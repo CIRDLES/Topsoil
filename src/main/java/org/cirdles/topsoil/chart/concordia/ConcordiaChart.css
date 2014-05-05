@@ -1,0 +1,17 @@
+.error-ellipse Path {
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+    -fx-fill: transparent;
+}
+.error-ellipse-fill Path {
+    -fx-stroke: transparent;
+    -fx-fill: red;
+    -fx-opacity: 0.3;
+}
+.drag-select {
+    -fx-opacity: 0.5;
+}
+.concordia-line {
+    -fx-stroke: blue;
+    -fx-stroke-width: 2px;
+}
