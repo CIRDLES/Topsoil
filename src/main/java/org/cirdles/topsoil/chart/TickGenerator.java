@@ -118,7 +118,7 @@ public class TickGenerator {
     }
 
     private double firstMajorTick(double lowerBound) {
-        return getAnchorTick() + getTickUnit() * floorToZero((lowerBound - getAnchorTick()) / getTickUnit());
+        return getAnchorTick() + getTickUnit() * ceil((lowerBound - getAnchorTick()) / getTickUnit());
     }
     
     private double floorToZero(double num) {
