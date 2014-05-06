@@ -55,12 +55,16 @@ public class ErrorEllipse {
     private Matrix controlPoints;
 
     public ErrorEllipse(double x, double y, double sigmaX, double sigmaY, double rho) {
+        this(x, y, sigmaX, sigmaY, rho, 1);
+    }
+    
+    public ErrorEllipse(double x, double y, double sigmaX, double sigmaY, double rho, double confidenceLevel) {
         this.x = x;
         this.y = y;
         this.sigmaX = sigmaX;
         this.sigmaY = sigmaY;
         this.rho = rho;
-        confidenceLevel = 1;
+        this.confidenceLevel = confidenceLevel;
     }
 
     /**
@@ -152,7 +156,7 @@ public class ErrorEllipse {
         //  [1]]               [x, y]]
         Matrix xyMatrix = new Matrix(13, 1, 1).times(new Matrix(new double[]{getX(), getY()}, 1));
         
-        return CONTROL_POINTS_MATRIX.times(r).times(confidenceLevel).plus(xyMatrix);
+        return CONTROL_POINTS_MATRIX.times(confidenceLevel).times(r).plus(xyMatrix);
     }
     
     private double min(double[] values) {
