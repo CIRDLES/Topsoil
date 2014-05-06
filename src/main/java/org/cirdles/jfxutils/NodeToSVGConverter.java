@@ -1,15 +1,16 @@
 package org.cirdles.jfxutils;
 
-import javafx.scene.Node;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
@@ -45,6 +46,12 @@ public class NodeToSVGConverter {
         }
     }
 
+    /**
+     * Write a single JavaFX node to the given SVG file.
+     * 
+     * @param node
+     * @param output 
+     */
     public void convert(Node node, File output) {
         try {
             Document document = documentBuilder.newDocument();
@@ -63,6 +70,12 @@ public class NodeToSVGConverter {
         }
     }
 
+    /**
+     * Write a list of JavaFX nodes to the given SVG file.
+     * 
+     * @param nodes
+     * @param output 
+     */
     public void convert(ObservableList<Node> nodes, File output) {
         try {
             Document document = documentBuilder.newDocument();
@@ -73,7 +86,6 @@ public class NodeToSVGConverter {
             svg.setAttribute("version", "1.1");
 
             for (Node node : nodes) {
-
                 Element element = convertNodeToElement(node, document);
 
                 if (element != null) {
@@ -92,6 +104,13 @@ public class NodeToSVGConverter {
         }
     }
 
+    /**
+     * Recursively converts a node (and all of its children if it's a parent) into an SVG XML element.
+     * 
+     * @param node
+     * @param document
+     * @return 
+     */
     private Element convertNodeToElement(Node node, Document document) {
         Element element = null;
 
@@ -109,10 +128,10 @@ public class NodeToSVGConverter {
             Line line = (Line) node;
 
             element = document.createElement("line");
-            element.setAttribute("x1", String.valueOf(line.getStartX()));
-            element.setAttribute("y1", String.valueOf(line.getStartY()));
-            element.setAttribute("x2", String.valueOf(line.getEndX()));
-            element.setAttribute("y2", String.valueOf(line.getEndY()));
+            element.setAttribute("x1", String.valueOf(line.getStartX() + line.getLayoutX()));
+            element.setAttribute("y1", String.valueOf(line.getStartY() + line.getLayoutY()));
+            element.setAttribute("x2", String.valueOf(line.getEndX() + line.getLayoutX()));
+            element.setAttribute("y2", String.valueOf(line.getEndY() + line.getLayoutY()));
 
             element.setAttribute("stroke", colorToRGBString((Color) line.getStroke()));
             element.setAttribute("stroke-width", String.valueOf(line.getStrokeWidth()));
@@ -126,14 +145,25 @@ public class NodeToSVGConverter {
                 if (pathElement instanceof MoveTo) {
                     MoveTo moveTo = (MoveTo) pathElement;
 
-                    d.append(String.format("M %f %f ", moveTo.getX(), moveTo.getY()));
+                    d.append(String.format("M %f %f ",
+                                           moveTo.getX() + path.getLayoutX(),
+                                           moveTo.getY() + path.getLayoutY()));
                 } else if (pathElement instanceof CubicCurveTo) {
                     CubicCurveTo cubicCurveTo = (CubicCurveTo) pathElement;
 
                     d.append(String.format("C %f %f %f %f %f %f ",
-                                           cubicCurveTo.getControlX1(), cubicCurveTo.getControlY1(),
-                                           cubicCurveTo.getControlX2(), cubicCurveTo.getControlY2(),
-                                           cubicCurveTo.getX(), cubicCurveTo.getY()));
+                                           cubicCurveTo.getControlX1() + path.getLayoutX(),
+                                           cubicCurveTo.getControlY1() + path.getLayoutY(),
+                                           cubicCurveTo.getControlX2() + path.getLayoutX(),
+                                           cubicCurveTo.getControlY2() + path.getLayoutY(),
+                                           cubicCurveTo.getX() + path.getLayoutX(),
+                                           cubicCurveTo.getY() + path.getLayoutY()));
+                } else if (pathElement instanceof LineTo) {
+                    LineTo lineTo = (LineTo) pathElement;
+
+                    d.append(String.format("L %f %f ",
+                                           lineTo.getX() + path.getLayoutX(),
+                                           lineTo.getY() + path.getLayoutY()));
                 }
             }
 
@@ -154,8 +184,8 @@ public class NodeToSVGConverter {
             element = document.createElement("text");
 
             element.setTextContent(text.getText());
-            element.setAttribute("x", String.valueOf(text.getX()));
-            element.setAttribute("y", String.valueOf(text.getY()));
+            element.setAttribute("x", String.valueOf(text.getX() + text.getLayoutX()));
+            element.setAttribute("y", String.valueOf(text.getY() + text.getLayoutY()));
             element.setAttribute("font-family", text.getFont().getFamily());
             element.setAttribute("font-size", String.valueOf(text.getFont().getSize()));
         } else if (node instanceof Circle) {
@@ -163,8 +193,8 @@ public class NodeToSVGConverter {
 
             element = document.createElement("circle");
 
-            element.setAttribute("cx", String.valueOf(circle.getCenterX()));
-            element.setAttribute("cy", String.valueOf(circle.getCenterY()));
+            element.setAttribute("cx", String.valueOf(circle.getCenterX() + circle.getLayoutX()));
+            element.setAttribute("cy", String.valueOf(circle.getCenterY() + circle.getLayoutY()));
             element.setAttribute("r", String.valueOf(circle.getRadius()));
             element.setAttribute("stroke", colorToRGBString((Color) circle.getStroke()));
             element.setAttribute("fill", colorToRGBString((Color) circle.getFill()));
@@ -177,6 +207,12 @@ public class NodeToSVGConverter {
         }
 
         try {
+            element.setAttribute("transform", String.format("rotate(%f %f, %f) translate(%f %f)",
+                                                            node.getRotate(),
+                                                            node.getTranslateX(),
+                                                            node.getTranslateY(),
+                                                            node.getLayoutX(),
+                                                            node.getLayoutY()));
             if (!node.getStyle().equals("")) {
                 element.setAttribute("style", node.getStyle());
             }
@@ -188,7 +224,7 @@ public class NodeToSVGConverter {
     }
 
     private String colorToRGBString(Color color) {
-        if (color == null) {
+        if (color == null || color == Color.TRANSPARENT) {
             return "none";
         }
 

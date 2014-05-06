@@ -39,6 +39,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.chart.concordia.ErrorChartToolBar;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.concordia.ConcordiaChart;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipse;
@@ -63,7 +64,6 @@ public class Topsoil extends Application implements ColumnSelectorDialog.ColumnS
      * Text of the error shown if there aren't enough columns to fill all the charts' fields
      */
     private final String NOT_ENOUGH_COLUMNS_MESSAGE = "Careful, you don't have enough columns to create an ErrorEllipse Chart";
-    
     /**
      * The table that contain data
      */
@@ -96,7 +96,7 @@ public class Topsoil extends Application implements ColumnSelectorDialog.ColumnS
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().add(new Menu("File"));
 
@@ -130,19 +130,20 @@ public class Topsoil extends Application implements ColumnSelectorDialog.ColumnS
                 }
             }
         });
-        
+
         Button generateErrorEllipseChart = new Button("Error Ellipse Chart");
         generateErrorEllipseChart.setOnAction((ActionEvent event) -> {
             //Show an error if there is not enough column
-        if(dataTable.getColumns().size() < 4){
-            Dialogs.create().message(NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
-        } else {
-            ColumnSelectorDialog csd = new ColumnSelectorDialog(dataTable, this);
-            csd.show();
-        }
+
+            if(dataTable.getColumns().size() < 4){
+                Dialogs.create().message(NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
+            } else {
+                ColumnSelectorDialog csd = new ColumnSelectorDialog(dataTable, this);
+                csd.show();
+            }
         });
         toolBar.getItems().add(generateErrorEllipseChart);
-        
+
         VBox root = new VBox(menuBar, toolBar, dataTable);
 
         primaryStage.setScene(new Scene(root, 1200, 800, true, SceneAntialiasing.DISABLED));
@@ -163,23 +164,26 @@ public class Topsoil extends Application implements ColumnSelectorDialog.ColumnS
 
     /**
      * Receive a converter from a <code>ColumnSelectorDialog</code> and create a chart from it.
-     * @param converter 
+     *
+     * @param converter
      */
     @Override
     public void receiveConverter(DataConverter<ErrorEllipse> converter) {
         //Creating a serie with all the data
-        XYChart.Series<Number, Number> serie = new XYChart.Series<>();
-        
-        for (Map<Object, Integer> row_ellipse : dataTable.getItems()){
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+        for (Map<Object, Integer> row_ellipse : dataTable.getItems()) {
             XYChart.Data<Number, Number> data = new XYChart.Data<>(1138, 1138, row_ellipse);
-            serie.getData().add(data);
+            series.getData().add(data);
         }
 
-        
         ConcordiaChart chart = new ConcordiaChart(converter);
-        chart.getData().add(serie);
-               
-        Scene scene = new Scene(chart, 1200, 800, true, SceneAntialiasing.DISABLED);
+        chart.getData().add(series);
+        VBox.setVgrow(chart, Priority.ALWAYS);
+        
+        ToolBar toolBar = new ErrorChartToolBar(chart);
+
+        Scene scene = new Scene(new VBox(toolBar, chart), 1200, 800, true, SceneAntialiasing.DISABLED);
         Stage chartStage = new Stage();
         chartStage.setScene(scene);
         chartStage.show();
