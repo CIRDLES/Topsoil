@@ -55,7 +55,7 @@ public class MapToEllipseDataConverter implements DataConverter<ErrorEllipse>{
         double sigmay = ellipse_data.get(key_sigmay);
         double rho = ellipse_data.get(key_rho);
 
-        return new ErrorEllipse(x, y, sigmay, sigmay, rho);
+        return new ErrorEllipse(x, y, sigmax, sigmay, rho);
     }
 
 }
