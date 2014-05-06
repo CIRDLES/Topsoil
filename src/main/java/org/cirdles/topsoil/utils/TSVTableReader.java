@@ -16,9 +16,16 @@
 
 package org.cirdles.topsoil.utils;
 
+import au.com.bytecode.opencsv.CSVReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.chart.MapTableColumn;
 
@@ -45,17 +52,23 @@ public class TSVTableReader extends TableReader {
         dest.getItems().clear();
         dest.getColumns().clear();
         
-        Scanner in = new Scanner(src);
+        CSVReader tsvReader = new CSVReader(new StringReader(src), '\t');
+        List<String[]> lines;
+        try {
+            lines = tsvReader.readAll();
+        } catch (IOException ex) {
+            Logger.getLogger(TSVTableReader.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
         
-        String[] columnNames, rowBuffer = new String[0];
+        String[] columnNames;
         int rowLength;
         
         if (expectingHeader) {
-            columnNames = in.nextLine().split("\t");
+            columnNames = lines.remove(0);
             rowLength = columnNames.length;
         } else {
-            rowBuffer = in.nextLine().split("\t");
-            rowLength = rowBuffer.length;
+            rowLength = lines.get(0).length;
             
             // generate default column names
             columnNames = new String[rowLength];
@@ -68,22 +81,11 @@ public class TSVTableReader extends TableReader {
             dest.getColumns().add(new MapTableColumn<>(i, columnNames[i]));
         }
         
-        if (rowBuffer.length != 0) {
+        for (String[] line : lines) {
             Map<Integer, Double> row = new HashMap();
             
             for (int i = 0; i < rowLength; i++) {
-                row.put(i, Double.parseDouble(rowBuffer[i]));
-            }
-            
-            dest.getItems().add(row);
-        }
-        
-        while (in.hasNextLine()) {
-            Map<Integer, Double> row = new HashMap();
-            rowBuffer = in.nextLine().split("\t");
-            
-            for (int i = 0; i < rowLength; i++) {
-                row.put(i, Double.parseDouble(rowBuffer[i])); 
+                row.put(i, Double.parseDouble(line[i])); 
             }
             
             dest.getItems().add(row);
