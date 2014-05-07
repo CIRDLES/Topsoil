@@ -82,10 +82,10 @@ public class TSVTableReader extends TableReader {
         }
         
         for (String[] line : lines) {
-            Map<Integer, Double> row = new HashMap();
+            Map row = new HashMap();
             
             for (int i = 0; i < rowLength; i++) {
-                row.put(i, Double.parseDouble(line[i])); 
+                row.put(i, line[i]); 
             }
             
             dest.getItems().add(row);

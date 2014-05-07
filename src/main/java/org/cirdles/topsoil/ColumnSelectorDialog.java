@@ -16,16 +16,12 @@
 package org.cirdles.topsoil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -37,7 +33,6 @@ import javafx.util.StringConverter;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.MapTableColumn;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipse;
-import org.cirdles.topsoil.chart.concordia.ErrorEllipseHolder;
 import org.cirdles.topsoil.chart.concordia.MapToEllipseDataConverter;
 import org.controlsfx.control.action.AbstractAction;
 import org.controlsfx.control.action.Action;
@@ -215,7 +210,7 @@ public class ColumnSelectorDialog extends Dialog {
                 for (TableColumn<Map, ?> column : tableToRead.getColumns()) {
                     MapTableColumn column_map = (MapTableColumn) column;
                     if (column_map.getKey().equals(key)) {
-                        name = column.getText();
+                        name = column.getText().replaceAll("\n", " ");
                     }
                 }
 
@@ -224,15 +219,15 @@ public class ColumnSelectorDialog extends Dialog {
 
             @Override
             public Object fromString(String string) {
-                Object retour = null;
+                Object result = null;
                 for (TableColumn<Map, ?> column : tableToRead.getColumns()) {
                     MapTableColumn column_map = (MapTableColumn) column;
                     if (column_map.getText().equals(string)) {
-                        retour = column_map.getKey();
+                        result = column_map.getKey();
                     }
                 }
 
-                return retour;
+                return result;
             }
         }
     }
