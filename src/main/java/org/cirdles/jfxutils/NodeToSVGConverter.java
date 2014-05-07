@@ -18,6 +18,7 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -123,24 +124,8 @@ public class NodeToSVGConverter {
         double x = 0;
         double y = 0;
         
-         if (node instanceof Label || node instanceof Text) {
-            Text text;
-            if(node instanceof Label){
-                text = (Text) ((Label) node).getChildrenUnmodifiable().get(0);
-            } else {
-                text = (Text) node;
-            }            
-            
-
-            element = document.createElement("text");
-
-            element.setTextContent(text.getText());
-            element.setAttribute("x", String.valueOf(text.getX())); x= text.getX();
-            element.setAttribute("y", String.valueOf(text.getX())); y= text.getX();
-            element.setAttribute("font-family", text.getFont().getFamily());
-            element.setAttribute("font-size", String.valueOf(text.getFont().getSize()));
-        } 
-         else if (node instanceof Parent) {
+         if (node instanceof Parent) {
+             //"I said goddamn! Goddamn... Goddamn"
             element = document.createElement("g");
 
             for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
@@ -220,21 +205,35 @@ public class NodeToSVGConverter {
             } catch (NullPointerException ex) {
                 System.out.println(circle + " has no opacity defined");
             }
-        }
+        } else if (node instanceof Text) {
+            Text text = (Text) node;    
+
+            element = document.createElement("text");
+
+            element.setTextContent(text.getText());
+            element.setAttribute("x", String.valueOf(text.getX())); x= text.getX();
+            element.setAttribute("y", String.valueOf(text.getX())); y= text.getX();
+            element.setAttribute("font-family", text.getFont().getFamily());
+            element.setAttribute("font-size", String.valueOf(text.getFont().getSize()));
+        } 
 
         try {
             //Getting the transforms
             StringBuilder tranforms_partstring = new StringBuilder();
+           
+            //Heads up : May not work if multiple tranform of the same type in the scene
             for(Transform t: node.getTransforms()){
                 if(t instanceof Rotate){
-                    Rotate r = (Rotate)t;
-                    //Heads up : May not work if multiple Rotate in the scene
                     //Heads up : Don't take in account the values PivotX, Y and Z
-                    tranforms_partstring.append(String.format("rotate(%f, %f %f)", r.getAngle(), x, y));
+                    Rotate r = (Rotate) t;
+                    tranforms_partstring.append(String.format("rotate(%f, %f %f) ", r.getAngle(), x, y));
+                } else if (t instanceof Translate){
+                    Translate r = (Translate) t;
+                    tranforms_partstring.append(String.format("translate(%f %f) ", t.getTx(), t.getTy()));
                 }
             }
             
-            element.setAttribute("transform", String.format(tranforms_partstring.toString()+" translate(%f %f)",
+            element.setAttribute("transform", String.format(tranforms_partstring.toString()+"translate(%f %f)",
                                                             node.getLayoutX(),
                                                             node.getLayoutY()));
             if (!node.getStyle().equals("")) {
