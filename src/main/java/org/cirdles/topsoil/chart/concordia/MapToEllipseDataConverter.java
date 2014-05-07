@@ -47,13 +47,13 @@ public class MapToEllipseDataConverter implements DataConverter<ErrorEllipse>{
 
     @Override
     public ErrorEllipse convert(XYChart.Data data) {
-        Map<Object, Double> ellipse_data = (Map<Object, Double>) data.getExtraValue(); 
+        Map ellipse_data = (Map) data.getExtraValue(); 
 
-        double x = ellipse_data.get(key_x);
-        double y = ellipse_data.get(key_y);
-        double sigmax = ellipse_data.get(key_sigmax);
-        double sigmay = ellipse_data.get(key_sigmay);
-        double rho = ellipse_data.get(key_rho);
+        double x = Double.valueOf(String.valueOf(ellipse_data.get(key_x)));
+        double y = Double.valueOf(String.valueOf(ellipse_data.get(key_y)));
+        double sigmax = Double.valueOf(String.valueOf(ellipse_data.get(key_sigmax)));
+        double sigmay = Double.valueOf(String.valueOf(ellipse_data.get(key_sigmay)));
+        double rho = Double.valueOf(String.valueOf(ellipse_data.get(key_rho)));
 
         return new ErrorEllipse(x, y, sigmax, sigmay, rho);
     }

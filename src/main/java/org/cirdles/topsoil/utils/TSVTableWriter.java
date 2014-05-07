@@ -16,6 +16,9 @@
 
 package org.cirdles.topsoil.utils;
 
+import au.com.bytecode.opencsv.CSVWriter;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
@@ -40,30 +43,34 @@ public class TSVTableWriter implements TableWriter<Map> {
 
     @Override
     public void write(TableView<Map> src, Path dest) {
-        StringBuilder stringBuilder = new StringBuilder();
+        CSVWriter tsvWriter;
+        try {
+            tsvWriter = new CSVWriter(new FileWriter(dest.toFile()), '\t');
+        } catch (IOException ex) {
+            Logger.getLogger(TSVTableWriter.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
         
         if (writeHeaders) {
-            for (TableColumn<Map, ?> column : src.getColumns()) {
-                stringBuilder.append(column.getText());
-                stringBuilder.append('\t');
+            String[] headers = new String[src.getColumns().size()];
+            for (int i = 0; i < src.getColumns().size(); i++) {
+                headers[i] = src.getColumns().get(i).getText();
             }
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-            stringBuilder.append('\n');
+            
+            tsvWriter.writeNext(headers);
         }
         
         for (int i = 0; i < src.getItems().size(); i++) {
-            for (TableColumn<Map, ?> column : src.getColumns()) {
-                stringBuilder.append(column.getCellData(i));
-                stringBuilder.append('\t');
+            String[] row = new String[src.getColumns().size()];
+            for (int j = 0; j < src.getColumns().size(); j++) {
+                row[j] = String.valueOf(src.getColumns().get(j).getCellData(i));
             }
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-            stringBuilder.append('\n');
+            
+            tsvWriter.writeNext(row);
         }
         
         try {
-            Files.write(dest, stringBuilder.toString().getBytes("utf-8"));
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(TSVTableWriter.class.getName()).log(Level.SEVERE, null, ex);
+            tsvWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(TSVTableWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
