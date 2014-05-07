@@ -25,6 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
@@ -62,11 +63,20 @@ public class ErrorChartToolBar extends ToolBar {
         pw.println(prefix+"Transform X: "+n.getTranslateX());
         pw.println(prefix+"Transform Y: "+n.getTranslateY());
         pw.println(prefix+"Transform Z: "+n.getTranslateZ());
-        pw.println(prefix+"Transforms :");
-        for(Transform t : n.getTransforms()){
-            pw.println(prefix+"..."+t.toString());
-        }*/
-        //pw.println(prefix+"--");
+        pw.println(prefix+"LocalToParent: "+n.getLocalToParentTransform());
+        pw.println(prefix+"LocalToScene: "+n.getLocalToSceneTransform());
+        if(n instanceof Label){
+            Label l = (Label) n;
+            pw.println(prefix+"Text: "+l.getText());
+            
+        }
+        if(!n.getTransforms().isEmpty()){
+            pw.println(prefix+"Transforms :");
+            for(Transform t : n.getTransforms()){
+                pw.println(prefix+"..."+t.toString());
+            }
+        }
+        pw.println(prefix+"--");*/
         
         if(n instanceof Parent){
             Parent parent = (Parent) n;
