@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
@@ -15,6 +16,8 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -113,8 +116,31 @@ public class NodeToSVGConverter {
      */
     private Element convertNodeToElement(Node node, Document document) {
         Element element = null;
+        /*
+         * Store the X and Y position for the element, to be reused in the tranformation at the end of the function.
+         * May, sometime, not be set.
+         */
+        double x = 0;
+        double y = 0;
+        
+         if (node instanceof Label || node instanceof Text) {
+            Text text;
+            if(node instanceof Label){
+                text = (Text) ((Label) node).getChildrenUnmodifiable().get(0);
+            } else {
+                text = (Text) node;
+            }            
+            
 
-        if (node instanceof Parent) {
+            element = document.createElement("text");
+
+            element.setTextContent(text.getText());
+            element.setAttribute("x", String.valueOf(text.getX())); x= text.getX();
+            element.setAttribute("y", String.valueOf(text.getX())); y= text.getX();
+            element.setAttribute("font-family", text.getFont().getFamily());
+            element.setAttribute("font-size", String.valueOf(text.getFont().getSize()));
+        } 
+         else if (node instanceof Parent) {
             element = document.createElement("g");
 
             for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
@@ -128,8 +154,8 @@ public class NodeToSVGConverter {
             Line line = (Line) node;
 
             element = document.createElement("line");
-            element.setAttribute("x1", String.valueOf(line.getStartX() + line.getLayoutX()));
-            element.setAttribute("y1", String.valueOf(line.getStartY() + line.getLayoutY()));
+            element.setAttribute("x1", String.valueOf(line.getStartX() + line.getLayoutX())); x = line.getStartX() + line.getLayoutX();
+            element.setAttribute("y1", String.valueOf(line.getStartX() + line.getLayoutX())); y = line.getStartX() + line.getLayoutX();
             element.setAttribute("x2", String.valueOf(line.getEndX() + line.getLayoutX()));
             element.setAttribute("y2", String.valueOf(line.getEndY() + line.getLayoutY()));
 
@@ -178,17 +204,7 @@ public class NodeToSVGConverter {
             } catch (NullPointerException ex) {
                 System.out.println(path + " has no opacity defined");
             }
-        } else if (node instanceof Text) {
-            Text text = (Text) node;
-
-            element = document.createElement("text");
-
-            element.setTextContent(text.getText());
-            element.setAttribute("x", String.valueOf(text.getX() + text.getLayoutX()));
-            element.setAttribute("y", String.valueOf(text.getY() + text.getLayoutY()));
-            element.setAttribute("font-family", text.getFont().getFamily());
-            element.setAttribute("font-size", String.valueOf(text.getFont().getSize()));
-        } else if (node instanceof Circle) {
+        }else if (node instanceof Circle) {
             Circle circle = (Circle) node;
 
             element = document.createElement("circle");
@@ -207,10 +223,18 @@ public class NodeToSVGConverter {
         }
 
         try {
-            element.setAttribute("transform", String.format("rotate(%f %f, %f) translate(%f %f)",
-                                                            node.getRotate(),
-                                                            node.getTranslateX(),
-                                                            node.getTranslateY(),
+            //Getting the transforms
+            StringBuilder tranforms_partstring = new StringBuilder();
+            for(Transform t: node.getTransforms()){
+                if(t instanceof Rotate){
+                    Rotate r = (Rotate)t;
+                    //Heads up : May not work if multiple Rotate in the scene
+                    //Heads up : Don't take in account the values PivotX, Y and Z
+                    tranforms_partstring.append(String.format("rotate(%f, %f %f)", r.getAngle(), x, y));
+                }
+            }
+            
+            element.setAttribute("transform", String.format(tranforms_partstring.toString()+" translate(%f %f)",
                                                             node.getLayoutX(),
                                                             node.getLayoutY()));
             if (!node.getStyle().equals("")) {
@@ -220,7 +244,7 @@ public class NodeToSVGConverter {
             System.err.printf("Nodes of class %s are not supported.", node.getClass().getName());
         }
 
-        return element;
+        return element; //haribo
     }
 
     private String colorToRGBString(Color color) {
