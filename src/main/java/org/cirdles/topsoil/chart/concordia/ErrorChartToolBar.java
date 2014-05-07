@@ -40,7 +40,7 @@ public class ErrorChartToolBar extends ToolBar {
     public ErrorChartToolBar(ConcordiaChart chart) {
         Button exportToSVG = new Button("Export to SVG");
         exportToSVG.setOnAction((ActionEvent event) -> {
-            start_turnNodeToText(chart);
+            //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
             NodeToSVGConverter converter = new NodeToSVGConverter();
             
             FileChooser fileChooser = new FileChooser();
