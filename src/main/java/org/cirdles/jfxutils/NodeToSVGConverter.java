@@ -139,10 +139,10 @@ public class NodeToSVGConverter {
             Line line = (Line) node;
 
             element = document.createElement("line");
-            element.setAttribute("x1", String.valueOf(line.getStartX() + line.getLayoutX())); x = line.getStartX() + line.getLayoutX();
-            element.setAttribute("y1", String.valueOf(line.getStartX() + line.getLayoutX())); y = line.getStartX() + line.getLayoutX();
-            element.setAttribute("x2", String.valueOf(line.getEndX() + line.getLayoutX()));
-            element.setAttribute("y2", String.valueOf(line.getEndY() + line.getLayoutY()));
+            element.setAttribute("x1", String.valueOf(line.getStartX())); x = line.getStartX();
+            element.setAttribute("y1", String.valueOf(line.getStartY())); y = line.getStartY();
+            element.setAttribute("x2", String.valueOf(line.getEndX()));
+            element.setAttribute("y2", String.valueOf(line.getEndY()));
 
             element.setAttribute("stroke", colorToRGBString((Color) line.getStroke()));
             element.setAttribute("stroke-width", String.valueOf(line.getStrokeWidth()));
