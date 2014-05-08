@@ -251,7 +251,7 @@ public class ColumnSelectorDialog extends Dialog {
             
             hide();
             target.receiveConverter(converter);
-            //Eat a Starbuck Hot Chocolate 
+            // Drink a Starbucks Hot Chocolate
         }
 
     }
