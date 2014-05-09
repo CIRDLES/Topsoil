@@ -35,7 +35,7 @@ import org.cirdles.topsoil.chart.NumberChart;
  * <p>
  * It support adding, removing or changing the Ellipses.</p>
  *
- * @author John Zeringue
+ * @author John Zeringue (known as El Zeringus in Spain)
  * @see NumberChart
  */
 public class ConcordiaChart extends NumberChart {
