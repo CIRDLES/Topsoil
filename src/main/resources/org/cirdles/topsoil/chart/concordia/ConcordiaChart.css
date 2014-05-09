@@ -3,7 +3,7 @@
     -fx-stroke-width: 2px;
     -fx-fill: transparent;
 }
-.error-ellipse-fill Path {
+.error-ellipse-fill {
     -fx-stroke: transparent;
     -fx-fill: red;
     -fx-opacity: 0.3;
