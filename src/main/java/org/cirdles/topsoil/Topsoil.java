@@ -16,14 +16,19 @@
  */
 package org.cirdles.topsoil;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.BooleanPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
@@ -31,6 +36,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.Clipboard;
@@ -38,7 +44,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.chart.concordia.ErrorChartToolBar;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.concordia.ConcordiaChart;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipse;
@@ -54,16 +62,20 @@ import org.controlsfx.dialog.Dialogs;
  *
  * @author John Zeringue
  */
-public class Topsoil extends Application implements ColumnSelectorDialog.ColumnSelectorDialogListener{
-
-    private static final Path TOPSOIL_PATH = Paths.get(System.getProperty("user.home"), "Topsoil");
-    private static final Path LAST_TABLE_PATH = Paths.get(TOPSOIL_PATH.toString(), "last_table.tsv");
+public class Topsoil extends Application implements ColumnSelectorDialog.ColumnSelectorDialogListener {
     
+    private static final String APP_NAME = "Topsoil";
+    
+    private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
+
+    private static final Path TOPSOIL_PATH = Paths.get(USER_HOME.toString(), APP_NAME);
+    private static final Path LAST_TABLE_PATH = Paths.get(TOPSOIL_PATH.toString(), "last_table.tsv");
+
     /**
-     * Text of the error shown if there aren't enough columns to fill all the charts' fields
+     * Text of the error shown if there aren't enough columns to fill all the
+     * charts' fields
      */
     private final String NOT_ENOUGH_COLUMNS_MESSAGE = "Careful, you don't have enough columns to create an ErrorEllipse Chart";
-    
     /**
      * The table that contain data
      */
@@ -96,9 +108,6 @@ public class Topsoil extends Application implements ColumnSelectorDialog.ColumnS
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().add(new Menu("File"));
 
         ToolBar toolBar = new ToolBar();
 
@@ -114,35 +123,57 @@ public class Topsoil extends Application implements ColumnSelectorDialog.ColumnS
             }
         }
 
+        Menu fileMenu = new Menu("File");
+        MenuItem importFromFile = new MenuItem("Import from File");
+        fileMenu.getItems().add(importFromFile);
+        importFromFile.setOnAction(event -> {
+            FileChooser tsvChooser = new FileChooser();
+            tsvChooser.setInitialDirectory(USER_HOME.toFile());
+            tsvChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Table Files", "TSV"));
+            Path filePath = tsvChooser.showOpenDialog(primaryStage).toPath();
+
+            yesNoPrompt("Does the selected file contain headers?", response -> {
+                TableReader tableReader = new TSVTableReader(response);
+
+                try {
+                    tableReader.read(filePath, dataTable);
+                } catch (IOException ex) {
+                    Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                TableWriter<Map> tableWriter = new TSVTableWriter(true);
+                tableWriter.write(dataTable, LAST_TABLE_PATH);
+            });
+        });
+
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().add(fileMenu);
+
         dataTable.setOnKeyPressed((KeyEvent event) -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
-                Action hasHeader = Dialogs.create()
-                        .title("Topsoil")
-                        .message("Does the pasted data contain headers?")
-                        .showConfirm();
-
-                if (hasHeader != Dialog.Actions.CANCEL) {
-                    TableReader tableReader = new TSVTableReader(hasHeader == Dialog.Actions.YES);
+                yesNoPrompt("Does the pasted data contain headers?", response -> {
+                    TableReader tableReader = new TSVTableReader(response);
                     tableReader.read(Clipboard.getSystemClipboard().getString(), dataTable);
 
                     TableWriter<Map> tableWriter = new TSVTableWriter(true);
                     tableWriter.write(dataTable, LAST_TABLE_PATH);
-                }
+                });
             }
         });
-        
+
         Button generateErrorEllipseChart = new Button("Error Ellipse Chart");
         generateErrorEllipseChart.setOnAction((ActionEvent event) -> {
             //Show an error if there is not enough column
-        if(dataTable.getColumns().size() < 4){
-            Dialogs.create().message(NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
-        } else {
-            ColumnSelectorDialog csd = new ColumnSelectorDialog(dataTable, this);
-            csd.show();
-        }
+            if (dataTable.getColumns().size() < 4) {
+
+                Dialogs.create().message(NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
+            } else {
+                ColumnSelectorDialog csd = new ColumnSelectorDialog(dataTable, this);
+                csd.show();
+            }
         });
         toolBar.getItems().add(generateErrorEllipseChart);
-        
+
         VBox root = new VBox(menuBar, toolBar, dataTable);
 
         primaryStage.setScene(new Scene(root, 1200, 800, true, SceneAntialiasing.DISABLED));
@@ -150,10 +181,22 @@ public class Topsoil extends Application implements ColumnSelectorDialog.ColumnS
         primaryStage.show();
     }
 
+    private static void yesNoPrompt(String message, Consumer<Boolean> callback) {
+        Action response = Dialogs.create()
+                .title(APP_NAME)
+                .message(message)
+                .showConfirm();
+
+        if (response != Dialog.Actions.CANCEL) {
+            callback.accept(response == Dialog.Actions.YES);
+        }
+    }
+
     /**
-     * The main() method is ignored in correctly deployed JavaFX application. main() serves only as fallback in case the
-     * application can not be launched through deployment artifacts, e.g., in IDEs with limited FX support. NetBeans
-     * ignores main().
+     * The main() method is ignored in correctly deployed JavaFX application.
+     * main() serves only as fallback in case the application can not be
+     * launched through deployment artifacts, e.g., in IDEs with limited FX
+     * support. NetBeans ignores main().
      * <p>
      * @param args the command line arguments
      */
@@ -162,24 +205,29 @@ public class Topsoil extends Application implements ColumnSelectorDialog.ColumnS
     }
 
     /**
-     * Receive a converter from a <code>ColumnSelectorDialog</code> and create a chart from it.
-     * @param converter 
+     * Receive a converter from a <code>ColumnSelectorDialog</code> and create a
+     * chart from it.
+     *
+     * @param converter
      */
     @Override
     public void receiveConverter(DataConverter<ErrorEllipse> converter) {
         //Creating a serie with all the data
-        XYChart.Series<Number, Number> serie = new XYChart.Series<>();
-        
-        for (Map<Object, Integer> row_ellipse : dataTable.getItems()){
+
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+        for (Map<Object, Integer> row_ellipse : dataTable.getItems()) {
             XYChart.Data<Number, Number> data = new XYChart.Data<>(1138, 1138, row_ellipse);
-            serie.getData().add(data);
+            series.getData().add(data);
         }
 
-        
         ConcordiaChart chart = new ConcordiaChart(converter);
-        chart.getData().add(serie);
-               
-        Scene scene = new Scene(chart, 1200, 800, true, SceneAntialiasing.DISABLED);
+        chart.getData().add(series);
+        VBox.setVgrow(chart, Priority.ALWAYS);
+        
+        ToolBar toolBar = new ErrorChartToolBar(chart);
+
+        Scene scene = new Scene(new VBox(toolBar, chart), 1200, 800, true, SceneAntialiasing.DISABLED);
         Stage chartStage = new Stage();
         chartStage.setScene(scene);
         chartStage.show();

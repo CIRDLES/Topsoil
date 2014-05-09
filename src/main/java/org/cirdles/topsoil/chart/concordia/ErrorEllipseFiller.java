@@ -48,12 +48,7 @@ public class ErrorEllipseFiller extends Filler<ErrorEllipse> {
         ellipse.setFill(Color.RED);
         ellipse.setOpacity(.3);
         
-        Circle center = new Circle(mapXToDisplay(errorEllipse.getX()),
-                                   mapYToDisplay(errorEllipse.getY()),
-                                   3); // circle radius
-        
-        Group node = new Group(ellipse, center);
-        node.getStyleClass().add("error-ellipse-fill");
+        ellipse.getStyleClass().add("error-ellipse-fill");
 
         Matrix controlPoints = errorEllipse.getControlPoints();
         
@@ -75,6 +70,6 @@ public class ErrorEllipseFiller extends Filler<ErrorEllipse> {
             cubicCurveTo.setY(mapYToDisplay(controlPoints.get(i * 3, 1)));
         }
 
-        return node;
+        return ellipse;
     }
 }
