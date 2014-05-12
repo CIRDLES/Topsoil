@@ -17,6 +17,11 @@ import org.cirdles.topsoil.chart.StyleAccessor;
  *  @author pfif
  */
 public interface ErrorEllipseStyleContainer extends StyleAccessor {
+    public static final Color ellipseOutlineColorDefault = Color.BLACK;
+    public static final Color ellipseFillColorDefault = Color.RED;
+    public static final double ellipseFillOpacityDefault = 0.3;
+    public static final boolean ellipseOutlineShownDefault = true;
+    
     /**
      * Return the <code>Property</code> that hold the <code>Color</code> of the stroke of the Ellipses styled according to this <code>ErrorEllipseStyleContainer</code>
      * @see Color 

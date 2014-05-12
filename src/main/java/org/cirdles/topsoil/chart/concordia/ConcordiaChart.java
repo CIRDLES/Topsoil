@@ -44,7 +44,7 @@ import org.cirdles.topsoil.chart.NumberChart;
  * @author John Zeringue (known as El Zeringus in Spain)
  * @see NumberChart
  */
-public class ConcordiaChart extends NumberChart {
+public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleContainer{
 
     private final DataConverter<ErrorEllipse> converter;
     
@@ -68,31 +68,13 @@ public class ConcordiaChart extends NumberChart {
         getYAxis().setAnimated(false);
         getYAxis().setLabel("\u00B2\u2070\u2076Pb/\u00B2\u00B3\u2078U"); // "206Pb/238U"
         
-        ErrorEllipseStyleContainer styler_temp = new ErrorEllipseStyleContainer() {
+        ellipseFillColorProperty = new SimpleObjectProperty<>(ErrorEllipseStyleContainer.ellipseFillColorDefault);
+        ellipseFillOpacityProperty = new SimpleDoubleProperty(ErrorEllipseStyleContainer.ellipseFillOpacityDefault);
+        ellipseOutlineColorProperty = new SimpleObjectProperty<>(ErrorEllipseStyleContainer.ellipseOutlineColorDefault);
+        ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleContainer.ellipseOutlineShownDefault);
 
-            @Override
-            public ObjectProperty<Color> ellipseOutlineColorProperty() {
-                return new SimpleObjectProperty<>(Color.BLACK); 
-            }
-
-            @Override
-            public ObjectProperty<Color> ellipseFillColorProperty() {
-                return new SimpleObjectProperty<>(Color.RED);
-            }
-
-            @Override
-            public DoubleProperty ellipseFillOpacityProperty() {
-                return new SimpleDoubleProperty(0.3);
-            }
-
-            @Override
-            public BooleanProperty ellipseOutlineShownProperty() {
-                return new SimpleBooleanProperty(true);
-            }
-        };
-        
-        errorEllipsePlotter = new ErrorEllipsePlotter(this, styler_temp);
-        errorEllipseFiller = new ErrorEllipseFiller(this, styler_temp);
+        errorEllipsePlotter = new ErrorEllipsePlotter(this, this);
+        errorEllipseFiller = new ErrorEllipseFiller(this, this);
         concordiaLinePlotter = new ConcordiaLinePlotter(this, null);
 
         this.converter = converter;
@@ -231,6 +213,30 @@ public class ConcordiaChart extends NumberChart {
                       ConcordiaLine.getX(concordiaLine.getEndT()),
                       ConcordiaLine.getY(concordiaLine.getStartT()),
                       ConcordiaLine.getY(concordiaLine.getEndT()));
+    }
+
+    ObjectProperty<Color> ellipseOutlineColorProperty;
+    @Override
+    public ObjectProperty<Color> ellipseOutlineColorProperty() {
+        return ellipseOutlineColorProperty;
+    }
+
+    ObjectProperty<Color> ellipseFillColorProperty;
+    @Override
+    public ObjectProperty<Color> ellipseFillColorProperty() {
+        return ellipseFillColorProperty;
+    }
+
+    DoubleProperty ellipseFillOpacityProperty;
+    @Override
+    public DoubleProperty ellipseFillOpacityProperty() {
+        return ellipseFillOpacityProperty;
+    }
+
+    BooleanProperty ellipseOutlineShownProperty;
+    @Override
+    public BooleanProperty ellipseOutlineShownProperty() {
+        return ellipseOutlineShownProperty;
     }
 
     private static final class DefaultConverter implements DataConverter<ErrorEllipse> {
