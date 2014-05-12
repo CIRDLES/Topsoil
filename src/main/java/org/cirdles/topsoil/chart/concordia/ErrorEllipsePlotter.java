@@ -49,7 +49,12 @@ public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyle
                                 new CubicCurveTo(),
                                 new CubicCurveTo(),
                                 new CubicCurveTo());
-        ellipse.setStroke(Color.BLACK);
+        if(style.get().ellipseOutlineShownProperty().get()){
+            ellipse.setStroke(style.get().ellipseOutlineColorProperty().get());
+        } else {
+            ellipse.setStroke(Color.TRANSPARENT);
+        }
+        
         ellipse.setStrokeWidth(2);
         ellipse.setFill(Color.TRANSPARENT);
         

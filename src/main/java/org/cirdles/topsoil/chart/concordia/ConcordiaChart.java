@@ -20,11 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javafx.animation.FadeTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart.Data;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.NumberChart;
@@ -61,9 +67,32 @@ public class ConcordiaChart extends NumberChart {
         getXAxis().setLabel("\u00B2\u2070\u2077Pb/\u00B2\u00B3\u2075U"); // "207Pb/235U"
         getYAxis().setAnimated(false);
         getYAxis().setLabel("\u00B2\u2070\u2076Pb/\u00B2\u00B3\u2078U"); // "206Pb/238U"
+        
+        ErrorEllipseStyleContainer styler_temp = new ErrorEllipseStyleContainer() {
 
-        errorEllipsePlotter = new ErrorEllipsePlotter(this, null);
-        errorEllipseFiller = new ErrorEllipseFiller(this, null);
+            @Override
+            public ObjectProperty<Color> ellipseOutlineColorProperty() {
+                return new SimpleObjectProperty<>(Color.BLACK); 
+            }
+
+            @Override
+            public ObjectProperty<Color> ellipseFillColorProperty() {
+                return new SimpleObjectProperty<>(Color.RED);
+            }
+
+            @Override
+            public DoubleProperty ellipseFillOpacityProperty() {
+                return new SimpleDoubleProperty(0.3);
+            }
+
+            @Override
+            public BooleanProperty ellipseOutlineShownProperty() {
+                return new SimpleBooleanProperty(true);
+            }
+        };
+        
+        errorEllipsePlotter = new ErrorEllipsePlotter(this, styler_temp);
+        errorEllipseFiller = new ErrorEllipseFiller(this, styler_temp);
         concordiaLinePlotter = new ConcordiaLinePlotter(this, null);
 
         this.converter = converter;
