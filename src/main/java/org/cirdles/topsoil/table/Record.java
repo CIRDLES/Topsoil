@@ -13,22 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.table;
 
-package org.cirdles.topsoil.utils;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import javafx.scene.control.TableView;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
- * @author John Zeringue <john.joseph.zeringue@gmail.com>
+ * @author CIRDLES
  */
-public abstract class TableReader<T> {
-    public abstract void read(String src, TableView<T> dest);
+public class Record {
+
+    private Map<Field, Object> fieldValues;
+
+    public Record() {
+        fieldValues = new HashMap<>();
+    }
     
-    public void read(Path src, TableView<T> dest) throws IOException {
-        read(new String(Files.readAllBytes(src)), dest);
+    public Set<Field> getFields() {
+        return fieldValues.keySet();
+    }
+
+    public <T> T getValue(Field<T> field) {
+        return (T) fieldValues.get(field);
+    }
+
+    public <T> void setValue(Field<T> field, T value) {
+        fieldValues.put(field, value);
     }
 }
