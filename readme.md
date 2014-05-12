@@ -77,7 +77,7 @@ error ellipse chart.
 
 #### Wrapping Up
 
-Viola! The chart should now appear in a new window on your desktop. Try moving
+Voilà! The chart should now appear in a new window on your desktop. Try moving
 around by clicking and dragging. Additionally, you can perform a "box zoom" by
 right-clicking and dragging a box inside the chart space or a "point zoom" by
 rolling your mouse wheel either in or out. Feel free to play around with any of
