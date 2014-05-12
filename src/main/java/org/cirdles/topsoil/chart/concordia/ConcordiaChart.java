@@ -149,7 +149,7 @@ public class ConcordiaChart extends NumberChart {
         getData().stream().forEach(series -> {
             series.getData().stream().forEach(item -> {
                 getPlotChildren().add(
-                        errorEllipseFiller.fill(converter.convert(item)));
+                        errorEllipseFiller.plot(converter.convert(item)));
             });
         });
 
