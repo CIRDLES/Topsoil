@@ -29,10 +29,10 @@ import org.cirdles.topsoil.chart.Plotter;
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ErrorEllipseFiller extends Plotter<ErrorEllipse> {
+public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
 
-    public ErrorEllipseFiller(XYChart chart) {
-        super(chart);
+    public ErrorEllipseFiller(XYChart chart, ErrorEllipseStyleContainer style_arg) {
+        super(chart, style_arg);
     }
 
     @Override

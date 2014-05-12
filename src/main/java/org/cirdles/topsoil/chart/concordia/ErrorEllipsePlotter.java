@@ -36,10 +36,10 @@ import org.cirdles.topsoil.chart.Plotter;
  * @see Data
  * @see ErrorEllipseHolder
  */
-public class ErrorEllipsePlotter extends Plotter<ErrorEllipse> {
-
-    public ErrorEllipsePlotter(XYChart chart) {
-        super(chart);
+public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
+    
+    public ErrorEllipsePlotter(XYChart chart, ErrorEllipseStyleContainer style_arg) {
+        super(chart, style_arg);
     }
 
     @Override
