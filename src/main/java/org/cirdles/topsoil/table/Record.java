@@ -18,6 +18,8 @@ package org.cirdles.topsoil.table;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.BooleanPropertyBase;
 
 /**
  *
@@ -25,7 +27,19 @@ import java.util.Set;
  */
 public class Record {
 
-    private Map<Field, Object> fieldValues;
+    private final Map<Field, Object> fieldValues;
+    private final BooleanProperty selected = new BooleanPropertyBase(false) {
+        
+        @Override
+        public Object getBean() {
+            return Record.this;
+        }
+        
+        @Override
+        public String getName() {
+            return "selected";
+        }
+    };
 
     public Record() {
         fieldValues = new HashMap<>();
@@ -34,9 +48,21 @@ public class Record {
     public Set<Field> getFields() {
         return fieldValues.keySet();
     }
+    
+    public boolean getSelected() {
+        return selected.get();
+    }
 
     public <T> T getValue(Field<T> field) {
         return (T) fieldValues.get(field);
+    }
+    
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+    
+    public void setSelected(boolean value) {
+        selected.set(value);
     }
 
     public <T> void setValue(Field<T> field, T value) {
