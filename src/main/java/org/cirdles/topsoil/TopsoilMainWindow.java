@@ -72,7 +72,7 @@ public class TopsoilMainWindow extends VBox {
                 tsvChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Table Files", "TSV"));
                 Path filePath = tsvChooser.showOpenDialog(primaryStage).toPath();
 
-                TinkeringTools.yesNoPrompt("Does the selected file contain headers?", response -> {
+                Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
                     TableReader tableReader = new TSVTableReader(response);
 
                     try {

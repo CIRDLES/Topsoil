@@ -69,7 +69,7 @@ public class TopsoilTable extends TableView<Record> implements ColumnSelectorDia
 
         this.setOnKeyPressed((KeyEvent event) -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
-                TinkeringTools.yesNoPrompt("Does the pasted data contain headers?", response -> {
+                Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
                     TableReader tableReader = new TSVTableReader(response);
                     tableReader.read(Clipboard.getSystemClipboard().getString(), this);
 
