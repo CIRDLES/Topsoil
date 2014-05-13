@@ -15,85 +15,95 @@
  */
 package org.cirdles.topsoil.chart.concordia;
 
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.table.Field;
 import org.cirdles.topsoil.table.Record;
 
 /**
- * <p>
- * Implementation of a <code>DataConverter</code> that generate an
- * <code>ErrorEllipse</code> from a <code>map</code>.</p>
- * <ul>
- * <li>The fields used from the <code>map</code> to <code>get</code> the value
- * to make the <code>ErrorEllipse</code> are passed to the constructor.</li>
- * <li>The <code>map</code> must be passed to the property
- * <code>extraValue</code> of the <code>XYChart.Data</code></li>
- * </ul>
+ * Implementation of a <code>DataConverter</code> that generates an <code>ErrorEllipse</code> from a <code>Data</code>
+ * with a <code>Record</code> attached. The fields passed into the constructor are used to map values from the
+ * <code>Record</code> into new <code>ErrorEllipse</code>s. The <code>Record</code>s must be set as the extra values of
+ * the <code>Data</code> objects.
  *
  * @see DataConverter
  * @see ErrorEllipse
+ * @see Record
+ * @see Field
+ * @see Data
  */
 public class RecordToErrorEllipseConverter implements DataConverter<ErrorEllipse> {
 
-    private final Field<Number> key_x;
-    private final Field<Number> key_y;
-    private final Field<Number> key_sigmax;
-    private final Field<Number> key_sigmay;
-    private final Field<Number> key_rho;
+    private final Field<Number> xField;
+    private final Field<Number> sigmaXField;
+    private final Field<Number> yField;
+    private final Field<Number> sigmaYField;
+    private final Field<Number> rhoField;
 
-    public RecordToErrorEllipseConverter(Field<Number> key_x, Field<Number> key_y,
-            Field<Number> key_sigmax, Field<Number> key_sigmay,
-            Field<Number> key_rho) {
-        this.key_x = key_x;
-        this.key_y = key_y;
-        this.key_sigmax = key_sigmax;
-        this.key_sigmay = key_sigmay;
-        this.key_rho = key_rho;
+    /**
+     * Creates a new converter that instantiates new <code>ErrorEllipse</code>s from <code>Record</code>s. The
+     * constructor parameters specify the fields that should correspond to x, sigmaX, y, sigmaY, and rho in the
+     * converted <code>ErrorEllipse</code>s.
+     *
+     * @param xField the field corresponding to the x-value for each record.
+     * @param sigmaXField the field corresponding to the sigmaX-value for each record.
+     * @param yField the field corresponding to the y-value for each record.
+     * @param sigmaYField the field corresponding to the sigmaY-value for each record.
+     * @param rhoField the field corresponding to the rho-value for each record.
+     */
+    public RecordToErrorEllipseConverter(Field<Number> xField, Field<Number> sigmaXField,
+                                         Field<Number> yField, Field<Number> sigmaYField,
+                                         Field<Number> rhoField) {
+        this.xField = xField;
+        this.sigmaXField = sigmaXField;
+        this.yField = yField;
+        this.sigmaYField = sigmaYField;
+        this.rhoField = rhoField;
     }
 
+    /**
+     * Converts a <code>Data</code> object into a new ErrorEllipse. The conversion requires that the <code>Data</code>'s
+     * extra value is a <code>Record</code> containing values for the fields given in the constructor. The
+     * <code>Data</code>'s x and y values are ignored.
+     *
+     * @param data a <code>Data</code> object with a <code>Record</code> as its extra value
+     * @return a new <code>ErrorEllipse</code> using the data attached to the argument
+     */
     @Override
-    public ErrorEllipse convert(XYChart.Data data) {
-        Record ellipse_data = (Record) data.getExtraValue();
-
-        double x = ellipse_data.getValue(key_x).doubleValue();
-        double y = ellipse_data.getValue(key_y).doubleValue();
-        double sigmax = ellipse_data.getValue(key_sigmax).doubleValue();
-        double sigmay = ellipse_data.getValue(key_sigmay).doubleValue();
-        double rho = ellipse_data.getValue(key_rho).doubleValue();
+    public ErrorEllipse convert(Data data) {
+        Record record = (Record) data.getExtraValue();
 
         return new ErrorEllipse() {
 
             @Override
             public double getX() {
-                return ellipse_data.getValue(key_x).doubleValue();
+                return record.getValue(xField).doubleValue();
             }
 
             @Override
             public double getY() {
-                return ellipse_data.getValue(key_y).doubleValue();
+                return record.getValue(yField).doubleValue();
             }
 
             @Override
             public double getSigmaX() {
-                return ellipse_data.getValue(key_sigmax).doubleValue();
+                return record.getValue(sigmaXField).doubleValue();
             }
 
             @Override
             public double getSigmaY() {
-                return ellipse_data.getValue(key_sigmay).doubleValue();
+                return record.getValue(sigmaYField).doubleValue();
             }
 
             @Override
             public double getRho() {
-                return ellipse_data.getValue(key_rho).doubleValue();
+                return record.getValue(rhoField).doubleValue();
             }
 
             @Override
             public boolean getSelected() {
-                return ellipse_data.getSelected();
+                return record.getSelected();
             }
         };
     }
-
 }

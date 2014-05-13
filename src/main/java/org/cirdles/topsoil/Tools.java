@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil;
 
 import java.util.function.Consumer;
@@ -22,11 +21,19 @@ import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 /**
- * Shortcut tools used anywhere in the program.
- * @author pfif
+ * Shortcut tools to be used anywhere in the program.
  */
-public class TinkeringTools {
-       public static void yesNoPrompt(String message, Consumer<Boolean> callback) {
+public class Tools {
+
+    /**
+     * Prompts the user for a yes or no response with a custom message. If the user selects yes or no, the callback
+     * function is called with a boolean indicating the result. Otherwise, the user may choose to cancel the action and
+     * the dialog will close without any side effects.
+     * 
+     * @param message the message to display to the user inside the dialog box
+     * @param callback the function to be called if the action is not canceled
+     */
+    public static void yesNoPrompt(String message, Consumer<Boolean> callback) {
         Action response = Dialogs.create()
                 .title(Topsoil.APP_NAME)
                 .message(message)
@@ -35,5 +42,5 @@ public class TinkeringTools {
         if (response != Dialog.Actions.CANCEL) {
             callback.accept(response == Dialog.Actions.YES);
         }
-    } 
+    }
 }
