@@ -17,6 +17,8 @@ package org.cirdles.topsoil;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -104,6 +106,9 @@ public class ColumnSelectorDialog extends Dialog {
             choiceBoxSigmaY = createChoiceBox(fields, 3);
             choiceBoxRho = createChoiceBox(fields, 4);
 
+            linkChoiceBoxesSequentially(choiceBoxX, choiceBoxSigmaX);
+            linkChoiceBoxesSequentially(choiceBoxY, choiceBoxSigmaY);
+
             addRow(0, createLabelForNode(choiceBoxX, X_LABEL_TEXT), choiceBoxX);
             addRow(1, createLabelForNode(choiceBoxSigmaX, SIGMA_X_LABEL_TEXT), choiceBoxSigmaX);
             addRow(2, createLabelForNode(choiceBoxY, Y_LABEL_TEXT), choiceBoxY);
@@ -173,11 +178,10 @@ public class ColumnSelectorDialog extends Dialog {
             chartStage.show();
         }
     }
-    
+
     /*
      * Utility methods for ColumnSelectorView
      */
-
     /**
      * Create a <code>ChoiceBox</code> with the right parameters
      */
@@ -210,6 +214,28 @@ public class ColumnSelectorDialog extends Dialog {
         });
 
         return choicebox;
+    }
+
+    /**
+     * Adds a listener to the first <code>ChoiceBox</code>'s <code>SelectionModel</code>'s index property that tries to
+     * set the index of the second <code>ChoiceBox</code>'s <code>SelectionModel</code> to the next index whenever the
+     * first's changes. This is because often times the error of a value immediately follows the value itself in the
+     * table, so this should be a better guess than the default value once the first <code>ChoiceBox</code> is set by
+     * the user.
+     *
+     * @param first
+     * @param second
+     */
+    private static void linkChoiceBoxesSequentially(ChoiceBox first, ChoiceBox second) {
+        first.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (newValue.doubleValue() + 1 < second.getItems().size()) {
+                    second.getSelectionModel().select(newValue.intValue() + 1);
+                }
+            }
+        });
     }
 
     /**
