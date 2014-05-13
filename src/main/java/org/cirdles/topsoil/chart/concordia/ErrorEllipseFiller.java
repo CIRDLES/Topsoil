@@ -17,28 +17,26 @@
 package org.cirdles.topsoil.chart.concordia;
 
 import Jama.Matrix;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import org.cirdles.topsoil.chart.Filler;
+import org.cirdles.topsoil.chart.Plotter;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ErrorEllipseFiller extends Filler<ErrorEllipse> {
+public class ErrorEllipseFiller extends Plotter<ErrorEllipse> {
 
     public ErrorEllipseFiller(XYChart chart) {
         super(chart);
     }
 
     @Override
-    public Node fill(ErrorEllipse errorEllipse) {
+    public Node plot(ErrorEllipse errorEllipse) {
         Path ellipse = new Path(new MoveTo(),
                                 new CubicCurveTo(),
                                 new CubicCurveTo(),
