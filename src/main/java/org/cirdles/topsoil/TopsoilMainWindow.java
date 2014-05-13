@@ -29,6 +29,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.utils.TSVTableReader;
 import org.cirdles.topsoil.utils.TSVTableWriter;
 import org.cirdles.topsoil.utils.TableReader;
@@ -80,7 +81,7 @@ public class TopsoilMainWindow extends VBox {
                         Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    TableWriter<Map> tableWriter = new TSVTableWriter(true);
+                    TableWriter<Record> tableWriter = new TSVTableWriter(true);
                     tableWriter.write(dataTable, Topsoil.LAST_TABLE_PATH);
                 });
             });

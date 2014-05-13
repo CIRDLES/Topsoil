@@ -18,7 +18,6 @@ package org.cirdles.topsoil;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Scene;
@@ -37,6 +36,7 @@ import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.concordia.ConcordiaChart;
 import org.cirdles.topsoil.chart.concordia.ErrorChartToolBar;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipse;
+import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.utils.TSVTableReader;
 import org.cirdles.topsoil.utils.TSVTableWriter;
 import org.cirdles.topsoil.utils.TableReader;
@@ -47,7 +47,7 @@ import org.cirdles.topsoil.utils.TableWriter;
  * Implements some shortcut.
  * Since it implements <code>ColumnSelectorDialog.ColumnSelectorDialogListener</code>, it is also responsible of generating charts.
  */
-public class TopsoilTable extends TableView<Map> implements ColumnSelectorDialog.ColumnSelectorDialogListener {
+public class TopsoilTable extends TableView<Record> implements ColumnSelectorDialog.ColumnSelectorDialogListener {
 
     public TopsoilTable() {
         if (Files.exists(Topsoil.LAST_TABLE_PATH)) {
@@ -65,7 +65,7 @@ public class TopsoilTable extends TableView<Map> implements ColumnSelectorDialog
                     TableReader tableReader = new TSVTableReader(response);
                     tableReader.read(Clipboard.getSystemClipboard().getString(), this);
 
-                    TableWriter<Map> tableWriter = new TSVTableWriter(true);
+                    TableWriter<Record> tableWriter = new TSVTableWriter(true);
                     tableWriter.write(this, LAST_TABLE_PATH);
                 });
             }
@@ -85,7 +85,7 @@ public class TopsoilTable extends TableView<Map> implements ColumnSelectorDialog
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-        for (Map<Object, Integer> row_ellipse : this.getItems()) {
+        for (Record row_ellipse : this.getItems()) {
             XYChart.Data<Number, Number> data = new XYChart.Data<>(1138, 1138, row_ellipse);
             series.getData().add(data);
         }
