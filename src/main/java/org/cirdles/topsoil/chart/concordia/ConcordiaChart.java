@@ -16,6 +16,7 @@
  */
 package org.cirdles.topsoil.chart.concordia;
 
+import com.sun.org.apache.xpath.internal.axes.WalkerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.cirdles.topsoil.chart.DataConverter;
+import org.cirdles.topsoil.chart.NumberAxis;
 import org.cirdles.topsoil.chart.NumberChart;
 
 /**
@@ -45,7 +47,7 @@ import org.cirdles.topsoil.chart.NumberChart;
  * @author John Zeringue (known as El Zeringus in Spain)
  * @see NumberChart
  */
-public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleContainer{
+public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleContainer, ConcordiaChartStyleAccessor{
 
     private final DataConverter<ErrorEllipse> converter;
     
@@ -73,10 +75,27 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
         ellipseFillOpacityProperty = new SimpleDoubleProperty(ErrorEllipseStyleContainer.ellipseFillOpacityDefault);
         ellipseOutlineColorProperty = new SimpleObjectProperty<>(ErrorEllipseStyleContainer.ellipseOutlineColorDefault);
         ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleContainer.ellipseOutlineShownDefault);
-
+        
+        axisAutoTickProperty = new SimpleBooleanProperty(true);
+        ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty().bind(axisAutoTickProperty);
+        ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty().bind(axisAutoTickProperty);
+        
+        axisXAnchorTickProperty = new SimpleDoubleProperty(0);
+        ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(axisXAnchorTickProperty);
+        axisYAnchorUnitProperty = new SimpleDoubleProperty(0);
+        ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(axisYAnchorUnitProperty);
+        
+        axisXTickUnitProperty = new SimpleDoubleProperty(0.5);
+        ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(axisXTickUnitProperty);
+        axisYTickUnitProperty = new SimpleDoubleProperty(1);
+        ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(axisYTickUnitProperty);
+        
+        concordiaLineShownProperty = new SimpleBooleanProperty(true);
+        
+        
         errorEllipsePlotter = new ErrorEllipsePlotter(this, this);
         errorEllipseFiller = new ErrorEllipseFiller(this, this);
-        concordiaLinePlotter = new ConcordiaLinePlotter(this, null);
+        concordiaLinePlotter = new ConcordiaLinePlotter(this, this);
 
         this.converter = converter;
     }
@@ -238,6 +257,42 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
     @Override
     public BooleanProperty ellipseOutlineShownProperty() {
         return ellipseOutlineShownProperty;
+    }
+
+    BooleanProperty concordiaLineShownProperty;
+    @Override
+    public BooleanProperty concordiaLineShownProperty() {
+        return concordiaLineShownProperty;
+    }
+
+    DoubleProperty axisXAnchorTickProperty;
+    @Override
+    public DoubleProperty axisXAnchorTickProperty() {
+        return axisXAnchorTickProperty;
+    }
+
+    DoubleProperty axisXTickUnitProperty;
+    @Override
+    public DoubleProperty axisXTickUnitProperty() {
+       return axisXTickUnitProperty;
+    }
+
+    DoubleProperty axisYAnchorUnitProperty;
+    @Override
+    public DoubleProperty axisYAnchorUnitProperty() {
+        return axisYAnchorUnitProperty;
+    }
+
+    DoubleProperty axisYTickUnitProperty;
+    @Override
+    public DoubleProperty axisYTickUnitProperty() {
+        return axisYTickUnitProperty;
+    }
+
+    BooleanProperty axisAutoTickProperty;
+    @Override
+    public BooleanProperty axisAutoTickProperty() {
+        return axisAutoTickProperty;
     }
 
     private static final class DefaultConverter implements DataConverter<ErrorEllipse> {

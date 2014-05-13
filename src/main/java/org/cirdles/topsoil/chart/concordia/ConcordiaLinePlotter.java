@@ -59,6 +59,7 @@ public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ConcordiaChartS
     @Override
     public Node plot(ConcordiaLine concordiaLine) {
         Group lineAndTicks = new Group();
+        lineAndTicks.visibleProperty().bind(style.get().concordiaLineShownProperty());
         
         // Plot the line itself.
         Path line = new Path(new MoveTo(mapXToDisplay(concordiaLine.getXs()[0]),
