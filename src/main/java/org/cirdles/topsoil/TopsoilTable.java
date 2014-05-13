@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.Clipboard;
@@ -43,9 +50,10 @@ import org.cirdles.topsoil.utils.TableReader;
 import org.cirdles.topsoil.utils.TableWriter;
 
 /**
- * A table containing data used to generate charts.
- * Implements some shortcut.
- * Since it implements <code>ColumnSelectorDialog.ColumnSelectorDialogListener</code>, it is also responsible of generating charts.
+ * A table containing data used to generate charts. Implements some shortcut.
+ * Since it implements
+ * <code>ColumnSelectorDialog.ColumnSelectorDialogListener</code>, it is also
+ * responsible of generating charts.
  */
 public class TopsoilTable extends TableView<Record> implements ColumnSelectorDialog.ColumnSelectorDialogListener {
 
@@ -58,7 +66,7 @@ public class TopsoilTable extends TableView<Record> implements ColumnSelectorDia
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         this.setOnKeyPressed((KeyEvent event) -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
                 TinkeringTools.yesNoPrompt("Does the pasted data contain headers?", response -> {
@@ -71,15 +79,24 @@ public class TopsoilTable extends TableView<Record> implements ColumnSelectorDia
             }
         });
 
+        getSelectionModel().selectedItemProperty().addListener(
+                (ObservableValue<? extends Record> observable, Record oldValue, Record newValue) -> {
+                    if (oldValue != null) {
+                        oldValue.setSelected(false);
+                    }
+                    
+                    newValue.setSelected(true);
+                });
     }
-    
-        /**
+
+    /**
      * Receive a converter from a <code>ColumnSelectorDialog</code> and create a
      * chart from it.
      *
      * @param converter
      */
     @Override
+
     public void receiveConverter(DataConverter<ErrorEllipse> converter) {
         //Creating a serie with all the data
 
@@ -93,7 +110,7 @@ public class TopsoilTable extends TableView<Record> implements ColumnSelectorDia
         ConcordiaChart chart = new ConcordiaChart(converter);
         chart.getData().add(series);
         VBox.setVgrow(chart, Priority.ALWAYS);
-        
+
         ToolBar toolBar = new ErrorChartToolBar(chart);
 
         Scene scene = new Scene(new VBox(toolBar, chart), 1200, 800, true, SceneAntialiasing.DISABLED);
