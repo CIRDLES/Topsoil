@@ -242,7 +242,7 @@ public class ColumnSelectorDialog extends Dialog {
             Field<Number> sigmay = content.choicebox_sigmaY.getSelectionModel().getSelectedItem();
             Field<Number> rho = content.choicebox_rho.getSelectionModel().getSelectedItem();
 
-            RecordToErrorEllipseConverter converter = new RecordToErrorEllipseConverter(x, y, sigmax, sigmay, rho);
+            RecordToErrorEllipseConverter converter = new RecordToErrorEllipseConverter(x, sigmax, y, sigmay, rho);
 
             hide();
             target.receiveConverter(converter);
