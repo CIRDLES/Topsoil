@@ -43,8 +43,9 @@ public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseStyleC
                                 new CubicCurveTo(),
                                 new CubicCurveTo());
         ellipse.setStroke(Color.TRANSPARENT);
-        ellipse.setFill(style.get().ellipseFillColorProperty().get());
-        ellipse.setOpacity(style.get().ellipseFillOpacityProperty().get());
+        
+        ellipse.fillProperty().bind(style.get().ellipseFillColorProperty());
+        ellipse.opacityProperty().bind(style.get().ellipseFillOpacityProperty());
 
         ellipse.getStyleClass().add("error-ellipse-fill");
 

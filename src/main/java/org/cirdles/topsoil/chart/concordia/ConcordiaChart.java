@@ -31,6 +31,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.NumberChart;
@@ -215,15 +216,15 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
                       ConcordiaLine.getY(concordiaLine.getEndT()));
     }
 
-    ObjectProperty<Color> ellipseOutlineColorProperty;
+    ObjectProperty<Paint> ellipseOutlineColorProperty;
     @Override
-    public ObjectProperty<Color> ellipseOutlineColorProperty() {
+    public ObjectProperty<Paint> ellipseOutlineColorProperty() {
         return ellipseOutlineColorProperty;
     }
 
-    ObjectProperty<Color> ellipseFillColorProperty;
+    ObjectProperty<Paint> ellipseFillColorProperty;
     @Override
-    public ObjectProperty<Color> ellipseFillColorProperty() {
+    public ObjectProperty<Paint> ellipseFillColorProperty() {
         return ellipseFillColorProperty;
     }
 

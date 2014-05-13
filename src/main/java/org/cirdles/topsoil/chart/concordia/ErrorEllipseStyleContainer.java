@@ -10,6 +10,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import org.cirdles.topsoil.chart.StyleAccessor;
 
 /**
@@ -26,13 +27,13 @@ public interface ErrorEllipseStyleContainer extends StyleAccessor {
      * Return the <code>Property</code> that hold the <code>Color</code> of the stroke of the Ellipses styled according to this <code>ErrorEllipseStyleContainer</code>
      * @see Color 
      */
-    public ObjectProperty<Color> ellipseOutlineColorProperty();
+    public ObjectProperty<Paint> ellipseOutlineColorProperty();
     
     /**
      * Return the <code>Property</code> that hold the <code>Color</code> that fill of the Ellipses styled according to this <code>ErrorEllipseStyleContainer</code>
      * @see Color 
      */
-    public ObjectProperty<Color> ellipseFillColorProperty();
+    public ObjectProperty<Paint> ellipseFillColorProperty();
     
     /**
      * Return the <code>DoubleProperty</code> that hold the opacity of the filling color Ellipses styled according to this <code>ErrorEllipseStyleContainer</code>
