@@ -55,7 +55,7 @@ import org.cirdles.topsoil.utils.TableWriter;
  * <code>ColumnSelectorDialog.ColumnSelectorDialogListener</code>, it is also
  * responsible of generating charts.
  */
-public class TopsoilTable extends TableView<Record> implements ColumnSelectorDialog.ColumnSelectorDialogListener {
+public class TopsoilTable extends TableView<Record> {
 
     public TopsoilTable() {
         if (Files.exists(Topsoil.LAST_TABLE_PATH)) {
@@ -87,35 +87,5 @@ public class TopsoilTable extends TableView<Record> implements ColumnSelectorDia
                     
                     newValue.setSelected(true);
                 });
-    }
-
-    /**
-     * Receive a converter from a <code>ColumnSelectorDialog</code> and create a
-     * chart from it.
-     *
-     * @param converter
-     */
-    @Override
-
-    public void receiveConverter(DataConverter<ErrorEllipse> converter) {
-        //Creating a serie with all the data
-
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-        for (Record row_ellipse : this.getItems()) {
-            XYChart.Data<Number, Number> data = new XYChart.Data<>(1138, 1138, row_ellipse);
-            series.getData().add(data);
-        }
-
-        ConcordiaChart chart = new ConcordiaChart(converter);
-        chart.getData().add(series);
-        VBox.setVgrow(chart, Priority.ALWAYS);
-
-        ToolBar toolBar = new ErrorChartToolBar(chart);
-
-        Scene scene = new Scene(new VBox(toolBar, chart), 1200, 800, true, SceneAntialiasing.DISABLED);
-        Stage chartStage = new Stage();
-        chartStage.setScene(scene);
-        chartStage.show();
     }
 }
