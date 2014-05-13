@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.chart.concordia;
 
-import java.util.Map;
 import javafx.scene.chart.XYChart;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.table.Field;
@@ -63,7 +62,38 @@ public class RecordToErrorEllipseConverter implements DataConverter<ErrorEllipse
         double sigmay = ellipse_data.getValue(key_sigmay).doubleValue();
         double rho = ellipse_data.getValue(key_rho).doubleValue();
 
-        return new ErrorEllipse(x, y, sigmax, sigmay, rho);
+        return new ErrorEllipse() {
+
+            @Override
+            public double getX() {
+                return ellipse_data.getValue(key_x).doubleValue();
+            }
+
+            @Override
+            public double getY() {
+                return ellipse_data.getValue(key_y).doubleValue();
+            }
+
+            @Override
+            public double getSigmaX() {
+                return ellipse_data.getValue(key_sigmax).doubleValue();
+            }
+
+            @Override
+            public double getSigmaY() {
+                return ellipse_data.getValue(key_sigmay).doubleValue();
+            }
+
+            @Override
+            public double getRho() {
+                return ellipse_data.getValue(key_rho).doubleValue();
+            }
+
+            @Override
+            public boolean getSelected() {
+                return ellipse_data.getSelected();
+            }
+        };
     }
 
 }
