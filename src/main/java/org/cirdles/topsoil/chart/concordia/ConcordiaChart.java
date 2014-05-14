@@ -235,15 +235,15 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
                       ConcordiaLine.getY(concordiaLine.getEndT()));
     }
 
-    ObjectProperty<Paint> ellipseOutlineColorProperty;
+    ObjectProperty<Color> ellipseOutlineColorProperty;
     @Override
-    public ObjectProperty<Paint> ellipseOutlineColorProperty() {
+    public ObjectProperty<Color> ellipseOutlineColorProperty() {
         return ellipseOutlineColorProperty;
     }
 
-    ObjectProperty<Paint> ellipseFillColorProperty;
+    ObjectProperty<Color> ellipseFillColorProperty;
     @Override
-    public ObjectProperty<Paint> ellipseFillColorProperty() {
+    public ObjectProperty<Color> ellipseFillColorProperty() {
         return ellipseFillColorProperty;
     }
 

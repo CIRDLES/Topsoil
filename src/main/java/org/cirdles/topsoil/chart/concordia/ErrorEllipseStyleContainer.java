@@ -27,13 +27,13 @@ public interface ErrorEllipseStyleContainer extends StyleAccessor {
      * Return the <code>Property</code> that hold the <code>Color</code> of the stroke of the Ellipses styled according to this <code>ErrorEllipseStyleContainer</code>
      * @see Color 
      */
-    public ObjectProperty<Paint> ellipseOutlineColorProperty();
+    public ObjectProperty<Color> ellipseOutlineColorProperty();
     
     /**
      * Return the <code>Property</code> that hold the <code>Color</code> that fill of the Ellipses styled according to this <code>ErrorEllipseStyleContainer</code>
      * @see Color 
      */
-    public ObjectProperty<Paint> ellipseFillColorProperty();
+    public ObjectProperty<Color> ellipseFillColorProperty();
     
     /**
      * Return the <code>DoubleProperty</code> that hold the opacity of the filling color Ellipses styled according to this <code>ErrorEllipseStyleContainer</code>
