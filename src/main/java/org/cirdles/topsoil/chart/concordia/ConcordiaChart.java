@@ -76,21 +76,21 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
         ellipseOutlineColorProperty = new SimpleObjectProperty<>(ErrorEllipseStyleContainer.ellipseOutlineColorDefault);
         ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleContainer.ellipseOutlineShownDefault);
         
-        axisAutoTickProperty = new SimpleBooleanProperty(true);
+        axisAutoTickProperty = new SimpleBooleanProperty(ConcordiaChartStyleAccessor.axisAutoTickProperty);
         ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty().bind(axisAutoTickProperty);
         ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty().bind(axisAutoTickProperty);
         
-        axisXAnchorTickProperty = new SimpleDoubleProperty(0);
+        axisXAnchorTickProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisXAnchorTickDefault);
         ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(axisXAnchorTickProperty);
-        axisYAnchorTickProperty = new SimpleDoubleProperty(0);
+        axisYAnchorTickProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisYAnchorTickDefault);
         ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(axisYAnchorTickProperty);
         
-        axisXTickUnitProperty = new SimpleDoubleProperty(0.5);
+        axisXTickUnitProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisXTickUnitDefault);
         ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(axisXTickUnitProperty);
-        axisYTickUnitProperty = new SimpleDoubleProperty(1);
+        axisYTickUnitProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisYTickUnitDefault);
         ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(axisYTickUnitProperty);
         
-        concordiaLineShownProperty = new SimpleBooleanProperty(true);
+        concordiaLineShownProperty = new SimpleBooleanProperty(ConcordiaChartStyleAccessor.concordiaLineShownDefault);
         
         
         errorEllipsePlotter = new ErrorEllipsePlotter(this, this);
