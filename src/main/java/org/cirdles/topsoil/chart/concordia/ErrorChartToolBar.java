@@ -21,15 +21,24 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.Property;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.ToolBar;
+import javafx.scene.input.DragEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
 import org.cirdles.jfxutils.NodeToSVGConverter;
+import org.cirdles.jfxutils.NumberField;
 
 /**
  * A ToolBar for use with ErrorCharts.
@@ -38,7 +47,13 @@ import org.cirdles.jfxutils.NodeToSVGConverter;
  */
 
 public class ErrorChartToolBar extends ToolBar {
+    
     public ErrorChartToolBar(ConcordiaChart chart) {
+        
+        ErrorEllipseStyleContainer eeStyleAccessor = (ErrorEllipseStyleContainer) chart;
+        ConcordiaChartStyleAccessor ccStyleAccessor = (ConcordiaChartStyleAccessor) chart;
+        
+        //Adding the buttons
         Button exportToSVG = new Button("Export to SVG");
         exportToSVG.setOnAction((ActionEvent event) -> {
             //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
@@ -52,7 +67,38 @@ public class ErrorChartToolBar extends ToolBar {
             converter.convert(chart, file);
         });
         
+        //Color Picker for filling and stroking the errorellipses
+        ColorPicker colorPickerStroke = new ColorPicker();
+        colorPickerStroke.valueProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineColorProperty());
+        
+        ColorPicker colorPickerFill = new ColorPicker();
+        colorPickerFill.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillColorProperty());
+        
+        CheckBox showOutlineCheckBox = new CheckBox();
+        showOutlineCheckBox.selectedProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineShownProperty());
+        
+        Slider slider_opacity = new Slider(0,1,0.5);
+        slider_opacity.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillOpacityProperty());
+        
+        NumberField tickXnf = new NumberField(ccStyleAccessor.axisXAnchorTickProperty());
+        NumberField tickYnf = new NumberField(ccStyleAccessor.axisYAnchorTickProperty());
+        
+        NumberField tickUnitXnf = new NumberField(ccStyleAccessor.axisXTickUnitProperty());
+        NumberField tickUnitYnf = new NumberField(ccStyleAccessor.axisYTickUnitProperty());
+        
+        CheckBox autoTickCheckBox = new CheckBox();
+        autoTickCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisAutoTickProperty());
+        
         getItems().add(exportToSVG);
+        getItems().add(colorPickerStroke);
+        getItems().add(colorPickerFill);
+        getItems().add(showOutlineCheckBox);
+        getItems().add(tickXnf);
+        getItems().add(tickUnitXnf);
+        getItems().add(tickYnf);
+        getItems().add(tickUnitYnf);
+        getItems().add(autoTickCheckBox);
+        getItems().add(slider_opacity);
     }
     
     private void turnNodeToText(Node n, PrintWriter pw, String prefix){
