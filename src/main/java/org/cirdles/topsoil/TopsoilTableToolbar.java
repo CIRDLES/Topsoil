@@ -40,7 +40,7 @@ public class TopsoilTableToolbar extends ToolBar {
 
                 Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
             } else {
-                ColumnSelectorDialog csd = new ColumnSelectorDialog(dataTable, dataTable);
+                ColumnSelectorDialog csd = new ColumnSelectorDialog(dataTable);
                 csd.show();
             }
         });

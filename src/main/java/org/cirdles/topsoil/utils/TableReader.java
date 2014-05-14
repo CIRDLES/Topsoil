@@ -19,17 +19,16 @@ package org.cirdles.topsoil.utils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import javafx.scene.control.TableView;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public abstract class TableReader {
-    public abstract void read(String src, TableView<Map> dest);
+public abstract class TableReader<T> {
+    public abstract void read(String src, TableView<T> dest);
     
-    public void read(Path src, TableView<Map> dest) throws IOException {
+    public void read(Path src, TableView<T> dest) throws IOException {
         read(new String(Files.readAllBytes(src)), dest);
     }
 }

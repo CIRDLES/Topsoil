@@ -17,23 +17,19 @@
 package org.cirdles.topsoil.utils;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.cirdles.topsoil.table.Record;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVTableWriter implements TableWriter<Map> {
+public class TSVTableWriter implements TableWriter<Record> {
     
     private final boolean writeHeaders;
 
@@ -42,7 +38,7 @@ public class TSVTableWriter implements TableWriter<Map> {
     }
 
     @Override
-    public void write(TableView<Map> src, Path dest) {
+    public void write(TableView<Record> src, Path dest) {
         CSVWriter tsvWriter;
         try {
             tsvWriter = new CSVWriter(new FileWriter(dest.toFile()), '\t');

@@ -311,7 +311,34 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
             double sigmaY = getField(extra, "sigmaY");
             double rho = getField(extra, "rho");
 
-            return new ErrorEllipse(x, y, sigmaX, sigmaY, rho);
+            return new ErrorEllipse() {
+
+                @Override
+                public double getX() {
+                    return x;
+                }
+
+                @Override
+                public double getSigmaX() {
+                    return sigmaX;
+                }
+
+                @Override
+                public double getY() {
+                    return y;
+                }
+
+                @Override
+                public double getSigmaY() {
+                    return sigmaY;
+                }
+
+                @Override
+                public double getRho() {
+                    return rho;
+                }
+                
+            };
         }
 
         protected double getField(Map map, String field) {
