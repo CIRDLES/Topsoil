@@ -82,8 +82,8 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
         
         axisXAnchorTickProperty = new SimpleDoubleProperty(0);
         ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(axisXAnchorTickProperty);
-        axisYAnchorUnitProperty = new SimpleDoubleProperty(0);
-        ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(axisYAnchorUnitProperty);
+        axisYAnchorTickProperty = new SimpleDoubleProperty(0);
+        ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(axisYAnchorTickProperty);
         
         axisXTickUnitProperty = new SimpleDoubleProperty(0.5);
         ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(axisXTickUnitProperty);
@@ -277,10 +277,10 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
        return axisXTickUnitProperty;
     }
 
-    DoubleProperty axisYAnchorUnitProperty;
+    DoubleProperty axisYAnchorTickProperty;
     @Override
-    public DoubleProperty axisYAnchorUnitProperty() {
-        return axisYAnchorUnitProperty;
+    public DoubleProperty axisYAnchorTickProperty() {
+        return axisYAnchorTickProperty;
     }
 
     DoubleProperty axisYTickUnitProperty;

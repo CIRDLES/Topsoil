@@ -34,7 +34,7 @@ public interface ConcordiaChartStyleAccessor extends StyleAccessor{
     /**
      * Return the <code>DoubleProperty</code> that give the Anchor Tick for the Y axis according to this <code>StyleAccessor</code>.
      */    
-    public DoubleProperty axisYAnchorUnitProperty();
+    public DoubleProperty axisYAnchorTickProperty();
     
     /**
      * Return the <code>DoubleProperty</code> that the give Tick Unit for the Y axis according to this <code>StyleAccessor</code>.
