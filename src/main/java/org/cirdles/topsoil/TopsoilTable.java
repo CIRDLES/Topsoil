@@ -35,6 +35,7 @@ import javafx.stage.Stage;
 import static org.cirdles.topsoil.Topsoil.LAST_TABLE_PATH;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.concordia.ConcordiaChart;
+import org.cirdles.topsoil.chart.concordia.ConcordiaChartExtendedPanel;
 import org.cirdles.topsoil.chart.concordia.ErrorChartToolBar;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipse;
 import org.cirdles.topsoil.utils.TSVTableReader;
@@ -92,11 +93,13 @@ public class TopsoilTable extends TableView<Map> implements ColumnSelectorDialog
 
         ConcordiaChart chart = new ConcordiaChart(converter);
         chart.getData().add(series);
-        VBox.setVgrow(chart, Priority.ALWAYS);
         
-        ToolBar toolBar = new ErrorChartToolBar(chart);
+        ConcordiaChartExtendedPanel ccExtendedPanel = new ConcordiaChartExtendedPanel(chart);
+        VBox.setVgrow(ccExtendedPanel, Priority.ALWAYS);
+        
+        ToolBar toolBar = new ErrorChartToolBar(chart, ccExtendedPanel);
 
-        Scene scene = new Scene(new VBox(toolBar, chart), 1200, 800, true, SceneAntialiasing.DISABLED);
+        Scene scene = new Scene(new VBox(toolBar, ccExtendedPanel), 1200, 800, true, SceneAntialiasing.DISABLED);
         Stage chartStage = new Stage();
         chartStage.setScene(scene);
         chartStage.show();
