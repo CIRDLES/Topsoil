@@ -50,8 +50,8 @@ public class ErrorChartToolBar extends ToolBar {
     
     public ErrorChartToolBar(ConcordiaChart chart) {
         
-        ErrorEllipseStyleContainer eeStyleAccessor = (ErrorEllipseStyleContainer) chart;
-        ConcordiaChartStyleAccessor ccStyleAccessor = (ConcordiaChartStyleAccessor) chart;
+        ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
+        ConcordiaChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
         
         //Adding the buttons
         Button exportToSVG = new Button("Export to SVG");
