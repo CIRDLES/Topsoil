@@ -19,6 +19,8 @@ package org.cirdles.topsoil.chart.concordia;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.Property;
@@ -28,6 +30,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -37,6 +40,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
+import org.cirdles.jfxutils.BoundChoiceBox;
 import org.cirdles.jfxutils.NodeToSVGConverter;
 import org.cirdles.jfxutils.NumberField;
 
@@ -89,6 +94,29 @@ public class ErrorChartToolBar extends ToolBar {
         CheckBox autoTickCheckBox = new CheckBox();
         autoTickCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisAutoTickProperty());
         
+        ChoiceBox<Number> confidenceLevel = new BoundChoiceBox<>(chart.confidenceLevel());
+        Map<Number, String> confidenceLevels = new HashMap<>();
+        confidenceLevels.put(1, "1\u03c3");
+        confidenceLevels.put(2, "2\u03c3");
+        confidenceLevels.put(1.96, "95%");
+        confidenceLevel.getItems().addAll(confidenceLevels.keySet());
+        confidenceLevel.getSelectionModel().select(0);
+        confidenceLevel.setConverter(new StringConverter<Number>() {
+
+            @Override
+            public String toString(Number object) {
+                return confidenceLevels.get(object);
+            }
+
+            /*
+             * Unused by ChoiceBox
+             */
+            @Override
+            public Number fromString(String string) {
+                return null;
+            }
+        });
+        
         getItems().add(exportToSVG);
         getItems().add(colorPickerStroke);
         getItems().add(colorPickerFill);
@@ -99,6 +127,7 @@ public class ErrorChartToolBar extends ToolBar {
         getItems().add(tickUnitYnf);
         getItems().add(autoTickCheckBox);
         getItems().add(slider_opacity);
+        getItems().add(confidenceLevel);
     }
     
     private void turnNodeToText(Node n, PrintWriter pw, String prefix){

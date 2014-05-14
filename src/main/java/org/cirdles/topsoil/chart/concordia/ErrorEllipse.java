@@ -53,44 +53,40 @@ public abstract class ErrorEllipse {
     public abstract double getSigmaY();
     public abstract double getRho();
     
-    public double getConfidenceLevel() {
-        return 1;
-    }
-    
     public boolean getSelected() {
         return false;
     }
     
-    public double getMinX() {
-        return min(getControlPoints().transpose().getArray()[0]);
+    public double getMinX(double confidenceLevel) {
+        return min(getControlPoints(confidenceLevel).transpose().getArray()[0]);
     }
     
-    public double getMaxX() {
-        return max(getControlPoints().transpose().getArray()[0]);
+    public double getMaxX(double confidenceLevel) {
+        return max(getControlPoints(confidenceLevel).transpose().getArray()[0]);
     }
     
-    public double getMinY() {
-        return min(getControlPoints().transpose().getArray()[1]);
+    public double getMinY(double confidenceLevel) {
+        return min(getControlPoints(confidenceLevel).transpose().getArray()[1]);
     }
     
-    public double getMaxY() {
-        return max(getControlPoints().transpose().getArray()[1]);
+    public double getMaxY(double confidenceLevel) {
+        return max(getControlPoints(confidenceLevel).transpose().getArray()[1]);
     }
     
     /**
      * Gets this error ellipse's Bezier control points.
      * @return the control points
      */
-    public Matrix getControlPoints() {
+    public Matrix getControlPoints(double confidenceLevel) {
         // lazy computation
         if (controlPoints == null) {
-            controlPoints = calculateControlPoints();
+            controlPoints = calculateControlPoints(confidenceLevel);
         }
         
         return controlPoints;
     }
 
-    private Matrix calculateControlPoints() {
+    private Matrix calculateControlPoints(double confidenceLevel) {
         double covarianceX_Y = getSigmaX() * getSigmaY() * getRho();
 
         Matrix covMat = new Matrix(new double[][]{
@@ -115,7 +111,7 @@ public abstract class ErrorEllipse {
         //  [1]]               [x, y]]
         Matrix xyMatrix = new Matrix(13, 1, 1).times(new Matrix(new double[]{getX(), getY()}, 1));
         
-        return CONTROL_POINTS_MATRIX.times(getConfidenceLevel()).times(r).plus(xyMatrix);
+        return CONTROL_POINTS_MATRIX.times(confidenceLevel).times(r).plus(xyMatrix);
     }
     
     private double min(double[] values) {

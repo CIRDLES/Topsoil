@@ -116,6 +116,11 @@ public class NodeToSVGConverter {
      * @return 
      */
     private Element convertNodeToElement(Node node, Document document) {
+        // Don't show nodes that aren't visible!
+        if (!node.isVisible()) {
+            return null;
+        }
+    
         Element element = null;
         /*
          * Store the X and Y position for the element, to be reused in the tranformation at the end of the function.

@@ -23,6 +23,7 @@ import java.util.Map;
 import javafx.animation.FadeTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -47,7 +48,7 @@ import org.cirdles.topsoil.chart.NumberChart;
  * @author John Zeringue (known as El Zeringus in Spain)
  * @see NumberChart
  */
-public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleContainer, ConcordiaChartStyleAccessor{
+public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleContainer, ConcordiaChartStyleAccessor {
 
     private final DataConverter<ErrorEllipse> converter;
     
@@ -56,6 +57,24 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
     private final ConcordiaLinePlotter concordiaLinePlotter;
 
     ConcordiaLine concordiaLine;
+    
+    private final DoubleProperty confidenceLevel = new DoublePropertyBase(1) {
+        
+        @Override
+        public Object getBean() {
+            return ConcordiaChart.this;
+        }
+        
+        @Override
+        public String getName() {
+            return "confidenceLevel";
+        }
+
+        @Override
+        protected void invalidated() {
+            layoutPlotChildren();
+        }
+    };
 
     public ConcordiaChart() {
         this(new DefaultConverter());
@@ -207,13 +226,13 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
                     ErrorEllipse errorEllipse = converter.convert(item);
 
                     if (xAxis.isAutoRanging()) {
-                        xData.add(errorEllipse.getMinX());
-                        xData.add(errorEllipse.getMaxX());
+                        xData.add(errorEllipse.getMinX(getConfidenceLevel()));
+                        xData.add(errorEllipse.getMaxX(getConfidenceLevel()));
                     }
 
                     if (yAxis.isAutoRanging()) {
-                        yData.add(errorEllipse.getMinY());
-                        yData.add(errorEllipse.getMaxY());
+                        yData.add(errorEllipse.getMinY(getConfidenceLevel()));
+                        yData.add(errorEllipse.getMaxY(getConfidenceLevel()));
                     }
                 });
             });
@@ -233,6 +252,18 @@ public class ConcordiaChart extends NumberChart implements ErrorEllipseStyleCont
                       ConcordiaLine.getX(concordiaLine.getEndT()),
                       ConcordiaLine.getY(concordiaLine.getStartT()),
                       ConcordiaLine.getY(concordiaLine.getEndT()));
+    }
+    
+    public DoubleProperty confidenceLevel() {
+        return confidenceLevel;
+    }
+    
+    public double getConfidenceLevel() {
+        return confidenceLevel.get();
+    }
+    
+    public void setConfidenceLevel(double value) {
+        confidenceLevel.set(value);
     }
 
     ObjectProperty<Color> ellipseOutlineColorProperty;

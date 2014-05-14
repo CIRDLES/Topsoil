@@ -38,6 +38,8 @@ import org.cirdles.topsoil.chart.Plotter;
  */
 public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
     
+    private ConcordiaChart chart = (ConcordiaChart) getChart();
+    
     public ErrorEllipsePlotter(XYChart chart, ErrorEllipseStyleContainer style_arg) {
         super(chart, style_arg);
     }
@@ -64,7 +66,7 @@ public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyle
         Group node = new Group(ellipse, center);
         node.getStyleClass().add("error-ellipse");
 
-        Matrix controlPoints = errorEllipse.getControlPoints();
+        Matrix controlPoints = errorEllipse.getControlPoints(chart.getConfidenceLevel());
         
         MoveTo moveTo = (MoveTo) ellipse.getElements().get(0);
         moveTo.setX(mapXToDisplay(controlPoints.get(0, 0)));

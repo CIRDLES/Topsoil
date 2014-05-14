@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil.chart.concordia;
 
 import Jama.Matrix;
@@ -31,6 +30,8 @@ import org.cirdles.topsoil.chart.Plotter;
  */
 public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
 
+    private ConcordiaChart chart = (ConcordiaChart) getChart();
+
     public ErrorEllipseFiller(XYChart chart, ErrorEllipseStyleContainer style_arg) {
         super(chart, style_arg);
     }
@@ -43,14 +44,14 @@ public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseStyleC
                                 new CubicCurveTo(),
                                 new CubicCurveTo());
         ellipse.setStroke(Color.TRANSPARENT);
-        
+
         ellipse.fillProperty().bind(style.get().ellipseFillColorProperty());
         ellipse.opacityProperty().bind(style.get().ellipseFillOpacityProperty());
 
         ellipse.getStyleClass().add("error-ellipse-fill");
 
-        Matrix controlPoints = errorEllipse.getControlPoints();
-        
+        Matrix controlPoints = errorEllipse.getControlPoints(chart.getConfidenceLevel());
+
         MoveTo moveTo = (MoveTo) ellipse.getElements().get(0);
         moveTo.setX(mapXToDisplay(controlPoints.get(0, 0)));
         moveTo.setY(mapYToDisplay(controlPoints.get(0, 1)));

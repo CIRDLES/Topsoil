@@ -43,4 +43,8 @@ public abstract class Plotter<T, S extends StyleAccessor> {
     protected double mapYToDisplay(double y) {
         return chart.getYAxis().getDisplayPosition(y);
     }
+    
+    public XYChart getChart() {
+        return chart;
+    }
 }
