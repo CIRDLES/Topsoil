@@ -15,6 +15,17 @@ import org.cirdles.topsoil.chart.StyleAccessor;
  * @author pfif
  */
 public interface ConcordiaChartStyleAccessor extends StyleAccessor{
+    public static Boolean concordiaLineShownDefault = true;
+    
+    public static Double axisXAnchorTickDefault = 0.;
+    public static Double axisYAnchorTickDefault = 0.;
+    
+    public static Double axisXTickUnitDefault  = 0.5;
+    public static Double axisYTickUnitDefault = 1.;
+    
+    public static Boolean axisAutoTickProperty = true;
+    
+    
     /**
      * Return the <code>BooleanProperty</code> that says if the concordia line styled according to this <code>StyleAccessor</code> should be shown.
      */

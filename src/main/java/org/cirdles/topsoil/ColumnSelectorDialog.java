@@ -38,6 +38,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.cirdles.topsoil.chart.concordia.ConcordiaChart;
+import org.cirdles.topsoil.chart.concordia.ConcordiaChartExtendedPanel;
 import org.cirdles.topsoil.chart.concordia.ErrorChartToolBar;
 import org.cirdles.topsoil.chart.concordia.RecordToErrorEllipseConverter;
 import org.cirdles.topsoil.table.Field;
@@ -168,11 +169,13 @@ public class ColumnSelectorDialog extends Dialog {
 
             ConcordiaChart chart = new ConcordiaChart(converter);
             chart.getData().add(series);
-            VBox.setVgrow(chart, Priority.ALWAYS);
+            
+            ConcordiaChartExtendedPanel ccExtendedPanel = new ConcordiaChartExtendedPanel(chart);
+            VBox.setVgrow(ccExtendedPanel, Priority.ALWAYS);
 
-            ToolBar toolBar = new ErrorChartToolBar(chart);
+            ToolBar toolBar = new ErrorChartToolBar(chart, ccExtendedPanel);
 
-            Scene scene = new Scene(new VBox(toolBar, chart), 1200, 800);
+            Scene scene = new Scene(new VBox(toolBar, ccExtendedPanel), 1200, 800);
             Stage chartStage = new Stage();
             chartStage.setScene(scene);
             chartStage.show();
