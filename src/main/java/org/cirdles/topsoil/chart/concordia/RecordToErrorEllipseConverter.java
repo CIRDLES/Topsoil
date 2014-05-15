@@ -19,6 +19,7 @@ import javafx.scene.chart.XYChart.Data;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.table.Field;
 import org.cirdles.topsoil.table.Record;
+import org.cirdles.topsoil.ExpressionType;
 
 /**
  * Implementation of a <code>DataConverter</code> that generates an <code>ErrorEllipse</code> from a <code>Data</code>
@@ -39,6 +40,12 @@ public class RecordToErrorEllipseConverter implements DataConverter<ErrorEllipse
     private final Field<Number> yField;
     private final Field<Number> sigmaYField;
     private final Field<Number> rhoField;
+    
+    private double errorSizeSigmaX = 1;
+    private ExpressionType expressionTypeSigmaX = ExpressionType.ABSOLUTE;
+    
+    private double errorSizeSigmaY = 1;
+    private ExpressionType expressionTypeSigmaY = ExpressionType.ABSOLUTE;
 
     /**
      * Creates a new converter that instantiates new <code>ErrorEllipse</code>s from <code>Record</code>s. The
@@ -81,18 +88,20 @@ public class RecordToErrorEllipseConverter implements DataConverter<ErrorEllipse
             }
 
             @Override
+            public double getSigmaX() {
+                return record.getValue(sigmaXField).doubleValue() / errorSizeSigmaX
+                        * (expressionTypeSigmaX == ExpressionType.ABSOLUTE ? 1 : record.getValue(xField).doubleValue() / 100);
+            }
+
+            @Override
             public double getY() {
                 return record.getValue(yField).doubleValue();
             }
 
             @Override
-            public double getSigmaX() {
-                return record.getValue(sigmaXField).doubleValue();
-            }
-
-            @Override
             public double getSigmaY() {
-                return record.getValue(sigmaYField).doubleValue();
+                return record.getValue(sigmaYField).doubleValue() / errorSizeSigmaY
+                        * (expressionTypeSigmaY == ExpressionType.ABSOLUTE ? 1 : record.getValue(yField).doubleValue() / 100);
             }
 
             @Override
@@ -105,5 +114,61 @@ public class RecordToErrorEllipseConverter implements DataConverter<ErrorEllipse
                 return record.getSelected();
             }
         };
+    }
+
+    /**
+     * @return the errorSizeSigmaX
+     */
+    public double getErrorSizeSigmaX() {
+        return errorSizeSigmaX;
+    }
+
+    /**
+     * @param errorSizeSigmaX the errorSizeSigmaX to set
+     */
+    public void setErrorSizeSigmaX(double errorSizeSigmaX) {
+        this.errorSizeSigmaX = errorSizeSigmaX;
+    }
+
+    /**
+     * @return the expressionTypeSigmaX
+     */
+    public ExpressionType getExpressionTypeSigmaX() {
+        return expressionTypeSigmaX;
+    }
+
+    /**
+     * @param expressionTypeSigmaX the expressionTypeSigmaX to set
+     */
+    public void setExpressionTypeSigmaX(ExpressionType expressionTypeSigmaX) {
+        this.expressionTypeSigmaX = expressionTypeSigmaX;
+    }
+
+    /**
+     * @return the errorSizeSigmaY
+     */
+    public double getErrorSizeSigmaY() {
+        return errorSizeSigmaY;
+    }
+
+    /**
+     * @param errorSizeSigmaY the errorSizeSigmaY to set
+     */
+    public void setErrorSizeSigmaY(double errorSizeSigmaY) {
+        this.errorSizeSigmaY = errorSizeSigmaY;
+    }
+
+    /**
+     * @return the expressionTypeSigmaY
+     */
+    public ExpressionType getExpressionTypeSigmaY() {
+        return expressionTypeSigmaY;
+    }
+
+    /**
+     * @param expressionTypeSigmaY the expressionTypeSigmaY to set
+     */
+    public void setExpressionTypeSigmaY(ExpressionType expressionTypeSigmaY) {
+        this.expressionTypeSigmaY = expressionTypeSigmaY;
     }
 }
