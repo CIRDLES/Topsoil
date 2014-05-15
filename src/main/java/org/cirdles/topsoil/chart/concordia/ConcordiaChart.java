@@ -16,7 +16,6 @@
  */
 package org.cirdles.topsoil.chart.concordia;
 
-import com.sun.org.apache.xpath.internal.axes.WalkerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

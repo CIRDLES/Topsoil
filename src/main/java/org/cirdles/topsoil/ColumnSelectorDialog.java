@@ -16,7 +16,9 @@
 package org.cirdles.topsoil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -53,6 +55,21 @@ public class ColumnSelectorDialog extends Dialog {
     private static final String MASTHEAD_TEXT = "Select the column for each variable.";
     private static final String ACTION_NAME = "Create chart";
 
+    private static final Map<Double, String> ERROR_SIZES = new HashMap<>();
+
+    static {
+        ERROR_SIZES.put(1., "1\u03c3");
+        ERROR_SIZES.put(2., "2\u03c3");
+    }
+
+
+    private static final Map<ExpressionType, String> EXPRESSION_TYPES = new HashMap<ExpressionType, String>();
+
+    static {
+        EXPRESSION_TYPES.put(ExpressionType.ABSOLUTE, "Abs");
+        EXPRESSION_TYPES.put(ExpressionType.PERCENTAGE, "%");
+    }
+
     public ColumnSelectorDialog(TableView<Record> tableToReadArg) {
         super(null, null);
 
@@ -69,15 +86,23 @@ public class ColumnSelectorDialog extends Dialog {
     private class ColumnSelectorView extends GridPane {
 
         private static final String X_LABEL_TEXT = "x";
-        private static final String SIGMA_X_LABEL_TEXT = "\u03c3x";
+        private static final String SIGMA_X_LABEL_TEXT = "x-error";
         private static final String Y_LABEL_TEXT = "y";
-        private static final String SIGMA_Y_LABEL_TEXT = "\u03c3y";
+        private static final String SIGMA_Y_LABEL_TEXT = "y-error";
         private static final String RHO_LABEL_TEXT = "\u03c1";
 
         private final ChoiceBox<Field<Number>> choiceBoxX;
+
         private final ChoiceBox<Field<Number>> choiceBoxSigmaX;
+        private final ChoiceBox<Double> choiceBoxErrorSizeSigmaX;
+        private final ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaX;
+
         private final ChoiceBox<Field<Number>> choiceBoxY;
+
         private final ChoiceBox<Field<Number>> choiceBoxSigmaY;
+        private final ChoiceBox<Double> choiceBoxErrorSizeSigmaY;
+        private final ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaY;
+
         private final ChoiceBox<Field<Number>> choiceBoxRho;
 
         public ColumnSelectorView(TableView<Record> table) {
@@ -102,18 +127,28 @@ public class ColumnSelectorDialog extends Dialog {
             }
 
             choiceBoxX = createChoiceBox(fields, 0);
+
             choiceBoxSigmaX = createChoiceBox(fields, 1);
+            choiceBoxErrorSizeSigmaX = createChoiceBox(ERROR_SIZES, 0);
+            choiceBoxExpressionTypeSigmaX = createChoiceBox(EXPRESSION_TYPES, 0);
+
             choiceBoxY = createChoiceBox(fields, 2);
+
             choiceBoxSigmaY = createChoiceBox(fields, 3);
+            choiceBoxErrorSizeSigmaY = createChoiceBox(ERROR_SIZES, 0);
+            choiceBoxExpressionTypeSigmaY = createChoiceBox(EXPRESSION_TYPES, 0);
+
             choiceBoxRho = createChoiceBox(fields, 4);
 
             linkChoiceBoxesSequentially(choiceBoxX, choiceBoxSigmaX);
             linkChoiceBoxesSequentially(choiceBoxY, choiceBoxSigmaY);
 
             addRow(0, createLabelForNode(choiceBoxX, X_LABEL_TEXT), choiceBoxX);
-            addRow(1, createLabelForNode(choiceBoxSigmaX, SIGMA_X_LABEL_TEXT), choiceBoxSigmaX);
+            addRow(1, createLabelForNode(choiceBoxSigmaX, SIGMA_X_LABEL_TEXT), choiceBoxSigmaX,
+                   choiceBoxErrorSizeSigmaX, choiceBoxExpressionTypeSigmaX);
             addRow(2, createLabelForNode(choiceBoxY, Y_LABEL_TEXT), choiceBoxY);
-            addRow(3, createLabelForNode(choiceBoxSigmaY, SIGMA_Y_LABEL_TEXT), choiceBoxSigmaY);
+            addRow(3, createLabelForNode(choiceBoxSigmaY, SIGMA_Y_LABEL_TEXT), choiceBoxSigmaY,
+                   choiceBoxErrorSizeSigmaY, choiceBoxExpressionTypeSigmaY);
             addRow(4, createLabelForNode(choiceBoxRho, RHO_LABEL_TEXT), choiceBoxRho);
         }
 
@@ -124,6 +159,14 @@ public class ColumnSelectorDialog extends Dialog {
         public Field<Number> getSigmaXSelection() {
             return getSelection(choiceBoxSigmaX);
         }
+        
+        public double getSigmaXErrorSize() {
+            return getSelection(choiceBoxErrorSizeSigmaX);
+        }
+        
+        public ExpressionType getSigmaXExpressionType() {
+            return getSelection(choiceBoxExpressionTypeSigmaX);
+        }
 
         public Field<Number> getYSelection() {
             return getSelection(choiceBoxY);
@@ -131,6 +174,14 @@ public class ColumnSelectorDialog extends Dialog {
 
         public Field<Number> getSigmaYSelection() {
             return getSelection(choiceBoxSigmaY);
+        }
+        
+        public double getSigmaYErrorSize() {
+            return getSelection(choiceBoxErrorSizeSigmaY);
+        }
+        
+        public ExpressionType getSigmaYExpressionType() {
+            return getSelection(choiceBoxExpressionTypeSigmaY);
         }
 
         public Field<Number> getRhoSelection() {
@@ -160,6 +211,11 @@ public class ColumnSelectorDialog extends Dialog {
                     = new RecordToErrorEllipseConverter(columnSelector.getXSelection(), columnSelector.getSigmaXSelection(),
                                                         columnSelector.getYSelection(), columnSelector.getSigmaYSelection(),
                                                         columnSelector.getRhoSelection());
+            
+            converter.setErrorSizeSigmaX(columnSelector.getSigmaXErrorSize());
+            converter.setExpressionTypeSigmaX(columnSelector.getSigmaXExpressionType());
+            converter.setErrorSizeSigmaY(columnSelector.getSigmaYErrorSize());
+            converter.setExpressionTypeSigmaY(columnSelector.getSigmaYExpressionType());
 
             Series<Number, Number> series = new Series<>();
 
@@ -169,7 +225,7 @@ public class ColumnSelectorDialog extends Dialog {
 
             ConcordiaChart chart = new ConcordiaChart(converter);
             chart.getData().add(series);
-            
+
             ConcordiaChartExtendedPanel ccExtendedPanel = new ConcordiaChartExtendedPanel(chart);
             VBox.setVgrow(ccExtendedPanel, Priority.ALWAYS);
 
@@ -189,12 +245,12 @@ public class ColumnSelectorDialog extends Dialog {
      * Create a <code>ChoiceBox</code> with the right parameters
      */
     private static ChoiceBox<Field<Number>> createChoiceBox(List<Field<Number>> fields, int initialSelection) {
-        ChoiceBox<Field<Number>> choicebox = new ChoiceBox<>();
-        choicebox.getItems().addAll(fields);
-        choicebox.getSelectionModel().select(initialSelection);
-        choicebox.setMinWidth(300);
+        ChoiceBox<Field<Number>> choiceBox = new ChoiceBox<>();
+        choiceBox.getItems().addAll(fields);
+        choiceBox.getSelectionModel().select(initialSelection);
+        choiceBox.setMinWidth(200);
 
-        choicebox.setConverter(new StringConverter<Field<Number>>() {
+        choiceBox.setConverter(new StringConverter<Field<Number>>() {
 
             /*
              * Converts a field to a <code>String</code> by returning its name with all newlines replaced by spaces.
@@ -216,7 +272,30 @@ public class ColumnSelectorDialog extends Dialog {
             }
         });
 
-        return choicebox;
+        return choiceBox;
+    }
+
+    private static <T> ChoiceBox<T> createChoiceBox(Map<T, String> contents, int initialSelection) {
+        ChoiceBox<T> choiceBox = new ChoiceBox<>();
+        choiceBox.getItems().addAll(contents.keySet());
+        choiceBox.setMinWidth(50);
+        choiceBox.setMaxWidth(50);
+        choiceBox.getSelectionModel().select(initialSelection);
+
+        choiceBox.setConverter(new StringConverter<T>() {
+
+            @Override
+            public String toString(T object) {
+                return contents.get(object);
+            }
+
+            @Override
+            public T fromString(String string) {
+                return null;
+            }
+        });
+
+        return choiceBox;
     }
 
     /**
