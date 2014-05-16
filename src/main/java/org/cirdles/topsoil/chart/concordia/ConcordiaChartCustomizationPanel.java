@@ -67,6 +67,9 @@ public class ConcordiaChartCustomizationPanel extends GridPane{
         NumberAxis xAxis = (NumberAxis) chart.getXAxis();
         NumberAxis yAxis = (NumberAxis) chart.getYAxis();
         
+        CheckBox checkbox_concordia = new CheckBox();
+        ccStyleAccessor.concordiaLineShownProperty().bind(checkbox_concordia.selectedProperty());
+        
         ObservableValue<Number> xRange = xAxis.upperBoundProperty().subtract(xAxis.lowerBoundProperty());
         ObservableValue<Number> yRange = yAxis.upperBoundProperty().subtract(yAxis.lowerBoundProperty());
         
@@ -101,7 +104,7 @@ public class ConcordiaChartCustomizationPanel extends GridPane{
         
         //Concordia Line (5)
         add(concordialine_label,0,5);
-        add(new Label("Not Implemented yet"),1,5);
+        add(checkbox_concordia,1,5);
         
         //Axis title (6)
         add(ticker_title,0,6);
