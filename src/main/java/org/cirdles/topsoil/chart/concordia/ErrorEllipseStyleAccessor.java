@@ -16,7 +16,7 @@ import org.cirdles.topsoil.chart.StyleAccessor;
  *  
  *  @author pfif
  */
-public interface ErrorEllipseStyleContainer extends StyleAccessor {
+public interface ErrorEllipseStyleAccessor extends StyleAccessor {
     public static final Color ellipseOutlineColorDefault = Color.BLACK;
     public static final Color ellipseFillColorDefault = Color.RED;
     public static final double ellipseFillOpacityDefault = 0.3;

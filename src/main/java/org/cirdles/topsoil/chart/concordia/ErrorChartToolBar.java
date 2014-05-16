@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.cirdles.topsoil.chart.concordia;
 
 import java.io.File;
@@ -39,51 +40,47 @@ import org.cirdles.jfxutils.NodeToSVGConverter;
 
 /**
  * A ToolBar for use with ErrorCharts.
- *
+ * 
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
+
 public class ErrorChartToolBar extends ToolBar {
-
     private static final String LABEL_LOCKTOQ1 = "Lock down to Q1";
-
-    public interface CustomizationPanelShower {
-
+    
+    public interface CustomizationPanelShower{
+        
         public ObjectProperty<Node> customizationPanelProperty();
-
         public BooleanProperty customizationPanelVisibilityProperty();
     }
-
+    
     public ErrorChartToolBar(ConcordiaChart chart, CustomizationPanelShower customPanelShower) {
-
+        
         ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
         ConcordiaChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
-
+        
         //Adding the buttons
         Button exportToSVG = new Button("Export to SVG");
         exportToSVG.setOnAction((ActionEvent event) -> {
             //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
             NodeToSVGConverter converter = new NodeToSVGConverter();
-
+            
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Export to SVG");
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             File file = fileChooser.showSaveDialog(getScene().getWindow());
-
+            
             converter.convert(chart, file);
         });
-
+        
         customPanelShower.customizationPanelProperty().set(new ConcordiaChartCustomizationPanel(chart));
-        Button customizationButton = new Button("Hide customization panel");
-        customizationButton.setOnAction((ActionEvent event) -> {
-            if (customPanelShower.customizationPanelVisibilityProperty().get() == true) {
+        Button customizationButton = new Button("Customize Chart");
+        customizationButton.setOnAction((ActionEvent event) -> {        
+            if(customPanelShower.customizationPanelVisibilityProperty().get() == true) 
                 customPanelShower.customizationPanelVisibilityProperty().set(false);
-                customizationButton.setText("Show customization panel");
-            } else {
+            else 
                 customPanelShower.customizationPanelVisibilityProperty().set(true);
-                customizationButton.setText("Hide customization panel");
-            }
         });
-
+        
         ChoiceBox<Number> confidenceLevel = new BoundChoiceBox<>(chart.confidenceLevel());
         Map<Number, String> confidenceLevels = new HashMap<>();
         confidenceLevels.put(1, "1\u03c3");
@@ -106,52 +103,53 @@ public class ErrorChartToolBar extends ToolBar {
                 return null;
             }
         });
-
+        
         Label label_locktoq1 = new Label(LABEL_LOCKTOQ1);
-
+        
         CheckBox locktoq1 = new CheckBox();
         chart.lockToQ1Property().bind(locktoq1.selectedProperty());
-
+        
         getItems().add(exportToSVG);
         getItems().add(confidenceLevel);
+        getItems().add(customizationButton);
         getItems().add(label_locktoq1);
         getItems().add(locktoq1);
-        getItems().add(customizationButton);
+
     }
-
-    private void turnNodeToText(Node n, PrintWriter pw, String prefix) {
+    
+    private void turnNodeToText(Node n, PrintWriter pw, String prefix){
         //pw.println(prefix+"--");
-        pw.println(prefix + n.getClass().getName());
+        pw.println(prefix+n.getClass().getName());
         /*pw.println(prefix+"Layout X: "+n.getLayoutX());
-         pw.println(prefix+"Layout Y: "+n.getLayoutY());
-         pw.println(prefix+"Transform X: "+n.getTranslateX());
-         pw.println(prefix+"Transform Y: "+n.getTranslateY());
-         pw.println(prefix+"Transform Z: "+n.getTranslateZ());
-         pw.println(prefix+"LocalToParent: "+n.getLocalToParentTransform());
-         pw.println(prefix+"LocalToScene: "+n.getLocalToSceneTransform());
-         if(n instanceof Label){
-         Label l = (Label) n;
-         pw.println(prefix+"Text: "+l.getText());
+        pw.println(prefix+"Layout Y: "+n.getLayoutY());
+        pw.println(prefix+"Transform X: "+n.getTranslateX());
+        pw.println(prefix+"Transform Y: "+n.getTranslateY());
+        pw.println(prefix+"Transform Z: "+n.getTranslateZ());
+        pw.println(prefix+"LocalToParent: "+n.getLocalToParentTransform());
+        pw.println(prefix+"LocalToScene: "+n.getLocalToSceneTransform());
+        if(n instanceof Label){
+            Label l = (Label) n;
+            pw.println(prefix+"Text: "+l.getText());
             
-         }
-         if(!n.getTransforms().isEmpty()){
-         pw.println(prefix+"Transforms :");
-         for(Transform t : n.getTransforms()){
-         pw.println(prefix+"..."+t.toString());
-         }
-         }
-         pw.println(prefix+"--");*/
-
-        if (n instanceof Parent) {
+        }
+        if(!n.getTransforms().isEmpty()){
+            pw.println(prefix+"Transforms :");
+            for(Transform t : n.getTransforms()){
+                pw.println(prefix+"..."+t.toString());
+            }
+        }
+        pw.println(prefix+"--");*/
+        
+        if(n instanceof Parent){
             Parent parent = (Parent) n;
-            String new_prefix = prefix + "\t";
-            for (Node new_n : parent.getChildrenUnmodifiable()) {
-                turnNodeToText(new_n, pw, new_prefix);
+            String new_prefix = prefix+"\t";
+            for(Node new_n : parent.getChildrenUnmodifiable()){
+               turnNodeToText(new_n, pw, new_prefix); 
             }
         }
     }
-
-    private void start_turnNodeToText(Node n) {
+    
+    private void start_turnNodeToText(Node n){
         PrintWriter pw = null;
         try {
             File f = new File("/Users/pfif/Documents/beboptango");
