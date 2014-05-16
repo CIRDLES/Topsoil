@@ -74,26 +74,26 @@ public class ConcordiaChart extends NumberChart{
             layoutPlotChildren();
         }
     };
-    private final ErrorEllipseStyleAccessor eeStyleAccessor = new ErrorEllipseStyleAccessor(){
-        ObjectProperty<Color> ellipseOutlineColorProperty  = new SimpleObjectProperty<Color>(ErrorEllipseStyleAccessor.ellipseOutlineColorDefault);
+    private final ErrorEllipseStyleContainer eeStyleAccessor = new ErrorEllipseStyleContainer(){
+        ObjectProperty<Color> ellipseOutlineColorProperty  = new SimpleObjectProperty<Color>(ErrorEllipseStyleContainer.ellipseOutlineColorDefault);
         @Override
         public ObjectProperty<Color> ellipseOutlineColorProperty() {
             return ellipseOutlineColorProperty;
         }
 
-        ObjectProperty<Color> ellipseFillColorProperty = new SimpleObjectProperty<Color>(ErrorEllipseStyleAccessor.ellipseFillColorDefault);
+        ObjectProperty<Color> ellipseFillColorProperty = new SimpleObjectProperty<Color>(ErrorEllipseStyleContainer.ellipseFillColorDefault);
         @Override
         public ObjectProperty<Color> ellipseFillColorProperty() {
             return ellipseFillColorProperty;
         }
 
-        DoubleProperty ellipseFillOpacityProperty = new SimpleDoubleProperty(ErrorEllipseStyleAccessor.ellipseFillOpacityDefault);
+        DoubleProperty ellipseFillOpacityProperty = new SimpleDoubleProperty(ErrorEllipseStyleContainer.ellipseFillOpacityDefault);
         @Override
         public DoubleProperty ellipseFillOpacityProperty() {
             return ellipseFillOpacityProperty;
         }
 
-        BooleanProperty ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleAccessor.ellipseOutlineShownDefault);
+        BooleanProperty ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleContainer.ellipseOutlineShownDefault);
         @Override
         public BooleanProperty ellipseOutlineShownProperty() {
             return ellipseOutlineShownProperty;
@@ -107,25 +107,29 @@ public class ConcordiaChart extends NumberChart{
             return concordiaLineShownProperty;
         }
     
+        DoubleProperty axisXAnchorTickProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisXAnchorTickDefault);
         @Override
         public DoubleProperty axisXAnchorTickProperty() {
-            return ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty();
+            return axisXAnchorTickProperty;
         }
 
+        DoubleProperty axisXTickUnitProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisXTickUnitDefault);
         @Override
         public DoubleProperty axisXTickUnitProperty() {
-           return ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty();
+           return axisXTickUnitProperty;
         }
 
         
+        DoubleProperty axisYAnchorTickProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisYAnchorTickDefault);
         @Override
         public DoubleProperty axisYAnchorTickProperty() {
-            return ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty();
+            return axisYAnchorTickProperty;
         }
 
+        DoubleProperty axisYTickUnitProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisYTickUnitDefault);
         @Override
         public DoubleProperty axisYTickUnitProperty() {
-            return ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty();
+            return axisYTickUnitProperty;
         }
 
         BooleanProperty axisAutoTickProperty = new SimpleBooleanProperty(ConcordiaChartStyleAccessor.axisAutoTickProperty);
@@ -152,6 +156,14 @@ public class ConcordiaChart extends NumberChart{
         
         ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty().bind(ccStyleAccessor.axisAutoTickProperty());
         ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty().bind(ccStyleAccessor.axisAutoTickProperty());
+        
+        ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(ccStyleAccessor.axisXAnchorTickProperty());
+
+        ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(ccStyleAccessor.axisYAnchorTickProperty());
+        
+
+        ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(ccStyleAccessor.axisXTickUnitProperty());
+        ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(ccStyleAccessor.axisYTickUnitProperty());
         
         
         
@@ -309,7 +321,7 @@ public class ConcordiaChart extends NumberChart{
         confidenceLevel.set(value);
     }
 
-    public ErrorEllipseStyleAccessor getErrorEllipseStyleAccessor() {
+    public ErrorEllipseStyleContainer getErrorEllipseStyleAccessor() {
         return eeStyleAccessor;
     }
 

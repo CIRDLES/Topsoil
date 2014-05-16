@@ -48,7 +48,7 @@ public class ConcordiaChartCustomizationPanel extends GridPane{
         Label axisy_label = new Label(AXISY_LABEL);
         Label autotick_label = new Label(AUTOTICK_LABEL);
         
-        ErrorEllipseStyleAccessor eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
+        ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
         ConcordiaChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
         
         //Color Picker for filling and stroking the errorellipses
