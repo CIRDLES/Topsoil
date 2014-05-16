@@ -45,7 +45,7 @@ public class NumberField extends TextField {
      * @param relatedValue
      */
     public NumberField(DoubleProperty displayValue, ObservableValue<Number> relatedValue) {
-        super(displayValue.toString());
+        super(displayValue.getValue().toString());
         this.doubleProperty = displayValue;
 
         /*
