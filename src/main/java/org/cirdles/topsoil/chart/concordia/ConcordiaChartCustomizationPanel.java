@@ -119,7 +119,7 @@ public class ConcordiaChartCustomizationPanel extends GridPane {
         add(tickXnf, 1, 7);
         add(tickUnitXnf, 2, 7);
 
-        //Axis X (8)
+        //Axis Y (8)
         add(axisy_label, 0, 8);
         add(tickYnf, 1, 8);
         add(tickUnitYnf, 2, 8);
