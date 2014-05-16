@@ -144,7 +144,7 @@ public abstract class NumberChart extends XYChart<Number, Number> {
 
         setOnMouseDragged((MouseEvent mouseEvent) -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                shiftPlotWindow((mouseDraggedX.get() - mouseEvent.getX()) / xAxis.getWidth() * getXRange(),
+                shiftPlotWindowConstraint((mouseDraggedX.get() - mouseEvent.getX()) / xAxis.getWidth() * getXRange(),
                                 -(mouseDraggedY.get() - mouseEvent.getY()) / yAxis.getHeight() * getYRange());
 
                 mouseDraggedX.set(mouseEvent.getX());
@@ -196,13 +196,21 @@ public abstract class NumberChart extends XYChart<Number, Number> {
             }
         });
 
-        setOnScroll((ScrollEvent scrollEvent) -> {
-            double zoomX = xAxis.getValueForDisplay(scrollEvent.getX() - xAxis.getLayoutX()).doubleValue();
-            double zoomY = yAxis.getValueForDisplay(scrollEvent.getY() - yAxis.getLayoutY()).doubleValue();
+        setOnScroll((ScrollEvent scrollEvent) -> {     
+              double zoomX = xAxis.getValueForDisplay(scrollEvent.getX() - xAxis.getLayoutX()).doubleValue();
+              double zoomY = yAxis.getValueForDisplay(scrollEvent.getY() - yAxis.getLayoutY()).doubleValue();
 
-            shiftPlotWindow(-zoomX, -zoomY);
+            shiftPlotWindowFree(-zoomX, -zoomY);
             scalePlotWindow(1 - scrollEvent.getDeltaY() / 400);
-            shiftPlotWindow(zoomX, zoomY);
+            shiftPlotWindowFree(zoomX, zoomY);
+            
+            if(xAxis.getLowerBound() < 0){
+                shiftPlotWindowFree(-xAxis.getLowerBound(), 0);
+            }
+            
+            if(yAxis.getLowerBound() < 0){
+                shiftPlotWindowFree(0, -yAxis.getLowerBound());
+            }
         });
     }
 
@@ -224,7 +232,31 @@ public abstract class NumberChart extends XYChart<Number, Number> {
         yAxis.setUpperBound(maxYValue);
     }
 
-    protected final void shiftPlotWindow(double xAmount, double yAmount) {
+    /**
+     * Some functions need to be able to move the plot window anywhere for a very short amount of time (like the scaling operation)
+     * However, the user input that move directly the window must be sometime constrain. To do so, we use the function. 
+     * @param xAmount
+     * @param yAmount 
+     */
+    protected final void shiftPlotWindowConstraint(double xAmount, double yAmount){
+        //Determining bounds
+        if(xAxis.getLowerBound() + xAmount < 0){
+            xAmount = -xAxis.getLowerBound();
+        }
+        
+        if(yAxis.getLowerBound() + yAmount < 0){
+            yAmount = -yAxis.getLowerBound();
+        }
+        
+        shiftPlotWindowFree(xAmount, yAmount);
+    } 
+    
+    /**
+     * Mode the plot window from a certain number of pixel in two directions.
+     * @param xAmount
+     * @param yAmount 
+     */
+    protected final void shiftPlotWindowFree(double xAmount, double yAmount) {
         setPlotWindow(xAxis.getLowerBound() + xAmount,
                       xAxis.getUpperBound() + xAmount,
                       yAxis.getLowerBound() + yAmount,
