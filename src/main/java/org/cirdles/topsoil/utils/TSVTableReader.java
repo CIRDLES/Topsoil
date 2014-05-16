@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil.utils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,13 +34,13 @@ import org.cirdles.topsoil.table.TextField;
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
 public class TSVTableReader extends TableReader<Record> {
-    
+
     private final boolean expectingHeader;
-    
+
     public TSVTableReader(boolean expectingHeader) {
         this.expectingHeader = expectingHeader;
     }
-    
+
     @Override
     public void read(String src, TableView<Record> dest) {
         // not much to do for src = null or ""
@@ -51,7 +51,7 @@ public class TSVTableReader extends TableReader<Record> {
         // clear dest
         dest.getItems().clear();
         dest.getColumns().clear();
-        
+
         CSVReader tsvReader = new CSVReader(new StringReader(src), '\t');
         List<String[]> lines;
         try {
@@ -60,11 +60,11 @@ public class TSVTableReader extends TableReader<Record> {
             Logger.getLogger(TSVTableReader.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
-        
+
         String[] header;
         int rowLength;
         Field[] fields;
-        
+
         if (expectingHeader) {
             header = lines.remove(0);
             rowLength = header.length;
@@ -77,7 +77,7 @@ public class TSVTableReader extends TableReader<Record> {
                 header[i] = "Field " + (char) ('A' + i);
             }
         }
-        
+
         fields = new Field[rowLength];
         for (int i = 0; i < rowLength; i++) {
             if (isNumber(lines.get(0)[i])) {
@@ -87,18 +87,22 @@ public class TSVTableReader extends TableReader<Record> {
             }
             dest.getColumns().add(new RecordTableColumn<>(fields[i]));
         }
-        
+
         for (String[] line : lines) {
             Record row = new Record();
-            
+
             for (int i = 0; i < rowLength; i++) {
-                row.setValue(fields[i], fields[i].getStringConverter().fromString(line[i]));                
+                try {
+                    row.setValue(fields[i], fields[i].getStringConverter().fromString(line[i]));
+                } catch (NumberFormatException e) {
+                    row.setValue(fields[i], null);
+                }
             }
-            
+
             dest.getItems().add(row);
         }
     }
-    
+
     private static boolean isNumber(String string) {
         try {
             Double.valueOf(string);

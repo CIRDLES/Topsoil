@@ -37,6 +37,10 @@ public class NumberField extends Field<Number> {
 
             @Override
             public String toString(Number number) {
+                if (number == null) {
+                    return "---";
+                }
+                
                 return number.toString();
             }
 
