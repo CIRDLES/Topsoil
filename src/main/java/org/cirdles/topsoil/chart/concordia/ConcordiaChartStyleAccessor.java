@@ -53,7 +53,12 @@ public interface ConcordiaChartStyleAccessor extends StyleAccessor{
     public DoubleProperty axisYTickUnitProperty();
     
     /**
-     * Return the <code>BooleanProperty</code> that say, according to this <code>StyleAccessor</code> if the axis should generate their own tick. 
+     * Return the <code>BooleanProperty</code> that say, according to this <code>StyleAccessor</code> if the axis X should generate their own tick. 
      */
-    public BooleanProperty axisAutoTickProperty();
+    public BooleanProperty axisXAutoTickProperty();
+    
+        /**
+     * Return the <code>BooleanProperty</code> that say, according to this <code>StyleAccessor</code> if the axis Y should generate their own tick. 
+     */
+    public BooleanProperty axisYAutoTickProperty();
 }

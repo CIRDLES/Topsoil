@@ -85,8 +85,11 @@ public class ConcordiaChartCustomizationPanel extends GridPane {
         NumberField tickUnitXnf = new NumberField(ccStyleAccessor.axisXTickUnitProperty(), xRange);
         NumberField tickUnitYnf = new NumberField(ccStyleAccessor.axisYTickUnitProperty(), yRange);
         
-        CheckBox autoTickCheckBox = new CheckBox();
-        autoTickCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisAutoTickProperty());
+        CheckBox autoTickXCheckBox = new CheckBox();
+        autoTickXCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisXAutoTickProperty());
+        
+        CheckBox autoTickYCheckBox = new CheckBox();
+        autoTickYCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisYAutoTickProperty());
 
         //Title window (0)
         add(title, 0, 0);
@@ -118,15 +121,13 @@ public class ConcordiaChartCustomizationPanel extends GridPane {
         add(axisx_label, 0, 7);
         add(tickXnf, 1, 7);
         add(tickUnitXnf, 2, 7);
+        add(autoTickXCheckBox, 3, 7);
 
         //Axis Y (8)
         add(axisy_label, 0, 8);
         add(tickYnf, 1, 8);
         add(tickUnitYnf, 2, 8);
-
-        //Auto Axis Tick (9)
-        add(autotick_label, 0, 9);
-        add(autoTickCheckBox, 1, 9);
+        add(autoTickYCheckBox, 3, 8);
     }
     
 }

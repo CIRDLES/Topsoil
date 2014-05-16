@@ -132,12 +132,16 @@ public class ConcordiaChart extends NumberChart {
             return ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty();
         }
 
-        BooleanProperty axisAutoTickProperty = new SimpleBooleanProperty(ConcordiaChartStyleAccessor.axisAutoTickProperty);
+        @Override
+        public BooleanProperty axisXAutoTickProperty() {
+            return ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty();
+        }
 
         @Override
-        public BooleanProperty axisAutoTickProperty() {
-            return axisAutoTickProperty;
+        public BooleanProperty axisYAutoTickProperty() {
+            return ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty();
         }
+
     };
 
     public ConcordiaChart() {
@@ -154,8 +158,6 @@ public class ConcordiaChart extends NumberChart {
         getYAxis().setAnimated(false);
         getYAxis().setLabel("\u00B2\u2070\u2076Pb/\u00B2\u00B3\u2078U"); // "206Pb/238U"
 
-        ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty().bind(ccStyleAccessor.axisAutoTickProperty());
-        ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty().bind(ccStyleAccessor.axisAutoTickProperty());
 
         errorEllipsePlotter = new ErrorEllipsePlotter(this, eeStyleAccessor);
         errorEllipseFiller = new ErrorEllipseFiller(this, eeStyleAccessor);
