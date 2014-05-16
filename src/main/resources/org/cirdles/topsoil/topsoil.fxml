@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="root"
+      prefHeight="800"
+      prefWidth="1200"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.cirdles.topsoil.TopsoilController">
+    <MenuBar>
+        <menus>
+            <Menu text="File">
+                <items>
+                    <MenuItem text="Import from TSV"
+                              onAction="#importFromFile" />
+                </items>
+            </Menu>
+            <Menu text="%applicationName" />
+        </menus>
+    </MenuBar>
+    <ToolBar>
+        <items>
+            <Button text="Create error chart"
+                    onAction="#createErrorChart" /> 
+        </items>
+    </ToolBar>
+    <org.cirdles.topsoil.TopsoilTable fx:id="dataTable"
+                                      VBox.vgrow="ALWAYS" />
+</VBox>

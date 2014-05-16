@@ -20,11 +20,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 /**
@@ -47,7 +50,7 @@ public class Topsoil extends Application{
     public static final String NOT_ENOUGH_COLUMNS_MESSAGE = "Careful, you don't have enough columns to create an ErrorEllipse Chart";
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws Exception {
         if (!Files.exists(TOPSOIL_PATH)) {
             try {
                 Files.createDirectory(TOPSOIL_PATH);
@@ -56,10 +59,11 @@ public class Topsoil extends Application{
             }
         }
 
-        TopsoilMainWindow root = new TopsoilMainWindow(primaryStage);
+        // TopsoilMainWindow root = new TopsoilMainWindow(primaryStage);
+        Pane root = (Pane) FXMLLoader.load(getClass().getResource("topsoil.fxml"),
+                                           ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
 
-        primaryStage.setScene(new Scene(root, 1200, 800, true, SceneAntialiasing.DISABLED));
-        primaryStage.setMaximized(true);
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
