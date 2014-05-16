@@ -25,27 +25,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.ToolBar;
-import javafx.scene.input.DragEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.cirdles.jfxutils.BoundChoiceBox;
 import org.cirdles.jfxutils.NodeToSVGConverter;
-import org.cirdles.jfxutils.NumberField;
 
 /**
  * A ToolBar for use with ErrorCharts.
@@ -80,7 +69,7 @@ public class ErrorChartToolBar extends ToolBar {
             converter.convert(chart, file);
         });
         
-        customPanelShower.customizationPanelProperty().set(new ConcordiaChartCustomizationPanel(eeStyleAccessor, ccStyleAccessor));
+        customPanelShower.customizationPanelProperty().set(new ConcordiaChartCustomizationPanel(chart));
         Button customizationButton = new Button("Customize Chart");
         customizationButton.setOnAction((ActionEvent event) -> {        
             if(customPanelShower.customizationPanelVisibilityProperty().get() == true) 

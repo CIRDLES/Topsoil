@@ -18,6 +18,7 @@ package org.cirdles.jfxutils;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
+import static java.lang.Math.*;
 
 /**
  * A useful type of TextField where the field is associated with a DoubleProperty at instantiation and the necessary
@@ -40,11 +41,12 @@ public class NumberField extends TextField {
     /**
      * Creates a new NumberField that is linked to the given DoubleProperty.
      *
-     * @param doubleProperty the DoubleProperty to sync with this field
+     * @param displayValue the DoubleProperty to sync with this field
+     * @param relatedValue
      */
-    public NumberField(DoubleProperty doubleProperty) {
-        super(doubleProperty.toString());
-        this.doubleProperty = doubleProperty;
+    public NumberField(DoubleProperty displayValue, ObservableValue<Number> relatedValue) {
+        super(displayValue.toString());
+        this.doubleProperty = displayValue;
 
         /*
          * Add a ChangeListener to this field's textProperty so that the associated DoubleProperty is changed whenever
@@ -53,7 +55,7 @@ public class NumberField extends TextField {
         textProperty().addListener(
                 (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                     try {
-                        doubleProperty.set(Double.valueOf(newValue));
+                        displayValue.set(Double.valueOf(newValue));
                     } catch (NumberFormatException ex) {
                         /*
                          * Do nothing. newValue must not be able to be parsed as a double.
@@ -69,9 +71,13 @@ public class NumberField extends TextField {
          * Add a ChangeListener to this field's associated DoubleProperty to change this field's text whenever the
          * associated DoubleProperty is changed.
          */
-        doubleProperty.addListener(
+        displayValue.addListener(
                 (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                    setText(String.valueOf(newValue));
+                    // calculates the optimal number of decimal places to display to the user based on the magnitude of
+                    // the related value
+                    int decimalPlaces = (int) abs(min(0, log10(relatedValue.getValue().doubleValue()) - 3));
+                    
+                    setText(String.format("%." + decimalPlaces + "f", newValue));
                 });
     }
 
