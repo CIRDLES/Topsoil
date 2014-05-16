@@ -58,8 +58,13 @@
 package org.cirdles.topsoil.chart;
 
 import static java.lang.Math.*;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
@@ -83,6 +88,8 @@ public abstract class NumberChart extends XYChart<Number, Number> {
     public final NumberAxis xAxis;
     public final NumberAxis yAxis;
     private final Rectangle dragSelect;
+    
+    private final BooleanProperty lockToQ1 = new SimpleBooleanProperty(true);
 
     public NumberChart() {
         super(new NumberAxis(), new NumberAxis());
@@ -204,12 +211,14 @@ public abstract class NumberChart extends XYChart<Number, Number> {
             scalePlotWindow(1 - scrollEvent.getDeltaY() / 400);
             shiftPlotWindowFree(zoomX, zoomY);
             
-            if(xAxis.getLowerBound() < 0){
-                shiftPlotWindowFree(-xAxis.getLowerBound(), 0);
-            }
-            
-            if(yAxis.getLowerBound() < 0){
-                shiftPlotWindowFree(0, -yAxis.getLowerBound());
+            if(lockToQ1.get()){
+                if(xAxis.getLowerBound() < 0){
+                    shiftPlotWindowFree(-xAxis.getLowerBound(), 0);
+                }
+                
+                if(yAxis.getLowerBound() < 0){
+                    shiftPlotWindowFree(0, -yAxis.getLowerBound());
+                }
             }
         });
     }
@@ -240,12 +249,14 @@ public abstract class NumberChart extends XYChart<Number, Number> {
      */
     protected final void shiftPlotWindowConstraint(double xAmount, double yAmount){
         //Determining bounds
-        if(xAxis.getLowerBound() + xAmount < 0){
-            xAmount = -xAxis.getLowerBound();
-        }
-        
-        if(yAxis.getLowerBound() + yAmount < 0){
-            yAmount = -yAxis.getLowerBound();
+        if(lockToQ1.get()){
+            if(xAxis.getLowerBound() + xAmount < 0){
+                xAmount = -xAxis.getLowerBound();
+            }
+            
+            if(yAxis.getLowerBound() + yAmount < 0){
+                yAmount = -yAxis.getLowerBound();
+            }
         }
         
         shiftPlotWindowFree(xAmount, yAmount);
@@ -273,6 +284,10 @@ public abstract class NumberChart extends XYChart<Number, Number> {
     @Override
     public ObservableList<Node> getChartChildren() {
         return super.getChartChildren();
+    }
+    
+    public BooleanProperty lockToQ1Property(){
+        return lockToQ1;
     }
 
 }
