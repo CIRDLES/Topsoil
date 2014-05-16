@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.jfxutils;
 
-package org.cirdles.topsoil.utils;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import javafx.scene.control.TableView;
+import javafx.beans.property.Property;
+import javafx.scene.control.ChoiceBox;
 
 /**
+ * A ChoiceBox that binds zero or more properties in its constructor to itself,
+ * so that whenever its selection changes, all properties bound to it also
+ * change.
  *
- * @author John Zeringue <john.joseph.zeringue@gmail.com>
+ * @param <T> the type of this ChoiceBox's items and the type of the properties
+ * bound to it
  */
-public abstract class TableReader<T> {
-    public abstract void read(String src, TableView<T> dest);
-    
-    public void read(Path src, TableView<T> dest) throws IOException {
-        read(new String(Files.readAllBytes(src)), dest);
+public class BoundChoiceBox<T> extends ChoiceBox<T> {
+
+    public BoundChoiceBox(Property<T>... properties) {
+        for (Property<T> property : properties) {
+            property.bind(getSelectionModel().selectedItemProperty());
+        }
     }
 }

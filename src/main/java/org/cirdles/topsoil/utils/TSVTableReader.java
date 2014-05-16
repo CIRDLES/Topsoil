@@ -13,45 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil.utils;
 
 import au.com.bytecode.opencsv.CSVReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.chart.MapTableColumn;
+import org.cirdles.topsoil.table.Field;
+import org.cirdles.topsoil.table.NumberField;
+import org.cirdles.topsoil.table.Record;
+import org.cirdles.topsoil.table.RecordTableColumn;
+import org.cirdles.topsoil.table.TextField;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVTableReader extends TableReader {
-    
+public class TSVTableReader extends TableReader<Record> {
+
     private final boolean expectingHeader;
-    
+
     public TSVTableReader(boolean expectingHeader) {
         this.expectingHeader = expectingHeader;
     }
 
     @Override
-    public void read(String src, TableView<Map> dest) {
+    public void read(String src, TableView<Record> dest) {
         // not much to do for src = null or ""
         if (src == null || src.equals("")) {
             return;
         }
-        
+
         // clear dest
         dest.getItems().clear();
         dest.getColumns().clear();
-        
+
         CSVReader tsvReader = new CSVReader(new StringReader(src), '\t');
         List<String[]> lines;
         try {
@@ -60,35 +60,55 @@ public class TSVTableReader extends TableReader {
             Logger.getLogger(TSVTableReader.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
-        
-        String[] columnNames;
+
+        String[] header;
         int rowLength;
-        
+        Field[] fields;
+
         if (expectingHeader) {
-            columnNames = lines.remove(0);
-            rowLength = columnNames.length;
+            header = lines.remove(0);
+            rowLength = header.length;
         } else {
             rowLength = lines.get(0).length;
-            
+
             // generate default column names
-            columnNames = new String[rowLength];
+            header = new String[rowLength];
             for (int i = 0; i < rowLength; i++) {
-                columnNames[i] = "Column " + (char) ('A' + i);
+                header[i] = "Field " + (char) ('A' + i);
             }
         }
-        
-        for (int i = 0; i < columnNames.length; i++) {
-            dest.getColumns().add(new MapTableColumn<>(i, columnNames[i]));
+
+        fields = new Field[rowLength];
+        for (int i = 0; i < rowLength; i++) {
+            if (isNumber(lines.get(0)[i])) {
+                fields[i] = new NumberField(header[i]);
+            } else {
+                fields[i] = new TextField(header[i]);
+            }
+            dest.getColumns().add(new RecordTableColumn<>(fields[i]));
         }
-        
+
         for (String[] line : lines) {
-            Map row = new HashMap();
-            
+            Record row = new Record();
+
             for (int i = 0; i < rowLength; i++) {
-                row.put(i, line[i]); 
+                try {
+                    row.setValue(fields[i], fields[i].getStringConverter().fromString(line[i]));
+                } catch (NumberFormatException e) {
+                    row.setValue(fields[i], null);
+                }
             }
-            
+
             dest.getItems().add(row);
+        }
+    }
+
+    private static boolean isNumber(String string) {
+        try {
+            Double.valueOf(string);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 }

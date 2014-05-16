@@ -19,16 +19,21 @@ package org.cirdles.topsoil.chart.concordia;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ToolBar;
-import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
+import org.cirdles.jfxutils.BoundChoiceBox;
 import org.cirdles.jfxutils.NodeToSVGConverter;
 
 /**
@@ -38,7 +43,19 @@ import org.cirdles.jfxutils.NodeToSVGConverter;
  */
 
 public class ErrorChartToolBar extends ToolBar {
-    public ErrorChartToolBar(ConcordiaChart chart) {
+    
+    public interface CustomizationPanelShower{
+        
+        public ObjectProperty<Node> customizationPanelProperty();
+        public BooleanProperty customizationPanelVisibilityProperty();
+    }
+    
+    public ErrorChartToolBar(ConcordiaChart chart, CustomizationPanelShower customPanelShower) {
+        
+        ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
+        ConcordiaChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
+        
+        //Adding the buttons
         Button exportToSVG = new Button("Export to SVG");
         exportToSVG.setOnAction((ActionEvent event) -> {
             //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
@@ -52,7 +69,42 @@ public class ErrorChartToolBar extends ToolBar {
             converter.convert(chart, file);
         });
         
+        customPanelShower.customizationPanelProperty().set(new ConcordiaChartCustomizationPanel(chart));
+        Button customizationButton = new Button("Customize Chart");
+        customizationButton.setOnAction((ActionEvent event) -> {        
+            if(customPanelShower.customizationPanelVisibilityProperty().get() == true) 
+                customPanelShower.customizationPanelVisibilityProperty().set(false);
+            else 
+                customPanelShower.customizationPanelVisibilityProperty().set(true);
+        });
+        
+        ChoiceBox<Number> confidenceLevel = new BoundChoiceBox<>(chart.confidenceLevel());
+        Map<Number, String> confidenceLevels = new HashMap<>();
+        confidenceLevels.put(1, "1\u03c3");
+        confidenceLevels.put(2, "2\u03c3");
+        confidenceLevels.put(1.96, "95%");
+        confidenceLevel.getItems().addAll(confidenceLevels.keySet());
+        confidenceLevel.getSelectionModel().select(0);
+        confidenceLevel.setConverter(new StringConverter<Number>() {
+
+            @Override
+            public String toString(Number object) {
+                return confidenceLevels.get(object);
+            }
+
+            /*
+             * Unused by ChoiceBox
+             */
+            @Override
+            public Number fromString(String string) {
+                return null;
+            }
+        });
+        
         getItems().add(exportToSVG);
+        getItems().add(confidenceLevel);
+        getItems().add(customizationButton);
+
     }
     
     private void turnNodeToText(Node n, PrintWriter pw, String prefix){

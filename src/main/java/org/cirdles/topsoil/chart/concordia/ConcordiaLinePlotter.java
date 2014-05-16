@@ -24,6 +24,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
 import org.cirdles.topsoil.chart.Plotter;
+import org.cirdles.topsoil.chart.StyleAccessor;
 import org.cirdles.topsoil.chart.TickGenerator;
 
 /**
@@ -32,7 +33,7 @@ import org.cirdles.topsoil.chart.TickGenerator;
  * 
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ConcordiaLinePlotter extends Plotter<ConcordiaLine> {
+public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ConcordiaChartStyleAccessor> {
 
     private final TickGenerator tickGenerator;
 
@@ -42,8 +43,8 @@ public class ConcordiaLinePlotter extends Plotter<ConcordiaLine> {
      * 
      * @param chart the chart to plot to
      */
-    public ConcordiaLinePlotter(XYChart chart) {
-        super(chart);
+    public ConcordiaLinePlotter(XYChart chart, ConcordiaChartStyleAccessor s) {
+        super(chart, s);
 
         tickGenerator = new TickGenerator();
     }
@@ -58,7 +59,8 @@ public class ConcordiaLinePlotter extends Plotter<ConcordiaLine> {
     @Override
     public Node plot(ConcordiaLine concordiaLine) {
         Group lineAndTicks = new Group();
-
+        lineAndTicks.visibleProperty().bind(style.get().concordiaLineShownProperty());
+        
         // Plot the line itself.
         Path line = new Path(new MoveTo(mapXToDisplay(concordiaLine.getXs()[0]),
                                         mapYToDisplay(concordiaLine.getYs()[0])));

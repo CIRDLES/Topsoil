@@ -13,45 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil.chart.concordia;
 
 import Jama.Matrix;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import org.cirdles.topsoil.chart.Filler;
+import org.cirdles.topsoil.chart.Plotter;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ErrorEllipseFiller extends Filler<ErrorEllipse> {
+public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
 
-    public ErrorEllipseFiller(XYChart chart) {
-        super(chart);
+    private ConcordiaChart chart = (ConcordiaChart) getChart();
+
+    public ErrorEllipseFiller(XYChart chart, ErrorEllipseStyleContainer style_arg) {
+        super(chart, style_arg);
     }
 
     @Override
-    public Node fill(ErrorEllipse errorEllipse) {
+    public Node plot(ErrorEllipse errorEllipse) {
         Path ellipse = new Path(new MoveTo(),
                                 new CubicCurveTo(),
                                 new CubicCurveTo(),
                                 new CubicCurveTo(),
                                 new CubicCurveTo());
         ellipse.setStroke(Color.TRANSPARENT);
-        ellipse.setFill(Color.RED);
-        ellipse.setOpacity(.3);
-        
+
+        ellipse.fillProperty().bind(style.get().ellipseFillColorProperty());
+        ellipse.opacityProperty().bind(style.get().ellipseFillOpacityProperty());
+
         ellipse.getStyleClass().add("error-ellipse-fill");
 
-        Matrix controlPoints = errorEllipse.getControlPoints();
-        
+        Matrix controlPoints = errorEllipse.getControlPoints(chart.getConfidenceLevel());
+
         MoveTo moveTo = (MoveTo) ellipse.getElements().get(0);
         moveTo.setX(mapXToDisplay(controlPoints.get(0, 0)));
         moveTo.setY(mapYToDisplay(controlPoints.get(0, 1)));

@@ -13,41 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.chart.XYChart;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableView;
-import javafx.scene.control.ToolBar;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import static org.cirdles.topsoil.Topsoil.LAST_TABLE_PATH;
-import org.cirdles.topsoil.chart.DataConverter;
-import org.cirdles.topsoil.chart.concordia.ConcordiaChart;
-import org.cirdles.topsoil.chart.concordia.ErrorChartToolBar;
-import org.cirdles.topsoil.chart.concordia.ErrorEllipse;
+import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.utils.TSVTableReader;
 import org.cirdles.topsoil.utils.TSVTableWriter;
 import org.cirdles.topsoil.utils.TableReader;
 import org.cirdles.topsoil.utils.TableWriter;
 
 /**
- * A table containing data used to generate charts.
- * Implements some shortcut.
- * Since it implements <code>ColumnSelectorDialog.ColumnSelectorDialogListener</code>, it is also responsible of generating charts.
+ * A table containing data used to generate charts. Implements some shortcut.
+ * Since it implements
+ * <code>ColumnSelectorDialog.ColumnSelectorDialogListener</code>, it is also
+ * responsible of generating charts.
  */
-public class TopsoilTable extends TableView<Map> implements ColumnSelectorDialog.ColumnSelectorDialogListener {
+public class TopsoilTable extends TableView<Record> {
 
     public TopsoilTable() {
         if (Files.exists(Topsoil.LAST_TABLE_PATH)) {
@@ -58,47 +48,26 @@ public class TopsoilTable extends TableView<Map> implements ColumnSelectorDialog
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         this.setOnKeyPressed((KeyEvent event) -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
-                TinkeringTools.yesNoPrompt("Does the pasted data contain headers?", response -> {
+                Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
                     TableReader tableReader = new TSVTableReader(response);
                     tableReader.read(Clipboard.getSystemClipboard().getString(), this);
 
-                    TableWriter<Map> tableWriter = new TSVTableWriter(true);
+                    TableWriter<Record> tableWriter = new TSVTableWriter(true);
                     tableWriter.write(this, LAST_TABLE_PATH);
                 });
             }
         });
 
-    }
-    
-        /**
-     * Receive a converter from a <code>ColumnSelectorDialog</code> and create a
-     * chart from it.
-     *
-     * @param converter
-     */
-    @Override
-    public void receiveConverter(DataConverter<ErrorEllipse> converter) {
-        //Creating a serie with all the data
-
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-        for (Map<Object, Integer> row_ellipse : this.getItems()) {
-            XYChart.Data<Number, Number> data = new XYChart.Data<>(1138, 1138, row_ellipse);
-            series.getData().add(data);
-        }
-
-        ConcordiaChart chart = new ConcordiaChart(converter);
-        chart.getData().add(series);
-        VBox.setVgrow(chart, Priority.ALWAYS);
-        
-        ToolBar toolBar = new ErrorChartToolBar(chart);
-
-        Scene scene = new Scene(new VBox(toolBar, chart), 1200, 800, true, SceneAntialiasing.DISABLED);
-        Stage chartStage = new Stage();
-        chartStage.setScene(scene);
-        chartStage.show();
+        getSelectionModel().selectedItemProperty().addListener(
+                (ObservableValue<? extends Record> observable, Record oldValue, Record newValue) -> {
+                    if (oldValue != null) {
+                        oldValue.setSelected(false);
+                    }
+                    
+                    newValue.setSelected(true);
+                });
     }
 }

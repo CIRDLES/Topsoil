@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 John.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.chart.concordia;
 
-import javafx.embed.swing.JFXPanel;
+package org.cirdles.topsoil;
 
-/**
- * A fairly empty class.
- * @author John
- */
-public class ConcordiaChartPanel extends JFXPanel {
-
+public enum ExpressionType {
+    ABSOLUTE, PERCENTAGE
+    
 }

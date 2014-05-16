@@ -36,10 +36,12 @@ import org.cirdles.topsoil.chart.Plotter;
  * @see Data
  * @see ErrorEllipseHolder
  */
-public class ErrorEllipsePlotter extends Plotter<ErrorEllipse> {
-
-    public ErrorEllipsePlotter(XYChart chart) {
-        super(chart);
+public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
+    
+    private ConcordiaChart chart = (ConcordiaChart) getChart();
+    
+    public ErrorEllipsePlotter(XYChart chart, ErrorEllipseStyleContainer style_arg) {
+        super(chart, style_arg);
     }
 
     @Override
@@ -49,7 +51,11 @@ public class ErrorEllipsePlotter extends Plotter<ErrorEllipse> {
                                 new CubicCurveTo(),
                                 new CubicCurveTo(),
                                 new CubicCurveTo());
-        ellipse.setStroke(Color.BLACK);
+        
+        //Stroke color and visibility will always be what the style require them to be 
+        ellipse.strokeProperty().bind(style.get().ellipseOutlineColorProperty());        
+        ellipse.visibleProperty().bind(style.get().ellipseOutlineShownProperty());
+        
         ellipse.setStrokeWidth(2);
         ellipse.setFill(Color.TRANSPARENT);
         
@@ -60,7 +66,7 @@ public class ErrorEllipsePlotter extends Plotter<ErrorEllipse> {
         Group node = new Group(ellipse, center);
         node.getStyleClass().add("error-ellipse");
 
-        Matrix controlPoints = errorEllipse.getControlPoints();
+        Matrix controlPoints = errorEllipse.getControlPoints(chart.getConfidenceLevel());
         
         MoveTo moveTo = (MoveTo) ellipse.getElements().get(0);
         moveTo.setX(mapXToDisplay(controlPoints.get(0, 0)));

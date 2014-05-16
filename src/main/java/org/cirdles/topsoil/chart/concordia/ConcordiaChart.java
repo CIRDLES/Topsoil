@@ -20,13 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javafx.animation.FadeTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart.Data;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.cirdles.topsoil.chart.DataConverter;
+import org.cirdles.topsoil.chart.NumberAxis;
 import org.cirdles.topsoil.chart.NumberChart;
 
 /**
@@ -38,7 +47,7 @@ import org.cirdles.topsoil.chart.NumberChart;
  * @author John Zeringue (known as El Zeringus in Spain)
  * @see NumberChart
  */
-public class ConcordiaChart extends NumberChart {
+public class ConcordiaChart extends NumberChart{
 
     private final DataConverter<ErrorEllipse> converter;
     
@@ -47,6 +56,88 @@ public class ConcordiaChart extends NumberChart {
     private final ConcordiaLinePlotter concordiaLinePlotter;
 
     ConcordiaLine concordiaLine;
+    
+    private final DoubleProperty confidenceLevel = new DoublePropertyBase(1) {
+        
+        @Override
+        public Object getBean() {
+            return ConcordiaChart.this;
+        }
+        
+        @Override
+        public String getName() {
+            return "confidenceLevel";
+        }
+
+        @Override
+        protected void invalidated() {
+            layoutPlotChildren();
+        }
+    };
+    private final ErrorEllipseStyleContainer eeStyleAccessor = new ErrorEllipseStyleContainer(){
+        ObjectProperty<Color> ellipseOutlineColorProperty  = new SimpleObjectProperty<Color>(ErrorEllipseStyleContainer.ellipseOutlineColorDefault);
+        @Override
+        public ObjectProperty<Color> ellipseOutlineColorProperty() {
+            return ellipseOutlineColorProperty;
+        }
+
+        ObjectProperty<Color> ellipseFillColorProperty = new SimpleObjectProperty<Color>(ErrorEllipseStyleContainer.ellipseFillColorDefault);
+        @Override
+        public ObjectProperty<Color> ellipseFillColorProperty() {
+            return ellipseFillColorProperty;
+        }
+
+        DoubleProperty ellipseFillOpacityProperty = new SimpleDoubleProperty(ErrorEllipseStyleContainer.ellipseFillOpacityDefault);
+        @Override
+        public DoubleProperty ellipseFillOpacityProperty() {
+            return ellipseFillOpacityProperty;
+        }
+
+        BooleanProperty ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleContainer.ellipseOutlineShownDefault);
+        @Override
+        public BooleanProperty ellipseOutlineShownProperty() {
+            return ellipseOutlineShownProperty;
+        }
+    };
+    
+    private final ConcordiaChartStyleAccessor ccStyleAccessor = new ConcordiaChartStyleAccessor(){
+        BooleanProperty concordiaLineShownProperty = new SimpleBooleanProperty(ConcordiaChartStyleAccessor.concordiaLineShownDefault);
+        @Override
+        public BooleanProperty concordiaLineShownProperty() {
+            return concordiaLineShownProperty;
+        }
+    
+        DoubleProperty axisXAnchorTickProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisXAnchorTickDefault);
+        @Override
+        public DoubleProperty axisXAnchorTickProperty() {
+            return axisXAnchorTickProperty;
+        }
+
+        DoubleProperty axisXTickUnitProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisXTickUnitDefault);
+        @Override
+        public DoubleProperty axisXTickUnitProperty() {
+           return axisXTickUnitProperty;
+        }
+
+        
+        DoubleProperty axisYAnchorTickProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisYAnchorTickDefault);
+        @Override
+        public DoubleProperty axisYAnchorTickProperty() {
+            return axisYAnchorTickProperty;
+        }
+
+        DoubleProperty axisYTickUnitProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisYTickUnitDefault);
+        @Override
+        public DoubleProperty axisYTickUnitProperty() {
+            return axisYTickUnitProperty;
+        }
+
+        BooleanProperty axisAutoTickProperty = new SimpleBooleanProperty(ConcordiaChartStyleAccessor.axisAutoTickProperty);
+        @Override
+        public BooleanProperty axisAutoTickProperty() {
+            return axisAutoTickProperty;
+        }
+    };
 
     public ConcordiaChart() {
         this(new DefaultConverter());
@@ -61,10 +152,24 @@ public class ConcordiaChart extends NumberChart {
         getXAxis().setLabel("\u00B2\u2070\u2077Pb/\u00B2\u00B3\u2075U"); // "207Pb/235U"
         getYAxis().setAnimated(false);
         getYAxis().setLabel("\u00B2\u2070\u2076Pb/\u00B2\u00B3\u2078U"); // "206Pb/238U"
+        
+        
+        ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty().bind(ccStyleAccessor.axisAutoTickProperty());
+        ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty().bind(ccStyleAccessor.axisAutoTickProperty());
+        
+        ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(ccStyleAccessor.axisXAnchorTickProperty());
 
-        errorEllipsePlotter = new ErrorEllipsePlotter(this);
-        errorEllipseFiller = new ErrorEllipseFiller(this);
-        concordiaLinePlotter = new ConcordiaLinePlotter(this);
+        ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(ccStyleAccessor.axisYAnchorTickProperty());
+        
+
+        ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(ccStyleAccessor.axisXTickUnitProperty());
+        ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(ccStyleAccessor.axisYTickUnitProperty());
+        
+        
+        
+        errorEllipsePlotter = new ErrorEllipsePlotter(this, eeStyleAccessor);
+        errorEllipseFiller = new ErrorEllipseFiller(this, eeStyleAccessor);
+        concordiaLinePlotter = new ConcordiaLinePlotter(this, ccStyleAccessor);
 
         this.converter = converter;
     }
@@ -149,7 +254,7 @@ public class ConcordiaChart extends NumberChart {
         getData().stream().forEach(series -> {
             series.getData().stream().forEach(item -> {
                 getPlotChildren().add(
-                        errorEllipseFiller.fill(converter.convert(item)));
+                        errorEllipseFiller.plot(converter.convert(item)));
             });
         });
 
@@ -176,13 +281,13 @@ public class ConcordiaChart extends NumberChart {
                     ErrorEllipse errorEllipse = converter.convert(item);
 
                     if (xAxis.isAutoRanging()) {
-                        xData.add(errorEllipse.getMinX());
-                        xData.add(errorEllipse.getMaxX());
+                        xData.add(errorEllipse.getMinX(getConfidenceLevel()));
+                        xData.add(errorEllipse.getMaxX(getConfidenceLevel()));
                     }
 
                     if (yAxis.isAutoRanging()) {
-                        yData.add(errorEllipse.getMinY());
-                        yData.add(errorEllipse.getMaxY());
+                        yData.add(errorEllipse.getMinY(getConfidenceLevel()));
+                        yData.add(errorEllipse.getMaxY(getConfidenceLevel()));
                     }
                 });
             });
@@ -203,6 +308,28 @@ public class ConcordiaChart extends NumberChart {
                       ConcordiaLine.getY(concordiaLine.getStartT()),
                       ConcordiaLine.getY(concordiaLine.getEndT()));
     }
+    
+    public DoubleProperty confidenceLevel() {
+        return confidenceLevel;
+    }
+    
+    public double getConfidenceLevel() {
+        return confidenceLevel.get();
+    }
+    
+    public void setConfidenceLevel(double value) {
+        confidenceLevel.set(value);
+    }
+
+    public ErrorEllipseStyleContainer getErrorEllipseStyleAccessor() {
+        return eeStyleAccessor;
+    }
+
+    public ConcordiaChartStyleAccessor getConcordiaChartStyleAccessor() {
+        return ccStyleAccessor;
+    }
+    
+    
 
     private static final class DefaultConverter implements DataConverter<ErrorEllipse> {
 
@@ -220,7 +347,34 @@ public class ConcordiaChart extends NumberChart {
             double sigmaY = getField(extra, "sigmaY");
             double rho = getField(extra, "rho");
 
-            return new ErrorEllipse(x, y, sigmaX, sigmaY, rho);
+            return new ErrorEllipse() {
+
+                @Override
+                public double getX() {
+                    return x;
+                }
+
+                @Override
+                public double getSigmaX() {
+                    return sigmaX;
+                }
+
+                @Override
+                public double getY() {
+                    return y;
+                }
+
+                @Override
+                public double getSigmaY() {
+                    return sigmaY;
+                }
+
+                @Override
+                public double getRho() {
+                    return rho;
+                }
+                
+            };
         }
 
         protected double getField(Map map, String field) {

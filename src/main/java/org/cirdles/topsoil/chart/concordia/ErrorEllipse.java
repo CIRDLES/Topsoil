@@ -27,7 +27,7 @@ import static java.lang.Math.sqrt;
  * 
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ErrorEllipse {
+public abstract class ErrorEllipse {
     private static final double K = 4. / 3 * (sqrt(2) - 1);
     private static final Matrix CONTROL_POINTS_MATRIX = new Matrix(new double[][]{
         {1, 0},
@@ -45,93 +45,48 @@ public class ErrorEllipse {
         {1, 0}
     });
     
-    private final double x;
-    private final double y;
-    private final double sigmaX;
-    private final double sigmaY;
-    private final double rho;
-    private final double confidenceLevel;
-    
     private Matrix controlPoints;
-
-    public ErrorEllipse(double x, double y, double sigmaX, double sigmaY, double rho) {
-        this(x, y, sigmaX, sigmaY, rho, 1);
+    
+    public abstract double getX();
+    public abstract double getSigmaX();
+    public abstract double getY();
+    public abstract double getSigmaY();
+    public abstract double getRho();
+    
+    public boolean getSelected() {
+        return false;
     }
     
-    public ErrorEllipse(double x, double y, double sigmaX, double sigmaY, double rho, double confidenceLevel) {
-        this.x = x;
-        this.y = y;
-        this.sigmaX = sigmaX;
-        this.sigmaY = sigmaY;
-        this.rho = rho;
-        this.confidenceLevel = confidenceLevel;
-    }
-
-    /**
-     * @return the x
-     */
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * @return the y
-     */
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * @return the sigmaX
-     */
-    public double getSigmaX() {
-        return sigmaX;
-    }
-
-    /**
-     * @return the sigmaY
-     */
-    public double getSigmaY() {
-        return sigmaY;
-    }
-
-    /**
-     * @return the rho
-     */
-    public double getRho() {
-        return rho;
+    public double getMinX(double confidenceLevel) {
+        return min(getControlPoints(confidenceLevel).transpose().getArray()[0]);
     }
     
-    public double getMinX() {
-        return min(getControlPoints().transpose().getArray()[0]);
+    public double getMaxX(double confidenceLevel) {
+        return max(getControlPoints(confidenceLevel).transpose().getArray()[0]);
     }
     
-    public double getMaxX() {
-        return max(getControlPoints().transpose().getArray()[0]);
+    public double getMinY(double confidenceLevel) {
+        return min(getControlPoints(confidenceLevel).transpose().getArray()[1]);
     }
     
-    public double getMinY() {
-        return min(getControlPoints().transpose().getArray()[1]);
-    }
-    
-    public double getMaxY() {
-        return max(getControlPoints().transpose().getArray()[1]);
+    public double getMaxY(double confidenceLevel) {
+        return max(getControlPoints(confidenceLevel).transpose().getArray()[1]);
     }
     
     /**
      * Gets this error ellipse's Bezier control points.
      * @return the control points
      */
-    public Matrix getControlPoints() {
+    public Matrix getControlPoints(double confidenceLevel) {
         // lazy computation
         if (controlPoints == null) {
-            controlPoints = calculateControlPoints();
+            controlPoints = calculateControlPoints(confidenceLevel);
         }
         
         return controlPoints;
     }
 
-    private Matrix calculateControlPoints() {
+    private Matrix calculateControlPoints(double confidenceLevel) {
         double covarianceX_Y = getSigmaX() * getSigmaY() * getRho();
 
         Matrix covMat = new Matrix(new double[][]{
