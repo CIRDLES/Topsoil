@@ -36,11 +36,11 @@ import org.cirdles.topsoil.chart.Plotter;
  * @see Data
  * @see ErrorEllipseHolder
  */
-public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
+public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyleAccessor> {
     
     private ConcordiaChart chart = (ConcordiaChart) getChart();
     
-    public ErrorEllipsePlotter(XYChart chart, ErrorEllipseStyleContainer style_arg) {
+    public ErrorEllipsePlotter(XYChart chart, ErrorEllipseStyleAccessor style_arg) {
         super(chart, style_arg);
     }
 

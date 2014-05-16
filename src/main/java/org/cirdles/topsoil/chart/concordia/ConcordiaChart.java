@@ -74,26 +74,26 @@ public class ConcordiaChart extends NumberChart{
             layoutPlotChildren();
         }
     };
-    private final ErrorEllipseStyleContainer eeStyleAccessor = new ErrorEllipseStyleContainer(){
-        ObjectProperty<Color> ellipseOutlineColorProperty  = new SimpleObjectProperty<Color>(ErrorEllipseStyleContainer.ellipseOutlineColorDefault);
+    private final ErrorEllipseStyleAccessor eeStyleAccessor = new ErrorEllipseStyleAccessor(){
+        ObjectProperty<Color> ellipseOutlineColorProperty  = new SimpleObjectProperty<Color>(ErrorEllipseStyleAccessor.ellipseOutlineColorDefault);
         @Override
         public ObjectProperty<Color> ellipseOutlineColorProperty() {
             return ellipseOutlineColorProperty;
         }
 
-        ObjectProperty<Color> ellipseFillColorProperty = new SimpleObjectProperty<Color>(ErrorEllipseStyleContainer.ellipseFillColorDefault);
+        ObjectProperty<Color> ellipseFillColorProperty = new SimpleObjectProperty<Color>(ErrorEllipseStyleAccessor.ellipseFillColorDefault);
         @Override
         public ObjectProperty<Color> ellipseFillColorProperty() {
             return ellipseFillColorProperty;
         }
 
-        DoubleProperty ellipseFillOpacityProperty = new SimpleDoubleProperty(ErrorEllipseStyleContainer.ellipseFillOpacityDefault);
+        DoubleProperty ellipseFillOpacityProperty = new SimpleDoubleProperty(ErrorEllipseStyleAccessor.ellipseFillOpacityDefault);
         @Override
         public DoubleProperty ellipseFillOpacityProperty() {
             return ellipseFillOpacityProperty;
         }
 
-        BooleanProperty ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleContainer.ellipseOutlineShownDefault);
+        BooleanProperty ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleAccessor.ellipseOutlineShownDefault);
         @Override
         public BooleanProperty ellipseOutlineShownProperty() {
             return ellipseOutlineShownProperty;
@@ -321,7 +321,7 @@ public class ConcordiaChart extends NumberChart{
         confidenceLevel.set(value);
     }
 
-    public ErrorEllipseStyleContainer getErrorEllipseStyleAccessor() {
+    public ErrorEllipseStyleAccessor getErrorEllipseStyleAccessor() {
         return eeStyleAccessor;
     }
 

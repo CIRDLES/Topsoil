@@ -29,7 +29,9 @@ import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
@@ -43,6 +45,7 @@ import org.cirdles.jfxutils.NodeToSVGConverter;
  */
 
 public class ErrorChartToolBar extends ToolBar {
+    private static final String LABEL_LOCKTOQ1 = "Lock down to Q1";
     
     public interface CustomizationPanelShower{
         
@@ -52,7 +55,7 @@ public class ErrorChartToolBar extends ToolBar {
     
     public ErrorChartToolBar(ConcordiaChart chart, CustomizationPanelShower customPanelShower) {
         
-        ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
+        ErrorEllipseStyleAccessor eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
         ConcordiaChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
         
         //Adding the buttons
@@ -101,9 +104,16 @@ public class ErrorChartToolBar extends ToolBar {
             }
         });
         
+        Label label_locktoq1 = new Label(LABEL_LOCKTOQ1);
+        
+        CheckBox locktoq1 = new CheckBox();
+        chart.lockToQ1Property().bind(locktoq1.selectedProperty());
+        
         getItems().add(exportToSVG);
         getItems().add(confidenceLevel);
         getItems().add(customizationButton);
+        getItems().add(label_locktoq1);
+        getItems().add(locktoq1);
 
     }
     
