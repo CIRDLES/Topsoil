@@ -54,6 +54,7 @@ import org.cirdles.jfxutils.NumberField;
  */
 
 public class ErrorChartToolBar extends ToolBar {
+    private static final String LABEL_LOCKTOQ1 = "Lock down to Q1";
     
     public interface CustomizationPanelShower{
         
@@ -112,9 +113,16 @@ public class ErrorChartToolBar extends ToolBar {
             }
         });
         
+        Label label_locktoq1 = new Label(LABEL_LOCKTOQ1);
+        
+        CheckBox locktoq1 = new CheckBox();
+        chart.lockToQ1Property().bind(locktoq1.selectedProperty());
+        
         getItems().add(exportToSVG);
         getItems().add(confidenceLevel);
         getItems().add(customizationButton);
+        getItems().add(label_locktoq1);
+        getItems().add(locktoq1);
 
     }
     
