@@ -6,14 +6,14 @@
 
 package org.cirdles.topsoil.chart.concordia;
 
-import java.awt.FlowLayout;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import org.cirdles.jfxutils.NumberField;
+import org.cirdles.topsoil.chart.NumberAxis;
 
 /**
  *
@@ -22,7 +22,6 @@ import org.cirdles.jfxutils.NumberField;
 public class ConcordiaChartCustomizationPanel extends GridPane{
     public static final String NODE_TITLE = "Customization";
     public static final String ELLIPSES_NODESECTION_TITLE = "Ellipses";
-
     
     public static final String STROKE_LABEL = "Stroke";
     public static final String FILL_LABEL = "Fill";
@@ -35,7 +34,7 @@ public class ConcordiaChartCustomizationPanel extends GridPane{
     public static final String AXISY_LABEL = "Axis Y";
     public static final String AUTOTICK_LABEL = "Auto Tick";
     
-    public ConcordiaChartCustomizationPanel(ErrorEllipseStyleContainer eeStyleAccessor, ConcordiaChartStyleAccessor ccStyleAccessor) {
+    public ConcordiaChartCustomizationPanel(ConcordiaChart chart) {
         
         //Creaton of the label
         Label title = new Label(NODE_TITLE);
@@ -48,6 +47,9 @@ public class ConcordiaChartCustomizationPanel extends GridPane{
         Label axisx_label = new Label(AXISX_LABEL);
         Label axisy_label = new Label(AXISY_LABEL);
         Label autotick_label = new Label(AUTOTICK_LABEL);
+        
+        ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
+        ConcordiaChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
         
         //Color Picker for filling and stroking the errorellipses
         ColorPicker colorPickerStroke = new ColorPicker();
@@ -62,11 +64,17 @@ public class ConcordiaChartCustomizationPanel extends GridPane{
         Slider slider_opacity = new Slider(0,1,0.5);
         slider_opacity.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillOpacityProperty());
         
-        NumberField tickXnf = new NumberField(ccStyleAccessor.axisXAnchorTickProperty());
-        NumberField tickYnf = new NumberField(ccStyleAccessor.axisYAnchorTickProperty());
+        NumberAxis xAxis = (NumberAxis) chart.getXAxis();
+        NumberAxis yAxis = (NumberAxis) chart.getYAxis();
         
-        NumberField tickUnitXnf = new NumberField(ccStyleAccessor.axisXTickUnitProperty());
-        NumberField tickUnitYnf = new NumberField(ccStyleAccessor.axisYTickUnitProperty());
+        ObservableValue<Number> xRange = xAxis.upperBoundProperty().subtract(xAxis.lowerBoundProperty());
+        ObservableValue<Number> yRange = yAxis.upperBoundProperty().subtract(yAxis.lowerBoundProperty());
+        
+        NumberField tickXnf = new NumberField(ccStyleAccessor.axisXAnchorTickProperty(), xRange);
+        NumberField tickYnf = new NumberField(ccStyleAccessor.axisYAnchorTickProperty(), yRange);
+        
+        NumberField tickUnitXnf = new NumberField(ccStyleAccessor.axisXTickUnitProperty(), xRange);
+        NumberField tickUnitYnf = new NumberField(ccStyleAccessor.axisYTickUnitProperty(), yRange);
         
         CheckBox autoTickCheckBox = new CheckBox();
         autoTickCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisAutoTickProperty());

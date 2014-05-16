@@ -68,14 +68,16 @@ public class AxisConfigurationToolBar extends ToolBar {
         RadioButton autoTickButton = new RadioButton("Autotick");
 
         RadioButton manualTickButton = new RadioButton("Anchor tick:");
+        
+        ObservableValue<Number> range = axis.upperBoundProperty().subtract(axis.lowerBoundProperty());
 
-        TextField AnchorTickField = new NumberField(axis.getTickGenerator().anchorTickProperty());
+        TextField AnchorTickField = new NumberField(axis.getTickGenerator().anchorTickProperty(), range);
         AnchorTickField.setAlignment(Pos.BASELINE_RIGHT);
         AnchorTickField.setEditable(false);
 
         Label TickUnitLabel = new Label("Tick unit:");
 
-        TextField TickUnitField = new NumberField(axis.getTickGenerator().tickUnitProperty());
+        TextField TickUnitField = new NumberField(axis.getTickGenerator().tickUnitProperty(), range);
         TickUnitField.setAlignment(Pos.BASELINE_RIGHT);
         TickUnitField.setEditable(false);
 
