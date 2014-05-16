@@ -107,29 +107,25 @@ public class ConcordiaChart extends NumberChart{
             return concordiaLineShownProperty;
         }
     
-        DoubleProperty axisXAnchorTickProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisXAnchorTickDefault);
         @Override
         public DoubleProperty axisXAnchorTickProperty() {
-            return axisXAnchorTickProperty;
+            return ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty();
         }
 
-        DoubleProperty axisXTickUnitProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisXTickUnitDefault);
         @Override
         public DoubleProperty axisXTickUnitProperty() {
-           return axisXTickUnitProperty;
+           return ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty();
         }
 
         
-        DoubleProperty axisYAnchorTickProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisYAnchorTickDefault);
         @Override
         public DoubleProperty axisYAnchorTickProperty() {
-            return axisYAnchorTickProperty;
+            return ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty();
         }
 
-        DoubleProperty axisYTickUnitProperty = new SimpleDoubleProperty(ConcordiaChartStyleAccessor.axisYTickUnitDefault);
         @Override
         public DoubleProperty axisYTickUnitProperty() {
-            return axisYTickUnitProperty;
+            return ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty();
         }
 
         BooleanProperty axisAutoTickProperty = new SimpleBooleanProperty(ConcordiaChartStyleAccessor.axisAutoTickProperty);
@@ -156,14 +152,6 @@ public class ConcordiaChart extends NumberChart{
         
         ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty().bind(ccStyleAccessor.axisAutoTickProperty());
         ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty().bind(ccStyleAccessor.axisAutoTickProperty());
-        
-        ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(ccStyleAccessor.axisXAnchorTickProperty());
-
-        ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty().bindBidirectional(ccStyleAccessor.axisYAnchorTickProperty());
-        
-
-        ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(ccStyleAccessor.axisXTickUnitProperty());
-        ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty().bindBidirectional(ccStyleAccessor.axisYTickUnitProperty());
         
         
         
