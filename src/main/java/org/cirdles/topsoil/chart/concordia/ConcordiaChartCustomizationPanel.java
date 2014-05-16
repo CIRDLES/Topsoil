@@ -6,6 +6,7 @@
 
 package org.cirdles.topsoil.chart.concordia;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.scene.control.CheckBox;
@@ -63,14 +64,17 @@ public class ConcordiaChartCustomizationPanel extends VBox {
             Label shown_label = new Label(SHOWN_LABEL);
             
             //Color Picker for filling and stroking the errorellipses
+            CheckBox showOutlineCheckBox = new CheckBox();
+            showOutlineCheckBox.selectedProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineShownProperty());
+            
             ColorPicker colorPickerStroke = new ColorPicker();
             colorPickerStroke.valueProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineColorProperty());
+            colorPickerStroke.disableProperty().bind(Bindings.not(showOutlineCheckBox.selectedProperty()));
         
             ColorPicker colorPickerFill = new ColorPicker();
             colorPickerFill.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillColorProperty());
         
-            CheckBox showOutlineCheckBox = new CheckBox();
-            showOutlineCheckBox.selectedProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineShownProperty());
+
         
             Slider slider_opacity = new Slider(0, 1, 0.5);
             slider_opacity.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillOpacityProperty());
@@ -120,14 +124,18 @@ public class ConcordiaChartCustomizationPanel extends VBox {
             Label anchortick_label = new Label(ANCHORTICK_LABEL);
             Label tickunit_label = new Label(TICKUNIT_LABEL);
             Label autotick_label = new Label(AUTOTICK_LABEL);
-            
-
 
             CheckBox checkbox_concordia = new CheckBox();
             ccStyleAccessor.concordiaLineShownProperty().bind(checkbox_concordia.selectedProperty());
 
             ObservableValue<Number> xRange = xAxis.upperBoundProperty().subtract(xAxis.lowerBoundProperty());
             ObservableValue<Number> yRange = yAxis.upperBoundProperty().subtract(yAxis.lowerBoundProperty());
+            
+            CheckBox autoTickXCheckBox = new CheckBox();
+            autoTickXCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisXAutoTickProperty());
+
+            CheckBox autoTickYCheckBox = new CheckBox();
+            autoTickYCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisYAutoTickProperty());
 
             NumberField tickXnf = new NumberField(ccStyleAccessor.axisXAnchorTickProperty(), xRange);
             NumberField tickYnf = new NumberField(ccStyleAccessor.axisYAnchorTickProperty(), yRange);
@@ -135,11 +143,7 @@ public class ConcordiaChartCustomizationPanel extends VBox {
             NumberField tickUnitXnf = new NumberField(ccStyleAccessor.axisXTickUnitProperty(), xRange);
             NumberField tickUnitYnf = new NumberField(ccStyleAccessor.axisYTickUnitProperty(), yRange);
 
-            CheckBox autoTickXCheckBox = new CheckBox();
-            autoTickXCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisXAutoTickProperty());
 
-            CheckBox autoTickYCheckBox = new CheckBox();
-            autoTickYCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisYAutoTickProperty());
             
             HBox concordialine_box = new HBox();
             concordialine_box.getChildren().add(concordialine_label);
