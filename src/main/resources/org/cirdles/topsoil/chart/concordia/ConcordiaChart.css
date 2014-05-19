@@ -15,3 +15,15 @@
     -fx-stroke: blue;
     -fx-stroke-width: 2px;
 }
+
+.title-panel {
+    -fx-font-size: 135%;
+}
+
+.title-subpanel{
+    -fx-font-size: 125%;
+}
+
+.title-subsubpanel{
+    -fx-font-size: 110%;
+}

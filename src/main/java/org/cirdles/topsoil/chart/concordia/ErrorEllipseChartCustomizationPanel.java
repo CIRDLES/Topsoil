@@ -44,11 +44,14 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
         ColumnConstraints labelConstraints = new ColumnConstraints();
         labelConstraints.setMinWidth(100);
         //getColumnConstraints().add(labelConstraints);
+        getStylesheets().add(ErrorEllipseChartCustomizationPanel.class.getResource("ConcordiaChart.css").toExternalForm());
         
         ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
 
         //Creaton of the label
         Label title = new Label(NODE_TITLE);
+        title.getStyleClass().add("title-panel");
+                
         ErrorEllipsesCustomisationPanel eeCustomizationPane = new ErrorEllipsesCustomisationPanel(eeStyleAccessor);
         ChartCustomizationPanel ccCustomizationPane = new ChartCustomizationPanel(chart);
         
@@ -67,6 +70,8 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
 
         public ErrorEllipsesCustomisationPanel(ErrorEllipseStyleContainer eeStyleAccessor) {
             Label node_title = new Label(ELLIPSES_NODESECTION_TITLE);
+            node_title.getStyleClass().add("title-subpanel");
+            
             Label stroke_label = new Label(STROKE_LABEL);
             Label fill_label = new Label(FILL_LABEL);
             Label opacity_label = new Label(OPACITY_LABEL);
@@ -126,8 +131,11 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             NumberAxis yAxis = (NumberAxis) chart.getYAxis();
             
             Label node_title = new Label(CHART_NODESECTION_TITLE);
+            node_title.getStyleClass().add("title-subpanel");
+            
             Label concordialine_label = new Label(CONCORDIALINE_OPACITY_LABEL);
             Label ticker_title = new Label(TICKER_NODESUBSECTION_TITLE);
+            ticker_title.getStyleClass().add("title-subsubpanel");
             Label axisx_label = new Label(AXISX_LABEL);
             Label axisy_label = new Label(AXISY_LABEL);
             Label anchortick_label = new Label(ANCHORTICK_LABEL);
