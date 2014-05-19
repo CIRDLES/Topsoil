@@ -138,8 +138,6 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             ticker_title.getStyleClass().add("title-subsubpanel");
             Label axisx_label = new Label(AXISX_LABEL);
             Label axisy_label = new Label(AXISY_LABEL);
-            Label anchortick_label = new Label(ANCHORTICK_LABEL);
-            Label tickunit_label = new Label(TICKUNIT_LABEL);
             Label autotick_label = new Label(AUTOTICK_LABEL);
 
             CheckBox checkbox_concordia = new CheckBox();
@@ -150,15 +148,24 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             
             CheckBox autoTickXCheckBox = new CheckBox();
             autoTickXCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisXAutoTickProperty());
-
+            
             CheckBox autoTickYCheckBox = new CheckBox();
             autoTickYCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisYAutoTickProperty());
 
             NumberField tickXnf = new NumberField(ccStyleAccessor.axisXAnchorTickProperty(), xRange);
+            tickXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
             NumberField tickYnf = new NumberField(ccStyleAccessor.axisYAnchorTickProperty(), yRange);
+            tickYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
             NumberField tickUnitXnf = new NumberField(ccStyleAccessor.axisXTickUnitProperty(), xRange);
+            tickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
             NumberField tickUnitYnf = new NumberField(ccStyleAccessor.axisYTickUnitProperty(), yRange);
+            tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
+            
+            Label tickunit_label = new Label(TICKUNIT_LABEL);
+            tickunit_label.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not());
+            Label anchortick_label = new Label(ANCHORTICK_LABEL);
+            anchortick_label.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not());
 
 
             
@@ -167,21 +174,21 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             concordialine_box.getChildren().add(checkbox_concordia);
             
             GridPane axisPane = new GridPane();
-            axisPane.add(anchortick_label, 1, 0);
+            axisPane.add(anchortick_label, 3, 0);
             axisPane.add(tickunit_label,2,0);
-            axisPane.add(autotick_label,3,0);
+            axisPane.add(autotick_label,1,0);
 
             //Axis X (1)
             axisPane.add(axisx_label, 0, 1);
-            axisPane.add(tickXnf, 1, 1);
+            axisPane.add(tickXnf, 3, 1);
             axisPane.add(tickUnitXnf, 2, 1);
-            axisPane.add(autoTickXCheckBox, 3, 1);
+            axisPane.add(autoTickXCheckBox, 1, 1);
 
             //Axis Y (2)
             axisPane.add(axisy_label, 0, 2);
-            axisPane.add(tickYnf, 1, 2);
+            axisPane.add(tickYnf, 3, 2);
             axisPane.add(tickUnitYnf, 2, 2);
-            axisPane.add(autoTickYCheckBox, 3, 2);
+            axisPane.add(autoTickYCheckBox, 1, 2);
             
             getChildren().add(node_title);
             getChildren().add(concordialine_box);
