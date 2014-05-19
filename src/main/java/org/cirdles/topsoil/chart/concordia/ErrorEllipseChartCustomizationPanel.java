@@ -67,7 +67,7 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
     
     private static class ErrorEllipsesCustomisationPanel extends VBox{
         public static final String ELLIPSES_NODESECTION_TITLE = "Ellipses";
-        public static final String STROKE_LABEL = "Stroke";
+        public static final String STROKE_LABEL = "Ellipses border";
         public static final String FILL_LABEL = "Fill";
         
         public static final String OPACITY_LABEL = "Opacity";
