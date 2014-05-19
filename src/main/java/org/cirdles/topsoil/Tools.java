@@ -16,6 +16,8 @@
 package org.cirdles.topsoil;
 
 import java.util.function.Consumer;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -42,5 +44,11 @@ public class Tools {
         if (response != Dialog.Actions.CANCEL) {
             callback.accept(response == Dialog.Actions.YES);
         }
+    }
+    
+    public static Label label_minsize(String textlabel){
+        Label label = new Label(textlabel);
+        label.setMinWidth(Region.USE_PREF_SIZE);
+        return label;
     }
 }

@@ -18,6 +18,7 @@ package org.cirdles.topsoil.chart.concordia;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
@@ -27,6 +28,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.cirdles.jfxutils.NumberField;
+import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.chart.NumberAxis;
 
 /**
@@ -41,6 +43,9 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
 
     
     public ErrorEllipseChartCustomizationPanel(ErrorEllipseChart chart) {
+        super(10);
+        setPadding(new Insets(10));
+        
         ColumnConstraints labelConstraints = new ColumnConstraints();
         labelConstraints.setMinWidth(100);
         //getColumnConstraints().add(labelConstraints);
@@ -49,7 +54,7 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
         ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
 
         //Creaton of the label
-        Label title = new Label(NODE_TITLE);
+        Label title = Tools.label_minsize(NODE_TITLE);
         title.getStyleClass().add("title-panel");
                 
         ErrorEllipsesCustomisationPanel eeCustomizationPane = new ErrorEllipsesCustomisationPanel(eeStyleAccessor);
@@ -69,13 +74,17 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
         public static final String SHOWN_LABEL = "Shown";
 
         public ErrorEllipsesCustomisationPanel(ErrorEllipseStyleContainer eeStyleAccessor) {
-            Label node_title = new Label(ELLIPSES_NODESECTION_TITLE);
+            super(5);
+
+            Label node_title = Tools.label_minsize(ELLIPSES_NODESECTION_TITLE);
+            
             node_title.getStyleClass().add("title-subpanel");
             
-            Label stroke_label = new Label(STROKE_LABEL);
-            Label fill_label = new Label(FILL_LABEL);
-            Label opacity_label = new Label(OPACITY_LABEL);
-            Label shown_label = new Label(SHOWN_LABEL);
+            Label stroke_label = Tools.label_minsize(STROKE_LABEL);
+            stroke_label.setMaxWidth(USE_PREF_SIZE);
+            Label fill_label = Tools.label_minsize(FILL_LABEL);
+            Label opacity_label = Tools.label_minsize(OPACITY_LABEL);
+            Label shown_label = Tools.label_minsize(SHOWN_LABEL);
             
             //Color Picker for filling and stroking the errorellipses
             CheckBox showOutlineCheckBox = new CheckBox();
@@ -94,6 +103,10 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             slider_opacity.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillOpacityProperty());
             
             GridPane ellipsesCustomization = new GridPane();
+            ellipsesCustomization.setHgap(10);
+            ellipsesCustomization.setVgap(10);
+            
+            ellipsesCustomization.setPadding(new Insets(0, 1, 0, 1));
 
             //Stroke (0)
             ellipsesCustomization.add(stroke_label, 0, 0);
@@ -126,19 +139,20 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
         
 
         public ChartCustomizationPanel(ErrorEllipseChart chart) {
+            super(5);
             ErrorEllipseChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
             NumberAxis xAxis = (NumberAxis) chart.getXAxis();
             NumberAxis yAxis = (NumberAxis) chart.getYAxis();
             
-            Label node_title = new Label(CHART_NODESECTION_TITLE);
+            Label node_title = Tools.label_minsize(CHART_NODESECTION_TITLE);
             node_title.getStyleClass().add("title-subpanel");
             
-            Label concordialine_label = new Label(CONCORDIALINE_OPACITY_LABEL);
-            Label ticker_title = new Label(TICKER_NODESUBSECTION_TITLE);
+            Label concordialine_label = Tools.label_minsize(CONCORDIALINE_OPACITY_LABEL);
+            Label ticker_title = Tools.label_minsize(TICKER_NODESUBSECTION_TITLE);
             ticker_title.getStyleClass().add("title-subsubpanel");
-            Label axisx_label = new Label(AXISX_LABEL);
-            Label axisy_label = new Label(AXISY_LABEL);
-            Label autotick_label = new Label(AUTOTICK_LABEL);
+            Label axisx_label = Tools.label_minsize(AXISX_LABEL);
+            Label axisy_label = Tools.label_minsize(AXISY_LABEL);
+            Label autotick_label = Tools.label_minsize(AUTOTICK_LABEL);
 
             CheckBox checkbox_concordia = new CheckBox();
             ccStyleAccessor.concordiaLineShownProperty().bind(checkbox_concordia.selectedProperty());
@@ -174,6 +188,9 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             concordialine_box.getChildren().add(checkbox_concordia);
             
             GridPane axisPane = new GridPane();
+            axisPane.setHgap(10);
+            axisPane.setVgap(10);
+            
             axisPane.add(anchortick_label, 3, 0);
             axisPane.add(tickunit_label,2,0);
             axisPane.add(autotick_label,1,0);
