@@ -24,7 +24,7 @@ import org.cirdles.topsoil.chart.StyleAccessor;
  *
  * @author pfif
  */
-public interface ConcordiaChartStyleAccessor extends StyleAccessor{
+public interface ErrorEllipseChartStyleAccessor extends StyleAccessor{
     public static Boolean concordiaLineShownDefault = true;
     
     public static Double axisXAnchorTickDefault = 0.;

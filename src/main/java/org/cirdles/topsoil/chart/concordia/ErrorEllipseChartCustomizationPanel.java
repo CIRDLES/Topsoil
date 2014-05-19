@@ -33,14 +33,14 @@ import org.cirdles.topsoil.chart.NumberAxis;
  *
  * @author pfif
  */
-public class ConcordiaChartCustomizationPanel extends VBox {
+public class ErrorEllipseChartCustomizationPanel extends VBox {
 
     public static final String NODE_TITLE = "Customization";
     
     
 
     
-    public ConcordiaChartCustomizationPanel(ConcordiaChart chart) {
+    public ErrorEllipseChartCustomizationPanel(ErrorEllipseChart chart) {
         ColumnConstraints labelConstraints = new ColumnConstraints();
         labelConstraints.setMinWidth(100);
         //getColumnConstraints().add(labelConstraints);
@@ -120,8 +120,8 @@ public class ConcordiaChartCustomizationPanel extends VBox {
         public static final String TICKUNIT_LABEL = "Tick Unit";
         
 
-        public ChartCustomizationPanel(ConcordiaChart chart) {
-            ConcordiaChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
+        public ChartCustomizationPanel(ErrorEllipseChart chart) {
+            ErrorEllipseChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
             NumberAxis xAxis = (NumberAxis) chart.getXAxis();
             NumberAxis yAxis = (NumberAxis) chart.getYAxis();
             

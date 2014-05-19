@@ -33,7 +33,7 @@ import org.cirdles.topsoil.chart.TickGenerator;
  * 
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ConcordiaChartStyleAccessor> {
+public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ErrorEllipseChartStyleAccessor> {
 
     private final TickGenerator tickGenerator;
 
@@ -43,7 +43,7 @@ public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ConcordiaChartS
      * 
      * @param chart the chart to plot to
      */
-    public ConcordiaLinePlotter(XYChart chart, ConcordiaChartStyleAccessor s) {
+    public ConcordiaLinePlotter(XYChart chart, ErrorEllipseChartStyleAccessor s) {
         super(chart, s);
 
         tickGenerator = new TickGenerator();

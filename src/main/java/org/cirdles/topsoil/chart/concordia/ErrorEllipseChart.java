@@ -46,7 +46,7 @@ import org.cirdles.topsoil.chart.NumberChart;
  * @author John Zeringue (known as El Zeringus in Spain)
  * @see NumberChart
  */
-public class ConcordiaChart extends NumberChart {
+public class ErrorEllipseChart extends NumberChart {
 
     private final DataConverter<ErrorEllipse> converter;
 
@@ -60,7 +60,7 @@ public class ConcordiaChart extends NumberChart {
 
         @Override
         public Object getBean() {
-            return ConcordiaChart.this;
+            return ErrorEllipseChart.this;
         }
 
         @Override
@@ -103,8 +103,8 @@ public class ConcordiaChart extends NumberChart {
         }
     };
 
-    private final ConcordiaChartStyleAccessor ccStyleAccessor = new ConcordiaChartStyleAccessor() {
-        BooleanProperty concordiaLineShownProperty = new SimpleBooleanProperty(ConcordiaChartStyleAccessor.concordiaLineShownDefault);
+    private final ErrorEllipseChartStyleAccessor ccStyleAccessor = new ErrorEllipseChartStyleAccessor() {
+        BooleanProperty concordiaLineShownProperty = new SimpleBooleanProperty(ErrorEllipseChartStyleAccessor.concordiaLineShownDefault);
 
         @Override
         public BooleanProperty concordiaLineShownProperty() {
@@ -144,14 +144,14 @@ public class ConcordiaChart extends NumberChart {
 
     };
 
-    public ConcordiaChart() {
+    public ErrorEllipseChart() {
         this(new DefaultConverter());
     }
 
-    public ConcordiaChart(DataConverter<ErrorEllipse> converter) {
+    public ErrorEllipseChart(DataConverter<ErrorEllipse> converter) {
         super();
 
-        getStylesheets().add(ConcordiaChart.class.getResource("ConcordiaChart.css").toExternalForm());
+        getStylesheets().add(ErrorEllipseChart.class.getResource("ConcordiaChart.css").toExternalForm());
         setAnimated(false);
         getXAxis().setAnimated(false);
         getXAxis().setLabel("\u00B2\u2070\u2077Pb/\u00B2\u00B3\u2075U"); // "207Pb/235U"
@@ -166,7 +166,7 @@ public class ConcordiaChart extends NumberChart {
         this.converter = converter;
     }
 
-    public ConcordiaChart(ObservableList<Series<Number, Number>> data) {
+    public ErrorEllipseChart(ObservableList<Series<Number, Number>> data) {
         this();
         setData(data);
     }
@@ -317,7 +317,7 @@ public class ConcordiaChart extends NumberChart {
         return eeStyleAccessor;
     }
 
-    public ConcordiaChartStyleAccessor getConcordiaChartStyleAccessor() {
+    public ErrorEllipseChartStyleAccessor getConcordiaChartStyleAccessor() {
         return ccStyleAccessor;
     }
 

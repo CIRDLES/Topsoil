@@ -23,9 +23,9 @@ import org.controlsfx.control.MasterDetailPane;
 /**
  * A fairly empty class.
  */
-public class ConcordiaChartExtendedPanel extends MasterDetailPane implements ErrorChartToolBar.CustomizationPanelShower {
+public class ErrorEllipseChartExtendedPanel extends MasterDetailPane implements ErrorChartToolBar.CustomizationPanelShower {
 
-    public ConcordiaChartExtendedPanel(ConcordiaChart cc) {
+    public ErrorEllipseChartExtendedPanel(ErrorEllipseChart cc) {
         setMasterNode(cc);
         setDividerPosition(0.7);
     }

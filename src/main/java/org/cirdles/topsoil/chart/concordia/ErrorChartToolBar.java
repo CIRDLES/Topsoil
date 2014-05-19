@@ -53,10 +53,10 @@ public class ErrorChartToolBar extends ToolBar {
         public BooleanProperty customizationPanelVisibilityProperty();
     }
 
-    public ErrorChartToolBar(ConcordiaChart chart, CustomizationPanelShower customPanelShower) {
+    public ErrorChartToolBar(ErrorEllipseChart chart, CustomizationPanelShower customPanelShower) {
 
         ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
-        ConcordiaChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
+        ErrorEllipseChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
 
         //Adding the buttons
         Button exportToSVG = new Button("Export to SVG");
@@ -72,7 +72,7 @@ public class ErrorChartToolBar extends ToolBar {
             converter.convert(chart, file);
         });
 
-        customPanelShower.customizationPanelProperty().set(new ConcordiaChartCustomizationPanel(chart));
+        customPanelShower.customizationPanelProperty().set(new ErrorEllipseChartCustomizationPanel(chart));
         Button customizationButton = new Button("Hide customization panel");
         customizationButton.setOnAction((ActionEvent event) -> {
             if (customPanelShower.customizationPanelVisibilityProperty().get() == true) {

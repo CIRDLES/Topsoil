@@ -30,7 +30,7 @@ import org.cirdles.topsoil.chart.Plotter;
  */
 public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
 
-    private ConcordiaChart chart = (ConcordiaChart) getChart();
+    private ErrorEllipseChart chart = (ErrorEllipseChart) getChart();
 
     public ErrorEllipseFiller(XYChart chart, ErrorEllipseStyleContainer style_arg) {
         super(chart, style_arg);
