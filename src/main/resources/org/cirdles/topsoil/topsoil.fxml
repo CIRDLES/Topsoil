@@ -13,18 +13,17 @@
       fx:controller="org.cirdles.topsoil.TopsoilController">
     <MenuBar>
         <menus>
-            <Menu text="File">
+            <Menu text="%fileMenu">
                 <items>
-                    <MenuItem text="Import from TSV"
+                    <MenuItem text="%importFromTSV"
                               onAction="#importFromFile" />
                 </items>
             </Menu>
-            <Menu text="%applicationName" />
         </menus>
     </MenuBar>
     <ToolBar>
         <items>
-            <Button text="Create error chart"
+            <Button text="%createErrorEllipseChart"
                     onAction="#createErrorChart" /> 
         </items>
     </ToolBar>
