@@ -29,5 +29,9 @@
         </items>
     </ToolBar>
     <org.cirdles.topsoil.TopsoilTable fx:id="dataTable"
-                                      VBox.vgrow="ALWAYS" />
+                                      VBox.vgrow="ALWAYS">
+        <placeholder>
+            <javafx.scene.text.Text text="%emptyTableMessage"/> 
+        </placeholder>
+    </org.cirdles.topsoil.TopsoilTable>
 </VBox>
