@@ -110,7 +110,7 @@ public class ErrorChartToolBar extends ToolBar {
         Label label_locktoq1 = new Label(LABEL_LOCKTOQ1);
 
         CheckBox locktoq1 = new CheckBox();
-        chart.lockToQ1Property().bind(locktoq1.selectedProperty());
+        locktoq1.selectedProperty().bindBidirectional(chart.lockToQ1Property());
 
         getItems().add(exportToSVG);
         getItems().add(confidenceLevel);
