@@ -25,7 +25,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.input.Clipboard;
 import javafx.stage.FileChooser;
+import static org.cirdles.topsoil.Topsoil.LAST_TABLE_PATH;
 import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.utils.TSVTableReader;
 import org.cirdles.topsoil.utils.TSVTableWriter;
@@ -81,5 +83,10 @@ public class TopsoilController implements Initializable {
         } else {
             new ColumnSelectorDialog(dataTable).show();
         }
+    }
+    
+    @FXML
+    private void pasteFromClipboard(ActionEvent event){
+        Tools.pastFromClipboard(dataTable);
     }
 }
