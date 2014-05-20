@@ -54,9 +54,6 @@ public class ErrorChartToolBar extends ToolBar {
     }
 
     public ErrorChartToolBar(ErrorEllipseChart chart, CustomizationPanelShower customPanelShower) {
-
-        ErrorEllipseChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
-
         //Adding the buttons
         Button exportToSVG = new Button("Export to SVG");
         exportToSVG.setOnAction((ActionEvent event) -> {

@@ -52,6 +52,16 @@ public class ErrorEllipseChart extends NumberChart {
     public static final Color ellipseFillColorDefault = Color.RED;
     public static final double ellipseFillOpacityDefault = 0.3;
     public static final boolean ellipseOutlineShownDefault = true;
+    
+    public static Boolean concordiaLineShownDefault = true;
+    
+    public static Double axisXAnchorTickDefault = 0.;
+    public static Double axisYAnchorTickDefault = 0.;
+    
+    public static Double axisXTickUnitDefault  = 0.5;
+    public static Double axisYTickUnitDefault = 1.;
+    
+    public static Boolean axisAutoTickProperty = true;
 
     private final DataConverter<ErrorEllipse> converter;
 
@@ -99,46 +109,36 @@ public class ErrorEllipseChart extends NumberChart {
         return ellipseOutlineShownProperty;
     }
 
-    private final ErrorEllipseChartStyleAccessor ccStyleAccessor = new ErrorEllipseChartStyleAccessor() {
-        BooleanProperty concordiaLineShownProperty = new SimpleBooleanProperty(ErrorEllipseChartStyleAccessor.concordiaLineShownDefault);
+    
+    BooleanProperty concordiaLineShownProperty = new SimpleBooleanProperty(concordiaLineShownDefault);
+    public BooleanProperty concordiaLineShownProperty() {
+        return concordiaLineShownProperty;
+    }
 
-        @Override
-        public BooleanProperty concordiaLineShownProperty() {
-            return concordiaLineShownProperty;
-        }
-        @Override
-        public DoubleProperty axisXAnchorTickProperty() {
-            return ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty();
-        }
+    public DoubleProperty axisXAnchorTickProperty() {
+        return ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty();
+    }
 
+    public DoubleProperty axisXTickUnitProperty() {
+       return ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty();
+    }
 
-        @Override
-        public DoubleProperty axisXTickUnitProperty() {
-           return ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty();
-        }
+    public DoubleProperty axisYAnchorTickProperty() {
+        return ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty();
+    }
 
-        @Override
-        public DoubleProperty axisYAnchorTickProperty() {
-            return ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty();
-        }
+    public DoubleProperty axisYTickUnitProperty() {
+        return ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty();
+    }
 
+    public BooleanProperty axisXAutoTickProperty() {
+        return ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty();
+    }
 
-        @Override
-        public DoubleProperty axisYTickUnitProperty() {
-            return ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty();
-        }
+    public BooleanProperty axisYAutoTickProperty() {
+        return ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty();
+    }
 
-        @Override
-        public BooleanProperty axisXAutoTickProperty() {
-            return ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty();
-        }
-
-        @Override
-        public BooleanProperty axisYAutoTickProperty() {
-            return ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty();
-        }
-
-    };
 
     public ErrorEllipseChart() {
         this(new DefaultConverter());
@@ -157,7 +157,7 @@ public class ErrorEllipseChart extends NumberChart {
 
         errorEllipsePlotter = new ErrorEllipsePlotter(this, null);
         errorEllipseFiller = new ErrorEllipseFiller(this, null);
-        concordiaLinePlotter = new ConcordiaLinePlotter(this, ccStyleAccessor);
+        concordiaLinePlotter = new ConcordiaLinePlotter(this, null);
 
         this.converter = converter;
     }
@@ -307,10 +307,6 @@ public class ErrorEllipseChart extends NumberChart {
 
     public void setConfidenceLevel(double value) {
         confidenceLevel.set(value);
-    }
-
-    public ErrorEllipseChartStyleAccessor getConcordiaChartStyleAccessor() {
-        return ccStyleAccessor;
     }
 
     private static final class DefaultConverter implements DataConverter<ErrorEllipse> {

@@ -138,7 +138,7 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
 
         public ChartCustomizationPanel(ErrorEllipseChart chart) {
             super(5);
-            ErrorEllipseChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
+
             NumberAxis xAxis = (NumberAxis) chart.getXAxis();
             NumberAxis yAxis = (NumberAxis) chart.getYAxis();
             
@@ -153,25 +153,25 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             Label autotick_label = Tools.label_minsize(AUTOTICK_LABEL);
 
             CheckBox checkbox_concordia = new CheckBox();
-            ccStyleAccessor.concordiaLineShownProperty().bind(checkbox_concordia.selectedProperty());
+            chart.concordiaLineShownProperty().bind(checkbox_concordia.selectedProperty());
 
             ObservableValue<Number> xRange = xAxis.upperBoundProperty().subtract(xAxis.lowerBoundProperty());
             ObservableValue<Number> yRange = yAxis.upperBoundProperty().subtract(yAxis.lowerBoundProperty());
             
             CheckBox autoTickXCheckBox = new CheckBox();
-            autoTickXCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisXAutoTickProperty());
+            autoTickXCheckBox.selectedProperty().bindBidirectional(chart.axisXAutoTickProperty());
             
             CheckBox autoTickYCheckBox = new CheckBox();
-            autoTickYCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisYAutoTickProperty());
+            autoTickYCheckBox.selectedProperty().bindBidirectional(chart.axisYAutoTickProperty());
 
-            NumberField tickXnf = new NumberField(ccStyleAccessor.axisXAnchorTickProperty(), xRange);
+            NumberField tickXnf = new NumberField(chart.axisXAnchorTickProperty(), xRange);
             tickXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-            NumberField tickYnf = new NumberField(ccStyleAccessor.axisYAnchorTickProperty(), yRange);
+            NumberField tickYnf = new NumberField(chart.axisYAnchorTickProperty(), yRange);
             tickYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
-            NumberField tickUnitXnf = new NumberField(ccStyleAccessor.axisXTickUnitProperty(), xRange);
+            NumberField tickUnitXnf = new NumberField(chart.axisXTickUnitProperty(), xRange);
             tickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-            NumberField tickUnitYnf = new NumberField(ccStyleAccessor.axisYTickUnitProperty(), yRange);
+            NumberField tickUnitYnf = new NumberField(chart.axisYTickUnitProperty(), yRange);
             tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
             
             Label tickunit_label = new Label(TICKUNIT_LABEL);
