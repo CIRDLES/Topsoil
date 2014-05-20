@@ -30,7 +30,11 @@
     <org.cirdles.topsoil.TopsoilTable fx:id="dataTable"
                                       VBox.vgrow="ALWAYS">
         <placeholder>
-            <javafx.scene.text.Text text="%emptyTableMessage"/> 
+            <VBox alignment="CENTER" >
+                <javafx.scene.text.Text text="%emptyTableMessage"/>
+                <Button text="%pasteMessage"
+                    onAction="#pasteFromClipboard"/> 
+            </VBox>
         </placeholder>
     </org.cirdles.topsoil.TopsoilTable>
 </VBox>

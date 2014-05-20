@@ -22,7 +22,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.chart.Plotter;
@@ -36,12 +35,10 @@ import org.cirdles.topsoil.chart.Plotter;
  * @see Data
  * @see ErrorEllipseHolder
  */
-public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
+public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseChart> {
     
-    private ErrorEllipseChart chart = (ErrorEllipseChart) getChart();
-    
-    public ErrorEllipsePlotter(XYChart chart, ErrorEllipseStyleContainer style_arg) {
-        super(chart, style_arg);
+    public ErrorEllipsePlotter(ErrorEllipseChart chart) {
+        super(chart);
     }
 
     @Override
@@ -53,8 +50,8 @@ public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyle
                                 new CubicCurveTo());
         
         //Stroke color and visibility will always be what the style require them to be 
-        ellipse.strokeProperty().bind(style.get().ellipseOutlineColorProperty());        
-        ellipse.visibleProperty().bind(style.get().ellipseOutlineShownProperty());
+        ellipse.strokeProperty().bind(chart.ellipseOutlineColorProperty());        
+        ellipse.visibleProperty().bind(chart.ellipseOutlineShownProperty());
         
         ellipse.setStrokeWidth(2);
         ellipse.setFill(Color.TRANSPARENT);

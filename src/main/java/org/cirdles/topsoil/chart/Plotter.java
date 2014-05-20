@@ -16,8 +16,6 @@
 
 package org.cirdles.topsoil.chart;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 
@@ -25,13 +23,11 @@ import javafx.scene.chart.XYChart;
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public abstract class Plotter<T, S extends StyleAccessor> {
-    private final XYChart chart;
-    protected final ObjectProperty<S> style;
+public abstract class Plotter<T, S extends XYChart> {
+    protected final S chart;
 
-    public Plotter(XYChart chart, S style_arg) {
+    public Plotter(S chart) {
         this.chart = chart;
-        style = new SimpleObjectProperty<>(style_arg);
     }
     
     public abstract Node plot(T plottable);
@@ -42,9 +38,5 @@ public abstract class Plotter<T, S extends StyleAccessor> {
 
     protected double mapYToDisplay(double y) {
         return chart.getYAxis().getDisplayPosition(y);
-    }
-    
-    public XYChart getChart() {
-        return chart;
     }
 }

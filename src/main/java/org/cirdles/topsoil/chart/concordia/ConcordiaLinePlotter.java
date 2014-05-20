@@ -17,14 +17,12 @@ package org.cirdles.topsoil.chart.concordia;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.chart.XYChart;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
 import org.cirdles.topsoil.chart.Plotter;
-import org.cirdles.topsoil.chart.StyleAccessor;
 import org.cirdles.topsoil.chart.TickGenerator;
 
 /**
@@ -33,7 +31,7 @@ import org.cirdles.topsoil.chart.TickGenerator;
  * 
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ErrorEllipseChartStyleAccessor> {
+public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ErrorEllipseChart> {
 
     private final TickGenerator tickGenerator;
 
@@ -43,8 +41,8 @@ public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ErrorEllipseCha
      * 
      * @param chart the chart to plot to
      */
-    public ConcordiaLinePlotter(XYChart chart, ErrorEllipseChartStyleAccessor s) {
-        super(chart, s);
+    public ConcordiaLinePlotter(ErrorEllipseChart chart) {
+        super(chart);
 
         tickGenerator = new TickGenerator();
     }
@@ -59,7 +57,7 @@ public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ErrorEllipseCha
     @Override
     public Node plot(ConcordiaLine concordiaLine) {
         Group lineAndTicks = new Group();
-        lineAndTicks.visibleProperty().bind(style.get().concordiaLineShownProperty());
+        lineAndTicks.visibleProperty().bind(chart.concordiaLineShownProperty());
         
         // Plot the line itself.
         Path line = new Path(new MoveTo(mapXToDisplay(concordiaLine.getXs()[0]),
