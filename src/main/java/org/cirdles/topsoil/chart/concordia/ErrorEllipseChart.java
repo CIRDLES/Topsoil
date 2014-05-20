@@ -114,32 +114,7 @@ public class ErrorEllipseChart extends NumberChart {
     public BooleanProperty concordiaLineShownProperty() {
         return concordiaLineShownProperty;
     }
-
-    public DoubleProperty axisXAnchorTickProperty() {
-        return ((NumberAxis) getXAxis()).getTickGenerator().anchorTickProperty();
-    }
-
-    public DoubleProperty axisXTickUnitProperty() {
-       return ((NumberAxis) getXAxis()).getTickGenerator().tickUnitProperty();
-    }
-
-    public DoubleProperty axisYAnchorTickProperty() {
-        return ((NumberAxis) getYAxis()).getTickGenerator().anchorTickProperty();
-    }
-
-    public DoubleProperty axisYTickUnitProperty() {
-        return ((NumberAxis) getYAxis()).getTickGenerator().tickUnitProperty();
-    }
-
-    public BooleanProperty axisXAutoTickProperty() {
-        return ((NumberAxis) getXAxis()).getTickGenerator().autoTickingProperty();
-    }
-
-    public BooleanProperty axisYAutoTickProperty() {
-        return ((NumberAxis) getYAxis()).getTickGenerator().autoTickingProperty();
-    }
-
-
+   
     public ErrorEllipseChart() {
         this(new DefaultConverter());
     }

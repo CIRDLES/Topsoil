@@ -159,19 +159,19 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             ObservableValue<Number> yRange = yAxis.upperBoundProperty().subtract(yAxis.lowerBoundProperty());
             
             CheckBox autoTickXCheckBox = new CheckBox();
-            autoTickXCheckBox.selectedProperty().bindBidirectional(chart.axisXAutoTickProperty());
+            autoTickXCheckBox.selectedProperty().bindBidirectional(((NumberAxis) chart.getXAxis()).getTickGenerator().autoTickingProperty());
             
             CheckBox autoTickYCheckBox = new CheckBox();
-            autoTickYCheckBox.selectedProperty().bindBidirectional(chart.axisYAutoTickProperty());
+            autoTickYCheckBox.selectedProperty().bindBidirectional(((NumberAxis) chart.getYAxis()).getTickGenerator().autoTickingProperty());
 
-            NumberField tickXnf = new NumberField(chart.axisXAnchorTickProperty(), xRange);
+            NumberField tickXnf = new NumberField(((NumberAxis) chart.getXAxis()).getTickGenerator().anchorTickProperty(), xRange);
             tickXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-            NumberField tickYnf = new NumberField(chart.axisYAnchorTickProperty(), yRange);
+            NumberField tickYnf = new NumberField(((NumberAxis) chart.getYAxis()).getTickGenerator().anchorTickProperty(), yRange);
             tickYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
-            NumberField tickUnitXnf = new NumberField(chart.axisXTickUnitProperty(), xRange);
+            NumberField tickUnitXnf = new NumberField(((NumberAxis) chart.getXAxis()).getTickGenerator().tickUnitProperty(), xRange);
             tickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-            NumberField tickUnitYnf = new NumberField(chart.axisYTickUnitProperty(), yRange);
+            NumberField tickUnitYnf = new NumberField(((NumberAxis) chart.getYAxis()).getTickGenerator().tickUnitProperty(), yRange);
             tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
             
             Label tickunit_label = new Label(TICKUNIT_LABEL);
