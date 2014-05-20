@@ -17,7 +17,6 @@ package org.cirdles.topsoil.chart.concordia;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.chart.XYChart;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -32,9 +31,8 @@ import org.cirdles.topsoil.chart.TickGenerator;
  * 
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ConcordiaLinePlotter extends Plotter<ConcordiaLine> {
+public class ConcordiaLinePlotter extends Plotter<ConcordiaLine, ErrorEllipseChart> {
 
-    private final ErrorEllipseChart chart = (ErrorEllipseChart) getChart();
     private final TickGenerator tickGenerator;
 
     /**
@@ -43,7 +41,7 @@ public class ConcordiaLinePlotter extends Plotter<ConcordiaLine> {
      * 
      * @param chart the chart to plot to
      */
-    public ConcordiaLinePlotter(XYChart chart) {
+    public ConcordiaLinePlotter(ErrorEllipseChart chart) {
         super(chart);
 
         tickGenerator = new TickGenerator();

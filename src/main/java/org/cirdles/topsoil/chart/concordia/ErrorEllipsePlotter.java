@@ -22,7 +22,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.chart.Plotter;
@@ -36,11 +35,9 @@ import org.cirdles.topsoil.chart.Plotter;
  * @see Data
  * @see ErrorEllipseHolder
  */
-public class ErrorEllipsePlotter extends Plotter<ErrorEllipse> {
+public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseChart> {
     
-    private ErrorEllipseChart chart = (ErrorEllipseChart) getChart();
-    
-    public ErrorEllipsePlotter(XYChart chart) {
+    public ErrorEllipsePlotter(ErrorEllipseChart chart) {
         super(chart);
     }
 
