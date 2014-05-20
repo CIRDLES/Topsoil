@@ -55,7 +55,6 @@ public class ErrorChartToolBar extends ToolBar {
 
     public ErrorChartToolBar(ErrorEllipseChart chart, CustomizationPanelShower customPanelShower) {
 
-        ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
         ErrorEllipseChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
 
         //Adding the buttons

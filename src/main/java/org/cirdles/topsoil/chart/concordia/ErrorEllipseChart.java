@@ -47,6 +47,11 @@ import org.cirdles.topsoil.chart.NumberChart;
  * @see NumberChart
  */
 public class ErrorEllipseChart extends NumberChart {
+    
+    public static final Color ellipseOutlineColorDefault = Color.BLACK;
+    public static final Color ellipseFillColorDefault = Color.RED;
+    public static final double ellipseFillOpacityDefault = 0.3;
+    public static final boolean ellipseOutlineShownDefault = true;
 
     private final DataConverter<ErrorEllipse> converter;
 
@@ -73,35 +78,26 @@ public class ErrorEllipseChart extends NumberChart {
             layoutPlotChildren();
         }
     };
-    private final ErrorEllipseStyleContainer eeStyleAccessor = new ErrorEllipseStyleContainer() {
-        ObjectProperty<Color> ellipseOutlineColorProperty = new SimpleObjectProperty<Color>(ErrorEllipseStyleContainer.ellipseOutlineColorDefault);
+    
+    ObjectProperty<Color> ellipseOutlineColorProperty = new SimpleObjectProperty<>(ellipseOutlineColorDefault);
+    public ObjectProperty<Color> ellipseOutlineColorProperty() {
+        return ellipseOutlineColorProperty;
+    }
 
-        @Override
-        public ObjectProperty<Color> ellipseOutlineColorProperty() {
-            return ellipseOutlineColorProperty;
-        }
+    ObjectProperty<Color> ellipseFillColorProperty = new SimpleObjectProperty<>(ellipseFillColorDefault);
+    public ObjectProperty<Color> ellipseFillColorProperty() {
+        return ellipseFillColorProperty;
+    }
 
-        ObjectProperty<Color> ellipseFillColorProperty = new SimpleObjectProperty<Color>(ErrorEllipseStyleContainer.ellipseFillColorDefault);
+    DoubleProperty ellipseFillOpacityProperty = new SimpleDoubleProperty(ellipseFillOpacityDefault);
+    public DoubleProperty ellipseFillOpacityProperty() {
+        return ellipseFillOpacityProperty;
+    }
 
-        @Override
-        public ObjectProperty<Color> ellipseFillColorProperty() {
-            return ellipseFillColorProperty;
-        }
-
-        DoubleProperty ellipseFillOpacityProperty = new SimpleDoubleProperty(ErrorEllipseStyleContainer.ellipseFillOpacityDefault);
-
-        @Override
-        public DoubleProperty ellipseFillOpacityProperty() {
-            return ellipseFillOpacityProperty;
-        }
-
-        BooleanProperty ellipseOutlineShownProperty = new SimpleBooleanProperty(ErrorEllipseStyleContainer.ellipseOutlineShownDefault);
-
-        @Override
-        public BooleanProperty ellipseOutlineShownProperty() {
-            return ellipseOutlineShownProperty;
-        }
-    };
+    BooleanProperty ellipseOutlineShownProperty = new SimpleBooleanProperty(ellipseOutlineShownDefault);
+    public BooleanProperty ellipseOutlineShownProperty() {
+        return ellipseOutlineShownProperty;
+    }
 
     private final ErrorEllipseChartStyleAccessor ccStyleAccessor = new ErrorEllipseChartStyleAccessor() {
         BooleanProperty concordiaLineShownProperty = new SimpleBooleanProperty(ErrorEllipseChartStyleAccessor.concordiaLineShownDefault);
@@ -159,8 +155,8 @@ public class ErrorEllipseChart extends NumberChart {
         getYAxis().setLabel("\u00B2\u2070\u2076Pb/\u00B2\u00B3\u2078U"); // "206Pb/238U"
 
 
-        errorEllipsePlotter = new ErrorEllipsePlotter(this, eeStyleAccessor);
-        errorEllipseFiller = new ErrorEllipseFiller(this, eeStyleAccessor);
+        errorEllipsePlotter = new ErrorEllipsePlotter(this, null);
+        errorEllipseFiller = new ErrorEllipseFiller(this, null);
         concordiaLinePlotter = new ConcordiaLinePlotter(this, ccStyleAccessor);
 
         this.converter = converter;
@@ -311,10 +307,6 @@ public class ErrorEllipseChart extends NumberChart {
 
     public void setConfidenceLevel(double value) {
         confidenceLevel.set(value);
-    }
-
-    public ErrorEllipseStyleContainer getErrorEllipseStyleAccessor() {
-        return eeStyleAccessor;
     }
 
     public ErrorEllipseChartStyleAccessor getConcordiaChartStyleAccessor() {

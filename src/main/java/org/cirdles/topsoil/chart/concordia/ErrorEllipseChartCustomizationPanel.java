@@ -50,14 +50,12 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
         labelConstraints.setMinWidth(100);
         //getColumnConstraints().add(labelConstraints);
         getStylesheets().add(ErrorEllipseChartCustomizationPanel.class.getResource("ConcordiaChart.css").toExternalForm());
-        
-        ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
 
         //Creaton of the label
         Label title = Tools.label_minsize(NODE_TITLE);
         title.getStyleClass().add("title-panel");
                 
-        ErrorEllipsesCustomisationPanel eeCustomizationPane = new ErrorEllipsesCustomisationPanel(eeStyleAccessor);
+        ErrorEllipsesCustomisationPanel eeCustomizationPane = new ErrorEllipsesCustomisationPanel(chart);
         ChartCustomizationPanel ccCustomizationPane = new ChartCustomizationPanel(chart);
         
         getChildren().add(title);
@@ -73,7 +71,7 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
         public static final String OPACITY_LABEL = "Opacity";
         public static final String SHOWN_LABEL = "Shown";
 
-        public ErrorEllipsesCustomisationPanel(ErrorEllipseStyleContainer eeStyleAccessor) {
+        public ErrorEllipsesCustomisationPanel(ErrorEllipseChart chart) {
             super(5);
 
             Label node_title = Tools.label_minsize(ELLIPSES_NODESECTION_TITLE);
@@ -88,19 +86,19 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             
             //Color Picker for filling and stroking the errorellipses
             CheckBox showOutlineCheckBox = new CheckBox();
-            showOutlineCheckBox.selectedProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineShownProperty());
+            showOutlineCheckBox.selectedProperty().bindBidirectional(chart.ellipseOutlineShownProperty());
             
             ColorPicker colorPickerStroke = new ColorPicker();
-            colorPickerStroke.valueProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineColorProperty());
+            colorPickerStroke.valueProperty().bindBidirectional(chart.ellipseOutlineColorProperty());
             colorPickerStroke.disableProperty().bind(Bindings.not(showOutlineCheckBox.selectedProperty()));
         
             ColorPicker colorPickerFill = new ColorPicker();
-            colorPickerFill.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillColorProperty());
+            colorPickerFill.valueProperty().bindBidirectional(chart.ellipseFillColorProperty());
         
 
         
             Slider slider_opacity = new Slider(0, 1, 0.5);
-            slider_opacity.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillOpacityProperty());
+            slider_opacity.valueProperty().bindBidirectional(chart.ellipseFillOpacityProperty());
             
             GridPane ellipsesCustomization = new GridPane();
             ellipsesCustomization.setHgap(10);

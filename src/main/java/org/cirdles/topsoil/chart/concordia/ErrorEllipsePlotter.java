@@ -26,6 +26,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.chart.Plotter;
+import org.cirdles.topsoil.chart.StyleAccessor;
 
 /**
  * Plots an error ellipse object to the chart associated with this plotter. "Plotting" means returning a node that has
@@ -36,11 +37,11 @@ import org.cirdles.topsoil.chart.Plotter;
  * @see Data
  * @see ErrorEllipseHolder
  */
-public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
+public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, StyleAccessor> {
     
     private ErrorEllipseChart chart = (ErrorEllipseChart) getChart();
     
-    public ErrorEllipsePlotter(XYChart chart, ErrorEllipseStyleContainer style_arg) {
+    public ErrorEllipsePlotter(XYChart chart, StyleAccessor style_arg) {
         super(chart, style_arg);
     }
 
@@ -53,8 +54,8 @@ public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, ErrorEllipseStyle
                                 new CubicCurveTo());
         
         //Stroke color and visibility will always be what the style require them to be 
-        ellipse.strokeProperty().bind(style.get().ellipseOutlineColorProperty());        
-        ellipse.visibleProperty().bind(style.get().ellipseOutlineShownProperty());
+        ellipse.strokeProperty().bind(chart.ellipseOutlineColorProperty());        
+        ellipse.visibleProperty().bind(chart.ellipseOutlineShownProperty());
         
         ellipse.setStrokeWidth(2);
         ellipse.setFill(Color.TRANSPARENT);
