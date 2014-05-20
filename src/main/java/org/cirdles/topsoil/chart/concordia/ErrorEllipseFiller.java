@@ -23,18 +23,17 @@ import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import org.cirdles.topsoil.chart.Plotter;
-import org.cirdles.topsoil.chart.StyleAccessor;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ErrorEllipseFiller extends Plotter<ErrorEllipse, StyleAccessor> {
+public class ErrorEllipseFiller extends Plotter<ErrorEllipse> {
 
     private ErrorEllipseChart chart = (ErrorEllipseChart) getChart();
 
-    public ErrorEllipseFiller(XYChart chart, StyleAccessor style_arg) {
-        super(chart, style_arg);
+    public ErrorEllipseFiller(XYChart chart) {
+        super(chart);
     }
 
     @Override

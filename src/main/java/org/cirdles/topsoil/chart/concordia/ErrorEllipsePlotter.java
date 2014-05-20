@@ -26,7 +26,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.chart.Plotter;
-import org.cirdles.topsoil.chart.StyleAccessor;
 
 /**
  * Plots an error ellipse object to the chart associated with this plotter. "Plotting" means returning a node that has
@@ -37,12 +36,12 @@ import org.cirdles.topsoil.chart.StyleAccessor;
  * @see Data
  * @see ErrorEllipseHolder
  */
-public class ErrorEllipsePlotter extends Plotter<ErrorEllipse, StyleAccessor> {
+public class ErrorEllipsePlotter extends Plotter<ErrorEllipse> {
     
     private ErrorEllipseChart chart = (ErrorEllipseChart) getChart();
     
-    public ErrorEllipsePlotter(XYChart chart, StyleAccessor style_arg) {
-        super(chart, style_arg);
+    public ErrorEllipsePlotter(XYChart chart) {
+        super(chart);
     }
 
     @Override

@@ -155,9 +155,9 @@ public class ErrorEllipseChart extends NumberChart {
         getYAxis().setLabel("\u00B2\u2070\u2076Pb/\u00B2\u00B3\u2078U"); // "206Pb/238U"
 
 
-        errorEllipsePlotter = new ErrorEllipsePlotter(this, null);
-        errorEllipseFiller = new ErrorEllipseFiller(this, null);
-        concordiaLinePlotter = new ConcordiaLinePlotter(this, null);
+        errorEllipsePlotter = new ErrorEllipsePlotter(this);
+        errorEllipseFiller = new ErrorEllipseFiller(this);
+        concordiaLinePlotter = new ConcordiaLinePlotter(this);
 
         this.converter = converter;
     }
