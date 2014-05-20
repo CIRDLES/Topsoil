@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
@@ -51,13 +52,7 @@ public class TopsoilTable extends TableView<Record> {
 
         this.setOnKeyPressed((KeyEvent event) -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
-                Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
-                    TableReader tableReader = new TSVTableReader(response);
-                    tableReader.read(Clipboard.getSystemClipboard().getString(), this);
-
-                    TableWriter<Record> tableWriter = new TSVTableWriter(true);
-                    tableWriter.write(this, LAST_TABLE_PATH);
-                });
+                Tools.pastFromClipboard(this);
             }
         });
 

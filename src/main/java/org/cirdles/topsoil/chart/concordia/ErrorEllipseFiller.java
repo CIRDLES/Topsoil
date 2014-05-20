@@ -17,7 +17,6 @@ package org.cirdles.topsoil.chart.concordia;
 
 import Jama.Matrix;
 import javafx.scene.Node;
-import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
@@ -28,14 +27,12 @@ import org.cirdles.topsoil.chart.Plotter;
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseStyleContainer> {
+public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseChart> {
 
-    private ConcordiaChart chart = (ConcordiaChart) getChart();
-
-    public ErrorEllipseFiller(XYChart chart, ErrorEllipseStyleContainer style_arg) {
-        super(chart, style_arg);
+    public ErrorEllipseFiller(ErrorEllipseChart chart) {
+        super(chart);
     }
-
+    
     @Override
     public Node plot(ErrorEllipse errorEllipse) {
         Path ellipse = new Path(new MoveTo(),
@@ -45,8 +42,8 @@ public class ErrorEllipseFiller extends Plotter<ErrorEllipse, ErrorEllipseStyleC
                                 new CubicCurveTo());
         ellipse.setStroke(Color.TRANSPARENT);
 
-        ellipse.fillProperty().bind(style.get().ellipseFillColorProperty());
-        ellipse.opacityProperty().bind(style.get().ellipseFillOpacityProperty());
+        ellipse.fillProperty().bind(chart.ellipseFillColorProperty());
+        ellipse.opacityProperty().bind(chart.ellipseFillOpacityProperty());
 
         ellipse.getStyleClass().add("error-ellipse-fill");
 

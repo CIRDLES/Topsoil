@@ -16,6 +16,15 @@
 package org.cirdles.topsoil;
 
 import java.util.function.Consumer;
+import javafx.scene.control.Label;
+import javafx.scene.input.Clipboard;
+import javafx.scene.layout.Region;
+import static org.cirdles.topsoil.Topsoil.LAST_TABLE_PATH;
+import org.cirdles.topsoil.table.Record;
+import org.cirdles.topsoil.utils.TSVTableReader;
+import org.cirdles.topsoil.utils.TSVTableWriter;
+import org.cirdles.topsoil.utils.TableReader;
+import org.cirdles.topsoil.utils.TableWriter;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -42,5 +51,21 @@ public class Tools {
         if (response != Dialog.Actions.CANCEL) {
             callback.accept(response == Dialog.Actions.YES);
         }
+    }
+    
+    public static Label label_minsize(String textlabel){
+        Label label = new Label(textlabel);
+        label.setMinWidth(Region.USE_PREF_SIZE);
+        return label;
+    }
+    
+    public static void pastFromClipboard(TopsoilTable dataTable){
+        Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
+            TableReader tableReader = new TSVTableReader(response);
+            tableReader.read(Clipboard.getSystemClipboard().getString(), dataTable);
+
+            TableWriter<Record> tableWriter = new TSVTableWriter(true);
+            tableWriter.write(dataTable, LAST_TABLE_PATH);
+        });
     }
 }

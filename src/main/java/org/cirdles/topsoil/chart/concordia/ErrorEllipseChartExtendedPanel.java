@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 John.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,17 @@ package org.cirdles.topsoil.chart.concordia;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import org.controlsfx.control.MasterDetailPane;
 
 /**
  * A fairly empty class.
- * @author John
  */
-public class ConcordiaChartExtendedPanel extends MasterDetailPane implements ErrorChartToolBar.CustomizationPanelShower{
-    
-    public ConcordiaChartExtendedPanel(ConcordiaChart cc) {
+public class ErrorEllipseChartExtendedPanel extends MasterDetailPane implements ErrorChartToolBar.CustomizationPanelShower {
+
+    public ErrorEllipseChartExtendedPanel(ErrorEllipseChart cc) {
         setMasterNode(cc);
-        showDetailNodeProperty().set(false);
+        setDividerPosition(0.7);
     }
 
     @Override
@@ -42,7 +39,4 @@ public class ConcordiaChartExtendedPanel extends MasterDetailPane implements Err
     public BooleanProperty customizationPanelVisibilityProperty() {
         return showDetailNodeProperty();
     }
-    
-
-   
 }
