@@ -18,6 +18,7 @@ package org.cirdles.topsoil.chart.concordia;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
@@ -27,6 +28,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.cirdles.jfxutils.NumberField;
+import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.chart.NumberAxis;
 
 /**
@@ -41,15 +43,19 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
 
     
     public ErrorEllipseChartCustomizationPanel(ErrorEllipseChart chart) {
+        super(10);
+        setPadding(new Insets(10));
+        
         ColumnConstraints labelConstraints = new ColumnConstraints();
         labelConstraints.setMinWidth(100);
         //getColumnConstraints().add(labelConstraints);
-        
-        ErrorEllipseStyleContainer eeStyleAccessor = chart.getErrorEllipseStyleAccessor();
+        getStylesheets().add(ErrorEllipseChartCustomizationPanel.class.getResource("ConcordiaChart.css").toExternalForm());
 
         //Creaton of the label
-        Label title = new Label(NODE_TITLE);
-        ErrorEllipsesCustomisationPanel eeCustomizationPane = new ErrorEllipsesCustomisationPanel(eeStyleAccessor);
+        Label title = Tools.label_minsize(NODE_TITLE);
+        title.getStyleClass().add("title-panel");
+                
+        ErrorEllipsesCustomisationPanel eeCustomizationPane = new ErrorEllipsesCustomisationPanel(chart);
         ChartCustomizationPanel ccCustomizationPane = new ChartCustomizationPanel(chart);
         
         getChildren().add(title);
@@ -59,36 +65,46 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
     
     private static class ErrorEllipsesCustomisationPanel extends VBox{
         public static final String ELLIPSES_NODESECTION_TITLE = "Ellipses";
-        public static final String STROKE_LABEL = "Stroke";
+        public static final String STROKE_LABEL = "Ellipses border";
         public static final String FILL_LABEL = "Fill";
         
         public static final String OPACITY_LABEL = "Opacity";
         public static final String SHOWN_LABEL = "Shown";
 
-        public ErrorEllipsesCustomisationPanel(ErrorEllipseStyleContainer eeStyleAccessor) {
-            Label node_title = new Label(ELLIPSES_NODESECTION_TITLE);
-            Label stroke_label = new Label(STROKE_LABEL);
-            Label fill_label = new Label(FILL_LABEL);
-            Label opacity_label = new Label(OPACITY_LABEL);
-            Label shown_label = new Label(SHOWN_LABEL);
+        public ErrorEllipsesCustomisationPanel(ErrorEllipseChart chart) {
+            super(5);
+
+            Label node_title = Tools.label_minsize(ELLIPSES_NODESECTION_TITLE);
+            
+            node_title.getStyleClass().add("title-subpanel");
+            
+            Label stroke_label = Tools.label_minsize(STROKE_LABEL);
+            stroke_label.setMaxWidth(USE_PREF_SIZE);
+            Label fill_label = Tools.label_minsize(FILL_LABEL);
+            Label opacity_label = Tools.label_minsize(OPACITY_LABEL);
+            Label shown_label = Tools.label_minsize(SHOWN_LABEL);
             
             //Color Picker for filling and stroking the errorellipses
             CheckBox showOutlineCheckBox = new CheckBox();
-            showOutlineCheckBox.selectedProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineShownProperty());
+            showOutlineCheckBox.selectedProperty().bindBidirectional(chart.ellipseOutlineShownProperty());
             
             ColorPicker colorPickerStroke = new ColorPicker();
-            colorPickerStroke.valueProperty().bindBidirectional(eeStyleAccessor.ellipseOutlineColorProperty());
+            colorPickerStroke.valueProperty().bindBidirectional(chart.ellipseOutlineColorProperty());
             colorPickerStroke.disableProperty().bind(Bindings.not(showOutlineCheckBox.selectedProperty()));
         
             ColorPicker colorPickerFill = new ColorPicker();
-            colorPickerFill.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillColorProperty());
+            colorPickerFill.valueProperty().bindBidirectional(chart.ellipseFillColorProperty());
         
 
         
             Slider slider_opacity = new Slider(0, 1, 0.5);
-            slider_opacity.valueProperty().bindBidirectional(eeStyleAccessor.ellipseFillOpacityProperty());
+            slider_opacity.valueProperty().bindBidirectional(chart.ellipseFillOpacityProperty());
             
             GridPane ellipsesCustomization = new GridPane();
+            ellipsesCustomization.setHgap(10);
+            ellipsesCustomization.setVgap(10);
+            
+            ellipsesCustomization.setPadding(new Insets(0, 1, 0, 1));
 
             //Stroke (0)
             ellipsesCustomization.add(stroke_label, 0, 0);
@@ -121,36 +137,47 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
         
 
         public ChartCustomizationPanel(ErrorEllipseChart chart) {
-            ErrorEllipseChartStyleAccessor ccStyleAccessor = chart.getConcordiaChartStyleAccessor();
+            super(5);
+
             NumberAxis xAxis = (NumberAxis) chart.getXAxis();
             NumberAxis yAxis = (NumberAxis) chart.getYAxis();
             
-            Label node_title = new Label(CHART_NODESECTION_TITLE);
-            Label concordialine_label = new Label(CONCORDIALINE_OPACITY_LABEL);
-            Label ticker_title = new Label(TICKER_NODESUBSECTION_TITLE);
-            Label axisx_label = new Label(AXISX_LABEL);
-            Label axisy_label = new Label(AXISY_LABEL);
-            Label anchortick_label = new Label(ANCHORTICK_LABEL);
-            Label tickunit_label = new Label(TICKUNIT_LABEL);
-            Label autotick_label = new Label(AUTOTICK_LABEL);
+            Label node_title = Tools.label_minsize(CHART_NODESECTION_TITLE);
+            node_title.getStyleClass().add("title-subpanel");
+            
+            Label concordialine_label = Tools.label_minsize(CONCORDIALINE_OPACITY_LABEL);
+            Label ticker_title = Tools.label_minsize(TICKER_NODESUBSECTION_TITLE);
+            ticker_title.getStyleClass().add("title-subsubpanel");
+            Label axisx_label = Tools.label_minsize(AXISX_LABEL);
+            Label axisy_label = Tools.label_minsize(AXISY_LABEL);
+            Label autotick_label = Tools.label_minsize(AUTOTICK_LABEL);
 
             CheckBox checkbox_concordia = new CheckBox();
-            ccStyleAccessor.concordiaLineShownProperty().bind(checkbox_concordia.selectedProperty());
+            chart.concordiaLineShownProperty().bind(checkbox_concordia.selectedProperty());
 
             ObservableValue<Number> xRange = xAxis.upperBoundProperty().subtract(xAxis.lowerBoundProperty());
             ObservableValue<Number> yRange = yAxis.upperBoundProperty().subtract(yAxis.lowerBoundProperty());
             
             CheckBox autoTickXCheckBox = new CheckBox();
-            autoTickXCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisXAutoTickProperty());
-
+            autoTickXCheckBox.selectedProperty().bindBidirectional(((NumberAxis) chart.getXAxis()).getTickGenerator().autoTickingProperty());
+            
             CheckBox autoTickYCheckBox = new CheckBox();
-            autoTickYCheckBox.selectedProperty().bindBidirectional(ccStyleAccessor.axisYAutoTickProperty());
+            autoTickYCheckBox.selectedProperty().bindBidirectional(((NumberAxis) chart.getYAxis()).getTickGenerator().autoTickingProperty());
 
-            NumberField tickXnf = new NumberField(ccStyleAccessor.axisXAnchorTickProperty(), xRange);
-            NumberField tickYnf = new NumberField(ccStyleAccessor.axisYAnchorTickProperty(), yRange);
+            NumberField tickXnf = new NumberField(((NumberAxis) chart.getXAxis()).getTickGenerator().anchorTickProperty(), xRange);
+            tickXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
+            NumberField tickYnf = new NumberField(((NumberAxis) chart.getYAxis()).getTickGenerator().anchorTickProperty(), yRange);
+            tickYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
-            NumberField tickUnitXnf = new NumberField(ccStyleAccessor.axisXTickUnitProperty(), xRange);
-            NumberField tickUnitYnf = new NumberField(ccStyleAccessor.axisYTickUnitProperty(), yRange);
+            NumberField tickUnitXnf = new NumberField(((NumberAxis) chart.getXAxis()).getTickGenerator().tickUnitProperty(), xRange);
+            tickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
+            NumberField tickUnitYnf = new NumberField(((NumberAxis) chart.getYAxis()).getTickGenerator().tickUnitProperty(), yRange);
+            tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
+            
+            Label tickunit_label = new Label(TICKUNIT_LABEL);
+            tickunit_label.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not());
+            Label anchortick_label = new Label(ANCHORTICK_LABEL);
+            anchortick_label.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not());
 
 
             
@@ -159,21 +186,24 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             concordialine_box.getChildren().add(checkbox_concordia);
             
             GridPane axisPane = new GridPane();
-            axisPane.add(anchortick_label, 1, 0);
+            axisPane.setHgap(10);
+            axisPane.setVgap(10);
+            
+            axisPane.add(anchortick_label, 3, 0);
             axisPane.add(tickunit_label,2,0);
-            axisPane.add(autotick_label,3,0);
+            axisPane.add(autotick_label,1,0);
 
             //Axis X (1)
             axisPane.add(axisx_label, 0, 1);
-            axisPane.add(tickXnf, 1, 1);
+            axisPane.add(tickXnf, 3, 1);
             axisPane.add(tickUnitXnf, 2, 1);
-            axisPane.add(autoTickXCheckBox, 3, 1);
+            axisPane.add(autoTickXCheckBox, 1, 1);
 
             //Axis Y (2)
             axisPane.add(axisy_label, 0, 2);
-            axisPane.add(tickYnf, 1, 2);
+            axisPane.add(tickYnf, 3, 2);
             axisPane.add(tickUnitYnf, 2, 2);
-            axisPane.add(autoTickYCheckBox, 3, 2);
+            axisPane.add(autoTickYCheckBox, 1, 2);
             
             getChildren().add(node_title);
             getChildren().add(concordialine_box);
