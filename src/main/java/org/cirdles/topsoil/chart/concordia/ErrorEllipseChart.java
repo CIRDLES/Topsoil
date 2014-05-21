@@ -34,7 +34,6 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.cirdles.topsoil.chart.DataConverter;
-import org.cirdles.topsoil.chart.NumberAxis;
 import org.cirdles.topsoil.chart.NumberChart;
 
 /**
@@ -71,7 +70,7 @@ public class ErrorEllipseChart extends NumberChart {
 
     ConcordiaLine concordiaLine;
 
-    private final DoubleProperty confidenceLevel = new DoublePropertyBase(1) {
+    private final DoubleProperty confidenceLevel = new DoublePropertyBase(2) {
 
         @Override
         public Object getBean() {

@@ -86,7 +86,7 @@ public class ErrorChartToolBar extends ToolBar {
         confidenceLevels.put(2, "2\u03c3");
         confidenceLevels.put(1.96, "95%");
         confidenceLevel.getItems().addAll(confidenceLevels.keySet());
-        confidenceLevel.getSelectionModel().select(0);
+        confidenceLevel.getSelectionModel().select(1);
         confidenceLevel.setConverter(new StringConverter<Number>() {
 
             @Override
