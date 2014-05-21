@@ -17,6 +17,7 @@ package org.cirdles.topsoil;
 
 import java.util.function.Consumer;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.Region;
 import static org.cirdles.topsoil.Topsoil.LAST_TABLE_PATH;
@@ -59,13 +60,26 @@ public class Tools {
         return label;
     }
     
-    public static void pastFromClipboard(TopsoilTable dataTable){
+    public static void pastFromClipboard(TableView<Record> dataTable){
         Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
             TableReader tableReader = new TSVTableReader(response);
             tableReader.read(Clipboard.getSystemClipboard().getString(), dataTable);
 
+            saveTable(dataTable);
+        });
+    }
+    
+    public static void saveTable(TableView<Record> dataTable){
+        if(!dataTable.getItems().isEmpty()){
             TableWriter<Record> tableWriter = new TSVTableWriter(true);
             tableWriter.write(dataTable, LAST_TABLE_PATH);
-        });
+        } else {
+           LAST_TABLE_PATH.toFile().delete();
+        }
+    }
+    
+    public static void clearTable(TableView<Record> dataTable){
+        dataTable.getItems().clear();
+        dataTable.getColumns().clear();
     }
 }
