@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TableView;
+import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.table.Field;
 import org.cirdles.topsoil.table.NumberField;
 import org.cirdles.topsoil.table.Record;
@@ -48,9 +49,7 @@ public class TSVTableReader extends TableReader<Record> {
             return;
         }
 
-        // clear dest
-        dest.getItems().clear();
-        dest.getColumns().clear();
+        Tools.clearTable(dest);
 
         CSVReader tsvReader = new CSVReader(new StringReader(src), '\t');
         List<String[]> lines;

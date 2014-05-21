@@ -17,6 +17,7 @@ package org.cirdles.topsoil;
 
 import java.util.function.Consumer;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.Region;
 import static org.cirdles.topsoil.Topsoil.LAST_TABLE_PATH;
@@ -67,5 +68,8 @@ public class Tools {
             TableWriter<Record> tableWriter = new TSVTableWriter(true);
             tableWriter.write(dataTable, LAST_TABLE_PATH);
         });
+    public static void clearTable(TableView<Record> dataTable){
+        dataTable.getItems().clear();
+        dataTable.getColumns().clear();
     }
 }
