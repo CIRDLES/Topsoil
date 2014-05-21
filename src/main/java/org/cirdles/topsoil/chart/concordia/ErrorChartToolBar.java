@@ -45,6 +45,7 @@ import org.cirdles.jfxutils.NodeToSVGConverter;
 public class ErrorChartToolBar extends ToolBar {
 
     private static final String LABEL_LOCKTOQ1 = "Lock down to Q1";
+    private static final String LABEL_RESETVIEW = "Reset view";
 
     public interface CustomizationPanelShower {
 
@@ -107,11 +108,18 @@ public class ErrorChartToolBar extends ToolBar {
 
         CheckBox locktoq1 = new CheckBox();
         locktoq1.selectedProperty().bindBidirectional(chart.lockToQ1Property());
+        
+        Button resetViewButton = new Button(LABEL_RESETVIEW);
+        resetViewButton.setOnAction((ActionEvent e) -> {
+            chart.getXAxis().autoRangingProperty().set(true);
+            chart.getYAxis().autoRangingProperty().set(true);
+        });
 
         getItems().add(exportToSVG);
         getItems().add(confidenceLevel);
         getItems().add(label_locktoq1);
         getItems().add(locktoq1);
+        getItems().add(resetViewButton);
         getItems().add(customizationButton);
     }
 
