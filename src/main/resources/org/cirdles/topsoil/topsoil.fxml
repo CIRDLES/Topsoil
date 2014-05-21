@@ -25,6 +25,8 @@
         <items>
             <Button text="%createErrorEllipseChart"
                     onAction="#createErrorChart" /> 
+            <Button text="%clearTableMessage"
+                    onAction="#emptyTable"/> 
         </items>
     </ToolBar>
     <org.cirdles.topsoil.TopsoilTable fx:id="dataTable"

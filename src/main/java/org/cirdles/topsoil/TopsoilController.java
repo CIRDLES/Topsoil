@@ -89,4 +89,10 @@ public class TopsoilController implements Initializable {
     private void pasteFromClipboard(ActionEvent event){
         Tools.pastFromClipboard(dataTable);
     }
+    
+    @FXML
+    private void emptyTable(ActionEvent event){
+        Tools.clearTable(dataTable);
+        Tools.saveTable(dataTable);
+    }
 }
