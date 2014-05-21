@@ -53,33 +53,9 @@ public abstract class NumberChart extends XYChart<Number, Number> {
 
         xAxis = (NumberAxis) getXAxis();
         xAxis.setForceZeroInRange(false);
-        xAxis.setTickLabelFormatter(new StringConverter<Number>() {
-
-            @Override
-            public String toString(Number t) {
-                return String.format("%.7f", t.doubleValue());
-            }
-
-            @Override
-            public Number fromString(String string) {
-                return Double.valueOf(string);
-            }
-        });
 
         yAxis = (NumberAxis) getYAxis();
         yAxis.setForceZeroInRange(false);
-        yAxis.setTickLabelFormatter(new StringConverter<Number>() {
-
-            @Override
-            public String toString(Number t) {
-                return String.format("%.7f", t.doubleValue());
-            }
-
-            @Override
-            public Number fromString(String string) {
-                return Double.valueOf(string);
-            }
-        });
 
         dragSelect = new Rectangle();
         dragSelect.getStyleClass().add("drag-select");
