@@ -39,7 +39,7 @@ public class Tools {
      * Prompts the user for a yes or no response with a custom message. If the user selects yes or no, the callback
      * function is called with a boolean indicating the result. Otherwise, the user may choose to cancel the action and
      * the dialog will close without any side effects.
-     * 
+     *
      * @param message the message to display to the user inside the dialog box
      * @param callback the function to be called if the action is not canceled
      */
@@ -53,9 +53,9 @@ public class Tools {
             callback.accept(response == Dialog.Actions.YES);
         }
     }
-    
-    public static Label label_minsize(String textlabel){
-        Label label = new Label(textlabel);
+
+    public static Label label_minsize(String textlabel) {
+        LabelUsePrefSize label = new LabelUsePrefSize(textlabel);
         label.setMinWidth(Region.USE_PREF_SIZE);
         return label;
     }
