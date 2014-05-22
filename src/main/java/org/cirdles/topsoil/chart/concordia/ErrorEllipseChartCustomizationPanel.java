@@ -94,7 +94,7 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
 
                 sliderOpacity.valueProperty().bindBidirectional(chart.ellipseFillOpacityProperty());
             } catch (IOException e) {
-                getChildren().add(new Label("There was an error."));
+                getChildren().add(new Label("There was an error loading this part of the panel."));
                 e.printStackTrace();
             }
 
