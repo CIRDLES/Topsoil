@@ -104,15 +104,24 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
 
     private static class ChartCustomizationPanel extends VBox {
 
-        public static final String CHART_NODESECTION_TITLE = "Chart";
-        public static final String CONCORDIALINE_OPACITY_LABEL = "Concordia Line";
-
-        public static final String TICKER_NODESUBSECTION_TITLE = "Axis";
-        public static final String AXISX_LABEL = "Axis X";
-        public static final String AXISY_LABEL = "Axis Y";
-        public static final String AUTOTICK_LABEL = "Auto Tick";
-        public static final String ANCHORTICK_LABEL = "Anchor tick";
-        public static final String TICKUNIT_LABEL = "Tick Unit";
+        @FXML
+        CheckBox checkboxConcordia;
+        @FXML
+        Label anchorTickLabel;
+        @FXML
+        Label tickUnitLabel;
+        @FXML
+        NumberField tickXnf;
+        @FXML
+        NumberField tickUnitXnf;
+        @FXML
+        CheckBox autoTickXCheckBox;
+        @FXML
+        NumberField tickYnf;
+        @FXML
+        NumberField tickUnitYnf;
+        @FXML
+        CheckBox autoTickYCheckBox;
 
         public ChartCustomizationPanel(ErrorEllipseChart chart) {
             super(5);
@@ -120,71 +129,39 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             NumberAxis xAxis = (NumberAxis) chart.getXAxis();
             NumberAxis yAxis = (NumberAxis) chart.getYAxis();
 
-            Label node_title = Tools.label_minsize(CHART_NODESECTION_TITLE);
-            node_title.getStyleClass().add("title-subpanel");
+            FXMLLoader loader = new FXMLLoader(ErrorEllipsesCustomisationPanel.class.getResource("chartcustomizationpanel.fxml"),
+                                               ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
+            loader.setRoot(this);
+            loader.setController(this);
 
-            Label concordialine_label = Tools.label_minsize(CONCORDIALINE_OPACITY_LABEL);
-            Label ticker_title = Tools.label_minsize(TICKER_NODESUBSECTION_TITLE);
-            ticker_title.getStyleClass().add("title-subsubpanel");
-            Label axisx_label = Tools.label_minsize(AXISX_LABEL);
-            Label axisy_label = Tools.label_minsize(AXISY_LABEL);
-            Label autotick_label = Tools.label_minsize(AUTOTICK_LABEL);
+            try {
+                loader.load();
+                chart.concordiaLineShownProperty().bind(checkboxConcordia.selectedProperty());
 
-            CheckBox checkbox_concordia = new CheckBox();
-            chart.concordiaLineShownProperty().bind(checkbox_concordia.selectedProperty());
+                ObservableValue<Number> xRange = xAxis.upperBoundProperty().subtract(xAxis.lowerBoundProperty());
+                ObservableValue<Number> yRange = yAxis.upperBoundProperty().subtract(yAxis.lowerBoundProperty());
 
-            ObservableValue<Number> xRange = xAxis.upperBoundProperty().subtract(xAxis.lowerBoundProperty());
-            ObservableValue<Number> yRange = yAxis.upperBoundProperty().subtract(yAxis.lowerBoundProperty());
+                autoTickXCheckBox.selectedProperty().bindBidirectional(((NumberAxis) chart.getXAxis()).getTickGenerator().autoTickingProperty());
 
-            CheckBox autoTickXCheckBox = new CheckBox();
-            autoTickXCheckBox.selectedProperty().bindBidirectional(((NumberAxis) chart.getXAxis()).getTickGenerator().autoTickingProperty());
+                autoTickYCheckBox.selectedProperty().bindBidirectional(((NumberAxis) chart.getYAxis()).getTickGenerator().autoTickingProperty());
 
-            CheckBox autoTickYCheckBox = new CheckBox();
-            autoTickYCheckBox.selectedProperty().bindBidirectional(((NumberAxis) chart.getYAxis()).getTickGenerator().autoTickingProperty());
+                tickXnf.setTargetProperty(((NumberAxis) chart.getXAxis()).getTickGenerator().anchorTickProperty(), xRange);
+                tickXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
+                tickYnf.setTargetProperty(((NumberAxis) chart.getYAxis()).getTickGenerator().anchorTickProperty(), yRange);
+                tickYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
-            NumberField tickXnf = new NumberField(((NumberAxis) chart.getXAxis()).getTickGenerator().anchorTickProperty(), xRange);
-            tickXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-            NumberField tickYnf = new NumberField(((NumberAxis) chart.getYAxis()).getTickGenerator().anchorTickProperty(), yRange);
-            tickYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
+                tickUnitXnf.setTargetProperty(((NumberAxis) chart.getXAxis()).getTickGenerator().tickUnitProperty(), xRange);
+                tickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
+                tickUnitYnf.setTargetProperty(((NumberAxis) chart.getYAxis()).getTickGenerator().tickUnitProperty(), yRange);
+                tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
-            NumberField tickUnitXnf = new NumberField(((NumberAxis) chart.getXAxis()).getTickGenerator().tickUnitProperty(), xRange);
-            tickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-            NumberField tickUnitYnf = new NumberField(((NumberAxis) chart.getYAxis()).getTickGenerator().tickUnitProperty(), yRange);
-            tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
+                tickUnitLabel.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not());
 
-            Label tickunit_label = new Label(TICKUNIT_LABEL);
-            tickunit_label.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not());
-            Label anchortick_label = new Label(ANCHORTICK_LABEL);
-            anchortick_label.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not());
-
-            HBox concordialine_box = new HBox();
-            concordialine_box.getChildren().add(concordialine_label);
-            concordialine_box.getChildren().add(checkbox_concordia);
-
-            GridPane axisPane = new GridPane();
-            axisPane.setHgap(10);
-            axisPane.setVgap(10);
-
-            axisPane.add(anchortick_label, 3, 0);
-            axisPane.add(tickunit_label, 2, 0);
-            axisPane.add(autotick_label, 1, 0);
-
-            //Axis X (1)
-            axisPane.add(axisx_label, 0, 1);
-            axisPane.add(tickXnf, 3, 1);
-            axisPane.add(tickUnitXnf, 2, 1);
-            axisPane.add(autoTickXCheckBox, 1, 1);
-
-            //Axis Y (2)
-            axisPane.add(axisy_label, 0, 2);
-            axisPane.add(tickYnf, 3, 2);
-            axisPane.add(tickUnitYnf, 2, 2);
-            axisPane.add(autoTickYCheckBox, 1, 2);
-
-            getChildren().add(node_title);
-            getChildren().add(concordialine_box);
-            getChildren().add(ticker_title);
-            getChildren().add(axisPane);
+                anchorTickLabel.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not());
+            } catch (IOException e) {
+                getChildren().add(new Label("There was an error loading this part of the panel."));
+                e.printStackTrace();
+            }
 
         }
     }
