@@ -64,6 +64,7 @@ public class ErrorChartToolBar extends ToolBar {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Export to SVG");
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
             File file = fileChooser.showSaveDialog(getScene().getWindow());
 
             converter.convert(chart, file);
