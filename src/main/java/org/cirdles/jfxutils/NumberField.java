@@ -19,6 +19,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
 import static java.lang.Math.*;
+import javafx.beans.value.ChangeListener;
 
 /**
  * A useful type of TextField where the field is associated with a DoubleProperty at instantiation and the necessary
@@ -36,7 +37,9 @@ public class NumberField extends TextField {
     /**
      * The DoubleProperty linked with this field
      */
-    private final DoubleProperty doubleProperty;
+    private DoubleProperty doubleProperty;
+    private ChangeListener<Number> current_listener;
+    
 
     /**
      * Creates a new NumberField that is linked to the given DoubleProperty.
@@ -45,17 +48,22 @@ public class NumberField extends TextField {
      * @param relatedValue
      */
     public NumberField(DoubleProperty displayValue, ObservableValue<Number> relatedValue) {
-        super(displayValue.getValue().toString());
-        this.doubleProperty = displayValue;
+        this();
+        textProperty().set(displayValue.getValue().toString());
+        setTargetProperty(displayValue, relatedValue);
 
-        /*
+  
+    }
+    
+    public NumberField(){
+         /*
          * Add a ChangeListener to this field's textProperty so that the associated DoubleProperty is changed whenever
          * this field's text changes.
          */
         textProperty().addListener(
                 (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                     try {
-                        displayValue.set(Double.valueOf(newValue));
+                        doubleProperty.set(Double.valueOf(newValue));
                     } catch (NumberFormatException ex) {
                         /*
                          * Do nothing. newValue must not be able to be parsed as a double.
@@ -64,20 +72,11 @@ public class NumberField extends TextField {
                          * http://download.java.net/jdk8/docs/api/java/lang/Double.html#valueOf-java.lang.String- but
                          * it's simpler to catch the exception unless serious drawbacks to this approach are found.
                          */
+                    } catch (NullPointerException ex){
+                        /*
+                        * doubleProperty is yet to be set
+                        */
                     }
-                });
-
-        /*
-         * Add a ChangeListener to this field's associated DoubleProperty to change this field's text whenever the
-         * associated DoubleProperty is changed.
-         */
-        displayValue.addListener(
-                (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                    // calculates the optimal number of decimal places to display to the user based on the magnitude of
-                    // the related value
-                    int decimalPlaces = (int) abs(min(0, log10(relatedValue.getValue().doubleValue()) - 3));
-                    
-                    setText(String.format("%." + decimalPlaces + "f", newValue));
                 });
     }
 
@@ -88,5 +87,28 @@ public class NumberField extends TextField {
      */
     public DoubleProperty doubleProperty() {
         return doubleProperty;
+    }
+    
+    public void setTargetProperty(DoubleProperty displayValue, ObservableValue<Number> relatedValue){
+        //If we currently have a property, then we should remove its listener before unbinding it
+        if(doubleProperty != null){
+            doubleProperty.removeListener(current_listener);
+        }
+        
+        this.doubleProperty = displayValue;
+        this.current_listener =   (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                    // calculates the optimal number of decimal places to display to the user based on the magnitude of
+                    // the related value
+                    int decimalPlaces = (int) abs(min(0, log10(relatedValue.getValue().doubleValue()) - 3));
+                    
+                    setText(String.format("%." + decimalPlaces + "f", newValue));
+                };
+
+        
+        /*
+         * Add a ChangeListener to this field's associated DoubleProperty to change this field's text whenever the
+         * associated DoubleProperty is changed.
+         */
+        displayValue.addListener(current_listener);
     }
 }

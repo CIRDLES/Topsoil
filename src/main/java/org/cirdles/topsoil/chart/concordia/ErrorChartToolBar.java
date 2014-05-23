@@ -36,6 +36,7 @@ import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.cirdles.jfxutils.BoundChoiceBox;
 import org.cirdles.jfxutils.NodeToSVGConverter;
+import org.controlsfx.control.MasterDetailPane;
 
 /**
  * A ToolBar for use with ErrorCharts.
@@ -47,14 +48,7 @@ public class ErrorChartToolBar extends ToolBar {
     private static final String LABEL_LOCKTOQ1 = "Lock down to Q1";
     private static final String LABEL_RESETVIEW = "Reset view";
 
-    public interface CustomizationPanelShower {
-
-        public ObjectProperty<Node> customizationPanelProperty();
-
-        public BooleanProperty customizationPanelVisibilityProperty();
-    }
-
-    public ErrorChartToolBar(ErrorEllipseChart chart, CustomizationPanelShower customPanelShower) {
+    public ErrorChartToolBar(ErrorEllipseChart chart, MasterDetailPane customPanelShower) {
         //Adding the buttons
         Button exportToSVG = new Button("Export to SVG");
         exportToSVG.setOnAction((ActionEvent event) -> {
@@ -70,14 +64,13 @@ public class ErrorChartToolBar extends ToolBar {
             converter.convert(chart, file);
         });
 
-        customPanelShower.customizationPanelProperty().set(new ErrorEllipseChartCustomizationPanel(chart));
         Button customizationButton = new Button("Hide customization panel");
         customizationButton.setOnAction((ActionEvent event) -> {
-            if (customPanelShower.customizationPanelVisibilityProperty().get() == true) {
-                customPanelShower.customizationPanelVisibilityProperty().set(false);
+            if (customPanelShower.showDetailNodeProperty().get() == true) {
+                customPanelShower.showDetailNodeProperty().set(false);
                 customizationButton.setText("Show customization panel");
             } else {
-                customPanelShower.customizationPanelVisibilityProperty().set(true);
+                customPanelShower.showDetailNodeProperty().set(true);
                 customizationButton.setText("Hide customization panel");
             }
         });

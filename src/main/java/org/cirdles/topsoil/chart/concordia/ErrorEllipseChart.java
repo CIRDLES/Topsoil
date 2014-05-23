@@ -65,7 +65,19 @@ public class ErrorEllipseChart extends NumberChart {
     
     public static Boolean axisAutoTickProperty = true;
 
-    private final DataConverter<ErrorEllipse> converter;
+    private final ObjectProperty<DataConverter<ErrorEllipse> > converter;
+    
+    public DataConverter<ErrorEllipse> getConverter(){
+        return converter.get();
+    }
+    
+    public void setConverter(DataConverter<ErrorEllipse> newConverter){
+        converter.set(newConverter);
+    }
+    
+    public ObjectProperty<DataConverter<ErrorEllipse> > converterProperty(){
+        return converter;
+    } 
 
     private final ErrorEllipsePlotter errorEllipsePlotter;
     private final ErrorEllipseFiller errorEllipseFiller;
@@ -136,7 +148,8 @@ public class ErrorEllipseChart extends NumberChart {
         errorEllipseFiller = new ErrorEllipseFiller(this);
         concordiaLinePlotter = new ConcordiaLinePlotter(this);
 
-        this.converter = converter;
+        this.converter = new SimpleObjectProperty<>();
+        this.converter.set(converter);
     }
 
     public ErrorEllipseChart(ObservableList<Series<Number, Number>> data) {
@@ -150,7 +163,7 @@ public class ErrorEllipseChart extends NumberChart {
 
         if (shouldAnimate()) {
             getPlotChildren().add(
-                    errorEllipsePlotter.plot(converter.convert(item)));
+                    errorEllipsePlotter.plot(converter.get().convert(item)));
             getPlotChildren().add(item.getNode());
             // fade in
             FadeTransition fadeIn = new FadeTransition(Duration.millis(500), item.getNode());
@@ -158,7 +171,7 @@ public class ErrorEllipseChart extends NumberChart {
             fadeIn.play();
         } else {
             getPlotChildren().add(
-                    errorEllipsePlotter.plot(converter.convert(item)));
+                    errorEllipsePlotter.plot(converter.get().convert(item)));
         }
     }
 
@@ -219,7 +232,7 @@ public class ErrorEllipseChart extends NumberChart {
         getData().stream().forEach(series -> {
             series.getData().stream().forEach(item -> {
                 getPlotChildren().add(
-                        errorEllipseFiller.plot(converter.convert(item)));
+                        errorEllipseFiller.plot(converter.get().convert(item)));
             });
         });
 
@@ -227,7 +240,7 @@ public class ErrorEllipseChart extends NumberChart {
         getData().stream().forEach(series -> {
             series.getData().stream().forEach(item -> {
                 getPlotChildren().add(
-                        errorEllipsePlotter.plot(converter.convert(item)));
+                        errorEllipsePlotter.plot(converter.get().convert(item)));
             });
         });
     }
@@ -243,7 +256,7 @@ public class ErrorEllipseChart extends NumberChart {
         if (xAxis.isAutoRanging() || yAxis.isAutoRanging()) {
             getData().stream().forEach(series -> {
                 series.getData().stream().forEach(item -> {
-                    ErrorEllipse errorEllipse = converter.convert(item);
+                    ErrorEllipse errorEllipse = converter.get().convert(item);
 
                     if (xAxis.isAutoRanging()) {
                         xData.add(errorEllipse.getMinX(getConfidenceLevel()));
