@@ -222,16 +222,15 @@ public class ColumnSelectorDialog extends Dialog {
             for (Record record : table.getItems()) {
                 series.getData().add(new Data<>(0, 0, record));
             }
+            
 
-         ErrorEllipseChart chart = new ErrorEllipseChart(converter);
-            chart.getData().add(series);
+            ErrorEllipseChartExtendedPanel ccExtendedPanel = new ErrorEllipseChartExtendedPanel();
+            ccExtendedPanel.getChart().setConverter(converter);
+            ccExtendedPanel.getChart().getData().add(series);
+            VBox.setVgrow(ccExtendedPanel.getMasterDetailPane(), Priority.ALWAYS);
 
-         ErrorEllipseChartExtendedPanel ccExtendedPanel = new ErrorEllipseChartExtendedPanel(chart);
-            VBox.setVgrow(ccExtendedPanel, Priority.ALWAYS);
 
-            ToolBar toolBar = new ErrorChartToolBar(chart, ccExtendedPanel);
-
-            Scene scene = new Scene(new VBox(toolBar, ccExtendedPanel), 1200, 800);
+            Scene scene = new Scene(ccExtendedPanel, 1200, 800);
             Stage chartStage = new Stage();
             chartStage.setScene(scene);
             chartStage.show();
