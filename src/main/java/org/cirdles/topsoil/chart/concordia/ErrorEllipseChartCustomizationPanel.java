@@ -33,6 +33,7 @@ import javafx.scene.layout.VBox;
 import org.cirdles.jfxutils.NumberField;
 import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.chart.NumberAxis;
+import org.cirdles.topsoil.chart.concordia.panels.ErrorEllipsesCustomisationPanel;
 
 /**
  *
@@ -63,45 +64,6 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
         getChildren().add(ccCustomizationPane);
     }
 
-    private static class ErrorEllipsesCustomisationPanel extends VBox {
-
-        @FXML
-        private ColorPicker colorPickerStroke;
-        @FXML
-        private CheckBox showOutlineCheckBox;
-        @FXML
-        private ColorPicker colorPickerFill;
-        @FXML
-        private Slider sliderOpacity;
-
-        public ErrorEllipsesCustomisationPanel(ErrorEllipseChart chart) {
-            super(5);
-
-            FXMLLoader loader = new FXMLLoader(ErrorEllipsesCustomisationPanel.class.getResource("errorellipsecustomizationpanel.fxml"),
-                                               ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
-            loader.setRoot(this);
-            loader.setController(this);
-
-            try {
-                loader.load();
-                //Binding everything to their property
-                showOutlineCheckBox.selectedProperty().bindBidirectional(chart.ellipseOutlineShownProperty());
-
-                colorPickerStroke.valueProperty().bindBidirectional(chart.ellipseOutlineColorProperty());
-                colorPickerStroke.disableProperty().bind(Bindings.not(showOutlineCheckBox.selectedProperty()));
-
-                colorPickerFill.valueProperty().bindBidirectional(chart.ellipseFillColorProperty());
-
-                sliderOpacity.valueProperty().bindBidirectional(chart.ellipseFillOpacityProperty());
-            } catch (IOException e) {
-                getChildren().add(new Label("There was an error loading this part of the panel."));
-                e.printStackTrace();
-            }
-
-        }
-
-    }
-
     private static class ChartCustomizationPanel extends VBox {
 
         @FXML
@@ -129,7 +91,7 @@ public class ErrorEllipseChartCustomizationPanel extends VBox {
             NumberAxis xAxis = (NumberAxis) chart.getXAxis();
             NumberAxis yAxis = (NumberAxis) chart.getYAxis();
 
-            FXMLLoader loader = new FXMLLoader(ErrorEllipsesCustomisationPanel.class.getResource("chartcustomizationpanel.fxml"),
+            FXMLLoader loader = new FXMLLoader(ChartCustomizationPanel.class.getResource("chartcustomizationpanel.fxml"),
                                                ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
             loader.setRoot(this);
             loader.setController(this);
