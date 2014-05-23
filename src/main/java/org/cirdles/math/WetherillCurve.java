@@ -36,7 +36,8 @@ public class WetherillCurve implements ParametricCurve {
 
     @Override
     public double dy_dx(double t) {
-        return LAMBDA_238.value() / LAMBDA_235.value() * pow(1 + x(t), LAMBDA_238.value() / LAMBDA_235.value() - 1);
+        return (LAMBDA_238.value() / LAMBDA_235.value())
+                * pow(1. + x(t), LAMBDA_238.value() / LAMBDA_235.value() - 1.);
     }
 
 }

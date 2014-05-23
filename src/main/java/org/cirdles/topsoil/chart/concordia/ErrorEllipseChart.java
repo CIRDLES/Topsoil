@@ -33,7 +33,10 @@ import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.cirdles.math.TeraWasserburgCurve;
+import org.cirdles.math.WetherillCurve;
 import org.cirdles.topsoil.chart.DataConverter;
+import org.cirdles.topsoil.chart.NumberAxis;
 import org.cirdles.topsoil.chart.NumberChart;
 
 /**
@@ -205,7 +208,7 @@ public class ErrorEllipseChart extends NumberChart {
         concordiaLine = new ConcordiaLine(xAxis.getLowerBound(), xAxis.getUpperBound(),
                                           yAxis.getLowerBound(), yAxis.getUpperBound());
 
-        getPlotChildren().add(concordiaLinePlotter.plot(concordiaLine));
+        getPlotChildren().add(concordiaLinePlotter.plot(new WetherillCurve()));
 
         // we have nothing to layout if no data is present
         if (getData() == null) {
@@ -281,6 +284,16 @@ public class ErrorEllipseChart extends NumberChart {
 
     public void setConfidenceLevel(double value) {
         confidenceLevel.set(value);
+    }
+    
+    @Override
+    public final NumberAxis getXAxis() {
+        return (NumberAxis) super.getXAxis();
+    }
+    
+    @Override
+    public final NumberAxis getYAxis() {
+        return (NumberAxis) super.getYAxis();
     }
 
     private static final class DefaultConverter implements DataConverter<ErrorEllipse> {

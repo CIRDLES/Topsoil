@@ -16,7 +16,7 @@
 package org.cirdles.math;
 
 import static java.lang.Math.*;            // expm1, pow
-import static org.cirdles.math.Constant.*; // LAMBDA_235, LAMBDA_238
+import static org.cirdles.math.Constant.*; // LAMBDA_235, LAMBDA_238, R238_235S
 
 /**
  *
@@ -26,21 +26,21 @@ public class TeraWasserburgCurve implements ParametricCurve {
 
     @Override
     public double x(double t) {
-        return 1 / expm1(LAMBDA_235.value() * t);
+        return 1 / expm1(LAMBDA_238.value() * t);
     }
 
     @Override
     public double y(double t) {
         return expm1(LAMBDA_235.value() * t)
-                / (LAMBDA_238.value() / LAMBDA_235.value() * expm1(LAMBDA_238.value() * t));
+                / expm1(LAMBDA_238.value() * t)
+                / R238_235S.value();
     }
 
     @Override
     public double dy_dx(double t) {
-        return LAMBDA_235.value() / LAMBDA_238.value()
-                * ((LAMBDA_238.value() * (1 + x(t)) - LAMBDA_235.value())
+        return ((LAMBDA_238.value() * (1 + x(t)) - LAMBDA_235.value())
                 * pow(1 + 1 / x(t), LAMBDA_235.value() / LAMBDA_238.value())
-                / (LAMBDA_238.value() * (1 + x(t))) - 1);
+                / (LAMBDA_238.value() * (1 + x(t))) - 1) / R238_235S.value();
     }
 
 }

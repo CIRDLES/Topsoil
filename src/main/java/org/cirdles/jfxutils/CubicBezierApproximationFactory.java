@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.jfxutils;
 
 import javafx.scene.shape.CubicCurveTo;
@@ -26,43 +25,56 @@ import org.cirdles.math.ParametricCurve;
  * @author zeringuej
  */
 public class CubicBezierApproximationFactory implements CurveApproximationFactory {
-    
+
     private final int numberOfPieces;
-    
+
     public CubicBezierApproximationFactory() {
         this(1);
     }
-    
+
     public CubicBezierApproximationFactory(int numberOfPieces) {
         if (numberOfPieces < 1) {
             throw new IllegalArgumentException("There must be at least one piece.");
         }
-        
+
         this.numberOfPieces = numberOfPieces;
     }
 
     @Override
     public Path approximate(ParametricCurve curve, double minT, double maxT) {
         Path approximation = new Path(new MoveTo(curve.x(minT), curve.y(minT)));
-        
+
         double deltaT = (maxT - minT) / numberOfPieces;
         for (int i = 0; i < numberOfPieces; i++) {
             approximation.getElements().add(new CubicBezierSegment(curve, minT + deltaT * i, minT + deltaT * (i + 1)));
         }
-        
+
         return approximation;
     }
-    
+
     private static class CubicBezierSegment extends CubicCurveTo {
+
         public CubicBezierSegment(ParametricCurve curve, double minT, double maxT) {
-            // P1 = P0 + ((t1 - t0) / 3) * B'(t0)
-            setControlX1(curve.x(minT) + (maxT - minT) / 3 * curve.dy_dx(minT));
-            setControlY1(curve.y(minT) + (maxT - minT) / 3 * curve.dy_dx(minT));
             
-            // P2 = P3 - ((t1 - t0) / 3) * B'(t1)
-            setControlX2(curve.x(maxT) - (maxT - minT) / 3 * curve.dy_dx(maxT));
-            setControlY2(curve.y(maxT) - (maxT - minT) / 3 * curve.dy_dx(maxT));
+            double segmentLength = Math.sqrt(Math.pow(curve.x(maxT) - curve.x(minT), 2)
+                    + Math.pow(curve.y(maxT) - curve.y(minT), 2));
+            double angle1 = Math.atan(curve.dy_dx(minT));
+            double angle2 = Math.atan(curve.dy_dx(maxT));
             
+            boolean tIncreasesWithX = curve.x(minT) <= curve.x(maxT);
+            
+            if (tIncreasesWithX) {
+                angle2 += Math.PI;
+            } else {
+                angle1 += Math.PI;
+            }
+
+            setControlX1(curve.x(minT) + segmentLength / 3 * Math.cos(angle1));
+            setControlY1(curve.y(minT) + segmentLength / 3 * Math.sin(angle1));
+
+            setControlX2(curve.x(maxT) + segmentLength / 3 * Math.cos(angle2));
+            setControlY2(curve.y(maxT) + segmentLength / 3 * Math.sin(angle2));
+
             setX(curve.x(maxT));
             setY(curve.y(maxT));
         }
