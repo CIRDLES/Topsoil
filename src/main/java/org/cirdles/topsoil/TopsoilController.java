@@ -43,14 +43,18 @@ public class TopsoilController implements Initializable {
     @FXML
     private Node root;
     @FXML
-    private TopsoilTable dataTable;
+    private TSVTable dataTable;
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        dataTable.setSavePath(Topsoil.LAST_TABLE_PATH);
+        dataTable.load();
     }
 
     @FXML
@@ -82,15 +86,15 @@ public class TopsoilController implements Initializable {
             new ColumnSelectorDialog(dataTable).show();
         }
     }
-    
+
     @FXML
-    private void pasteFromClipboard(ActionEvent event){
-        Tools.pastFromClipboard(dataTable);
+    private void pasteFromClipboard(ActionEvent event) {
+        dataTable.pasteFromClipboard();
     }
-    
+
     @FXML
-    private void emptyTable(ActionEvent event){
-        Tools.clearTable(dataTable);
-        Tools.saveTable(dataTable);
+    private void emptyTable(ActionEvent event) {
+        dataTable.clear();
+        dataTable.save();
     }
 }

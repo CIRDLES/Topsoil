@@ -5,6 +5,7 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.cirdles.topsoil.*?>
 
 <VBox fx:id="root"
       prefHeight="800"
@@ -29,14 +30,14 @@
                     onAction="#emptyTable"/> 
         </items>
     </ToolBar>
-    <org.cirdles.topsoil.TopsoilTable fx:id="dataTable"
-                                      VBox.vgrow="ALWAYS">
+    <TSVTable fx:id="dataTable"
+              VBox.vgrow="ALWAYS">
         <placeholder>
             <VBox alignment="CENTER" >
                 <javafx.scene.text.Text text="%emptyTableMessage"/>
                 <Button text="%pasteMessage"
-                    onAction="#pasteFromClipboard"/> 
+                        onAction="#pasteFromClipboard"/> 
             </VBox>
         </placeholder>
-    </org.cirdles.topsoil.TopsoilTable>
+    </TSVTable>
 </VBox>

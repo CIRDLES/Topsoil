@@ -41,10 +41,10 @@ public class TopsoilMainWindow extends VBox {
     /**
      * The table that contain data
      */
-    TopsoilTable dataTable;
+    TSVTable dataTable;
 
     public TopsoilMainWindow(Stage primaryStage) {
-        dataTable = new TopsoilTable();
+        dataTable = new TSVTable();
         VBox.setVgrow(dataTable, Priority.ALWAYS);
         
         TopsoilTableToolbar toolbar = new TopsoilTableToolbar(dataTable);

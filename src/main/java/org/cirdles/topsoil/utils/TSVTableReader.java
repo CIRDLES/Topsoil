@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.table.Field;
 import org.cirdles.topsoil.table.NumberField;
 import org.cirdles.topsoil.table.Record;
@@ -44,11 +43,12 @@ public class TSVTableReader extends TableReader<Record> {
     @Override
     public void read(String src, TableView<Record> dest) {
         // not much to do for src = null or ""
-        if (src == null || src.equals("")) {
+        if (src == null || src.trim().equals("")) {
             return;
         }
 
-        Tools.clearTable(dest);
+        dest.getItems().clear();
+        dest.getColumns().clear();
 
         CSVReader tsvReader = new CSVReader(new StringReader(src), '\t');
         List<String[]> lines;
