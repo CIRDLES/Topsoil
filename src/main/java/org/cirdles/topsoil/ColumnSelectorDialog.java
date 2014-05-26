@@ -15,21 +15,25 @@
  */
 package org.cirdles.topsoil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.ColumnConstraints;
@@ -38,6 +42,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipseChartExtendedPanel;
 import org.cirdles.topsoil.chart.concordia.RecordToErrorEllipseConverter;
 import org.cirdles.topsoil.table.Field;
@@ -58,7 +63,6 @@ public class ColumnSelectorDialog extends Dialog {
         ERROR_SIZES.put(1., "1\u03c3");
         ERROR_SIZES.put(2., "2\u03c3");
     }
-
 
     private static final Map<ExpressionType, String> EXPRESSION_TYPES = new HashMap<ExpressionType, String>();
 
@@ -82,25 +86,28 @@ public class ColumnSelectorDialog extends Dialog {
      */
     private class ColumnSelectorView extends GridPane {
 
-        private static final String X_LABEL_TEXT = "x";
-        private static final String SIGMA_X_LABEL_TEXT = "x-error";
-        private static final String Y_LABEL_TEXT = "y";
-        private static final String SIGMA_Y_LABEL_TEXT = "y-error";
-        private static final String RHO_LABEL_TEXT = "\u03c1";
+        @FXML
+        private ChoiceBox<Field<Number>> choiceBoxX;
 
-        private final ChoiceBox<Field<Number>> choiceBoxX;
+        @FXML
+        private ChoiceBox<Field<Number>> choiceBoxSigmaX;
+        @FXML
+        private ChoiceBox<Double> choiceBoxErrorSizeSigmaX;
+        @FXML
+        private ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaX;
 
-        private final ChoiceBox<Field<Number>> choiceBoxSigmaX;
-        private final ChoiceBox<Double> choiceBoxErrorSizeSigmaX;
-        private final ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaX;
+        @FXML
+        private ChoiceBox<Field<Number>> choiceBoxY;
 
-        private final ChoiceBox<Field<Number>> choiceBoxY;
+        @FXML
+        private ChoiceBox<Field<Number>> choiceBoxSigmaY;
+        @FXML
+        private ChoiceBox<Double> choiceBoxErrorSizeSigmaY;
+        @FXML
+        private ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaY;
 
-        private final ChoiceBox<Field<Number>> choiceBoxSigmaY;
-        private final ChoiceBox<Double> choiceBoxErrorSizeSigmaY;
-        private final ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaY;
-
-        private final ChoiceBox<Field<Number>> choiceBoxRho;
+        @FXML
+        private ChoiceBox<Field<Number>> choiceBoxRho;
 
         public ColumnSelectorView(TableView<Record> table) {
             setAlignment(Pos.CENTER);
@@ -123,30 +130,35 @@ public class ColumnSelectorDialog extends Dialog {
                 }
             }
 
-            choiceBoxX = createChoiceBox(fields, 0);
+            FXMLLoader loader = new FXMLLoader(ColumnSelectorView.class.getResource("columndialogselector.fxml"),
+                                               ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
 
-            choiceBoxSigmaX = createChoiceBox(fields, 1);
-            choiceBoxErrorSizeSigmaX = createChoiceBox(ERROR_SIZES, 0);
-            choiceBoxExpressionTypeSigmaX = createChoiceBox(EXPRESSION_TYPES, 0);
+            loader.setRoot(this);
+            loader.setController(this);
+            loader.setBuilderFactory(new TopsoilBuilderFactory());
 
-            choiceBoxY = createChoiceBox(fields, 2);
+            try {
+                loader.load();
 
-            choiceBoxSigmaY = createChoiceBox(fields, 3);
-            choiceBoxErrorSizeSigmaY = createChoiceBox(ERROR_SIZES, 0);
-            choiceBoxExpressionTypeSigmaY = createChoiceBox(EXPRESSION_TYPES, 0);
+                fillChoiceBox(choiceBoxX, fields, 0);
 
-            choiceBoxRho = createChoiceBox(fields, 4);
+                fillChoiceBox(choiceBoxSigmaX, fields, 1);
+                fillChoiceBox(choiceBoxErrorSizeSigmaX, ERROR_SIZES, 0);
+                fillChoiceBox(choiceBoxExpressionTypeSigmaX, EXPRESSION_TYPES, 0);
 
-            linkChoiceBoxesSequentially(choiceBoxX, choiceBoxSigmaX);
-            linkChoiceBoxesSequentially(choiceBoxY, choiceBoxSigmaY);
+                fillChoiceBox(choiceBoxY, fields, 2);
 
-            addRow(0, createLabelForNode(choiceBoxX, X_LABEL_TEXT), choiceBoxX);
-            addRow(1, createLabelForNode(choiceBoxSigmaX, SIGMA_X_LABEL_TEXT), choiceBoxSigmaX,
-                   choiceBoxErrorSizeSigmaX, choiceBoxExpressionTypeSigmaX);
-            addRow(2, createLabelForNode(choiceBoxY, Y_LABEL_TEXT), choiceBoxY);
-            addRow(3, createLabelForNode(choiceBoxSigmaY, SIGMA_Y_LABEL_TEXT), choiceBoxSigmaY,
-                   choiceBoxErrorSizeSigmaY, choiceBoxExpressionTypeSigmaY);
-            addRow(4, createLabelForNode(choiceBoxRho, RHO_LABEL_TEXT), choiceBoxRho);
+                fillChoiceBox(choiceBoxSigmaY, fields, 3);
+                fillChoiceBox(choiceBoxErrorSizeSigmaY, ERROR_SIZES, 0);
+                fillChoiceBox(choiceBoxExpressionTypeSigmaY, EXPRESSION_TYPES, 0);
+
+                fillChoiceBox(choiceBoxRho, fields, 4);
+
+                linkChoiceBoxesSequentially(choiceBoxX, choiceBoxSigmaX);
+                linkChoiceBoxesSequentially(choiceBoxY, choiceBoxSigmaY);
+            } catch (IOException ex) {
+                Logger.getLogger(ColumnSelectorDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         public Field<Number> getXSelection() {
@@ -156,11 +168,11 @@ public class ColumnSelectorDialog extends Dialog {
         public Field<Number> getSigmaXSelection() {
             return getSelection(choiceBoxSigmaX);
         }
-        
+
         public double getSigmaXErrorSize() {
             return getSelection(choiceBoxErrorSizeSigmaX);
         }
-        
+
         public ExpressionType getSigmaXExpressionType() {
             return getSelection(choiceBoxExpressionTypeSigmaX);
         }
@@ -172,11 +184,11 @@ public class ColumnSelectorDialog extends Dialog {
         public Field<Number> getSigmaYSelection() {
             return getSelection(choiceBoxSigmaY);
         }
-        
+
         public double getSigmaYErrorSize() {
             return getSelection(choiceBoxErrorSizeSigmaY);
         }
-        
+
         public ExpressionType getSigmaYExpressionType() {
             return getSelection(choiceBoxExpressionTypeSigmaY);
         }
@@ -208,7 +220,7 @@ public class ColumnSelectorDialog extends Dialog {
                     = new RecordToErrorEllipseConverter(columnSelector.getXSelection(), columnSelector.getSigmaXSelection(),
                                                         columnSelector.getYSelection(), columnSelector.getSigmaYSelection(),
                                                         columnSelector.getRhoSelection());
-            
+
             converter.setErrorSizeSigmaX(columnSelector.getSigmaXErrorSize());
             converter.setExpressionTypeSigmaX(columnSelector.getSigmaXExpressionType());
             converter.setErrorSizeSigmaY(columnSelector.getSigmaYErrorSize());
@@ -219,13 +231,11 @@ public class ColumnSelectorDialog extends Dialog {
             for (Record record : table.getItems()) {
                 series.getData().add(new Data<>(0, 0, record));
             }
-            
 
             ErrorEllipseChartExtendedPanel ccExtendedPanel = new ErrorEllipseChartExtendedPanel();
             ccExtendedPanel.getChart().setConverter(converter);
             ccExtendedPanel.getChart().getData().add(series);
             VBox.setVgrow(ccExtendedPanel.getMasterDetailPane(), Priority.ALWAYS);
-
 
             Scene scene = new Scene(ccExtendedPanel, 1200, 800);
             Stage chartStage = new Stage();
@@ -240,8 +250,7 @@ public class ColumnSelectorDialog extends Dialog {
     /**
      * Create a <code>ChoiceBox</code> with the right parameters
      */
-    private static ChoiceBox<Field<Number>> createChoiceBox(List<Field<Number>> fields, int initialSelection) {
-        ChoiceBox<Field<Number>> choiceBox = new ChoiceBox<>();
+    private static void fillChoiceBox(ChoiceBox<Field<Number>> choiceBox, List<Field<Number>> fields, int initialSelection) {
         choiceBox.getItems().addAll(fields);
         choiceBox.getSelectionModel().select(initialSelection);
         choiceBox.setMinWidth(200);
@@ -267,12 +276,9 @@ public class ColumnSelectorDialog extends Dialog {
                 return null;
             }
         });
-
-        return choiceBox;
     }
 
-    private static <T> ChoiceBox<T> createChoiceBox(Map<T, String> contents, int initialSelection) {
-        ChoiceBox<T> choiceBox = new ChoiceBox<>();
+    private static <T> void fillChoiceBox(ChoiceBox<T> choiceBox, Map<T, String> contents, int initialSelection) {
         choiceBox.getItems().addAll(contents.keySet());
         choiceBox.setMinWidth(50);
         choiceBox.setMaxWidth(50);
@@ -291,7 +297,6 @@ public class ColumnSelectorDialog extends Dialog {
             }
         });
 
-        return choiceBox;
     }
 
     /**
@@ -316,18 +321,4 @@ public class ColumnSelectorDialog extends Dialog {
         });
     }
 
-    /**
-     * Returns a new <code>Node</code> containing the argument <code>Node</code> and a new <code>Label</code> with the
-     * given text.
-     *
-     * @param node
-     * @param text
-     * @return
-     */
-    private static Label createLabelForNode(Node node, String text) {
-        Label label = new Label(text);
-        label.setLabelFor(node);
-
-        return label;
-    }
 }
