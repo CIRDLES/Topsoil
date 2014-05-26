@@ -20,17 +20,12 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableView;
-import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import static org.cirdles.topsoil.Topsoil.LAST_TABLE_PATH;
 import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.utils.TSVTableReader;
-import org.cirdles.topsoil.utils.TSVTableWriter;
 import org.cirdles.topsoil.utils.TableReader;
-import org.cirdles.topsoil.utils.TableWriter;
 
 /**
  * A table containing data used to generate charts. Implements some shortcut.

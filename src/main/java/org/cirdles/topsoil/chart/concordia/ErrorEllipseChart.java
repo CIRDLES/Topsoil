@@ -33,7 +33,6 @@ import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import org.cirdles.math.TeraWasserburgCurve;
 import org.cirdles.math.WetherillCurve;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.NumberAxis;
