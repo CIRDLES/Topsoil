@@ -73,8 +73,6 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
                                chart.getXAxis().getLowerBound(), chart.getYAxis().getLowerBound(),
                                chart.getXAxis().getUpperBound(), chart.getYAxis().getUpperBound());
 
-        System.out.println(minT + " " + maxT);
-
         Group lineAndTicks = new Group();
         lineAndTicks.visibleProperty().bind(chart.concordiaLineShownProperty());
 
