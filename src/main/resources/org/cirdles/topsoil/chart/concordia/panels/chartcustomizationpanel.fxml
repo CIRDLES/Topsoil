@@ -19,6 +19,11 @@
         </HBox>
         <LabelUsePrefSize text="%tickerNodeSubsectionTitle" styleClass="title-subsubpanel"/>
         <GridPane hgap="10" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints halignment="CENTER" />
+            </columnConstraints>
+            
             <children>
                 <!-- Row 0 -->
                 <LabelUsePrefSize text="%anchorTickLabel" fx:id="anchorTickLabel" 
