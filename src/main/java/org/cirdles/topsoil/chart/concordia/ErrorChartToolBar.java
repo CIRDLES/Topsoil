@@ -17,23 +17,25 @@ package org.cirdles.topsoil.chart.concordia;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
-import org.cirdles.jfxutils.BoundChoiceBox;
 import org.cirdles.jfxutils.NodeToSVGConverter;
+import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.controlsfx.control.MasterDetailPane;
 
 /**
@@ -43,78 +45,97 @@ import org.controlsfx.control.MasterDetailPane;
  */
 public class ErrorChartToolBar extends ToolBar {
 
-    private static final String LABEL_LOCKTOQ1 = "Lock down to Q1";
-    private static final String LABEL_RESETVIEW = "Reset view";
+    private ErrorEllipseChart chart;
+    private MasterDetailPane customPanelShower;
 
-    public ErrorChartToolBar(ErrorEllipseChart chart, MasterDetailPane customPanelShower) {
-        //Adding the buttons
-        Button exportToSVG = new Button("Export to SVG");
-        exportToSVG.setOnAction((ActionEvent event) -> {
-            //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
-            NodeToSVGConverter converter = new NodeToSVGConverter();
+    @FXML
+    private Button customizationButton;
+    @FXML
+    private ChoiceBox confidenceLevel;
+    @FXML
+    private CheckBox lockToQ1;
 
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Export to SVG");
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
-            File file = fileChooser.showSaveDialog(getScene().getWindow());
+    private final ResourceBundle bundle;
 
-            converter.convert(chart, file);
-        });
+    public ErrorChartToolBar(ErrorEllipseChart chart_arg, MasterDetailPane customPanelShower_args) {
 
-        Button customizationButton = new Button("Hide customization panel");
-        customizationButton.setOnAction((ActionEvent event) -> {
-            if (customPanelShower.showDetailNodeProperty().get() == true) {
-                customPanelShower.showDetailNodeProperty().set(false);
-                customizationButton.setText("Show customization panel");
-            } else {
-                customPanelShower.showDetailNodeProperty().set(true);
-                customizationButton.setText("Hide customization panel");
-            }
-        });
+        chart = chart_arg;
+        customPanelShower = customPanelShower_args;
+        bundle = ResourceBundle.getBundle("org.cirdles.topsoil.Resources");
 
-        ChoiceBox<Number> confidenceLevel = new BoundChoiceBox<>(chart.confidenceLevel());
-        Map<Number, String> confidenceLevels = new HashMap<>();
-        confidenceLevels.put(1, "1\u03c3");
-        confidenceLevels.put(2, "2\u03c3");
-        confidenceLevels.put(1.96, "95%");
-        confidenceLevel.getItems().addAll(confidenceLevels.keySet());
-        confidenceLevel.getSelectionModel().select(1);
-        confidenceLevel.setConverter(new StringConverter<Number>() {
+        FXMLLoader loader = new FXMLLoader(ErrorChartToolBar.class.getResource("errorellipsetoolbar.fxml"),
+                                           bundle);
+        loader.setRoot(this);
+        loader.setController(this);
+        loader.setBuilderFactory(new TopsoilBuilderFactory());
 
-            @Override
-            public String toString(Number object) {
-                return confidenceLevels.get(object);
-            }
+        try {
+            loader.load();
 
-            /*
-             * Unused by ChoiceBox
-             */
-            @Override
-            public Number fromString(String string) {
-                return null;
-            }
-        });
+            chart.confidenceLevel().bind(confidenceLevel.valueProperty());
+            Map<Number, String> confidenceLevels = new HashMap<>();
+            confidenceLevels.put(1, "1\u03c3");
+            confidenceLevels.put(2, "2\u03c3");
+            confidenceLevels.put(1.96, "95%");
+            confidenceLevel.getItems().addAll(confidenceLevels.keySet());
+            confidenceLevel.getSelectionModel().select(1);
+            confidenceLevel.setConverter(new StringConverter<Number>() {
 
-        Label label_locktoq1 = new Label(LABEL_LOCKTOQ1);
+                @Override
+                public String toString(Number object) {
+                    return confidenceLevels.get(object);
+                }
 
-        CheckBox locktoq1 = new CheckBox();
-        locktoq1.selectedProperty().bindBidirectional(chart.lockToQ1Property());
-        
-        Button resetViewButton = new Button(LABEL_RESETVIEW);
-        resetViewButton.setOnAction((ActionEvent e) -> {
-            chart.getXAxis().autoRangingProperty().set(true);
-            chart.getYAxis().autoRangingProperty().set(true);
-        });
+                /*
+                 * Unused by ChoiceBox
+                 */
+                @Override
+                public Number fromString(String string) {
+                    return null;
+                }
+            });
 
-        getItems().add(exportToSVG);
-        getItems().add(confidenceLevel);
-        getItems().add(label_locktoq1);
-        getItems().add(locktoq1);
-        getItems().add(resetViewButton);
-        getItems().add(customizationButton);
+            chart.concordiaLineShownProperty().bind(lockToQ1.selectedProperty());
+        } catch (IOException ex) {
+            Logger.getLogger(ErrorChartToolBar.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
+    @FXML
+    private void exportToSVG() {
+        //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
+        NodeToSVGConverter converter = new NodeToSVGConverter();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export to SVG");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
+        File file = fileChooser.showSaveDialog(getScene().getWindow());
+
+        converter.convert(chart, file);
+    }
+
+    @FXML
+    private void switchCustomPanel() {
+        if (customPanelShower.showDetailNodeProperty().get() == true) {
+            customPanelShower.showDetailNodeProperty().set(false);
+            customizationButton.setText(bundle.getString("showCustomizationPanel"));
+        } else {
+            customPanelShower.showDetailNodeProperty().set(true);
+            customizationButton.setText(bundle.getString("hideCustomizationPanel"));
+        }
+    }
+
+    @FXML
+    private void resetView() {
+        chart.getXAxis().autoRangingProperty().set(true);
+        chart.getYAxis().autoRangingProperty().set(true);
+    }
+
+    /*
+     * DEVELOPPER TOOLS
+     */
     private void turnNodeToText(Node n, PrintWriter pw, String prefix) {
         //pw.println(prefix+"--");
         pw.println(prefix + n.getClass().getName());
