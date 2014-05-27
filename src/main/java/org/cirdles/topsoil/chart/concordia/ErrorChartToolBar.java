@@ -76,7 +76,7 @@ public class ErrorChartToolBar extends ToolBar {
             Map<Number, String> confidenceLevels = new HashMap<>();
             confidenceLevels.put(1, "1\u03c3");
             confidenceLevels.put(2, "2\u03c3");
-            confidenceLevels.put(1.96, "95%");
+            confidenceLevels.put(2.4477, "95%");
             confidenceLevel.getItems().addAll(confidenceLevels.keySet());
             confidenceLevel.getSelectionModel().select(1);
             confidenceLevel.setConverter(new StringConverter<Number>() {
