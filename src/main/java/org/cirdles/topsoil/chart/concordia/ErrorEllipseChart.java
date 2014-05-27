@@ -24,6 +24,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -33,6 +34,8 @@ import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.cirdles.math.ParametricCurve;
+import org.cirdles.math.TeraWasserburgCurve;
 import org.cirdles.math.WetherillCurve;
 import org.cirdles.topsoil.chart.DataConverter;
 import org.cirdles.topsoil.chart.NumberAxis;
@@ -48,35 +51,63 @@ import org.cirdles.topsoil.chart.NumberChart;
  * @see NumberChart
  */
 public class ErrorEllipseChart extends NumberChart {
-    
+
     public static final Color ellipseOutlineColorDefault = Color.BLACK;
     public static final Color ellipseFillColorDefault = Color.RED;
     public static final double ellipseFillOpacityDefault = 0.3;
     public static final boolean ellipseOutlineShownDefault = true;
-    
-    public static Boolean concordiaLineShownDefault = true;
-    
+
     public static Double axisXAnchorTickDefault = 0.;
     public static Double axisYAnchorTickDefault = 0.;
-    
-    public static Double axisXTickUnitDefault  = 0.5;
+
+    public static Double axisXTickUnitDefault = 0.5;
     public static Double axisYTickUnitDefault = 1.;
-    
+
     public static Boolean axisAutoTickProperty = true;
 
-    private final ObjectProperty<DataConverter<ErrorEllipse> > converter;
-    
-    public DataConverter<ErrorEllipse> getConverter(){
+    private final ObjectProperty<ConcordiaLineType> concordiaLineType = new ObjectPropertyBase<ConcordiaLineType>(ConcordiaLineType.NONE) {
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "concordiaLineType";
+        }
+
+        @Override
+        protected void invalidated() {
+            layoutPlotChildren();
+        }
+    };
+
+    public ObjectProperty<ConcordiaLineType> concordiaLineTypeProperty() {
+        return concordiaLineType;
+    }
+
+    public ConcordiaLineType getConcordiaLineType() {
+        return concordiaLineType.get();
+    }
+
+    public void setConcordiaLineType(ConcordiaLineType type) {
+        concordiaLineType.set(type);
+    }
+
+    private final ObjectProperty<DataConverter<ErrorEllipse>> converter;
+
+    public DataConverter<ErrorEllipse> getConverter() {
         return converter.get();
     }
-    
-    public void setConverter(DataConverter<ErrorEllipse> newConverter){
+
+    public void setConverter(DataConverter<ErrorEllipse> newConverter) {
         converter.set(newConverter);
     }
-    
-    public ObjectProperty<DataConverter<ErrorEllipse> > converterProperty(){
+
+    public ObjectProperty<DataConverter<ErrorEllipse>> converterProperty() {
         return converter;
-    } 
+    }
 
     private final ErrorEllipsePlotter errorEllipsePlotter;
     private final ErrorEllipseFiller errorEllipseFiller;
@@ -101,33 +132,31 @@ public class ErrorEllipseChart extends NumberChart {
             layoutPlotChildren();
         }
     };
-    
+
     ObjectProperty<Color> ellipseOutlineColorProperty = new SimpleObjectProperty<>(ellipseOutlineColorDefault);
+
     public ObjectProperty<Color> ellipseOutlineColorProperty() {
         return ellipseOutlineColorProperty;
     }
 
     ObjectProperty<Color> ellipseFillColorProperty = new SimpleObjectProperty<>(ellipseFillColorDefault);
+
     public ObjectProperty<Color> ellipseFillColorProperty() {
         return ellipseFillColorProperty;
     }
 
     DoubleProperty ellipseFillOpacityProperty = new SimpleDoubleProperty(ellipseFillOpacityDefault);
+
     public DoubleProperty ellipseFillOpacityProperty() {
         return ellipseFillOpacityProperty;
     }
 
     BooleanProperty ellipseOutlineShownProperty = new SimpleBooleanProperty(ellipseOutlineShownDefault);
+
     public BooleanProperty ellipseOutlineShownProperty() {
         return ellipseOutlineShownProperty;
     }
 
-    
-    BooleanProperty concordiaLineShownProperty = new SimpleBooleanProperty(concordiaLineShownDefault);
-    public BooleanProperty concordiaLineShownProperty() {
-        return concordiaLineShownProperty;
-    }
-   
     public ErrorEllipseChart() {
         this(new DefaultConverter());
     }
@@ -141,7 +170,6 @@ public class ErrorEllipseChart extends NumberChart {
         getXAxis().setLabel("\u00B2\u2070\u2077Pb/\u00B2\u00B3\u2075U"); // "207Pb/235U"
         getYAxis().setAnimated(false);
         getYAxis().setLabel("\u00B2\u2070\u2076Pb/\u00B2\u00B3\u2078U"); // "206Pb/238U"
-
 
         errorEllipsePlotter = new ErrorEllipsePlotter(this);
         errorEllipseFiller = new ErrorEllipseFiller(this);
@@ -217,10 +245,13 @@ public class ErrorEllipseChart extends NumberChart {
     protected void layoutPlotChildren() {
         getPlotChildren().clear();
 
-        concordiaLine = new ConcordiaLine(xAxis.getLowerBound(), xAxis.getUpperBound(),
-                                          yAxis.getLowerBound(), yAxis.getUpperBound());
-
-        getPlotChildren().add(concordiaLinePlotter.plot(new WetherillCurve()));
+        if (getConcordiaLineType() != ConcordiaLineType.NONE) {
+            ParametricCurve curve = getConcordiaLineType() == ConcordiaLineType.WETHERILL
+                                    ? new WetherillCurve()
+                                    : new TeraWasserburgCurve();
+            
+            getPlotChildren().add(concordiaLinePlotter.plot(curve));
+        }
 
         // we have nothing to layout if no data is present
         if (getData() == null) {
@@ -297,12 +328,12 @@ public class ErrorEllipseChart extends NumberChart {
     public void setConfidenceLevel(double value) {
         confidenceLevel.set(value);
     }
-    
+
     @Override
     public final NumberAxis getXAxis() {
         return (NumberAxis) super.getXAxis();
     }
-    
+
     @Override
     public final NumberAxis getYAxis() {
         return (NumberAxis) super.getYAxis();

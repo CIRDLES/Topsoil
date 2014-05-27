@@ -94,8 +94,6 @@ public class ErrorChartToolBar extends ToolBar {
                     return null;
                 }
             });
-
-            chart.concordiaLineShownProperty().bind(lockToQ1.selectedProperty());
         } catch (IOException ex) {
             Logger.getLogger(ErrorChartToolBar.class.getName()).log(Level.SEVERE, null, ex);
         }
