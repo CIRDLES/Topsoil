@@ -74,7 +74,6 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
                                chart.getXAxis().getUpperBound(), chart.getYAxis().getUpperBound());
 
         Group lineAndTicks = new Group();
-        lineAndTicks.visibleProperty().bind(chart.concordiaLineShownProperty());
 
         Path line = curveFactory.approximate(concordiaLine, minT, maxT);
         line.getStyleClass().add("concordia-line");
@@ -95,6 +94,7 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
             }
         }
 
+        System.out.println(line);
         lineAndTicks.getChildren().add(line);
 
         // Plot the tick marks (circles) and labels.
@@ -145,8 +145,8 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
                              findTInterceptForY(curve, maxY))
                 .stream()
                 .filter(value -> {
-                    return curve.x(value) > minX - 1e-2 && curve.x(value) < maxX + 1e-2
-                    && curve.y(value) > minY - 1e-2 && curve.y(value) < maxY + 1e-2;
+                    return curve.x(value) > minX - 1e-10 && curve.x(value) < maxX + 1e-10
+                    && curve.y(value) > minY - 1e-10 && curve.y(value) < maxY + 1e-10;
                 })
                 .reduce(Double.MAX_VALUE, Math::min);
     }
@@ -158,8 +158,8 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
                              findTInterceptForY(curve, maxY))
                 .stream()
                 .filter(value -> {
-                    return curve.x(value) > minX - 1e-2 && curve.x(value) < maxX + 1e-2
-                    && curve.y(value) > minY - 1e-2 && curve.y(value) < maxY + 1e-2;
+                    return curve.x(value) > minX - 1e-10 && curve.x(value) < maxX + 1e-10
+                    && curve.y(value) > minY - 1e-10 && curve.y(value) < maxY + 1e-10;
                 })
                 .reduce(Double.MIN_VALUE, Math::max);
     }
