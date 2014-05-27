@@ -30,6 +30,7 @@ import javafx.scene.text.Text;
 import org.cirdles.jfxutils.CubicBezierApproximationFactory;
 import org.cirdles.jfxutils.CurveApproximationFactory;
 import org.cirdles.math.ParametricCurve;
+import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.chart.Plotter;
 import org.cirdles.topsoil.chart.TickGenerator;
 
@@ -94,7 +95,6 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
             }
         }
 
-        System.out.println(line);
         lineAndTicks.getChildren().add(line);
 
         // Plot the tick marks (circles) and labels.
@@ -102,7 +102,7 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
             Circle circle = new Circle(mapXToDisplay(concordiaLine.x(tick.doubleValue())),
                                        mapYToDisplay(concordiaLine.y(tick.doubleValue())),
                                        5);
-            Text label = new Text(String.format("%.2f", tick.doubleValue() / 1000000));
+            Text label = new Text(Tools.DYNAMIC_STRING_CONVERTER.toString(tick.doubleValue() / 1000000));
             label.setX(circle.getCenterX() - label.getBoundsInLocal().getWidth() - 10);
             label.setY(circle.getCenterY());
 
