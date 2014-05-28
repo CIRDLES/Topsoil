@@ -91,14 +91,14 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
         autoTickXCheckBox.selectedProperty().bindBidirectional((chart.getXAxis()).getTickGenerator().autoTickingProperty());
         autoTickYCheckBox.selectedProperty().bindBidirectional((chart.getYAxis()).getTickGenerator().autoTickingProperty());
 
-        tickXnf.setTargetProperty((chart.getXAxis()).getTickGenerator().anchorTickProperty(), xRange);
+        tickXnf.setTarget((chart.getXAxis()).getTickGenerator().anchorTickProperty());
         tickXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-        tickYnf.setTargetProperty((chart.getYAxis()).getTickGenerator().anchorTickProperty(), yRange);
+        tickYnf.setTarget((chart.getYAxis()).getTickGenerator().anchorTickProperty());
         tickYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
-        tickUnitXnf.setTargetProperty((chart.getXAxis()).getTickGenerator().tickUnitProperty(), xRange);
+        tickUnitXnf.setTarget((chart.getXAxis()).getTickGenerator().tickUnitProperty());
         tickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-        tickUnitYnf.setTargetProperty((chart.getYAxis()).getTickGenerator().tickUnitProperty(), yRange);
+        tickUnitYnf.setTarget((chart.getYAxis()).getTickGenerator().tickUnitProperty());
         tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
         tickUnitLabel.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(),

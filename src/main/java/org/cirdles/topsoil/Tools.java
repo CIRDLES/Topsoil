@@ -48,6 +48,19 @@ public class Tools {
             return null;
         }
     };
+    
+    public static final StringConverter<Double> DYNAMIC_STRING_DOUBLE_CONVERTER = new StringConverter<Double>() {
+
+        @Override
+        public String toString(Double object) {
+            return String.format("%.10f", object).replaceFirst("\\.?0+$", "");
+        }
+
+        @Override
+        public Double fromString(String string) {
+            return Double.valueOf(string);
+        }
+    };
 
     /**
      * Prompts the user for a yes or no response with a custom message. If the user selects yes or no, the callback
