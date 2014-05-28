@@ -32,6 +32,8 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.util.StringConverter;
 import javafx.scene.chart.XYChart;
+import org.cirdles.topsoil.Tools;
+import org.controlsfx.control.spreadsheet.StringConverterWithFormat;
 
 /**
  * <p>A <code>XYChart</code>, supporting to be moved by drag and drop, in which only numbers are accepted.</p>
@@ -53,9 +55,11 @@ public abstract class NumberChart extends XYChart<Number, Number> {
 
         xAxis = (NumberAxis) getXAxis();
         xAxis.setForceZeroInRange(false);
+        xAxis.setTickLabelFormatter(Tools.DYNAMIC_STRING_CONVERTER);
 
         yAxis = (NumberAxis) getYAxis();
         yAxis.setForceZeroInRange(false);
+        yAxis.setTickLabelFormatter(Tools.DYNAMIC_STRING_CONVERTER);
 
         dragSelect = new Rectangle();
         dragSelect.getStyleClass().add("drag-select");

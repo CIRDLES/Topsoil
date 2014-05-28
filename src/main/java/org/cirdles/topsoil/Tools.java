@@ -20,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.Region;
+import javafx.util.StringConverter;
 import static org.cirdles.topsoil.Topsoil.LAST_TABLE_PATH;
 import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.utils.TSVTableReader;
@@ -34,6 +35,19 @@ import org.controlsfx.dialog.Dialogs;
  * Shortcut tools to be used anywhere in the program.
  */
 public class Tools {
+
+    public static final StringConverter<Number> DYNAMIC_STRING_CONVERTER = new StringConverter<Number>() {
+
+        @Override
+        public String toString(Number object) {
+            return String.format("%.10f", object.doubleValue()).replaceFirst("\\.?0+$", "");
+        }
+
+        @Override
+        public Number fromString(String string) {
+            return null;
+        }
+    };
 
     /**
      * Prompts the user for a yes or no response with a custom message. If the user selects yes or no, the callback
@@ -59,8 +73,8 @@ public class Tools {
         label.setMinWidth(Region.USE_PREF_SIZE);
         return label;
     }
-    
-    public static void pasteFromClipboard(TableView<Record> dataTable){
+
+    public static void pasteFromClipboard(TableView<Record> dataTable) {
         Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
             TableReader tableReader = new TSVTableReader(response);
             tableReader.read(Clipboard.getSystemClipboard().getString(), dataTable);
@@ -68,17 +82,17 @@ public class Tools {
             saveTable(dataTable);
         });
     }
-    
-    public static void saveTable(TableView<Record> dataTable){
-        if(!dataTable.getItems().isEmpty()){
+
+    public static void saveTable(TableView<Record> dataTable) {
+        if (!dataTable.getItems().isEmpty()) {
             TableWriter<Record> tableWriter = new TSVTableWriter(true);
             tableWriter.write(dataTable, LAST_TABLE_PATH);
         } else {
-           LAST_TABLE_PATH.toFile().delete();
+            LAST_TABLE_PATH.toFile().delete();
         }
     }
-    
-    public static void clearTable(TableView<Record> dataTable){
+
+    public static void clearTable(TableView<Record> dataTable) {
         dataTable.getItems().clear();
         dataTable.getColumns().clear();
     }
