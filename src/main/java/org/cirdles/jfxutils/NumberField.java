@@ -13,50 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.jfxutils;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
+import org.cirdles.topsoil.Tools;
 
 /**
  *
  * @author pfif
  */
 public class NumberField extends TextField {
+
     StringConverter<Number> converter;
     Property<Number> target;
-    
-    
-    public NumberField(StringConverter<Number> converter_arg){
+
+    public NumberField() {
+        converter = Tools.DYNAMIC_STRING_CONVERTER;
+    }
+
+    public NumberField(StringConverter<Number> converter_arg) {
         converter = converter_arg;
     }
-    
-    public NumberField(Property<Number> targetProperty, StringConverter<Number> converter_arg){
+
+    public NumberField(Property<Number> targetProperty, StringConverter<Number> converter_arg) {
         converter = converter_arg;
         target = targetProperty;
         bindTargetThroughConverter();
     }
-    
-    private void bindTargetThroughConverter(){
-        if(converter != null && target != null){
+
+    private void bindTargetThroughConverter() {
+        if (converter != null && target != null) {
             Bindings.bindBidirectional(textProperty(), target, converter);
         }
     }
-    
-    private void unbindTarget(){
-        if(target != null) textProperty().unbindBidirectional(target);
+
+    private void unbindTarget() {
+        if (target != null) {
+            textProperty().unbindBidirectional(target);
+        }
     }
-    
-    public void setConverter(StringConverter<Number> conveter_arg){
+
+    public void setConverter(StringConverter<Number> conveter_arg) {
         unbindTarget();
         converter = conveter_arg;
         bindTargetThroughConverter();
     }
-    
-    public void setTarget(Property<Number> property){
+
+    public void setTarget(Property<Number> property) {
         unbindTarget();
         target = property;
         bindTargetThroughConverter();

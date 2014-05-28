@@ -45,19 +45,6 @@ public class Tools {
 
         @Override
         public Number fromString(String string) {
-            return null;
-        }
-    };
-    
-    public static final StringConverter<Double> DYNAMIC_STRING_DOUBLE_CONVERTER = new StringConverter<Double>() {
-
-        @Override
-        public String toString(Double object) {
-            return String.format("%.10f", object).replaceFirst("\\.?0+$", "");
-        }
-
-        @Override
-        public Double fromString(String string) {
             return Double.valueOf(string);
         }
     };

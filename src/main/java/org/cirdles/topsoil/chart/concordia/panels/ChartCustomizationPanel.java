@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -38,12 +39,28 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
     @FXML ToggleGroup concordiaLineToggleGroup;
     @FXML Label anchorTickLabel;
     @FXML Label tickUnitLabel;
+    @FXML Label minTickUnitLabel;
+    @FXML Label lowerBoundLabel;
+    @FXML Label upperBoundLabel;
+
     @FXML NumberField tickXnf;
     @FXML NumberField tickUnitXnf;
-    @FXML CheckBox autoTickXCheckBox;
+    @FXML NumberField minTickUnitXnf;
+
     @FXML NumberField tickYnf;
     @FXML NumberField tickUnitYnf;
+    @FXML NumberField minTickUnitYnf;
+
+    @FXML NumberField lowerBoundXnf;
+    @FXML NumberField upperBoundXnf;
+
+    @FXML NumberField lowerBoundYnf;
+    @FXML NumberField upperBoundYnf;
+
     @FXML CheckBox autoTickYCheckBox;
+    @FXML CheckBox autoTickXCheckBox;
+
+    private BooleanBinding showAutoTick;
 
     private final ErrorEllipseChart chart;
 
@@ -83,6 +100,8 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
             }
         });
 
+        showAutoTick = Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not();
+
         ObservableValue<Number> xRange
                 = chart.getXAxis().upperBoundProperty().subtract(chart.getXAxis().lowerBoundProperty());
         ObservableValue<Number> yRange
@@ -101,10 +120,19 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
         tickUnitYnf.setTarget((chart.getYAxis()).getTickGenerator().tickUnitProperty());
         tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
-        tickUnitLabel.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(),
-                                                          autoTickYCheckBox.selectedProperty()).not());
+        minTickUnitXnf.setTarget(chart.getXAxis().minorTickCountProperty());
+        minTickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
+        minTickUnitYnf.setTarget(chart.getYAxis().minorTickCountProperty());
+        minTickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
 
-        anchorTickLabel.visibleProperty().bind(Bindings.and(autoTickXCheckBox.selectedProperty(),
-                                                            autoTickYCheckBox.selectedProperty()).not());
+        lowerBoundXnf.setTarget(chart.getXAxis().lowerBoundProperty());
+        lowerBoundYnf.setTarget(chart.getYAxis().lowerBoundProperty());
+
+        upperBoundXnf.setTarget(chart.getXAxis().upperBoundProperty());
+        upperBoundYnf.setTarget(chart.getYAxis().upperBoundProperty());
+
+        tickUnitLabel.visibleProperty().bind(showAutoTick);
+        anchorTickLabel.visibleProperty().bind(showAutoTick);
+        minTickUnitLabel.visibleProperty().bind(showAutoTick);
     }
 }
