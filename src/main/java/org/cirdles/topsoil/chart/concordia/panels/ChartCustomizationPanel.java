@@ -18,49 +18,24 @@ package org.cirdles.topsoil.chart.concordia.panels;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import org.cirdles.jfxutils.NumberField;
 import org.cirdles.topsoil.chart.concordia.ConcordiaLineType;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipseChart;
 
 public class ChartCustomizationPanel extends VBox implements Initializable {
 
-    @FXML ToggleGroup concordiaLineToggleGroup;
-    @FXML Label anchorTickLabel;
-    @FXML Label tickUnitLabel;
-    @FXML Label minTickUnitLabel;
-    @FXML Label lowerBoundLabel;
-    @FXML Label upperBoundLabel;
+    @FXML private ToggleGroup concordiaLineToggleGroup;
 
-    @FXML NumberField tickXnf;
-    @FXML NumberField tickUnitXnf;
-    @FXML NumberField minTickUnitXnf;
-
-    @FXML NumberField tickYnf;
-    @FXML NumberField tickUnitYnf;
-    @FXML NumberField minTickUnitYnf;
-
-    @FXML NumberField lowerBoundXnf;
-    @FXML NumberField upperBoundXnf;
-
-    @FXML NumberField lowerBoundYnf;
-    @FXML NumberField upperBoundYnf;
-
-    @FXML CheckBox autoTickYCheckBox;
-    @FXML CheckBox autoTickXCheckBox;
-
-    private BooleanBinding showAutoTick;
+    @FXML private AxisConfigurationSubpanel axisXConfigPanel;
+    @FXML private AxisConfigurationSubpanel axisYConfigPanel;
 
     private final ErrorEllipseChart chart;
 
@@ -100,39 +75,10 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
             }
         });
 
-        showAutoTick = Bindings.and(autoTickXCheckBox.selectedProperty(), autoTickYCheckBox.selectedProperty()).not();
+        axisXConfigPanel.axisProperty().set(chart.getXAxis());
+        axisXConfigPanel.titleProperty().set(resources.getString("axisxLabel"));
 
-        ObservableValue<Number> xRange
-                = chart.getXAxis().upperBoundProperty().subtract(chart.getXAxis().lowerBoundProperty());
-        ObservableValue<Number> yRange
-                = chart.getYAxis().upperBoundProperty().subtract(chart.getYAxis().lowerBoundProperty());
-
-        autoTickXCheckBox.selectedProperty().bindBidirectional((chart.getXAxis()).getTickGenerator().autoTickingProperty());
-        autoTickYCheckBox.selectedProperty().bindBidirectional((chart.getYAxis()).getTickGenerator().autoTickingProperty());
-
-        tickXnf.setTarget((chart.getXAxis()).getTickGenerator().anchorTickProperty());
-        tickXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-        tickYnf.setTarget((chart.getYAxis()).getTickGenerator().anchorTickProperty());
-        tickYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
-
-        tickUnitXnf.setTarget((chart.getXAxis()).getTickGenerator().tickUnitProperty());
-        tickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-        tickUnitYnf.setTarget((chart.getYAxis()).getTickGenerator().tickUnitProperty());
-        tickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
-
-        minTickUnitXnf.setTarget(chart.getXAxis().minorTickCountProperty());
-        minTickUnitXnf.visibleProperty().bind(Bindings.not(autoTickXCheckBox.selectedProperty()));
-        minTickUnitYnf.setTarget(chart.getYAxis().minorTickCountProperty());
-        minTickUnitYnf.visibleProperty().bind(Bindings.not(autoTickYCheckBox.selectedProperty()));
-
-        lowerBoundXnf.setTarget(chart.getXAxis().lowerBoundProperty());
-        lowerBoundYnf.setTarget(chart.getYAxis().lowerBoundProperty());
-
-        upperBoundXnf.setTarget(chart.getXAxis().upperBoundProperty());
-        upperBoundYnf.setTarget(chart.getYAxis().upperBoundProperty());
-
-        tickUnitLabel.visibleProperty().bind(showAutoTick);
-        anchorTickLabel.visibleProperty().bind(showAutoTick);
-        minTickUnitLabel.visibleProperty().bind(showAutoTick);
+        axisYConfigPanel.axisProperty().set(chart.getYAxis());
+        axisYConfigPanel.titleProperty().set(resources.getString("axisyLabel"));
     }
 }

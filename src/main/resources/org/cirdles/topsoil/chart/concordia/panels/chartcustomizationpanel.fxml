@@ -7,6 +7,8 @@
 <?import javafx.scene.layout.*?>
 <?import org.cirdles.topsoil.LabelUsePrefSize ?>
 <?import org.cirdles.jfxutils.NumberField ?>
+<?import org.cirdles.topsoil.chart.concordia.panels.AxisConfigurationSubpanel ?>
+
 
 <fx:root xmlns:fx="http://javafx.com/fxml"
          type="javafx.scene.layout.VBox"
@@ -30,49 +32,7 @@
                      selected="true"/>
     </HBox>
     <LabelUsePrefSize text="%tickerNodeSubsectionTitle" styleClass="title-subsubpanel"/>
-    <GridPane hgap="10" vgap="10">
-        <columnConstraints>
-            <ColumnConstraints />
-            <ColumnConstraints halignment="CENTER" />
-        </columnConstraints>
-            
-        <!-- Row 0 -->
-
-        <LabelUsePrefSize text="%autoTickLabel" 
-                          GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-        <LabelUsePrefSize text="%tickUnitLabel" fx:id="tickUnitLabel"
-                          GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-        <LabelUsePrefSize text="%anchorTickLabel" fx:id="anchorTickLabel" 
-                          GridPane.columnIndex="3" GridPane.rowIndex="0"/>
-        <LabelUsePrefSize text="%minTickUnit" fx:id="minTickUnitLabel"
-                          GridPane.columnIndex="4" GridPane.rowIndex="0"/>
-
-        <LabelUsePrefSize text="%lowerBound" fx:id="lowerBoundLabel"
-                          GridPane.columnIndex="5" GridPane.rowIndex="0"/>
-        <LabelUsePrefSize text="%upperBound" fx:id="upperBoundLabel"
-                          GridPane.columnIndex="6" GridPane.rowIndex="0"/>
-        
-        
-
-        <!-- Row 1-->
-        <LabelUsePrefSize text="%axisxLabel" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <CheckBox fx:id="autoTickXCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-        <NumberField fx:id="tickUnitXnf" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-        <NumberField fx:id="tickXnf" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-        <NumberField fx:id="minTickUnitXnf" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
-        
-        <NumberField fx:id="lowerBoundXnf" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
-        <NumberField fx:id="upperBoundXnf" GridPane.columnIndex="6" GridPane.rowIndex="1"/>
-
-        <!-- Row 2 -->
-        <LabelUsePrefSize text="%axisyLabel" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <CheckBox fx:id="autoTickYCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-        <NumberField fx:id="tickUnitYnf" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-        <NumberField fx:id="tickYnf" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-        <NumberField fx:id="minTickUnitYnf" GridPane.columnIndex="4" GridPane.rowIndex="2"/>
-        
-        <NumberField fx:id="lowerBoundYnf" GridPane.columnIndex="5" GridPane.rowIndex="2"/>
-        <NumberField fx:id="upperBoundYnf" GridPane.columnIndex="6" GridPane.rowIndex="2"/>
-        
-    </GridPane>
+    
+    <AxisConfigurationSubpanel fx:id="axisXConfigPanel"/>
+    <AxisConfigurationSubpanel fx:id="axisYConfigPanel"/>
 </fx:root>
