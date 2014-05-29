@@ -15,10 +15,13 @@
  */
 package org.cirdles.topsoil.chart.concordia;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*; // max, min
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
@@ -29,7 +32,10 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.text.Text;
 import org.cirdles.jfxutils.CubicBezierApproximationFactory;
 import org.cirdles.jfxutils.CurveApproximationFactory;
+import org.cirdles.math.ConstantFunction;
+import org.cirdles.math.CubicBezierCurve;
 import org.cirdles.math.ParametricCurve;
+import org.cirdles.math.ParametricCurve2D;
 import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.chart.Plotter;
 import org.cirdles.topsoil.chart.TickGenerator;
@@ -41,6 +47,8 @@ import org.cirdles.topsoil.chart.TickGenerator;
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
 public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseChart> {
+
+    private static final int NUMBER_OF_PIECES = 50;
 
     private final TickGenerator tickGenerator;
     private final CurveApproximationFactory curveFactory;
@@ -65,6 +73,91 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
      * @param concordiaLine the concordia line segment to plot
      * @return the node to be used to show the concordia line in the associated chart
      */
+    public Node plot(ParametricCurve2D concordiaLine) {
+        double minX = chart.getXAxis().getLowerBound();
+        double minY = chart.getYAxis().getLowerBound();
+        double maxX = chart.getXAxis().getUpperBound();
+        double maxY = chart.getYAxis().getUpperBound();
+
+        List<Double> xIntercepts
+                = Arrays.asList(concordiaLine.x().minus(new ConstantFunction(minX)).zero(),
+                                concordiaLine.x().minus(new ConstantFunction(maxX)).zero())
+                .stream()
+                .filter(t -> concordiaLine.of(t).y() >= minY && concordiaLine.of(t).y() <= maxY)
+                .collect(Collectors.toList());
+
+        List<Double> yIntercepts
+                = Arrays.asList(concordiaLine.y().minus(new ConstantFunction(minY)).zero(),
+                                concordiaLine.y().minus(new ConstantFunction(maxY)).zero())
+                .stream()
+                .filter(t -> concordiaLine.of(t).x() >= minX && concordiaLine.of(t).x() <= maxX)
+                .collect(Collectors.toList());
+
+        if (xIntercepts.size() + yIntercepts.size() <= 1) {
+            return null;
+        }
+
+        List<Double> intercepts = new ArrayList<>(xIntercepts);
+        intercepts.addAll(yIntercepts);
+
+        Collections.sort(intercepts);
+
+        double minT = intercepts.get(0);
+        double maxT = intercepts.get(intercepts.size() - 1);
+
+        Group lineAndTicks = new Group();
+
+        double deltaT = (maxT - minT) / NUMBER_OF_PIECES;
+
+        Path line = CubicBezierCurve.approximate(concordiaLine, minT, minT + deltaT).asPath();
+        for (int i = 1; i < NUMBER_OF_PIECES; i++) {
+            line.getElements().add(
+                    CubicBezierCurve.approximate(concordiaLine, minT + i * deltaT, minT + (i + 1) * deltaT)
+                    .asCubicCurveTo());
+        }
+
+        line.getStyleClass().add("concordia-line");
+
+        for (PathElement element : line.getElements()) {
+            if (element instanceof MoveTo) {
+                MoveTo moveTo = (MoveTo) element;
+                moveTo.setX(mapXToDisplay(moveTo.getX()));
+                moveTo.setY(mapYToDisplay(moveTo.getY()));
+            } else if (element instanceof CubicCurveTo) {
+                CubicCurveTo curveTo = (CubicCurveTo) element;
+                curveTo.setControlX1(mapXToDisplay(curveTo.getControlX1()));
+                curveTo.setControlY1(mapYToDisplay(curveTo.getControlY1()));
+                curveTo.setControlX2(mapXToDisplay(curveTo.getControlX2()));
+                curveTo.setControlY2(mapYToDisplay(curveTo.getControlY2()));
+                curveTo.setX(mapXToDisplay(curveTo.getX()));
+                curveTo.setY(mapYToDisplay(curveTo.getY()));
+            }
+        }
+
+        lineAndTicks.getChildren().add(line);
+
+        // Plot the tick marks (circles) and labels.
+        for (Number tick : tickGenerator.majorTicksForRange(minT, maxT)) {
+            Circle circle = new Circle(mapXToDisplay(concordiaLine.x().of(tick.doubleValue())),
+                                       mapYToDisplay(concordiaLine.y().of(tick.doubleValue())),
+                                       5);
+            Text label = new Text(Tools.DYNAMIC_STRING_CONVERTER.toString(tick.doubleValue() / 1000000));
+            label.setX(circle.getCenterX() - label.getBoundsInLocal().getWidth() - 10);
+            label.setY(circle.getCenterY());
+
+            lineAndTicks.getChildren().addAll(circle, label);
+        }
+
+        return lineAndTicks;
+    }
+
+    /**
+     * Plots the concordia line on the chart associated with this plotter. The root node returned by this method is a
+     * group containing the path approximated the line, circular tick marks, and tick mark labels.
+     *
+     * @param concordiaLine the concordia line segment to plot
+     * @return the node to be used to show the concordia line in the associated chart
+     */
     @Override
     public Node plot(ParametricCurve concordiaLine) {
         double minT = findMinT(concordiaLine,
@@ -73,6 +166,9 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
         double maxT = findMaxT(concordiaLine,
                                chart.getXAxis().getLowerBound(), chart.getYAxis().getLowerBound(),
                                chart.getXAxis().getUpperBound(), chart.getYAxis().getUpperBound());
+
+        System.out.println(minT + " " + maxT);
+        System.out.println("-------");
 
         Group lineAndTicks = new Group();
 
@@ -144,9 +240,14 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
                              findTInterceptForX(curve, maxX),
                              findTInterceptForY(curve, maxY))
                 .stream()
+                .map(value -> {
+                    System.out.println(value);
+                    return value;
+                })
                 .filter(value -> {
-                    return curve.x(value) > minX - 1e-10 && curve.x(value) < maxX + 1e-10
-                    && curve.y(value) > minY - 1e-10 && curve.y(value) < maxY + 1e-10;
+                    System.out.println("[" + curve.x(value) + " " + curve.y(value) + "]");
+                    return curve.x(value) > minX - 1e-4 && curve.x(value) < maxX + 1e-4
+                    && curve.y(value) > minY - 1e-4 && curve.y(value) < maxY + 1e-4;
                 })
                 .reduce(Double.MAX_VALUE, Math::min);
     }
@@ -158,8 +259,8 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
                              findTInterceptForY(curve, maxY))
                 .stream()
                 .filter(value -> {
-                    return curve.x(value) > minX - 1e-10 && curve.x(value) < maxX + 1e-10
-                    && curve.y(value) > minY - 1e-10 && curve.y(value) < maxY + 1e-10;
+                    return curve.x(value) > minX - 1e-4 && curve.x(value) < maxX + 1e-4
+                    && curve.y(value) > minY - 1e-4 && curve.y(value) < maxY + 1e-4;
                 })
                 .reduce(Double.MIN_VALUE, Math::max);
     }
@@ -176,7 +277,7 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
 
         // Perform a binary search and return the result
         double middleT = -1;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             middleT = (startT + stopT) / 2;
             if (curve.x(middleT) < value) {
                 startT = middleT;
@@ -200,7 +301,7 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve, ErrorEllipseC
 
         // Perform a binary search and return the result
         double middleT = -1;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             middleT = (startT + stopT) / 2;
             if (curve.y(middleT) < value) {
                 startT = middleT;

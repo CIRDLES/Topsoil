@@ -15,15 +15,60 @@
  */
 package org.cirdles.math;
 
-import static java.lang.Math.*;            // expm1, pow
+import static java.lang.Math.*;            // exp, expm1, pow
 import static org.cirdles.math.Constant.*; // LAMBDA_235, LAMBDA_238
 
 /**
  *
  * @author zeringuej
  */
-public class WetherillCurve implements ParametricCurve {
+public class WetherillCurve extends ParametricCurve2D implements ParametricCurve {
+    
+    private static Function X_COMPONENT = new Function() { // x(t)
 
+            @Override
+            public double of(double t) {
+                return expm1(LAMBDA_235.value() * t);
+            }
+
+            @Override
+            public Function prime() {
+                return new Function() {
+
+                    @Override
+                    public double of(double t) {
+                        return LAMBDA_235.value() * exp(LAMBDA_235.value() * t);
+                    }
+                };
+            }
+        };
+    
+    private static Function Y_COMPONENT = new Function() { // y(t)
+
+            @Override
+            public double of(double t) {
+                return expm1(LAMBDA_238.value() * t);
+            }
+
+            @Override
+            public Function prime() {
+                return new Function() {
+
+                    @Override
+                    public double of(double t) {
+                        return LAMBDA_238.value() * exp(LAMBDA_238.value() * t);
+                    }
+                };
+            }
+        };
+
+    public WetherillCurve() {
+        super(X_COMPONENT, Y_COMPONENT);
+    }
+
+    /*
+     * TO BE REMOVED
+     */
     @Override
     public double x(double t) {
         return expm1(LAMBDA_235.value() * t);
