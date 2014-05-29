@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.cirdles.topsoil.LabelUsePrefSize ?>
+<?import org.controlsfx.control.SegmentedButton ?>
+<?import org.cirdles.jfxutils.NumberField ?>
+
+<fx:root xmlns:fx="http://javafx.com/fxml/1" spacing="10" type="VBox">
+    <fx:define>
+        <GridPane fx:id="tickingPanel" hgap="5" vgap="5">
+            <!-- Row 0 -->
+            <LabelUsePrefSize text="%autoTickLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <CheckBox fx:id="autoTickCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        
+            <!-- Row 1 -->
+            <LabelUsePrefSize text="%anchorTickLabel" fx:id="anchorTickLabel" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <NumberField fx:id="ticknf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        
+            <!-- Row 2 -->
+            <LabelUsePrefSize text="%tickUnitLabel" fx:id="tickUnitLabel" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <NumberField fx:id="tickUnitnf" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            
+            <!-- Row 3-->
+            <LabelUsePrefSize text="%minTickUnit" fx:id="minTickUnitLabel" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <NumberField fx:id="minTickUnitnf" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        </GridPane>
+        
+        <GridPane fx:id="scalePanel" hgap="5" vgap="5">
+            <LabelUsePrefSize text="%lowerBound" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <NumberField fx:id="lowerBoundnf" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <LabelUsePrefSize text="%upperBound" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <NumberField fx:id="upperBoundnf" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
+    </fx:define>
+    
+    
+    
+    <LabelUsePrefSize fx:id="titreLabel"/>
+    <SegmentedButton>
+        <buttons>
+            <ToggleButton text="%manualTickingLabel" fx:id="tickingButton" />
+            <ToggleButton text="%scaleLabel" fx:id="scaleButton"/>
+        </buttons>
+    </SegmentedButton>
+    
+    <Pane fx:id="childPaneContainer"/>
+    
+</fx:root>

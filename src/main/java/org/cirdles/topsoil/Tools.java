@@ -45,7 +45,7 @@ public class Tools {
 
         @Override
         public Number fromString(String string) {
-            return null;
+            return Double.valueOf(string);
         }
     };
 
