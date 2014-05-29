@@ -15,15 +15,66 @@
  */
 package org.cirdles.math;
 
-import static java.lang.Math.*;            // expm1, pow
+import static java.lang.Math.*;            // exp, expm1, pow
 import static org.cirdles.math.Constant.*; // LAMBDA_235, LAMBDA_238, R238_235S
 
 /**
  *
  * @author zeringuej
  */
-public class TeraWasserburgCurve implements ParametricCurve {
+public class TeraWasserburgCurve extends ParametricCurve2D implements ParametricCurve {
 
+    private static Function X_COMPONENT = new Function() {
+
+        @Override
+        public double of(double t) {
+            return 1 / expm1(LAMBDA_238.value() * t);
+        }
+
+        @Override
+        public Function prime() throws UnsupportedOperationException {
+            return new Function() {
+
+                @Override
+                public double of(double t) {
+                    return -LAMBDA_238.value() * exp(LAMBDA_238.value() * t)
+                            / pow(expm1(LAMBDA_238.value() * t), 2);
+                }
+            };
+        }
+    };
+
+    private static Function Y_COMPONENT = new Function() {
+
+        @Override
+        public double of(double t) {
+            return expm1(LAMBDA_235.value() * t)
+                    / (R238_235S.value() * expm1(LAMBDA_238.value() * t));
+        }
+
+        @Override
+        public Function prime() throws UnsupportedOperationException {
+            return new Function() {
+
+                @Override
+                public double of(double t) {
+                    return -(LAMBDA_235.value() * exp(LAMBDA_235.value() * t)
+                            - exp(LAMBDA_238.value() * t)
+                            * (LAMBDA_238.value() + LAMBDA_235.value() * exp(LAMBDA_235.value() * t)
+                            - LAMBDA_238.value() * exp(LAMBDA_235.value() * t)))
+                            / (R238_235S.value() * pow(expm1(LAMBDA_238.value() * t), 2));
+                }
+            };
+        }
+    };
+
+    public TeraWasserburgCurve() {
+        super(X_COMPONENT, Y_COMPONENT);
+    }
+
+    /*
+     * TO BE REMOVED
+     */
     @Override
     public double x(double t) {
         return 1 / expm1(LAMBDA_238.value() * t);
@@ -42,5 +93,4 @@ public class TeraWasserburgCurve implements ParametricCurve {
                 * pow(1 + 1 / x(t), LAMBDA_235.value() / LAMBDA_238.value())
                 / (LAMBDA_238.value() * (1 + x(t))) - 1) / R238_235S.value();
     }
-
 }

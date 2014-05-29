@@ -35,6 +35,7 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.cirdles.math.ParametricCurve;
+import org.cirdles.math.ParametricCurve2D;
 import org.cirdles.math.TeraWasserburgCurve;
 import org.cirdles.math.WetherillCurve;
 import org.cirdles.topsoil.chart.DataConverter;
@@ -246,11 +247,15 @@ public class ErrorEllipseChart extends NumberChart {
         getPlotChildren().clear();
 
         if (getConcordiaLineType() != ConcordiaLineType.NONE) {
-            ParametricCurve curve = getConcordiaLineType() == ConcordiaLineType.WETHERILL
-                                    ? new WetherillCurve()
-                                    : new TeraWasserburgCurve();
-            
-            getPlotChildren().add(concordiaLinePlotter.plot(curve));
+            ParametricCurve2D curve = getConcordiaLineType() == ConcordiaLineType.WETHERILL
+                                      ? new WetherillCurve()
+                                      : new TeraWasserburgCurve();
+
+            Node node = concordiaLinePlotter.plot(curve);
+
+            if (node != null) {
+                getPlotChildren().add(node);
+            }
         }
 
         // we have nothing to layout if no data is present

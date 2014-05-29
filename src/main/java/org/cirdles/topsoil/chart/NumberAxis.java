@@ -60,13 +60,13 @@ public final class NumberAxis extends ValueAxis<Number> {
      * These are matching decimal formatter strings
      */
     private static final String[] TICK_UNIT_FORMATTER_DEFAULTS = {"0.0000000000", "0.00000000000", "0.0000000000",
-        "0.000000000", "0.0000000000", "0.000000000",
-        "0.00000000", "0.000000000", "0.00000000",
-        "0.0000000", "0.00000000", "0.0000000", "0.000000",
-        "0.0000000", "0.000000", "0.00000", "0.000000",
-        "0.00000", "0.0000", "0.00000", "0.0000", "0.000",
-        "0.0000", "0.000", "0.00", "0.000", "0.00", "0.0",
-        "0.00", "0.0", "0", "0.0", "0", "#,##0"};
+                                                                  "0.000000000", "0.0000000000", "0.000000000",
+                                                                  "0.00000000", "0.000000000", "0.00000000",
+                                                                  "0.0000000", "0.00000000", "0.0000000", "0.000000",
+                                                                  "0.0000000", "0.000000", "0.00000", "0.000000",
+                                                                  "0.00000", "0.0000", "0.00000", "0.0000", "0.000",
+                                                                  "0.0000", "0.000", "0.00", "0.000", "0.00", "0.0",
+                                                                  "0.00", "0.0", "0", "0.0", "0", "#,##0"};
 
     private Object currentAnimationID;
     private final ChartLayoutAnimator animator = new ChartLayoutAnimator(this);
@@ -229,6 +229,7 @@ public final class NumberAxis extends ValueAxis<Number> {
      * <p>
      * @return List of data values where to draw minor tick marks
      */
+    @Override
     protected List<Number> calculateMinorTickMarks() {
         final double lowerBound = getLowerBound();
         final double upperBound = getUpperBound();
@@ -363,6 +364,12 @@ public final class NumberAxis extends ValueAxis<Number> {
         final double newScale = calculateNewScale(length, minRounded, maxRounded);
         // return new range
         return new double[]{minRounded, maxRounded, tickUnitRounded, newScale, rangeIndex};
+    }
+
+    @Override
+    public double getDisplayPosition(Number value) {
+        double length = Side.LEFT.equals(getSide()) || Side.RIGHT.equals(getSide()) ? getHeight() : 0;
+        return length + ((value.doubleValue() - currentLowerBound.get()) * getScale());
     }
 
     // -------------- STYLESHEET HANDLING ------------------------------------------------------------------------------
