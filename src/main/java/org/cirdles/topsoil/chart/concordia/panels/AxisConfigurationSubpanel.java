@@ -20,10 +20,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +30,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.cirdles.jfxutils.NumberField;
@@ -56,7 +53,7 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
     @FXML private NumberField tickUnitnf;
     @FXML private NumberField minTickUnitnf;
 
-    @FXML private HBox scalePanel;
+    @FXML private GridPane scalePanel;
     @FXML private NumberField lowerBoundnf;
     @FXML private NumberField upperBoundnf;
 
@@ -100,6 +97,8 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
                 childPaneContainer.getChildren().remove(scalePanel);
             }
         });
+
+        scaleButton.setSelected(true);
     }
 
     public void initializeAxis() {
@@ -107,13 +106,13 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
             autoTickCheckBox.selectedProperty().bindBidirectional(axis.get().getTickGenerator().autoTickingProperty());
 
             ticknf.setTarget(axis.get().getTickGenerator().anchorTickProperty());
-            ticknf.visibleProperty().bind(Bindings.not(autoTickCheckBox.selectedProperty()));
+            ticknf.disableProperty().bind(autoTickCheckBox.selectedProperty());
 
             tickUnitnf.setTarget(axis.get().getTickGenerator().tickUnitProperty());
-            tickUnitnf.visibleProperty().bind(Bindings.not(autoTickCheckBox.selectedProperty()));
+            tickUnitnf.disableProperty().bind(autoTickCheckBox.selectedProperty());
 
             minTickUnitnf.setTarget(axis.get().minorTickCountProperty());
-            minTickUnitnf.visibleProperty().bind(Bindings.not(autoTickCheckBox.selectedProperty()));
+            minTickUnitnf.disableProperty().bind(autoTickCheckBox.selectedProperty());
 
             lowerBoundnf.setTarget(axis.get().lowerBoundProperty());
             upperBoundnf.setTarget(axis.get().upperBoundProperty());
