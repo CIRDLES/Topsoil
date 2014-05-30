@@ -20,13 +20,13 @@
     <LabelUsePrefSize text="%tickerNodeSubsectionTitle" styleClass="title-subpanel"/>
     <VBox spacing="5" >
         <LabelUsePrefSize text="%concordialineOpacityLabel"/>
-        <RadioButton text="Wetherill"
+        <RadioButton text="%wetherillTypeLabel"
                      userData="Wetherill"
                      toggleGroup="$concordiaLineToggleGroup" />
-        <RadioButton text="Tera-Wasserburg"
+        <RadioButton text="%teraWasserburgTypeLabel"
                      userData="Tera-Wasserburg"
                      toggleGroup="$concordiaLineToggleGroup" />
-        <RadioButton text="None"
+        <RadioButton text="%noneTypeLabel"
                      userData="None"
                      toggleGroup="$concordiaLineToggleGroup"
                      selected="true"/>

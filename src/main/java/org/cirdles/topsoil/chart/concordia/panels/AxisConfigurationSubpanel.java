@@ -20,14 +20,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Side;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -44,7 +43,9 @@ import org.cirdles.topsoil.chart.NumberAxis;
  */
 public class AxisConfigurationSubpanel extends VBox implements Initializable {
 
-    @FXML private Label titreLabel;
+    @FXML private CheckBox gridLinesCheckBox;
+
+    @FXML private Label titleLabel;
     @FXML private ToggleButton tickingButton;
     @FXML private ToggleButton scaleButton;
 
@@ -79,7 +80,7 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        titreLabel.textProperty().bind(title);
+        titleLabel.textProperty().bind(title);
 
         axis.addListener((ObservableValue<? extends NumberAxis> observable, NumberAxis oldValue, NumberAxis newValue) -> {
             initializeAxis();
@@ -119,6 +120,14 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
 
             lowerBoundnf.setTarget(axis.get().lowerBoundProperty());
             upperBoundnf.setTarget(axis.get().upperBoundProperty());
+
+            XYChart chart = (XYChart) axis.get().getParent().getParent();
+
+            if (axis.get().getSide().equals(Side.LEFT) || axis.get().getSide().equals(Side.RIGHT)) {
+                gridLinesCheckBox.selectedProperty().bindBidirectional(chart.horizontalGridLinesVisibleProperty());
+            } else {
+                gridLinesCheckBox.selectedProperty().bindBidirectional(chart.verticalGridLinesVisibleProperty());
+            }
         }
     }
 

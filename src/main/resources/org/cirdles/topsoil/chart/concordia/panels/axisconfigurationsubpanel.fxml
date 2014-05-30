@@ -13,20 +13,24 @@
     <fx:define>
         <GridPane fx:id="tickingPanel" hgap="5" vgap="5">
             <!-- Row 0 -->
-            <LabelUsePrefSize text="%autoTickLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-            <CheckBox fx:id="autoTickCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-        
+            <LabelUsePrefSize text="%showGridLinesLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <CheckBox fx:id="gridLinesCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            
             <!-- Row 1 -->
-            <LabelUsePrefSize text="%anchorTickLabel" fx:id="anchorTickLabel" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-            <NumberField fx:id="ticknf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <LabelUsePrefSize text="%autoTickLabel" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <CheckBox fx:id="autoTickCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
         
             <!-- Row 2 -->
-            <LabelUsePrefSize text="%tickUnitLabel" fx:id="tickUnitLabel" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-            <NumberField fx:id="tickUnitnf" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <LabelUsePrefSize text="%anchorTickLabel" fx:id="anchorTickLabel" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <NumberField fx:id="ticknf" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        
+            <!-- Row 3 -->
+            <LabelUsePrefSize text="%tickUnitLabel" fx:id="tickUnitLabel" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <NumberField fx:id="tickUnitnf" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
             
-            <!-- Row 3-->
-            <LabelUsePrefSize text="%minTickUnit" fx:id="minTickUnitLabel" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-            <NumberField fx:id="minTickUnitnf" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            <!-- Row 4-->
+            <LabelUsePrefSize text="%minTickUnit" fx:id="minTickUnitLabel" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <NumberField fx:id="minTickUnitnf" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
         </GridPane>
         
         <GridPane fx:id="scalePanel" hgap="5" vgap="5">
@@ -39,7 +43,7 @@
     
     
     
-    <LabelUsePrefSize fx:id="titreLabel"/>
+    <LabelUsePrefSize fx:id="titleLabel"/>
     <SegmentedButton>
         <buttons>
             <ToggleButton text="%manualTickingLabel" fx:id="tickingButton" />
