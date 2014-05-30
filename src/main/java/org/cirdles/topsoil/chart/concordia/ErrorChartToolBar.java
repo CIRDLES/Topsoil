@@ -111,7 +111,9 @@ public class ErrorChartToolBar extends ToolBar {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
         File file = fileChooser.showSaveDialog(getScene().getWindow());
 
-        converter.convert(chart, file);
+        if (file != null) {
+            converter.convert(chart, file);
+        }
     }
 
     @FXML
