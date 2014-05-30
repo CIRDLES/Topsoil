@@ -15,28 +15,60 @@
  */
 package org.cirdles.topsoil.chart.concordia;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.VBox;
+import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.controlsfx.control.MasterDetailPane;
 
 /**
  * A fairly empty class.
  */
-public class ErrorEllipseChartExtendedPanel extends MasterDetailPane implements ErrorChartToolBar.CustomizationPanelShower {
+public class ErrorEllipseChartExtendedPanel extends VBox {
 
-    public ErrorEllipseChartExtendedPanel(ErrorEllipseChart cc) {
-        setMasterNode(cc);
-        setDividerPosition(0.7);
+    @FXML
+    private ToggleGroup concordiaLineToggleGroup;
+
+    public ErrorEllipseChartExtendedPanel() {
+        //setPadding(new Insets(10));
+        FXMLLoader loader = new FXMLLoader(ErrorEllipseChartExtendedPanel.class.getResource("errorellipsechartextendedpanel.fxml"),
+                                           ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
+        loader.setRoot(this);
+        loader.setController(this);
+        loader.setBuilderFactory(new TopsoilBuilderFactory());
+
+        try {
+            loader.load();
+        } catch (IOException ex) {
+            Logger.getLogger(ErrorEllipseChartExtendedPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    @Override
-    public ObjectProperty<Node> customizationPanelProperty() {
-        return detailNodeProperty();
+    public ErrorEllipseChart getChart() {
+        ErrorEllipseChart result = null;
+        for (Node n : this.getChildrenUnmodifiable()) {
+            if (n instanceof MasterDetailPane) {
+                result = (ErrorEllipseChart) ((MasterDetailPane) n).masterNodeProperty().get();
+            }
+        }
+        return result;
     }
 
-    @Override
-    public BooleanProperty customizationPanelVisibilityProperty() {
-        return showDetailNodeProperty();
+    public MasterDetailPane getMasterDetailPane() {
+        MasterDetailPane result = null;
+        for (Node n : this.getChildrenUnmodifiable()) {
+            if (n instanceof MasterDetailPane) {
+                result = (MasterDetailPane) n;
+            }
+        }
+        return result;
     }
 }

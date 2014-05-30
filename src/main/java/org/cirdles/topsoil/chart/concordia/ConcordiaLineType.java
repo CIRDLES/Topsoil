@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.cirdles.jfxutils;
-
-import javafx.scene.shape.Path;
-import org.cirdles.math.ParametricCurve;
+package org.cirdles.topsoil.chart.concordia;
 
 /**
  *
  * @author zeringuej
  */
-public interface CurveApproximationFactory {
-    public Path approximate(ParametricCurve curve, double minT, double maxT);
+public enum ConcordiaLineType {
+    WETHERILL, TERA_WASSERBURG, NONE;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2014 pfif.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.math;
 
-/**
- * Mathematical constants to be used program-wide.
- */
-public enum Constant {
+package org.cirdles.topsoil;
 
-    LAMBDA_235(9.8485e-10), LAMBDA_238(1.55125e-10), R238_235S(137.88);
-
-    private final double value;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 
     /**
-     * Creates a new constant with the given value.
-     *
-     * @param value the value of the constant
+     * A Label whose min width is always set to use its pref width.
      */
-    private Constant(double value) {
-        this.value = value;
-    }
+    public class LabelUsePrefSize extends Label{
 
-    /**
-     * Returns the value of this constant.
-     *
-     * @return the value of this constant
-     */
-    public double value() {
-        return value;
+        public LabelUsePrefSize() {
+            this("");
+            
+        }
+        
+        public LabelUsePrefSize(String text){
+            super(text);
+            setMinWidth(Region.USE_PREF_SIZE);
+        }
+        
     }
-}

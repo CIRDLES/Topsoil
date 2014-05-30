@@ -16,12 +16,25 @@
 
 package org.cirdles.math;
 
+import static org.cirdles.math.ConstantFunction.*;
+
 /**
  *
  * @author zeringuej
  */
-public interface ParametricCurve {
-    public double x(double t);
-    public double y(double t);
-    public double dy_dx(double t);
+public class ParametricCurve2D extends ParametricCurve3D {
+
+    public ParametricCurve2D(Function x, Function y) {
+        super(x, y, ZERO_FUNCTION);
+    }
+    
+    @Override
+    public Vector2D of(double t) {
+        return new Vector2D(x().of(t), y().of(t));
+    }
+    
+    @Override
+    public ParametricCurve2D prime() throws UnsupportedOperationException {
+        return new ParametricCurve2D(x().prime(), y().prime());
+    }
 }

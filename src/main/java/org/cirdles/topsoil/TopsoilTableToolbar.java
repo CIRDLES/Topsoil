@@ -22,15 +22,15 @@ import javafx.scene.control.ToolBar;
 import org.controlsfx.dialog.Dialogs;
 
 /**
- * A toolbar, containing buttons to call actions on a <code>TopsoilTable</code>.
+ * A toolbar, containing buttons to call actions on a <code>TSVTable</code>.
  */
 public class TopsoilTableToolbar extends ToolBar {
     /**
      * The table that is linked to the Menubar
      */
-    TopsoilTable dataTable;
+    TSVTable dataTable;
 
-    public TopsoilTableToolbar(TopsoilTable dataTable_arg) {
+    public TopsoilTableToolbar(TSVTable dataTable_arg) {
         dataTable = dataTable_arg;
         
         Button generateErrorEllipseChart = new Button("Error Ellipse Chart");

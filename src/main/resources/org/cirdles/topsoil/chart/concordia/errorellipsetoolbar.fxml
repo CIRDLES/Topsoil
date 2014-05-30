@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="ToolBar" >
+    <items>
+        <Button text="%exportToSVG" onAction="#exportToSVG" />
+        <ChoiceBox fx:id="confidenceLevel"/>
+        <Label text="%labelLockToQ1" />
+        <CheckBox fx:id="lockToQ1" />
+        <Button text="%labelResetView" onAction="#resetView"/>
+        <Button text="%hideCustomizationPanel" onAction="#switchCustomPanel" fx:id="customizationButton"/>
+    </items>
+</fx:root>
