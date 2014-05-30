@@ -18,7 +18,7 @@
     </fx:define>
     
     <LabelUsePrefSize text="%tickerNodeSubsectionTitle" styleClass="title-subpanel"/>
-    <HBox spacing="5" >
+    <VBox spacing="5" >
         <LabelUsePrefSize text="%concordialineOpacityLabel"/>
         <RadioButton text="Wetherill"
                      userData="Wetherill"
@@ -30,7 +30,7 @@
                      userData="None"
                      toggleGroup="$concordiaLineToggleGroup"
                      selected="true"/>
-    </HBox>
+    </VBox>
     <LabelUsePrefSize text="%tickerNodeSubsectionTitle" styleClass="title-subsubpanel"/>
     
     <AxisConfigurationSubpanel fx:id="axisXConfigPanel"/>
