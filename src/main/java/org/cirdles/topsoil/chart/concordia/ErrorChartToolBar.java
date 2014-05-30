@@ -129,8 +129,7 @@ public class ErrorChartToolBar extends ToolBar {
 
     @FXML
     private void resetView() {
-        chart.getXAxis().autoRangingProperty().set(true);
-        chart.getYAxis().autoRangingProperty().set(true);
+        chart.resetView();
     }
 
     /*

@@ -34,8 +34,11 @@ import javafx.scene.chart.XYChart;
 import org.cirdles.topsoil.Tools;
 
 /**
- * <p>A <code>XYChart</code>, supporting to be moved by drag and drop, in which only numbers are accepted.</p>
- * <p>In addition to supporting drag and drop, it also support zoom via right clicking and scrolling.
+ * <p>
+ * A <code>XYChart</code>, supporting to be moved by drag and drop, in which only numbers are accepted.</p>
+ * <p>
+ * In addition to supporting drag and drop, it also support zoom via right clicking and scrolling.
+ *
  * @author John
  * @see XYChart
  */
@@ -44,7 +47,7 @@ public abstract class NumberChart extends XYChart<Number, Number> {
     public final NumberAxis xAxis;
     public final NumberAxis yAxis;
     private final Rectangle dragSelect;
-    
+
     private final BooleanProperty lockToQ1 = new SimpleBooleanProperty(true);
 
     public NumberChart() {
@@ -86,7 +89,7 @@ public abstract class NumberChart extends XYChart<Number, Number> {
         setOnMouseDragged((MouseEvent mouseEvent) -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                 shiftPlotWindowConstraint((mouseDraggedX.get() - mouseEvent.getX()) / xAxis.getWidth() * getXRange(),
-                                -(mouseDraggedY.get() - mouseEvent.getY()) / yAxis.getHeight() * getYRange());
+                                          -(mouseDraggedY.get() - mouseEvent.getY()) / yAxis.getHeight() * getYRange());
 
                 mouseDraggedX.set(mouseEvent.getX());
                 mouseDraggedY.set(mouseEvent.getY());
@@ -137,24 +140,23 @@ public abstract class NumberChart extends XYChart<Number, Number> {
             }
         });
 
-        setOnScroll((ScrollEvent scrollEvent) -> {     
-              double zoomX = xAxis.getValueForDisplay(scrollEvent.getX() - xAxis.getLayoutX()).doubleValue();
-              double zoomY = yAxis.getValueForDisplay(scrollEvent.getY() - yAxis.getLayoutY()).doubleValue();
+        setOnScroll((ScrollEvent scrollEvent) -> {
+            double zoomX = xAxis.getValueForDisplay(scrollEvent.getX() - xAxis.getLayoutX()).doubleValue();
+            double zoomY = yAxis.getValueForDisplay(scrollEvent.getY() - yAxis.getLayoutY()).doubleValue();
 
             shiftPlotWindowFree(-zoomX, -zoomY);
             scalePlotWindow(1 - scrollEvent.getDeltaY() / 400);
             shiftPlotWindowFree(zoomX, zoomY);
-            
-            if(lockToQ1.get()){
+
+            if (lockToQ1.get()) {
                 moveBackToQ1();
             }
         });
-        
+
         lockToQ1.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             moveBackToQ1();
         });
-        
-        
+
     }
 
     private double getXRange() {
@@ -176,30 +178,33 @@ public abstract class NumberChart extends XYChart<Number, Number> {
     }
 
     /**
-     * Some functions need to be able to move the plot window anywhere for a very short amount of time (like the scaling operation)
-     * However, the user input that move directly the window must be sometime constrain. To do so, we use the function. 
+     * Some functions need to be able to move the plot window anywhere for a very short amount of time (like the scaling
+     * operation) However, the user input that move directly the window must be sometime constrain. To do so, we use the
+     * function.
+     *
      * @param xAmount
-     * @param yAmount 
+     * @param yAmount
      */
-    protected final void shiftPlotWindowConstraint(double xAmount, double yAmount){
+    protected final void shiftPlotWindowConstraint(double xAmount, double yAmount) {
         //Determining bounds
-        if(lockToQ1.get()){
-            if(xAxis.getLowerBound() + xAmount < 0){
+        if (lockToQ1.get()) {
+            if (xAxis.getLowerBound() + xAmount < 0) {
                 xAmount = -xAxis.getLowerBound();
             }
-            
-            if(yAxis.getLowerBound() + yAmount < 0){
+
+            if (yAxis.getLowerBound() + yAmount < 0) {
                 yAmount = -yAxis.getLowerBound();
             }
         }
-        
+
         shiftPlotWindowFree(xAmount, yAmount);
-    } 
-    
+    }
+
     /**
      * Mode the plot window from a certain number of pixel in two directions.
+     *
      * @param xAmount
-     * @param yAmount 
+     * @param yAmount
      */
     protected final void shiftPlotWindowFree(double xAmount, double yAmount) {
         setPlotWindow(xAxis.getLowerBound() + xAmount,
@@ -214,24 +219,31 @@ public abstract class NumberChart extends XYChart<Number, Number> {
                       yAxis.getLowerBound() * factor,
                       yAxis.getUpperBound() * factor);
     }
-    
+
     @Override
     public ObservableList<Node> getChartChildren() {
         return super.getChartChildren();
     }
-    
-    public BooleanProperty lockToQ1Property(){
+
+    public BooleanProperty lockToQ1Property() {
         return lockToQ1;
     }
 
     private void moveBackToQ1() {
-        if(xAxis.getLowerBound() < 0){
+        if (xAxis.getLowerBound() < 0) {
             shiftPlotWindowFree(-xAxis.getLowerBound(), 0);
         }
-                
-        if(yAxis.getLowerBound() < 0){
+
+        if (yAxis.getLowerBound() < 0) {
             shiftPlotWindowFree(0, -yAxis.getLowerBound());
         }
     }
 
+    public void resetView() {
+        xAxis.setAutoRanging(false);
+        yAxis.setAutoRanging(false);
+
+        xAxis.setAutoRanging(true);
+        yAxis.setAutoRanging(true);
+    }
 }

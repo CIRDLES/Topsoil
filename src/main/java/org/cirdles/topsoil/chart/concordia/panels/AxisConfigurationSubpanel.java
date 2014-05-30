@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -122,6 +123,20 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
             upperBoundnf.setTarget(axis.get().upperBoundProperty());
 
             XYChart chart = (XYChart) axis.get().getParent().getParent();
+            
+            lowerBoundnf.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    axis.get().setAutoRanging(false);
+                }
+            });
+            
+            lowerBoundnf.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    axis.get().setAutoRanging(false);
+                }
+            });
 
             if (axis.get().getSide().equals(Side.LEFT) || axis.get().getSide().equals(Side.RIGHT)) {
                 gridLinesCheckBox.selectedProperty().bindBidirectional(chart.horizontalGridLinesVisibleProperty());
