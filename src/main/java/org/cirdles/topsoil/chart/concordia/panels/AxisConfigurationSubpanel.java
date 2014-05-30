@@ -20,12 +20,15 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -58,7 +61,7 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
     @FXML private NumberField upperBoundnf;
 
     private ObjectProperty<NumberAxis> axis = new SimpleObjectProperty();
-    private ObjectProperty<String> titre = new SimpleObjectProperty();
+    private ObjectProperty<String> title = new SimpleObjectProperty();
 
     public AxisConfigurationSubpanel() {
         FXMLLoader loader = new FXMLLoader(AxisConfigurationSubpanel.class.getResource("axisconfigurationsubpanel.fxml"),
@@ -76,7 +79,7 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        titreLabel.textProperty().bind(titre);
+        titreLabel.textProperty().bind(title);
 
         axis.addListener((ObservableValue<? extends NumberAxis> observable, NumberAxis oldValue, NumberAxis newValue) -> {
             initializeAxis();
@@ -124,6 +127,6 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
     }
 
     public ObjectProperty<String> titleProperty() {
-        return titre;
+        return title;
     }
 }
