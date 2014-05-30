@@ -151,7 +151,7 @@ public class Vector3D {
 
     @Override
     public String toString() {
-        return String.format("(%.5f,%.5f,%.5f)", x(), y(), z());
+        return String.format("(%.4f,%.4f,%.4f)", x(), y(), z());
     }
 
     /**
