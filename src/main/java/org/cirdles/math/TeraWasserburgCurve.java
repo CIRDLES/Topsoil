@@ -22,7 +22,7 @@ import static org.cirdles.math.Constant.*; // LAMBDA_235, LAMBDA_238, R238_235S
  *
  * @author zeringuej
  */
-public class TeraWasserburgCurve extends ParametricCurve2D implements ParametricCurve {
+public class TeraWasserburgCurve extends ParametricCurve2D {
 
     private static Function X_COMPONENT = new Function() {
 
@@ -70,27 +70,5 @@ public class TeraWasserburgCurve extends ParametricCurve2D implements Parametric
 
     public TeraWasserburgCurve() {
         super(X_COMPONENT, Y_COMPONENT);
-    }
-
-    /*
-     * TO BE REMOVED
-     */
-    @Override
-    public double x(double t) {
-        return 1 / expm1(LAMBDA_238.value() * t);
-    }
-
-    @Override
-    public double y(double t) {
-        return expm1(LAMBDA_235.value() * t)
-                / expm1(LAMBDA_238.value() * t)
-                / R238_235S.value();
-    }
-
-    @Override
-    public double dy_dx(double t) {
-        return ((LAMBDA_238.value() * (1 + x(t)) - LAMBDA_235.value())
-                * pow(1 + 1 / x(t), LAMBDA_235.value() / LAMBDA_238.value())
-                / (LAMBDA_238.value() * (1 + x(t))) - 1) / R238_235S.value();
     }
 }

@@ -22,7 +22,7 @@ import static org.cirdles.math.Constant.*; // LAMBDA_235, LAMBDA_238
  *
  * @author zeringuej
  */
-public class WetherillCurve extends ParametricCurve2D implements ParametricCurve {
+public class WetherillCurve extends ParametricCurve2D {
     
     private static Function X_COMPONENT = new Function() { // x(t)
 
@@ -65,24 +65,4 @@ public class WetherillCurve extends ParametricCurve2D implements ParametricCurve
     public WetherillCurve() {
         super(X_COMPONENT, Y_COMPONENT);
     }
-
-    /*
-     * TO BE REMOVED
-     */
-    @Override
-    public double x(double t) {
-        return expm1(LAMBDA_235.value() * t);
-    }
-
-    @Override
-    public double y(double t) {
-        return expm1(LAMBDA_238.value() * t);
-    }
-
-    @Override
-    public double dy_dx(double t) {
-        return (LAMBDA_238.value() / LAMBDA_235.value())
-                * pow(1. + x(t), LAMBDA_238.value() / LAMBDA_235.value() - 1.);
-    }
-
 }

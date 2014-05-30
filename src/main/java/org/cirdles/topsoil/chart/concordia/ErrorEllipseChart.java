@@ -34,7 +34,6 @@ import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import org.cirdles.math.ParametricCurve;
 import org.cirdles.math.ParametricCurve2D;
 import org.cirdles.math.TeraWasserburgCurve;
 import org.cirdles.math.WetherillCurve;
