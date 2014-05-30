@@ -221,7 +221,7 @@ public class NodeToSVGConverter {
             element.setTextContent(text.getText());
             element.setAttribute("x", String.valueOf(text.getX())); x= text.getX();
             element.setAttribute("y", String.valueOf(text.getY())); y= text.getY();
-            element.setAttribute("font-family", text.getFont().getFamily() + ", sans-serif");
+            element.setAttribute("font-family", "Verdana");
             element.setAttribute("font-size", String.valueOf(text.getFont().getSize()));
         } 
 
