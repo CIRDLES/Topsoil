@@ -16,24 +16,43 @@
 package org.cirdles.math;
 
 /**
- *
- * @author zeringuej
+ * A constant function, that is, a function that returns the same value for all inputs.
  */
 public class ConstantFunction extends Function {
 
+    /**
+     * The zero function, a constant function that always returns zero.
+     */
     public static final ConstantFunction ZERO_FUNCTION = new ConstantFunction(0);
 
     private final double value;
 
+    /**
+     * Creates a new constant function that always returns the same value.
+     * 
+     * @param value the value of the function
+     */
     public ConstantFunction(double value) {
         this.value = value;
     }
 
+    /**
+     * Returns the value of this function at x, which for constant functions is always their constant values.
+     * 
+     * @param x the x
+     * @return the value of this function
+     */
     @Override
     public double of(double x) {
         return value;
     }
 
+    /**
+     * Returns a function representing the first derivative of this function. For constant functions, this is always the
+     * zero function.
+     * 
+     * @return 
+     */
     @Override
     public Function prime() {
         return ZERO_FUNCTION;

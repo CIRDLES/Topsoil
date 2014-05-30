@@ -16,8 +16,7 @@
 package org.cirdles.math;
 
 /**
- *
- * @author zeringuej
+ * Mathematical constants to be used program-wide.
  */
 public enum Constant {
 
@@ -25,10 +24,20 @@ public enum Constant {
 
     private final double value;
 
+    /**
+     * Creates a new constant with the given value.
+     *
+     * @param value the value of the constant
+     */
     private Constant(double value) {
         this.value = value;
     }
 
+    /**
+     * Returns the value of this constant.
+     *
+     * @return the value of this constant
+     */
     public double value() {
         return value;
     }
