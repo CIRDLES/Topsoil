@@ -49,6 +49,19 @@ public class Tools {
         }
     };
 
+    public static final StringConverter<Number> DYNAMIC_NUMBER_CONVERTER_TO_INTEGER = new StringConverter<Number>() {
+
+        @Override
+        public String toString(Number object) {
+            return String.valueOf(object.intValue());
+        }
+
+        @Override
+        public Number fromString(String string) {
+            return Integer.valueOf(string);
+        }
+    };
+
     /**
      * Prompts the user for a yes or no response with a custom message. If the user selects yes or no, the callback
      * function is called with a boolean indicating the result. Otherwise, the user may choose to cancel the action and
