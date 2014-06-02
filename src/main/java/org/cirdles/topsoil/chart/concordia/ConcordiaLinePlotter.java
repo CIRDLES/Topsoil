@@ -27,6 +27,7 @@ import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.cirdles.math.ConstantFunction;
 import org.cirdles.math.CubicBezierCurve;
@@ -136,6 +137,7 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve2D, ErrorEllips
                                        mapYToDisplay(concordiaLine.y().of(tick.doubleValue())),
                                        5);
             Text label = new Text(Tools.DYNAMIC_STRING_CONVERTER.toString(tick.doubleValue() / 1000000));
+            label.setFont(new Font(chart.concordiaLineFontFamilyProperty().get(), chart.concordiaLineFontSizeProperty().get()));
             label.setX(circle.getCenterX() - label.getBoundsInLocal().getWidth() - 10);
             label.setY(circle.getCenterY());
 

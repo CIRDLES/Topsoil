@@ -30,9 +30,16 @@ import javafx.geometry.Side;
 import javafx.util.StringConverter;
 
 import com.sun.javafx.charts.ChartLayoutAnimator;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
+import javafx.scene.Node;
 import javafx.scene.chart.ValueAxis;
+import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 
 /**
  * A axis class that plots a range of numbers with major tick marks every "tickUnit". You can use any Number type with
@@ -74,6 +81,15 @@ public final class NumberAxis extends ValueAxis<Number> {
     private DefaultFormatter defaultFormatter = new DefaultFormatter(this);
     private final TickGenerator tickGenerator = new AxisTickGenerator(this);
 
+    private final ObjectProperty<String> fontFamily = new SimpleObjectProperty<String>();
+    public ObjectProperty<String> fontFamilyProperty() {return fontFamily;}
+    
+    private final DoubleProperty fontSizeTickLabel = new SimpleDoubleProperty();
+    public DoubleProperty fontSizeTickLabelProperty() {return fontSizeTickLabel;}
+    
+    private final DoubleProperty fontSizeAxisLabel = new SimpleDoubleProperty();
+    public DoubleProperty fontSizeAxisLabelProperty(){return fontSizeAxisLabel;}
+
     // -------------- PUBLIC PROPERTIES --------------------------------------------------------------------------------
     /**
      * When true zero is always included in the visible range. This only has effect if auto-ranging is on.
@@ -113,12 +129,42 @@ public final class NumberAxis extends ValueAxis<Number> {
     public TickGenerator getTickGenerator() {
         return tickGenerator;
     }
+    
+    private void setTextsSize(){
+        Font newFont = new Font(fontFamily.get(), fontSizeTickLabel.get());
+            tickLabelFontProperty().set(newFont);
+            
+            for (Node n : getChildren()) {
+                if (n instanceof Label) {
+                    Label nLabel = (Label) n;
+                    Font newFontLabel = new Font(fontFamily.get(), fontSizeAxisLabel.get());
+                    nLabel.setFont(newFontLabel);
+
+                }
+            }
+            layoutChildren();
+    }
 
     // -------------- CONSTRUCTORS -------------------------------------------------------------------------------------
     /**
      * Create a auto-ranging NumberAxis
      */
     public NumberAxis() {
+        
+        //When the fontfamily is modified, we modify the actual font
+        fontFamily.addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            setTextsSize();
+        });
+        
+        //When the fontsize is modified, we modify the actual font
+        fontSizeAxisLabel.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            setTextsSize();
+        });
+        
+        fontSizeTickLabel.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            setTextsSize();
+        });
+
     }
 
     /**
@@ -129,7 +175,9 @@ public final class NumberAxis extends ValueAxis<Number> {
      * @param tickUnit The tick unit, ie space between tickmarks
      */
     public NumberAxis(double lowerBound, double upperBound, double tickUnit) {
-        super(lowerBound, upperBound);
+        this();
+        setLowerBound(lowerBound);
+        setUpperBound(upperBound);
 
         tickGenerator.setAutoTicking(false);
         tickGenerator.setAnchorTick(lowerBound);
@@ -145,13 +193,8 @@ public final class NumberAxis extends ValueAxis<Number> {
      * @param tickUnit The tick unit, ie space between tickmarks
      */
     public NumberAxis(String axisLabel, double lowerBound, double upperBound, double tickUnit) {
-        super(lowerBound, upperBound);
-
+        this(lowerBound, upperBound, tickUnit);
         setLabel(axisLabel);
-
-        tickGenerator.setAutoTicking(false);
-        tickGenerator.setAnchorTick(lowerBound);
-        tickGenerator.setTickUnit(tickUnit);
     }
 
     // -------------- PROTECTED METHODS --------------------------------------------------------------------------------

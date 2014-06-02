@@ -28,11 +28,13 @@ import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import org.cirdles.math.ParametricCurve2D;
 import org.cirdles.math.TeraWasserburgCurve;
@@ -157,6 +159,18 @@ public class ErrorEllipseChart extends NumberChart {
         return ellipseOutlineShownProperty;
     }
 
+    private final ObjectProperty<String> concordiaLineFontFamily = new SimpleObjectProperty<>(Font.getFamilies().get(0));
+
+    public ObjectProperty<String> concordiaLineFontFamilyProperty() {
+        return concordiaLineFontFamily;
+    }
+
+    private final DoubleProperty concordiaLineFontSize = new SimpleDoubleProperty();
+
+    public DoubleProperty concordiaLineFontSizeProperty() {
+        return concordiaLineFontSize;
+    }
+
     public ErrorEllipseChart() {
         this(new DefaultConverter());
     }
@@ -177,6 +191,11 @@ public class ErrorEllipseChart extends NumberChart {
 
         this.converter = new SimpleObjectProperty<>();
         this.converter.set(converter);
+
+        concordiaLineFontFamily.addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+
+            layoutPlotChildren();
+        });
     }
 
     public ErrorEllipseChart(ObservableList<Series<Number, Number>> data) {
