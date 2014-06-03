@@ -76,6 +76,9 @@ public class ErrorChartToolBar extends ToolBar {
     }
 
     public void initialize() {
+        svgWidthField.setNumber(15);
+        svgHeightField.setNumber(10);
+        
         chart.confidenceLevel().bind(confidenceLevel.valueProperty());
         Map<Number, String> confidenceLevels = new HashMap<>();
         confidenceLevels.put(1, "1\u03c3");
@@ -112,7 +115,7 @@ public class ErrorChartToolBar extends ToolBar {
         File file = fileChooser.showSaveDialog(getScene().getWindow());
 
         if (file != null) {
-            converter.convert(chart, file);
+            converter.convert(chart, file, svgWidthField.getNumber(), svgHeightField.getNumber());
         }
     }
 
