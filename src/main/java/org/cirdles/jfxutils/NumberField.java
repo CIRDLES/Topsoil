@@ -16,6 +16,8 @@
 package org.cirdles.jfxutils;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.Property;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -26,45 +28,45 @@ import org.cirdles.topsoil.Tools;
  * @author pfif
  */
 public class NumberField extends TextField {
+    
+    private final DoubleProperty number = new DoublePropertyBase() {
 
-    StringConverter<Number> converter;
-    Property<Number> target;
+        @Override
+        public Object getBean() {
+            return NumberField.this;
+        }
 
+        @Override
+        public String getName() {
+            return "number";
+        }
+    };
+    
+    public DoubleProperty numberProperty() {
+        return number;
+    }
+    
+    public double getNumber() {
+        return number.get();
+    }
+    
+    public void setNumber(double value) {
+        number.set(value);
+    }
+
+    /**
+     * Create a new number field with the default converter for converting from the number to text and vice versa.
+     */
     public NumberField() {
-        converter = Tools.DYNAMIC_STRING_CONVERTER;
+        this(Tools.DYNAMIC_STRING_CONVERTER);
     }
 
-    public NumberField(StringConverter<Number> converter_arg) {
-        converter = converter_arg;
-    }
-
-    public NumberField(Property<Number> targetProperty, StringConverter<Number> converter_arg) {
-        converter = converter_arg;
-        target = targetProperty;
-        bindTargetThroughConverter();
-    }
-
-    private void bindTargetThroughConverter() {
-        if (converter != null && target != null) {
-            Bindings.bindBidirectional(textProperty(), target, converter);
-        }
-    }
-
-    private void unbindTarget() {
-        if (target != null) {
-            textProperty().unbindBidirectional(target);
-        }
-    }
-
-    public void setConverter(StringConverter<Number> conveter_arg) {
-        unbindTarget();
-        converter = conveter_arg;
-        bindTargetThroughConverter();
-    }
-
-    public void setTarget(Property<Number> property) {
-        unbindTarget();
-        target = property;
-        bindTargetThroughConverter();
+    /**
+     * Create a new number field that uses the given converter to equate its text contents to a decimal number.
+     * 
+     * @param converter 
+     */
+    public NumberField(StringConverter<Number> converter) {
+        Bindings.bindBidirectional(textProperty(), number, converter);
     }
 }
