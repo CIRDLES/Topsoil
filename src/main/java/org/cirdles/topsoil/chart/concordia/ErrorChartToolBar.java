@@ -35,6 +35,7 @@ import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.cirdles.jfxutils.NodeToSVGConverter;
+import org.cirdles.jfxutils.NumberField;
 import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.controlsfx.control.MasterDetailPane;
 
@@ -48,6 +49,9 @@ public class ErrorChartToolBar extends ToolBar {
     private final ErrorEllipseChart chart;
     private final MasterDetailPane masterDetailPane;
 
+    @FXML private NumberField svgWidthField;
+    @FXML private NumberField svgHeightField;
+    
     @FXML private Button customizationButton;
     @FXML private ChoiceBox confidenceLevel;
     @FXML private CheckBox lockToQ1;

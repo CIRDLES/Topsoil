@@ -110,17 +110,17 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
         if (axis.get() != null) {
             autoTickCheckBox.selectedProperty().bindBidirectional(axis.get().getTickGenerator().autoTickingProperty());
 
-            ticknf.setTarget(axis.get().getTickGenerator().anchorTickProperty());
+            ticknf.numberProperty().bindBidirectional(axis.get().getTickGenerator().anchorTickProperty());
             ticknf.disableProperty().bind(autoTickCheckBox.selectedProperty());
 
-            tickUnitnf.setTarget(axis.get().getTickGenerator().tickUnitProperty());
+            tickUnitnf.numberProperty().bindBidirectional(axis.get().getTickGenerator().tickUnitProperty());
             tickUnitnf.disableProperty().bind(autoTickCheckBox.selectedProperty());
 
-            minTickUnitnf.setTarget(axis.get().minorTickCountProperty());
+            minTickUnitnf.numberProperty().bindBidirectional(axis.get().minorTickCountProperty());
             minTickUnitnf.disableProperty().bind(autoTickCheckBox.selectedProperty());
 
-            lowerBoundnf.setTarget(axis.get().lowerBoundProperty());
-            upperBoundnf.setTarget(axis.get().upperBoundProperty());
+            lowerBoundnf.numberProperty().bindBidirectional(axis.get().lowerBoundProperty());
+            upperBoundnf.numberProperty().bindBidirectional(axis.get().upperBoundProperty());
 
             XYChart chart = (XYChart) axis.get().getParent().getParent();
             
