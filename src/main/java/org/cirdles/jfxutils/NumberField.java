@@ -19,6 +19,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.Property;
+import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import org.cirdles.topsoil.Tools;
@@ -68,5 +69,6 @@ public class NumberField extends TextField {
      */
     public NumberField(StringConverter<Number> converter) {
         Bindings.bindBidirectional(textProperty(), number, converter);
+        setAlignment(Pos.CENTER_RIGHT);
     }
 }
