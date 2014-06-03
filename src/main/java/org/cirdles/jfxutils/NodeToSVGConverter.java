@@ -57,6 +57,10 @@ public class NodeToSVGConverter {
      * @param output
      */
     public void convert(Node node, File output) {
+        convert(node, output, 15, 10);
+    }
+    
+    public void convert(Node node, File output, double width, double height) {
         try {
             Document document = documentBuilder.newDocument();
             document.setXmlStandalone(true);
@@ -65,6 +69,8 @@ public class NodeToSVGConverter {
             svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
             svg.setAttribute("version", "1.1");
             svg.setAttribute("preserveAspectRatio", "xMinYMin");
+            svg.setAttribute("width", String.format("%fcm", width));
+            svg.setAttribute("height", String.format("%fcm", height));
             svg.setAttribute("viewBox", String.format("0 0 %f %f",
                                                       node.getBoundsInLocal().getWidth(),
                                                       node.getBoundsInLocal().getHeight()));
