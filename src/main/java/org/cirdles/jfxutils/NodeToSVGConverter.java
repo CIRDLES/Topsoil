@@ -52,9 +52,9 @@ public class NodeToSVGConverter {
 
     /**
      * Write a single JavaFX node to the given SVG file.
-     * 
+     *
      * @param node
-     * @param output 
+     * @param output
      */
     public void convert(Node node, File output) {
         try {
@@ -64,13 +64,17 @@ public class NodeToSVGConverter {
             Element svg = document.createElement("svg");
             svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
             svg.setAttribute("version", "1.1");
+            svg.setAttribute("preserveAspectRatio", "xMinYMin");
+            svg.setAttribute("viewBox", String.format("0 0 %f %f",
+                                                      node.getBoundsInLocal().getWidth(),
+                                                      node.getBoundsInLocal().getHeight()));
             svg.appendChild(convertNodeToElement(node, document));
 
             document.appendChild(svg);
 
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "-//W3C//DTD SVG 1.1//EN");
             transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd");
-            
+
             transformer.transform(new DOMSource(document), new StreamResult(output));
         } catch (TransformerException ex) {
             Logger.getLogger(NodeToSVGConverter.class.getName()).log(Level.SEVERE, null, ex);
@@ -79,9 +83,9 @@ public class NodeToSVGConverter {
 
     /**
      * Write a list of JavaFX nodes to the given SVG file.
-     * 
+     *
      * @param nodes
-     * @param output 
+     * @param output
      */
     public void convert(ObservableList<Node> nodes, File output) {
         try {
@@ -113,17 +117,17 @@ public class NodeToSVGConverter {
 
     /**
      * Recursively converts a node (and all of its children if it's a parent) into an SVG XML element.
-     * 
+     *
      * @param node
      * @param document
-     * @return 
+     * @return
      */
     private Element convertNodeToElement(Node node, Document document) {
         // Don't show nodes that aren't visible!
         if (!node.isVisible()) {
             return null;
         }
-    
+
         Element element = null;
         /*
          * Store the X and Y position for the element, to be reused in the tranformation at the end of the function.
@@ -131,9 +135,9 @@ public class NodeToSVGConverter {
          */
         double x = 0;
         double y = 0;
-        
-         if (node instanceof Parent) {
-             //"I said goddamn! Goddamn... Goddamn"
+
+        if (node instanceof Parent) {
+            //"I said goddamn! Goddamn... Goddamn"
             element = document.createElement("g");
 
             for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
@@ -147,8 +151,10 @@ public class NodeToSVGConverter {
             Line line = (Line) node;
 
             element = document.createElement("line");
-            element.setAttribute("x1", String.valueOf(line.getStartX())); x = line.getStartX();
-            element.setAttribute("y1", String.valueOf(line.getStartY())); y = line.getStartY();
+            element.setAttribute("x1", String.valueOf(line.getStartX()));
+            x = line.getStartX();
+            element.setAttribute("y1", String.valueOf(line.getStartY()));
+            y = line.getStartY();
             element.setAttribute("x2", String.valueOf(line.getEndX()));
             element.setAttribute("y2", String.valueOf(line.getEndY()));
 
@@ -197,7 +203,7 @@ public class NodeToSVGConverter {
             } catch (NullPointerException ex) {
                 System.out.println(path + " has no opacity defined");
             }
-        }else if (node instanceof Circle) {
+        } else if (node instanceof Circle) {
             Circle circle = (Circle) node;
 
             element = document.createElement("circle");
@@ -214,34 +220,36 @@ public class NodeToSVGConverter {
                 System.out.println(circle + " has no opacity defined");
             }
         } else if (node instanceof Text) {
-            Text text = (Text) node;    
+            Text text = (Text) node;
 
             element = document.createElement("text");
 
             element.setTextContent(text.getText());
-            element.setAttribute("x", String.valueOf(text.getX())); x= text.getX();
-            element.setAttribute("y", String.valueOf(text.getY())); y= text.getY();
+            element.setAttribute("x", String.valueOf(text.getX()));
+            x = text.getX();
+            element.setAttribute("y", String.valueOf(text.getY()));
+            y = text.getY();
             element.setAttribute("font-family", "Verdana");
             element.setAttribute("font-size", String.valueOf(text.getFont().getSize()));
-        } 
+        }
 
         try {
             //Getting the transforms
             StringBuilder tranforms_partstring = new StringBuilder();
-           
+
             //Heads up : May not work if multiple tranform of the same type in the scene
-            for(Transform t: node.getTransforms()){
-                if(t instanceof Rotate){
+            for (Transform t : node.getTransforms()) {
+                if (t instanceof Rotate) {
                     //Heads up : Don't take in account the values PivotX, Y and Z
                     Rotate r = (Rotate) t;
                     tranforms_partstring.append(String.format("rotate(%f, %f %f) ", r.getAngle(), x, y));
-                } else if (t instanceof Translate){
+                } else if (t instanceof Translate) {
                     Translate r = (Translate) t;
                     tranforms_partstring.append(String.format("translate(%f %f) ", t.getTx(), t.getTy()));
                 }
             }
-            
-            element.setAttribute("transform", String.format(tranforms_partstring.toString()+"translate(%f %f)",
+
+            element.setAttribute("transform", String.format(tranforms_partstring.toString() + "translate(%f %f)",
                                                             node.getLayoutX(),
                                                             node.getLayoutY()));
             if (!node.getStyle().equals("")) {
