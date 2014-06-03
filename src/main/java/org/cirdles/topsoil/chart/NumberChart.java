@@ -48,6 +48,8 @@ public abstract class NumberChart extends XYChart<Number, Number> {
     public final NumberAxis yAxis;
     private final Rectangle dragSelect;
 
+    private static final int MINSIDE_DRAGWINDOW = 3;
+
     private final BooleanProperty lockToQ1 = new SimpleBooleanProperty(true);
 
     public NumberChart() {
@@ -129,14 +131,24 @@ public abstract class NumberChart extends XYChart<Number, Number> {
             } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 dragSelect.setVisible(false);
 
-                double minXValue = xAxis.getValueForDisplay(dragSelect.getX() - xAxis.getLayoutX()).doubleValue();
-                double maxXValue = xAxis.getValueForDisplay(
-                        dragSelect.getX() + dragSelect.getWidth() - xAxis.getLayoutX()).doubleValue();
-                double minYValue = yAxis.getValueForDisplay(
-                        dragSelect.getY() + dragSelect.getHeight() - yAxis.getLayoutY()).doubleValue();
-                double maxYValue = yAxis.getValueForDisplay(dragSelect.getY() - yAxis.getLayoutY()).doubleValue();
+                double minXValue_ondisplay = dragSelect.getX() - xAxis.getLayoutX();
+                double maxXValue_ondisplay = dragSelect.getX() + dragSelect.getWidth() - xAxis.getLayoutX();
+                double minYValue_ondisplay = dragSelect.getY() + dragSelect.getHeight() - yAxis.getLayoutY();
+                double maxYValue_ondisplay = dragSelect.getY() - yAxis.getLayoutY();
 
-                setPlotWindow(minXValue, maxXValue, minYValue, maxYValue);
+                double minXValue = xAxis.getValueForDisplay(minXValue_ondisplay).doubleValue();
+                double maxXValue = xAxis.getValueForDisplay(maxXValue_ondisplay).doubleValue();
+                double minYValue = yAxis.getValueForDisplay(minYValue_ondisplay).doubleValue();
+                double maxYValue = yAxis.getValueForDisplay(maxYValue_ondisplay).doubleValue();
+
+                if (abs(maxXValue_ondisplay - minXValue_ondisplay) > MINSIDE_DRAGWINDOW && abs(maxYValue_ondisplay - minYValue_ondisplay) > MINSIDE_DRAGWINDOW) {
+                    setPlotWindow(minXValue, maxXValue, minYValue, maxYValue);
+                }
+                
+                dragSelect.setX(0);
+                dragSelect.setY(0);
+                dragSelect.setWidth(0);
+                dragSelect.setHeight(0);
             }
         });
 
