@@ -101,6 +101,8 @@ public class ErrorChartToolBar extends ToolBar {
                 return null;
             }
         });
+        lockToQ1.selectedProperty().set(true);
+        chart.lockToQ1Property().bindBidirectional(lockToQ1.selectedProperty());
     }
 
     @FXML
