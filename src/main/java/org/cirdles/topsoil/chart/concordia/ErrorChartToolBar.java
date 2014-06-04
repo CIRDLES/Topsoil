@@ -28,15 +28,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.cirdles.jfxutils.NodeToSVGConverter;
 import org.cirdles.jfxutils.NumberField;
 import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
+import org.cirdles.topsoil.chart.concordia.panels.SVGExportDialog;
 import org.controlsfx.control.MasterDetailPane;
 
 /**
@@ -49,9 +52,6 @@ public class ErrorChartToolBar extends ToolBar {
     private final ErrorEllipseChart chart;
     private final MasterDetailPane masterDetailPane;
 
-    @FXML private NumberField svgWidthField;
-    @FXML private NumberField svgHeightField;
-    
     @FXML private Button customizationButton;
     @FXML private ChoiceBox confidenceLevel;
     @FXML private CheckBox lockToQ1;
@@ -76,9 +76,7 @@ public class ErrorChartToolBar extends ToolBar {
     }
 
     public void initialize() {
-        svgWidthField.setNumber(15);
-        svgHeightField.setNumber(10);
-        
+
         chart.confidenceLevel().bind(confidenceLevel.valueProperty());
         Map<Number, String> confidenceLevels = new HashMap<>();
         confidenceLevels.put(1, "1\u03c3");
@@ -108,17 +106,8 @@ public class ErrorChartToolBar extends ToolBar {
     @FXML
     private void exportToSVG() {
         //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
-        NodeToSVGConverter converter = new NodeToSVGConverter();
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Export to SVG");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
-        File file = fileChooser.showSaveDialog(getScene().getWindow());
-
-        if (file != null) {
-            converter.convert(chart, file, svgWidthField.getNumber(), svgHeightField.getNumber());
-        }
+        SVGExportDialog exportpanel = new SVGExportDialog(this, chart);
+        exportpanel.show();
     }
 
     @FXML

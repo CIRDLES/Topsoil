@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.cirdles.topsoil.LabelUsePrefSize ?>
+<?import org.cirdles.jfxutils.NumberField ?>
+
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="VBox" spacing="2">
+    <LabelUsePrefSize text="%sizeSelection"/>
+    <HBox spacing="2">
+        <Label text="%widthLabel" />
+        <NumberField fx:id="svgWidthField" />
+        <Label text="cm" />
+    </HBox>
+    <HBox spacing="2">
+        <Label text="%heightLabel" />
+        <NumberField fx:id="svgHeightField" />
+        <Label text="cm" />
+    </HBox>
+</fx:root>
