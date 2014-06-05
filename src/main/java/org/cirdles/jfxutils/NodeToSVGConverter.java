@@ -6,6 +6,10 @@ import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
@@ -59,7 +63,7 @@ public class NodeToSVGConverter {
     public void convert(Node node, File output) {
         convert(node, output, 15, 10);
     }
-    
+
     public void convert(Node node, File output, double width, double height) {
         try {
             Document document = documentBuilder.newDocument();
@@ -130,7 +134,7 @@ public class NodeToSVGConverter {
      */
     private Element convertNodeToElement(Node node, Document document) {
         // Don't show nodes that aren't visible!
-        if (!node.isVisible()) {
+        if (!node.isVisible() || node.getOpacity() == 0) {
             return null;
         }
 
@@ -153,8 +157,55 @@ public class NodeToSVGConverter {
                     element.appendChild(childElement);
                 }
             }
+
+            if (node instanceof Region) {
+                Region region = (Region) node;
+
+                if (region.getBorder() != null) {
+                    Border border = region.getBorder();
+
+                    for (BorderStroke borderStroke : border.getStrokes()) {
+                        BorderWidths borderWidths = borderStroke.getWidths();
+
+                        if (borderStroke.getTopStroke().isOpaque() && borderWidths.getTop() > 0) {
+                            Line line = new Line(0, 0, region.getWidth(), 0);
+                            line.setStroke(borderStroke.getTopStroke());
+                            line.setStrokeWidth(borderWidths.getTop());
+
+                            element.appendChild(convertNodeToElement(line, document));
+                        }
+
+                        if (borderStroke.getBottomStroke().isOpaque() && borderWidths.getBottom() > 0) {
+                            Line line = new Line(0, region.getHeight(), region.getWidth(), region.getHeight());
+                            line.setStroke(borderStroke.getRightStroke());
+                            line.setStrokeWidth(borderWidths.getRight());
+
+                            element.appendChild(convertNodeToElement(line, document));
+                        }
+
+                        if (borderStroke.getLeftStroke().isOpaque() && borderWidths.getLeft() > 0) {
+                            Line line = new Line(0, 0, 0, region.getHeight());
+                            line.setStroke(borderStroke.getLeftStroke());
+                            line.setStrokeWidth(borderWidths.getLeft());
+
+                            element.appendChild(convertNodeToElement(line, document));
+                        }
+
+                        if (borderStroke.getRightStroke().isOpaque() && borderWidths.getRight() > 0) {
+                            Line line = new Line(region.getWidth(), 0, region.getWidth(), region.getHeight());
+                            line.setStroke(borderStroke.getRightStroke());
+                            line.setStrokeWidth(borderWidths.getRight());
+
+                            element.appendChild(convertNodeToElement(line, document));
+                        }
+                    }
+                }
+            }
         } else if (node instanceof Line) {
             Line line = (Line) node;
+            if (colorToRGBString((Color) line.getStroke()).equals("none")) {
+                return null;
+            }
 
             element = document.createElement("line");
             element.setAttribute("x1", String.valueOf(line.getStartX()));
@@ -269,7 +320,7 @@ public class NodeToSVGConverter {
     }
 
     private String colorToRGBString(Color color) {
-        if (color == null || color == Color.TRANSPARENT) {
+        if (color == null || color == Color.TRANSPARENT || !color.isOpaque()) {
             return "none";
         }
 
