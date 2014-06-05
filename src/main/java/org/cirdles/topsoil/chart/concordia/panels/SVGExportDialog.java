@@ -74,8 +74,8 @@ public class SVGExportDialog extends Dialog {
 
         @FXML
         private void initialize() {
-            svgWidthField.setNumber(15);
-            svgHeightField.setNumber(10);
+            svgWidthField.setConverted(15);
+            svgHeightField.setConverted(10);
         }
 
         public NumberField getSvgWidthField() {
@@ -108,8 +108,8 @@ public class SVGExportDialog extends Dialog {
             if (file != null) {
                 converter.convert(chart,
                                   file,
-                                  ((SVGExportDialogView) getContent()).getSvgWidthField().getNumber(),
-                                  ((SVGExportDialogView) getContent()).getSvgHeightField().getNumber());
+                                  ((SVGExportDialogView) getContent()).getSvgWidthField().getConverted().doubleValue(),
+                                  ((SVGExportDialogView) getContent()).getSvgHeightField().getConverted().doubleValue());
             }
 
             hide();
