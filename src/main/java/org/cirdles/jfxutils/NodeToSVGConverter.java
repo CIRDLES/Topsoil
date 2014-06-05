@@ -219,6 +219,10 @@ public class NodeToSVGConverter {
             element.setAttribute("stroke-width", String.valueOf(line.getStrokeWidth()));
         } else if (node instanceof Path) {
             Path path = (Path) node;
+            
+            if (colorToRGBString((Color) path.getStroke()).equals("none")) {
+                return null;
+            }
 
             element = document.createElement("path");
 
