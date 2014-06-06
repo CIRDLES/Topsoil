@@ -23,16 +23,37 @@ import org.junit.Test;
  * @author pfif
  */
 public class ToolsTest {
-    
+
     @Test
-    public void testSuperscriptParser() {
+    public void testSuperscriptParserNominal() {
         String toBeConverted = "sometext^0123456789^sometext_0123456789_";
-        String converted = Tools.SUPERSCRIPTPARSER_CONVERTER.toString(toBeConverted);
-        
+        String converted = Tools.SUPERSCRIPTPARSER_CONVERTER.fromString(toBeConverted);
+
         Assert.assertEquals("sometext\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079"
                 + "sometext\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089",
                             converted);
-        
-        Assert.assertEquals(toBeConverted, Tools.SUPERSCRIPTPARSER_CONVERTER.fromString(converted));
+
+        Assert.assertEquals(toBeConverted, Tools.SUPERSCRIPTPARSER_CONVERTER.toString(converted));
+    }
+
+    @Test
+    public void testSuperscriptParserRealData() {
+        String toBeConverted = "^207^Pb^235^U";
+        String converted = Tools.SUPERSCRIPTPARSER_CONVERTER.fromString(toBeConverted);
+
+        Assert.assertEquals("\u00B2\u2070\u2077Pb\u00B2\u00B3\u2075U",
+                            converted);
+
+        Assert.assertEquals(toBeConverted, Tools.SUPERSCRIPTPARSER_CONVERTER.toString(converted));
+    }
+
+    @Test
+    public void testSuperscriptParserNormal() {
+        String toBeConverted = "sometext";
+        String converted = Tools.SUPERSCRIPTPARSER_CONVERTER.fromString(toBeConverted);
+
+        Assert.assertEquals("sometext", converted);
+
+        Assert.assertEquals(toBeConverted, Tools.SUPERSCRIPTPARSER_CONVERTER.toString(converted));
     }
 }
