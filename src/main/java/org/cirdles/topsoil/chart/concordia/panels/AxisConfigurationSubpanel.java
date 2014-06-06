@@ -36,6 +36,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.cirdles.jfxutils.NumberField;
+import org.cirdles.jfxutils.ParsedField;
 import org.cirdles.topsoil.chart.NumberAxis;
 
 /**
@@ -61,6 +62,8 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
     @FXML private GridPane scalePanel;
     @FXML private NumberField lowerBoundnf;
     @FXML private NumberField upperBoundnf;
+    
+    @FXML private ParsedField nameField;
 
     private ObjectProperty<NumberAxis> axis = new SimpleObjectProperty();
     private ObjectProperty<String> title = new SimpleObjectProperty();
@@ -123,6 +126,8 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
             upperBoundnf.convertedProperty().bindBidirectional(axis.get().upperBoundProperty());
 
             XYChart chart = (XYChart) axis.get().getParent().getParent();
+            
+            nameField.convertedProperty().bindBidirectional(axis.get().labelProperty());
             
             lowerBoundnf.textProperty().addListener(new ChangeListener<String>() {
                 @Override

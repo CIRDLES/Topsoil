@@ -55,7 +55,7 @@ public abstract class ConverterField<T> extends TextField {
      */
     public ConverterField(Property<T> converted, StringConverter<T> converter) {
         this.converted = converted;
-        Bindings.bindBidirectional(textProperty(), converted, converter);
+        Bindings.bindBidirectional(textProperty(), this.converted, converter);
         setAlignment(Pos.CENTER_RIGHT);
     }
 }
