@@ -78,7 +78,7 @@ public class Tools {
          * @return
          */
         private String parse(String string, String delimiter, String toCapture, Translator converter) {
-            String result = new String();
+            StringBuffer result = new StringBuffer();
             int lenghdelimiter;
             if (delimiter == null) {
                 lenghdelimiter = 0;
@@ -87,19 +87,20 @@ public class Tools {
                 lenghdelimiter = delimiter.length();
             }
 
-            String regex = "[a-zA-Z0-9]*\\Q" + delimiter + "\\E(" + toCapture + "+)\\Q" + delimiter + "\\E[a-zA-Z0-9]*";
+            String regex = "\\Q" + delimiter + "\\E(" + toCapture + "+)\\Q" + delimiter + "\\E";
+            
+            
             Matcher matcher = Pattern.compile(regex).matcher(string);
             while (matcher.find()) {
-                result += string.substring(0, matcher.start(1) - lenghdelimiter)
-                        + converter.translate(matcher.group(1))
-                        + string.substring(matcher.end(1) + lenghdelimiter);
+                matcher.appendReplacement(result, converter.translate(matcher.group(1)));
             }
+            matcher.appendTail(result);
 
-            return result;
+            return result.toString();
         }
 
         @Override
-        public String toString(String string) {
+        public String fromString(String string) {
             String result = parse(string, SUPERSCRIPT_SIGN, "[0-9]", (String origin) -> {
                 String retour = new String();
                 for (char i : origin.toCharArray()) {
@@ -160,7 +161,7 @@ public class Tools {
         }
 
         @Override
-        public String fromString(String string) {
+        public String toString(String string) {
             String result = parse(string,
                                   null,
                                   "[\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079]",
