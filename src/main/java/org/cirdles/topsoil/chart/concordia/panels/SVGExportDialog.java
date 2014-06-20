@@ -23,12 +23,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import org.cirdles.jfxutils.NodeToSVGConverter;
+import org.cirdles.convertfx.tosvg.FXToSVGConverter;
 import org.cirdles.jfxutils.NumberField;
 import org.cirdles.topsoil.LabelUsePrefSize;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipseChart;
 import org.controlsfx.control.action.AbstractAction;
-import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 
 /**
@@ -96,8 +95,7 @@ public class SVGExportDialog extends Dialog {
 
         @Override
         public void execute(ActionEvent ae) {
-
-            NodeToSVGConverter converter = new NodeToSVGConverter();
+            FXToSVGConverter converter = new FXToSVGConverter();
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Export to SVG");
@@ -106,10 +104,7 @@ public class SVGExportDialog extends Dialog {
             File file = fileChooser.showSaveDialog(getContent().getScene().getWindow());
 
             if (file != null) {
-                converter.convert(chart,
-                                  file,
-                                  ((SVGExportDialogView) getContent()).getSvgWidthField().getConverted().doubleValue(),
-                                  ((SVGExportDialogView) getContent()).getSvgHeightField().getConverted().doubleValue());
+                converter.convertToFile(chart, file);
             }
 
             hide();
