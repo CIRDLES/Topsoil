@@ -212,7 +212,7 @@ public class ColumnSelectorDialog extends Dialog {
         }
 
         @Override
-        public void execute(ActionEvent ae) {
+        public void handle(ActionEvent ae) {
             hide();
 
             ColumnSelectorView columnSelector = (ColumnSelectorView) getContent();

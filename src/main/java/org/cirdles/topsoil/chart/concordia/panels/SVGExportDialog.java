@@ -94,7 +94,7 @@ public class SVGExportDialog extends Dialog {
         }
 
         @Override
-        public void execute(ActionEvent ae) {
+        public void handle(ActionEvent ae) {
             FXToSVGConverter converter = new FXToSVGConverter();
 
             FileChooser fileChooser = new FileChooser();
