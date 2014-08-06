@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.chart.concordia;
 
+import Jama.Matrix;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -58,6 +59,25 @@ public class ErrorEllipseTest {
         double expResult5_1 = 1.1027E-2;
         double result5_1 = instance.getControlPoints(2).get(5, 1);
         assertEquals(expResult5_1, result5_1, 1E-6);
+    }
+    
+    @Test
+    public void testCalculateU() {
+        System.out.println("calculateU");
+        
+        for (int i = 0; i < 500; i++) {
+            double sigmaX = Math.random() * 10;
+            double sigmaY = Math.random() * 10;
+            double rho = Math.random() * 2 - 1;
+            
+            Matrix a = ErrorEllipse.calculateU(sigmaX, sigmaY, rho);
+            Matrix b = ErrorEllipse.calculateUOld(sigmaX, sigmaY, rho);
+            
+            assertEquals(a.get(0, 0), b.get(0, 0), 1e-14);
+            assertEquals(a.get(0, 1), b.get(0, 1), 1e-14);
+            assertEquals(a.get(1, 0), b.get(1, 0), 1e-14);
+            assertEquals(a.get(1, 1), b.get(1, 1), 1e-14);
+        }
     }
 
 }
