@@ -33,15 +33,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ToolBar;
-<<<<<<< HEAD
-import javafx.util.StringConverter;
-=======
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.cirdles.jfxutils.NodeToSVGConverter;
 import org.cirdles.jfxutils.NumberField;
->>>>>>> master
 import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.cirdles.topsoil.chart.concordia.panels.SVGExportDialog;
 import org.controlsfx.control.MasterDetailPane;
