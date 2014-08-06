@@ -23,11 +23,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+<<<<<<< HEAD
 import org.cirdles.convertfx.tosvg.FXToSVGConverter;
+=======
+import org.cirdles.jfxutils.NodeToSVGConverter;
+>>>>>>> master
 import org.cirdles.jfxutils.NumberField;
 import org.cirdles.topsoil.LabelUsePrefSize;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipseChart;
 import org.controlsfx.control.action.AbstractAction;
+<<<<<<< HEAD
+=======
+import org.controlsfx.control.action.Action;
+>>>>>>> master
 import org.controlsfx.dialog.Dialog;
 
 /**
@@ -94,8 +102,14 @@ public class SVGExportDialog extends Dialog {
         }
 
         @Override
+<<<<<<< HEAD
         public void handle(ActionEvent ae) {
             FXToSVGConverter converter = new FXToSVGConverter();
+=======
+        public void execute(ActionEvent ae) {
+
+            NodeToSVGConverter converter = new NodeToSVGConverter();
+>>>>>>> master
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Export to SVG");
@@ -104,7 +118,14 @@ public class SVGExportDialog extends Dialog {
             File file = fileChooser.showSaveDialog(getContent().getScene().getWindow());
 
             if (file != null) {
+<<<<<<< HEAD
                 converter.convertToFile(chart, file);
+=======
+                converter.convert(chart,
+                                  file,
+                                  ((SVGExportDialogView) getContent()).getSvgWidthField().getConverted().doubleValue(),
+                                  ((SVGExportDialogView) getContent()).getSvgHeightField().getConverted().doubleValue());
+>>>>>>> master
             }
 
             hide();
