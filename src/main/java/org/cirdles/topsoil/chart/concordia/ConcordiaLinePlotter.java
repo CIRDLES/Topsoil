@@ -32,6 +32,7 @@ import javafx.scene.text.Text;
 import org.cirdles.math.ConstantFunction;
 import org.cirdles.math.CubicBezierCurve;
 import org.cirdles.math.ParametricCurve2D;
+import org.cirdles.math.WetherillCurve;
 import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.chart.Plotter;
 import org.cirdles.topsoil.chart.TickGenerator;
@@ -99,6 +100,12 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve2D, ErrorEllips
 
         double minT = intercepts.get(0);
         double maxT = intercepts.get(intercepts.size() - 1);
+        
+        // prevent wetherill concordia from going into the negative ts
+        if (concordiaLine instanceof WetherillCurve) {
+            minT = Math.max(minT, 0);
+            maxT = Math.max(maxT, 0);
+        }
 
         Group lineAndTicks = new Group();
 
