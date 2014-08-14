@@ -105,6 +105,9 @@ public class ConcordiaLinePlotter extends Plotter<ParametricCurve2D, ErrorEllips
         if (concordiaLine instanceof WetherillCurve) {
             minT = Math.max(minT, 0);
             maxT = Math.max(maxT, 0);
+            
+            minT = Math.min(minT, 4600000000.);
+            maxT = Math.min(maxT, 4600000000.);
         }
 
         Group lineAndTicks = new Group();
