@@ -33,7 +33,7 @@
     </VBox>
     
     
-    <HBox >
+    <HBox alignment="CENTER_LEFT" spacing="10" >
         <LabelUsePrefSize text="%fontLabel"/>
         <ChoiceBox fx:id="fontChoiceBox" /> 
     </HBox>
