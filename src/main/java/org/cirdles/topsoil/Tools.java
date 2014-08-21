@@ -16,6 +16,8 @@
 package org.cirdles.topsoil;
 
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
@@ -27,6 +29,7 @@ import org.cirdles.topsoil.utils.TSVTableReader;
 import org.cirdles.topsoil.utils.TSVTableWriter;
 import org.cirdles.topsoil.utils.TableReader;
 import org.cirdles.topsoil.utils.TableWriter;
+import org.cirdles.util.function.Translator;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -47,6 +50,130 @@ public class Tools {
         public Number fromString(String string) {
             return Double.valueOf(string);
         }
+    };
+
+    public static final StringConverter<Number> DYNAMIC_NUMBER_CONVERTER_TO_INTEGER = new StringConverter<Number>() {
+
+        @Override
+        public String toString(Number object) {
+            return String.valueOf(object.intValue());
+        }
+
+        @Override
+        public Number fromString(String string) {
+            return Integer.valueOf(string);
+        }
+    };
+
+    public static final StringConverter<String> SUPERSCRIPTPARSER_CONVERTER = new StringConverter<String>() {
+        private final String SUPERSCRIPT_SIGN = "^";
+        private final String SUBSCRIPT_SIGN = "_";
+
+        /**
+         * In a String, search for <code>toCapture</code> between delimiters, converter them, and return the new String
+         *
+         * @param string
+         * @param delimiter
+         * @param translator
+         * @return
+         */
+        private String parse(String string, String delimiter, String toCapture, Translator converter) {
+            StringBuffer result = new StringBuffer();
+            int lenghdelimiter;
+            if (delimiter == null) {
+                lenghdelimiter = 0;
+                delimiter = "";
+            } else {
+                lenghdelimiter = delimiter.length();
+            }
+
+            String regex = "\\Q" + delimiter + "\\E(" + toCapture + "+)\\Q" + delimiter + "\\E";
+            
+            
+            Matcher matcher = Pattern.compile(regex).matcher(string);
+            while (matcher.find()) {
+                matcher.appendReplacement(result, converter.translate(matcher.group(1)));
+            }
+            matcher.appendTail(result);
+
+            return result.toString();
+        }
+
+        @Override
+        public String fromString(String string) {
+            String result = parse(string, SUPERSCRIPT_SIGN, "[0-9]", (String origin) -> {
+                String retour = new String();
+                for (char i : origin.toCharArray()) {
+                    if (i == '1') {
+                        retour += "\u00B9";
+                    } else if (i == '2') {
+                        retour += "\u00B2";
+                    } else if (i == '3') {
+                        retour += "\u00B3";
+                    } else {
+                        int code = 0x2070 + Integer.valueOf(String.valueOf(i));
+
+                        retour += (char) code;
+                    }
+                }
+
+                return retour;
+            });
+
+            result = parse(result, SUBSCRIPT_SIGN, "[0-9]", (String origin) -> {
+                String retour = new String();
+
+                for (char i : origin.toCharArray()) {
+                    int code = 0x2080 + Integer.valueOf(String.valueOf(i));
+
+                    retour += (char) code;
+                }
+
+                return retour;
+            });
+
+            return result;
+        }
+
+        class SupersubToNormal implements Translator {
+
+            private String delimiter;
+
+            public SupersubToNormal(String delimiter) {
+                this.delimiter = delimiter;
+            }
+
+            @Override
+            public String translate(String origin) {
+                String retour = new String();
+                for (char c : origin.toCharArray()) {
+                    if (c == '\u00B9') {
+                        retour += 1;
+                    } else {
+                        String code = Integer.toHexString(c);
+                        retour += code.charAt(code.length() - 1);
+                    }
+                }
+
+                return delimiter + retour + delimiter;
+            }
+
+        }
+
+        @Override
+        public String toString(String string) {
+            String result = parse(string,
+                                  null,
+                                  "[\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079]",
+                                  new SupersubToNormal("^"));
+
+            result = parse(result,
+                           null,
+                           "[\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089]",
+                           new SupersubToNormal("_"));
+            return result;
+        }
+
     };
 
     /**

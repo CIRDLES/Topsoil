@@ -18,26 +18,38 @@ package org.cirdles.topsoil.chart.concordia.panels;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.chart.concordia.ConcordiaLineType;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipseChart;
 
 public class ChartCustomizationPanel extends VBox implements Initializable {
 
     @FXML private ToggleGroup concordiaLineToggleGroup;
+    @FXML private ChoiceBox<String> fontChoiceBox;
 
     @FXML private AxisConfigurationSubpanel axisXConfigPanel;
     @FXML private AxisConfigurationSubpanel axisYConfigPanel;
 
     private final ErrorEllipseChart chart;
+
+    @FXML private Slider fontSizeAxisLabelSlider;
+    @FXML private Label fontSizeAxisLabelValue;
+
+    @FXML private Slider fontSizeTickLabelSlider;
+    @FXML private Label fontSizeTickLabelValue;
 
     public ChartCustomizationPanel(ErrorEllipseChart chart) {
         this.chart = chart;
@@ -75,10 +87,39 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
             }
         });
 
+        fontChoiceBox.getItems().addAll(Font.getFamilies());
+        fontChoiceBox.getSelectionModel().select("System");
+        chart.concordiaLineFontFamilyProperty().bind(fontChoiceBox.valueProperty());
+        chart.getXAxis().fontFamilyProperty().bind(fontChoiceBox.valueProperty());
+        chart.getYAxis().fontFamilyProperty().bind(fontChoiceBox.valueProperty());
+
+        initSlider(fontSizeTickLabelSlider, fontSizeTickLabelValue, 10);
+        chart.concordiaLineFontSizeProperty().bind(fontSizeTickLabelSlider.valueProperty());
+        chart.getXAxis().fontSizeTickLabelProperty().bind(fontSizeTickLabelSlider.valueProperty());
+        chart.getYAxis().fontSizeTickLabelProperty().bind(fontSizeTickLabelSlider.valueProperty());
+        
+        initSlider(fontSizeAxisLabelSlider, fontSizeAxisLabelValue, 12);
+        chart.getXAxis().fontSizeAxisLabelProperty().bind(fontSizeAxisLabelSlider.valueProperty());
+        chart.getYAxis().fontSizeAxisLabelProperty().bind(fontSizeAxisLabelSlider.valueProperty());
+
         axisXConfigPanel.axisProperty().set(chart.getXAxis());
         axisXConfigPanel.titleProperty().set(resources.getString("axisxLabel"));
 
         axisYConfigPanel.axisProperty().set(chart.getYAxis());
         axisYConfigPanel.titleProperty().set(resources.getString("axisyLabel"));
+    }
+
+    private void initSlider(Slider s, Label l, int initvalue) {
+        s.setMin(8);
+        s.setMax(20);
+        s.valueProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            l.setText(Tools.DYNAMIC_NUMBER_CONVERTER_TO_INTEGER.toString(newValue));
+        });
+        
+        s.majorTickUnitProperty().set(1);
+        s.minorTickCountProperty().set(0);
+        s.setSnapToTicks(true);
+
+        s.setValue(initvalue);
     }
 }

@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.cirdles.jfxutils;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -29,21 +32,30 @@ import org.cirdles.topsoil.Tools;
  *
  * @author pfif
  */
-public class NumberField extends ConverterField<Number> {
-
-    /**
-     * Create a new number field with the default converter for converting from the number to text and vice versa.
-     */
-    public NumberField() {
-        this(Tools.DYNAMIC_STRING_CONVERTER);
+public abstract class ConverterField<T> extends TextField {
+    
+    private final Property<T> converted;
+    
+    public Property<T> convertedProperty() {
+        return converted;
+    }
+    
+    public T getConverted() {
+        return converted.getValue();
+    }
+    
+    public void setConverted(T value) {
+        converted.setValue(value);
     }
 
     /**
      * Create a new number field that uses the given converter to equate its text contents to a decimal number.
-     *
-     * @param converter
+     * 
+     * @param converter 
      */
-    public NumberField(StringConverter<Number> converter) {
-        super(new SimpleDoubleProperty(), converter);
+    public ConverterField(Property<T> converted, StringConverter<T> converter) {
+        this.converted = converted;
+        Bindings.bindBidirectional(textProperty(), this.converted, converter);
+        setAlignment(Pos.CENTER_RIGHT);
     }
 }

@@ -28,14 +28,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.cirdles.jfxutils.NodeToSVGConverter;
+import org.cirdles.jfxutils.NumberField;
 import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
+import org.cirdles.topsoil.chart.concordia.panels.SVGExportDialog;
 import org.controlsfx.control.MasterDetailPane;
 
 /**
@@ -45,85 +49,75 @@ import org.controlsfx.control.MasterDetailPane;
  */
 public class ErrorChartToolBar extends ToolBar {
 
-    private ErrorEllipseChart chart;
-    private MasterDetailPane customPanelShower;
+    private final ErrorEllipseChart chart;
+    private final MasterDetailPane masterDetailPane;
 
-    @FXML
-    private Button customizationButton;
-    @FXML
-    private ChoiceBox confidenceLevel;
-    @FXML
-    private CheckBox lockToQ1;
+    @FXML private Button customizationButton;
+    @FXML private ChoiceBox confidenceLevel;
+    @FXML private CheckBox lockToQ1;
 
-    private final ResourceBundle bundle;
+    @FXML private ResourceBundle resources;
 
-    public ErrorChartToolBar(ErrorEllipseChart chart_arg, MasterDetailPane customPanelShower_args) {
-
-        chart = chart_arg;
-        customPanelShower = customPanelShower_args;
-        bundle = ResourceBundle.getBundle("org.cirdles.topsoil.Resources");
+    public ErrorChartToolBar(ErrorEllipseChart chart, MasterDetailPane masterDetailPane) {
+        this.chart = chart;
+        this.masterDetailPane = masterDetailPane;
 
         FXMLLoader loader = new FXMLLoader(ErrorChartToolBar.class.getResource("errorellipsetoolbar.fxml"),
-                                           bundle);
+                                           ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
         loader.setRoot(this);
         loader.setController(this);
         loader.setBuilderFactory(new TopsoilBuilderFactory());
 
         try {
             loader.load();
-
-            chart.confidenceLevel().bind(confidenceLevel.valueProperty());
-            Map<Number, String> confidenceLevels = new HashMap<>();
-            confidenceLevels.put(1, "1\u03c3");
-            confidenceLevels.put(2, "2\u03c3");
-            confidenceLevels.put(2.4477, "95%");
-            confidenceLevel.getItems().addAll(confidenceLevels.keySet());
-            confidenceLevel.getSelectionModel().select(1);
-            confidenceLevel.setConverter(new StringConverter<Number>() {
-
-                @Override
-                public String toString(Number object) {
-                    return confidenceLevels.get(object);
-                }
-
-                /*
-                 * Unused by ChoiceBox
-                 */
-                @Override
-                public Number fromString(String string) {
-                    return null;
-                }
-            });
         } catch (IOException ex) {
             Logger.getLogger(ErrorChartToolBar.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
 
+    public void initialize() {
+
+        chart.confidenceLevel().bind(confidenceLevel.valueProperty());
+        Map<Number, String> confidenceLevels = new HashMap<>();
+        confidenceLevels.put(1, "1\u03c3");
+        confidenceLevels.put(2, "2\u03c3");
+        confidenceLevels.put(2.4477, "95%");
+        confidenceLevel.getItems().addAll(confidenceLevels.keySet());
+        confidenceLevel.getSelectionModel().select(1);
+        confidenceLevel.setConverter(new StringConverter<Number>() {
+
+            @Override
+            public String toString(Number object) {
+                return confidenceLevels.get(object);
+            }
+
+            /*
+             * Unused by ChoiceBox
+             */
+            @Override
+            public Number fromString(String string) {
+                return null;
+            }
+        });
+        lockToQ1.selectedProperty().set(true);
+        chart.lockToQ1Property().bindBidirectional(lockToQ1.selectedProperty());
     }
 
     @FXML
     private void exportToSVG() {
         //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
-        NodeToSVGConverter converter = new NodeToSVGConverter();
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Export to SVG");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
-        File file = fileChooser.showSaveDialog(getScene().getWindow());
-
-        if (file != null) {
-            converter.convert(chart, file);
-        }
+        SVGExportDialog exportpanel = new SVGExportDialog(this, chart);
+        exportpanel.show();
     }
 
     @FXML
     private void switchCustomPanel() {
-        if (customPanelShower.showDetailNodeProperty().get() == true) {
-            customPanelShower.showDetailNodeProperty().set(false);
-            customizationButton.setText(bundle.getString("showCustomizationPanel"));
+        if (masterDetailPane.showDetailNodeProperty().get() == true) {
+            masterDetailPane.showDetailNodeProperty().set(false);
+            customizationButton.setText(resources.getString("showCustomizationPanel"));
         } else {
-            customPanelShower.showDetailNodeProperty().set(true);
-            customizationButton.setText(bundle.getString("hideCustomizationPanel"));
+            masterDetailPane.showDetailNodeProperty().set(true);
+            customizationButton.setText(resources.getString("hideCustomizationPanel"));
         }
     }
 
@@ -133,46 +127,26 @@ public class ErrorChartToolBar extends ToolBar {
     }
 
     /*
-     * DEVELOPPER TOOLS
+     * DEVELOPER TOOLS
      */
-    private void turnNodeToText(Node n, PrintWriter pw, String prefix) {
-        //pw.println(prefix+"--");
+    private void nodeToText(Node n, PrintWriter pw, String prefix) {
         pw.println(prefix + n.getClass().getName());
-        /*pw.println(prefix+"Layout X: "+n.getLayoutX());
-         pw.println(prefix+"Layout Y: "+n.getLayoutY());
-         pw.println(prefix+"Transform X: "+n.getTranslateX());
-         pw.println(prefix+"Transform Y: "+n.getTranslateY());
-         pw.println(prefix+"Transform Z: "+n.getTranslateZ());
-         pw.println(prefix+"LocalToParent: "+n.getLocalToParentTransform());
-         pw.println(prefix+"LocalToScene: "+n.getLocalToSceneTransform());
-         if(n instanceof Label){
-         Label l = (Label) n;
-         pw.println(prefix+"Text: "+l.getText());
-            
-         }
-         if(!n.getTransforms().isEmpty()){
-         pw.println(prefix+"Transforms :");
-         for(Transform t : n.getTransforms()){
-         pw.println(prefix+"..."+t.toString());
-         }
-         }
-         pw.println(prefix+"--");*/
 
         if (n instanceof Parent) {
             Parent parent = (Parent) n;
             String new_prefix = prefix + "\t";
             for (Node new_n : parent.getChildrenUnmodifiable()) {
-                turnNodeToText(new_n, pw, new_prefix);
+                nodeToText(new_n, pw, new_prefix);
             }
         }
     }
 
-    private void start_turnNodeToText(Node n) {
+    private void nodeToText(Node n) {
         PrintWriter pw = null;
         try {
             File f = new File("/Users/pfif/Documents/beboptango");
             pw = new PrintWriter(f);
-            turnNodeToText(n, pw, "");
+            nodeToText(n, pw, "");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ErrorChartToolBar.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

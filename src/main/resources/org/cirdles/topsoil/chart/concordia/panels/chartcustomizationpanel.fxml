@@ -10,7 +10,7 @@
 <?import org.cirdles.topsoil.chart.concordia.panels.AxisConfigurationSubpanel ?>
 
 
-<fx:root xmlns:fx="http://javafx.com/fxml"
+<fx:root xmlns:fx="http://javafx.com/fxml/1"
          type="javafx.scene.layout.VBox"
          spacing="15">
     <fx:define>
@@ -31,6 +31,23 @@
                      toggleGroup="$concordiaLineToggleGroup"
                      selected="true"/>
     </VBox>
+    
+    
+    <HBox >
+        <LabelUsePrefSize text="%fontLabel"/>
+        <ChoiceBox fx:id="fontChoiceBox" /> 
+    </HBox>
+    <HBox>
+        <LabelUsePrefSize text="%fontSizeAxisLabel"/>
+        <Slider fx:id="fontSizeAxisLabelSlider" />
+        <LabelUsePrefSize fx:id="fontSizeAxisLabelValue"/>
+    </HBox>
+    <HBox>
+        <LabelUsePrefSize text="%fontSizeTickLabel"/>
+        <Slider fx:id="fontSizeTickLabelSlider"/>
+        <LabelUsePrefSize fx:id="fontSizeTickLabelValue"/>
+    </HBox>
+    
     <LabelUsePrefSize text="%tickerNodeSubsectionTitle" styleClass="title-subsubpanel"/>
     
     <AxisConfigurationSubpanel fx:id="axisXConfigPanel"/>

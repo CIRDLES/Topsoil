@@ -5,6 +5,7 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.cirdles.jfxutils.*?>
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1" type="ToolBar" >
     <items>

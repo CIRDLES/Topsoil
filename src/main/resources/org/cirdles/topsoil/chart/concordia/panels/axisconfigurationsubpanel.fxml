@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.cirdles.topsoil.LabelUsePrefSize ?>
 <?import org.controlsfx.control.SegmentedButton ?>
-<?import org.cirdles.jfxutils.NumberField ?>
+<?import org.cirdles.jfxutils.* ?>
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1" spacing="10" type="VBox">
     <fx:define>
@@ -42,8 +42,10 @@
     </fx:define>
     
     
-    
-    <LabelUsePrefSize fx:id="titleLabel"/>
+    <HBox spacing="5">
+        <LabelUsePrefSize fx:id="titleLabel"/>
+        <ParsedField fx:id="nameField"/>
+    </HBox>
     <SegmentedButton>
         <buttons>
             <ToggleButton text="%manualTickingLabel" fx:id="tickingButton" />
