@@ -80,7 +80,8 @@ public class TopsoilController implements Initializable {
 
     @FXML
     private void createErrorChart(ActionEvent event) {
-        if (dataTable.getColumns().size() < 4) {
+        // table needs 5 columns to generate chart
+        if (dataTable.getColumns().size() < 5) {
             Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
         } else {
             new ColumnSelectorDialog(dataTable).show();
