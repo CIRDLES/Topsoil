@@ -65,7 +65,7 @@ public class ErrorEllipseTest {
     public void testCalculateU() {
         System.out.println("calculateU");
         
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 5000; i++) {
             double sigmaX = Math.random() * 10;
             double sigmaY = Math.random() * 10;
             double rho = Math.random() * 2 - 1;
@@ -73,10 +73,10 @@ public class ErrorEllipseTest {
             Matrix a = ErrorEllipse.calculateU(sigmaX, sigmaY, rho);
             Matrix b = ErrorEllipse.calculateUOld(sigmaX, sigmaY, rho);
             
-            assertEquals(a.get(0, 0), b.get(0, 0), 1e-14);
-            assertEquals(a.get(0, 1), b.get(0, 1), 1e-14);
-            assertEquals(a.get(1, 0), b.get(1, 0), 1e-14);
-            assertEquals(a.get(1, 1), b.get(1, 1), 1e-14);
+            assertEquals(a.get(0, 0), b.get(0, 0), 1e-12);
+            assertEquals(a.get(0, 1), b.get(0, 1), 1e-12);
+            assertEquals(a.get(1, 0), b.get(1, 0), 1e-12);
+            assertEquals(a.get(1, 1), b.get(1, 1), 1e-12);
         }
     }
 
