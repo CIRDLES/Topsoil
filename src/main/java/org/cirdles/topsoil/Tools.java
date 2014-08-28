@@ -29,7 +29,7 @@ import org.cirdles.topsoil.utils.TSVTableReader;
 import org.cirdles.topsoil.utils.TSVTableWriter;
 import org.cirdles.topsoil.utils.TableReader;
 import org.cirdles.topsoil.utils.TableWriter;
-import org.cirdles.util.function.Translator;
+import org.cirdles.utils.function.Translator;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
