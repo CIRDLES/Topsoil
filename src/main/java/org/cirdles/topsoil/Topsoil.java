@@ -51,7 +51,8 @@ public class Topsoil extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Create the Topsoil folder if it doesn't exist.
-        Files.createDirectory(TOPSOIL_PATH);
+        // Note that Files.createDirectory(TOPSOIL_PATH) throws an error if the folder already exists.
+        Files.createDirectories(TOPSOIL_PATH);
         
         // Migrate from the old file structure to the new
         if (Files.exists(OLD_LAST_TABLE_PATH)) {
