@@ -79,7 +79,7 @@ public class TopsoilMainWindow extends VBox {
                         Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    TableWriter<Record> tableWriter = new TSVTableWriter(true);
+                    TableWriter<Record> tableWriter = new TSVTableWriter(true, dataTable.getRequiredColumnCount());
                     tableWriter.write(dataTable, Topsoil.LAST_TABLE_PATH);
                 });
             });

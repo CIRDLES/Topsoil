@@ -212,7 +212,7 @@ public class Tools {
 
     public static void saveTable(TableView<Record> dataTable) {
         if (!dataTable.getItems().isEmpty()) {
-            TableWriter<Record> tableWriter = new TSVTableWriter(true);
+            TableWriter<Record> tableWriter = new TSVTableWriter(true, ((TSVTable)dataTable).getRequiredColumnCount());
             tableWriter.write(dataTable, LAST_TABLE_PATH);
         } else {
             LAST_TABLE_PATH.toFile().delete();

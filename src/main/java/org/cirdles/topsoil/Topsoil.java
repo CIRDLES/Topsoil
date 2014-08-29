@@ -43,6 +43,7 @@ public class Topsoil extends Application {
      * Text of the error shown if there aren't enough columns to fill all the charts' fields
      */
     public static final String NOT_ENOUGH_COLUMNS_MESSAGE = "Careful, you don't have enough columns to create an ErrorEllipse Chart";
+    public static final String NOT_ENOUGH_COLUMNS_MESSAGE_2 = "You are missing data columns, so Topsoil is supplying columns of zeroes to support an ErrorEllipse Chart";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
