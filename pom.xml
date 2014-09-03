@@ -24,13 +24,19 @@
     <developers>
         <developer>
             <name>John Zeringue</name>
-            <url>https://github.com/zeringus</url>
+            <url>https://github.com/johnzeringue</url>
             <organization>CIRDLES</organization>
         </developer>
         
         <developer>
             <name>Florent Pastor</name>
             <url>https://github.com/pfif</url>
+            <organization>CIRDLES</organization>
+        </developer>
+        
+        <developer>
+            <name>Santoshi Devata</name>
+            <url>https://github.com/nityasantoshi</url>
             <organization>CIRDLES</organization>
         </developer>
     </developers>
