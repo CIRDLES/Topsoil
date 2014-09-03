@@ -110,6 +110,28 @@
                     <vendor>CIRDLES</vendor>
                 </configuration>
             </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                
+                <configuration>
+                    <tags>
+                        <tag>
+                            <name>pre</name>
+                            <placement>m</placement>
+                            <head>Precondition:</head>
+                        </tag>
+                        
+                        <tag>
+                            <name>post</name>
+                            <placement>m</placement>
+                            <head>Postcondition:</head>
+                        </tag>
+                    </tags>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     
