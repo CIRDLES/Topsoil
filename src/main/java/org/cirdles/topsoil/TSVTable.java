@@ -37,8 +37,14 @@ import org.cirdles.topsoil.utils.TableWriter;
 public class TSVTable extends TableView<Record> {
 
     private Path savePath;
+    
+    // JFB
+    // zroe means ignore, positive means fill to this count if data not present
+    private int requiredColumnCount;
 
     public TSVTable() {
+        this.requiredColumnCount = 0;
+        
         this.setOnKeyPressed((KeyEvent event) -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
                 pasteFromClipboard();
@@ -117,8 +123,16 @@ public class TSVTable extends TableView<Record> {
             throw new IllegalArgumentException("Cannot save to null path.");
         }
 
-        TableWriter<Record> tableWriter = new TSVTableWriter(true);
+        TableWriter<Record> tableWriter = new TSVTableWriter(true, requiredColumnCount);
         tableWriter.write(this, savePath);
+    }
+    
+    public void saveToPathWithRequiredColumnCount(Path savePath){
+        
+    }
+    
+    public boolean hasRequiredColumnCount(){
+        return getColumns().size() >= requiredColumnCount;
     }
 
     /**
@@ -137,5 +151,19 @@ public class TSVTable extends TableView<Record> {
      */
     public void setSavePath(Path savePath) {
         this.savePath = savePath;
+    }
+
+    /**
+     * @param requiredColumnCount the requiredColumnCount to set
+     */
+    public void setRequiredColumnCount(int requiredColumnCount) {
+        this.requiredColumnCount = requiredColumnCount;
+    }
+
+    /**
+     * @return the requiredColumnCount
+     */
+    public int getRequiredColumnCount() {
+        return requiredColumnCount;
     }
 }
