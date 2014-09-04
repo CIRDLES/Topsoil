@@ -33,7 +33,8 @@ public class GetApplicationDirectoryOperation extends PlatformDependentOperation
             throw new IllegalArgumentException("Valid application name must be provided");
         }
         
-        return Paths.get(System.getProperty("appdata"), params[0]);
+        // getenv must be used because appdata is a Windows evironment variable
+        return Paths.get(System.getenv("appdata"), params[0]);
     }
 
     @Override
