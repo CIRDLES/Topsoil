@@ -16,10 +16,13 @@
  */
 package org.cirdles.topsoil;
 
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -39,7 +42,7 @@ public class Topsoil extends Application {
 
     public static final Path OLD_TOPSOIL_PATH = USER_HOME.resolve(APP_NAME);
     public static final Path OLD_LAST_TABLE_PATH = OLD_TOPSOIL_PATH.resolve("last_table.tsv");
-    
+
     public static final Path TOPSOIL_PATH = new GetApplicationDirectoryOperation().perform(APP_NAME);
     public static final Path LAST_TABLE_PATH = TOPSOIL_PATH.resolve("last_table.tsv");
 
@@ -51,15 +54,21 @@ public class Topsoil extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Create the Topsoil folder if it doesn't exist.
-        // Note that Files.createDirectory(TOPSOIL_PATH) throws an error if the folder already exists.
+        // create the Topsoil folder if it doesn't exist
+        // note that Files.createDirectory(TOPSOIL_PATH) throws an error if the folder already exists
         Files.createDirectories(TOPSOIL_PATH);
-        
-        // Migrate from the old file structure to the new
-        if (Files.exists(OLD_LAST_TABLE_PATH)) {
+
+        // migrate from the old file structure to the new
+        if (Files.exists(OLD_LAST_TABLE_PATH) && !Files.exists(LAST_TABLE_PATH)) {
             Files.move(OLD_LAST_TABLE_PATH, LAST_TABLE_PATH);
         }
-        Files.deleteIfExists(OLD_TOPSOIL_PATH);
+
+        // delete the old data store if it's now empty
+        try {
+            Files.deleteIfExists(OLD_TOPSOIL_PATH);
+        } catch (DirectoryNotEmptyException ex) {
+            Logger.getLogger(Topsoil.class.getName()).log(Level.INFO, "Old Topsoil path not empty");
+        }
 
         ResourceBundle bundle = ResourceBundle.getBundle("org.cirdles.topsoil.Resources");
 
