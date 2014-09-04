@@ -25,6 +25,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.utils.GetApplicationDirectoryOperation;
 
 /**
  *
@@ -36,8 +37,11 @@ public class Topsoil extends Application {
 
     public static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
 
-    public static final Path TOPSOIL_PATH = Paths.get(USER_HOME.toString(), APP_NAME);
-    public static final Path LAST_TABLE_PATH = Paths.get(TOPSOIL_PATH.toString(), "last_table.tsv");
+    public static final Path OLD_TOPSOIL_PATH = USER_HOME.resolve(APP_NAME);
+    public static final Path OLD_LAST_TABLE_PATH = OLD_TOPSOIL_PATH.resolve("last_table.tsv");
+    
+    public static final Path TOPSOIL_PATH = new GetApplicationDirectoryOperation().perform(APP_NAME);
+    public static final Path LAST_TABLE_PATH = TOPSOIL_PATH.resolve("last_table.tsv");
 
     /**
      * Text of the error shown if there aren't enough columns to fill all the charts' fields
@@ -48,7 +52,14 @@ public class Topsoil extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Create the Topsoil folder if it doesn't exist.
+        // Note that Files.createDirectory(TOPSOIL_PATH) throws an error if the folder already exists.
         Files.createDirectories(TOPSOIL_PATH);
+        
+        // Migrate from the old file structure to the new
+        if (Files.exists(OLD_LAST_TABLE_PATH)) {
+            Files.move(OLD_LAST_TABLE_PATH, LAST_TABLE_PATH);
+        }
+        Files.deleteIfExists(OLD_TOPSOIL_PATH);
 
         ResourceBundle bundle = ResourceBundle.getBundle("org.cirdles.topsoil.Resources");
 
