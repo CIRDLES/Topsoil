@@ -45,6 +45,9 @@ public class TopsoilController implements Initializable {
     @FXML
     private TSVTable dataTable;
 
+    // JFB
+    private final int ERROR_CHART_REQUIRED_COL_COUNT = 5;
+
     /**
      * Initializes the controller class.
      *
@@ -53,6 +56,7 @@ public class TopsoilController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         dataTable.setSavePath(Topsoil.LAST_TABLE_PATH);
         dataTable.load();
     }
@@ -64,6 +68,9 @@ public class TopsoilController implements Initializable {
         tsvChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Table Files", "TSV"));
         Path filePath = tsvChooser.showOpenDialog(root.getScene().getWindow()).toPath();
 
+        // JFB for now, assume error chart is only chart style
+        dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
+
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
             TableReader tableReader = new TSVTableReader(response);
 
@@ -73,19 +80,31 @@ public class TopsoilController implements Initializable {
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            TableWriter<Record> tableWriter = new TSVTableWriter(true);
+            TableWriter<Record> tableWriter = new TSVTableWriter(true, dataTable.getRequiredColumnCount());
             tableWriter.write(dataTable, Topsoil.LAST_TABLE_PATH);
         });
     }
 
     @FXML
     private void createErrorChart(ActionEvent event) {
-        // table needs 5 columns to generate chart
-        if (dataTable.getColumns().size() < 5) {
-            Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
-        } else {
-            new ColumnSelectorDialog(dataTable).show();
+//        // table needs 5 columns to generate chart
+//        if (dataTable.getColumns().size() < 5) {
+//            Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
+//        } else {
+//            new ColumnSelectorDialog(dataTable).show();
+//        }
+
+        // JFB for now, assume error chart is only chart style
+        dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
+
+        if (!dataTable.hasRequiredColumnCount()) {
+            Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE_2).showWarning();
+            dataTable.save();
+            dataTable.load();
         }
+
+        new ColumnSelectorDialog(dataTable).show();
+
     }
 
     @FXML
