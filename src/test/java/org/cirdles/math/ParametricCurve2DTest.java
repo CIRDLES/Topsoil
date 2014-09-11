@@ -16,10 +16,6 @@
 
 package org.cirdles.math;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -32,21 +28,7 @@ public class ParametricCurve2DTest {
     public ParametricCurve2DTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
     
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of of method, of class ParametricCurve2D.
@@ -54,13 +36,14 @@ public class ParametricCurve2DTest {
     @Test
     public void testOf() {
         System.out.println("of");
-        double t = 0.0;
-        ParametricCurve2D instance = null;
-        Vector2D expResult = null;
+        double t = 3.2;
+        Function oneFunction = new ConstantFunction(1);
+        Function twoFunction = new ConstantFunction(2);
+        ParametricCurve2D instance = new ParametricCurve2D(oneFunction,twoFunction) ;
+        Vector2D expResult = new Vector2D(1,2);
         Vector2D result = instance.of(t);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+       
     }
 
     /**
@@ -69,12 +52,13 @@ public class ParametricCurve2DTest {
     @Test
     public void testPrime() {
         System.out.println("prime");
-        ParametricCurve2D instance = null;
-        ParametricCurve2D expResult = null;
+        Function oneFunction = new ConstantFunction(5);
+        Function twoFunction = new ConstantFunction(3);
+        ParametricCurve2D instance = new ParametricCurve2D(oneFunction,twoFunction) ;
+        ParametricCurve2D expResult = new ParametricCurve2D(oneFunction.prime(),twoFunction.prime());
         ParametricCurve2D result = instance.prime();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        expResult.equals(result);
+        
     }
     
 }
