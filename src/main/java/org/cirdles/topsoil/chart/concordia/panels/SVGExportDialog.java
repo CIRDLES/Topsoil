@@ -18,7 +18,6 @@ package org.cirdles.topsoil.chart.concordia.panels;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
@@ -27,9 +26,8 @@ import org.cirdles.jfxutils.NodeToSVGConverter;
 import org.cirdles.jfxutils.NumberField;
 import org.cirdles.topsoil.LabelUsePrefSize;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipseChart;
-import org.controlsfx.control.action.AbstractAction;
-import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
+import org.controlsfx.control.action.Action;
 
 /**
  *
@@ -49,7 +47,7 @@ public class SVGExportDialog extends Dialog {
         setContent(new SVGExportDialogView());
 
         getActions().add(new ConvertToSVGAction());
-        getActions().add(Dialog.Actions.CANCEL);
+        getActions().add(Dialog.ACTION_CANCEL);
     }
 
     private static class SVGExportDialogView extends VBox {
@@ -88,31 +86,27 @@ public class SVGExportDialog extends Dialog {
 
     }
 
-    private class ConvertToSVGAction extends AbstractAction {
+    private class ConvertToSVGAction extends Action {
 
         public ConvertToSVGAction() {
-            super(resources.getString("exportToSVG"));
-        }
+            super(resources.getString("exportToSVG"), event -> {
+                NodeToSVGConverter converter = new NodeToSVGConverter();
 
-        @Override
-        public void execute(ActionEvent ae) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Export to SVG");
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
+                File file = fileChooser.showSaveDialog(getContent().getScene().getWindow());
 
-            NodeToSVGConverter converter = new NodeToSVGConverter();
+                if (file != null) {
+                    converter.convert(chart,
+                                      file,
+                                      ((SVGExportDialogView) getContent()).getSvgWidthField().getConverted().doubleValue(),
+                                      ((SVGExportDialogView) getContent()).getSvgHeightField().getConverted().doubleValue());
+                }
 
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Export to SVG");
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
-            File file = fileChooser.showSaveDialog(getContent().getScene().getWindow());
-
-            if (file != null) {
-                converter.convert(chart,
-                                  file,
-                                  ((SVGExportDialogView) getContent()).getSvgWidthField().getConverted().doubleValue(),
-                                  ((SVGExportDialogView) getContent()).getSvgHeightField().getConverted().doubleValue());
-            }
-
-            hide();
+                hide();
+            });
         }
 
     }

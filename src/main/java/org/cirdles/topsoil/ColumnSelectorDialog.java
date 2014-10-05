@@ -49,7 +49,7 @@ import org.cirdles.topsoil.table.Field;
 import org.cirdles.topsoil.table.NumberField;
 import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.table.RecordTableColumn;
-import org.controlsfx.control.action.AbstractAction;
+import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 
 public class ColumnSelectorDialog extends Dialog {
@@ -75,7 +75,7 @@ public class ColumnSelectorDialog extends Dialog {
         super(null, null);
 
         setContent(new ColumnSelectorView(tableToReadArg));
-        getActions().addAll(new ColumnSelectorAction(tableToReadArg), Dialog.Actions.CANCEL);
+        getActions().addAll(new ColumnSelectorAction(tableToReadArg), Dialog.ACTION_CANCEL);
 
         setResizable(false);
         setMasthead(MASTHEAD_TEXT);
@@ -202,45 +202,39 @@ public class ColumnSelectorDialog extends Dialog {
         }
     }
 
-    private class ColumnSelectorAction extends AbstractAction {
-
-        private final TableView<Record> table;
+    private class ColumnSelectorAction extends Action {
 
         public ColumnSelectorAction(TableView<Record> table) {
-            super(ACTION_NAME);
-            this.table = table;
-        }
+            super(ACTION_NAME, event -> {
+                hide();
 
-        @Override
-        public void execute(ActionEvent ae) {
-            hide();
+                ColumnSelectorView columnSelector = (ColumnSelectorView) getContent();
+                RecordToErrorEllipseConverter converter
+                        = new RecordToErrorEllipseConverter(columnSelector.getXSelection(), columnSelector.getSigmaXSelection(),
+                                                            columnSelector.getYSelection(), columnSelector.getSigmaYSelection(),
+                                                            columnSelector.getRhoSelection());
 
-            ColumnSelectorView columnSelector = (ColumnSelectorView) getContent();
-            RecordToErrorEllipseConverter converter
-                    = new RecordToErrorEllipseConverter(columnSelector.getXSelection(), columnSelector.getSigmaXSelection(),
-                                                        columnSelector.getYSelection(), columnSelector.getSigmaYSelection(),
-                                                        columnSelector.getRhoSelection());
+                converter.setErrorSizeSigmaX(columnSelector.getSigmaXErrorSize());
+                converter.setExpressionTypeSigmaX(columnSelector.getSigmaXExpressionType());
+                converter.setErrorSizeSigmaY(columnSelector.getSigmaYErrorSize());
+                converter.setExpressionTypeSigmaY(columnSelector.getSigmaYExpressionType());
 
-            converter.setErrorSizeSigmaX(columnSelector.getSigmaXErrorSize());
-            converter.setExpressionTypeSigmaX(columnSelector.getSigmaXExpressionType());
-            converter.setErrorSizeSigmaY(columnSelector.getSigmaYErrorSize());
-            converter.setExpressionTypeSigmaY(columnSelector.getSigmaYExpressionType());
+                Series<Number, Number> series = new Series<>();
 
-            Series<Number, Number> series = new Series<>();
+                for (Record record : table.getItems()) {
+                    series.getData().add(new Data<>(0, 0, record));
+                }
 
-            for (Record record : table.getItems()) {
-                series.getData().add(new Data<>(0, 0, record));
-            }
+                ErrorEllipseChartExtendedPanel ccExtendedPanel = new ErrorEllipseChartExtendedPanel();
+                ccExtendedPanel.getChart().setConverter(converter);
+                ccExtendedPanel.getChart().getData().add(series);
+                VBox.setVgrow(ccExtendedPanel.getMasterDetailPane(), Priority.ALWAYS);
 
-            ErrorEllipseChartExtendedPanel ccExtendedPanel = new ErrorEllipseChartExtendedPanel();
-            ccExtendedPanel.getChart().setConverter(converter);
-            ccExtendedPanel.getChart().getData().add(series);
-            VBox.setVgrow(ccExtendedPanel.getMasterDetailPane(), Priority.ALWAYS);
-
-            Scene scene = new Scene(ccExtendedPanel, 1200, 800);
-            Stage chartStage = new Stage();
-            chartStage.setScene(scene);
-            chartStage.show();
+                Scene scene = new Scene(ccExtendedPanel, 1200, 800);
+                Stage chartStage = new Stage();
+                chartStage.setScene(scene);
+                chartStage.show();
+            });
         }
     }
 
