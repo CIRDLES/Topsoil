@@ -190,8 +190,8 @@ public class Tools {
                 .message(message)
                 .showConfirm();
 
-        if (response != Dialog.Actions.CANCEL) {
-            callback.accept(response == Dialog.Actions.YES);
+        if (response != Dialog.ACTION_CANCEL) {
+            callback.accept(response == Dialog.ACTION_YES);
         }
     }
 
