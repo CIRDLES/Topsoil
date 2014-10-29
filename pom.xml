@@ -4,7 +4,7 @@
     
     <groupId>org.cirdles</groupId>
     <artifactId>topsoil</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.4</version>
     <packaging>jar</packaging>
     
     <name>Topsoil</name>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.0.6</version>
+            <version>8.20.7</version>
         </dependency>
         
         <dependency>

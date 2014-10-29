@@ -32,9 +32,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ToolBar;
+import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import org.cirdles.jfxutils.NodeToSVGConverter;
 import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
-import org.cirdles.topsoil.chart.concordia.panels.SVGExportDialog;
 import org.controlsfx.control.MasterDetailPane;
 
 /**
@@ -100,9 +101,17 @@ public class ErrorChartToolBar extends ToolBar {
 
     @FXML
     private void exportToSVG() {
-        //start_turnNodeToText(chart); (Tool for developper/ should always be commented before commit)
-        SVGExportDialog exportpanel = new SVGExportDialog(this, chart);
-        exportpanel.show();
+        NodeToSVGConverter converter = new NodeToSVGConverter();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export to SVG");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
+        File file = fileChooser.showSaveDialog(getScene().getWindow());
+
+        if (file != null) {
+            converter.convert(chart, file);
+        }
     }
 
     @FXML
