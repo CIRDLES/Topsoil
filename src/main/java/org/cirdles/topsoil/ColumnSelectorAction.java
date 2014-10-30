@@ -30,7 +30,7 @@ import org.controlsfx.control.action.Action;
  *
  * @author zeringue
  */
-class ColumnSelectorAction extends Action {
+public class ColumnSelectorAction extends Action {
     
     private static final String ACTION_NAME = "Create chart";
     
@@ -40,24 +40,32 @@ class ColumnSelectorAction extends Action {
         super(ACTION_NAME, (javafx.event.ActionEvent event) -> {
             dialog.hide();
             ColumnSelectorView columnSelector = (ColumnSelectorView) dialog.getContent();
+            
+            // create a new converter for the chart
             RecordToErrorEllipseConverter converter = new RecordToErrorEllipseConverter(columnSelector.getXSelection(), columnSelector.getSigmaXSelection(), columnSelector.getYSelection(), columnSelector.getSigmaYSelection(), columnSelector.getRhoSelection());
             converter.setErrorSizeSigmaX(columnSelector.getSigmaXErrorSize());
             converter.setExpressionTypeSigmaX(columnSelector.getSigmaXExpressionType());
             converter.setErrorSizeSigmaY(columnSelector.getSigmaYErrorSize());
             converter.setExpressionTypeSigmaY(columnSelector.getSigmaYExpressionType());
+            
+            // build a new series
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             for (Record record : table.getItems()) {
                 series.getData().add(new XYChart.Data<>(0, 0, record));
             }
+            
             ErrorEllipseChartExtendedPanel ccExtendedPanel = new ErrorEllipseChartExtendedPanel();
             ccExtendedPanel.getChart().setConverter(converter);
             ccExtendedPanel.getChart().getData().add(series);
+            
             VBox.setVgrow(ccExtendedPanel.getMasterDetailPane(), Priority.ALWAYS);
             Scene scene = new Scene(ccExtendedPanel, 1200, 800);
+            
             Stage chartStage = new Stage();
             chartStage.setScene(scene);
             chartStage.show();
         });
+        
         this.dialog = dialog;
     }
     

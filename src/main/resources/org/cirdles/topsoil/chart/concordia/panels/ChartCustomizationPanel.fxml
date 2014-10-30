@@ -5,9 +5,9 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import org.cirdles.topsoil.LabelUsePrefSize ?>
-<?import org.cirdles.jfxutils.NumberField ?>
-<?import org.cirdles.topsoil.chart.concordia.panels.AxisConfigurationSubpanel ?>
+<?import org.cirdles.topsoil.LabelUsePrefSize?>
+<?import org.cirdles.jfxutils.NumberField?>
+<?import org.cirdles.topsoil.chart.concordia.panels.AxisConfigurationPanel?>
 
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1"
@@ -50,6 +50,6 @@
     
     <LabelUsePrefSize text="%tickerNodeSubsectionTitle" styleClass="title-subsubpanel"/>
     
-    <AxisConfigurationSubpanel fx:id="axisXConfigPanel"/>
-    <AxisConfigurationSubpanel fx:id="axisYConfigPanel"/>
+    <AxisConfigurationPanel fx:id="axisXConfigPanel"/>
+    <AxisConfigurationPanel fx:id="axisYConfigPanel"/>
 </fx:root>

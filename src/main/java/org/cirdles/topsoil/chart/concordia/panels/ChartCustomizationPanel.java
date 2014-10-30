@@ -15,35 +15,28 @@
  */
 package org.cirdles.topsoil.chart.concordia.panels;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.Tools;
 import org.cirdles.topsoil.chart.concordia.ConcordiaLineType;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipseChart;
 
-public class ChartCustomizationPanel extends VBox implements Initializable {
+public class ChartCustomizationPanel extends CustomVBox<ChartCustomizationPanel> implements Initializable {
 
     @FXML private ToggleGroup concordiaLineToggleGroup;
     @FXML private ChoiceBox<String> fontChoiceBox;
 
-    @FXML private AxisConfigurationSubpanel axisXConfigPanel;
-    @FXML private AxisConfigurationSubpanel axisYConfigPanel;
-
-    private final ErrorEllipseChart chart;
+    @FXML private AxisConfigurationPanel axisXConfigPanel;
+    @FXML private AxisConfigurationPanel axisYConfigPanel;
 
     @FXML private Slider fontSizeAxisLabelSlider;
     @FXML private Label fontSizeAxisLabelValue;
@@ -51,39 +44,25 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
     @FXML private Slider fontSizeTickLabelSlider;
     @FXML private Label fontSizeTickLabelValue;
 
+    private ErrorEllipseChart chart;
+
     public ChartCustomizationPanel(ErrorEllipseChart chart) {
-        this.chart = chart;
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("chartcustomizationpanel.fxml"),
-                                           ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
-        loader.setRoot(this);
-        loader.setController(this);
-
-        try {
-            loader.load();
-        } catch (IOException e) {
-            getChildren().add(new Label("There was an error loading this part of the panel."));
-            e.printStackTrace();
-        }
+        super(self -> self.chart = chart);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        concordiaLineToggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                switch (newValue.getUserData().toString()) {
-                    case "Wetherill":
-                        chart.setConcordiaLineType(ConcordiaLineType.WETHERILL);
-                        break;
-                    case "Tera-Wasserburg":
-                        chart.setConcordiaLineType(ConcordiaLineType.TERA_WASSERBURG);
-                        break;
-                    case "None":
-                        chart.setConcordiaLineType(ConcordiaLineType.NONE);
-                        break;
-                }
+        concordiaLineToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            switch (newValue.getUserData().toString()) {
+                case "Wetherill":
+                    chart.setConcordiaLineType(ConcordiaLineType.WETHERILL);
+                    break;
+                case "Tera-Wasserburg":
+                    chart.setConcordiaLineType(ConcordiaLineType.TERA_WASSERBURG);
+                    break;
+                case "None":
+                    chart.setConcordiaLineType(ConcordiaLineType.NONE);
+                    break;
             }
         });
 
@@ -97,7 +76,7 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
         chart.concordiaLineFontSizeProperty().bind(fontSizeTickLabelSlider.valueProperty());
         chart.getXAxis().fontSizeTickLabelProperty().bind(fontSizeTickLabelSlider.valueProperty());
         chart.getYAxis().fontSizeTickLabelProperty().bind(fontSizeTickLabelSlider.valueProperty());
-        
+
         initSlider(fontSizeAxisLabelSlider, fontSizeAxisLabelValue, 12);
         chart.getXAxis().fontSizeAxisLabelProperty().bind(fontSizeAxisLabelSlider.valueProperty());
         chart.getYAxis().fontSizeAxisLabelProperty().bind(fontSizeAxisLabelSlider.valueProperty());
@@ -115,7 +94,7 @@ public class ChartCustomizationPanel extends VBox implements Initializable {
         s.valueProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             l.setText(Tools.DYNAMIC_NUMBER_CONVERTER_TO_INTEGER.toString(newValue));
         });
-        
+
         s.majorTickUnitProperty().set(1);
         s.minorTickCountProperty().set(0);
         s.setSnapToTicks(true);

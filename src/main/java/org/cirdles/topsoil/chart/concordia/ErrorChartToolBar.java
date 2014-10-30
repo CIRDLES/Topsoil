@@ -31,9 +31,9 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import org.cirdles.javafx.CustomToolBar;
 import org.cirdles.jfxutils.NodeToSVGConverter;
 import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.controlsfx.control.MasterDetailPane;
@@ -43,10 +43,10 @@ import org.controlsfx.control.MasterDetailPane;
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ErrorChartToolBar extends ToolBar {
+public class ErrorChartToolBar extends CustomToolBar<ErrorChartToolBar> {
 
-    private final ErrorEllipseChart chart;
-    private final MasterDetailPane masterDetailPane;
+    private ErrorEllipseChart chart;
+    private MasterDetailPane masterDetailPane;
 
     @FXML private Button customizationButton;
     @FXML private ChoiceBox confidenceLevel;
@@ -55,20 +55,10 @@ public class ErrorChartToolBar extends ToolBar {
     @FXML private ResourceBundle resources;
 
     public ErrorChartToolBar(ErrorEllipseChart chart, MasterDetailPane masterDetailPane) {
-        this.chart = chart;
-        this.masterDetailPane = masterDetailPane;
-
-        FXMLLoader loader = new FXMLLoader(ErrorChartToolBar.class.getResource("errorellipsetoolbar.fxml"),
-                                           ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
-        loader.setRoot(this);
-        loader.setController(this);
-        loader.setBuilderFactory(new TopsoilBuilderFactory());
-
-        try {
-            loader.load();
-        } catch (IOException ex) {
-            Logger.getLogger(ErrorChartToolBar.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super(self -> {
+            self.chart = chart;
+            self.masterDetailPane = masterDetailPane;
+        });
     }
 
     public void initialize() {

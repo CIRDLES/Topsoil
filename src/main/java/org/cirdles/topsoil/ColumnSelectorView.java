@@ -35,6 +35,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
+import org.cirdles.javafx.CustomGridPane;
 import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.cirdles.topsoil.table.Field;
 import org.cirdles.topsoil.table.NumberField;
@@ -44,7 +45,7 @@ import org.cirdles.topsoil.table.RecordTableColumn;
 /**
  * This UI element is used by the user to choose which column in the main table determine which value of an ellipse.
  */
-class ColumnSelectorView extends GridPane {
+public class ColumnSelectorView extends CustomGridPane<ColumnSelectorView> {
 
     private static final Map<Double, String> ERROR_SIZES = new HashMap<>();
 
@@ -60,65 +61,52 @@ class ColumnSelectorView extends GridPane {
         EXPRESSION_TYPES.put(ExpressionType.PERCENTAGE, "%");
     }
 
-    @FXML
-    private ChoiceBox<Field<Number>> choiceBoxX;
-    @FXML
-    private ChoiceBox<Field<Number>> choiceBoxSigmaX;
-    @FXML
-    private ChoiceBox<Double> choiceBoxErrorSizeSigmaX;
-    @FXML
-    private ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaX;
-    @FXML
-    private ChoiceBox<Field<Number>> choiceBoxY;
-    @FXML
-    private ChoiceBox<Field<Number>> choiceBoxSigmaY;
-    @FXML
-    private ChoiceBox<Double> choiceBoxErrorSizeSigmaY;
-    @FXML
-    private ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaY;
-    @FXML
-    private ChoiceBox<Field<Number>> choiceBoxRho;
-    private final ColumnSelectorDialog dialog;
+    @FXML private ChoiceBox<Field<Number>> choiceBoxX;
+    @FXML private ChoiceBox<Field<Number>> choiceBoxSigmaX;
+    @FXML private ChoiceBox<Double> choiceBoxErrorSizeSigmaX;
+    @FXML private ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaX;
+    @FXML private ChoiceBox<Field<Number>> choiceBoxY;
+    @FXML private ChoiceBox<Field<Number>> choiceBoxSigmaY;
+    @FXML private ChoiceBox<Double> choiceBoxErrorSizeSigmaY;
+    @FXML private ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaY;
+    @FXML private ChoiceBox<Field<Number>> choiceBoxRho;
+    
+    private ColumnSelectorDialog dialog;
+    private List<Field<Number>> fields;
 
     public ColumnSelectorView(TableView<Record> table, final ColumnSelectorDialog dialog) {
-        this.dialog = dialog;
-        setAlignment(Pos.CENTER);
-        setHgap(12);
-        // Make the labels right align.
-        ColumnConstraints labelConstraints = new ColumnConstraints();
-        labelConstraints.setHalignment(HPos.RIGHT);
-        getColumnConstraints().add(labelConstraints);
-        List<Field<Number>> fields = new ArrayList<>(table.getColumns().size());
-        for (TableColumn<Record, ?> column : table.getColumns()) {
-            // Only add Field<Number>s from RecordTableColumns to fields.
-            if (column instanceof RecordTableColumn) {
-                RecordTableColumn recordColumn = (RecordTableColumn) column;
-                if (recordColumn.getField() instanceof NumberField) {
-                    fields.add(recordColumn.getField());
+        super(self -> {
+            self.dialog = dialog;
+            self.setAlignment(Pos.CENTER);
+            self.setHgap(12);
+            // Make the labels right align.
+            ColumnConstraints labelConstraints = new ColumnConstraints();
+            labelConstraints.setHalignment(HPos.RIGHT);
+            self.getColumnConstraints().add(labelConstraints);
+            self.fields = new ArrayList<>(table.getColumns().size());
+            
+            for (TableColumn<Record, ?> column : table.getColumns()) {
+                // Only add Field<Number>s from RecordTableColumns to fields.
+                if (column instanceof RecordTableColumn) {
+                    RecordTableColumn recordColumn = (RecordTableColumn) column;
+                    if (recordColumn.getField() instanceof NumberField) {
+                        self.fields.add(recordColumn.getField());
+                    }
                 }
             }
-        }
-        FXMLLoader loader = new FXMLLoader(ColumnSelectorView.class.getResource("columndialogselector.fxml"),
-                ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
-        loader.setRoot(this);
-        loader.setController(this);
-        loader.setBuilderFactory(new TopsoilBuilderFactory());
-        try {
-            loader.load();
-            fillChoiceBox(choiceBoxX, fields, 0);
-            fillChoiceBox(choiceBoxSigmaX, fields, 1);
-            fillChoiceBox(choiceBoxErrorSizeSigmaX, ERROR_SIZES, 0);
-            fillChoiceBox(choiceBoxExpressionTypeSigmaX, EXPRESSION_TYPES, 0);
-            fillChoiceBox(choiceBoxY, fields, 2);
-            fillChoiceBox(choiceBoxSigmaY, fields, 3);
-            fillChoiceBox(choiceBoxErrorSizeSigmaY, ERROR_SIZES, 0);
-            fillChoiceBox(choiceBoxExpressionTypeSigmaY, EXPRESSION_TYPES, 0);
-            fillChoiceBox(choiceBoxRho, fields, 4);
-            linkChoiceBoxesSequentially(choiceBoxX, choiceBoxSigmaX);
-            linkChoiceBoxesSequentially(choiceBoxY, choiceBoxSigmaY);
-        } catch (IOException ex) {
-            Logger.getLogger(ColumnSelectorDialog.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        });
+
+        fillChoiceBox(choiceBoxX, fields, 0);
+        fillChoiceBox(choiceBoxSigmaX, fields, 1);
+        fillChoiceBox(choiceBoxErrorSizeSigmaX, ERROR_SIZES, 0);
+        fillChoiceBox(choiceBoxExpressionTypeSigmaX, EXPRESSION_TYPES, 0);
+        fillChoiceBox(choiceBoxY, fields, 2);
+        fillChoiceBox(choiceBoxSigmaY, fields, 3);
+        fillChoiceBox(choiceBoxErrorSizeSigmaY, ERROR_SIZES, 0);
+        fillChoiceBox(choiceBoxExpressionTypeSigmaY, EXPRESSION_TYPES, 0);
+        fillChoiceBox(choiceBoxRho, fields, 4);
+        linkChoiceBoxesSequentially(choiceBoxX, choiceBoxSigmaX);
+        linkChoiceBoxesSequentially(choiceBoxY, choiceBoxSigmaY);
     }
 
     public Field<Number> getXSelection() {

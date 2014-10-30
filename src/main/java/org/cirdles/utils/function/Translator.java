@@ -22,4 +22,5 @@ package org.cirdles.utils.function;
 public interface Translator {
 
     public String translate(String origin);
+    
 }

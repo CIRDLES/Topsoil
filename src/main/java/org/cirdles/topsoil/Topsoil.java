@@ -69,16 +69,8 @@ public class Topsoil extends Application {
         } catch (DirectoryNotEmptyException ex) {
             Logger.getLogger(Topsoil.class.getName()).log(Level.INFO, "Old Topsoil path not empty");
         }
-
-        ResourceBundle bundle = ResourceBundle.getBundle("org.cirdles.topsoil.Resources");
-
-        // TopsoilMainWindow root = new TopsoilMainWindow(primaryStage);
-        Pane root = (Pane) FXMLLoader.load(getClass().getResource("topsoil.fxml"), bundle);
-
-        primaryStage.setScene(new Scene(root));
-        primaryStage.setTitle(String.format("%s [%s]",
-                                            bundle.getString("applicationName"),
-                                            bundle.getString("applicationVersion")));
+        
+        primaryStage.setScene(new Scene(new TopsoilMainWindow()));
         primaryStage.show();
     }
 
