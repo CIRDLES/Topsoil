@@ -26,7 +26,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -64,18 +63,44 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         dataTable.setSavePath(Topsoil.LAST_TABLE_PATH);
         dataTable.load();
 
-        // when the stage/window loads...
-        sceneProperty().addListener((observableScene, oldScene, newScene) -> {
-            getScene().windowProperty().addListener((observableWindow, oldWindow, newWindow) -> {
-                // set the window title to something like "Topsoil [0.3.4]"
+        // set the window title to something like "Topsoil [0.3.4]"
+        String applicationName = resources.getString("applicationName");
+        String applicationVersion = resources.getString("applicationVersion");
+        setWindowTitle(String.format("%s [%s]", applicationName, applicationVersion));
+    }
+
+    private void setWindowTitle(String title) {
+        // while the code below is long and ugly, anonymous inner classes are
+        // necessary (in Java 8) in order to allow the listeners to reference
+        // and remove themselves
+        // initially lambdas were used (see git history)
+        // this keeps TestFX from causing errors
+        
+        // create self-removing window listener
+        // runs second
+        ChangeListener<Window> windowListener = new ChangeListener<Window>() {
+            @Override
+            public void changed(ObservableValue<? extends Window> observableWindow, Window oldWindow, Window newWindow) {
                 Stage stage = (Stage) newWindow;
 
-                String applicationName = resources.getString("applicationName");
-                String applicationVersion = resources.getString("applicationVersion");
+                // actually set the title
+                stage.setTitle(title);
 
-                stage.setTitle(String.format("%s [%s]", applicationName, applicationVersion));
-            });
-        });
+                getScene().windowProperty().removeListener(this);
+            }
+        };
+        
+        // create self-removing scene listener
+        // runs first
+        ChangeListener<Scene> sceneListener = new ChangeListener<Scene>() {
+            @Override
+            public void changed(ObservableValue<? extends Scene> observableScene, Scene oldScene, Scene newScene) {
+                getScene().windowProperty().addListener(windowListener);
+                sceneProperty().removeListener(this);
+            }
+        };
+
+        sceneProperty().addListener(sceneListener);
     }
 
     @FXML
