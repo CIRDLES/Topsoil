@@ -17,15 +17,14 @@ package org.cirdles.topsoil.chart.concordia;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -35,7 +34,6 @@ import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.cirdles.javafx.CustomToolBar;
 import org.cirdles.jfxutils.NodeToSVGConverter;
-import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.controlsfx.control.MasterDetailPane;
 
 /**
@@ -64,10 +62,14 @@ public class ErrorChartToolBar extends CustomToolBar<ErrorChartToolBar> {
     public void initialize() {
 
         chart.confidenceLevel().bind(confidenceLevel.valueProperty());
-        Map<Number, String> confidenceLevels = new HashMap<>();
-        confidenceLevels.put(1, "1\u03c3");
-        confidenceLevels.put(2, "2\u03c3");
+        
+        // build map of confidence levels
+        Map<Number, String> confidenceLevels = new TreeMap<>();
+        confidenceLevels.put(1., "1\u03c3"); // using a double prevents boxing issues here
+        confidenceLevels.put(2., "2\u03c3"); // and here
         confidenceLevels.put(2.4477, "95%");
+        
+        // configure confidence level choice box
         confidenceLevel.getItems().addAll(confidenceLevels.keySet());
         confidenceLevel.getSelectionModel().select(1);
         confidenceLevel.setConverter(new StringConverter<Number>() {

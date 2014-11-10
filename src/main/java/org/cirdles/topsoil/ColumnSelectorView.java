@@ -16,9 +16,10 @@
 package org.cirdles.topsoil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -40,14 +41,14 @@ import org.cirdles.topsoil.table.RecordTableColumn;
  */
 public class ColumnSelectorView extends CustomGridPane<ColumnSelectorView> {
 
-    private static final Map<Double, String> ERROR_SIZES = new HashMap<>();
+    private static final Map<Double, String> ERROR_SIZES = new TreeMap<>();
 
     static {
         ERROR_SIZES.put(1., "1\u03c3");
         ERROR_SIZES.put(2., "2\u03c3");
     }
 
-    private static final Map<ExpressionType, String> EXPRESSION_TYPES = new HashMap<ExpressionType, String>();
+    private static final Map<ExpressionType, String> EXPRESSION_TYPES = new EnumMap<>(ExpressionType.class);
 
     static {
         EXPRESSION_TYPES.put(ExpressionType.ABSOLUTE, "Abs");
@@ -63,7 +64,7 @@ public class ColumnSelectorView extends CustomGridPane<ColumnSelectorView> {
     @FXML private ChoiceBox<Double> choiceBoxErrorSizeSigmaY;
     @FXML private ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaY;
     @FXML private ChoiceBox<Field<Number>> choiceBoxRho;
-    
+
     private ColumnSelectorDialog dialog;
     private List<Field<Number>> fields;
 
@@ -72,12 +73,13 @@ public class ColumnSelectorView extends CustomGridPane<ColumnSelectorView> {
             self.dialog = dialog;
             self.setAlignment(Pos.CENTER);
             self.setHgap(12);
+
             // Make the labels right align.
             ColumnConstraints labelConstraints = new ColumnConstraints();
             labelConstraints.setHalignment(HPos.RIGHT);
             self.getColumnConstraints().add(labelConstraints);
             self.fields = new ArrayList<>(table.getColumns().size());
-            
+
             for (TableColumn<Record, ?> column : table.getColumns()) {
                 // Only add Field<Number>s from RecordTableColumns to fields.
                 if (column instanceof RecordTableColumn) {
@@ -88,17 +90,33 @@ public class ColumnSelectorView extends CustomGridPane<ColumnSelectorView> {
                 }
             }
         });
+    }
 
+    @FXML
+    private void initialize() {
+        // x
         fillChoiceBox(choiceBoxX, fields, 0);
+        
+        // sigma x
         fillChoiceBox(choiceBoxSigmaX, fields, 1);
-        fillChoiceBox(choiceBoxErrorSizeSigmaX, ERROR_SIZES, 0);
-        fillChoiceBox(choiceBoxExpressionTypeSigmaX, EXPRESSION_TYPES, 0);
+        fillChoiceBox(choiceBoxErrorSizeSigmaX, ERROR_SIZES, 1);
+        fillChoiceBox(choiceBoxExpressionTypeSigmaX, EXPRESSION_TYPES, 1);
+        
+        // y
         fillChoiceBox(choiceBoxY, fields, 2);
+        
+        // sigma y
         fillChoiceBox(choiceBoxSigmaY, fields, 3);
-        fillChoiceBox(choiceBoxErrorSizeSigmaY, ERROR_SIZES, 0);
-        fillChoiceBox(choiceBoxExpressionTypeSigmaY, EXPRESSION_TYPES, 0);
+        fillChoiceBox(choiceBoxErrorSizeSigmaY, ERROR_SIZES, 1);
+        fillChoiceBox(choiceBoxExpressionTypeSigmaY, EXPRESSION_TYPES, 1);
+        
+        // rho
         fillChoiceBox(choiceBoxRho, fields, 4);
+        
+        // x and sigma x
         linkChoiceBoxesSequentially(choiceBoxX, choiceBoxSigmaX);
+        
+        // y and sigma y
         linkChoiceBoxesSequentially(choiceBoxY, choiceBoxSigmaY);
     }
 
