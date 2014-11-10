@@ -15,28 +15,21 @@
  */
 package org.cirdles.topsoil;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import org.cirdles.javafx.CustomGridPane;
-import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
 import org.cirdles.topsoil.table.Field;
 import org.cirdles.topsoil.table.NumberField;
 import org.cirdles.topsoil.table.Record;

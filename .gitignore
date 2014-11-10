@@ -4,5 +4,5 @@ target
 # Netbeans
 nbactions.xml
 
-# TestFX (?)
+# TestFX
 screenshot*.png

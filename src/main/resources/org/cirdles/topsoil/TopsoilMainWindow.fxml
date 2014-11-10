@@ -24,9 +24,11 @@
     <ToolBar>
         <items>
             <Button text="%createErrorEllipseChart"
-                    onAction="#createErrorChart" /> 
+                    onAction="#createErrorChart"
+                    fx:id="createErrorChartButton" /> 
             <Button text="%clearTableMessage"
-                    onAction="#emptyTable"/> 
+                    onAction="#emptyTable"
+                    fx:id="emptyTableButton" /> 
         </items>
     </ToolBar>
     <TSVTable fx:id="dataTable"

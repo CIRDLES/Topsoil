@@ -19,6 +19,7 @@ import javafx.scene.Parent;
 import org.junit.Test;
 import static org.loadui.testfx.Assertions.*;
 import org.loadui.testfx.GuiTest;
+import static org.hamcrest.CoreMatchers.*;
 
 /**
  *
@@ -32,8 +33,13 @@ public class TopsoilMainWindowTest extends GuiTest {
     }
     
     @Test
-    public void toolBar_should_beVisible() {
-        assertNodeExists("#dataTable");
+    public void createErrorChartButton_should_openColumnSelectorDialog() {
+        int initialNumberOfWindows = getWindows().size();
+        
+        click("#createErrorChartButton");
+        
+        // if the button works then there should now be one more window
+        verifyThat(getWindows().size(), is(initialNumberOfWindows + 1));
     }
     
 }
