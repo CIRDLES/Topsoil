@@ -48,8 +48,14 @@ topsoil.showData = function () {
     var settings = {};
     ts.settingsManager.getSettings().forEach(function (setting) {
         Object.defineProperty(settings, setting.getName(), {
-            get: function () { return setting.getValue(); },
-            set: function (value) { setting.setValue(value); }
+            get: function () {
+                return setting.getValue();
+            },
+            set: function (value) {
+                listener.block();
+                setting.setValue(value);
+                listener.unblock();
+            }
         });
     });
 
@@ -119,12 +125,23 @@ var X_MIN = "X Min";
 var Y_MAX = "Y Max";
 var Y_MIN = "Y Min";
 
+var listener;
+
 topsoil.transferSettings = function (settingsManager) {
     // store the settings manager for later
     ts.settingsManager = settingsManager;
-    settingsManager.addJSListener({
+    settingsManager.addJSListener(listener = {
+        blocked: false,
         onUpdate: function (setting) {
-            topsoil.showData();
+            if (!blocked) {
+                topsoil.showData();
+            }
+        },
+        block: function () {
+            blocked = true;
+        },
+        unblock: function () {
+            blocked = false;
         }
     });
 

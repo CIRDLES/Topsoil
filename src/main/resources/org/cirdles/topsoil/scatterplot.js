@@ -17,20 +17,37 @@
 (function () {
     "use strict";
 
-//    chart.settings
-//            .addSetting(X_MAX, 100)
-//            .addSetting(X_MIN, 0)
-//            .addSetting(Y_MAX, 100)
-//            .addSetting(Y_MIN, 0);
+    chart.settings
+            .addSetting(X_MAX, 100)
+            .addSetting(X_MIN, 0)
+            .addSetting(Y_MAX, 100)
+            .addSetting(Y_MIN, 0);
 
     chart.draw = function (data) {
+        chart.settings[X_MIN] = d3.min(data, function (d) {
+            return d.x;
+        });
+        chart.settings[X_MAX] = d3.max(data, function (d) {
+            return d.x;
+        });
+        chart.settings[Y_MIN] = d3.min(data, function (d) {
+            return d.y;
+        });
+        chart.settings[Y_MAX] = d3.max(data, function (d) {
+            return d.y;
+        });
+        
+        chart.update(data);
+    };
+
+    chart.update = function (data) {
         // a mathematical construct
         var x = d3.scale.linear()
-                .domain(d3.extent(data, function (d) { return d.x; }))
+                .domain([chart.settings[X_MIN], chart.settings[X_MAX]])
                 .range([0, chart.width]);
 
         var y = d3.scale.linear()
-                .domain(d3.extent(data, function (d) { return d.y; }))
+                .domain([chart.settings[Y_MIN], chart.settings[Y_MAX]])
                 .range([chart.height, 0]);
 
         // what actually makes the axis
@@ -86,7 +103,7 @@
 
         // remove unused points
         points.exit().remove();
-
+        
         // add pan/zoom
         var zoom = d3.behavior.zoom()
                 .x(x)
@@ -97,8 +114,8 @@
                     chart.settings[Y_MIN] = y.domain()[0];
                     chart.settings[X_MAX] = x.domain()[1];
                     chart.settings[Y_MAX] = y.domain()[1];
-
-                    chart.draw(ts.data);
+                    
+                    chart.update(data);
                 });
 
         chart.area.clipped.call(zoom);
