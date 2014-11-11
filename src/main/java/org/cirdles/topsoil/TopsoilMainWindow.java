@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 zeringuej.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 package org.cirdles.topsoil;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,11 +29,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.cirdles.javafx.CustomVBox;
+import org.cirdles.topsoil.lib.chart.JavaScriptChart;
 import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.utils.TSVTableReader;
 import org.cirdles.topsoil.utils.TSVTableWriter;
@@ -41,7 +47,7 @@ import org.controlsfx.dialog.Dialogs;
 /**
  * FXML Controller class
  *
- * @author zeringuej
+ * @author John Zeringue
  */
 public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
@@ -75,7 +81,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         // and remove themselves
         // initially lambdas were used (see git history)
         // this keeps TestFX from causing errors
-        
+
         // create self-removing window listener
         // runs second
         ChangeListener<Window> windowListener = new ChangeListener<Window>() {
@@ -89,7 +95,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 getScene().windowProperty().removeListener(this);
             }
         };
-        
+
         // create self-removing scene listener
         // runs first
         ChangeListener<Scene> sceneListener = new ChangeListener<Scene>() {
@@ -147,6 +153,26 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
         new ColumnSelectorDialog(dataTable).show();
 
+    }
+
+    @FXML
+    private void createChart(ActionEvent event) {
+        String chartName = ((MenuItem) event.getSource()).getText();
+
+        if (chartName.equals("Scatterplot")) {
+            try {
+                // get the path to the JavaScript file
+                URI javascriptURI = getClass().getResource("scatterplot.js").toURI();
+                Path javascriptPath = Paths.get(javascriptURI);
+                
+                // create the new chart (a scatterplot)
+                JavaScriptChart chart = new JavaScriptChart(javascriptPath);
+                
+                new org.cirdles.topsoil.app.ColumnSelectorDialog(dataTable, chart).show();
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @FXML

@@ -8,28 +8,27 @@
 <?import org.cirdles.topsoil.*?>
 
 <fx:root type="javafx.scene.layout.VBox"
-      prefHeight="800"
-      prefWidth="1200"
-      xmlns:fx="http://javafx.com/fxml/1">
+         prefHeight="800"
+         prefWidth="1200"
+         xmlns:fx="http://javafx.com/fxml/1">
     <MenuBar useSystemMenuBar="true" >
-        <menus>
-            <Menu text="%fileMenu">
-                <items>
-                    <MenuItem text="%importFromTSV"
-                              onAction="#importFromFile" />
-                </items>
-            </Menu>
-        </menus>
+        <Menu text="%fileMenu">
+            <MenuItem text="%importFromTSV"
+                      onAction="#importFromFile" />
+        </Menu>
+        
+        <Menu text="Charts">
+            <MenuItem text="Scatterplot"
+                      onAction="#createChart" />
+        </Menu>
     </MenuBar>
     <ToolBar>
-        <items>
-            <Button text="%createErrorEllipseChart"
-                    onAction="#createErrorChart"
-                    fx:id="createErrorChartButton" /> 
-            <Button text="%clearTableMessage"
-                    onAction="#emptyTable"
-                    fx:id="emptyTableButton" /> 
-        </items>
+        <Button text="%createErrorEllipseChart"
+                onAction="#createErrorChart"
+                fx:id="createErrorChartButton" /> 
+        <Button text="%clearTableMessage"
+                onAction="#emptyTable"
+                fx:id="emptyTableButton" />
     </ToolBar>
     <TSVTable fx:id="dataTable"
               VBox.vgrow="ALWAYS">
