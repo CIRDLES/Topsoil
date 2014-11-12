@@ -18,6 +18,7 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
@@ -32,6 +33,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -61,10 +63,6 @@ public class NodeToSVGConverter {
      * @param output
      */
     public void convert(Node node, File output) {
-        convert(node, output, 15, 10);
-    }
-
-    public void convert(Node node, File output, double width, double height) {
         try {
             Document document = documentBuilder.newDocument();
             document.setXmlStandalone(true);
@@ -73,8 +71,6 @@ public class NodeToSVGConverter {
             svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
             svg.setAttribute("version", "1.1");
             svg.setAttribute("preserveAspectRatio", "xMinYMin");
-            svg.setAttribute("width", String.format("%fcm", width));
-            svg.setAttribute("height", String.format("%fcm", height));
             svg.setAttribute("viewBox", String.format("0 0 %f %f",
                                                       node.getBoundsInLocal().getWidth(),
                                                       node.getBoundsInLocal().getHeight()));
@@ -147,7 +143,6 @@ public class NodeToSVGConverter {
         double y = 0;
 
         if (node instanceof Parent) {
-            //"I said goddamn! Goddamn... Goddamn"
             element = document.createElement("g");
 
             for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
@@ -157,49 +152,25 @@ public class NodeToSVGConverter {
                     element.appendChild(childElement);
                 }
             }
+            
+            // handle clip property
+            if (node.getClip() != null) {
+                Element clip = convertNodeToElement(node.getClip(), document);
+                
+                Element clipPath = document.createElement("clipPath");
+                clipPath.appendChild(clip);
+                String clipID = "clip" + node.getClip().hashCode();
+                clipPath.setAttribute("id", clipID);
+                
+                Element defs = document.createElement("defs");
+                defs.appendChild(clipPath);
+                
+                element.setAttribute("clip-path", "url(#" + clipID + ")");
+                element.appendChild(defs);
+            }
 
             if (node instanceof Region) {
-                Region region = (Region) node;
-
-                if (region.getBorder() != null) {
-                    Border border = region.getBorder();
-
-                    for (BorderStroke borderStroke : border.getStrokes()) {
-                        BorderWidths borderWidths = borderStroke.getWidths();
-
-                        if (borderStroke.getTopStroke().isOpaque() && borderWidths.getTop() > 0) {
-                            Line line = new Line(0, 0, region.getWidth(), 0);
-                            line.setStroke(borderStroke.getTopStroke());
-                            line.setStrokeWidth(borderWidths.getTop());
-
-                            element.appendChild(convertNodeToElement(line, document));
-                        }
-
-                        if (borderStroke.getBottomStroke().isOpaque() && borderWidths.getBottom() > 0) {
-                            Line line = new Line(0, region.getHeight(), region.getWidth(), region.getHeight());
-                            line.setStroke(borderStroke.getRightStroke());
-                            line.setStrokeWidth(borderWidths.getRight());
-
-                            element.appendChild(convertNodeToElement(line, document));
-                        }
-
-                        if (borderStroke.getLeftStroke().isOpaque() && borderWidths.getLeft() > 0) {
-                            Line line = new Line(0, 0, 0, region.getHeight());
-                            line.setStroke(borderStroke.getLeftStroke());
-                            line.setStrokeWidth(borderWidths.getLeft());
-
-                            element.appendChild(convertNodeToElement(line, document));
-                        }
-
-                        if (borderStroke.getRightStroke().isOpaque() && borderWidths.getRight() > 0) {
-                            Line line = new Line(region.getWidth(), 0, region.getWidth(), region.getHeight());
-                            line.setStroke(borderStroke.getRightStroke());
-                            line.setStrokeWidth(borderWidths.getRight());
-
-                            element.appendChild(convertNodeToElement(line, document));
-                        }
-                    }
-                }
+                convertRegion(node, element, document);
             }
         } else if (node instanceof Line) {
             Line line = (Line) node;
@@ -218,64 +189,11 @@ public class NodeToSVGConverter {
             element.setAttribute("stroke", colorToRGBString((Color) line.getStroke()));
             element.setAttribute("stroke-width", String.valueOf(line.getStrokeWidth()));
         } else if (node instanceof Path) {
-            Path path = (Path) node;
-
-            element = document.createElement("path");
-
-            StringBuilder d = new StringBuilder();
-            for (PathElement pathElement : path.getElements()) {
-                if (pathElement instanceof MoveTo) {
-                    MoveTo moveTo = (MoveTo) pathElement;
-
-                    d.append(String.format("M %f %f ",
-                                           moveTo.getX() + path.getLayoutX(),
-                                           moveTo.getY() + path.getLayoutY()));
-                } else if (pathElement instanceof CubicCurveTo) {
-                    CubicCurveTo cubicCurveTo = (CubicCurveTo) pathElement;
-
-                    d.append(String.format("C %f %f %f %f %f %f ",
-                                           cubicCurveTo.getControlX1() + path.getLayoutX(),
-                                           cubicCurveTo.getControlY1() + path.getLayoutY(),
-                                           cubicCurveTo.getControlX2() + path.getLayoutX(),
-                                           cubicCurveTo.getControlY2() + path.getLayoutY(),
-                                           cubicCurveTo.getX() + path.getLayoutX(),
-                                           cubicCurveTo.getY() + path.getLayoutY()));
-                } else if (pathElement instanceof LineTo) {
-                    LineTo lineTo = (LineTo) pathElement;
-
-                    d.append(String.format("L %f %f ",
-                                           lineTo.getX() + path.getLayoutX(),
-                                           lineTo.getY() + path.getLayoutY()));
-                }
-            }
-
-            element.setAttribute("d", d.toString().trim());
-
-            element.setAttribute("stroke", colorToRGBString((Color) path.getStroke()));
-            element.setAttribute("stroke-width", String.valueOf(path.getStrokeWidth()));
-            element.setAttribute("fill", colorToRGBString((Color) path.getFill()));
-
-            try {
-                element.setAttribute("opacity", String.valueOf(path.opacityProperty().get()));
-            } catch (NullPointerException ex) {
-                System.out.println(path + " has no opacity defined");
-            }
+            element = convertPath(node, element, document);
         } else if (node instanceof Circle) {
-            Circle circle = (Circle) node;
-
-            element = document.createElement("circle");
-
-            element.setAttribute("cx", String.valueOf(circle.getCenterX() + circle.getLayoutX()));
-            element.setAttribute("cy", String.valueOf(circle.getCenterY() + circle.getLayoutY()));
-            element.setAttribute("r", String.valueOf(circle.getRadius()));
-            element.setAttribute("stroke", colorToRGBString((Color) circle.getStroke()));
-            element.setAttribute("fill", colorToRGBString((Color) circle.getFill()));
-
-            try {
-                element.setAttribute("opacity", String.valueOf(circle.opacityProperty().get()));
-            } catch (NullPointerException ex) {
-                System.out.println(circle + " has no opacity defined");
-            }
+            element = convertCircle(node, element, document);
+        } else if (node instanceof Rectangle) {
+            element = convertRectangle((Rectangle) node, element, document);
         } else if (node instanceof Text) {
             Text text = (Text) node;
 
@@ -294,17 +212,7 @@ public class NodeToSVGConverter {
             //Getting the transforms
             StringBuilder tranforms_partstring = new StringBuilder();
 
-            //Heads up : May not work if multiple tranform of the same type in the scene
-            for (Transform t : node.getTransforms()) {
-                if (t instanceof Rotate) {
-                    //Heads up : Don't take in account the values PivotX, Y and Z
-                    Rotate r = (Rotate) t;
-                    tranforms_partstring.append(String.format("rotate(%f, %f %f) ", r.getAngle(), x, y));
-                } else if (t instanceof Translate) {
-                    Translate r = (Translate) t;
-                    tranforms_partstring.append(String.format("translate(%f %f) ", t.getTx(), t.getTy()));
-                }
-            }
+            convertTransforms(node, tranforms_partstring, x, y);
 
             element.setAttribute("transform", String.format(tranforms_partstring.toString() + "translate(%f %f)",
                                                             node.getLayoutX(),
@@ -317,6 +225,131 @@ public class NodeToSVGConverter {
         }
 
         return element; //haribo
+    }
+
+    private void convertTransforms(Node node, StringBuilder tranforms_partstring, double x, double y) {
+        //Heads up : May not work if multiple tranform of the same type in the scene
+        for (Transform t : node.getTransforms()) {
+            if (t instanceof Rotate) {
+                //Heads up : Don't take in account the values PivotX, Y and Z
+                Rotate r = (Rotate) t;
+                tranforms_partstring.append(String.format("rotate(%f, %f %f) ", r.getAngle(), x, y));
+            } else if (t instanceof Translate) {
+                Translate r = (Translate) t;
+                tranforms_partstring.append(String.format("translate(%f %f) ", t.getTx(), t.getTy()));
+            }
+        }
+    }
+
+    private Element convertCircle(Node node, Element element, Document document) throws DOMException {
+        Circle circle = (Circle) node;
+        element = document.createElement("circle");
+        element.setAttribute("cx", String.valueOf(circle.getCenterX() + circle.getLayoutX()));
+        element.setAttribute("cy", String.valueOf(circle.getCenterY() + circle.getLayoutY()));
+        element.setAttribute("r", String.valueOf(circle.getRadius()));
+        element.setAttribute("stroke", colorToRGBString((Color) circle.getStroke()));
+        element.setAttribute("fill", colorToRGBString((Color) circle.getFill()));
+        try {
+            element.setAttribute("opacity", String.valueOf(circle.opacityProperty().get()));
+        } catch (NullPointerException ex) {
+            System.out.println(circle + " has no opacity defined");
+        }
+        return element;
+    }
+
+    private Element convertPath(Node node, Element element, Document document) throws DOMException {
+        Path path = (Path) node;
+        element = document.createElement("path");
+        StringBuilder d = new StringBuilder();
+        for (PathElement pathElement : path.getElements()) {
+            if (pathElement instanceof MoveTo) {
+                MoveTo moveTo = (MoveTo) pathElement;
+                
+                d.append(String.format("M %f %f ",
+                        moveTo.getX() + path.getLayoutX(),
+                        moveTo.getY() + path.getLayoutY()));
+            } else if (pathElement instanceof CubicCurveTo) {
+                CubicCurveTo cubicCurveTo = (CubicCurveTo) pathElement;
+                
+                d.append(String.format("C %f %f %f %f %f %f ",
+                        cubicCurveTo.getControlX1() + path.getLayoutX(),
+                        cubicCurveTo.getControlY1() + path.getLayoutY(),
+                        cubicCurveTo.getControlX2() + path.getLayoutX(),
+                        cubicCurveTo.getControlY2() + path.getLayoutY(),
+                        cubicCurveTo.getX() + path.getLayoutX(),
+                        cubicCurveTo.getY() + path.getLayoutY()));
+            } else if (pathElement instanceof LineTo) {
+                LineTo lineTo = (LineTo) pathElement;
+                
+                d.append(String.format("L %f %f ",
+                        lineTo.getX() + path.getLayoutX(),
+                        lineTo.getY() + path.getLayoutY()));
+            }
+        }
+        element.setAttribute("d", d.toString().trim());
+        element.setAttribute("stroke", colorToRGBString((Color) path.getStroke()));
+        element.setAttribute("stroke-width", String.valueOf(path.getStrokeWidth()));
+        element.setAttribute("fill", colorToRGBString((Color) path.getFill()));
+        try {
+            element.setAttribute("opacity", String.valueOf(path.opacityProperty().get()));
+        } catch (NullPointerException ex) {
+            System.out.println(path + " has no opacity defined");
+        }
+        return element;
+    }
+    
+    private void convertRegion(Node node, Element element, Document document) throws DOMException {
+        Region region = (Region) node;
+        
+        if (region.getBorder() != null) {
+            Border border = region.getBorder();
+            
+            for (BorderStroke borderStroke : border.getStrokes()) {
+                BorderWidths borderWidths = borderStroke.getWidths();
+                
+                if (borderStroke.getTopStroke().isOpaque() && borderWidths.getTop() > 0) {
+                    Line line = new Line(0, 0, region.getWidth(), 0);
+                    line.setStroke(borderStroke.getTopStroke());
+                    line.setStrokeWidth(borderWidths.getTop());
+                    
+                    element.appendChild(convertNodeToElement(line, document));
+                }
+                
+                if (borderStroke.getBottomStroke().isOpaque() && borderWidths.getBottom() > 0) {
+                    Line line = new Line(0, region.getHeight(), region.getWidth(), region.getHeight());
+                    line.setStroke(borderStroke.getRightStroke());
+                    line.setStrokeWidth(borderWidths.getRight());
+                    
+                    element.appendChild(convertNodeToElement(line, document));
+                }
+                
+                if (borderStroke.getLeftStroke().isOpaque() && borderWidths.getLeft() > 0) {
+                    Line line = new Line(0, 0, 0, region.getHeight());
+                    line.setStroke(borderStroke.getLeftStroke());
+                    line.setStrokeWidth(borderWidths.getLeft());
+                    
+                    element.appendChild(convertNodeToElement(line, document));
+                }
+                
+                if (borderStroke.getRightStroke().isOpaque() && borderWidths.getRight() > 0) {
+                    Line line = new Line(region.getWidth(), 0, region.getWidth(), region.getHeight());
+                    line.setStroke(borderStroke.getRightStroke());
+                    line.setStrokeWidth(borderWidths.getRight());
+                    
+                    element.appendChild(convertNodeToElement(line, document));
+                }
+            }
+        }
+    }
+
+    private Element convertRectangle(Rectangle rectangle, Element element, Document document) {
+        Element rect = document.createElement("rect");
+        rect.setAttribute("x", String.valueOf(rectangle.getX()));
+        rect.setAttribute("y", String.valueOf(rectangle.getY()));
+        rect.setAttribute("width", String.valueOf(rectangle.getWidth()));
+        rect.setAttribute("height", String.valueOf(rectangle.getHeight()));
+        
+        return rect;
     }
 
     private String colorToRGBString(Color color) {
