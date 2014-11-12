@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil.chart.concordia;
 
 import Jama.Matrix;
@@ -24,10 +23,11 @@ import static java.lang.Math.sqrt;
  * A class which represents an error ellipse. While this class is responsible for generating Bezier curve control points
  * and calculating its minimums and maximums, it is not to know anything about the framework using it, nor is it
  * intended to translate its properties into any other coordinate space.
- * 
+ *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
 public abstract class ErrorEllipse {
+
     private static final double K = 4. / 3 * (sqrt(2) - 1);
     private static final Matrix CONTROL_POINTS_MATRIX = new Matrix(new double[][]{
         {1, 0},
@@ -44,37 +44,42 @@ public abstract class ErrorEllipse {
         {1, -K},
         {1, 0}
     });
-    
+
     private Matrix controlPoints;
-    
+
     public abstract double getX();
+
     public abstract double getSigmaX();
+
     public abstract double getY();
+
     public abstract double getSigmaY();
+
     public abstract double getRho();
-    
+
     public boolean getSelected() {
         return false;
     }
-    
+
     public double getMinX(double confidenceLevel) {
         return min(getControlPoints(confidenceLevel).transpose().getArray()[0]);
     }
-    
+
     public double getMaxX(double confidenceLevel) {
         return max(getControlPoints(confidenceLevel).transpose().getArray()[0]);
     }
-    
+
     public double getMinY(double confidenceLevel) {
         return min(getControlPoints(confidenceLevel).transpose().getArray()[1]);
     }
-    
+
     public double getMaxY(double confidenceLevel) {
         return max(getControlPoints(confidenceLevel).transpose().getArray()[1]);
     }
-    
+
     /**
      * Gets this error ellipse's Bezier control points.
+     *
      * @return the control points
      */
     public Matrix getControlPoints(double confidenceLevel) {
@@ -82,19 +87,28 @@ public abstract class ErrorEllipse {
         if (controlPoints == null) {
             controlPoints = calculateControlPoints(confidenceLevel);
         }
-        
+
         return controlPoints;
     }
 
-    private Matrix calculateControlPoints(double confidenceLevel) {
-        double covarianceX_Y = getSigmaX() * getSigmaY() * getRho();
+    static Matrix calculateUOld(double sigmaX, double sigmaY, double rho) {
+        double covarianceX_Y = sigmaX * sigmaY * rho;
 
         Matrix covMat = new Matrix(new double[][]{
-            {pow(getSigmaX(), 2), covarianceX_Y},
-            {covarianceX_Y, pow(getSigmaY(), 2)}
+            {pow(sigmaX, 2), covarianceX_Y},
+            {covarianceX_Y, pow(sigmaY, 2)}
         });
 
-        Matrix r = covMat.chol().getL().transpose();
+        return covMat.chol().getL().transpose();
+    }
+
+    static Matrix calculateU(double sigmaX, double sigmaY, double rho) {
+        return new Matrix(new double[][]{{sigmaX, rho * sigmaY},
+                                         {0, sigmaY * Math.sqrt(1 - rho * rho)}});
+    }
+
+    private Matrix calculateControlPoints(double confidenceLevel) {
+        Matrix u = calculateU(getSigmaX(), getSigmaY(), getRho());
 
         // [[1],              [[x, y],
         //  [1],               [x, y],
@@ -110,27 +124,27 @@ public abstract class ErrorEllipse {
         //  [1],               [x, y],
         //  [1]]               [x, y]]
         Matrix xyMatrix = new Matrix(13, 1, 1).times(new Matrix(new double[]{getX(), getY()}, 1));
-        
-        return CONTROL_POINTS_MATRIX.times(confidenceLevel).times(r).plus(xyMatrix);
+
+        return CONTROL_POINTS_MATRIX.times(confidenceLevel).times(u).plus(xyMatrix);
     }
-    
+
     private double min(double[] values) {
         double min = Double.MAX_VALUE;
-        
+
         for (double value : values) {
             min = Math.min(min, value);
         }
-        
+
         return min;
     }
-    
+
     private double max(double[] values) {
         double max = Double.MIN_VALUE;
-        
+
         for (double value : values) {
             max = Math.max(max, value);
         }
-        
+
         return max;
     }
 }

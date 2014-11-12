@@ -17,19 +17,19 @@ package org.cirdles.topsoil.builder;
 
 import javafx.util.Builder;
 import org.cirdles.topsoil.chart.concordia.ErrorEllipseChart;
-import org.cirdles.topsoil.chart.concordia.panels.ErrorEllipsesCustomisationPanel;
+import org.cirdles.topsoil.chart.concordia.panels.ErrorEllipseCustomizationPanel;
 
 /**
  *
  * @author pfif
  */
-public class ErrorEllipsesCustomisationPanelBuilder implements Builder<ErrorEllipsesCustomisationPanel> {
+public class ErrorEllipseCustomizationPanelBuilder implements Builder<ErrorEllipseCustomizationPanel> {
 
     public ErrorEllipseChart chart;
 
     @Override
-    public ErrorEllipsesCustomisationPanel build() {
-        return new ErrorEllipsesCustomisationPanel(chart);
+    public ErrorEllipseCustomizationPanel build() {
+        return new ErrorEllipseCustomizationPanel(chart);
     }
 
     public void setChart(ErrorEllipseChart c) {

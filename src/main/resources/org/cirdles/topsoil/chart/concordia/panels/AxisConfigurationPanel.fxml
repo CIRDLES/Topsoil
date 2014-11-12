@@ -42,7 +42,7 @@
     </fx:define>
     
     
-    <HBox spacing="5">
+    <HBox spacing="10" alignment="CENTER_LEFT" >
         <LabelUsePrefSize fx:id="titleLabel"/>
         <ParsedField fx:id="nameField"/>
     </HBox>

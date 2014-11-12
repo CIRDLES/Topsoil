@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2014 zeringuej.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,80 +13,150 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.table.Record;
 import org.cirdles.topsoil.utils.TSVTableReader;
 import org.cirdles.topsoil.utils.TSVTableWriter;
 import org.cirdles.topsoil.utils.TableReader;
 import org.cirdles.topsoil.utils.TableWriter;
+import org.controlsfx.dialog.Dialogs;
 
 /**
- * The main window of the Topsoil standalone program.
- * @author pfif
+ * FXML Controller class
+ *
+ * @author zeringuej
  */
-public class TopsoilMainWindow extends VBox {
-    /**
-     * The table that contain data
-     */
-    TSVTable dataTable;
+public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
-    public TopsoilMainWindow(Stage primaryStage) {
-        dataTable = new TSVTable();
-        VBox.setVgrow(dataTable, Priority.ALWAYS);
-        
-        TopsoilTableToolbar toolbar = new TopsoilTableToolbar(dataTable);
-        
-        this.getChildren().add(new TopsoilMainMenubar(primaryStage));
-        this.getChildren().add(toolbar);
-        this.getChildren().add(dataTable);
+    @FXML private TSVTable dataTable;
+
+    // JFB
+    private final int ERROR_CHART_REQUIRED_COL_COUNT = 5;
+
+    private ResourceBundle resources;
+
+    /**
+     * Initializes the controller class.
+     *
+     * @param url
+     * @param resources
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle resources) {
+        dataTable.setSavePath(Topsoil.LAST_TABLE_PATH);
+        dataTable.load();
+
+        // set the window title to something like "Topsoil [0.3.4]"
+        String applicationName = resources.getString("applicationName");
+        String applicationVersion = resources.getString("applicationVersion");
+        setWindowTitle(String.format("%s [%s]", applicationName, applicationVersion));
     }
-    
-    
-    /**
-     * The menu bar of Topsoil's main window.
-     */
-    public class TopsoilMainMenubar extends MenuBar{
 
-        public TopsoilMainMenubar(Stage primaryStage) {
-            Menu fileMenu = new Menu("File");
-            MenuItem importFromFile = new MenuItem("Import from File");
-            fileMenu.getItems().add(importFromFile);
-            importFromFile.setOnAction(event -> {
-                FileChooser tsvChooser = new FileChooser();
-                tsvChooser.setInitialDirectory(Topsoil.USER_HOME.toFile());
-                tsvChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Table Files", "TSV"));
-                Path filePath = tsvChooser.showOpenDialog(primaryStage).toPath();
+    private void setWindowTitle(String title) {
+        // while the code below is long and ugly, anonymous inner classes are
+        // necessary (in Java 8) in order to allow the listeners to reference
+        // and remove themselves
+        // initially lambdas were used (see git history)
+        // this keeps TestFX from causing errors
+        
+        // create self-removing window listener
+        // runs second
+        ChangeListener<Window> windowListener = new ChangeListener<Window>() {
+            @Override
+            public void changed(ObservableValue<? extends Window> observableWindow, Window oldWindow, Window newWindow) {
+                Stage stage = (Stage) newWindow;
 
-                Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
-                    TableReader tableReader = new TSVTableReader(response);
+                // actually set the title
+                stage.setTitle(title);
 
-                    try {
-                        tableReader.read(filePath, dataTable);
-                    } catch (IOException ex) {
-                        Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                getScene().windowProperty().removeListener(this);
+            }
+        };
+        
+        // create self-removing scene listener
+        // runs first
+        ChangeListener<Scene> sceneListener = new ChangeListener<Scene>() {
+            @Override
+            public void changed(ObservableValue<? extends Scene> observableScene, Scene oldScene, Scene newScene) {
+                getScene().windowProperty().addListener(windowListener);
+                sceneProperty().removeListener(this);
+            }
+        };
 
-                    TableWriter<Record> tableWriter = new TSVTableWriter(true);
-                    tableWriter.write(dataTable, Topsoil.LAST_TABLE_PATH);
-                });
-            });
+        sceneProperty().addListener(sceneListener);
+    }
 
-            MenuBar menuBar = new MenuBar();
-            menuBar.getMenus().add(fileMenu);
+    @FXML
+    private void importFromFile(ActionEvent event) {
+        FileChooser tsvChooser = new FileChooser();
+        tsvChooser.setInitialDirectory(Topsoil.USER_HOME.toFile());
+        tsvChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Table Files", "TSV"));
+        Path filePath = tsvChooser.showOpenDialog(getScene().getWindow()).toPath();
+
+        // JFB for now, assume error chart is only chart style
+        dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
+
+        Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
+            TableReader tableReader = new TSVTableReader(response);
+
+            try {
+                tableReader.read(filePath, dataTable);
+            } catch (IOException ex) {
+                Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            TableWriter<Record> tableWriter = new TSVTableWriter(true, dataTable.getRequiredColumnCount());
+            tableWriter.write(dataTable, Topsoil.LAST_TABLE_PATH);
+        });
+    }
+
+    @FXML
+    private void createErrorChart(ActionEvent event) {
+//        // table needs 5 columns to generate chart
+//        if (dataTable.getColumns().size() < 5) {
+//            Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
+//        } else {
+//            new ColumnSelectorDialog(dataTable).show();
+//        }
+
+        // JFB for now, assume error chart is only chart style
+        dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
+
+        if (!dataTable.hasRequiredColumnCount()) {
+            Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE_2).showWarning();
+            dataTable.save();
+            dataTable.load();
         }
+
+        new ColumnSelectorDialog(dataTable).show();
+
     }
-    
+
+    @FXML
+    private void pasteFromClipboard(ActionEvent event) {
+        dataTable.pasteFromClipboard();
+    }
+
+    @FXML
+    private void emptyTable(ActionEvent event) {
+        dataTable.clear();
+        dataTable.save();
+    }
 }

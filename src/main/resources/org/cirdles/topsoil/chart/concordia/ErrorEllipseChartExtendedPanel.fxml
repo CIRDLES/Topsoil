@@ -30,7 +30,7 @@
                         </padding>
                         <children>
                             <LabelUsePrefSize text="%customizationPanelNodeTitle" styleClass="title-panel"/>
-                            <ErrorEllipsesCustomisationPanel chart="$chart"/>
+                            <ErrorEllipseCustomizationPanel chart="$chart"/>
                             <ChartCustomizationPanel chart="$chart"/>
                         </children>
                     </VBox>

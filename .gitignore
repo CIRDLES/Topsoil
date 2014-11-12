@@ -3,3 +3,6 @@ target
 
 # Netbeans
 nbactions.xml
+
+# TestFX
+screenshot*.png

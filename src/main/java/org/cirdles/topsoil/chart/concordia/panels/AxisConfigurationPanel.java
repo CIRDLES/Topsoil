@@ -20,8 +20,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -35,6 +38,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.cirdles.javafx.CustomVBox;
 import org.cirdles.jfxutils.NumberField;
 import org.cirdles.jfxutils.ParsedField;
 import org.cirdles.topsoil.chart.NumberAxis;
@@ -43,7 +47,7 @@ import org.cirdles.topsoil.chart.NumberAxis;
  *
  * @author pfif
  */
-public class AxisConfigurationSubpanel extends VBox implements Initializable {
+public class AxisConfigurationPanel extends CustomVBox<AxisConfigurationPanel> implements Initializable {
 
     @FXML private CheckBox gridLinesCheckBox;
 
@@ -62,28 +66,21 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
     @FXML private GridPane scalePanel;
     @FXML private NumberField lowerBoundnf;
     @FXML private NumberField upperBoundnf;
-    
+
     @FXML private ParsedField nameField;
 
-    private ObjectProperty<NumberAxis> axis = new SimpleObjectProperty();
-    private ObjectProperty<String> title = new SimpleObjectProperty();
+    private ObjectProperty<NumberAxis> axis;
+    private StringProperty title;
 
-    public AxisConfigurationSubpanel() {
-        FXMLLoader loader = new FXMLLoader(AxisConfigurationSubpanel.class.getResource("axisconfigurationsubpanel.fxml"),
-                                           ResourceBundle.getBundle("org.cirdles.topsoil.Resources"));
-        loader.setRoot(this);
-        loader.setController(this);
-
-        try {
-            loader.load();
-        } catch (IOException ex) {
-            Logger.getLogger(AxisConfigurationSubpanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public AxisConfigurationPanel() {
+        super(self -> {
+            self.axis = new SimpleObjectProperty<>();
+            self.title = new SimpleStringProperty("");
+        });
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         titleLabel.textProperty().bind(title);
 
         axis.addListener((ObservableValue<? extends NumberAxis> observable, NumberAxis oldValue, NumberAxis newValue) -> {
@@ -126,16 +123,16 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
             upperBoundnf.convertedProperty().bindBidirectional(axis.get().upperBoundProperty());
 
             XYChart chart = (XYChart) axis.get().getParent().getParent();
-            
+
             nameField.convertedProperty().bindBidirectional(axis.get().labelProperty());
-            
+
             lowerBoundnf.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     axis.get().setAutoRanging(false);
                 }
             });
-            
+
             lowerBoundnf.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -155,7 +152,7 @@ public class AxisConfigurationSubpanel extends VBox implements Initializable {
         return axis;
     }
 
-    public ObjectProperty<String> titleProperty() {
+    public StringProperty titleProperty() {
         return title;
     }
 }

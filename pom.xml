@@ -1,54 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <groupId>org.cirdles</groupId>
     <artifactId>topsoil</artifactId>
-    <version>0.3.4</version>
+    <version>0.4.0</version>
     <packaging>jar</packaging>
+    
+    <name>Topsoil</name>
+    <description>Community-driven replacement for Isoplot</description>
+    <url>https://github.com/CIRDLES/topsoil</url>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    
+    <scm>
+        <url>https://github.com/cirdles/topsoil</url>
+    </scm>
+    
+    <developers>
+        <developer>
+            <name>John Zeringue</name>
+            <url>https://github.com/zeringus</url>
+            <organization>CIRDLES</organization>
+        </developer>
+        
+        <developer>
+            <name>Florent Pastor</name>
+            <url>https://github.com/pfif</url>
+            <organization>CIRDLES</organization>
+        </developer>
+    </developers>
+    
+    <organization>
+        <name>CIRDLES</name>
+        <url>http://cirdles.org</url>
+    </organization>
+    
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     <dependencies>
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.20.7</version>
+            <version>8.20.8</version>
         </dependency>
+        
         <dependency>
             <groupId>gov.nist.math</groupId>
             <artifactId>jama</artifactId>
             <version>1.0.3</version>
         </dependency>
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.loadui</groupId>
+            <artifactId>testFx</artifactId>
+            <version>3.1.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+    
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                
                 <configuration>
                     <archive>
                         <manifest>
                             <mainClass>org.cirdles.topsoil.Topsoil</mainClass>
                         </manifest>
                     </archive>
+                    
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                 </configuration>
             </plugin>
+            
+            <plugin>
+                <groupId>com.zenjava</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>2.0</version>
+                
+                <configuration>
+                    <mainClass>org.cirdles.topsoil.Topsoil</mainClass>
+                    <vendor>CIRDLES</vendor>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+    
+    <repositories>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
 </project>

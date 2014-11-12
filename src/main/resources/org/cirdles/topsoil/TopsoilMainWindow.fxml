@@ -7,11 +7,10 @@
 <?import javafx.scene.layout.*?>
 <?import org.cirdles.topsoil.*?>
 
-<VBox fx:id="root"
+<fx:root type="javafx.scene.layout.VBox"
       prefHeight="800"
       prefWidth="1200"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.cirdles.topsoil.TopsoilController">
+      xmlns:fx="http://javafx.com/fxml/1">
     <MenuBar useSystemMenuBar="true" >
         <menus>
             <Menu text="%fileMenu">
@@ -25,9 +24,11 @@
     <ToolBar>
         <items>
             <Button text="%createErrorEllipseChart"
-                    onAction="#createErrorChart" /> 
+                    onAction="#createErrorChart"
+                    fx:id="createErrorChartButton" /> 
             <Button text="%clearTableMessage"
-                    onAction="#emptyTable"/> 
+                    onAction="#emptyTable"
+                    fx:id="emptyTableButton" /> 
         </items>
     </ToolBar>
     <TSVTable fx:id="dataTable"
@@ -40,4 +41,4 @@
             </VBox>
         </placeholder>
     </TSVTable>
-</VBox>
+</fx:root>
