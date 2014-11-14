@@ -13,22 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.app.builder;
 
-package org.cirdles.jfxutils;
-
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+import javafx.util.Builder;
+import org.cirdles.topsoil.app.chart.concordia.ErrorEllipseChart;
+import org.cirdles.topsoil.app.chart.concordia.panels.ChartCustomizationPanel;
 
 /**
  *
  * @author pfif
  */
-public class ParsedField extends ConverterField<String>{
+public class ChartCustomizationPanelBuilder implements Builder<ChartCustomizationPanel> {
 
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(new String()), Tools.SUPERSCRIPTPARSER_CONVERTER);
+    private ErrorEllipseChart chart;
+
+    @Override
+    public ChartCustomizationPanel build() {
+        return new ChartCustomizationPanel(chart);
     }
-    
-    
-    
+
+    public ErrorEllipseChart getChart() {
+        return chart;
+    }
+
+    public void setChart(ErrorEllipseChart newChart) {
+        chart = newChart;
+    }
+
 }

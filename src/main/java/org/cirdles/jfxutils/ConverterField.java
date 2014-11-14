@@ -26,7 +26,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
-import org.cirdles.topsoil.Tools;
+import org.cirdles.topsoil.app.Tools;
 
 /**
  *

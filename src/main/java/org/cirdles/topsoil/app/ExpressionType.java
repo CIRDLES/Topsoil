@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.app;
 
-package org.cirdles.jfxutils;
+public enum ExpressionType {
 
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+    ABSOLUTE, PERCENTAGE
 
-/**
- *
- * @author pfif
- */
-public class ParsedField extends ConverterField<String>{
-
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(new String()), Tools.SUPERSCRIPTPARSER_CONVERTER);
-    }
-    
-    
-    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package org.cirdles.jfxutils;
-
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+package org.cirdles.topsoil.app.chart.concordia;
 
 /**
  *
- * @author pfif
+ * @author zeringuej
  */
-public class ParsedField extends ConverterField<String>{
-
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(new String()), Tools.SUPERSCRIPTPARSER_CONVERTER);
-    }
-    
-    
-    
+public enum ConcordiaLineType {
+    WETHERILL, TERA_WASSERBURG, NONE;
 }

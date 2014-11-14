@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,29 @@
  * limitations under the License.
  */
 
-package org.cirdles.jfxutils;
+package org.cirdles.topsoil.app.chart;
 
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+import javafx.scene.Node;
+import javafx.scene.chart.XYChart;
 
 /**
  *
- * @author pfif
+ * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ParsedField extends ConverterField<String>{
+public abstract class Plotter<T, S extends XYChart> {
+    protected final S chart;
 
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(new String()), Tools.SUPERSCRIPTPARSER_CONVERTER);
+    public Plotter(S chart) {
+        this.chart = chart;
     }
     
+    public abstract Node plot(T plottable);
     
-    
+    protected double mapXToDisplay(double x) {
+        return chart.getXAxis().getDisplayPosition(x);
+    }
+
+    protected double mapYToDisplay(double y) {
+        return chart.getYAxis().getDisplayPosition(y);
+    }
 }
