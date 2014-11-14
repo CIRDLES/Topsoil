@@ -78,7 +78,7 @@ public class TSVTableReader extends TableReader<Record> {
 
         fields = new Field[rowLength];
         for (int i = 0; i < rowLength; i++) {
-            if (isNumber(lines.get(0)[i])) {
+            if (lines.isEmpty() || isNumber(lines.get(0)[i])) {
                 fields[i] = new NumberField(header[i]);
             } else {
                 fields[i] = new TextField(header[i]);
