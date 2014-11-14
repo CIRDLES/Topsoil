@@ -16,8 +16,12 @@
 package org.cirdles.topsoil.app;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +40,8 @@ import org.cirdles.topsoil.app.utils.TSVTableReader;
 import org.cirdles.topsoil.app.utils.TSVTableWriter;
 import org.cirdles.topsoil.app.utils.TableReader;
 import org.cirdles.topsoil.app.utils.TableWriter;
+import org.cirdles.topsoil.chart.ChartInitializationDialog;
+import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.controlsfx.dialog.Dialogs;
 
 /**
@@ -126,16 +132,22 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             tableWriter.write(dataTable, Topsoil.LAST_TABLE_PATH);
         });
     }
+    
+    @FXML
+    private void createScatterplot(ActionEvent event) {
+        try {
+            // get the path to the JavaScript file
+            URI javascriptURI = getClass().getResource("scatterplot.js").toURI();
+            Path javascriptPath = Paths.get(javascriptURI);
+            
+            new ChartInitializationDialog(dataTable, new JavaScriptChart(javascriptPath)).show();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     @FXML
     private void createErrorChart(ActionEvent event) {
-//        // table needs 5 columns to generate chart
-//        if (dataTable.getColumns().size() < 5) {
-//            Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE).showWarning();
-//        } else {
-//            new ColumnSelectorDialog(dataTable).show();
-//        }
-
         // JFB for now, assume error chart is only chart style
         dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
 
@@ -146,7 +158,6 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         }
 
         new ColumnSelectorDialog(dataTable).show();
-
     }
 
     @FXML
