@@ -1,5 +1,6 @@
 Topsoil
 =======
+[![Build Status](https://travis-ci.org/CIRDLES/topsoil.svg?branch=v0.4.0)](https://travis-ci.org/CIRDLES/topsoil)
 
 Topsoil is a desktop application and Java library that creates data
 visualizations for geochronologists and other earth scientists. The project is

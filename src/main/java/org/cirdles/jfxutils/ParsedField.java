@@ -17,7 +17,7 @@
 package org.cirdles.jfxutils;
 
 import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.Tools;
+import org.cirdles.topsoil.app.Tools;
 
 /**
  *

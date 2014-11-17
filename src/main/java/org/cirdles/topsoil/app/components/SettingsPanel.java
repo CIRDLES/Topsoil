@@ -17,9 +17,9 @@ package org.cirdles.topsoil.app.components;
 
 import javafx.fxml.FXML;
 import org.cirdles.javafx.CustomVBox;
-import org.cirdles.topsoil.lib.chart.Setting;
-import org.cirdles.topsoil.lib.chart.SettingsManager;
-import org.cirdles.topsoil.lib.chart.SettingsManagerListener;
+import org.cirdles.topsoil.chart.Setting;
+import org.cirdles.topsoil.chart.SettingsManager;
+import org.cirdles.topsoil.chart.SettingsManagerListener;
 
 /**
  *

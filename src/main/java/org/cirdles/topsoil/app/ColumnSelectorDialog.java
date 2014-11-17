@@ -16,20 +16,18 @@
 package org.cirdles.topsoil.app;
 
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.lib.chart.Chart;
-import org.cirdles.topsoil.table.Record;
+import org.cirdles.topsoil.app.table.Record;
 import org.controlsfx.dialog.Dialog;
 
 public class ColumnSelectorDialog extends Dialog {
 
     private static final String MASTHEAD_TEXT = "Select the column for each variable.";
 
-    public ColumnSelectorDialog(TableView<Record> tableToReadArg, Chart<double[][]> chart) {
+    public ColumnSelectorDialog(TableView<Record> tableToReadArg) {
         super(null, null);
 
-        setContent(new ColumnSelectorView(tableToReadArg));
-        getActions().addAll(new ColumnSelectorAction(tableToReadArg, chart, this),
-                            Dialog.ACTION_CANCEL);
+        setContent(new ColumnSelectorView(tableToReadArg, this));
+        getActions().addAll(new ColumnSelectorAction(tableToReadArg, this), Dialog.ACTION_CANCEL);
 
         setResizable(false);
         setMasthead(MASTHEAD_TEXT);

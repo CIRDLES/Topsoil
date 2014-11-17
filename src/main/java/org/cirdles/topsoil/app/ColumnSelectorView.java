@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.app;
 
-import org.cirdles.topsoil.*;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -32,10 +31,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.util.StringConverter;
 import org.cirdles.javafx.CustomGridPane;
-import org.cirdles.topsoil.table.Field;
-import org.cirdles.topsoil.table.NumberField;
-import org.cirdles.topsoil.table.Record;
-import org.cirdles.topsoil.table.RecordTableColumn;
+import org.cirdles.topsoil.app.table.Field;
+import org.cirdles.topsoil.app.table.NumberField;
+import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.app.table.RecordTableColumn;
 
 /**
  * This UI element is used by the user to choose which column in the main table determine which value of an ellipse.
@@ -66,10 +65,12 @@ public class ColumnSelectorView extends CustomGridPane<ColumnSelectorView> {
     @FXML private ChoiceBox<ExpressionType> choiceBoxExpressionTypeSigmaY;
     @FXML private ChoiceBox<Field<Number>> choiceBoxRho;
 
+    private ColumnSelectorDialog dialog;
     private List<Field<Number>> fields;
 
-    public ColumnSelectorView(TableView<Record> table) {
+    public ColumnSelectorView(TableView<Record> table, final ColumnSelectorDialog dialog) {
         super(self -> {
+            self.dialog = dialog;
             self.setAlignment(Pos.CENTER);
             self.setHgap(12);
 

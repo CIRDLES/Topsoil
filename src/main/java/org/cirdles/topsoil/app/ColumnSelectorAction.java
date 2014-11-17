@@ -15,19 +15,15 @@
  */
 package org.cirdles.topsoil.app;
 
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.chart.concordia.ErrorEllipse;
-import org.cirdles.topsoil.chart.concordia.ErrorEllipseChartExtendedPanel;
-import org.cirdles.topsoil.chart.concordia.RecordToErrorEllipseConverter;
-import org.cirdles.topsoil.lib.chart.Chart;
-import org.cirdles.topsoil.table.Record;
+import org.cirdles.topsoil.app.chart.concordia.ErrorEllipseChartExtendedPanel;
+import org.cirdles.topsoil.app.chart.concordia.RecordToErrorEllipseConverter;
+import org.cirdles.topsoil.app.table.Record;
 import org.controlsfx.control.action.Action;
 
 /**
@@ -37,8 +33,10 @@ import org.controlsfx.control.action.Action;
 public class ColumnSelectorAction extends Action {
     
     private static final String ACTION_NAME = "Create chart";
+    
+    private final ColumnSelectorDialog dialog;
 
-    public ColumnSelectorAction(TableView<Record> table, Chart<double[][]> chart, ColumnSelectorDialog dialog) {
+    public ColumnSelectorAction(TableView<Record> table, final ColumnSelectorDialog dialog) {
         super(ACTION_NAME, (javafx.event.ActionEvent event) -> {
             dialog.hide();
             ColumnSelectorView columnSelector = (ColumnSelectorView) dialog.getContent();
@@ -50,26 +48,25 @@ public class ColumnSelectorAction extends Action {
             converter.setErrorSizeSigmaY(columnSelector.getSigmaYErrorSize());
             converter.setExpressionTypeSigmaY(columnSelector.getSigmaYExpressionType());
             
-            // build the data matrix
-            double[][] data = new double[table.getItems().size()][5];
-            for (int i = 0; i < data.length; i++) {
-                Record record = table.getItems().get(i);
-                ErrorEllipse ellipse = converter.convert(new Data<>(0, 0, record));
-                
-                data[i][0] = ellipse.getX();
-                data[i][1] = ellipse.getSigmaX();
-                data[i][2] = ellipse.getY();
-                data[i][3] = ellipse.getSigmaY();
-                data[i][4] = ellipse.getRho();
+            // build a new series
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            for (Record record : table.getItems()) {
+                series.getData().add(new XYChart.Data<>(0, 0, record));
             }
             
-            chart.setData(data);
-            Scene scene = new Scene((Parent) chart.asNode(), 1200, 800);
+            ErrorEllipseChartExtendedPanel ccExtendedPanel = new ErrorEllipseChartExtendedPanel();
+            ccExtendedPanel.getChart().setConverter(converter);
+            ccExtendedPanel.getChart().getData().add(series);
+            
+            VBox.setVgrow(ccExtendedPanel.getMasterDetailPane(), Priority.ALWAYS);
+            Scene scene = new Scene(ccExtendedPanel, 1200, 800);
             
             Stage chartStage = new Stage();
             chartStage.setScene(scene);
             chartStage.show();
         });
+        
+        this.dialog = dialog;
     }
     
 }

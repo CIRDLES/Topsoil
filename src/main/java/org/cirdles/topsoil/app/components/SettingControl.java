@@ -19,8 +19,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import org.cirdles.javafx.CustomHBox;
-import org.cirdles.topsoil.lib.chart.Setting;
-import org.cirdles.topsoil.lib.chart.SettingListener;
+import org.cirdles.topsoil.chart.Setting;
+import org.cirdles.topsoil.chart.SettingListener;
 
 /**
  *
