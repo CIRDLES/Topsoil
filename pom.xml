@@ -4,7 +4,7 @@
     
     <groupId>org.cirdles</groupId>
     <artifactId>topsoil</artifactId>
-    <version>0.3.4</version>
+    <version>0.4.1</version>
     <packaging>jar</packaging>
     
     <name>Topsoil</name>
@@ -72,12 +72,6 @@
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.cirdles</groupId>
-            <artifactId>convertfx</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
         </dependency>
         
         <dependency>
