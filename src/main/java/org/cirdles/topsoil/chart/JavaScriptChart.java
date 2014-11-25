@@ -46,13 +46,17 @@ public class JavaScriptChart extends BaseChart<double[][]> {
     private static final String HTML_TEMPLATE;
 
     static {
+        // prepare the local URL for Firebug Lite
+        final String FIREBUG_LITE_URL
+                = JavaScriptChart.class.getResource("firebug-lite.js").toExternalForm();
+        
         // prepare the local URL for d3.js
         final String D3_JS_URL
                 = JavaScriptChart.class.getResource("d3.js").toExternalForm();
         
-        // prepare the local URL for Firebug Lite
-        final String FIREBUG_LITE_URL
-                = JavaScriptChart.class.getResource("firebug-lite.js").toExternalForm();
+        // prepare the local URL for numeric.js
+        final String NUMERIC_JS_URL
+                = JavaScriptChart.class.getResource("numeric.js").toExternalForm();
         
         // prepare the local URL for topsoil.js
         final String TOPSOIL_JS_URL
@@ -70,8 +74,9 @@ public class JavaScriptChart extends BaseChart<double[][]> {
                 + "</style>\n"
                 // </head>
                 + "<body>"
-                + "<script src=\"" + D3_JS_URL + "\"></script>\n"
                 + "<script src=\"" + FIREBUG_LITE_URL + "\"></script>\n"
+                + "<script src=\"" + D3_JS_URL + "\"></script>\n"
+                + "<script src=\"" + NUMERIC_JS_URL + "\"></script>\n"
                 + "<script src=\"" + TOPSOIL_JS_URL + "\"></script>\n"
                 + "<script src=\"%s\"></script>\n" // JS file for chart
                 // </body>

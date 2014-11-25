@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
@@ -30,7 +29,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
@@ -147,6 +145,22 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    @FXML
+    /**
+     * For the new JS charts, {@link #createErrorChart} is the old method.
+     */
+    private void createErrorEllipseChart(ActionEvent event) {
+        try {
+            // get the path to the JavaScript file
+            URI javascriptURI = getClass().getResource("errorellipsechart.js").toURI();
+            Path javascriptPath = Paths.get(javascriptURI);
+            
+            new ChartInitializationDialog(dataTable, new JavaScriptChart(javascriptPath)).show();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     @FXML
     private void createErrorChart(ActionEvent event) {
@@ -160,26 +174,6 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         }
 
         new ColumnSelectorDialog(dataTable).show();
-    }
-
-    @FXML
-    private void createChart(ActionEvent event) {
-        String chartName = ((MenuItem) event.getSource()).getText();
-
-        if (chartName.equals("Scatterplot")) {
-            try {
-                // get the path to the JavaScript file
-                URI javascriptURI = getClass().getResource("scatterplot.js").toURI();
-                Path javascriptPath = Paths.get(javascriptURI);
-                
-                // create the new chart (a scatterplot)
-                JavaScriptChart chart = new JavaScriptChart(javascriptPath);
-                
-                new ChartInitializationDialog(dataTable, chart).show();
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
 
     @FXML

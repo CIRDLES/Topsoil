@@ -18,8 +18,10 @@
         </Menu>
         
         <Menu text="Charts">
-            <MenuItem text="Scatterplot"
+            <MenuItem text="scatterplot"
                       onAction="#createScatterplot" />
+            <MenuItem text="error ellipse chart"
+                      onAction="#createErrorEllipseChart" />
         </Menu>
     </MenuBar>
     <ToolBar>

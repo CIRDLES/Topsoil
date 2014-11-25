@@ -42,7 +42,6 @@
     };
 
     chart.update = function (data) {
-
         // what actually makes the axis
         var xAxis = d3.svg.axis()
                 .scale(chart.x)

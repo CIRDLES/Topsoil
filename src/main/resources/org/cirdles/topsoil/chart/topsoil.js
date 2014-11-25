@@ -87,10 +87,12 @@ chart.area = d3.select("body")
         .attr("transform", "translate(" + chart.margin.left + "," + chart.margin.top + ")");
 
 // create a clip path and backing for the plot area
-// the visible (white) backing is necessary for mouse events
+// this is a big performance booster
+// use this!
 chart.area.clipped = chart.area.append("g")
         .attr("clip-path", "url(#clipBox)");
 
+// the visible (white) backing is necessary for mouse events
 chart.plotArea = chart.area.clipped.append("rect")
         .attr("id", "plotArea")
         .attr("width", chart.width)
