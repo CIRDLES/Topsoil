@@ -17,6 +17,7 @@
 package org.cirdles.topsoil.chart;
 
 import java.util.Optional;
+import org.cirdles.topsoil.chart.setting.SettingScope;
 
 /**
  * A partial implementation of {@link Chart} that stores and retrieves set data.
@@ -26,6 +27,7 @@ import java.util.Optional;
 public abstract class BaseChart<T> implements Chart<T> {
     
     private Optional<T> data = Optional.empty();
+    private final SettingScope settingScope = new SettingScope();
 
     @Override
     public Optional<T> getData() {
@@ -35,6 +37,11 @@ public abstract class BaseChart<T> implements Chart<T> {
     @Override
     public void setData(T data) {
         this.data = Optional.ofNullable(data);
+    }
+
+    @Override
+    public SettingScope getSettingScope() {
+        return settingScope;
     }
     
 }

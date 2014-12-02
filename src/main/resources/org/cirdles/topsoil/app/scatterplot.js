@@ -24,11 +24,23 @@
             .addSetting(Y_MIN, 0);
 
     chart.draw = function (data) {
-        chart.settings[X_MIN] = d3.min(data, function(d) { return d.x; });
-        chart.settings[Y_MIN] = d3.min(data, function(d) { return d.y; });
-        chart.settings[X_MAX] = d3.max(data, function(d) { return d.x; });
-        chart.settings[Y_MAX] = d3.max(data, function(d) { return d.y; });
-        
+        if (data.length > 0) {
+            chart.settings[X_MIN] = d3.min(data, function (d) {
+                return d.x;
+            });
+            chart.settings[Y_MIN] = d3.min(data, function (d) {
+                return d.y;
+            });
+            chart.settings[X_MAX] = d3.max(data, function (d) {
+                return d.x;
+            });
+            chart.settings[Y_MAX] = d3.max(data, function (d) {
+                return d.y;
+            });
+            
+            chart.settings.apply();
+        }
+
         // a mathematical construct
         chart.x = d3.scale.linear()
                 .domain([chart.settings[X_MIN], chart.settings[X_MAX]])
@@ -37,11 +49,14 @@
         chart.y = d3.scale.linear()
                 .domain([chart.settings[Y_MIN], chart.settings[Y_MAX]])
                 .range([chart.height, 0]);
-        
+
         chart.update(data);
     };
 
     chart.update = function (data) {
+        chart.x.domain([chart.settings[X_MIN], chart.settings[X_MAX]]);
+        chart.y.domain([chart.settings[Y_MIN], chart.settings[Y_MAX]]);
+
         // what actually makes the axis
         var xAxis = d3.svg.axis()
                 .scale(chart.x)
@@ -95,19 +110,20 @@
 
         // remove unused points
         points.exit().remove();
-        
+
         // add pan/zoom
         var zoom = d3.behavior.zoom()
                 .x(chart.x)
                 .y(chart.y)
-                .scaleExtent([.1, 25])
                 .on("zoom", function () {
-                    chart.settings[X_MIN] = chart.x.domain()[0];
-                    chart.settings[Y_MIN] = chart.y.domain()[0];
-                    chart.settings[X_MAX] = chart.x.domain()[1];
-                    chart.settings[Y_MAX] = chart.y.domain()[1];
+                    alert("\nZOOM!!!\n");
 
-                    chart.update(data);
+                    chart.settings[X_MIN] = zoom.x().domain()[0];
+                    chart.settings[Y_MIN] = zoom.y().domain()[0];
+                    chart.settings[X_MAX] = zoom.x().domain()[1];
+                    chart.settings[Y_MAX] = zoom.y().domain()[1];
+                    
+                    chart.settings.apply();
                 });
 
         chart.area.clipped.call(zoom);

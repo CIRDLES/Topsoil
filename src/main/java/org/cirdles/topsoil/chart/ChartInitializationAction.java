@@ -19,11 +19,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.chart.concordia.ErrorEllipse;
 import org.cirdles.topsoil.app.chart.concordia.RecordToErrorEllipseConverter;
+import org.cirdles.topsoil.app.component.SettingsPanel;
 import org.cirdles.topsoil.app.table.Record;
 import org.controlsfx.control.action.Action;
 
@@ -58,10 +58,12 @@ public class ChartInitializationAction extends Action {
                 data[i][2] = errorEllipse.getY();
                 data[i][3] = errorEllipse.getSigmaY();
                 data[i][4] = errorEllipse.getRho();
-            };
+            }
             chart.setData(data);
             
-            Scene scene = new Scene((Parent) chart.asNode(), 1200, 800);
+            SettingsPanel settingsPanel = new SettingsPanel(chart.getSettingScope());
+            
+            Scene scene = new Scene(new VBox(chart.asNode(), settingsPanel), 1200, 800);
             
             Stage chartStage = new Stage();
             chartStage.setScene(scene);

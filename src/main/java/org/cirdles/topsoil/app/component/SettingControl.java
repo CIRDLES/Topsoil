@@ -13,34 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.components;
+package org.cirdles.topsoil.app.component;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import org.cirdles.javafx.CustomHBox;
-import org.cirdles.topsoil.chart.Setting;
-import org.cirdles.topsoil.chart.SettingListener;
+import org.cirdles.topsoil.chart.setting.SettingScope;
 
 /**
  *
  * @author John Zeringue
  */
-public class SettingControl extends CustomHBox<SettingControl> implements SettingListener {
+public class SettingControl extends CustomHBox<SettingControl> {
 
-    private Setting setting;
+    private SettingScope settingScope;
+    private String settingName;
 
-    public SettingControl(Setting setting) {
+    public SettingControl(SettingScope settingScope, String settingName) {
         super(self -> {
-            self.setting = setting;
-            self.setting.addListener(self);
+            self.settingScope = settingScope;
+            self.settingName = settingName;
         });
     }
-
-    @Override
-    public void onUpdate(Setting setting) {
-        settingSlider.setValue(setting.getValue());
-        settingValue.setText(String.format("%.2f", setting.getValue()));
+    
+    void update(Object value) {
+        // both the slider and the value label should reflect the current value
+        double doubleValue = ((Number) value).doubleValue();
+        
+        settingSlider.setValue(doubleValue);
+        settingValue.setText(String.format("%.2f", doubleValue));
     }
 
     @FXML
@@ -53,26 +55,17 @@ public class SettingControl extends CustomHBox<SettingControl> implements Settin
     @FXML
     private void initialize() {
         // setting label should show the setting's name
-        settingLabel.setText(setting.getName());
+        settingLabel.setText(settingName);
         
-        // both the slider and the value label should reflect the current value
-        settingSlider.setValue(setting.getValue());
-        settingValue.setText(String.format("%.2f", setting.getValue()));
+        settingScope.get(settingName).ifPresent(value -> {
+            update(value);
+        });
         
         // on slider change
         settingSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             // update the setting and label values
-            setting.setValue(newValue.doubleValue());
-            settingValue.setText(String.format("%.2f", newValue));
+            settingScope.set(settingName, newValue);
         });
-    }
-    
-    private Setting getSetting() {
-        return setting;
-    }
-    
-    private void setSetting(Setting setting) {
-        this.setting = setting;
     }
 
 }

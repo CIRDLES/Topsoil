@@ -18,134 +18,131 @@
  * TOPSOIL
  */
 
-// "use strict" here causes an error
-// not sure why
+(function () {
+    "use strict";
 
-// top level containers
-var topsoil = ts = {data: []}, chart = {};
+    // top level containers
+    window.topsoil = {data: []};
+    window.chart = {};
 
-// adds a row of data
-topsoil.addData = function (data) {
-    var convertedData = {};
+    // alias topsoil
+    window.ts = topsoil;
 
-    // store the data in the 
-    convertedData.x = data[0];
-    convertedData.sigmaX = convertedData.sigma_x = convertedData.σx = data[1];
-    convertedData.y = data[2];
-    convertedData.sigmaY = convertedData.sigma_y = convertedData.σy = data[3];
-    convertedData.rho = convertedData.ρ = data[4];
+    // adds a row of data
+    topsoil.addData = function (data) {
+        var convertedData = {};
 
-    ts.data.push(convertedData);
-};
+        // store the data in the 
+        convertedData.x = data[0];
+        convertedData.sigmaX = convertedData.sigma_x = convertedData.σx = data[1];
+        convertedData.y = data[2];
+        convertedData.sigmaY = convertedData.sigma_y = convertedData.σy = data[3];
+        convertedData.rho = convertedData.ρ = data[4];
 
-// clears all stored data
-topsoil.clearData = function () {
-    ts.data = [];
-};
+        ts.data.push(convertedData);
+    };
 
-topsoil.showData = function () {
-    // build settings
-    var settings = {};
-    ts.settingsManager.getSettings().forEach(function (setting) {
-        Object.defineProperty(settings, setting.getName(), {
-            get: function () { return setting.getValue(); },
-            set: function (value) {
-                settingsListener.block();
-                setting.setValue(value);
-                settingsListener.unblock();
+    // clears all stored data
+    topsoil.clearData = function () {
+        ts.data = [];
+    };
+
+    topsoil.showData = function () {
+        // build settings
+        chart.settings = {
+            backlog: [],
+            apply: function () {
+                chart.settings.backlog.forEach(function (update) {
+                    ts.settingScope.set(update.settingName, update.value);
+                });
             }
+        };
+        var names = ts.settingScope.getNames();
+        names.forEach(function (settingName) {
+            Object.defineProperty(chart.settings, settingName, {
+                get: function () {
+                    var value = ts.settingScope.get(settingName).get();
+                    alert("\nJS got value " + value + "\n");
+                    return value;
+                },
+                set: function (value) {
+                    alert("\nJS set\n");
+                    chart.settings.backlog.push({ settingName: settingName, value: value });
+                }
+            });
         });
-    });
 
-    chart.settings = settings;
-    chart.draw(ts.data);
-};
+        chart.draw(ts.data);
+    };
 
-/*
- * CHART
- */
+    /*
+     * CHART
+     */
 
-// an acknoledged (seemingly arbitrary) fudge factor for the window dimensions
-// without this (which has been minimized!) scrollbars show (at least on OS X)
-var magicNumber = 3.0000375;
+    // an acknoledged (seemingly arbitrary) fudge factor for the window dimensions
+    // without this (which has been minimized!) scrollbars show (at least on OS X)
+    var magicNumber = 3.0000375;
 
-chart.margin = {top: 75, right: 75, bottom: 75, left: 75};
-chart.width = window.innerWidth - magicNumber - chart.margin.left - chart.margin.right;
-chart.height = window.innerHeight - magicNumber - chart.margin.top - chart.margin.bottom;
+    chart.margin = {top: 75, right: 75, bottom: 75, left: 75};
+    chart.width = window.innerWidth - magicNumber - chart.margin.left - chart.margin.right;
+    chart.height = window.innerHeight - magicNumber - chart.margin.top - chart.margin.bottom;
 
-// set up for the chart
-chart.area = d3.select("body")
-        // create the svg element
-        .append("svg")
-        // somewhat confusing locally, but this element should be considered
-        // to be the chart externally
-        .attr("id", "chart")
-        .attr("width", chart.width + chart.margin.left + chart.margin.right)
-        .attr("height", chart.height + chart.margin.top + chart.margin.bottom)
-        // create a new coordinate space that accounts for the margins
-        .append("g")
-        .attr("transform", "translate(" + chart.margin.left + "," + chart.margin.top + ")");
+    // set up for the chart
+    chart.area = d3.select("body")
+            // create the svg element
+            .append("svg")
+            // somewhat confusing locally, but this element should be considered
+            // to be the chart externally
+            .attr("id", "chart")
+            .attr("width", chart.width + chart.margin.left + chart.margin.right)
+            .attr("height", chart.height + chart.margin.top + chart.margin.bottom)
+            // create a new coordinate space that accounts for the margins
+            .append("g")
+            .attr("transform", "translate(" + chart.margin.left + "," + chart.margin.top + ")");
 
-// create a clip path and backing for the plot area
-// this is a big performance booster
-// use this!
-chart.area.clipped = chart.area.append("g")
-        .attr("clip-path", "url(#clipBox)");
+    // create a clip path and backing for the plot area
+    // this is a big performance booster
+    // use this!
+    chart.area.clipped = chart.area.append("g")
+            .attr("clip-path", "url(#clipBox)");
 
-// the visible (white) backing is necessary for mouse events
-chart.plotArea = chart.area.clipped.append("rect")
-        .attr("id", "plotArea")
-        .attr("width", chart.width)
-        .attr("height", chart.height)
-        .attr("fill", "white")
-        .attr("stroke", "none");
+    // the visible (white) backing is necessary for mouse events
+    chart.plotArea = chart.area.clipped.append("rect")
+            .attr("id", "plotArea")
+            .attr("width", chart.width)
+            .attr("height", chart.height)
+            .attr("fill", "white")
+            .attr("stroke", "none");
 
-chart.area.append("defs")
-        .append("clipPath")
-        .attr("id", "clipBox")
-        .append("use")
-        .attr("xlink:href", "#" + chart.plotArea.attr("id"));
+    chart.area.append("defs")
+            .append("clipPath")
+            .attr("id", "clipBox")
+            .append("use")
+            .attr("xlink:href", "#" + chart.plotArea.attr("id"));
 
-// creates a buffer until the settings manager is set up
-chart.settings = [];
-chart.settings.addSetting = function (name, value) {
-    chart.settings.push([name, value]);
+    // creates a buffer until the settings manager is set up
+    chart.settings = [];
+    chart.settings.addSetting = function (name, value) {
+        chart.settings.push({name: name, value: value, 0: name, 1: value});
 
-    // so that this method can be chained
-    return chart.settings;
-};
+        return chart.settings; // so that this method can be chained
+    };
 
-/*
- * SETTINGS
- */
+    /*
+     * SETTINGS
+     */
 
-// constants for setting names
-var X_MAX = "X Max";
-var X_MIN = "X Min";
-var Y_MAX = "Y Max";
-var Y_MIN = "Y Min";
+    // constants for setting names
+    window.X_MAX = "X Max";
+    window.X_MIN = "X Min";
+    window.Y_MAX = "Y Max";
+    window.Y_MIN = "Y Min";
 
-var settingsListener;
-topsoil.transferSettings = function (settingsManager) {
-    // store the settings manager for later
-    ts.settingsManager = settingsManager;
-    var blocked = false;
-    settingsManager.addJSListener(settingsListener = {
-        onUpdate: function (setting) {
-            if (!blocked) {
-                topsoil.showData();
-            }
-        },
-        block: function() {
-            blocked = true;
-        },
-        unblock: function() {
-            blocked = false;
-        }
-    });
+    topsoil.setupSettingScope = function (settingScope) {
+        ts.settingScope = settingScope;
 
-    chart.settings.forEach(function (setting) {
-        // setting is a 2-array in the form [name, value]
-        settingsManager.addSetting(setting[0], setting[1]);
-    });
-};
+        chart.settings.forEach(function (setting) {
+            settingScope.set(setting.name, setting.value);
+        });
+    };
+})();

@@ -17,6 +17,7 @@ package org.cirdles.topsoil.chart;
 
 import java.util.Optional;
 import javafx.scene.Node;
+import org.cirdles.topsoil.chart.setting.SettingScope;
 
 /**
  * A generalized chart that can express itself as a {@link Node}.
@@ -48,5 +49,7 @@ public interface Chart<T> {
      * @param data data of type <code>T</code>
      */
     public void setData(T data);
+    
+    public SettingScope getSettingScope();
 
 }
