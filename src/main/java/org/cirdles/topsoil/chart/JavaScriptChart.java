@@ -91,8 +91,6 @@ public class JavaScriptChart extends BaseChart<double[][]> {
     private WebView webView;
     private WebEngine webEngine;
     private JSObject topsoil;
-    
-    private final SettingsManager settingsManager;
 
     private boolean loaded = false;
     private boolean initialized = false;
@@ -108,7 +106,6 @@ public class JavaScriptChart extends BaseChart<double[][]> {
         }
 
         this.sourcePath = sourcePath;
-        settingsManager = new SettingsManager();
     }
 
     /**
@@ -202,8 +199,12 @@ public class JavaScriptChart extends BaseChart<double[][]> {
         afterLoad(() -> {
             topsoil = (JSObject) webEngine.executeScript("topsoil");
             
-            // pass settings manager
-            topsoil.call("transferSettings", settingsManager);
+            // setup setting scope
+            topsoil.call("setupSettingScope", getSettingScope());
+            topsoil.call("showData");
+            getSettingScope().addListener((settingName, value) -> {
+                webEngine.executeScript("chart.update(ts.data);");
+            });
 
             // initialization is over
             initialized = true;
