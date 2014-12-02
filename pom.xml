@@ -24,13 +24,19 @@
     <developers>
         <developer>
             <name>John Zeringue</name>
-            <url>https://github.com/zeringus</url>
+            <url>https://github.com/johnzeringue</url>
             <organization>CIRDLES</organization>
         </developer>
         
         <developer>
             <name>Florent Pastor</name>
             <url>https://github.com/pfif</url>
+            <organization>CIRDLES</organization>
+        </developer>
+        
+        <developer>
+            <name>Santoshi Devata</name>
+            <url>https://github.com/nityasantoshi</url>
             <organization>CIRDLES</organization>
         </developer>
     </developers>
@@ -109,6 +115,28 @@
                 <configuration>
                     <mainClass>org.cirdles.topsoil.Topsoil</mainClass>
                     <vendor>CIRDLES</vendor>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                
+                <configuration>
+                    <tags>
+                        <tag>
+                            <name>pre</name>
+                            <placement>m</placement>
+                            <head>Precondition:</head>
+                        </tag>
+                        
+                        <tag>
+                            <name>post</name>
+                            <placement>m</placement>
+                            <head>Postcondition:</head>
+                        </tag>
+                    </tags>
                 </configuration>
             </plugin>
         </plugins>
