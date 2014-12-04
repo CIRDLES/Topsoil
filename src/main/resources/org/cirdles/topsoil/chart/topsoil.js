@@ -50,24 +50,17 @@
     topsoil.showData = function () {
         // build settings
         chart.settings = {
-            backlog: [],
-            apply: function () {
-                chart.settings.backlog.forEach(function (update) {
-                    ts.settingScope.set(update.settingName, update.value);
-                });
-            }
+            transactor: ts.settingScope.buildTransactor()
         };
-        var names = ts.settingScope.getNames();
+        
+        var names = ts.settingScope.getSettingNames();
         names.forEach(function (settingName) {
             Object.defineProperty(chart.settings, settingName, {
                 get: function () {
-                    var value = ts.settingScope.get(settingName).get();
-                    alert("\nJS got value " + value + "\n");
-                    return value;
+                    return ts.settingScope.get(settingName).get();
                 },
                 set: function (value) {
-                    alert("\nJS set\n");
-                    chart.settings.backlog.push({ settingName: settingName, value: value });
+                    ts.settingScope.set(settingName, value);
                 }
             });
         });

@@ -21,25 +21,33 @@
             .addSetting(X_MAX, 100)
             .addSetting(X_MIN, 0)
             .addSetting(Y_MAX, 100)
-            .addSetting(Y_MIN, 0);
+            .addSetting(Y_MIN, 0)
+            .addSetting("Title", "Hello, world!");
 
     chart.draw = function (data) {
         if (data.length > 0) {
-            chart.settings[X_MIN] = d3.min(data, function (d) {
-                return d.x;
-            });
-            chart.settings[Y_MIN] = d3.min(data, function (d) {
-                return d.y;
-            });
-            chart.settings[X_MAX] = d3.max(data, function (d) {
-                return d.x;
-            });
-            chart.settings[Y_MAX] = d3.max(data, function (d) {
-                return d.y;
-            });
+            var t = chart.settings.transactor;
             
-            chart.settings.apply();
+            t.set(X_MIN, d3.min(data, function (d) {
+                return d.x;
+            }));
+            t.set(Y_MIN, d3.min(data, function (d) {
+                return d.y;
+            }));
+            t.set(X_MAX, d3.max(data, function (d) {
+                return d.x;
+            }));
+            t.set(Y_MAX, d3.max(data, function (d) {
+                return d.y;
+            }));
+            
+            t.apply();
         }
+        
+        chart.area.append("text")
+                .attr("class", "title text")
+                .attr("x", chart.width / 2)
+                .attr("y", -50);
 
         // a mathematical construct
         chart.x = d3.scale.linear()
@@ -56,6 +64,8 @@
     chart.update = function (data) {
         chart.x.domain([chart.settings[X_MIN], chart.settings[X_MAX]]);
         chart.y.domain([chart.settings[Y_MIN], chart.settings[Y_MAX]]);
+        
+        d3.select(".title.text").text(chart.settings["Title"]);
 
         // what actually makes the axis
         var xAxis = d3.svg.axis()
@@ -116,14 +126,14 @@
                 .x(chart.x)
                 .y(chart.y)
                 .on("zoom", function () {
-                    alert("\nZOOM!!!\n");
-
-                    chart.settings[X_MIN] = zoom.x().domain()[0];
-                    chart.settings[Y_MIN] = zoom.y().domain()[0];
-                    chart.settings[X_MAX] = zoom.x().domain()[1];
-                    chart.settings[Y_MAX] = zoom.y().domain()[1];
+                    var t = chart.settings.transactor;
                     
-                    chart.settings.apply();
+                    t.set(X_MIN, zoom.x().domain()[0]);
+                    t.set(Y_MIN, zoom.y().domain()[0]);
+                    t.set(X_MAX, zoom.x().domain()[1]);
+                    t.set(Y_MAX, zoom.y().domain()[1]);
+                    
+                    t.apply();
                 });
 
         chart.area.clipped.call(zoom);
