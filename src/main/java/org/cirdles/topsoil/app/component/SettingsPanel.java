@@ -17,6 +17,8 @@ package org.cirdles.topsoil.app.component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.chart.setting.SettingScope;
@@ -34,12 +36,15 @@ public class SettingsPanel extends CustomVBox<SettingsPanel> {
         super(self -> {
             self.settingScope = settingScope;
             self.settingControls = new HashMap<>();
-            
-            self.settingScope.addListener((settingName, value) -> {
-                if (self.settingControls.containsKey(settingName)) {
-                    self.settingControls.get(settingName).update(value);
-                } else {
-                    self.addControl(settingName);
+
+            self.settingScope.addListener(settingNames -> {
+                for (String settingName : settingNames) {
+                    if (self.settingControls.containsKey(settingName)) {
+                        Object value = settingScope.get(settingName).get();
+                        self.settingControls.get(settingName).update(value);
+                    } else {
+                        self.addControl(settingName);
+                    }
                 }
             });
         });
@@ -47,14 +52,25 @@ public class SettingsPanel extends CustomVBox<SettingsPanel> {
 
     @FXML
     private void initialize() {
-        for (String settingName : settingScope.getNames()) {
+        for (String settingName : settingScope.getSettingNames()) {
             addControl(settingName);
         }
     }
 
     private void addControl(String settingName) {
-        SettingControl newControl = new SettingControl(settingScope, settingName);
+        SettingControl newControl = null;
+        Object value = settingScope.get(settingName).get();
+
+        if (value instanceof Number) {
+            newControl = new NumberSettingControl(settingScope, settingName);
+        } else if (value instanceof String) {
+            newControl = new StringSettingControl(settingScope, settingName);
+        } else {
+            Logger.getGlobal().log(Level.WARNING, value.getClass() + " not handled");
+        }
         
+        Logger.getGlobal().log(Level.INFO, settingName);
+
         settingControls.put(settingName, newControl);
         getChildren().add(newControl);
     }

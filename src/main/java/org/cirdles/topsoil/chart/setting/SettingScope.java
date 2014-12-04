@@ -16,15 +16,11 @@
 package org.cirdles.topsoil.chart.setting;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -32,64 +28,86 @@ import java.util.logging.Logger;
  */
 public class SettingScope {
 
-    private static final Logger logger
-            = Logger.getLogger(SettingScope.class.getName());
+    private final Map<String, Object> settings;
+    private final Collection<Consumer<String[]>> listeners;
 
-    private final Optional<SettingScope> parentScope;
-    private final Map<String, Object> settings = new HashMap<>();
-    private final Collection<BiConsumer<String, Object>> listeners = new HashSet<>();
+    private final Collection<String> changedSettings;
 
     public SettingScope() {
-        this.parentScope = Optional.empty();
+        settings = new HashMap<>();
+        listeners = new HashSet<>();
+
+        changedSettings = new HashSet<>();
     }
 
-    public SettingScope(SettingScope parentScope) {
-        this.parentScope = Optional.ofNullable(parentScope);
+    public void apply(SettingTransaction transaction) {
+        transaction.forEach(operation -> operation.applyTo(this));
+
+        if (!changedSettings.isEmpty()) {
+            String[] changedSettingsArray = changedSettings.toArray(new String[0]);
+            listeners.forEach(listener -> listener.accept(changedSettingsArray));
+            
+            changedSettings.clear();
+        }
+    }
+    
+    public void transaction(Consumer<SettingTransaction> transactionConsumer) {
+        SettingTransaction transaction = new SettingTransaction();
+        transactionConsumer.accept(transaction);
+        this.apply(transaction);
     }
 
     public Optional get(String settingName) {
-        Optional value = Optional.ofNullable(settings.get(settingName));
-
-        if (!value.isPresent()) {
-            // return the parent's value if it exists
-            value = parentScope.flatMap(parentScope -> {
-                return parentScope.get(settingName);
-            });
-        }
-
-        return value;
+        return Optional.ofNullable(settings.get(settingName));
     }
 
-    public String[] getNames() {
-        // copy the key set of settings
-        Collection<String> localNames = new HashSet<>(settings.keySet());
-
-        // add this scope's parent's names if it has one
-        parentScope.map(SettingScope::getNames).ifPresent(names -> {
-            Collections.addAll(localNames, names);
-        });
-
-        return localNames.toArray(new String[localNames.size()]);
+    public String[] getSettingNames() {
+        return settings.keySet().toArray(new String[0]);
     }
 
     public void set(String settingName, Object value) {
         Object currentValue = settings.get(settingName);
-        
-        logger.info(currentValue + " --> " + value);
-        
-        if (currentValue == null || !currentValue.equals(value)) {
-            logger.log(Level.INFO, "{0} set to value {1} of {2}",
-                       new Object[]{settingName, value, value.getClass()});
 
+        if (currentValue == null || !currentValue.equals(value)) {
             settings.put(settingName, value);
-            listeners.forEach(listener -> listener.accept(settingName, value));
-        } else {
-            logger.log(Level.INFO, "{0} is unchanged", new Object[]{settingName});
+            changedSettings.add(settingName);
+            listeners.forEach(listener -> listener.accept(changedSettings.toArray(new String[0])));
         }
     }
 
-    public void addListener(BiConsumer<String, Object> listener) {
+    public void addListener(Consumer<String[]> listener) {
         listeners.add(listener);
+    }
+    
+    public SettingTransactor buildTransactor() {
+        return new SettingTransactor(this);
+    }
+
+    public static final class OperationFactory implements SettingOperationFactory {
+
+        @Override
+        public SettingOperation buildGet(String settingName) {
+            return settingScope -> {
+                return settingScope.settings.keySet().toArray(new String[0]);
+            };
+        }
+
+        @Override
+        public SettingOperation<Void> buildSet(String settingName, Object value) {
+            return settingScope -> {
+                settingScope.settings.merge(settingName, value, (oldValue, newValue) -> {
+                    // if the values are different let the setting scope know
+                    if (!oldValue.equals(newValue)) {
+                        settingScope.changedSettings.add(settingName);
+                    }
+
+                    return newValue;
+                });
+
+                return null;
+            };
+        }
+
     }
 
 }

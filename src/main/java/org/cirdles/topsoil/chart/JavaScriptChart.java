@@ -202,7 +202,7 @@ public class JavaScriptChart extends BaseChart<double[][]> {
             // setup setting scope
             topsoil.call("setupSettingScope", getSettingScope());
             topsoil.call("showData");
-            getSettingScope().addListener((settingName, value) -> {
+            getSettingScope().addListener(settingNames -> {
                 webEngine.executeScript("chart.update(ts.data);");
             });
 

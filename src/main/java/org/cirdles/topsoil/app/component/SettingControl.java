@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.app.component;
 
+import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -25,10 +26,10 @@ import org.cirdles.topsoil.chart.setting.SettingScope;
  *
  * @author John Zeringue
  */
-public class SettingControl extends CustomHBox<SettingControl> {
+public abstract class SettingControl<T> extends CustomHBox<SettingControl> {
 
-    private SettingScope settingScope;
-    private String settingName;
+    protected SettingScope settingScope;
+    protected String settingName;
 
     public SettingControl(SettingScope settingScope, String settingName) {
         super(self -> {
@@ -37,35 +38,14 @@ public class SettingControl extends CustomHBox<SettingControl> {
         });
     }
     
-    void update(Object value) {
-        // both the slider and the value label should reflect the current value
-        double doubleValue = ((Number) value).doubleValue();
-        
-        settingSlider.setValue(doubleValue);
-        settingValue.setText(String.format("%.2f", doubleValue));
+    public String getSettingName() {
+        return settingName;
     }
-
-    @FXML
-    private Label settingLabel;
-    @FXML
-    private Slider settingSlider;
-    @FXML
-    private Label settingValue;
-
-    @FXML
-    private void initialize() {
-        // setting label should show the setting's name
-        settingLabel.setText(settingName);
-        
-        settingScope.get(settingName).ifPresent(value -> {
-            update(value);
-        });
-        
-        // on slider change
-        settingSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            // update the setting and label values
-            settingScope.set(settingName, newValue);
-        });
+    
+    public SettingScope getSettingScope() {
+        return settingScope;
     }
+    
+    public abstract void update(T value);
 
 }

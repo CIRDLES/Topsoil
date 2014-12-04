@@ -6,3 +6,6 @@ nbactions.xml
 
 # TestFX
 screenshot*.png
+
+# logs
+*.log
