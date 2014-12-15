@@ -23,7 +23,7 @@ public class ChartInitializationDialog extends Dialog {
 
     private static final String MASTHEAD_TEXT = "Select the column for each variable.";
 
-    public ChartInitializationDialog(TableView<Record> tableToRead, Chart chart) {
+    public ChartInitializationDialog(TableView<Record> tableToRead, JavaScriptChart chart) {
         super(null, null);
 
         setContent(new ChartInitializationView(tableToRead));

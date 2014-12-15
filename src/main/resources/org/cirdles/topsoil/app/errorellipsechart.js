@@ -102,6 +102,15 @@
         return x1;
     };
 
+    chart.settings
+            .addSetting(X_MAX, 100)
+            .addSetting(X_MIN, 0)
+            .addSetting(Y_MAX, 100)
+            .addSetting(Y_MIN, 0)
+            .addSetting("X Label", "207Pb*/235U")
+            .addSetting("Y Label", "206Pb*/238U")
+            .addSetting("Ellipse Fill", "red");
+
     chart.draw = function (data) {
         var x = chart.x = d3.scale.linear()
                 .range([0, chart.width]);
@@ -109,23 +118,22 @@
         var y = chart.y = d3.scale.linear()
                 .range([chart.height, 0]);
 
-        x.domain([
-            d3.min(data, function (d) {
-                return d.x - d.sigma_x;
-            }),
-            d3.max(data, function (d) {
-                return d.x + d.sigma_x;
-            })
-        ]).nice();
-
-        y.domain([
-            d3.min(data, function (d) {
-                return d.y - d.sigma_y;
-            }),
-            d3.max(data, function (d) {
-                return d.y + d.sigma_y;
-            })
-        ]).nice();
+        if (data.length > 0) {
+            chart.settings.transaction(function (t) {
+                t.set(X_MIN, d3.min(data, function (d) {
+                    return d.x - d.sigma_x;
+                }));
+                t.set(Y_MIN, d3.min(data, function (d) {
+                    return d.y - d.sigma_y;
+                }));
+                t.set(X_MAX, d3.max(data, function (d) {
+                    return d.x + d.sigma_x;
+                }));
+                t.set(Y_MAX, d3.max(data, function (d) {
+                    return d.y + d.sigma_y;
+                }));
+            });
+        }
 
         // initialize the concordia
         chart.area.clipped.append("path")
@@ -135,17 +143,13 @@
                 .attr("stroke-width", 2)
                 .attr("shape-rendering", "geometricPrecision");
 
-        var xAxisLabel = "207Pb*/235U";
-        var yAxisLabel = "206Pb*/238U";
-
         chart.area.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + chart.height + ")")
                 .append("text")
                 .attr("class", "label")
                 .attr("x", chart.width)
-                .attr("y", -6)
-                .text(xAxisLabel);
+                .attr("y", -6);
 
         chart.area.append("g")
                 .attr("class", "y axis")
@@ -153,8 +157,7 @@
                 .attr("class", "label")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 6)
-                .attr("dy", ".71em")
-                .text(yAxisLabel);
+                .attr("dy", ".71em");
 
         chart.update(data);
     };
@@ -162,6 +165,12 @@
     chart.update = function (data) {
         var x = chart.x;
         var y = chart.y;
+
+        x.domain([chart.settings[X_MIN], chart.settings[X_MAX]]);
+        y.domain([chart.settings[Y_MIN], chart.settings[Y_MAX]]);
+
+        d3.select(".x.axis .label").text(chart.settings["X Label"]);
+        d3.select(".y.axis .label").text(chart.settings["Y Label"]);
 
         var xAxis = d3.svg.axis()
                 .scale(x)
@@ -173,10 +182,10 @@
 
         var ellipses;
         (ellipses = chart.area.clipped.selectAll(".ellipse")
-                .data(data))
+                .data(data)
+                .attr("fill", chart.settings["Ellipse Fill"]))
                 .enter().append("path")
                 .attr("class", "ellipse")
-                .attr("fill", "red")
                 .attr("fill-opacity", 0.3)
                 .attr("stroke", "black");
 
@@ -325,6 +334,13 @@
                     if (y.domain()[0] < 0)
                         ty += y.range()[0] - y(0);
                     zoom.translate([tx, ty]);
+
+                    chart.settings.transaction(function (t) {
+                        t.set(X_MIN, zoom.x().domain()[0]);
+                        t.set(Y_MIN, zoom.y().domain()[0]);
+                        t.set(X_MAX, zoom.x().domain()[1]);
+                        t.set(Y_MAX, zoom.y().domain()[1]);
+                    });
 
                     chart.update(data);
                 });

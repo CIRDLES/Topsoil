@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * TOPSOIL
- */
-
 (function () {
     "use strict";
 
@@ -51,6 +47,12 @@
         // build settings
         chart.settings = {
             transactor: ts.settingScope.buildTransactor()
+        };
+        
+        chart.settings.transaction = function (consumer) {
+            var t = chart.settings.transactor;
+            consumer(t);
+            t.apply();
         };
         
         var names = ts.settingScope.getSettingNames();

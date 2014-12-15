@@ -278,5 +278,11 @@ public class JavaScriptChart extends BaseChart<double[][]> {
 
         return svgDocument;
     }
+    
+    public void fitData() {
+        afterInitialization(() -> {
+            topsoil.call("showData");
+        });
+    }
 
 }
