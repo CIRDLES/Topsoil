@@ -17,7 +17,7 @@
                       onAction="#importFromFile" />
         </Menu>
         
-        <Menu text="Charts">
+        <Menu text="Charts" fx:id="chartsMenu">
             <MenuItem text="scatterplot"
                       onAction="#createScatterplot" />
             <MenuItem text="error ellipse chart"

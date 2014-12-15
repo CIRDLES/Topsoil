@@ -21,36 +21,35 @@ import org.cirdles.utils.PlatformDependentOperation;
 
 /**
  *
- * @author johnzeringue
+ * @author John Zeringue
  */
-public class GetApplicationDirectoryOperation extends PlatformDependentOperation<String, Path> {
+public class GetDocumentsDirectoryOperation extends PlatformDependentOperation<String, Path>{
 
     @Override
     protected Path performOnWindows(String... params) {
-        if (params.length != 1 || params[0] == null || params[0].equals("")) {
-            throw new IllegalArgumentException("Valid application name must be provided");
+        if (params.length == 1 && !"".equals(params)) {
+            return Paths.get(System.getProperty("user.home"), "Documents", params[0]);
+        } else {
+            return Paths.get(System.getProperty("user.home"), "Documents");
         }
-        
-        // getenv must be used because appdata is a Windows evironment variable
-        return Paths.get(System.getenv("appdata"), params[0]);
     }
 
     @Override
     protected Path performOnMacOS(String... params) {
-        if (params.length != 1 || params[0] == null || params.equals("")) {
-            throw new IllegalArgumentException("Valid application name must be provided");
+        if (params.length == 1 && !"".equals(params)) {
+            return Paths.get(System.getProperty("user.home"), "Documents", params[0]);
+        } else {
+            return Paths.get(System.getProperty("user.home"), "Documents");
         }
-        
-        return Paths.get(System.getProperty("user.home"), "Library/Application Support", params[0]);
     }
 
     @Override
     protected Path performOnLinux(String... params) {
-        if (params.length != 1 || params[0] == null || params.equals("")) {
-            throw new IllegalArgumentException("Valid application name must be provided");
+        if (params.length == 1 && !"".equals(params)) {
+            return Paths.get(System.getProperty("user.home"), "Documents", params[0]);
+        } else {
+            return Paths.get(System.getProperty("user.home"), "Documents");
         }
-        
-        return Paths.get(System.getProperty("user.home"), "." + params[0].replaceAll(" *", "-").toLowerCase());
     }
-
+   
 }

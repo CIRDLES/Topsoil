@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
@@ -30,12 +31,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.app.utils.GetDocumentsDirectoryOperation;
 import org.cirdles.topsoil.app.utils.TSVTableReader;
 import org.cirdles.topsoil.app.utils.TSVTableWriter;
 import org.cirdles.topsoil.app.utils.TableReader;
@@ -52,11 +55,10 @@ import org.controlsfx.dialog.Dialogs;
 public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
     @FXML private TSVTable dataTable;
+    @FXML private Menu chartsMenu;
 
     // JFB
     private final int ERROR_CHART_REQUIRED_COL_COUNT = 5;
-
-    private ResourceBundle resources;
 
     /**
      * Initializes the controller class.
@@ -68,11 +70,37 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     public void initialize(URL url, ResourceBundle resources) {
         dataTable.setSavePath(Topsoil.LAST_TABLE_PATH);
         dataTable.load();
-
+        
+        loadCustomScripts();
+        
         // set the window title to something like "Topsoil [0.3.4]"
         String applicationName = resources.getString("applicationName");
         String applicationVersion = resources.getString("applicationVersion");
         setWindowTitle(String.format("%s [%s]", applicationName, applicationVersion));
+    }
+
+    private void loadCustomScripts() {
+        Path topsoilScripts = new GetDocumentsDirectoryOperation().perform("Topsoil Scripts");
+        System.out.println(topsoilScripts);
+        if (Files.exists(topsoilScripts)) {
+            try {
+                Files.walk(topsoilScripts).forEach(filePath -> {
+                    String fileName = filePath.getFileName().toString();
+                    
+                    if (fileName.matches(".*\\.js")) {
+                        MenuItem chartItem = new MenuItem(fileName.replace(".js", ""));
+                        
+                        chartItem.setOnAction(event -> {
+                            new ChartInitializationDialog(dataTable, new JavaScriptChart(filePath)).show();
+                        });
+                        
+                        chartsMenu.getItems().add(chartItem);
+                    }
+                });
+            } catch (IOException ex) {
+                Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     private void setWindowTitle(String title) {
