@@ -68,8 +68,6 @@ public class SettingsPanel extends CustomVBox<SettingsPanel> {
         } else {
             Logger.getGlobal().log(Level.WARNING, value.getClass() + " not handled");
         }
-        
-        Logger.getGlobal().log(Level.INFO, settingName);
 
         settingControls.put(settingName, newControl);
         getChildren().add(newControl);

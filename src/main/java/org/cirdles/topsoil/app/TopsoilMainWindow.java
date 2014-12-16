@@ -79,9 +79,13 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         setWindowTitle(String.format("%s [%s]", applicationName, applicationVersion));
     }
 
+    @FXML
     private void loadCustomScripts() {
+        // only keep the first two charts
+        chartsMenu.getItems().retainAll(chartsMenu.getItems().subList(0, 2));
+        
         Path topsoilScripts = new GetDocumentsDirectoryOperation().perform("Topsoil Scripts");
-        System.out.println(topsoilScripts);
+
         if (Files.exists(topsoilScripts)) {
             try {
                 Files.walk(topsoilScripts).forEach(filePath -> {
