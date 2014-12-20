@@ -19,9 +19,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,6 +65,8 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     // JFB
     private final int ERROR_CHART_REQUIRED_COL_COUNT = 5;
 
+    private FileSystem jarFileSystem;
+
     /**
      * Initializes the controller class.
      *
@@ -70,9 +77,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     public void initialize(URL url, ResourceBundle resources) {
         dataTable.setSavePath(Topsoil.LAST_TABLE_PATH);
         dataTable.load();
-        
+
         loadCustomScripts();
-        
+
         // set the window title to something like "Topsoil [0.3.4]"
         String applicationName = resources.getString("applicationName");
         String applicationVersion = resources.getString("applicationVersion");
@@ -83,21 +90,21 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     private void loadCustomScripts() {
         // only keep the first two charts
         chartsMenu.getItems().retainAll(chartsMenu.getItems().subList(0, 2));
-        
+
         Path topsoilScripts = new GetDocumentsDirectoryOperation().perform("Topsoil Scripts");
 
         if (Files.exists(topsoilScripts)) {
             try {
                 Files.walk(topsoilScripts).forEach(filePath -> {
                     String fileName = filePath.getFileName().toString();
-                    
+
                     if (fileName.matches(".*\\.js")) {
                         MenuItem chartItem = new MenuItem(fileName.replace(".js", ""));
-                        
+
                         chartItem.setOnAction(event -> {
                             new ChartInitializationDialog(dataTable, new JavaScriptChart(filePath)).show();
                         });
-                        
+
                         chartsMenu.getItems().add(chartItem);
                     }
                 });
@@ -164,38 +171,68 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             tableWriter.write(dataTable, Topsoil.LAST_TABLE_PATH);
         });
     }
-    
+
     @FXML
     private void createScatterplot(ActionEvent event) {
         try {
             // get the path to the JavaScript file
             URI javascriptURI = getClass().getResource("scatterplot.js").toURI();
-            Path javascriptPath = Paths.get(javascriptURI);
-            
+            Path javascriptPath;
+
+            // JARs and Netbeans builds must be handled differently
+            if (javascriptURI.toString().startsWith("jar:")) {
+                System.out.println(javascriptURI);
+                String[] uriParts = javascriptURI.toString().split("!");
+
+                Map<String, ?> env = new HashMap<>();
+                if (jarFileSystem == null) {
+                    jarFileSystem = FileSystems.newFileSystem(URI.create(uriParts[0]), env);
+                }
+
+                javascriptPath = jarFileSystem.getPath(uriParts[1]);
+            } else {
+                javascriptPath = Paths.get(javascriptURI);
+            }
+
             new ChartInitializationDialog(dataTable, new JavaScriptChart(javascriptPath)).show();
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    @FXML
-    /**
-     * For the new JS charts, {@link #createErrorChart} is the old method.
-     */
-    private void createErrorEllipseChart(ActionEvent event) {
-        try {
-            // get the path to the JavaScript file
-            URI javascriptURI = getClass().getResource("errorellipsechart.js").toURI();
-            Path javascriptPath = Paths.get(javascriptURI);
-            
-            new ChartInitializationDialog(dataTable, new JavaScriptChart(javascriptPath)).show();
-        } catch (URISyntaxException ex) {
+        } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @FXML
-    private void createErrorChart(ActionEvent event) {
+    /**
+     * For the new JS charts, {@link #createErrorChart} is the old method.
+     */
+    private void createErrorEllipseChart() {
+        try {
+            // get the path to the JavaScript file
+            URI javascriptURI = getClass().getResource("errorellipsechart.js").toURI();
+            Path javascriptPath;
+
+            // JARs and Netbeans builds must be handled differently
+            if (javascriptURI.toString().startsWith("jar:")) {
+                System.out.println(javascriptURI);
+                String[] uriParts = javascriptURI.toString().split("!");
+
+                Map<String, ?> env = new HashMap<>();
+                if (jarFileSystem == null) {
+                    jarFileSystem = FileSystems.newFileSystem(URI.create(uriParts[0]), env);
+                }
+
+                javascriptPath = jarFileSystem.getPath(uriParts[1]);
+            } else {
+                javascriptPath = Paths.get(javascriptURI);
+            }
+
+            new ChartInitializationDialog(dataTable, new JavaScriptChart(javascriptPath)).show();
+        } catch (URISyntaxException | IOException ex) {
+            Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @FXML
+    private void createErrorChart() {
         // JFB for now, assume error chart is only chart style
         dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
 
