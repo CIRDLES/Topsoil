@@ -1,5 +1,11 @@
 language: java
 
+# enable container-based architecture and caching
+sudo: false
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+
 jdk:
   - oraclejdk8 # JavaFX 8 only works under Oracle JDK 8
 
