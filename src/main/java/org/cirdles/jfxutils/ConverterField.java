@@ -16,17 +16,11 @@
 
 package org.cirdles.jfxutils;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
-import org.cirdles.topsoil.app.Tools;
 
 /**
  *
