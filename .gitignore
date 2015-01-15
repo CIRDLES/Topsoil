@@ -1,5 +1,6 @@
-# Maven
-target
+# Gradle
+.gradle
+build
 
 # Netbeans
 nbactions.xml
@@ -9,3 +10,10 @@ screenshot*.png
 
 # logs
 *.log
+
+# JavaScript
+node_modules
+
+# Vim
+*.swp
+/.nb-gradle/private/

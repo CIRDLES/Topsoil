@@ -1,0 +1,84 @@
+// BEGIN JAVASCRIPT SUPPORT
+plugins {
+    id "com.eriwen.gradle.js" version "1.12.1"
+    id "com.moowork.node" version "0.8"
+    id "com.github.rundis.buster" version "0.2.4.2"
+}
+// END JAVASCRIPT SUPPORT
+
+apply plugin: 'java'
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+ext.mainClass = 'org.cirdles.topsoil.app.Topsoil'
+
+def configJavaExec = { JavaExec task ->
+    task.main = mainClass
+    task.classpath = sourceSets.main.runtimeClasspath
+    task.standardInput = System.in
+}
+
+task run(dependsOn: project.classes, type: JavaExec) {
+    configJavaExec(it)
+}
+
+task debug(dependsOn: project.classes, type: JavaExec) {
+    configJavaExec(it)
+    debug = true
+}
+
+task jarWithDependencies(type: Jar) {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+
+    baseName = project.name + '-with-dependencies'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+// BEGIN JAVASCRIPT SUPPORT
+javascript.source {
+    topsoil {
+        js {
+            srcDir 'src/main/resources/org/cirdles/topsoil/chart/topsoil_js'
+            include '*.js'
+        }
+    }
+}
+
+combineJs {
+    source = javascript.source.topsoil.js.files
+    dest = file("${project.buildDir}/resources/main/org/cirdles/topsoil/chart/topsoil.js")
+}
+
+assemble.finalizedBy combineJs
+
+task installBuster(type: NpmTask) {
+    args = [file('node_modules/buster').exists() ? 'update' : 'install', 'buster']
+}
+
+buster {
+    busterExecutablesPath = 'node_modules/buster/bin'
+    configFile = file('config/buster.js')
+}
+
+busterTest.dependsOn combineJs
+busterTest.dependsOn installBuster
+
+test.finalizedBy busterTest
+// END JAVASCRIPT SUPPORT
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.controlsfx:controlsfx:8.20.8'
+    compile 'gov.nist.math:jama:1.0.3'
+    compile 'net.sf.opencsv:opencsv:2.3'
+
+    testCompile 'junit:junit:4.10'
+    testCompile 'org.loadui:testFx:3.1.0'
+}
