@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.app;
 
-import org.cirdles.topsoil.app.TSVTable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -23,18 +22,16 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
+import javafx.scene.control.TableView;
+import org.cirdles.topsoil.app.table.Record;
 import org.junit.Test;
 import org.loadui.testfx.GuiTest;
-
-import static org.loadui.testfx.Assertions.*;
-import static org.loadui.testfx.controls.TableViews.*;
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  *
  * @author John Zeringue
  */
-public class TSVTableTest extends GuiTest {
+public class ColumnSelectorViewTest extends GuiTest {
 
     @Override
     protected Parent getRootNode() {
@@ -47,18 +44,14 @@ public class TSVTableTest extends GuiTest {
             Logger.getLogger(TSVTableTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        TSVTable testTSVTable = new TSVTable(sampleTSVPath);
-        testTSVTable.setId("tsvTable");
-        return testTSVTable;
+        TableView<Record> testTable = new TSVTable(sampleTSVPath);
+        
+        return new ColumnSelectorView(testTable, null);
     }
     
     @Test
-    public void tsvTable_should_correctlyLoadABasicTSVFile() {
-        verifyThat("#tsvTable", containsCell("29.165688743")); // the first number in the file
-        verifyThat("#tsvTable", containsCell("0.915025602")); // the last number in the file
-        verifyThat("#tsvTable", containsCell("0.702153693")); // a number in the middle
+    public void testShouldPass() {
         
-        verifyThat(numberOfRowsIn("#tsvTable"), is(17)); // sample.tsv contains 17 lines
     }
     
 }

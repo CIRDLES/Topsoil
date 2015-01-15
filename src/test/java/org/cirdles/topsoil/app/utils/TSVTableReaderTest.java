@@ -15,20 +15,30 @@
  */
 package org.cirdles.topsoil.app.utils;
 
-import org.cirdles.topsoil.app.utils.TableReader;
-import org.cirdles.topsoil.app.utils.TSVTableReader;
+import javafx.scene.Parent;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.table.Record;
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.loadui.testfx.Assertions.*;
+
+import static org.loadui.testfx.controls.TableViews.*;
+import org.loadui.testfx.GuiTest;
 
 /**
  *
  * @author zeringue
  */
-public class TSVTableReaderTest {
-    
-    public TSVTableReaderTest() {
+public class TSVTableReaderTest extends GuiTest {
+
+    @Override
+    protected Parent getRootNode() {
+        TableView<Record> recordTable = new TableView<>();
+
+        recordTable.setId("recordTable");
+        new TSVTableReader(true).read("A\tB\tC", recordTable);
+
+        return recordTable;
     }
 
     /**
@@ -36,24 +46,7 @@ public class TSVTableReaderTest {
      */
     @Test
     public void testRead() {
-        // test a file with only headers
-        String src = "A\tB\tC";
-        TableView<Record> dest = new TableView<>();
-        TableReader instance = new TSVTableReader(true);
-        instance.read(src, dest);
-        
-        assertEquals("dest should have three columns", 3, dest.getColumns().size());
-        assertTrue("dest should have zero rows", dest.getItems().isEmpty());
-        
-        // test a file with one line of data
-        src = "1\t2\t3";
-        dest = new TableView<>();
-        instance = new TSVTableReader(false);
-        instance.read(src, dest);
-        
-        assertEquals("dest should have three columns", 3, dest.getColumns().size());
-        assertEquals("dest should have one row", 1, dest.getItems().size());
-        assertEquals("dest should have a three at the end of the first row", 3., dest.getColumns().get(2).getCellData(0));
+        verifyThat(numberOfRowsIn("#recordTable"), is(0));
     }
-    
+
 }

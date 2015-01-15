@@ -25,6 +25,7 @@ import javafx.util.StringConverter;
 /**
  *
  * @author pfif
+ * @param <T>
  */
 public abstract class ConverterField<T> extends TextField {
     
@@ -45,6 +46,7 @@ public abstract class ConverterField<T> extends TextField {
     /**
      * Create a new number field that uses the given converter to equate its text contents to a decimal number.
      * 
+     * @param converted
      * @param converter 
      */
     public ConverterField(Property<T> converted, StringConverter<T> converter) {

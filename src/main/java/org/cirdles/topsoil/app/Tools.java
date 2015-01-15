@@ -43,7 +43,7 @@ public class Tools {
 
         @Override
         public String toString(Number object) {
-            return String.format("%.10f", object.doubleValue()).replaceFirst("\\.?0+$", "");
+            return String.format("%.10f", object.doubleValue()).replaceFirst("[\\.,]?0+$", "");
         }
 
         @Override
