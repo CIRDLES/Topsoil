@@ -4,7 +4,9 @@ language: java
 sudo: false
 cache:
   directories:
-    - '$HOME/.m2/repository'
+    - $HOME/.m2/repository
+    - $HOME/.gradle/caches/
+    - node_modules
 
 jdk:
   - oraclejdk8 # JavaFX 8 only works under Oracle JDK 8
