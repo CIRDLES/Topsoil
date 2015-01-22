@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.chart.concordia;
 
-import org.cirdles.topsoil.app.chart.concordia.ErrorEllipse;
 import Jama.Matrix;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -16,7 +15,6 @@ public class ErrorEllipseTest {
      */
     @Test
     public void testGetControlPoints() {
-        System.out.println("getControlPoints");
         ErrorEllipse instance = new ErrorEllipse() {
 
             @Override
@@ -64,8 +62,6 @@ public class ErrorEllipseTest {
     
     @Test
     public void testCalculateU() {
-        System.out.println("calculateU");
-        
         for (int i = 0; i < 5000; i++) {
             double sigmaX = Math.random() * 10;
             double sigmaY = Math.random() * 10;

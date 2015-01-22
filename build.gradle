@@ -7,6 +7,7 @@ plugins {
 // END JAVASCRIPT SUPPORT
 
 apply plugin: 'java'
+apply plugin: 'findbugs'
 
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -53,7 +54,7 @@ combineJs {
     dest = file("${project.buildDir}/resources/main/org/cirdles/topsoil/chart/topsoil.js")
 }
 
-assemble.finalizedBy combineJs
+processResources.dependsOn combineJs
 
 task installBuster(type: NpmTask) {
     args = [file('node_modules/buster').exists() ? 'update' : 'install', 'buster']
@@ -64,11 +65,17 @@ buster {
     configFile = file('config/buster.js')
 }
 
-busterTest.dependsOn combineJs
 busterTest.dependsOn installBuster
 
-test.finalizedBy busterTest
+test.dependsOn busterTest
 // END JAVASCRIPT SUPPORT
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
 
 repositories {
     jcenter()

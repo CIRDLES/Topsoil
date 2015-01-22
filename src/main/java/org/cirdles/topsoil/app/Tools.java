@@ -16,6 +16,8 @@
 package org.cirdles.topsoil.app;
 
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.scene.control.Label;
@@ -38,6 +40,8 @@ import org.controlsfx.dialog.Dialogs;
  * Shortcut tools to be used anywhere in the program.
  */
 public class Tools {
+    
+    private static final String LOGGER_NAME = Tools.class.getName();
 
     public static final StringConverter<Number> DYNAMIC_STRING_CONVERTER = new StringConverter<Number>() {
 
@@ -66,8 +70,8 @@ public class Tools {
     };
 
     public static final StringConverter<String> SUPERSCRIPTPARSER_CONVERTER = new StringConverter<String>() {
-        private final String SUPERSCRIPT_SIGN = "^";
-        private final String SUBSCRIPT_SIGN = "_";
+        private static final String SUPERSCRIPT_SIGN = "^";
+        private static final String SUBSCRIPT_SIGN = "_";
 
         /**
          * In a String, search for <code>toCapture</code> between delimiters, converter them, and return the new String
@@ -79,12 +83,8 @@ public class Tools {
          */
         private String parse(String string, String delimiter, String toCapture, Translator converter) {
             StringBuffer result = new StringBuffer();
-            int lenghdelimiter;
             if (delimiter == null) {
-                lenghdelimiter = 0;
                 delimiter = "";
-            } else {
-                lenghdelimiter = delimiter.length();
             }
 
             String regex = "\\Q" + delimiter + "\\E(" + toCapture + "+)\\Q" + delimiter + "\\E";
@@ -121,7 +121,7 @@ public class Tools {
             });
 
             result = parse(result, SUBSCRIPT_SIGN, "[0-9]", (String origin) -> {
-                String retour = new String();
+                String retour = "";
 
                 for (char i : origin.toCharArray()) {
                     int code = 0x2080 + Integer.valueOf(String.valueOf(i));
@@ -145,13 +145,13 @@ public class Tools {
 
             @Override
             public String translate(String origin) {
-                String retour = new String();
+                StringBuilder retour = new StringBuilder();
                 for (char c : origin.toCharArray()) {
                     if (c == '\u00B9') {
-                        retour += 1;
+                        retour.append(1);
                     } else {
                         String code = Integer.toHexString(c);
-                        retour += code.charAt(code.length() - 1);
+                        retour.append(code.charAt(code.length() - 1));
                     }
                 }
 
@@ -201,7 +201,7 @@ public class Tools {
         return label;
     }
 
-    public static void pasteFromClipboard(TableView<Record> dataTable) {
+    public static void pasteFromClipboard(TSVTable dataTable) {
         Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
             TableReader tableReader = new TSVTableReader(response);
             tableReader.read(Clipboard.getSystemClipboard().getString(), dataTable);
@@ -210,12 +210,17 @@ public class Tools {
         });
     }
 
-    public static void saveTable(TableView<Record> dataTable) {
+    public static void saveTable(TSVTable dataTable) {
         if (!dataTable.getItems().isEmpty()) {
-            TableWriter<Record> tableWriter = new TSVTableWriter(true, ((TSVTable)dataTable).getRequiredColumnCount());
+            TableWriter<Record> tableWriter = new TSVTableWriter(true, dataTable.getRequiredColumnCount());
             tableWriter.write(dataTable, LAST_TABLE_PATH);
         } else {
-            LAST_TABLE_PATH.toFile().delete();
+            boolean lastTableFileDeleted = LAST_TABLE_PATH.toFile().delete();
+            
+            if (!lastTableFileDeleted) {
+                Logger.getLogger(LOGGER_NAME).log(Level.FINE,
+                        "Last table file was not able to be deleted");
+            }
         }
     }
 

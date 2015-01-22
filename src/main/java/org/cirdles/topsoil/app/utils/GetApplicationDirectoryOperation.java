@@ -27,9 +27,7 @@ public class GetApplicationDirectoryOperation extends PlatformDependentOperation
 
     @Override
     protected Path performOnWindows(String... params) {
-        if (params.length != 1 || params[0] == null || params[0].equals("")) {
-            throw new IllegalArgumentException("Valid application name must be provided");
-        }
+        validateParams(params);
         
         // getenv must be used because appdata is a Windows evironment variable
         return Paths.get(System.getenv("appdata"), params[0]);
@@ -37,20 +35,33 @@ public class GetApplicationDirectoryOperation extends PlatformDependentOperation
 
     @Override
     protected Path performOnMacOS(String... params) {
-        if (params.length != 1 || params[0] == null || params.equals("")) {
-            throw new IllegalArgumentException("Valid application name must be provided");
-        }
-        
+        validateParams(params);
         return Paths.get(System.getProperty("user.home"), "Library/Application Support", params[0]);
     }
 
     @Override
     protected Path performOnLinux(String... params) {
-        if (params.length != 1 || params[0] == null || params.equals("")) {
-            throw new IllegalArgumentException("Valid application name must be provided");
+        validateParams(params);
+        return Paths.get(System.getProperty("user.home"), buildLinuxFolderName(params[0]));
+    }
+    
+    String buildLinuxFolderName(String applicationName) {
+        return "." + applicationName.trim().replaceAll(" +", "-").toLowerCase();
+    }
+    
+    void validateParams(String[] params) {
+        boolean stillValid = params.length >= 1;
+        
+        if (stillValid) {
+            String applicationName = params[0];
+            
+            stillValid &= applicationName != null;
+            stillValid &= !"".equals(applicationName);
         }
         
-        return Paths.get(System.getProperty("user.home"), "." + params[0].replaceAll(" *", "-").toLowerCase());
+        if (!stillValid) {
+            throw new IllegalArgumentException("Valid application name must be provided");
+        }
     }
 
 }

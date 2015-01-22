@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +49,6 @@ import org.cirdles.topsoil.app.utils.TableReader;
 import org.cirdles.topsoil.app.utils.TableWriter;
 import org.cirdles.topsoil.chart.ChartInitializationDialog;
 import org.cirdles.topsoil.chart.JavaScriptChart;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -59,8 +57,10 @@ import org.controlsfx.dialog.Dialogs;
  */
 public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
-    @FXML private TSVTable dataTable;
-    @FXML private Menu chartsMenu;
+    @FXML
+    private TSVTable dataTable;
+    @FXML
+    private Menu chartsMenu;
 
     // JFB
     private final int ERROR_CHART_REQUIRED_COL_COUNT = 5;
@@ -126,10 +126,12 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         ChangeListener<Window> windowListener = new ChangeListener<Window>() {
             @Override
             public void changed(ObservableValue<? extends Window> observableWindow, Window oldWindow, Window newWindow) {
-                Stage stage = (Stage) newWindow;
+                if (newWindow instanceof Stage) { // make the cast safe
+                    Stage stage = (Stage) newWindow;
 
-                // actually set the title
-                stage.setTitle(title);
+                    // actually set the title
+                    stage.setTitle(title);
+                }
 
                 getScene().windowProperty().removeListener(this);
             }
@@ -229,20 +231,6 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    @FXML
-    private void createErrorChart() {
-        // JFB for now, assume error chart is only chart style
-        dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
-
-        if (!dataTable.hasRequiredColumnCount()) {
-            Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE_2).showWarning();
-            dataTable.save();
-            dataTable.load();
-        }
-
-        new ColumnSelectorDialog(dataTable).show();
     }
 
     @FXML

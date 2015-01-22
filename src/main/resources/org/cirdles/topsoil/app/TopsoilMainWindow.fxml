@@ -27,9 +27,6 @@
         </Menu>
     </MenuBar>
     <ToolBar>
-        <Button text="%createErrorEllipseChart"
-                onAction="#createErrorChart"
-                fx:id="createErrorChartButton" /> 
         <Button text="%clearTableMessage"
                 onAction="#emptyTable"
                 fx:id="emptyTableButton" /> 

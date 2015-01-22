@@ -17,6 +17,7 @@
 package org.cirdles.topsoil.app.utils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javafx.scene.control.TableView;
@@ -29,6 +30,6 @@ public abstract class TableReader<T> {
     public abstract void read(String src, TableView<T> dest);
     
     public void read(Path src, TableView<T> dest) throws IOException {
-        read(new String(Files.readAllBytes(src)), dest);
+        read(new String(Files.readAllBytes(src), StandardCharsets.UTF_8), dest);
     }
 }
