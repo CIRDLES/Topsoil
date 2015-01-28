@@ -61,9 +61,7 @@ public class JavaScriptChart extends BaseChart<double[][]> {
         // prepare the local URL for topsoil.js
         final String TOPSOIL_JS_URL
                 = JavaScriptChart.class.getResource("topsoil.js").toExternalForm();
-        // prepare the local URL for Vector2D.js
-        final String VECTOR2D_JS_URL
-                = JavaScriptChart.class.getResource("Vector2D.js").toExternalForm();
+        
 
         // build the HTML template (comments show implicit elements/tags)
         HTML_TEMPLATE
@@ -80,7 +78,6 @@ public class JavaScriptChart extends BaseChart<double[][]> {
                 + "<script src=\"" + FIREBUG_LITE_URL + "\"></script>\n"
                 + "<script src=\"" + D3_JS_URL + "\"></script>\n"
                 + "<script src=\"" + NUMERIC_JS_URL + "\"></script>\n"
-                + "<script src=\"" + VECTOR2D_JS_URL + "\"></script>\n"
                 + "<script src=\"" + TOPSOIL_JS_URL + "\"></script>\n"
                 + "<script src=\"%s\"></script>\n" // JS file for chart
                 // </body>
