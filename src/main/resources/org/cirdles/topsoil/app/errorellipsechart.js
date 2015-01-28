@@ -17,11 +17,9 @@
 (function () {
     "use strict";
 
-
     // constants
     var LAMBDA_235 = 9.8485e-10;
     var LAMBDA_238 = 1.55125e-10;
-
 
     // 2D vector for vector math
     function Vector2D(x, y) {

@@ -61,7 +61,6 @@ public class JavaScriptChart extends BaseChart<double[][]> {
         // prepare the local URL for topsoil.js
         final String TOPSOIL_JS_URL
                 = JavaScriptChart.class.getResource("topsoil.js").toExternalForm();
-        
 
         // build the HTML template (comments show implicit elements/tags)
         HTML_TEMPLATE
