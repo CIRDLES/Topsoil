@@ -1,9 +1,10 @@
 # Gradle
-.gradle
-build
+.gradle/
+build/
 
 # Netbeans
 nbactions.xml
+.nb-gradle/
 
 # TestFX
 screenshot*.png
@@ -12,8 +13,7 @@ screenshot*.png
 *.log
 
 # JavaScript
-node_modules
+node_modules/
 
 # Vim
 *.swp
-/.nb-gradle/private/
