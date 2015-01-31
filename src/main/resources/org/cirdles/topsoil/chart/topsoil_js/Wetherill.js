@@ -1,44 +1,46 @@
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2014 CIRDLES.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-var Wetherill = (function() {
-    function Wetherill(t) {
-        var thisWetherill = this;
+var wetherill = (function() {
+    "use strict";
+    
+    var LAMBDA_235 = 9.8485e-10;
+    var LAMBDA_238 = 1.55125e-10;
+    
+    var wetherill = function(t) {
+        return new Vector2D(wetherill.x(t), wetherill.y(t));
+    };
 
-        thisWetherill.LAMBDA_235 = 9.8485e-10;
-        thisWetherill.LAMBDA_238 = 1.55125e-10;
-        thisWetherill.curve = new Vector2D(thisWetherill.x(t), thisWetherill.y(t));
+    wetherill.x = function (t) {
+        return Math.exp(LAMBDA_235 * t) - 1;
+    };
 
-        return thisWetherill.curve;
-    }
+    wetherill.y = function (t) {
+        return Math.exp(LAMBDA_238 * t) - 1;
+    };
 
-    Wetherill.prototype.x = function (t) {
-        var thisWetherill = this;
-        return Math.exp(thisWetherill.LAMBDA_235 * t) - 1;
-    }
+    wetherill.prime = function (t) {
+        return new Vector2D(wetherill.x.prime(t), wetherill.y.prime(t));
+    };
 
-    Wetherill.prototype.y = function (t) {
-        var thisWetherill = this;
-        return Math.exp(thisWetherill.LAMBDA_238 * t) - 1;
-    }
+    wetherill.x.prime = function (t) {
+        return LAMBDA_235 * Math.exp(LAMBDA_235 * t);
+    };
 
-    Wetherill.prototype.prime = function (t) {
-        var thisWetherill = new Wetherill(t);
-        return new Vector2D(thisWetherill.xPrime(t), thisWetherill.yPrime(t));
-    }
-
-    Wetherill.prototype.xPrime = function (t) {
-        var thisWetherill = this;
-        return Math.exp(thisWetherill.LAMBDA_235 * t)
-                * thisWetherill.LAMBDA_235;
-    }
-
-    Wetherill.prototype.yPrime = function (t) {
-        var thisWetherill = this;
-        return Math.exp(thisWetherill.LAMBDA_235 * t)
-                * thisWetherill.LAMBDA_238;
-    }
-    return Wetherill;
+    wetherill.y.prime = function (t) {
+        return LAMBDA_238 * Math.exp(LAMBDA_238 * t);
+    };
+    return wetherill;
 })();

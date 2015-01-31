@@ -18,39 +18,6 @@
     "use strict";
 
 
-    // constants
-    var LAMBDA_235 = 9.8485e-10;
-    var LAMBDA_238 = 1.55125e-10;
-
-
-
-    // define the parametric function for the wetherill curve
-    var wetherill = function (t) {
-        return new Vector2D(wetherill.x(t), wetherill.y(t));
-    };
-
-    wetherill.prime = function (t) {
-        return new Vector2D(wetherill.x.prime(t), wetherill.y.prime(t));
-    };
-
-    // the x-component of the wetherill
-    wetherill.x = function (t) {
-        return Math.exp(LAMBDA_235 * t) - 1;
-    };
-
-    wetherill.x.prime = function (t) {
-        return LAMBDA_235 * Math.exp(LAMBDA_235 * t);
-    };
-
-    // the y-component of the wetherill
-    wetherill.y = function (t) {
-        return Math.exp(LAMBDA_238 * t) - 1;
-    };
-
-    wetherill.y.prime = function (t) {
-        return LAMBDA_238 * Math.exp(LAMBDA_238 * t);
-    };
-
     var newtonMethod = function (f, value) {
         // if value is provided then shift f by value
         if (typeof value !== "undefined") {
