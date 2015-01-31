@@ -23,29 +23,6 @@
     var LAMBDA_238 = 1.55125e-10;
 
 
-    // 2D vector for vector math
-    function Vector2D(x, y) {
-        this.x = this[0] = x;
-        this.y = this[1] = y;
-    }
-
-    Vector2D.prototype = {
-        plus: function (point) {
-            return new Vector2D(this.x + point.x, this.y + point.y);
-        },
-        minus: function (point) {
-            return new Vector2D(this.x - point.x, this.y - point.y);
-        },
-        times: function (scalar) {
-            return new Vector2D(this.x * scalar, this.y * scalar);
-        },
-        dividedBy: function (scalar) {
-            return new Vector2D(this.x / scalar, this.y / scalar);
-        },
-        scaleBy: function (xScale, yScale) {
-            return new Vector2D(xScale(this.x), yScale(this.y));
-        }
-    };
 
     // define the parametric function for the wetherill curve
     var wetherill = function (t) {
