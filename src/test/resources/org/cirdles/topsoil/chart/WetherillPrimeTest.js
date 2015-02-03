@@ -26,7 +26,7 @@ describe("WetherillPrime", function() {
         this.vector = new Vector2D(vX, vY);
     });
     
-    it("instantiates an instance of Wetherill correctly (prime)", function() {
+    it("instantiates an instance (prime)", function() {
        var curve = wetherill.prime(10);
        buster.assert.equals(this.vector, curve);
    });

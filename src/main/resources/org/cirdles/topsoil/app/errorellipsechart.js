@@ -17,37 +17,6 @@
 (function () {
     "use strict";
 
-
-    var newtonMethod = function (f, value) {
-        // if value is provided then shift f by value
-        if (typeof value !== "undefined") {
-            var unshiftedF = f;
-
-            f = function (x) {
-                return unshiftedF(x) - value;
-            };
-
-            // the derivative is the same after the shift
-            f.prime = unshiftedF.prime;
-        }
-
-        var x0, x1 = 1;
-
-        // bounce around until the derivative at x1 is nonzero
-        while (f.prime(x1) === 0)
-            x1 += Math.random();
-
-        for (var i = 0; i < 200; i++) {
-            x0 = x1;
-            if (Math.abs(f.prime(x0)) < Number.EPSILON) {
-                break;
-            }
-            x1 -= f(x0) / f.prime(x0);
-        }
-
-        return x1;
-    };
-
     chart.settings
             .addSetting(X_MAX, 100)
             .addSetting(X_MIN, 0)

@@ -19,11 +19,11 @@ var spec = describe("Vector2D", function() {
        buster.assert.equals(5, this.vector.y);
    });
    
-   it("should have x attribute (accessed via [] index)", function() {
+   it("should have x attribute", function() {
        buster.assert.equals(5, this.vector[0]);
    });
    
-   it("should have y attribute (accessed via [] index)" , function() {
+   it("should have y attribute" , function() {
        buster.assert.equals(5, this.vector[1]);
    });
    
