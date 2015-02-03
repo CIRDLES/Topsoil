@@ -1,5 +1,5 @@
 /* 
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,20 @@ buster.spec.expose();
 describe("Wetherill", function() {
    before(function() {
         var LAMBDA_235 = 9.8485e-10,
-            LAMBDA_238 = 1.55125e-10,
-            vX = Math.exp(LAMBDA_235 * 10) - 1,
-            vY = Math.exp(LAMBDA_238 * 10) - 1;
-        this.vector = new Vector2D(vX, vY);
+            LAMBDA_238 = 1.55125e-10;
+        this.calcX = function(t) { return Math.exp(LAMBDA_235 * t) - 1; },
+        this.calcY = function(t) { return Math.exp(LAMBDA_238 * t) - 1; };
    });
    
-   it("can instantiate an instance (non-prime)", function() {
-       var curve = wetherill(10);
-       buster.assert.equals(this.vector, curve);
+   it("calculating it's value at a time t", function() {
+        var t = 10,
+            value = wetherill(t);
+        buster.assert.equals(new Vector2D(this.calcX(t),this.calcY(t)), value);
+   });
+   it("calculating it's value at a time 0", function() {
+        var t = 0,
+            value = wetherill(t);
+        buster.assert.equals(new Vector2D(this.calcX(t),this.calcY(t)), value);
    });
 });
 

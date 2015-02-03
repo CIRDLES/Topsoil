@@ -1,5 +1,5 @@
 /* 
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,21 @@ buster.spec.expose();
 
 describe("WetherillPrime", function() {
     before(function() {
-        var t = 10,
-            LAMBDA_235 = 9.8485e-10,
-            LAMBDA_238 = 1.55125e-10,
-            vX = LAMBDA_235 * Math.exp(LAMBDA_235 * t),
-            vY = LAMBDA_238 * Math.exp(LAMBDA_238 * t);
-        this.vector = new Vector2D(vX, vY);
+        var LAMBDA_235 = 9.8485e-10,
+            LAMBDA_238 = 1.55125e-10;
+            this.calcX = function(t) { return LAMBDA_235 * Math.exp(LAMBDA_235 * t); },
+            this.calcY = function(t) { return LAMBDA_238 * Math.exp(LAMBDA_238 * t); };
     });
     
-    it("instantiates an instance (prime)", function() {
-       var curve = wetherill.prime(10);
-       buster.assert.equals(this.vector, curve);
-   });
+    it("calculating it's derivative at a time t", function() {
+       var t = 10,
+           derivative = wetherill.prime(t);
+       buster.assert.equals(new Vector2D(this.calcX(t), this.calcY(t)), derivative);
+    });
+    
+    it("calculating it's derivative at a time zero", function() {
+        var t = 0,
+           derivative = wetherill.prime(t);
+       buster.assert.equals(new Vector2D(this.calcX(t), this.calcY(t)), derivative);
+    });
 });

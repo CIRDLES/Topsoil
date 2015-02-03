@@ -1,5 +1,5 @@
 /* 
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-var Vector2D = (function(){
+(function(){
     "use strict";
     
-    function Vector2D(x, y) {
+    window.Vector2D = function(x, y) {
         var thisVector2D = this;
         thisVector2D.x = thisVector2D[0] = x;
         thisVector2D.y = thisVector2D[1] = y;

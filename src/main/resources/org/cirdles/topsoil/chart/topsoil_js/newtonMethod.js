@@ -1,5 +1,5 @@
 /* 
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-var newtonMethod = (function() {
+(function() {
     "use strict";
     
-    return function (f, value) {
+    window.newtonMethod = function (f, value) {
         // if value is provided then shift f by value
         if (typeof value !== "undefined") {
             var unshiftedF = f;

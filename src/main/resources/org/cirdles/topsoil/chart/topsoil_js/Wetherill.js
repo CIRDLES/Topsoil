@@ -1,5 +1,5 @@
 /* 
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var wetherill = (function() {
+(function() {
     "use strict";
     
     var LAMBDA_235 = 9.8485e-10;
     var LAMBDA_238 = 1.55125e-10;
     
-    var wetherill = function(t) {
+    window.wetherill = function(t) {
         return new Vector2D(wetherill.x(t), wetherill.y(t));
     };
 
@@ -42,5 +42,4 @@ var wetherill = (function() {
     wetherill.y.prime = function (t) {
         return LAMBDA_238 * Math.exp(LAMBDA_238 * t);
     };
-    return wetherill;
 })();
