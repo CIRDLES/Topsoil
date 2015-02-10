@@ -32,8 +32,7 @@ public class GetApplicationDirectoryOperation extends PlatformDependentOperation
     private static PlatformDependentOperation<String, Path> instance;
     
 	/**
-	 * This method returns the path on Windows. It throws an exception 
-	 * if a valid application name is not given. 
+	 * This method returns the path on Windows. 
 	 * 
 	 * @param String... params
 	 * @return Path the path in Windows 
