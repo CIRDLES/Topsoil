@@ -1,7 +1,6 @@
 // BEGIN JAVASCRIPT SUPPORT
 plugins {
     id "com.eriwen.gradle.js" version "1.12.1"
-    id "com.moowork.node" version "0.8"
     id "com.github.rundis.buster" version "0.2.4.2"
 }
 // END JAVASCRIPT SUPPORT
@@ -56,18 +55,9 @@ combineJs {
 
 processResources.dependsOn combineJs
 
-task installBuster(type: NpmTask) {
-    args = [file('node_modules/buster').exists() ? 'update' : 'install', 'buster']
-}
-
 buster {
-    busterExecutablesPath = 'node_modules/buster/bin'
     configFile = file('config/buster.js')
 }
-
-busterTest.dependsOn installBuster
-
-test.dependsOn busterTest
 // END JAVASCRIPT SUPPORT
 
 tasks.withType(FindBugs) {
@@ -88,4 +78,5 @@ dependencies {
 
     testCompile 'junit:junit:4.10'
     testCompile 'org.loadui:testFx:3.1.0'
+    testCompile 'com.google.jimfs:jimfs:1.0'
 }
