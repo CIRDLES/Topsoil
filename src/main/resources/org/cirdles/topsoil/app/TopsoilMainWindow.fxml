@@ -25,20 +25,19 @@
             <MenuItem text="error ellipse chart"
                       onAction="#createErrorEllipseChart" />
         </Menu>
+        
+        <Menu text="Data Sets" fx:id="dataSetsMenu"/>
     </MenuBar>
     <ToolBar>
         <Button text="%clearTableMessage"
                 onAction="#emptyTable"
-                fx:id="emptyTableButton" /> 
+                fx:id="emptyTableButton" />
+        <Button text="Create Data Table"
+                onAction="#createDataTable" />
+        <Button text="Save Data Table"
+                onAction="#saveDataTable" />
     </ToolBar>
-    <TSVTable fx:id="dataTable"
-              VBox.vgrow="ALWAYS">
-        <placeholder>
-            <VBox alignment="CENTER" >
-                <javafx.scene.text.Text text="%emptyTableMessage"/>
-                <Button text="%pasteMessage"
-                        onAction="#pasteFromClipboard"/> 
-            </VBox>
-        </placeholder>
-    </TSVTable>
+    
+    <TabPane fx:id="dataTableTabPane"
+             VBox.vgrow="ALWAYS" />
 </fx:root>
