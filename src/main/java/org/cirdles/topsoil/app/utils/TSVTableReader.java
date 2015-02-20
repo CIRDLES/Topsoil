@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.table.Field;
-import org.cirdles.topsoil.app.table.NumberField;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.data.NumberField;
+import org.cirdles.topsoil.data.Record;
 import org.cirdles.topsoil.app.table.RecordTableColumn;
-import org.cirdles.topsoil.app.table.TextField;
+import org.cirdles.topsoil.data.TextField;
 
 /**
  *

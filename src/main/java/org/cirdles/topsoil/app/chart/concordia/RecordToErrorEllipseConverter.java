@@ -17,8 +17,8 @@ package org.cirdles.topsoil.app.chart.concordia;
 
 import javafx.scene.chart.XYChart.Data;
 import org.cirdles.topsoil.app.chart.DataConverter;
-import org.cirdles.topsoil.app.table.Field;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.data.Record;
 import org.cirdles.topsoil.app.ExpressionType;
 
 /**

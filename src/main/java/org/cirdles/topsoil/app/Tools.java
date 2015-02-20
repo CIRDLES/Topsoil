@@ -26,7 +26,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 import static org.cirdles.topsoil.app.Topsoil.LAST_TABLE_PATH;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Record;
 import org.cirdles.topsoil.app.utils.TSVTableReader;
 import org.cirdles.topsoil.app.utils.TSVTableWriter;
 import org.cirdles.topsoil.app.utils.TableReader;

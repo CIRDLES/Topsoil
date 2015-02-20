@@ -17,7 +17,7 @@ package org.cirdles.topsoil.app.utils;
 
 import javafx.scene.Parent;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Record;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import static org.loadui.testfx.Assertions.*;

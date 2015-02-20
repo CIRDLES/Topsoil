@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.cirdles.topsoil.app.table;
+package org.cirdles.topsoil.data;
 
 import javafx.util.StringConverter;
 
@@ -22,27 +22,31 @@ import javafx.util.StringConverter;
  *
  * @author zeringuej
  */
-public class TextField extends Field<String> {
+public class NumberField extends Field<Number> {
 
-    public TextField() {
+    public NumberField() {
     }
-    
-    public TextField(String name) {
+
+    public NumberField(String name) {
         super(name);
     }
 
     @Override
-    public StringConverter<String> getStringConverter() {
-        return new StringConverter<String>() {
+    public StringConverter<Number> getStringConverter() {
+        return new StringConverter<Number>() {
 
             @Override
-            public String toString(String string) {
-                return string;
+            public String toString(Number number) {
+                if (number == null) {
+                    return "---";
+                }
+                
+                return number.toString();
             }
 
             @Override
-            public String fromString(String string) {
-                return string;
+            public Number fromString(String string) {
+                return Double.valueOf(string);
             }
         };
     }

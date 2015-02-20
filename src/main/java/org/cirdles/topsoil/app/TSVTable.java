@@ -25,7 +25,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Record;
 import org.cirdles.topsoil.app.utils.TSVTableReader;
 import org.cirdles.topsoil.app.utils.TSVTableWriter;
 import org.cirdles.topsoil.app.utils.TableReader;

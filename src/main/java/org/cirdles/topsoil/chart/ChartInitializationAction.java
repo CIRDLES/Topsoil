@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.chart.concordia.ErrorEllipse;
 import org.cirdles.topsoil.app.chart.concordia.RecordToErrorEllipseConverter;
 import org.cirdles.topsoil.app.component.SettingsPanel;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Record;
 import org.cirdles.topsoil.app.utils.SVGSaver;
 import org.controlsfx.control.action.Action;
 

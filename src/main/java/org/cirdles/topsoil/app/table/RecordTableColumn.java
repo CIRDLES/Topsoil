@@ -15,6 +15,8 @@
  */
 package org.cirdles.topsoil.app.table;
 
+import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Field;
 import javafx.beans.value.ObservableValueBase;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;

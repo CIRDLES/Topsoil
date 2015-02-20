@@ -26,7 +26,7 @@ import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Record;
 
 /**
  *

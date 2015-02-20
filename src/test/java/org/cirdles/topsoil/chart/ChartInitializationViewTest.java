@@ -25,7 +25,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.TSVTable;
 import org.cirdles.topsoil.app.TSVTableTest;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Record;
 import org.junit.Test;
 import org.loadui.testfx.GuiTest;
 

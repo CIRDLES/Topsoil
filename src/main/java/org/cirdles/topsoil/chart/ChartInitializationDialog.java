@@ -16,7 +16,7 @@
 package org.cirdles.topsoil.chart;
 
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Record;
 import org.controlsfx.dialog.Dialog;
 
 public class ChartInitializationDialog extends Dialog {

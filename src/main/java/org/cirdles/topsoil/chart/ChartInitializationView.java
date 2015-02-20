@@ -32,9 +32,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.util.StringConverter;
 import org.cirdles.javafx.CustomGridPane;
-import org.cirdles.topsoil.app.table.Field;
-import org.cirdles.topsoil.app.table.NumberField;
-import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.data.NumberField;
+import org.cirdles.topsoil.data.Record;
 import org.cirdles.topsoil.app.table.RecordTableColumn;
 
 /**
