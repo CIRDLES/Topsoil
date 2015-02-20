@@ -25,7 +25,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.app.utils.TSVTableReader;
 import org.cirdles.topsoil.app.utils.TSVTableWriter;
 import org.cirdles.topsoil.app.utils.TableReader;
@@ -34,7 +34,7 @@ import org.cirdles.topsoil.app.utils.TableWriter;
 /**
  * A table containing data used to generate charts. Implements some shortcuts.
  */
-public class TSVTable extends TableView<Record> {
+public class TSVTable extends TableView<Entry> {
 
     private Path savePath;
     
@@ -51,8 +51,7 @@ public class TSVTable extends TableView<Record> {
             }
         });
 
-        getSelectionModel().selectedItemProperty().addListener(
-                (ObservableValue<? extends Record> observable, Record oldValue, Record newValue) -> {
+        getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Entry> observable, Entry oldValue, Entry newValue) -> {
                     if (oldValue != null) {
                         oldValue.setSelected(false);
                     }
@@ -123,7 +122,7 @@ public class TSVTable extends TableView<Record> {
             throw new IllegalArgumentException("Cannot save to null path.");
         }
 
-        TableWriter<Record> tableWriter = new TSVTableWriter(true, requiredColumnCount);
+        TableWriter<Entry> tableWriter = new TSVTableWriter(true, requiredColumnCount);
         tableWriter.write(this, savePath);
     }
     

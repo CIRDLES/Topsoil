@@ -18,18 +18,18 @@ package org.cirdles.topsoil.app.chart.concordia;
 import javafx.scene.chart.XYChart.Data;
 import org.cirdles.topsoil.app.chart.DataConverter;
 import org.cirdles.topsoil.data.Field;
-import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.app.ExpressionType;
 
 /**
  * Implementation of a <code>DataConverter</code> that generates an <code>ErrorEllipse</code> from a <code>Data</code>
- * with a <code>Record</code> attached. The fields passed into the constructor are used to map values from the
- * <code>Record</code> into new <code>ErrorEllipse</code>s. The <code>Record</code>s must be set as the extra values of
+ * with a <code>Entry</code> attached. The fields passed into the constructor are used to map values from the
+ * <code>Entry</code> into new <code>ErrorEllipse</code>s. The <code>Entry</code>s must be set as the extra values of
  * the <code>Data</code> objects.
  *
  * @see DataConverter
  * @see ErrorEllipse
- * @see Record
+ * @see Entry
  * @see Field
  * @see Data
  */
@@ -48,7 +48,7 @@ public class RecordToErrorEllipseConverter implements DataConverter<ErrorEllipse
     private ExpressionType expressionTypeSigmaY = ExpressionType.ABSOLUTE;
 
     /**
-     * Creates a new converter that instantiates new <code>ErrorEllipse</code>s from <code>Record</code>s. The
+     * Creates a new converter that instantiates new <code>ErrorEllipse</code>s from <code>Entry</code>s. The
      * constructor parameters specify the fields that should correspond to x, sigmaX, y, sigmaY, and rho in the
      * converted <code>ErrorEllipse</code>s.
      *
@@ -70,48 +70,48 @@ public class RecordToErrorEllipseConverter implements DataConverter<ErrorEllipse
 
     /**
      * Converts a <code>Data</code> object into a new ErrorEllipse. The conversion requires that the <code>Data</code>'s
-     * extra value is a <code>Record</code> containing values for the fields given in the constructor. The
+     * extra value is a <code>Entry</code> containing values for the fields given in the constructor. The
      * <code>Data</code>'s x and y values are ignored.
      *
-     * @param data a <code>Data</code> object with a <code>Record</code> as its extra value
+     * @param data a <code>Data</code> object with a <code>Entry</code> as its extra value
      * @return a new <code>ErrorEllipse</code> using the data attached to the argument
      */
     @Override
     public ErrorEllipse convert(Data data) {
-        Record record = (Record) data.getExtraValue();
+        Entry entry = (Entry) data.getExtraValue();
 
         return new ErrorEllipse() {
 
             @Override
             public double getX() {
-                return record.getValue(xField).doubleValue();
+                return entry.getValue(xField).doubleValue();
             }
 
             @Override
             public double getSigmaX() {
-                return record.getValue(sigmaXField).doubleValue() / errorSizeSigmaX
-                        * (expressionTypeSigmaX == ExpressionType.ABSOLUTE ? 1 : record.getValue(xField).doubleValue() / 100);
+                return entry.getValue(sigmaXField).doubleValue() / errorSizeSigmaX
+                        * (expressionTypeSigmaX == ExpressionType.ABSOLUTE ? 1 : entry.getValue(xField).doubleValue() / 100);
             }
 
             @Override
             public double getY() {
-                return record.getValue(yField).doubleValue();
+                return entry.getValue(yField).doubleValue();
             }
 
             @Override
             public double getSigmaY() {
-                return record.getValue(sigmaYField).doubleValue() / errorSizeSigmaY
-                        * (expressionTypeSigmaY == ExpressionType.ABSOLUTE ? 1 : record.getValue(yField).doubleValue() / 100);
+                return entry.getValue(sigmaYField).doubleValue() / errorSizeSigmaY
+                        * (expressionTypeSigmaY == ExpressionType.ABSOLUTE ? 1 : entry.getValue(yField).doubleValue() / 100);
             }
 
             @Override
             public double getRho() {
-                return record.getValue(rhoField).doubleValue();
+                return entry.getValue(rhoField).doubleValue();
             }
 
             @Override
             public boolean getSelected() {
-                return record.getSelected();
+                return entry.getSelected();
             }
         };
     }

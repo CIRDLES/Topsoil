@@ -24,15 +24,15 @@ import java.util.logging.Logger;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.data.Field;
 import org.cirdles.topsoil.data.NumberField;
-import org.cirdles.topsoil.data.Record;
-import org.cirdles.topsoil.app.table.RecordTableColumn;
+import org.cirdles.topsoil.data.Entry;
+import org.cirdles.topsoil.app.table.EntryTableColumn;
 import org.cirdles.topsoil.data.TextField;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVTableReader extends TableReader<Record> {
+public class TSVTableReader extends TableReader<Entry> {
 
     private final boolean expectingHeader;
 
@@ -41,7 +41,7 @@ public class TSVTableReader extends TableReader<Record> {
     }
 
     @Override
-    public void read(String src, TableView<Record> dest) {
+    public void read(String src, TableView<Entry> dest) {
         // not much to do for src = null or ""
         if (src == null || src.trim().equals("")) {
             return;
@@ -83,11 +83,11 @@ public class TSVTableReader extends TableReader<Record> {
             } else {
                 fields[i] = new TextField(header[i]);
             }
-            dest.getColumns().add(new RecordTableColumn<>(fields[i]));
+            dest.getColumns().add(new EntryTableColumn<>(fields[i]));
         }
 
         for (String[] line : lines) {
-            Record row = new Record();
+            Entry row = new Entry();
 
             for (int i = 0; i < rowLength; i++) {
                 try {

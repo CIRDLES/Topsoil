@@ -15,7 +15,7 @@
  */
 package org.cirdles.topsoil.app.table;
 
-import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.data.Field;
 import javafx.beans.value.ObservableValueBase;
 import javafx.scene.control.TableColumn;
@@ -26,15 +26,15 @@ import javafx.scene.control.cell.TextFieldTableCell;
  * @author CIRDLES
  * @param <T>
  */
-public class RecordTableColumn<T> extends TableColumn<Record, T> {
+public class EntryTableColumn<T> extends TableColumn<Entry, T> {
     
     private final Field<T> field;
 
-    public RecordTableColumn(Field<T> field) {
+    public EntryTableColumn(Field<T> field) {
         setText(field.getName());
         textProperty().bindBidirectional(field.nameProperty());
 
-        setCellValueFactory((CellDataFeatures<Record, T> param) -> new ObservableValueBase<T>() {
+        setCellValueFactory((CellDataFeatures<Entry, T> param) -> new ObservableValueBase<T>() {
             
             @Override
             public T getValue() {
@@ -42,7 +42,7 @@ public class RecordTableColumn<T> extends TableColumn<Record, T> {
             }
         });
         setCellFactory(TextFieldTableCell.forTableColumn(field.getStringConverter()));
-        setOnEditCommit((CellEditEvent<Record, T> event) -> {
+        setOnEditCommit((CellEditEvent<Entry, T> event) -> {
             event.getRowValue().setValue(field, event.getNewValue());
         });
         

@@ -32,7 +32,7 @@ import org.junit.After;
  *
  * @author John Zeringue
  */
-public class TSVDataSetTest {
+public class TSVDatasetTest {
 
     private static final FileSystem FILE_SYSTEM
             = Jimfs.newFileSystem(Configuration.unix());
@@ -72,19 +72,19 @@ public class TSVDataSetTest {
             PATH_OPEN_WITH_HEADERS_AND_SPACES
     );
 
-    private TSVDataSet instanceClosedWithoutHeaders;
-    private TSVDataSet instanceClosedWithHeaders;
-    private TSVDataSet instanceOpenWithHeadersAndSpaces;
+    private TSVDataset instanceClosedWithoutHeaders;
+    private TSVDataset instanceClosedWithHeaders;
+    private TSVDataset instanceOpenWithHeadersAndSpaces;
 
     @Before
     public void instantiateDataSets() {
         instanceClosedWithoutHeaders
-                = new TSVDataSet(PATH_CLOSED_WITHOUT_HEADERS);
+                = new TSVDataset(PATH_CLOSED_WITHOUT_HEADERS);
 
-        instanceClosedWithHeaders = new TSVDataSet(PATH_CLOSED_WITH_HEADERS);
+        instanceClosedWithHeaders = new TSVDataset(PATH_CLOSED_WITH_HEADERS);
 
         instanceOpenWithHeadersAndSpaces
-                = new TSVDataSet(PATH_OPEN_WITH_HEADERS_AND_SPACES);
+                = new TSVDataset(PATH_OPEN_WITH_HEADERS_AND_SPACES);
     }
 
     @Before
@@ -102,7 +102,7 @@ public class TSVDataSetTest {
     }
 
     /**
-     * Test of getName method, of class TSVDataSet.
+     * Test of getName method, of class TSVDataset.
      */
     @Test
     public void testGetName() {
@@ -112,7 +112,7 @@ public class TSVDataSetTest {
     }
 
     /**
-     * Test of getTSVPath method, of class TSVDataSet.
+     * Test of getTSVPath method, of class TSVDataset.
      */
     @Test
     public void testGetPath() {
@@ -125,7 +125,7 @@ public class TSVDataSetTest {
     }
 
     /**
-     * Test of hasHeaders method, of class TSVDataSet.
+     * Test of hasHeaders method, of class TSVDataset.
      */
     @Test
     public void testHasHeaders() {
@@ -135,7 +135,7 @@ public class TSVDataSetTest {
     }
 
     /**
-     * Test of isOpen method, of class TSVDataSet.
+     * Test of isOpen method, of class TSVDataset.
      */
     @Test
     public void testIsOpen() {
@@ -145,7 +145,7 @@ public class TSVDataSetTest {
     }
 
     /**
-     * Test of open method, of class TSVDataSet.
+     * Test of open method, of class TSVDataset.
      */
     @Test
     public void testOpen() {
@@ -165,7 +165,7 @@ public class TSVDataSetTest {
     }
 
     /**
-     * Test of close method, of class TSVDataSet.
+     * Test of close method, of class TSVDataset.
      */
     @Test
     public void testClose() {
@@ -184,7 +184,7 @@ public class TSVDataSetTest {
     }
 
     /**
-     * Test of tsvPathMarkedAsOpen method, of class TSVDataSet.
+     * Test of tsvPathMarkedAsOpen method, of class TSVDataset.
      */
     @Test
     public void testPathMarkedAsOpen() {
@@ -199,7 +199,7 @@ public class TSVDataSetTest {
     }
 
     /**
-     * Test of tsvPathNotMarkedAsOpen method, of class TSVDataSet.
+     * Test of tsvPathNotMarkedAsOpen method, of class TSVDataset.
      */
     @Test
     public void testPathNotMarkedAsOpen() {

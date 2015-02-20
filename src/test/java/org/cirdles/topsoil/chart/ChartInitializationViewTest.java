@@ -25,7 +25,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.TSVTable;
 import org.cirdles.topsoil.app.TSVTableTest;
-import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Entry;
 import org.junit.Test;
 import org.loadui.testfx.GuiTest;
 
@@ -46,7 +46,7 @@ public class ChartInitializationViewTest extends GuiTest {
             Logger.getLogger(TSVTableTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        TableView<Record> testTable = new TSVTable(sampleTSVPath);
+        TableView<Entry> testTable = new TSVTable(sampleTSVPath);
         
         return new ChartInitializationView(testTable);
     }

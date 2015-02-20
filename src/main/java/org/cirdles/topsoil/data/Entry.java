@@ -25,14 +25,14 @@ import javafx.beans.property.BooleanPropertyBase;
  *
  * @author CIRDLES
  */
-public class Record {
+public class Entry {
 
     private final Map<Field, Object> fieldValues;
     private final BooleanProperty selected = new BooleanPropertyBase(false) {
         
         @Override
         public Object getBean() {
-            return Record.this;
+            return Entry.this;
         }
         
         @Override
@@ -41,7 +41,7 @@ public class Record {
         }
     };
 
-    public Record() {
+    public Entry() {
         fieldValues = new HashMap<>();
     }
     

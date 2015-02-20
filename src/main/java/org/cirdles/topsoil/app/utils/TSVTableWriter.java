@@ -26,13 +26,13 @@ import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Entry;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVTableWriter implements TableWriter<Record> {
+public class TSVTableWriter implements TableWriter<Entry> {
 
     private final boolean writeHeaders;
 
@@ -46,7 +46,7 @@ public class TSVTableWriter implements TableWriter<Record> {
     }
 
     @Override
-    public void write(TableView<Record> src, Path dest) {
+    public void write(TableView<Entry> src, Path dest) {
         CSVWriter tsvWriter;
         try {
             FileOutputStream tsvOutputStream = new FileOutputStream(dest.toFile());

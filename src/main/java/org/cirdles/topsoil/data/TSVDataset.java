@@ -26,9 +26,9 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TSVDataSet implements DataSet {
+public class TSVDataset implements Dataset {
     
-    private static final Logger LOGGER = Logger.getLogger(TSVDataSet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TSVDataset.class.getName());
 
     private static final String FILE_NAME_REGEX
             = "(.+?)(?:__([a-z]+)__)?(?:__([a-z]+)__)?\\.tsv";
@@ -40,7 +40,7 @@ public class TSVDataSet implements DataSet {
     private Path tsvPath;
     private Collection<String> flags;
 
-    public TSVDataSet(Path tsvPath) {
+    public TSVDataset(Path tsvPath) {
         this.tsvPath = tsvPath;
         parseFileName(tsvPath.getFileName().toString());
     }

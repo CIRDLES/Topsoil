@@ -16,14 +16,14 @@
 package org.cirdles.topsoil.chart;
 
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Entry;
 import org.controlsfx.dialog.Dialog;
 
 public class ChartInitializationDialog extends Dialog {
 
     private static final String MASTHEAD_TEXT = "Select the column for each variable.";
 
-    public ChartInitializationDialog(TableView<Record> tableToRead, JavaScriptChart chart) {
+    public ChartInitializationDialog(TableView<Entry> tableToRead, JavaScriptChart chart) {
         super(null, null);
 
         setContent(new ChartInitializationView(tableToRead));

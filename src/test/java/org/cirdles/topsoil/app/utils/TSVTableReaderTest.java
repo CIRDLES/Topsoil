@@ -17,7 +17,7 @@ package org.cirdles.topsoil.app.utils;
 
 import javafx.scene.Parent;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Entry;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import static org.loadui.testfx.Assertions.*;
@@ -33,7 +33,7 @@ public class TSVTableReaderTest extends GuiTest {
 
     @Override
     protected Parent getRootNode() {
-        TableView<Record> recordTable = new TableView<>();
+        TableView<Entry> recordTable = new TableView<>();
 
         recordTable.setId("recordTable");
         new TSVTableReader(true).read("A\tB\tC", recordTable);

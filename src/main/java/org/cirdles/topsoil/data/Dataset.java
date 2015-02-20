@@ -21,7 +21,7 @@ import java.nio.file.Path;
  *
  * @author John Zeringue
  */
-public interface DataSet {
+public interface Dataset {
     
     public String getName();
     

@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.chart.concordia.ErrorEllipse;
 import org.cirdles.topsoil.app.chart.concordia.RecordToErrorEllipseConverter;
 import org.cirdles.topsoil.app.component.SettingsPanel;
-import org.cirdles.topsoil.data.Record;
+import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.app.utils.SVGSaver;
 import org.controlsfx.control.action.Action;
 
@@ -38,7 +38,7 @@ public class ChartInitializationAction extends Action {
 
     private static final String ACTION_NAME = "Create chart";
 
-    public ChartInitializationAction(TableView<Record> table, JavaScriptChart chart, final ChartInitializationDialog dialog) {
+    public ChartInitializationAction(TableView<Entry> table, JavaScriptChart chart, final ChartInitializationDialog dialog) {
         super(ACTION_NAME, event -> {
             dialog.hide();
             ChartInitializationView columnSelector = (ChartInitializationView) dialog.getContent();
