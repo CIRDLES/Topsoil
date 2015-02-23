@@ -14,14 +14,10 @@
 * limitations under the License.
 */
 
-buster.spec.expose();
+(function(){
+    window.constants = {
+        LAMBDA_235 : 9.8485e-10,
+        LAMBDA_238 : 1.55125e-10
+    };
+})();
 
-describe("Topsoil", function() {
-   it("has an instance of 'topsoil'", function() {
-       buster.assert.equals("object", typeof topsoil);
-   });
-   
-   it("has an instance alias 'ts'", function() {
-       buster.assert.equals(topsoil, ts);
-   });
-});
