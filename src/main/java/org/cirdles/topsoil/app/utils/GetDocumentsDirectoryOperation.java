@@ -27,7 +27,7 @@ public class GetDocumentsDirectoryOperation extends PlatformDependentOperation<S
 
     @Override
     protected Path performOnWindows(String... params) {
-        if (params.length == 1 && !"".equals(params)) {
+        if (params.length == 1 && !"".equals(params[0])) {
             return Paths.get(System.getProperty("user.home"), "Documents", params[0]);
         } else {
             return Paths.get(System.getProperty("user.home"), "Documents");
@@ -36,7 +36,7 @@ public class GetDocumentsDirectoryOperation extends PlatformDependentOperation<S
 
     @Override
     protected Path performOnMacOS(String... params) {
-        if (params.length == 1 && !"".equals(params)) {
+        if (params.length == 1 && !"".equals(params[0])) {
             return Paths.get(System.getProperty("user.home"), "Documents", params[0]);
         } else {
             return Paths.get(System.getProperty("user.home"), "Documents");
@@ -45,7 +45,7 @@ public class GetDocumentsDirectoryOperation extends PlatformDependentOperation<S
 
     @Override
     protected Path performOnLinux(String... params) {
-        if (params.length == 1 && !"".equals(params)) {
+        if (params.length == 1 && !"".equals(params[0])) {
             return Paths.get(System.getProperty("user.home"), "Documents", params[0]);
         } else {
             return Paths.get(System.getProperty("user.home"), "Documents");

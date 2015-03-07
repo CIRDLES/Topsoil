@@ -43,7 +43,8 @@ public abstract class Field<T> {
     };
 
     public Field() {
-        id = numberOfFields++;
+        id = numberOfFields;
+        incrementNumberOfFields();
     }
 
     public Field(String name) {
@@ -92,5 +93,10 @@ public abstract class Field<T> {
         int hash = 7;
         hash = 43 * hash + this.id;
         return hash;
+    }
+    
+    // makes FindBugs happy
+    private static void incrementNumberOfFields() {
+        ++numberOfFields;
     }
 }

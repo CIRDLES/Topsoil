@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.cirdles.math;
-
-import static org.cirdles.math.ConstantFunction.*;
+package org.cirdles.topsoil.app;
 
 /**
  *
- * @author zeringuej
+ * @author John Zeringue
  */
-public class ParametricCurve2D extends ParametricCurve3D {
-
-    public ParametricCurve2D(Function x, Function y) {
-        super(x, y, ZERO_FUNCTION);
-    }
+public class DataSetNameDialog {
     
-    @Override
-    public Vector2D of(double t) {
-        return new Vector2D(x().of(t), y().of(t));
-    }
-    
-    @Override
-    public ParametricCurve2D prime() throws UnsupportedOperationException {
-        return new ParametricCurve2D(x().prime(), y().prime());
-    }
 }

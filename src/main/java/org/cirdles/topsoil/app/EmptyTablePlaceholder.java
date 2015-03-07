@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.app;
 
-package org.cirdles.topsoil.app.chart;
-
-import javafx.scene.Node;
-import javafx.scene.chart.XYChart;
+import javafx.fxml.FXML;
+import org.cirdles.javafx.CustomVBox;
 
 /**
  *
- * @author John Zeringue <john.joseph.zeringue@gmail.com>
+ * @author John Zeringue
  */
-public abstract class Plotter<T, S extends XYChart> {
-    protected final S chart;
+public class EmptyTablePlaceholder extends CustomVBox<EmptyTablePlaceholder> {
 
-    public Plotter(S chart) {
-        this.chart = chart;
+    private TSVTable dataTable;
+
+    public EmptyTablePlaceholder(TSVTable dataTable) {
+        super(self -> self.dataTable = dataTable);
     }
     
-    public abstract Node plot(T plottable);
-    
-    protected double mapXToDisplay(double x) {
-        return chart.getXAxis().getDisplayPosition(x);
+    @FXML
+    void pasteFromClipboardIntoDataTable() {
+        dataTable.pasteFromClipboard();
     }
 
-    protected double mapYToDisplay(double y) {
-        return chart.getYAxis().getDisplayPosition(y);
-    }
 }

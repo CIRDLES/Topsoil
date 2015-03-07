@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.app.table;
 
-package org.cirdles.topsoil.app.chart.concordia;
+import java.nio.file.Path;
 
 /**
  *
- * @author zeringuej
+ * @author John Zeringue
  */
-public enum ConcordiaLineType {
-    WETHERILL, TERA_WASSERBURG, NONE;
+public interface DataSet {
+    
+    public String getName();
+    
+    public Path getPath();
+    
+    public boolean hasHeaders();
+    
+    public boolean isOpen();
+    
+    public void open();
+    
+    public void close();
+    
 }

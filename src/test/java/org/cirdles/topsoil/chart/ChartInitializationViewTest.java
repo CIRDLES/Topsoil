@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app;
+package org.cirdles.topsoil.chart;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,6 +23,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.control.TableView;
+import org.cirdles.topsoil.app.TSVTable;
+import org.cirdles.topsoil.app.TSVTableTest;
 import org.cirdles.topsoil.app.table.Record;
 import org.junit.Test;
 import org.loadui.testfx.GuiTest;
@@ -31,7 +33,7 @@ import org.loadui.testfx.GuiTest;
  *
  * @author John Zeringue
  */
-public class ColumnSelectorViewTest extends GuiTest {
+public class ChartInitializationViewTest extends GuiTest {
 
     @Override
     protected Parent getRootNode() {
@@ -46,12 +48,7 @@ public class ColumnSelectorViewTest extends GuiTest {
         
         TableView<Record> testTable = new TSVTable(sampleTSVPath);
         
-        return new ColumnSelectorView(testTable, null);
-    }
-    
-    @Test
-    public void testShouldPass() {
-        
+        return new ChartInitializationView(testTable);
     }
     
 }

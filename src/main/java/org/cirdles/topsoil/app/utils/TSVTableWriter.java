@@ -16,8 +16,12 @@
 package org.cirdles.topsoil.app.utils;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,7 +49,10 @@ public class TSVTableWriter implements TableWriter<Record> {
     public void write(TableView<Record> src, Path dest) {
         CSVWriter tsvWriter;
         try {
-            tsvWriter = new CSVWriter(new FileWriter(dest.toFile()), '\t');
+            FileOutputStream tsvOutputStream = new FileOutputStream(dest.toFile());
+            Writer tsvOutputStreamWriter
+                    = new OutputStreamWriter(tsvOutputStream, StandardCharsets.UTF_8);
+            tsvWriter = new CSVWriter(tsvOutputStreamWriter, '\t');
         } catch (IOException ex) {
             Logger.getLogger(TSVTableWriter.class.getName()).log(Level.SEVERE, null, ex);
             return;

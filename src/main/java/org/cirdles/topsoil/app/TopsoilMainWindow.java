@@ -24,7 +24,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -32,17 +35,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.cirdles.javafx.CustomVBox;
+import org.cirdles.topsoil.app.table.DataSet;
 import org.cirdles.topsoil.app.table.Record;
+import org.cirdles.topsoil.app.table.TSVDataSet;
+import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.app.utils.GetDocumentsDirectoryOperation;
 import org.cirdles.topsoil.app.utils.TSVTableReader;
 import org.cirdles.topsoil.app.utils.TSVTableWriter;
@@ -59,13 +67,27 @@ import org.controlsfx.dialog.Dialogs;
  */
 public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
-    @FXML private TSVTable dataTable;
-    @FXML private Menu chartsMenu;
+    private final static Path APPLICATION_DIRECTORY
+            = new GetApplicationDirectoryOperation().perform("Topsoil");
+
+    private final static Path DATA_SETS_DIRECTORY
+            = APPLICATION_DIRECTORY.resolve("Data Sets");
+
+    @FXML
+    private Menu chartsMenu;
+    @FXML
+    private Menu dataSetsMenu;
+    @FXML
+    private TabPane dataTableTabPane;
 
     // JFB
     private final int ERROR_CHART_REQUIRED_COL_COUNT = 5;
 
+    private Map<TSVTable, DataSet> dataTableToSet;
+
     private FileSystem jarFileSystem;
+
+    private List<DataSet> dataSets = Collections.emptyList();
 
     /**
      * Initializes the controller class.
@@ -75,10 +97,16 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resources) {
-        dataTable.setSavePath(Topsoil.LAST_TABLE_PATH);
-        dataTable.load();
+        dataTableToSet = new HashMap<>();
 
         loadCustomScripts();
+        loadDataSets();
+
+        dataSets.stream()
+                .filter(DataSet::isOpen)
+                .forEach(dataSet -> {
+                    loadDataSet(dataSet, createTab());
+                });
 
         // set the window title to something like "Topsoil [0.3.4]"
         String applicationName = resources.getString("applicationName");
@@ -86,8 +114,60 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         setWindowTitle(String.format("%s [%s]", applicationName, applicationVersion));
     }
 
+    Optional<TSVTable> getCurrentTable() {
+        Optional<TSVTable> result = Optional.empty();
+        Tab currentTab = dataTableTabPane.getSelectionModel().getSelectedItem();
+
+        if (currentTab.getContent() instanceof TSVTable) {
+            result = Optional.of((TSVTable) currentTab.getContent());
+        }
+
+        return result;
+    }
+
     @FXML
-    private void loadCustomScripts() {
+    void createDataTable() {
+        createTab();
+    }
+
+    Tab createTab() {
+        Tab dataTableTab = new Tab("Untitled Data");
+        dataTableTab.setOnClosed(event -> {
+            if (dataTableTab.getContent() instanceof TSVTable) {
+                TSVTable table = (TSVTable) dataTableTab.getContent();
+
+                if (dataTableToSet.containsKey(table)) {
+                    dataTableToSet.get(table).close();
+                }
+            }
+        });
+
+        TSVTable dataTable = new TSVTable();
+        dataTable.setPlaceholder(new EmptyTablePlaceholder(dataTable));
+        dataTableTab.setContent(dataTable);
+
+        dataTableTabPane.getTabs().add(dataTableTab);
+
+        return dataTableTab;
+    }
+
+    @FXML
+    void saveDataTable() {
+        Dialogs.create()
+                .message("Data set name:")
+                .showTextInput().ifPresent(dataSetName -> {
+                    Path dataSetPath = DATA_SETS_DIRECTORY.resolve(
+                            dataSetName + "__open____headers__.tsv");
+
+                    getCurrentTable().ifPresent(table -> table.saveToPath(dataSetPath));
+                });
+
+        // reload
+        loadDataSets();
+    }
+
+    @FXML
+    void loadCustomScripts() {
         // only keep the first two charts
         chartsMenu.getItems().retainAll(chartsMenu.getItems().subList(0, 2));
 
@@ -102,7 +182,8 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                         MenuItem chartItem = new MenuItem(fileName.replace(".js", ""));
 
                         chartItem.setOnAction(event -> {
-                            new ChartInitializationDialog(dataTable, new JavaScriptChart(filePath)).show();
+                            new ChartInitializationDialog(getCurrentTable().get(),
+                                    new JavaScriptChart(filePath)).show();
                         });
 
                         chartsMenu.getItems().add(chartItem);
@@ -114,7 +195,65 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         }
     }
 
-    private void setWindowTitle(String title) {
+    void loadDataSets() {
+        try {
+            // safer than Files.createDirectory
+            Files.createDirectories(DATA_SETS_DIRECTORY);
+
+            // allows this method to be called multiple times in the same
+            // session
+            dataSetsMenu.getItems().clear();
+            dataSets = new ArrayList<>();
+
+            if (Files.exists(DATA_SETS_DIRECTORY)) {
+                Files.walk(DATA_SETS_DIRECTORY).forEach(path -> {
+                    if (Files.isDirectory(path)) {
+                        return;
+                    }
+
+                    final TSVDataSet dataSet = new TSVDataSet(path);
+                    dataSets.add(dataSet);
+
+                    MenuItem dataSetMenuItem = new MenuItem(dataSet.getName());
+
+                    dataSetMenuItem.setOnAction(event -> {
+                        loadDataSet(dataSet);
+                    });
+
+                    dataSetsMenu.getItems().add(dataSetMenuItem);
+                });
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void loadDataSet(DataSet dataSet) {
+        loadDataSet(dataSet, createTab());
+    }
+
+    void loadDataSet(DataSet dataSet, Tab tab) {
+        Node content = tab.getContent();
+
+        if (content instanceof TSVTable) {
+            TSVTable table = (TSVTable) content;
+
+            if (dataTableToSet.containsKey(table)) {
+                dataTableToSet.get(table).close();
+            }
+
+            table.loadFromPath(dataSet.getPath());
+            dataTableToSet.put(table, dataSet);
+            dataSet.open();
+            tab.setText(dataSet.getName());
+        }
+    }
+
+    Tab getCurrentTab() {
+        return dataTableTabPane.getSelectionModel().getSelectedItem();
+    }
+
+    void setWindowTitle(String title) {
         // while the code below is long and ugly, anonymous inner classes are
         // necessary (in Java 8) in order to allow the listeners to reference
         // and remove themselves
@@ -126,10 +265,12 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         ChangeListener<Window> windowListener = new ChangeListener<Window>() {
             @Override
             public void changed(ObservableValue<? extends Window> observableWindow, Window oldWindow, Window newWindow) {
-                Stage stage = (Stage) newWindow;
+                if (newWindow instanceof Stage) { // make the cast safe
+                    Stage stage = (Stage) newWindow;
 
-                // actually set the title
-                stage.setTitle(title);
+                    // actually set the title
+                    stage.setTitle(title);
+                }
 
                 getScene().windowProperty().removeListener(this);
             }
@@ -149,7 +290,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     }
 
     @FXML
-    private void importFromFile(ActionEvent event) {
+    void importFromFile() {
+        TSVTable dataTable = getCurrentTable().get();
+
         FileChooser tsvChooser = new FileChooser();
         tsvChooser.setInitialDirectory(Topsoil.USER_HOME.toFile());
         tsvChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Table Files", "TSV"));
@@ -173,7 +316,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     }
 
     @FXML
-    private void createScatterplot(ActionEvent event) {
+    void createScatterplot() {
         try {
             // get the path to the JavaScript file
             URI javascriptURI = getClass().getResource("scatterplot.js").toURI();
@@ -194,17 +337,17 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 javascriptPath = Paths.get(javascriptURI);
             }
 
-            new ChartInitializationDialog(dataTable, new JavaScriptChart(javascriptPath)).show();
+            new ChartInitializationDialog(getCurrentTable().get(), new JavaScriptChart(javascriptPath)).show();
         } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    @FXML
     /**
      * For the new JS charts, {@link #createErrorChart} is the old method.
      */
-    private void createErrorEllipseChart() {
+    @FXML
+    void createErrorEllipseChart() {
         try {
             // get the path to the JavaScript file
             URI javascriptURI = getClass().getResource("errorellipsechart.js").toURI();
@@ -225,34 +368,20 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 javascriptPath = Paths.get(javascriptURI);
             }
 
-            new ChartInitializationDialog(dataTable, new JavaScriptChart(javascriptPath)).show();
+            new ChartInitializationDialog(getCurrentTable().get(),
+                    new JavaScriptChart(javascriptPath)).show();
         } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @FXML
-    private void createErrorChart() {
-        // JFB for now, assume error chart is only chart style
-        dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
-
-        if (!dataTable.hasRequiredColumnCount()) {
-            Dialogs.create().message(Topsoil.NOT_ENOUGH_COLUMNS_MESSAGE_2).showWarning();
-            dataTable.save();
-            dataTable.load();
-        }
-
-        new ColumnSelectorDialog(dataTable).show();
+    void pasteFromClipboard() {
+        getCurrentTable().ifPresent(TSVTable::pasteFromClipboard);
     }
 
     @FXML
-    private void pasteFromClipboard(ActionEvent event) {
-        dataTable.pasteFromClipboard();
-    }
-
-    @FXML
-    private void emptyTable(ActionEvent event) {
-        dataTable.clear();
-        dataTable.save();
+    void emptyTable() {
+        getCurrentTable().ifPresent(TSVTable::clear);
     }
 }

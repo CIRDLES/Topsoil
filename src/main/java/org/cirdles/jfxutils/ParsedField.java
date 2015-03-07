@@ -26,9 +26,7 @@ import org.cirdles.topsoil.app.Tools;
 public class ParsedField extends ConverterField<String>{
 
     public ParsedField() {
-        super(new SimpleObjectProperty<>(new String()), Tools.SUPERSCRIPTPARSER_CONVERTER);
+        super(new SimpleObjectProperty<>(""), Tools.SUPERSCRIPTPARSER_CONVERTER);
     }
-    
-    
     
 }
