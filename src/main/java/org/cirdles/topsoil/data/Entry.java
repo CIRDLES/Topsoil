@@ -15,9 +15,10 @@
  */
 package org.cirdles.topsoil.data;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
 
@@ -39,10 +40,11 @@ public class Entry {
         public String getName() {
             return "selected";
         }
+        
     };
 
     public Entry() {
-        fieldValues = new HashMap<>();
+        fieldValues = new TreeMap<>();
     }
     
     public Set<Field> getFields() {
@@ -56,6 +58,10 @@ public class Entry {
     public <T> T getValue(Field<T> field) {
         return (T) fieldValues.get(field);
     }
+
+    public <T> Optional<T> getOptionalValue(Field<T> field) {
+        return Optional.ofNullable((T) fieldValues.get(field));
+    }
     
     public BooleanProperty selectedProperty() {
         return selected;
@@ -68,4 +74,5 @@ public class Entry {
     public <T> void setValue(Field<T> field, T value) {
         fieldValues.put(field, value);
     }
+    
 }

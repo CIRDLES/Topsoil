@@ -25,6 +25,7 @@ import javafx.util.StringConverter;
 public class TextField extends Field<String> {
 
     public TextField() {
+        super();
     }
     
     public TextField(String name) {

@@ -21,8 +21,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -33,6 +36,7 @@ import javafx.scene.web.WebView;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import netscape.javascript.JSObject;
+import org.cirdles.topsoil.data.Dataset;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -41,7 +45,7 @@ import org.w3c.dom.Element;
  *
  * @author John Zeringue
  */
-public class JavaScriptChart extends BaseChart<double[][]> {
+public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
     private static final String HTML_TEMPLATE;
 
@@ -49,15 +53,15 @@ public class JavaScriptChart extends BaseChart<double[][]> {
         // prepare the local URL for Firebug Lite
         final String FIREBUG_LITE_URL
                 = JavaScriptChart.class.getResource("firebug-lite.js").toExternalForm();
-        
+
         // prepare the local URL for d3.js
         final String D3_JS_URL
                 = JavaScriptChart.class.getResource("d3.js").toExternalForm();
-        
+
         // prepare the local URL for numeric.js
         final String NUMERIC_JS_URL
                 = JavaScriptChart.class.getResource("numeric.js").toExternalForm();
-        
+
         // prepare the local URL for topsoil.js
         final String TOPSOIL_JS_URL
                 = JavaScriptChart.class.getResource("topsoil.js").toExternalForm();
@@ -166,7 +170,7 @@ public class JavaScriptChart extends BaseChart<double[][]> {
     }
 
     @Override
-    public Node asNode() {
+    public Node displayAsNode() {
         // this chart's node (a WebView) is lazily instantiated
         initializeWebViewIfNeeded();
 
@@ -198,7 +202,7 @@ public class JavaScriptChart extends BaseChart<double[][]> {
         // used as a callback for webEngine.loadContent(HTML_TEMPLATE)
         afterLoad(() -> {
             topsoil = (JSObject) webEngine.executeScript("topsoil");
-            
+
             // setup setting scope
             topsoil.call("setupSettingScope", getSettingScope());
             topsoil.call("showData");
@@ -228,11 +232,12 @@ public class JavaScriptChart extends BaseChart<double[][]> {
      * in the following order: <code>x</code>, <code>σx</code>, <code>y</code>,
      * <code>σy</code>, <code>ρ</code>.
      *
-     * @param data a two-dimensional double array of size <code>n</code> by 5
+     * @param dataset
+     * @param variableContext
      */
     @Override
-    public void setData(double[][] data) {
-        super.setData(data);
+    public void setData(Dataset dataset, VariableContext variableContext) {
+        super.setData(dataset, variableContext);
 
         // this chart's node (a WebView) is lazily instantiated
         initializeWebViewIfNeeded();
@@ -242,9 +247,34 @@ public class JavaScriptChart extends BaseChart<double[][]> {
         // of undefined objects on the other side of things
         afterInitialization(() -> {
             topsoil.call("clearData"); // old data must be cleared away
-            Arrays.stream(data).forEach(row -> topsoil.call("addData", (Object) row));
+
+            dataset.getEntries().forEach(entry -> {
+                JSObject row = (JSObject) webEngine.executeScript("new Object()");
+
+                variableContext.getBindings().forEach(variableBinding -> {
+                    row.setMember(
+                            variableBinding.getVariable().getName(),
+                            variableBinding.getValue(entry));
+                });
+
+                topsoil.call("addData", row);
+            });
+
             topsoil.call("showData");
         });
+    }
+
+    @Override
+    public Optional<List<Variable>> getVariables() {
+        Variable x = new IndependentVariable("x");
+        Variable sigmaX = new DependentVariable("sigma_x", x);
+        Variable y = new IndependentVariable("y");
+        Variable sigmaY = new DependentVariable("sigma_y", y);
+        Variable rho = new IndependentVariable("rho");
+
+        return Optional.of(Arrays.asList(
+                x, sigmaX, y, sigmaY, rho
+        ));
     }
 
     /**
@@ -272,13 +302,15 @@ public class JavaScriptChart extends BaseChart<double[][]> {
 
             // set the svg element as the document root (must be imported first)
             svgDocument.appendChild(svgDocument.importNode(svgElement, true));
+
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(JavaScriptChart.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JavaScriptChart.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         return svgDocument;
     }
-    
+
     public void fitData() {
         afterInitialization(() -> {
             topsoil.call("showData");

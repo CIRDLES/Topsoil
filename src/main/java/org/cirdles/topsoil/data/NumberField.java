@@ -25,6 +25,7 @@ import javafx.util.StringConverter;
 public class NumberField extends Field<Number> {
 
     public NumberField() {
+        super();
     }
 
     public NumberField(String name) {
@@ -48,6 +49,7 @@ public class NumberField extends Field<Number> {
             public Number fromString(String string) {
                 return Double.valueOf(string);
             }
+            
         };
     }
     

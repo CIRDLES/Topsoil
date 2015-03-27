@@ -16,18 +16,14 @@
 package org.cirdles.topsoil.chart;
 
 import javafx.scene.Scene;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.chart.concordia.ErrorEllipse;
-import org.cirdles.topsoil.app.chart.concordia.RecordToErrorEllipseConverter;
 import org.cirdles.topsoil.app.component.SettingsPanel;
-import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.app.utils.SVGSaver;
+import org.cirdles.topsoil.data.Dataset;
 import org.controlsfx.control.action.Action;
 
 /**
@@ -38,31 +34,42 @@ public class ChartInitializationAction extends Action {
 
     private static final String ACTION_NAME = "Create chart";
 
-    public ChartInitializationAction(TableView<Entry> table, JavaScriptChart chart, final ChartInitializationDialog dialog) {
+    public ChartInitializationAction(Dataset dataset, JavaScriptChart chart, final ChartInitializationDialog dialog) {
         super(ACTION_NAME, event -> {
             dialog.hide();
             ChartInitializationView columnSelector = (ChartInitializationView) dialog.getContent();
 
-            // create a new converter for the chart
-            RecordToErrorEllipseConverter converter = new RecordToErrorEllipseConverter(columnSelector.getXSelection(), columnSelector.getSigmaXSelection(), columnSelector.getYSelection(), columnSelector.getSigmaYSelection(), columnSelector.getRhoSelection());
-            converter.setErrorSizeSigmaX(columnSelector.getSigmaXErrorSize());
-            converter.setExpressionTypeSigmaX(columnSelector.getSigmaXExpressionType());
-            converter.setErrorSizeSigmaY(columnSelector.getSigmaYErrorSize());
-            converter.setExpressionTypeSigmaY(columnSelector.getSigmaYExpressionType());
+            VariableContext variableContext = new SimpleVariableContext();
 
-            // build the data matrix
-            double[][] data = new double[table.getItems().size()][5];
-            for (int i = 0; i < table.getItems().size(); i++) {
-                ErrorEllipse errorEllipse = converter.convert(
-                        new XYChart.Data<>(0, 0, table.getItems().get(i)));
+            chart.getVariables().ifPresent(variables -> {
+                // x
+                variableContext.addBinding(
+                        variables.get(0), columnSelector.getXSelection());
 
-                data[i][0] = errorEllipse.getX();
-                data[i][1] = errorEllipse.getSigmaX();
-                data[i][2] = errorEllipse.getY();
-                data[i][3] = errorEllipse.getSigmaY();
-                data[i][4] = errorEllipse.getRho();
-            }
-            chart.setData(data);
+                // sigma x
+                variableContext.addBinding(
+                        variables.get(1), columnSelector.getSigmaXSelection(),
+                        new UncertaintyVariableFormat(
+                                columnSelector.getSigmaXErrorSize(),
+                                columnSelector.getSigmaXExpressionType()));
+
+                // y
+                variableContext.addBinding(
+                        variables.get(2), columnSelector.getYSelection());
+
+                // sigma y
+                variableContext.addBinding(
+                        variables.get(3), columnSelector.getSigmaYSelection(),
+                        new UncertaintyVariableFormat(
+                                columnSelector.getSigmaYErrorSize(),
+                                columnSelector.getSigmaYExpressionType()));
+
+                // rho
+                variableContext.addBinding(
+                        variables.get(4), columnSelector.getRhoSelection());
+            });
+
+            chart.setData(dataset, variableContext);
 
             SettingsPanel settingsPanel = new SettingsPanel(chart.getSettingScope());
 
@@ -80,8 +87,8 @@ public class ChartInitializationAction extends Action {
 
             toolBar.getItems().addAll(saveToSVG, fitData);
 
-            HBox chartAndConfig = new HBox(chart.asNode(), settingsPanel);
-            
+            HBox chartAndConfig = new HBox(chart.displayAsNode(), settingsPanel);
+
             VBox chartWindow = new VBox(toolBar, chartAndConfig);
             Scene scene = new Scene(chartWindow, 1200, 800);
 

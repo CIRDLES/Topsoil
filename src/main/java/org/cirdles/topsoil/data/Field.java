@@ -24,7 +24,7 @@ import javafx.util.StringConverter;
  * @author CIRDLES
  * @param <T>
  */
-public abstract class Field<T> {
+public abstract class Field<T> implements Comparable<Field>{
 
     private static int numberOfFields = 0;
 
@@ -55,7 +55,7 @@ public abstract class Field<T> {
     /**
      * @return the id
      */
-    int getID() {
+    int getId() {
         return id;
     }
 
@@ -80,12 +80,17 @@ public abstract class Field<T> {
     }
 
     @Override
+    public int compareTo(Field that) {
+        return Integer.compare(this.id, that.id);
+    }
+
+    @Override
     public boolean equals(Object that) {
         if (that == null || !(that instanceof Field)) {
             return false;
         }
 
-        return this.getID() == ((Field) that).getID();
+        return this.getId() == ((Field) that).getId();
     }
 
     @Override

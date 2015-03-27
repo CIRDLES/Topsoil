@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.cirdles.topsoil.app.chart;
-
-import javafx.scene.chart.XYChart.Data;
+package org.cirdles.topsoil.chart;
 
 /**
  *
- * @author John Zeringue <john.joseph.zeringue@gmail.com>
- * @param <T>
+ * @author John Zeringue
  */
-public interface DataConverter<T> {
-    public T convert(Data data);
+public class IndependentVariable<T> extends BaseVariable<T> {
+    
+    public IndependentVariable(String name) {
+        super(name);
+    }
+    
 }

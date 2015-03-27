@@ -24,10 +24,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -48,16 +45,16 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.data.TSVDataset;
 import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.app.utils.GetDocumentsDirectoryOperation;
-import org.cirdles.topsoil.app.utils.TSVTableReader;
-import org.cirdles.topsoil.app.utils.TSVTableWriter;
-import org.cirdles.topsoil.app.utils.TableReader;
-import org.cirdles.topsoil.app.utils.TableWriter;
+import org.cirdles.topsoil.app.utils.TSVDatasetReader;
+import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
+import org.cirdles.topsoil.app.utils.DatasetReader;
+import org.cirdles.topsoil.app.utils.DatasetWriter;
 import org.cirdles.topsoil.chart.ChartInitializationDialog;
 import org.cirdles.topsoil.chart.JavaScriptChart;
+import org.cirdles.topsoil.data.DatasetManager;
+import org.cirdles.topsoil.data.TSVDatasetManager;
 import org.controlsfx.dialog.Dialogs;
 
 /**
@@ -66,6 +63,9 @@ import org.controlsfx.dialog.Dialogs;
  * @author John Zeringue
  */
 public class TopsoilMainWindow extends CustomVBox implements Initializable {
+
+    private static final Logger LOGGER
+            = Logger.getLogger(TopsoilMainWindow.class.getName());
 
     private final static Path APPLICATION_DIRECTORY
             = new GetApplicationDirectoryOperation().perform("Topsoil");
@@ -87,7 +87,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
     private FileSystem jarFileSystem;
 
-    private List<Dataset> datasets = Collections.emptyList();
+    private DatasetManager datasetManager;
 
     /**
      * Initializes the controller class.
@@ -99,19 +99,19 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     public void initialize(URL url, ResourceBundle resources) {
         dataTableToSet = new HashMap<>();
 
-        loadCustomScripts();
-        loadDataSets();
+        datasetManager = new TSVDatasetManager(DATA_SETS_DIRECTORY);
+        datasetManager.getDatasets().stream()
+                .filter(datasetManager::isOpen)
+                .forEach(this::loadDataSet);
 
-        datasets.stream()
-                .filter(Dataset::isOpen)
-                .forEach(dataset -> {
-                    loadDataSet(dataset, createTab());
-                });
+        loadCustomScripts();
+        reloadDatasetMenu();
 
         // set the window title to something like "Topsoil [0.3.4]"
         String applicationName = resources.getString("applicationName");
         String applicationVersion = resources.getString("applicationVersion");
-        setWindowTitle(String.format("%s [%s]", applicationName, applicationVersion));
+        setWindowTitle(
+                String.format("%s [%s]", applicationName, applicationVersion));
     }
 
     Optional<TSVTable> getCurrentTable() {
@@ -137,7 +137,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 TSVTable table = (TSVTable) dataTableTab.getContent();
 
                 if (dataTableToSet.containsKey(table)) {
-                    dataTableToSet.get(table).close();
+                    datasetManager.close(dataTableToSet.get(table));
                 }
             }
         });
@@ -163,7 +163,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 });
 
         // reload
-        loadDataSets();
+        reloadDatasetMenu();
     }
 
     @FXML
@@ -182,7 +182,8 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                         MenuItem chartItem = new MenuItem(fileName.replace(".js", ""));
 
                         chartItem.setOnAction(event -> {
-                            new ChartInitializationDialog(getCurrentTable().get(),
+                            new ChartInitializationDialog(
+                                    getCurrentTable().map(dataTableToSet::get).get(),
                                     new JavaScriptChart(filePath)).show();
                         });
 
@@ -190,42 +191,26 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                     }
                 });
             } catch (IOException ex) {
-                Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
     }
 
-    void loadDataSets() {
-        try {
-            // safer than Files.createDirectory
-            Files.createDirectories(DATA_SETS_DIRECTORY);
+    void createDatasetMenuItem(Dataset dataset) {
+        MenuItem datasetMenuItem = new MenuItem(dataset.getName());
 
-            // allows this method to be called multiple times in the same
-            // session
-            datasetsMenu.getItems().clear();
-            datasets = new ArrayList<>();
+        datasetMenuItem.setOnAction(event -> {
+            loadDataSet(dataset);
+        });
 
-            if (Files.exists(DATA_SETS_DIRECTORY)) {
-                Files.walk(DATA_SETS_DIRECTORY).forEach(path -> {
-                    if (Files.isDirectory(path)) {
-                        return;
-                    }
+        datasetsMenu.getItems().add(datasetMenuItem);
+    }
 
-                    final TSVDataset dataset = new TSVDataset(path);
-                    datasets.add(dataset);
+    void reloadDatasetMenu() {
+        // allows this method to be called multiple times in the same session
+        datasetsMenu.getItems().clear();
 
-                    MenuItem datasetMenuItem = new MenuItem(dataset.getName());
-
-                    datasetMenuItem.setOnAction(event -> {
-                        loadDataSet(dataset);
-                    });
-
-                    datasetsMenu.getItems().add(datasetMenuItem);
-                });
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        datasetManager.getDatasets().forEach(this::createDatasetMenuItem);
     }
 
     void loadDataSet(Dataset dataset) {
@@ -238,13 +223,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         if (content instanceof TSVTable) {
             TSVTable table = (TSVTable) content;
 
-            if (dataTableToSet.containsKey(table)) {
-                dataTableToSet.get(table).close();
-            }
-
-            table.loadFromPath(dataset.getPath());
+            table.setDataset(dataset);
             dataTableToSet.put(table, dataset);
-            dataset.open();
+            datasetManager.open(dataset);
             tab.setText(dataset.getName());
         }
     }
@@ -302,16 +283,21 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
 
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
-            TableReader tableReader = new TSVTableReader(response);
+            DatasetReader tableReader = new TSVDatasetReader(response);
 
             try {
-                tableReader.read(filePath, dataTable);
+                Dataset dataset = tableReader.read(filePath);
+                dataTable.setDataset(dataset);
             } catch (IOException ex) {
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            TableWriter<Entry> tableWriter = new TSVTableWriter(true, dataTable.getRequiredColumnCount());
-            tableWriter.write(dataTable, Topsoil.LAST_TABLE_PATH);
+            DatasetWriter tableWriter = new TSVDatasetWriter(dataTable.getRequiredColumnCount());
+            try {
+                tableWriter.write(dataTable.getDataset(), Topsoil.LAST_TABLE_PATH);
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
         });
     }
 
@@ -337,9 +323,10 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 javascriptPath = Paths.get(javascriptURI);
             }
 
-            new ChartInitializationDialog(getCurrentTable().get(), new JavaScriptChart(javascriptPath)).show();
+            new ChartInitializationDialog(
+                    getCurrentTable().map(dataTableToSet::get).get(), new JavaScriptChart(javascriptPath)).show();
         } catch (URISyntaxException | IOException ex) {
-            Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -368,10 +355,11 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 javascriptPath = Paths.get(javascriptURI);
             }
 
-            new ChartInitializationDialog(getCurrentTable().get(),
+            new ChartInitializationDialog(
+                    getCurrentTable().map(dataTableToSet::get).get(),
                     new JavaScriptChart(javascriptPath)).show();
         } catch (URISyntaxException | IOException ex) {
-            Logger.getLogger(TopsoilMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 

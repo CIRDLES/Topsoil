@@ -15,26 +15,20 @@
  */
 package org.cirdles.topsoil.data;
 
-import static java.util.Collections.emptyList;
 import java.util.List;
 
 /**
  *
  * @author John Zeringue
  */
-public interface Dataset {
-
-    public static final Dataset EMPTY_DATASET
-            = new SimpleDataset(emptyList(), emptyList());
+public interface DatasetManager {
     
-    public String getName();
-
-    public List<Field> getFields();
-
-    public List<Entry> getEntries();
-
-    public static Dataset emptyDataset() {
-        return EMPTY_DATASET;
-    }
-
+    public List<Dataset> getDatasets();
+    
+    public boolean isOpen(Dataset dataset);
+    
+    public void open(Dataset dataset);
+    
+    public void close(Dataset dataset);
+    
 }

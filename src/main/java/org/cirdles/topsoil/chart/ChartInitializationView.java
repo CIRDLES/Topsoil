@@ -27,14 +27,12 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.util.StringConverter;
 import org.cirdles.javafx.CustomGridPane;
 import org.cirdles.topsoil.data.Field;
 import org.cirdles.topsoil.data.NumberField;
-import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.app.table.EntryTableColumn;
+import org.cirdles.topsoil.data.Dataset;
 
 /**
  * This UI element is used by the user to choose which column in the main table determine which value of an ellipse.
@@ -67,7 +65,7 @@ public class ChartInitializationView extends CustomGridPane<ChartInitializationV
 
     private List<Field<Number>> fields;
 
-    public ChartInitializationView(TableView<Entry> table) {
+    public ChartInitializationView(Dataset dataset) {
         super(self -> {
             self.setAlignment(Pos.CENTER);
             self.setHgap(12);
@@ -76,16 +74,11 @@ public class ChartInitializationView extends CustomGridPane<ChartInitializationV
             ColumnConstraints labelConstraints = new ColumnConstraints();
             labelConstraints.setHalignment(HPos.RIGHT);
             self.getColumnConstraints().add(labelConstraints);
-            self.fields = new ArrayList<>(table.getColumns().size());
-
-            table.getColumns().stream()
-                    .filter((column) -> (column instanceof EntryTableColumn))
-                    .map((column) -> (EntryTableColumn) column)
-                    // Only add Field<Number>s from RecordTableColumns to fields.
-                    .filter((recordColumn) -> (recordColumn.getField() instanceof NumberField))
-                    .forEach((recordColumn) -> {
-                        self.fields.add(recordColumn.getField());
-                    });
+            
+            self.fields = new ArrayList<>(dataset.getFields().size());
+            dataset.getFields().stream()
+                    .filter(field -> field instanceof NumberField)
+                    .forEach(field -> self.fields.add(field));
         });
     }
 

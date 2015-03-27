@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.app;
 
-import org.cirdles.topsoil.app.TSVTable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;

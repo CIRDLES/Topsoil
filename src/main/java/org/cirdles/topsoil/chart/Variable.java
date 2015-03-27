@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.chart;
 
-package org.cirdles.topsoil.app.utils;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import javafx.scene.control.TableView;
+import java.util.List;
 
 /**
  *
- * @author John Zeringue <john.joseph.zeringue@gmail.com>
+ * @author John Zeringue
  */
-public abstract class TableReader<T> {
-    public abstract void read(String src, TableView<T> dest);
+public interface Variable<T> {
     
-    public void read(Path src, TableView<T> dest) throws IOException {
-        read(new String(Files.readAllBytes(src), StandardCharsets.UTF_8), dest);
-    }
+    public String getName();
+    
+    public List<VariableFormat> getFormats();
+    
 }

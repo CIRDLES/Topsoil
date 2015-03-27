@@ -26,16 +26,7 @@
 
     // adds a row of data
     topsoil.addData = function (data) {
-        var convertedData = {};
-
-        // store the data in the 
-        convertedData.x = data[0];
-        convertedData.sigmaX = convertedData.sigma_x = convertedData.σx = data[1];
-        convertedData.y = data[2];
-        convertedData.sigmaY = convertedData.sigma_y = convertedData.σy = data[3];
-        convertedData.rho = convertedData.ρ = data[4];
-
-        ts.data.push(convertedData);
+        ts.data.push(data);
     };
 
     // clears all stored data

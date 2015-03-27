@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.app;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,10 +28,11 @@ import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 import static org.cirdles.topsoil.app.Topsoil.LAST_TABLE_PATH;
 import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.app.utils.TSVTableReader;
-import org.cirdles.topsoil.app.utils.TSVTableWriter;
-import org.cirdles.topsoil.app.utils.TableReader;
-import org.cirdles.topsoil.app.utils.TableWriter;
+import org.cirdles.topsoil.app.utils.TSVDatasetReader;
+import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
+import org.cirdles.topsoil.app.utils.DatasetReader;
+import org.cirdles.topsoil.app.utils.DatasetWriter;
+import org.cirdles.topsoil.data.Dataset;
 import org.cirdles.utils.function.Translator;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
@@ -203,8 +205,16 @@ public class Tools {
 
     public static void pasteFromClipboard(TSVTable dataTable) {
         Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
-            TableReader tableReader = new TSVTableReader(response);
-            tableReader.read(Clipboard.getSystemClipboard().getString(), dataTable);
+            DatasetReader tableReader = new TSVDatasetReader(response);
+            
+            try {
+                Dataset dataset
+                        = tableReader.read(Clipboard.getSystemClipboard().getString());
+                
+                
+            } catch (IOException ex) {
+                Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             saveTable(dataTable);
         });
@@ -212,8 +222,12 @@ public class Tools {
 
     public static void saveTable(TSVTable dataTable) {
         if (!dataTable.getItems().isEmpty()) {
-            TableWriter<Entry> tableWriter = new TSVTableWriter(true, dataTable.getRequiredColumnCount());
-            tableWriter.write(dataTable, LAST_TABLE_PATH);
+            DatasetWriter tableWriter = new TSVDatasetWriter(dataTable.getRequiredColumnCount());
+            try {
+                tableWriter.write(dataTable.getDataset(), LAST_TABLE_PATH);
+            } catch (IOException ex) {
+                Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             boolean lastTableFileDeleted = LAST_TABLE_PATH.toFile().delete();
             

@@ -15,19 +15,18 @@
  */
 package org.cirdles.topsoil.chart;
 
-import javafx.scene.control.TableView;
-import org.cirdles.topsoil.data.Entry;
+import org.cirdles.topsoil.data.Dataset;
 import org.controlsfx.dialog.Dialog;
 
 public class ChartInitializationDialog extends Dialog {
 
     private static final String MASTHEAD_TEXT = "Select the column for each variable.";
 
-    public ChartInitializationDialog(TableView<Entry> tableToRead, JavaScriptChart chart) {
+    public ChartInitializationDialog(Dataset dataset, JavaScriptChart chart) {
         super(null, null);
 
-        setContent(new ChartInitializationView(tableToRead));
-        getActions().addAll(new ChartInitializationAction(tableToRead, chart, this), Dialog.ACTION_CANCEL);
+        setContent(new ChartInitializationView(dataset));
+        getActions().addAll(new ChartInitializationAction(dataset, chart, this), Dialog.ACTION_CANCEL);
 
         setResizable(false);
         setMasthead(MASTHEAD_TEXT);

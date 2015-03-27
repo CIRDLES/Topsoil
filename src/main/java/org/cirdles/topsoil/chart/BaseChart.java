@@ -13,35 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.cirdles.topsoil.chart;
 
 import java.util.Optional;
 import org.cirdles.topsoil.chart.setting.SettingScope;
+import org.cirdles.topsoil.data.Dataset;
 
 /**
  * A partial implementation of {@link Chart} that stores and retrieves set data.
- * 
+ *
  * @author John Zeringue
  */
-public abstract class BaseChart<T> implements Chart<T> {
-    
-    private Optional<T> data = Optional.empty();
+public abstract class BaseChart implements Chart {
+
     private final SettingScope settingScope = new SettingScope();
 
+    private Optional<Dataset> dataset = Optional.empty();
+    private Optional<VariableContext> variableBindings = Optional.empty();
+
     @Override
-    public Optional<T> getData() {
-        return data;
+    public Optional<Dataset> getDataset() {
+        return dataset;
     }
 
     @Override
-    public void setData(T data) {
-        this.data = Optional.ofNullable(data);
+    public Optional<VariableContext> getVariableContext() {
+        return variableBindings;
+    }
+
+    @Override
+    public void setData(Dataset dataset, VariableContext variableBindings) {
+        this.dataset = Optional.ofNullable(dataset);
+        this.variableBindings = Optional.ofNullable(variableBindings);
     }
 
     @Override
     public SettingScope getSettingScope() {
         return settingScope;
     }
-    
+
 }

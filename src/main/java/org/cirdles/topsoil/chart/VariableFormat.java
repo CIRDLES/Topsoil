@@ -13,28 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.data;
+package org.cirdles.topsoil.chart;
 
-import static java.util.Collections.emptyList;
-import java.util.List;
+import org.cirdles.topsoil.data.Entry;
 
 /**
  *
  * @author John Zeringue
  */
-public interface Dataset {
+public interface VariableFormat<T> {
 
-    public static final Dataset EMPTY_DATASET
-            = new SimpleDataset(emptyList(), emptyList());
-    
     public String getName();
 
-    public List<Field> getFields();
+    public T normalize(VariableBinding<T> binding, Entry entry);
 
-    public List<Entry> getEntries();
-
-    public static Dataset emptyDataset() {
-        return EMPTY_DATASET;
+    public static <T> VariableFormat<T> identity() {
+        return new IdentityVariableFormat<>();
     }
 
 }
