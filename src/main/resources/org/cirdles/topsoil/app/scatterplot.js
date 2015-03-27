@@ -121,6 +121,7 @@
         var zoom = d3.behavior.zoom()
                 .x(chart.x)
                 .y(chart.y)
+                .scaleExtent([0.5, 2.5])
                 .on("zoom", function () {
                     chart.settings.transaction(function (t) {
                         t.set(X_MIN, zoom.x().domain()[0]);

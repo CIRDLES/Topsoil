@@ -238,7 +238,7 @@
         var zoom = d3.behavior.zoom()
                 .x(x)
                 .y(y)
-                .scaleExtent([.1, 25])
+                .scaleExtent([.5, 2.5])
                 .on("zoom", function () {
                     var t = zoom.translate();
                     var tx = t[0];
