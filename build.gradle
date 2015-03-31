@@ -78,6 +78,7 @@ dependencies {
     compile 'net.sf.opencsv:opencsv:2.3'
 
     testCompile 'junit:junit:4.10'
-    testCompile 'org.loadui:testFx:3.1.0'
     testCompile 'com.google.jimfs:jimfs:1.0'
+    testCompile 'org.testfx:testfx-core:4.0.+'
+    testCompile 'org.testfx:testfx-junit:4.0.+'
 }

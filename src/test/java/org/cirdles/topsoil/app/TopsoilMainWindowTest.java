@@ -15,18 +15,21 @@
  */
 package org.cirdles.topsoil.app;
 
-import javafx.scene.Parent;
-import org.loadui.testfx.GuiTest;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.testfx.framework.junit.ApplicationTest;
 
 /**
  *
  * @author John Zeringue
  */
-public class TopsoilMainWindowTest extends GuiTest {
+public class TopsoilMainWindowTest extends ApplicationTest {
 
     @Override
-    protected Parent getRootNode() {
-        return new TopsoilMainWindow();
+    public void start(Stage stage) throws Exception {
+        Scene scene = new Scene(new TopsoilMainWindow());
+        stage.setScene(scene);
+        stage.show();
     }
     
 }
