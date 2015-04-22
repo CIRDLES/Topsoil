@@ -17,6 +17,7 @@ package org.cirdles.topsoil.data;
 
 import static java.util.Collections.emptyList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -27,7 +28,7 @@ public interface Dataset {
     public static final Dataset EMPTY_DATASET
             = new SimpleDataset(emptyList(), emptyList());
     
-    public String getName();
+    public Optional<String> getName();
 
     public List<Field> getFields();
 

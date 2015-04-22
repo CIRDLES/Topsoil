@@ -6,6 +6,7 @@
 package org.cirdles.topsoil.data;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -16,13 +17,16 @@ public class SimpleDataset implements Dataset {
     private final List<Field> fields;
     private final List<Entry> entries;
     
-    private String name;
+    private Optional<String> name = Optional.empty();
 
     public SimpleDataset(List<Field> fields, List<Entry> entries) {
         this.fields = fields;
         this.entries = entries;
-        
-        name = "";
+    }
+
+    @Override
+    public Optional<String> getName() {
+        return name;
     }
 
     @Override
@@ -36,18 +40,10 @@ public class SimpleDataset implements Dataset {
     }
 
     /**
-     * @return the name
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
      * @param name the name to set
      */
     public void setName(String name) {
-        this.name = name;
+        this.name = Optional.ofNullable(name);
     }
 
 }

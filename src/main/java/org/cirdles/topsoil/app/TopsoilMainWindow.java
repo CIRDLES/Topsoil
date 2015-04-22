@@ -198,7 +198,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     }
 
     void createDatasetMenuItem(Dataset dataset) {
-        MenuItem datasetMenuItem = new MenuItem(dataset.getName());
+        MenuItem datasetMenuItem = dataset.getName()
+                .map(MenuItem::new)
+                .orElseGet(MenuItem::new);
 
         datasetMenuItem.setOnAction(event -> {
             loadDataSet(dataset);
@@ -227,7 +229,10 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             table.setDataset(dataset);
             dataTableToSet.put(table, dataset);
             datasetManager.open(dataset);
-            tab.setText(dataset.getName());
+            
+            dataset.getName().ifPresent(name -> {
+                tab.setText(name);
+            });
         }
     }
 
