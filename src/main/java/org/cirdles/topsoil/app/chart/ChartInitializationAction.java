@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.chart;
+package org.cirdles.topsoil.app.chart;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,6 +23,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.component.SettingsPanel;
 import org.cirdles.topsoil.app.utils.SVGSaver;
+import org.cirdles.topsoil.chart.JavaScriptChart;
+import org.cirdles.topsoil.chart.SimpleVariableContext;
+import org.cirdles.topsoil.app.UncertaintyVariableFormat;
+import org.cirdles.topsoil.chart.VariableContext;
 import org.cirdles.topsoil.data.Dataset;
 import org.controlsfx.control.action.Action;
 

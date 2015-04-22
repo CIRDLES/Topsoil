@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.chart;
 
-import java.awt.Component;
 import javafx.scene.Node;
 import javax.swing.JComponent;
 

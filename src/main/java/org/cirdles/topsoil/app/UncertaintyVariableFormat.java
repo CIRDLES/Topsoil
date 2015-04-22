@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.chart;
+package org.cirdles.topsoil.app;
 
 import java.util.Objects;
 import org.cirdles.topsoil.app.ExpressionType;
+import org.cirdles.topsoil.chart.DependentVariableFormat;
 import static org.cirdles.topsoil.app.ExpressionType.*;
 
 /**
