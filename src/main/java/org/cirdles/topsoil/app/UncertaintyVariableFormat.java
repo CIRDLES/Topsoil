@@ -16,7 +16,6 @@
 package org.cirdles.topsoil.app;
 
 import java.util.Objects;
-import org.cirdles.topsoil.app.ExpressionType;
 import org.cirdles.topsoil.chart.DependentVariableFormat;
 import static org.cirdles.topsoil.app.ExpressionType.*;
 

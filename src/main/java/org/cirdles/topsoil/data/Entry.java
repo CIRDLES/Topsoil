@@ -28,6 +28,6 @@ public interface Entry {
     
     public <T> void set(Field<? extends T> field, T value);
     
-    public Set<Field> fields();
+    public Set<Field> getFields();
     
 }

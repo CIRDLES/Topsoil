@@ -43,7 +43,7 @@ public class SimpleEntry implements Entry {
     }
     
     @Override
-    public Set<Field> fields() {
+    public Set<Field> getFields() {
         return fieldsToValues.keySet();
     }
     
