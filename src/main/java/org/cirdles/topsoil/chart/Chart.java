@@ -26,7 +26,7 @@ import org.cirdles.topsoil.data.Dataset;
  *
  * @author John Zeringue
  */
-public interface Chart {
+public interface Chart extends Displayable {
 
     /**
      * Returns an {@link Optional} that contains this {@link Chart}'s if it has
