@@ -16,17 +16,11 @@
 package org.cirdles.topsoil.app.utils;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.control.TableView;
 import org.cirdles.topsoil.data.Dataset;
 import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.data.Field;
@@ -76,7 +70,7 @@ public class TSVDatasetWriter implements DatasetWriter<Entry> {
             for (Entry entry : dataset.getEntries()) {
                 for (int i = 0; i < dataset.getFields().size() + 1; i++) {
                     Field field = dataset.getFields().get(i);
-                    line[i] = entry.getValue(field).toString();
+                    line[i] = entry.get(field).get().toString();
                 }
 
                 // filler data

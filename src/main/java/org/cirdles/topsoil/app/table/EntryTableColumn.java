@@ -15,11 +15,11 @@
  */
 package org.cirdles.topsoil.app.table;
 
-import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.data.Field;
 import javafx.beans.value.ObservableValueBase;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
+import org.cirdles.topsoil.data.Entry;
 
 /**
  *
@@ -38,12 +38,12 @@ public class EntryTableColumn<T> extends TableColumn<Entry, T> {
             
             @Override
             public T getValue() {
-                return param.getValue().getValue(field);
+                return param.getValue().get(field).get();
             }
         });
         setCellFactory(TextFieldTableCell.forTableColumn(field.getStringConverter()));
         setOnEditCommit((CellEditEvent<Entry, T> event) -> {
-            event.getRowValue().setValue(field, event.getNewValue());
+            event.getRowValue().set(field, event.getNewValue());
         });
         
         this.field = field;

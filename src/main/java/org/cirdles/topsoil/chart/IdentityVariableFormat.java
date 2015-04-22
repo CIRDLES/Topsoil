@@ -26,7 +26,7 @@ public class IdentityVariableFormat<T> extends BaseVariableFormat<T> {
 
     @Override
     public T normalize(VariableBinding<T> binding, Entry entry) {
-        return entry.getValue(binding.getField());
+        return entry.get(binding.getField()).get();
     }
     
 }

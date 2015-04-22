@@ -23,8 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.cirdles.topsoil.data.Field;
 import org.cirdles.topsoil.data.NumberField;
-import org.cirdles.topsoil.data.Entry;
+import org.cirdles.topsoil.data.SimpleEntry;
 import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.data.SimpleDataset;
 import org.cirdles.topsoil.data.TextField;
 
@@ -79,11 +80,11 @@ public class TSVDatasetReader implements DatasetReader {
 
         List<Entry> entries = new ArrayList<>(lines.size() - firstRow());
         for (int i = firstRow(); i < lines.size(); i++) {
-            Entry entry = new Entry();
+            Entry entry = new SimpleEntry();
 
             for (int j = 0; j < fields.size(); j++) {
                 Field currentField = fields.get(j);
-                entry.setValue(currentField,
+                entry.set(currentField,
                         currentField.getStringConverter().fromString(lines.get(i)[j]));
             }
 

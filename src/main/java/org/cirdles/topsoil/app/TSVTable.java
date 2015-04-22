@@ -20,19 +20,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.cirdles.topsoil.app.table.EntryTableColumn;
-import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.app.utils.TSVDatasetReader;
 import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
 import org.cirdles.topsoil.app.utils.DatasetReader;
 import org.cirdles.topsoil.app.utils.DatasetWriter;
 import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.data.Field;
 import org.cirdles.topsoil.data.NumberField;
 import org.cirdles.topsoil.data.TextField;
@@ -57,14 +56,6 @@ public class TSVTable extends TableView<Entry> {
                 pasteFromClipboard();
             }
         });
-
-        getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Entry> observable, Entry oldValue, Entry newValue) -> {
-                    if (oldValue != null) {
-                        oldValue.setSelected(false);
-                    }
-
-                    newValue.setSelected(true);
-                });
     }
 
     public TSVTable(Path savePath) {
