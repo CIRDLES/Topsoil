@@ -40,6 +40,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -55,7 +56,6 @@ import org.cirdles.topsoil.app.chart.ChartInitializationDialog;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.data.DatasetManager;
 import org.cirdles.topsoil.app.utils.TSVDatasetManager;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -153,14 +153,15 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
     @FXML
     void saveDataTable() {
-        Dialogs.create()
-                .message("Data set name:")
-                .showTextInput().ifPresent(datasetName -> {
-                    Path datasetPath = DATA_SETS_DIRECTORY.resolve(
-                            datasetName + "__open____headers__.tsv");
+        TextInputDialog textInputDialog = new TextInputDialog();
 
-                    getCurrentTable().ifPresent(table -> table.saveToPath(datasetPath));
-                });
+        textInputDialog.setContentText("Data set name:");
+        textInputDialog.showAndWait().ifPresent(datasetName -> {
+            Path datasetPath = DATA_SETS_DIRECTORY.resolve(
+                    datasetName + "__open____headers__.tsv");
+
+            getCurrentTable().ifPresent(table -> table.saveToPath(datasetPath));
+        });
 
         // reload
         reloadDatasetMenu();
