@@ -18,7 +18,6 @@ package org.cirdles.topsoil.data;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  *
@@ -40,11 +39,6 @@ public class SimpleEntry implements Entry {
     @Override
     public <T> void set(Field<? extends T> field, T value) {
         fieldsToValues.put(field, value);
-    }
-    
-    @Override
-    public Set<Field> getFields() {
-        return fieldsToValues.keySet();
     }
     
 }

@@ -16,7 +16,6 @@
 package org.cirdles.topsoil.data;
 
 import java.util.Optional;
-import java.util.Set;
 
 /**
  *
@@ -27,7 +26,5 @@ public interface Entry {
     public <T> Optional<T> get(Field<? extends T> field);
     
     public <T> void set(Field<? extends T> field, T value);
-    
-    public Set<Field> getFields();
     
 }
