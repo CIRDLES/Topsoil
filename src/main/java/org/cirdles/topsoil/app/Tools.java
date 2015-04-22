@@ -197,12 +197,6 @@ public class Tools {
         }
     }
 
-    public static Label label_minsize(String textlabel) {
-        LabelUsePrefSize label = new LabelUsePrefSize(textlabel);
-        label.setMinWidth(Region.USE_PREF_SIZE);
-        return label;
-    }
-
     public static void pasteFromClipboard(TSVTable dataTable) {
         Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
             DatasetReader tableReader = new TSVDatasetReader(response);
