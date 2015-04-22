@@ -61,7 +61,7 @@ public class TSVDatasetReader implements DatasetReader {
         }
 
         if (lines.isEmpty()) {
-            return Dataset.emptyDataset();
+            return Dataset.EMPTY_DATASET;
         }
 
         int headerCount = lines.get(0).length;

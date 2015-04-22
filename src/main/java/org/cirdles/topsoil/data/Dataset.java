@@ -34,8 +34,4 @@ public interface Dataset {
 
     public List<Entry> getEntries();
 
-    public static Dataset emptyDataset() {
-        return EMPTY_DATASET;
-    }
-
 }
