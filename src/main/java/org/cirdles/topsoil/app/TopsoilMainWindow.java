@@ -54,7 +54,7 @@ import org.cirdles.topsoil.app.utils.DatasetWriter;
 import org.cirdles.topsoil.app.chart.ChartInitializationDialog;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.data.DatasetManager;
-import org.cirdles.topsoil.data.TSVDatasetManager;
+import org.cirdles.topsoil.app.utils.TSVDatasetManager;
 import org.controlsfx.dialog.Dialogs;
 
 /**

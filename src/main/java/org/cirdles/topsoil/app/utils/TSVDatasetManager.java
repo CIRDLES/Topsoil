@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.data;
+package org.cirdles.topsoil.app.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,8 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cirdles.topsoil.app.utils.DatasetReader;
-import org.cirdles.topsoil.app.utils.TSVDatasetReader;
+import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.data.DatasetManager;
+import org.cirdles.topsoil.data.SimpleDataset;
 
 /**
  *
