@@ -23,8 +23,8 @@ import java.util.Optional;
  */
 public interface Entry {
     
-    public <T> Optional<T> get(Field<? extends T> field);
+    public <T> Optional<T> get(Field<? super T> field);
     
-    public <T> void set(Field<? extends T> field, T value);
+    public <T> void set(Field<? super T> field, T value);
     
 }

@@ -32,12 +32,12 @@ public class SimpleEntry implements Entry {
     }
 
     @Override
-    public <T> Optional<T> get(Field<? extends T> field) {
+    public <T> Optional<T> get(Field<? super T> field) {
         return Optional.ofNullable((T) fieldsToValues.get(field));
     }
 
     @Override
-    public <T> void set(Field<? extends T> field, T value) {
+    public <T> void set(Field<? super T> field, T value) {
         fieldsToValues.put(field, value);
     }
     
