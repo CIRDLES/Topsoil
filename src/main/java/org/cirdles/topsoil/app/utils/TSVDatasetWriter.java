@@ -68,7 +68,7 @@ public class TSVDatasetWriter implements DatasetWriter {
 
             // write data
             for (Entry entry : dataset.getEntries()) {
-                for (int i = 0; i < dataset.getFields().size() + 1; i++) {
+                for (int i = 0; i < dataset.getFields().size(); i++) {
                     Field field = dataset.getFields().get(i);
                     line[i] = entry.get(field).get().toString();
                 }
