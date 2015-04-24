@@ -29,7 +29,7 @@ import org.cirdles.topsoil.data.Field;
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVDatasetWriter implements DatasetWriter<Entry> {
+public class TSVDatasetWriter implements DatasetWriter {
 
     // JFB
     // used to fill out missing columns

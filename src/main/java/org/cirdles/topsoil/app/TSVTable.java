@@ -152,7 +152,7 @@ public class TSVTable extends TableView<Entry> {
             throw new IllegalArgumentException("Cannot save to null path.");
         }
 
-        DatasetWriter<Entry> tableWriter = new TSVDatasetWriter(requiredColumnCount);
+        DatasetWriter tableWriter = new TSVDatasetWriter(requiredColumnCount);
         
         try {
             tableWriter.write(getDataset(), savePath);

@@ -28,9 +28,8 @@ import org.cirdles.topsoil.data.Dataset;
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
- * @param <T>
  */
-public interface DatasetWriter<T> {
+public interface DatasetWriter {
 
     public void write(Dataset dataset, OutputStream destination)
             throws IOException;
