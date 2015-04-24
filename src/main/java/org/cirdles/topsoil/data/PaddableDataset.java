@@ -26,8 +26,9 @@ import java.util.Optional;
 public class PaddableDataset implements Dataset {
     
     private final Dataset baseDataset;
-    
     private final List<Field> paddingFields = new ArrayList<>();
+    
+    private int numberOfPads = 0;
 
     public PaddableDataset(Dataset baseDataset) {
         this.baseDataset = baseDataset;
@@ -54,6 +55,12 @@ public class PaddableDataset implements Dataset {
     public <T> void padWith(Field<? super T> field, T fillValue) {
         paddingFields.add(field);
         getEntries().forEach(entry -> entry.set(field, fillValue));
+        
+        numberOfPads++;
+    }
+    
+    public void padWithZeros() {
+        padWith(new NumberField("fill-" + numberOfPads), 0);
     }
     
 }

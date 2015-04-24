@@ -22,8 +22,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.data.PaddableDataset;
 
 /**
  *
@@ -50,37 +50,33 @@ public class TSVDatasetWriter implements DatasetWriter {
                 = new OutputStreamWriter(destination, Charset.forName("UTF-8"));
 
         try (CSVWriter tsvWriter = new CSVWriter(outputStreamWriter, '\t')) {
-            int actualColumnCount
-                    = Math.max(requiredColumnCount, dataset.getFields().size());
+            int actualColumnCount = Math.max(
+                    requiredColumnCount, dataset.getFields().size());
+            
+            PaddableDataset paddedDataset = new PaddableDataset(dataset);
+            
+            while (paddedDataset.getFields().size() < actualColumnCount) {
+                paddedDataset.padWithZeros();
+            }
 
             String[] line = new String[actualColumnCount];
 
-            for (int i = 0; i < dataset.getFields().size(); i++) {
-                line[i] = dataset.getFields().get(i).getName();
-            }
-
-            // build extra headers
-            for (int i = dataset.getFields().size(); i < actualColumnCount; i++) {
-                line[i] = "fill-" + (i - dataset.getFields().size() + 1);
+            for (int i = 0; i < paddedDataset.getFields().size(); i++) {
+                line[i] = paddedDataset.getFields().get(i).getName();
             }
 
             tsvWriter.writeNext(line);
 
             // write data
-            for (Entry entry : dataset.getEntries()) {
-                for (int i = 0; i < dataset.getFields().size(); i++) {
-                    Field field = dataset.getFields().get(i);
-                    line[i] = entry.get(field).get().toString();
-                }
-
-                // filler data
-                for (int i = dataset.getFields().size(); i < actualColumnCount; i++) {
-                    line[i] = "0.00";
+            paddedDataset.getEntries().forEach(entry -> {
+                for (int i = 0; i < paddedDataset.getFields().size(); i++) {
+                    Field field = paddedDataset.getFields().get(i);
+                    line[i] = entry.get(field).orElse("").toString();
                 }
 
                 // write current line
                 tsvWriter.writeNext(line);
-            }
+            });
         }
     }
 

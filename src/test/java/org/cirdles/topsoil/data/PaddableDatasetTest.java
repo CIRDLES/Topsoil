@@ -104,7 +104,26 @@ public class PaddableDatasetTest {
         assertTrue(dataset.getEntries().stream()
                 .allMatch(entry -> {
                     return entry.get(fieldD)
-                            .map(value -> value.equals(4))
+                    .map(value -> value.equals(4))
+                    .orElse(false);
+                }));
+    }
+
+    /**
+     * Test of padWithZeros method, of class PaddableDataset.
+     */
+    @Test
+    public void testPadWithZeros() {
+        dataset.padWithZeros();
+
+        NumberField fill0 = (NumberField) dataset.getFields().stream()
+                .filter(field -> field.getName().equals("fill-0"))
+                .findAny().get();
+
+        assertTrue(dataset.getEntries().stream()
+                .allMatch(entry -> {
+                    return entry.get(fill0)
+                            .map(value -> value.equals(0))
                             .orElse(false);
                 }));
     }

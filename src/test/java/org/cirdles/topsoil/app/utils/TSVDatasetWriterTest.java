@@ -84,9 +84,9 @@ public class TSVDatasetWriterTest {
     }
 
     private static final String EXPECTED_WITH_FIVE_COLUMN_MINIMUM = ""
-            + "\"A\"\t\"B\"\t\"C\"\t\"D\"\t\"fill-1\"\n"
-            + "\"1\"\t\"2\"\t\"3\"\t\"4\"\t\"0.00\"\n"
-            + "\"1\"\t\"2\"\t\"3\"\t\"4\"\t\"0.00\"\n";
+            + "\"A\"\t\"B\"\t\"C\"\t\"D\"\t\"fill-0\"\n"
+            + "\"1\"\t\"2\"\t\"3\"\t\"4\"\t\"0\"\n"
+            + "\"1\"\t\"2\"\t\"3\"\t\"4\"\t\"0\"\n";
 
     @Test
     public void testWriteWithFiveColumnMinimum() throws Exception {
