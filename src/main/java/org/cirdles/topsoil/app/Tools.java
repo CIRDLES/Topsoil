@@ -15,32 +15,33 @@
  */
 package org.cirdles.topsoil.app;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
+import static javafx.scene.control.ButtonType.YES;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
-import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 import static org.cirdles.topsoil.app.Topsoil.LAST_TABLE_PATH;
-import org.cirdles.topsoil.app.table.Record;
-import org.cirdles.topsoil.app.utils.TSVTableReader;
-import org.cirdles.topsoil.app.utils.TSVTableWriter;
-import org.cirdles.topsoil.app.utils.TableReader;
-import org.cirdles.topsoil.app.utils.TableWriter;
+import org.cirdles.topsoil.app.utils.TSVDatasetReader;
+import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
+import org.cirdles.topsoil.app.utils.DatasetReader;
+import org.cirdles.topsoil.app.utils.DatasetWriter;
+import org.cirdles.topsoil.app.utils.YesNoAlert;
+import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.data.Entry;
 import org.cirdles.utils.function.Translator;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * Shortcut tools to be used anywhere in the program.
  */
 public class Tools {
-    
+
     private static final String LOGGER_NAME = Tools.class.getName();
 
     public static final StringConverter<Number> DYNAMIC_STRING_CONVERTER = new StringConverter<Number>() {
@@ -74,7 +75,8 @@ public class Tools {
         private static final String SUBSCRIPT_SIGN = "_";
 
         /**
-         * In a String, search for <code>toCapture</code> between delimiters, converter them, and return the new String
+         * In a String, search for <code>toCapture</code> between delimiters,
+         * converter them, and return the new String
          *
          * @param string
          * @param delimiter
@@ -88,8 +90,7 @@ public class Tools {
             }
 
             String regex = "\\Q" + delimiter + "\\E(" + toCapture + "+)\\Q" + delimiter + "\\E";
-            
-            
+
             Matcher matcher = Pattern.compile(regex).matcher(string);
             while (matcher.find()) {
                 matcher.appendReplacement(result, converter.translate(matcher.group(1)));
@@ -163,48 +164,50 @@ public class Tools {
         @Override
         public String toString(String string) {
             String result = parse(string,
-                                  null,
-                                  "[\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079]",
-                                  new SupersubToNormal("^"));
+                    null,
+                    "[\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079]",
+                    new SupersubToNormal("^"));
 
             result = parse(result,
-                           null,
-                           "[\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089]",
-                           new SupersubToNormal("_"));
+                    null,
+                    "[\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089]",
+                    new SupersubToNormal("_"));
             return result;
         }
 
     };
 
     /**
-     * Prompts the user for a yes or no response with a custom message. If the user selects yes or no, the callback
-     * function is called with a boolean indicating the result. Otherwise, the user may choose to cancel the action and
-     * the dialog will close without any side effects.
+     * Prompts the user for a yes or no response with a custom message. If the
+     * user selects yes or no, the callback function is called with a boolean
+     * indicating the result. Otherwise, the user may choose to cancel the
+     * action and the dialog will close without any side effects.
      *
      * @param message the message to display to the user inside the dialog box
      * @param callback the function to be called if the action is not canceled
      */
     public static void yesNoPrompt(String message, Consumer<Boolean> callback) {
-        Action response = Dialogs.create()
-                .title(Topsoil.APP_NAME)
-                .message(message)
-                .showConfirm();
+        Alert alert = new YesNoAlert(message);
+        alert.setTitle(Topsoil.APP_NAME);
 
-        if (response != Dialog.ACTION_CANCEL) {
-            callback.accept(response == Dialog.ACTION_YES);
-        }
-    }
-
-    public static Label label_minsize(String textlabel) {
-        LabelUsePrefSize label = new LabelUsePrefSize(textlabel);
-        label.setMinWidth(Region.USE_PREF_SIZE);
-        return label;
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType.getButtonData() != CANCEL_CLOSE) {
+                callback.accept(buttonType == YES);
+            }
+        });
     }
 
     public static void pasteFromClipboard(TSVTable dataTable) {
         Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
-            TableReader tableReader = new TSVTableReader(response);
-            tableReader.read(Clipboard.getSystemClipboard().getString(), dataTable);
+            DatasetReader tableReader = new TSVDatasetReader(response);
+
+            try {
+                Dataset dataset
+                        = tableReader.read(Clipboard.getSystemClipboard().getString());
+
+            } catch (IOException ex) {
+                Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             saveTable(dataTable);
         });
@@ -212,11 +215,15 @@ public class Tools {
 
     public static void saveTable(TSVTable dataTable) {
         if (!dataTable.getItems().isEmpty()) {
-            TableWriter<Record> tableWriter = new TSVTableWriter(true, dataTable.getRequiredColumnCount());
-            tableWriter.write(dataTable, LAST_TABLE_PATH);
+            DatasetWriter tableWriter = new TSVDatasetWriter(dataTable.getRequiredColumnCount());
+            try {
+                tableWriter.write(dataTable.getDataset(), LAST_TABLE_PATH);
+            } catch (IOException ex) {
+                Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             boolean lastTableFileDeleted = LAST_TABLE_PATH.toFile().delete();
-            
+
             if (!lastTableFileDeleted) {
                 Logger.getLogger(LOGGER_NAME).log(Level.FINE,
                         "Last table file was not able to be deleted");
@@ -224,7 +231,7 @@ public class Tools {
         }
     }
 
-    public static void clearTable(TableView<Record> dataTable) {
+    public static void clearTable(TableView<Entry> dataTable) {
         dataTable.getItems().clear();
         dataTable.getColumns().clear();
     }

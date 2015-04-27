@@ -15,41 +15,39 @@
  */
 package org.cirdles.topsoil.chart;
 
+import java.util.List;
 import java.util.Optional;
 import javafx.scene.Node;
 import org.cirdles.topsoil.chart.setting.SettingScope;
+import org.cirdles.topsoil.data.Dataset;
 
 /**
  * A generalized chart that can express itself as a {@link Node}.
- * 
+ *
  * @author John Zeringue
- * @param <T> the type of data accepted by this chart
  */
-public interface Chart<T> {
-
-    /**
-     * Returns this chart as a {@link Node}. This method should always return
-     * the same object.
-     * 
-     * @return the {@link Node} representation of this chart
-     */
-    public Node asNode();
+public interface Chart extends Displayable {
 
     /**
      * Returns an {@link Optional} that contains this {@link Chart}'s if it has
      * been set and is empty otherwise.
-     * 
+     *
      * @return an {@link Optional} containing data of type <code>T</code>
      */
-    public Optional<T> getData();
+    public Optional<Dataset> getDataset();
+
+    public Optional<VariableContext> getVariableContext();
 
     /**
      * Sets this {@link Chart}'s data to the object specified.
-     * 
-     * @param data data of type <code>T</code>
+     *
+     * @param dataset
+     * @param variableContext
      */
-    public void setData(T data);
-    
+    public void setData(Dataset dataset, VariableContext variableContext);
+
+    public Optional<List<Variable>> getVariables();
+
     public SettingScope getSettingScope();
 
 }
