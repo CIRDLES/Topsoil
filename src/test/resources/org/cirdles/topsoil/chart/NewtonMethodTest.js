@@ -1,4 +1,4 @@
-/* 
+/*
 * Copyright 2015 CIRDLES.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,26 +13,26 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-buster.spec.expose();
+
+"use strict";
 
 describe("NewtonMethod", function() {
     it("should verify a self-determined oracle", function() {
-        buster.assert.equals(newtonMethod(wetherill.x, 0), 
-            newtonMethod(wetherill.x, 0));
+        expect(newtonMethod(wetherill.x, 0)).toEqual(newtonMethod(wetherill.x, 0));
     });
     describe("execution time", function() {
-        before(function() {
+        beforeEach(function() {
             var startT = new Date().getTime();
             if (newtonMethod(wetherill.x, 1)) {
                 this.t = (new Date().getTime()) - startT;
             }
         });
         it("should complete execution in less than 100 milliseconds", function() {
-            buster.assert.less(this.t, 100);
+            expect(this.t).toBeLessThan(100);
         });
     });
     describe("root accuracy", function() {
-        before(function() {
+        beforeEach(function() {
             this.f = function (x) {
                 return Math.pow(x, 7) - 1000;
             };
@@ -40,9 +40,8 @@ describe("NewtonMethod", function() {
                 return 7 * Math.pow(x, 6);
             };
         });
-        it("should return the root of the given function within 0.01+-", function() {
-            buster.assert.near(newtonMethod(this.f), 2.69008741, 0.01);
+        it("should return the root of the given function within two decimal point precision", function() {
+            expect(newtonMethod(this.f)).toBeCloseTo(2.69008741, 1);
         });
     });
 });
-
