@@ -16,9 +16,11 @@
 package org.cirdles.topsoil.app;
 
 import javafx.scene.Scene;
+import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
+import org.junit.Test;
+import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
-
 /**
  *
  * @author John Zeringue
@@ -31,5 +33,9 @@ public class TopsoilMainWindowTest extends ApplicationTest {
         stage.setScene(scene);
         stage.show();
     }
-    
+
+    @Test
+    public void testCancelImportFile() {
+        clickOn("File").clickOn("Import from TSV").closeCurrentWindow();
+    }
 }
