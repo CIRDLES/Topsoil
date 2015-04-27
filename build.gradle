@@ -1,13 +1,14 @@
 // BEGIN JAVASCRIPT SUPPORT
 plugins {
     id "com.eriwen.gradle.js" version "1.12.1"
-    id "com.github.rundis.buster" version "0.2.4.2"
+    id "com.moowork.node" version "0.9"
 }
 // END JAVASCRIPT SUPPORT
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'findbugs'
+apply plugin: 'com.moowork.node'
 
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -56,9 +57,11 @@ combineJs {
 
 processResources.dependsOn combineJs
 
-buster {
-    configFile = file('config/buster.js')
+task karmaTest(type: NodeTask, dependsOn: 'npmInstall') {
+    script = file('node_modules/karma/bin/karma')
+    args = ['start', 'config/karma.conf.js']
 }
+
 // END JAVASCRIPT SUPPORT
 
 tasks.withType(FindBugs) {
