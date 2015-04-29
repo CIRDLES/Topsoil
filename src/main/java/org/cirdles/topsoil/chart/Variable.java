@@ -20,6 +20,7 @@ import java.util.List;
 /**
  *
  * @author John Zeringue
+ * @param <T>
  */
 public interface Variable<T> {
     

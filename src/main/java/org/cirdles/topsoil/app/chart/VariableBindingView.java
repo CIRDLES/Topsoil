@@ -37,7 +37,7 @@ import org.cirdles.topsoil.data.Dataset;
 /**
  * This UI element is used by the user to choose which column in the main table determine which value of an ellipse.
  */
-public class ChartInitializationView extends CustomGridPane<ChartInitializationView> {
+public class VariableBindingView extends CustomGridPane<VariableBindingView> {
 
     private static final Map<Double, String> ERROR_SIZES = new TreeMap<>();
 
@@ -65,7 +65,7 @@ public class ChartInitializationView extends CustomGridPane<ChartInitializationV
 
     private List<Field<Number>> fields;
 
-    public ChartInitializationView(Dataset dataset) {
+    public VariableBindingView(Dataset dataset) {
         super(self -> {
             self.setAlignment(Pos.CENTER);
             self.setHgap(12);
