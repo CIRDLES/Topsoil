@@ -35,6 +35,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -52,10 +53,12 @@ import org.cirdles.topsoil.app.utils.TSVDatasetReader;
 import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
 import org.cirdles.topsoil.app.utils.DatasetReader;
 import org.cirdles.topsoil.app.utils.DatasetWriter;
-import org.cirdles.topsoil.app.chart.ChartInitializationDialog;
+import org.cirdles.topsoil.app.chart.VariableBindingDialog;
+import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.data.DatasetManager;
 import org.cirdles.topsoil.app.utils.TSVDatasetManager;
+import org.cirdles.topsoil.chart.Chart;
 
 /**
  * FXML Controller class
@@ -183,9 +186,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                         MenuItem chartItem = new MenuItem(fileName.replace(".js", ""));
 
                         chartItem.setOnAction(event -> {
-                            new ChartInitializationDialog(
-                                    getCurrentTable().map(dataTableToSet::get).get(),
-                                    new JavaScriptChart(filePath)).show();
+                            initializeAndShow(
+                                    new JavaScriptChart(filePath),
+                                    getCurrentTable().map(dataTableToSet::get).get());
                         });
 
                         chartsMenu.getItems().add(chartItem);
@@ -229,7 +232,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             table.setDataset(dataset);
             dataTableToSet.put(table, dataset);
             datasetManager.open(dataset);
-            
+
             dataset.getName().ifPresent(name -> {
                 tab.setText(name);
             });
@@ -307,30 +310,51 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         });
     }
 
+    void initializeAndShow(Chart chart, Dataset dataset) {
+        new VariableBindingDialog(dataset, chart).showAndWait()
+                .ifPresent(variableContext -> {
+                    chart.setData(dataset, variableContext);
+
+                    Parent chartWindow = new ChartWindow(chart);
+                    Scene scene = new Scene(chartWindow, 1200, 800);
+
+                    Stage chartStage = new Stage();
+                    chartStage.setScene(scene);
+                    chartStage.show();
+                });
+    }
+
+    private void createJavaScriptChart(URI javascriptURI) throws IOException {
+        Path javascriptPath;
+
+        // JARs and Netbeans builds must be handled differently
+        if (javascriptURI.toString().startsWith("jar:")) {
+            System.out.println(javascriptURI);
+            String[] uriParts = javascriptURI.toString().split("!");
+
+            Map<String, ?> env = new HashMap<>();
+            if (jarFileSystem == null) {
+                jarFileSystem = FileSystems.newFileSystem(URI.create(uriParts[0]), env);
+            }
+
+            javascriptPath = jarFileSystem.getPath(uriParts[1]);
+        } else {
+            javascriptPath = Paths.get(javascriptURI);
+        }
+
+        getCurrentTable().map(dataTableToSet::get).ifPresent(dataset -> {
+            initializeAndShow(
+                    new JavaScriptChart(javascriptPath), dataset);
+        });
+    }
+
     @FXML
     void createScatterplot() {
         try {
             // get the path to the JavaScript file
             URI javascriptURI = getClass().getResource("scatterplot.js").toURI();
-            Path javascriptPath;
-
-            // JARs and Netbeans builds must be handled differently
-            if (javascriptURI.toString().startsWith("jar:")) {
-                System.out.println(javascriptURI);
-                String[] uriParts = javascriptURI.toString().split("!");
-
-                Map<String, ?> env = new HashMap<>();
-                if (jarFileSystem == null) {
-                    jarFileSystem = FileSystems.newFileSystem(URI.create(uriParts[0]), env);
-                }
-
-                javascriptPath = jarFileSystem.getPath(uriParts[1]);
-            } else {
-                javascriptPath = Paths.get(javascriptURI);
-            }
-
-            new ChartInitializationDialog(
-                    getCurrentTable().map(dataTableToSet::get).get(), new JavaScriptChart(javascriptPath)).show();
+            
+            createJavaScriptChart(javascriptURI);
         } catch (URISyntaxException | IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -344,26 +368,8 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         try {
             // get the path to the JavaScript file
             URI javascriptURI = getClass().getResource("errorellipsechart.js").toURI();
-            Path javascriptPath;
-
-            // JARs and Netbeans builds must be handled differently
-            if (javascriptURI.toString().startsWith("jar:")) {
-                System.out.println(javascriptURI);
-                String[] uriParts = javascriptURI.toString().split("!");
-
-                Map<String, ?> env = new HashMap<>();
-                if (jarFileSystem == null) {
-                    jarFileSystem = FileSystems.newFileSystem(URI.create(uriParts[0]), env);
-                }
-
-                javascriptPath = jarFileSystem.getPath(uriParts[1]);
-            } else {
-                javascriptPath = Paths.get(javascriptURI);
-            }
-
-            new ChartInitializationDialog(
-                    getCurrentTable().map(dataTableToSet::get).get(),
-                    new JavaScriptChart(javascriptPath)).show();
+            
+            createJavaScriptChart(javascriptURI);
         } catch (URISyntaxException | IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
