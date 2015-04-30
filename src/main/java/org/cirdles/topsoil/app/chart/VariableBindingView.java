@@ -30,9 +30,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.util.StringConverter;
 import org.cirdles.javafx.CustomGridPane;
-import org.cirdles.topsoil.data.Field;
 import org.cirdles.topsoil.data.NumberField;
 import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.data.Field;
 
 /**
  * This UI element is used by the user to choose which column in the main table determine which value of an ellipse.
