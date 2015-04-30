@@ -17,4 +17,4 @@ before_install:
 
 before_script: npm install -g buster
 
-script: ./gradlew check busterTest
+script: ./gradlew check busterTest --stacktrace
