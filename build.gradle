@@ -74,7 +74,6 @@ repositories {
 
 dependencies {
     compile 'org.controlsfx:controlsfx:8.20.8'
-    compile 'gov.nist.math:jama:1.0.3'
     compile 'net.sf.opencsv:opencsv:2.3'
 
     testCompile 'junit:junit:4.10'
