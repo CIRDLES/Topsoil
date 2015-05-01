@@ -15,11 +15,11 @@
  */
 package org.cirdles.topsoil.app.table;
 
-import org.cirdles.topsoil.data.Field;
 import javafx.beans.value.ObservableValueBase;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
 import org.cirdles.topsoil.data.Entry;
+import org.cirdles.topsoil.data.Field;
 
 /**
  *
@@ -32,7 +32,6 @@ public class EntryTableColumn<T> extends TableColumn<Entry, T> {
 
     public EntryTableColumn(Field<T> field) {
         setText(field.getName());
-        textProperty().bindBidirectional(field.nameProperty());
 
         setCellValueFactory((CellDataFeatures<Entry, T> param) -> new ObservableValueBase<T>() {
             

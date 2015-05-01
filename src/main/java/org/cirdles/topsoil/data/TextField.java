@@ -22,11 +22,7 @@ import javafx.util.StringConverter;
  *
  * @author zeringuej
  */
-public class TextField extends Field<String> {
-
-    public TextField() {
-        super();
-    }
+public class TextField extends BaseField<String> {
     
     public TextField(String name) {
         super(name);

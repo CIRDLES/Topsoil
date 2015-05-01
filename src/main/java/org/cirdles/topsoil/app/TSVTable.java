@@ -32,7 +32,6 @@ import org.cirdles.topsoil.app.utils.DatasetReader;
 import org.cirdles.topsoil.app.utils.DatasetWriter;
 import org.cirdles.topsoil.data.Dataset;
 import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.data.Field;
 import org.cirdles.topsoil.data.NumberField;
 import org.cirdles.topsoil.data.TextField;
 
@@ -69,7 +68,7 @@ public class TSVTable extends TableView<Entry> {
         clear();
         
         // create columns for fields
-        for (Field field : dataset.getFields()) {
+        dataset.getFields().stream().forEach(field -> {
             if (field instanceof NumberField) {
                 NumberField numberField = (NumberField) field;
                 getColumns().add(new EntryTableColumn<>(numberField));
@@ -77,7 +76,7 @@ public class TSVTable extends TableView<Entry> {
                 TextField textField = (TextField) field;
                 getColumns().add(new EntryTableColumn<>(textField));
             }
-        }
+        });
         
         // set data
         setItems(FXCollections.observableList(dataset.getEntries()));
