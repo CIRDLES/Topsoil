@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.app;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -118,14 +119,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     }
 
     Optional<TSVTable> getCurrentTable() {
-        Optional<TSVTable> result = Optional.empty();
-        Tab currentTab = dataTableTabPane.getSelectionModel().getSelectedItem();
-
-        if (currentTab.getContent() instanceof TSVTable) {
-            result = Optional.of((TSVTable) currentTab.getContent());
-        }
-
-        return result;
+        return getCurrentTab().map(tab -> (TSVTable) tab.getContent());
     }
 
     @FXML
@@ -164,6 +158,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                     datasetName + "__open____headers__.tsv");
 
             getCurrentTable().ifPresent(table -> table.saveToPath(datasetPath));
+            getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
         });
 
         // reload
@@ -239,8 +234,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         }
     }
 
-    Tab getCurrentTab() {
-        return dataTableTabPane.getSelectionModel().getSelectedItem();
+    Optional<Tab> getCurrentTab() {
+        return Optional.ofNullable(
+                dataTableTabPane.getSelectionModel().getSelectedItem());
     }
 
     void setWindowTitle(String title) {
@@ -279,14 +275,12 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         sceneProperty().addListener(sceneListener);
     }
 
-    @FXML
-    void importFromFile() {
-        TSVTable dataTable = getCurrentTable().get();
+    public TSVTable createTable() {
+        return (TSVTable) createTab().getContent();
+    }
 
-        FileChooser tsvChooser = new FileChooser();
-        tsvChooser.setInitialDirectory(Topsoil.USER_HOME.toFile());
-        tsvChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Table Files", "TSV"));
-        Path filePath = tsvChooser.showOpenDialog(getScene().getWindow()).toPath();
+    void importFromFile(Path filePath) {
+        TSVTable dataTable = getCurrentTable().orElseGet(this::createTable);
 
         // JFB for now, assume error chart is only chart style
         dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
@@ -309,7 +303,19 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             }
         });
     }
+    
+    @FXML
+    void importFromFile() {
+        FileChooser tsvChooser = new FileChooser();
+        tsvChooser.setInitialDirectory(Topsoil.USER_HOME.toFile());
+        tsvChooser.setSelectedExtensionFilter(
+                new FileChooser.ExtensionFilter("Table Files", "TSV"));
 
+        Optional.ofNullable(tsvChooser.showOpenDialog(getScene().getWindow()))
+                .map(File::toPath)
+                .ifPresent(this::importFromFile);
+    }
+    
     void initializeAndShow(Chart chart, Dataset dataset) {
         new VariableBindingDialog(dataset, chart).showAndWait()
                 .ifPresent(variableContext -> {
@@ -347,7 +353,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                     new JavaScriptChart(javascriptPath), dataset);
         });
     }
-
+    
     @FXML
     void createScatterplot() {
         try {
