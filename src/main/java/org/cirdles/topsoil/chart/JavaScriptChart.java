@@ -45,6 +45,15 @@ import org.w3c.dom.Element;
  * @author John Zeringue
  */
 public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
+    
+    private static final Variable X = new IndependentVariable("x");
+    private static final Variable SIGMA_X = new DependentVariable("sigma_x", X);
+    private static final Variable Y = new IndependentVariable("y");
+    private static final Variable SIGMA_Y = new DependentVariable("sigma_y", Y);
+    private static final Variable RHO = new IndependentVariable("rho");
+    
+    private static final List<Variable> VARIABLES
+            = Arrays.asList(X, SIGMA_X, Y, SIGMA_Y, RHO);
 
     private static final String HTML_TEMPLATE;
 
@@ -264,16 +273,8 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
     }
 
     @Override
-    public Optional<List<Variable>> getVariables() {
-        Variable x = new IndependentVariable("x");
-        Variable sigmaX = new DependentVariable("sigma_x", x);
-        Variable y = new IndependentVariable("y");
-        Variable sigmaY = new DependentVariable("sigma_y", y);
-        Variable rho = new IndependentVariable("rho");
-
-        return Optional.of(Arrays.asList(
-                x, sigmaX, y, sigmaY, rho
-        ));
+    public List<Variable> getVariables() {
+        return VARIABLES;
     }
 
     /**
