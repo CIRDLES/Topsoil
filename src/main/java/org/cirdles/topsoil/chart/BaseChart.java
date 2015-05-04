@@ -42,9 +42,9 @@ public abstract class BaseChart implements Chart {
     }
 
     @Override
-    public void setData(Dataset dataset, VariableContext variableBindings) {
-        this.dataset = Optional.ofNullable(dataset);
-        this.variableBindings = Optional.ofNullable(variableBindings);
+    public void setData(VariableContext variableContext) {
+        this.dataset = Optional.ofNullable(variableContext.getDataset());
+        this.variableBindings = Optional.ofNullable(variableContext);
     }
 
     @Override

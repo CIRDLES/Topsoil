@@ -18,6 +18,7 @@ package org.cirdles.topsoil.chart;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import org.cirdles.topsoil.data.Dataset;
 import org.cirdles.topsoil.data.Entry;
 import org.cirdles.topsoil.data.Field;
 
@@ -28,6 +29,8 @@ import org.cirdles.topsoil.data.Field;
 public interface VariableContext {
 
     public Collection<Variable> getVariables();
+    
+    public Dataset getDataset();
 
     public Collection<VariableBinding> getBindings();
 

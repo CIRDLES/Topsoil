@@ -41,10 +41,9 @@ public interface Chart extends Displayable {
     /**
      * Sets this {@link Chart}'s data to the object specified.
      *
-     * @param dataset
      * @param variableContext
      */
-    public void setData(Dataset dataset, VariableContext variableContext);
+    public void setData(VariableContext variableContext);
 
     public Optional<List<Variable>> getVariables();
 
