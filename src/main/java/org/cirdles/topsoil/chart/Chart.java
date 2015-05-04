@@ -45,7 +45,7 @@ public interface Chart extends Displayable {
      */
     public void setData(VariableContext variableContext);
 
-    public Optional<List<Variable>> getVariables();
+    public List<Variable> getVariables();
 
     public SettingScope getSettingScope();
 

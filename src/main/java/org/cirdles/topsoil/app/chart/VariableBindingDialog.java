@@ -15,12 +15,14 @@
  */
 package org.cirdles.topsoil.app.chart;
 
+import java.util.List;
 import javafx.scene.control.ButtonType;
 import static javafx.scene.control.ButtonType.OK;
 import javafx.scene.control.Dialog;
 import org.cirdles.topsoil.app.UncertaintyVariableFormat;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.SimpleVariableContext;
+import org.cirdles.topsoil.chart.Variable;
 import org.cirdles.topsoil.chart.VariableContext;
 import org.cirdles.topsoil.data.Dataset;
 
@@ -43,34 +45,33 @@ public class VariableBindingDialog extends Dialog<VariableContext> {
                 = (VariableBindingDialogPane) getDialogPane();
 
         VariableContext variableContext = new SimpleVariableContext(dataset);
+        List<Variable> variables = chart.getVariables();
 
-        chart.getVariables().ifPresent(variables -> {
-            // x
-            variableContext.addBinding(
-                    variables.get(0), columnSelector.getXSelection());
+        // x
+        variableContext.addBinding(
+                variables.get(0), columnSelector.getXSelection());
 
-            // sigma x
-            variableContext.addBinding(
-                    variables.get(1), columnSelector.getSigmaXSelection(),
-                    new UncertaintyVariableFormat(
-                            columnSelector.getSigmaXErrorSize(),
-                            columnSelector.getSigmaXExpressionType()));
+        // sigma x
+        variableContext.addBinding(
+                variables.get(1), columnSelector.getSigmaXSelection(),
+                new UncertaintyVariableFormat(
+                        columnSelector.getSigmaXErrorSize(),
+                        columnSelector.getSigmaXExpressionType()));
 
-            // y
-            variableContext.addBinding(
-                    variables.get(2), columnSelector.getYSelection());
+        // y
+        variableContext.addBinding(
+                variables.get(2), columnSelector.getYSelection());
 
-            // sigma y
-            variableContext.addBinding(
-                    variables.get(3), columnSelector.getSigmaYSelection(),
-                    new UncertaintyVariableFormat(
-                            columnSelector.getSigmaYErrorSize(),
-                            columnSelector.getSigmaYExpressionType()));
+        // sigma y
+        variableContext.addBinding(
+                variables.get(3), columnSelector.getSigmaYSelection(),
+                new UncertaintyVariableFormat(
+                        columnSelector.getSigmaYErrorSize(),
+                        columnSelector.getSigmaYExpressionType()));
 
-            // rho
-            variableContext.addBinding(
-                    variables.get(4), columnSelector.getRhoSelection());
-        });
+        // rho
+        variableContext.addBinding(
+                variables.get(4), columnSelector.getRhoSelection());
 
         return variableContext;
     }
