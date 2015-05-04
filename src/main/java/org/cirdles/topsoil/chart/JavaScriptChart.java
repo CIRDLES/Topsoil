@@ -235,8 +235,8 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
      * @param variableContext
      */
     @Override
-    public void setData(Dataset dataset, VariableContext variableContext) {
-        super.setData(dataset, variableContext);
+    public void setData(VariableContext variableContext) {
+        super.setData(variableContext);
 
         // this chart's node (a WebView) is lazily instantiated
         initializeWebViewIfNeeded();
@@ -247,7 +247,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         afterInitialization(() -> {
             topsoil.call("clearData"); // old data must be cleared away
 
-            dataset.getEntries().forEach(entry -> {
+            variableContext.getDataset().getEntries().forEach(entry -> {
                 JSObject row = (JSObject) webEngine.executeScript("new Object()");
 
                 variableContext.getBindings().forEach(variableBinding -> {

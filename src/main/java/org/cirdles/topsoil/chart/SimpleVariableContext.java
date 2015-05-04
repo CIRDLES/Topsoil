@@ -18,17 +18,28 @@ package org.cirdles.topsoil.chart;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import org.cirdles.topsoil.data.Dataset;
 import org.cirdles.topsoil.data.Field;
 
 public class SimpleVariableContext implements VariableContext {
 
     private final Collection<VariableBinding> bindings = new ArrayList<>();
+    private final Dataset dataset;
+
+    public SimpleVariableContext(Dataset dataset) {
+        this.dataset = dataset;
+    }
 
     @Override
     public Collection<Variable> getVariables() {
         return getBindings().stream()
                 .map(VariableBinding::getVariable)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public Dataset getDataset() {
+        return dataset;
     }
 
     @Override

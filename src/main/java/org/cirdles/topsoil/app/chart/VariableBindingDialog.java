@@ -26,9 +26,11 @@ import org.cirdles.topsoil.data.Dataset;
 
 public class VariableBindingDialog extends Dialog<VariableContext> {
 
+    private final Dataset dataset;
     private final Chart chart;
 
     public VariableBindingDialog(Dataset dataset, Chart chart) {
+        this.dataset = dataset;
         this.chart = chart;
 
         setDialogPane(new VariableBindingDialogPane(dataset));
@@ -40,7 +42,7 @@ public class VariableBindingDialog extends Dialog<VariableContext> {
         VariableBindingDialogPane columnSelector
                 = (VariableBindingDialogPane) getDialogPane();
 
-        VariableContext variableContext = new SimpleVariableContext();
+        VariableContext variableContext = new SimpleVariableContext(dataset);
 
         chart.getVariables().ifPresent(variables -> {
             // x
