@@ -15,11 +15,11 @@
  */
 package org.cirdles.topsoil.app;
 
+import org.cirdles.OSXIncompatible;
 import javafx.scene.Scene;
-import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import org.junit.Test;
-import static org.testfx.api.FxAssert.verifyThat;
+import org.junit.experimental.categories.Category;
 import org.testfx.framework.junit.ApplicationTest;
 /**
  *
@@ -35,6 +35,7 @@ public class TopsoilMainWindowTest extends ApplicationTest {
     }
 
     @Test
+    @Category(OSXIncompatible.class)
     public void testCancelImportFile() {
         clickOn("File").clickOn("Import from TSV").closeCurrentWindow();
     }

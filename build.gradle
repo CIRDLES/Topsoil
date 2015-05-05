@@ -39,6 +39,14 @@ task jarWithDependencies(type: Jar) {
     with jar
 }
 
+test {
+    useJUnit {
+        if (System.getProperty("os.name").startsWith("Mac OS")) {
+            excludeCategories 'org.cirdles.OSXIncompatible'
+        }
+    }
+}
+
 // BEGIN JAVASCRIPT SUPPORT
 javascript.source {
     topsoil {
