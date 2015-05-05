@@ -16,6 +16,7 @@
 
 package org.cirdles.topsoil.data;
 
+import static java.lang.Double.NaN;
 import javafx.util.StringConverter;
 
 /**
@@ -43,7 +44,13 @@ public class NumberField extends BaseField<Number> {
 
             @Override
             public Number fromString(String string) {
-                return Double.valueOf(string);
+
+                //Check for valid numbers
+                try {
+                    return Double.valueOf(string);
+                } catch (NumberFormatException e) {
+                    return NaN;
+                }
             }
             
         };

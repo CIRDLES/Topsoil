@@ -49,6 +49,7 @@ public class TSVTable extends TableView<Entry> {
 
     public TSVTable() {
         this.requiredColumnCount = 0;
+        this.setEditable(true);
         
         this.setOnKeyPressed((KeyEvent event) -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
