@@ -6,45 +6,5 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root xmlns:fx="http://javafx.com/fxml/1" type="GridPane">
-    <children>
-        <!-- Row 0-->
-        <Label text="%xLabelText" 
-               GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <ChoiceBox fx:id="choiceBoxX"
-                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-        
-        <!-- Row 1 -->
-        <Label text="%sigmaXLabelText"
-               GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <ChoiceBox fx:id="choiceBoxSigmaX"
-                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-        <ChoiceBox fx:id="choiceBoxErrorSizeSigmaX"
-                   GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-        <ChoiceBox fx:id="choiceBoxExpressionTypeSigmaX"
-                   GridPane.rowIndex="1" GridPane.columnIndex="3"/>
-        
-        <!-- Row 2 -->
-        <Label text="%yLabelText"
-               GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <ChoiceBox fx:id="choiceBoxY"
-                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-        
-        <!-- Row 3 -->
-        <Label text="%sigmaYLabelText"
-               GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <ChoiceBox fx:id="choiceBoxSigmaY"
-                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-        <ChoiceBox fx:id="choiceBoxErrorSizeSigmaY"
-                   GridPane.rowIndex="3" GridPane.columnIndex="2"/>
-        <ChoiceBox fx:id="choiceBoxExpressionTypeSigmaY"
-                   GridPane.rowIndex="3" GridPane.columnIndex="3"/>
-        
-        <!-- Row 4 -->
-        <Label text="%rhoLabelText"
-               GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <ChoiceBox fx:id="choiceBoxRho"
-                   GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-         
-    </children>
-</fx:root>
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="VBox"
+         spacing="8" />

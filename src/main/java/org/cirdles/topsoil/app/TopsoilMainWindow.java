@@ -317,7 +317,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     }
     
     void initializeAndShow(Chart chart, Dataset dataset) {
-        new VariableBindingDialog(dataset, chart).showAndWait()
+        new VariableBindingDialog(chart.getVariables(), dataset).showAndWait()
                 .ifPresent(variableContext -> {
                     chart.setData(variableContext);
 

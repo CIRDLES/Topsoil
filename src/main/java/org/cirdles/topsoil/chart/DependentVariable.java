@@ -15,6 +15,8 @@
  */
 package org.cirdles.topsoil.chart;
 
+import java.util.List;
+
 /**
  *
  * @author John Zeringue
@@ -26,6 +28,12 @@ public class DependentVariable<T> extends BaseVariable<T> {
 
     public DependentVariable(String name, Variable<T> dependency) {
         super(name);
+        this.dependency = dependency;
+    }
+
+    public DependentVariable(String name, Variable<T> dependency,
+            List<VariableFormat> formats) {
+        super(name, formats);
         this.dependency = dependency;
     }
     
