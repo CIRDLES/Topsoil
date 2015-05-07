@@ -17,14 +17,10 @@ package org.cirdles.topsoil.app;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -330,55 +326,20 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 });
     }
 
-    private void createJavaScriptChart(URI javascriptURI) throws IOException {
-        Path javascriptPath;
-
-        // JARs and Netbeans builds must be handled differently
-        if (javascriptURI.toString().startsWith("jar:")) {
-            System.out.println(javascriptURI);
-            String[] uriParts = javascriptURI.toString().split("!");
-
-            Map<String, ?> env = new HashMap<>();
-            if (jarFileSystem == null) {
-                jarFileSystem = FileSystems.newFileSystem(URI.create(uriParts[0]), env);
-            }
-
-            javascriptPath = jarFileSystem.getPath(uriParts[1]);
-        } else {
-            javascriptPath = Paths.get(javascriptURI);
-        }
-
+    private void initializeAndShow(JavaScriptChart javaScriptChart) {
         getCurrentTable().map(dataTableToSet::get).ifPresent(dataset -> {
-            initializeAndShow(
-                    new JavaScriptChart(javascriptPath), dataset);
+            initializeAndShow(javaScriptChart, dataset);
         });
     }
     
     @FXML
     void createScatterplot() {
-        try {
-            // get the path to the JavaScript file
-            URI javascriptURI = getClass().getResource("scatterplot.js").toURI();
-            
-            createJavaScriptChart(javascriptURI);
-        } catch (URISyntaxException | IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
+        initializeAndShow(new ScatterplotChart());
     }
 
-    /**
-     * For the new JS charts, {@link #createErrorChart} is the old method.
-     */
     @FXML
     void createErrorEllipseChart() {
-        try {
-            // get the path to the JavaScript file
-            URI javascriptURI = getClass().getResource("errorellipsechart.js").toURI();
-            
-            createJavaScriptChart(javascriptURI);
-        } catch (URISyntaxException | IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
+        initializeAndShow(new ErrorEllipseChart());
     }
 
     @FXML
@@ -390,4 +351,5 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     void emptyTable() {
         getCurrentTable().ifPresent(TSVTable::clear);
     }
+    
 }
