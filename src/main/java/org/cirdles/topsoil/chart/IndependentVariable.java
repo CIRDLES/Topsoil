@@ -15,6 +15,8 @@
  */
 package org.cirdles.topsoil.chart;
 
+import java.util.List;
+
 /**
  *
  * @author John Zeringue
@@ -23,6 +25,10 @@ public class IndependentVariable<T> extends BaseVariable<T> {
     
     public IndependentVariable(String name) {
         super(name);
+    }
+
+    public IndependentVariable(String name, List<VariableFormat> formats) {
+        super(name, formats);
     }
     
 }

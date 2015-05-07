@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
@@ -35,7 +34,7 @@ import javafx.scene.web.WebView;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import netscape.javascript.JSObject;
-import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.data.Entry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -45,13 +44,67 @@ import org.w3c.dom.Element;
  * @author John Zeringue
  */
 public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
+
+    private static final VariableFormat<Number> ONE_SIGMA_ABSOLUTE
+            = new BaseVariableFormat<Number>("1σ (Abs)") {
+
+                @Override
+                public Number normalize(VariableBinding<Number> binding,
+                        Entry entry) {
+                    return entry.get(binding.getField()).get().doubleValue();
+                }
+
+            };
+
+    private static final VariableFormat<Number> ONE_SIGMA_PERCENT
+            = new DependentVariableFormat<Number>("1σ (%)") {
+
+                @Override
+                public Number normalize(Number variableValue,
+                        Number dependencyValue) {
+                    return variableValue.doubleValue()
+                    * dependencyValue.doubleValue() / 100;
+                }
+
+            };
+
+    private static final VariableFormat<Number> TWO_SIGMA_ABSOLUTE
+            = new BaseVariableFormat<Number>("2σ (Abs)") {
+
+                @Override
+                public Number normalize(VariableBinding<Number> binding,
+                        Entry entry) {
+                    return entry.get(binding.getField()).get().doubleValue() / 2;
+                }
+
+            };
+
+    private static final VariableFormat<Number> TWO_SIGMA_PERCENT
+            = new DependentVariableFormat<Number>("2σ (%)") {
+
+                @Override
+                public Number normalize(Number variableValue,
+                        Number dependencyValue) {
+                    return variableValue.doubleValue()
+                    * dependencyValue.doubleValue() / 200;
+                }
+
+            };
     
+    private static final List<VariableFormat> UNCERTAINTY_FORMATS
+            = Arrays.asList(
+                    ONE_SIGMA_ABSOLUTE,
+                    ONE_SIGMA_PERCENT,
+                    TWO_SIGMA_ABSOLUTE,
+                    TWO_SIGMA_PERCENT
+            );
+
     private static final Variable X = new IndependentVariable("x");
-    private static final Variable SIGMA_X = new DependentVariable("sigma_x", X);
+    private static final Variable SIGMA_X = new DependentVariable("sigma_x", X, UNCERTAINTY_FORMATS);
     private static final Variable Y = new IndependentVariable("y");
-    private static final Variable SIGMA_Y = new DependentVariable("sigma_y", Y);
+    private static final Variable SIGMA_Y = new DependentVariable("sigma_y", Y, UNCERTAINTY_FORMATS);
     private static final Variable RHO = new IndependentVariable("rho");
-    
+
     private static final List<Variable> VARIABLES
             = Arrays.asList(X, SIGMA_X, Y, SIGMA_Y, RHO);
 
@@ -240,7 +293,6 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
      * in the following order: <code>x</code>, <code>σx</code>, <code>y</code>,
      * <code>σy</code>, <code>ρ</code>.
      *
-     * @param dataset
      * @param variableContext
      */
     @Override
