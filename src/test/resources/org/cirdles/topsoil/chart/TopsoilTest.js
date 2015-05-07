@@ -1,4 +1,4 @@
-/* 
+/*
 * Copyright 2015 CIRDLES.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,14 @@
 * limitations under the License.
 */
 
-buster.spec.expose();
+"use strict";
 
 describe("Topsoil", function() {
    it("has an instance of 'topsoil'", function() {
-       buster.assert.equals("object", typeof topsoil);
+       expect("object").toEqual(typeof topsoil);
    });
-   
+
    it("has an instance alias 'ts'", function() {
-       buster.assert.equals(topsoil, ts);
+       expect(topsoil).toEqual(ts);
    });
 });

@@ -1,4 +1,4 @@
-/* 
+/*
 * Copyright 2015 CIRDLES.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,30 +14,25 @@
 * limitations under the License.
 */
 
-buster.spec.expose();
+"use strict";
 
 describe("Vector2D", function() {
     it("should have x attribute", function() {
-        buster.assert.equals(5, (new Vector2D(5, 5)).x);
+        expect((new Vector2D(5, 5)).x).toEqual(5);
     });
     it("should have y attribute", function() {
-        buster.assert.equals(5, (new Vector2D(5, 5)).y);
+        expect((new Vector2D(5, 5)).y).toEqual(5);
     });
     it("can add itself to another vector", function() {
-        buster.assert.equals(new Vector2D(6, 6), 
-            (new Vector2D(5, 5)).plus({x:1,y:1}));
+        expect(new Vector2D(6, 6)).toEqual((new Vector2D(5, 5)).plus({x:1,y:1}));
     });
     it("can subtract another vector from itself", function() {
-        buster.assert.equals(new Vector2D(4, 4), 
-            (new Vector2D(5, 5)).minus({x:1,y:1}));
+      expect(new Vector2D(4, 4)).toEqual((new Vector2D(5, 5)).minus({x:1,y:1}));
     });
     it("should be able to multiply itself by a scalar", function() {
-        buster.assert.equals(new Vector2D(25, 25), 
-            (new Vector2D(5, 5)).times(5));
+        expect(new Vector2D(25, 25)).toEqual((new Vector2D(5, 5)).times(5));
     });
     it("should be able to divide itself by a scalar", function() {
-        buster.assert.equals(new Vector2D(1, 1), 
-            (new Vector2D(5, 5)).dividedBy(5));
+        expect(new Vector2D(1, 1)).toEqual((new Vector2D(5, 5)).dividedBy(5));
     });
 });
-
