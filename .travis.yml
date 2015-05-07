@@ -18,3 +18,10 @@ before_install:
 before_script: npm install -g buster
 
 script: ./gradlew check busterTest --info
+
+# add Gitter integration
+notifications:
+  webhooks:
+    urls: https://webhooks.gitter.im/e/7545741f25d3397d0a1e
+    on_success: change
+  # on_failure: always
