@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.app.table;
 
+import java.beans.EventHandler;
 import javafx.beans.value.ObservableValueBase;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -41,14 +42,14 @@ public class EntryTableColumn<T> extends TableColumn<Entry, T> {
             }
         });
         setCellFactory(TextFieldTableCell.forTableColumn(field.getStringConverter()));
-        setOnEditCommit((CellEditEvent<Entry, T> event) -> {
-            event.getRowValue().set(field, event.getNewValue());
-        });
         
+        setOnEditCommit(new CellEditEventHandler<>(field));
+
         this.field = field;
     }
     
     public Field<T> getField() {
         return field;
     }
+    
 }
