@@ -34,6 +34,9 @@ public class DefaultJavaScriptChart extends JavaScriptChart {
 
     private static final String JAR_SCHEME = "jar";
 
+    private static final Map<String, FileSystem> FILE_SYSTEMS
+            = new HashMap<>();
+
     public DefaultJavaScriptChart(String resourceName, Class clazz) {
         super(resourceToPath(resourceName, clazz));
     }
@@ -43,17 +46,24 @@ public class DefaultJavaScriptChart extends JavaScriptChart {
         return clazz.getResource(name).toURI();
     }
 
-    private static Path uriToPath(URI uri) throws IOException {
+    private static Path uriToPath(URI uri) {
         Path path;
 
         if (uri.getScheme().equals(JAR_SCHEME)) {
             String[] uriParts = uri.toString().split("!");
 
+            // retrieve or build file system
             Map<String, ?> env = new HashMap<>();
-            try (FileSystem fileSystem
-                    = newFileSystem(URI.create(uriParts[0]), env)) {
-                path = fileSystem.getPath(uriParts[1]);
-            }
+            FileSystem fileSystem = FILE_SYSTEMS.computeIfAbsent(uriParts[0],
+                    jarPath -> {
+                        try {
+                            return newFileSystem(URI.create(jarPath), env);
+                        } catch (IOException ex) {
+                            return null;
+                        }
+                    });
+            
+            path = fileSystem.getPath(uriParts[1]);
         } else { // assume file scheme
             path = Paths.get(uri);
         }
@@ -64,7 +74,7 @@ public class DefaultJavaScriptChart extends JavaScriptChart {
     private static Path resourceToPath(String name, Class clazz) {
         try {
             return uriToPath(resourceToURI(name, clazz));
-        } catch (IOException | URISyntaxException ex) {
+        } catch (URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
     }
