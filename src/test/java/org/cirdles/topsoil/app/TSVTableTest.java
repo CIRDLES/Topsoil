@@ -23,7 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TableView;
 import javafx.stage.Stage;
+import org.cirdles.TableSelector;
+import org.cirdles.topsoil.dataset.entry.Entry;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
@@ -36,35 +39,41 @@ import static org.testfx.matcher.control.TableViewMatchers.*;
  */
 public class TSVTableTest extends ApplicationTest {
 
+    private static final Logger LOGGER
+            = Logger.getLogger(TSVTableTest.class.getName());
+
+    private TableView<Entry> tsvTable;
+    private TableSelector<Entry> tableSelector;
+
     private Parent getRootNode() {
         // generate path to the sample TSV file
         Path sampleTSVPath = null;
+
         try {
             URI sampleTSV_URI = getClass().getResource("sample.tsv").toURI();
             sampleTSVPath = Paths.get(sampleTSV_URI);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(TSVTableTest.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
-        
-        TSVTable testTSVTable = new TSVTable(sampleTSVPath);
-        testTSVTable.setId("tsvTable");
-        return testTSVTable;
+
+        tsvTable = new TSVTable(sampleTSVPath);
+        tableSelector = new TableSelector(tsvTable);
+
+        return tsvTable;
     }
-    
+
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(getRootNode());
         stage.setScene(scene);
         stage.show();
     }
-    
+
     @Test
     public void tsvTable_should_correctlyLoadABasicTSVFile() {
-        verifyThat("#tsvTable", hasTableCell(29.165688743)); // the first number in the file
-//        verifyThat("#tsvTable", hasTableCell(0.915025602)); // the last number in the file
-        verifyThat("#tsvTable", hasTableCell(0.702153693)); // a number in the middle
-        
-        verifyThat("#tsvTable", hasItems(17)); // sample.tsv contains 17 lines
-    }
-    
+        verifyThat(tsvTable, hasTableCell(29.165688743)); // the first number in the file
+        verifyThat(tsvTable, hasTableCell(0.702153693)); // a number in the middle
+
+        verifyThat(tsvTable, hasItems(17)); // sample.tsv contains 17 lines
+    }   
 }

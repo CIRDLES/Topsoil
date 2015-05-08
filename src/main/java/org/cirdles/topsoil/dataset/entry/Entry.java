@@ -23,9 +23,13 @@ import java.util.Optional;
  * @author John Zeringue
  */
 public interface Entry {
-    
+
     public <T> Optional<T> get(Field<? extends T> field);
-    
+
     public <T> void set(Field<? super T> field, T value);
-    
+
+    public void addListener(EntryListener listener);
+
+    public void removeListener(EntryListener listener);
+
 }

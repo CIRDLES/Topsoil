@@ -13,28 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.dataset;
+package org.cirdles.topsoil.dataset.field;
 
-import org.cirdles.topsoil.dataset.field.Field;
-import static java.util.Collections.emptyList;
-import java.util.List;
-import java.util.Optional;
-import javafx.collections.ObservableList;
+import javafx.scene.control.TableRow;
+import javafx.util.StringConverter;
 import org.cirdles.topsoil.dataset.entry.Entry;
 
 /**
  *
- * @author John Zeringue
+ * @author parizotclement
  */
-public interface Dataset {
-
-    public static final Dataset EMPTY_DATASET
-            = new SimpleDataset(emptyList(), emptyList());
+public final class Fields {
     
-    public Optional<String> getName();
+    public static final BooleanField SELECTED = new BooleanField("Selected");
+    
+    public static final Field<TableRow<Entry>> ROW = new Field(){
 
-    public List<Field<?>> getFields();
+        @Override
+        public String getName() {
+            return "Row";
+        }
 
-    public ObservableList<Entry> getEntries();
+        @Override
+        public StringConverter getStringConverter() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        
+    };
     
 }

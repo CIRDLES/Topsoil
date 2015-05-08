@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
@@ -45,12 +46,16 @@ public class TSVTable extends TableView<Entry> {
 
     public TSVTable() {
         this.setEditable(true);
-        
+        this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         this.setOnKeyPressed((KeyEvent event) -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
                 pasteFromClipboard();
             }
         });
+
+        //Context Menu
+        setRowFactory(new EntryRowFactory());
     }
 
     public TSVTable(Path savePath) {
@@ -59,10 +64,10 @@ public class TSVTable extends TableView<Entry> {
         this.savePath = savePath;
         load();
     }
-    
+
     public void setDataset(Dataset dataset) {
         clear();
-        
+
         // create columns for fields
         dataset.getFields().stream().forEach(field -> {
             if (field instanceof NumberField) {
@@ -73,13 +78,13 @@ public class TSVTable extends TableView<Entry> {
                 getColumns().add(new EntryTableColumn<>(textField));
             }
         });
-        
+
         // set data
         setItems(FXCollections.observableList(dataset.getEntries()));
-        
+
         this.dataset = dataset;
     }
-    
+
     public Dataset getDataset() {
         return dataset;
     }
@@ -90,7 +95,7 @@ public class TSVTable extends TableView<Entry> {
     public void pasteFromClipboard() {
         Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
             DatasetReader tableReader = new TSVDatasetReader(response);
-            
+
             try {
                 Dataset dataset
                         = tableReader.read(Clipboard.getSystemClipboard().getString());
@@ -112,7 +117,7 @@ public class TSVTable extends TableView<Entry> {
         getItems().clear();
         getColumns().clear();
     }
-    
+
     public void load() {
         if (savePath != null) {
             loadFromPath(savePath);
@@ -130,7 +135,7 @@ public class TSVTable extends TableView<Entry> {
             }
         }
     }
-    
+
     public void save() {
         if (savePath != null) {
             saveToPath(savePath);
@@ -148,7 +153,7 @@ public class TSVTable extends TableView<Entry> {
         }
 
         DatasetWriter tableWriter = new TSVDatasetWriter();
-        
+
         try {
             tableWriter.write(getDataset(), savePath);
         } catch (IOException ex) {
@@ -173,5 +178,4 @@ public class TSVTable extends TableView<Entry> {
     public void setSavePath(Path savePath) {
         this.savePath = savePath;
     }
-
 }

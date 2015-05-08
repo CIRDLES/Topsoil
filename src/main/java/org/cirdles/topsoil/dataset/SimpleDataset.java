@@ -15,10 +15,12 @@
  */
 package org.cirdles.topsoil.dataset;
 
-import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.field.Field;
 import java.util.List;
 import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.cirdles.topsoil.dataset.entry.Entry;
 
 /**
  *
@@ -27,13 +29,13 @@ import java.util.Optional;
 public class SimpleDataset implements Dataset {
  
     private final List<Field<?>> fields;
-    private final List<Entry> entries;
+    private final ObservableList<Entry> entries;
     
     private Optional<String> name = Optional.empty();
 
     public SimpleDataset(List<Field<?>> fields, List<Entry> entries) {
         this.fields = fields;
-        this.entries = entries;
+        this.entries = FXCollections.observableArrayList(entries);
     }
 
     @Override
@@ -47,9 +49,9 @@ public class SimpleDataset implements Dataset {
     }
 
     @Override
-    public List<Entry> getEntries() {
+    public ObservableList<Entry> getEntries() {
         return entries;
-    }
+    }    
 
     /**
      * @param name the name to set

@@ -13,28 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.dataset;
+package org.cirdles.topsoil.dataset.entry;
 
 import org.cirdles.topsoil.dataset.field.Field;
-import static java.util.Collections.emptyList;
-import java.util.List;
-import java.util.Optional;
-import javafx.collections.ObservableList;
-import org.cirdles.topsoil.dataset.entry.Entry;
 
 /**
  *
- * @author John Zeringue
+ * @author parizotclement
  */
-public interface Dataset {
-
-    public static final Dataset EMPTY_DATASET
-            = new SimpleDataset(emptyList(), emptyList());
+@FunctionalInterface
+public interface EntryListener {
     
-    public Optional<String> getName();
-
-    public List<Field<?>> getFields();
-
-    public ObservableList<Entry> getEntries();
+    public void changed(Entry entry, Field field);
     
 }
