@@ -55,7 +55,7 @@ public class NodeToSVGConverter {
         try {
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         } catch (ParserConfigurationException | TransformerConfigurationException ex) {
             Logger.getLogger(NodeToSVGConverter.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -198,7 +198,7 @@ public class NodeToSVGConverter {
         } else if (node instanceof Circle) {
             element = convertCircle(node, element, document);
         } else if (node instanceof Rectangle) {
-            element = convertRectangle((Rectangle) node, element, document);
+            element = convertRectangle((Rectangle) node, document);
         } else if (node instanceof Text) {
             Text text = (Text) node;
 
@@ -347,7 +347,7 @@ public class NodeToSVGConverter {
         }
     }
 
-    private Element convertRectangle(Rectangle rectangle, Element element, Document document) {
+    private Element convertRectangle(Rectangle rectangle, Document document) {
         Element rect = document.createElement("rect");
         rect.setAttribute("x", numberFormat.format(rectangle.getX()));
         rect.setAttribute("y", numberFormat.format(rectangle.getY()));

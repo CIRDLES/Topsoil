@@ -1,5 +1,7 @@
+package org.cirdles;
+
 /*
- * Copyright 2014 pfif.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +16,11 @@
  * limitations under the License.
  */
 
-package org.cirdles.jfxutils;
-
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
 
 /**
  *
- * @author pfif
+ * @author John Zeringue
  */
-public class ParsedField extends ConverterField<String>{
-
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(""), Tools.SUPERSCRIPTPARSER_CONVERTER);
-    }
+public interface OSXIncompatible {
     
 }

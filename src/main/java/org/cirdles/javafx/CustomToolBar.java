@@ -17,7 +17,6 @@ package org.cirdles.javafx;
 
 import java.util.function.Consumer;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.VBox;
 
 /**
  * This class allows subclasses to easily inherit the initialization behavior

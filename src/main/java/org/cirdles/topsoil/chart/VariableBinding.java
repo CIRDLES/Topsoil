@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.chart;
 
-package org.cirdles.jfxutils;
-
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+import org.cirdles.topsoil.data.Entry;
+import org.cirdles.topsoil.data.Field;
 
 /**
  *
- * @author pfif
+ * @author John Zeringue
+ * @param <T>
  */
-public class ParsedField extends ConverterField<String>{
-
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(""), Tools.SUPERSCRIPTPARSER_CONVERTER);
+public interface VariableBinding<T> {
+    
+    public Variable<T> getVariable();
+    
+    public Field<T> getField();
+    
+    public VariableFormat<T> getFormat();
+    
+    public VariableContext getContext();
+    
+    public default T getValue(Entry entry) {
+        return getFormat().normalize(this, entry);
     }
     
 }

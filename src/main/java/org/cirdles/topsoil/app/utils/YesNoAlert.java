@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.app.utils;
 
-package org.cirdles.jfxutils;
-
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+import javafx.scene.control.Alert;
+import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
+import static javafx.scene.control.ButtonType.CANCEL;
+import static javafx.scene.control.ButtonType.NO;
+import static javafx.scene.control.ButtonType.YES;
 
 /**
  *
- * @author pfif
+ * @author John Zeringue
  */
-public class ParsedField extends ConverterField<String>{
+public class YesNoAlert extends Alert {
 
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(""), Tools.SUPERSCRIPTPARSER_CONVERTER);
+    public YesNoAlert(String contentText) {
+        super(CONFIRMATION);
+
+        setContentText(contentText);
+        getButtonTypes().setAll(YES, NO, CANCEL);
     }
-    
+
 }
