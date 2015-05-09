@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cirdles.topsoil.data.Dataset;
@@ -65,7 +66,7 @@ public class TSVDatasetManager implements DatasetManager {
 
     @Override
     public void open(Dataset dataset) {
-        if (datasetToPath.get(dataset).getParent().equals(getOpenPath())) {
+        if (isOpen(dataset)) {
             return;
         }
         
@@ -83,7 +84,7 @@ public class TSVDatasetManager implements DatasetManager {
 
     @Override
     public void close(Dataset dataset) {
-        if (datasetToPath.get(dataset).getParent().equals(getClosedPath())) {
+        if (isClosed(dataset)) {
             return;
         }
         
@@ -130,7 +131,20 @@ public class TSVDatasetManager implements DatasetManager {
 
     @Override
     public boolean isOpen(Dataset dataset) {
-        return datasetToPath.get(dataset).getParent().equals(getOpenPath());
+        return Optional.of(dataset)
+                .map(datasetToPath::get)
+                .map(Path::getParent)
+                .map(parent -> parent.equals(getOpenPath()))
+                .orElse(false);
+    }
+
+    @Override
+    public boolean isClosed(Dataset dataset) {
+        return Optional.of(dataset)
+                .map(datasetToPath::get)
+                .map(Path::getParent)
+                .map(parent -> parent.equals(getClosedPath()))
+                .orElse(false);
     }
 
     List<Dataset> getClosedDatasets() {
