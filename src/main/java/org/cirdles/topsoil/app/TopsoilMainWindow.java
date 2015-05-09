@@ -287,6 +287,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             try {
                 Dataset dataset = tableReader.read(filePath);
                 dataTable.setDataset(dataset);
+                dataTableToSet.put(dataTable, dataset);
             } catch (IOException ex) {
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
