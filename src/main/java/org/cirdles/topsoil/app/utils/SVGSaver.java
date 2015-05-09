@@ -18,6 +18,7 @@ package org.cirdles.topsoil.app.utils;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Optional;
 import javafx.stage.FileChooser;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -29,15 +30,37 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 /**
- *
+ * The purpose of SVGSaver.java is to save a vector image displayed in Topsoil's
+ * js-charts with the .svg file extension
+ * 
  * @author John Zeringue
  */
+
 public class SVGSaver {
 
     public static final String SVG_DOCTYPE_PUBLIC = "-//W3C//DTD SVG 1.1//EN";
     private static final String SVG_DOCTYPE_SYSTEM = "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd";
 
+    /**
+     * Saves the vector image in Topsoil with the .svg file extension
+     * 
+     * @param svgDocument
+     *            Vector image to be saved
+     */
     public void save(Document svgDocument) {
+        // If there is no file specified, then there is nothing to do.
+        // Otherwise, write the file with the SVG format.   
+        generateSaveUI().ifPresent(svgFile -> {
+            writeSVGToFile(svgDocument, svgFile);
+        });
+    }
+
+    /**
+     * Create a save dialog window and prompt user for filepath
+     * 
+     * @return Optional<File> svgFile, the filepath
+     */
+    public static Optional<File> generateSaveUI() {
         // get the path for the new SVG file
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export to SVG");
@@ -45,15 +68,22 @@ public class SVGSaver {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SVG Image", "*.svg"));
         File svgFile = fileChooser.showSaveDialog(null);
 
-        // can't convert if the file isn't specified
-        if (svgFile == null) {
-            return;
-        }
+        return Optional.ofNullable(svgFile);
+    }
+    
 
-        // write the SVG to the given path
+    /**
+     * Writes the SVG file to the given path
+     * 
+     * @param svgDocument
+     *            Vector image to be saved
+     * @param svgFile
+     *            Given path to save image
+     */
+    public void writeSVGToFile(Document svgDocument, File svgFile) {
+
         try {
-            Transformer transformer = TransformerFactory.newInstance()
-                    .newTransformer();
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
 
             // configure the resulting SVG document
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, SVG_DOCTYPE_PUBLIC);
@@ -67,5 +97,4 @@ public class SVGSaver {
             Logger.getLogger(SVGSaver.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 }
