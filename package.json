@@ -1,0 +1,26 @@
+{
+  "name": "Topsoil",
+  "version": "1.0.0",
+  "description": "Topsoil ======= [![Build Status](https://travis-ci.org/CIRDLES/Topsoil.svg?branch=master)](https://travis-ci.org/CIRDLES/Topsoil)",
+  "main": "index.js",
+  "scripts": {
+    "karmaTest": "karma start ./config/karma.conf.js --single-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thomasLevans/Topsoil"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thomasLevans/Topsoil/issues"
+  },
+  "homepage": "https://github.com/thomasLevans/Topsoil",
+  "devDependencies": {
+    "phantomjs": "^1.9.16",
+    "karma": "^0.12.32",
+    "jasmine-core": "^2.2.0",
+    "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.1.4"
+  }
+}

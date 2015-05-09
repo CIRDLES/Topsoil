@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package org.cirdles.jfxutils;
+package org.cirdles.topsoil.app;
 
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 
-/**
- *
- * @author pfif
- */
-public class ParsedField extends ConverterField<String>{
+    /**
+     * A Label whose min width is always set to use its pref width.
+     */
+    public class LabelUsePrefSize extends Label{
 
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(""), Tools.SUPERSCRIPTPARSER_CONVERTER);
+        public LabelUsePrefSize() {
+            this("");
+            
+        }
+        
+        public LabelUsePrefSize(String text){
+            super(text);
+            setMinWidth(Region.USE_PREF_SIZE);
+        }
+        
     }
-    
-}

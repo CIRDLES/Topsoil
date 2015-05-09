@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import org.cirdles.topsoil.builder.TopsoilBuilderFactory;
+import org.cirdles.topsoil.app.builder.TopsoilBuilderFactory;
 
 /**
  * A class that's responsible for initializing a custom JavaFX component by

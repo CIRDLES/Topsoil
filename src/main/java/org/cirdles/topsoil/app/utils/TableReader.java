@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package org.cirdles.jfxutils;
+package org.cirdles.topsoil.app.utils;
 
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import javafx.scene.control.TableView;
 
 /**
  *
- * @author pfif
+ * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class ParsedField extends ConverterField<String>{
-
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(""), Tools.SUPERSCRIPTPARSER_CONVERTER);
-    }
+public abstract class TableReader<T> {
+    public abstract void read(String src, TableView<T> dest);
     
+    public void read(Path src, TableView<T> dest) throws IOException {
+        read(new String(Files.readAllBytes(src), StandardCharsets.UTF_8), dest);
+    }
 }

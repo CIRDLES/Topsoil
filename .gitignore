@@ -1,8 +1,19 @@
-# Maven
-target
+# Gradle
+.gradle/
+build/
 
 # Netbeans
 nbactions.xml
+.nb-gradle*
 
 # TestFX
 screenshot*.png
+
+# logs
+*.log
+
+# JavaScript
+node_modules/
+
+# Vim
+*.swp
