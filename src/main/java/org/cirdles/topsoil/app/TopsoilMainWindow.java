@@ -43,19 +43,19 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.cirdles.javafx.CustomVBox;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
-import org.cirdles.topsoil.app.utils.GetDocumentsDirectoryOperation;
-import org.cirdles.topsoil.app.utils.TSVDatasetReader;
-import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
+import org.cirdles.topsoil.app.chart.ChartWindow;
+import org.cirdles.topsoil.app.chart.VariableBindingDialog;
 import org.cirdles.topsoil.app.utils.DatasetReader;
 import org.cirdles.topsoil.app.utils.DatasetWriter;
-import org.cirdles.topsoil.app.chart.VariableBindingDialog;
-import org.cirdles.topsoil.app.chart.ChartWindow;
-import org.cirdles.topsoil.chart.JavaScriptChart;
-import org.cirdles.topsoil.data.DatasetManager;
+import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
+import org.cirdles.topsoil.app.utils.GetDocumentsDirectoryOperation;
 import org.cirdles.topsoil.app.utils.TSVDatasetManager;
+import org.cirdles.topsoil.app.utils.TSVDatasetReader;
+import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
 import org.cirdles.topsoil.chart.Chart;
+import org.cirdles.topsoil.chart.JavaScriptChart;
+import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.data.DatasetManager;
 
 /**
  * FXML Controller class
@@ -287,6 +287,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             try {
                 Dataset dataset = tableReader.read(filePath);
                 dataTable.setDataset(dataset);
+
+                dataTableToSet.put(dataTable, dataset);
+
             } catch (IOException ex) {
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -299,7 +302,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             }
         });
     }
-    
+
     @FXML
     void importFromFile() {
         FileChooser tsvChooser = new FileChooser();
@@ -311,7 +314,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 .map(File::toPath)
                 .ifPresent(this::importFromFile);
     }
-    
+
     void initializeAndShow(Chart chart, Dataset dataset) {
         new VariableBindingDialog(chart.getVariables(), dataset).showAndWait()
                 .ifPresent(variableContext -> {
@@ -327,11 +330,16 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     }
 
     private void initializeAndShow(JavaScriptChart javaScriptChart) {
+        // confirm dataTableToSet contains table entry
+        getCurrentTable().ifPresent(table -> {
+            dataTableToSet.put(table, table.getDataset());
+        });
+
         getCurrentTable().map(dataTableToSet::get).ifPresent(dataset -> {
             initializeAndShow(javaScriptChart, dataset);
         });
     }
-    
+
     @FXML
     void createScatterplot() {
         initializeAndShow(new ScatterplotChart());
@@ -351,5 +359,5 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     void emptyTable() {
         getCurrentTable().ifPresent(TSVTable::clear);
     }
-    
+
 }
