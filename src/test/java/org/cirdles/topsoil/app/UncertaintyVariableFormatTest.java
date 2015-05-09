@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.app;
 
-import org.cirdles.topsoil.app.UncertaintyVariableFormat;
 import static org.cirdles.topsoil.app.ExpressionType.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -45,8 +44,8 @@ public class UncertaintyVariableFormatTest {
      */
     @Test
     public void testNormalizeAbsolute() {
-        assertEquals(3.14, oneSigmaAbsolute.normalizeAbsolute(3.14), 10e-10);
-        assertEquals(3.14, twoSigmaAbsolute.normalizeAbsolute(6.28), 10e-10);
+        assertEquals(3.24, oneSigmaAbsolute.normalizeAbsolute(3.24), 10e-10);
+        assertEquals(3.24, twoSigmaAbsolute.normalizeAbsolute(6.48), 10e-10);
     }
 
     /**

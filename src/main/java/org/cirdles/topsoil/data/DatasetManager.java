@@ -27,6 +27,8 @@ public interface DatasetManager {
     
     public boolean isOpen(Dataset dataset);
     
+    public boolean isClosed(Dataset dataset);
+    
     public void open(Dataset dataset);
     
     public void close(Dataset dataset);
