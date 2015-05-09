@@ -4,7 +4,8 @@ language: java
 sudo: false
 cache:
   directories:
-    - '$HOME/.m2/repository'
+    - $HOME/.m2/repository
+    - $HOME/.gradle/caches/
 
 jdk:
   - oraclejdk8 # JavaFX 8 only works under Oracle JDK 8
@@ -13,3 +14,14 @@ jdk:
 before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
+
+before_script: npm install -g buster
+
+script: ./gradlew check busterTest --info
+
+# add Gitter integration
+notifications:
+  webhooks:
+    urls: https://webhooks.gitter.im/e/7545741f25d3397d0a1e
+    on_success: change
+  # on_failure: always

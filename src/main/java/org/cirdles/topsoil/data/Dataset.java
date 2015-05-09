@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.cirdles.topsoil.data;
 
-package org.cirdles.jfxutils;
-
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+import static java.util.Collections.emptyList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
- * @author pfif
+ * @author John Zeringue
  */
-public class ParsedField extends ConverterField<String>{
+public interface Dataset {
 
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(""), Tools.SUPERSCRIPTPARSER_CONVERTER);
-    }
+    public static final Dataset EMPTY_DATASET
+            = new SimpleDataset(emptyList(), emptyList());
     
+    public Optional<String> getName();
+
+    public List<Field> getFields();
+
+    public List<Entry> getEntries();
+
 }

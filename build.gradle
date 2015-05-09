@@ -1,0 +1,91 @@
+// BEGIN JAVASCRIPT SUPPORT
+plugins {
+    id "com.eriwen.gradle.js" version "1.12.1"
+    id "com.github.rundis.buster" version "0.2.4.2"
+}
+// END JAVASCRIPT SUPPORT
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'findbugs'
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+ext.mainClass = 'org.cirdles.topsoil.app.Topsoil'
+
+def configJavaExec = { JavaExec task ->
+    task.main = mainClass
+    task.classpath = sourceSets.main.runtimeClasspath
+    task.standardInput = System.in
+}
+
+task run(dependsOn: project.classes, type: JavaExec) {
+    configJavaExec(it)
+}
+
+task debug(dependsOn: project.classes, type: JavaExec) {
+    configJavaExec(it)
+    debug = true
+}
+
+task jarWithDependencies(type: Jar) {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+
+    baseName = project.name + '-with-dependencies'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+test {
+    useJUnit {
+        if (System.getProperty("os.name").startsWith("Mac OS")) {
+            excludeCategories 'org.cirdles.OSXIncompatible'
+        }
+    }
+}
+
+// BEGIN JAVASCRIPT SUPPORT
+javascript.source {
+    topsoil {
+        js {
+            srcDir 'src/main/resources/org/cirdles/topsoil/chart/topsoil_js'
+            include '*.js'
+        }
+    }
+}
+
+combineJs {
+    source = javascript.source.topsoil.js.files
+    dest = file("${project.buildDir}/resources/main/org/cirdles/topsoil/chart/topsoil.js")
+}
+
+processResources.dependsOn combineJs
+
+buster {
+    configFile = file('config/buster.js')
+}
+// END JAVASCRIPT SUPPORT
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.controlsfx:controlsfx:8.20.8'
+    compile 'net.sf.opencsv:opencsv:2.3'
+
+    testCompile 'junit:junit:4.10'
+    testCompile 'com.google.jimfs:jimfs:1.0'
+    testCompile 'org.testfx:testfx-core:4.0.+'
+    testCompile 'org.testfx:testfx-junit:4.0.+'
+}

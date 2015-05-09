@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.cirdles.topsoil.app.*?>
+
+<fx:root type="javafx.scene.layout.VBox"
+         prefHeight="800"
+         prefWidth="1200"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <MenuBar useSystemMenuBar="true" >
+        <Menu text="%fileMenu">
+            <MenuItem text="%importFromTSV"
+                      onAction="#importFromFile" />
+            <MenuItem text="Load scripts"
+                      onAction="#loadCustomScripts" />
+        </Menu>
+        
+        <Menu text="Charts" fx:id="chartsMenu">
+            <MenuItem text="scatterplot"
+                      onAction="#createScatterplot" />
+            <MenuItem text="error ellipse chart"
+                      onAction="#createErrorEllipseChart" />
+        </Menu>
+        
+        <Menu text="Datasets" fx:id="datasetsMenu"/>
+    </MenuBar>
+    <ToolBar>
+        <Button text="%clearTableMessage"
+                onAction="#emptyTable"
+                fx:id="emptyTableButton" />
+        <Button text="Create Data Table"
+                onAction="#createDataTable" />
+        <Button text="Save Data Table"
+                onAction="#saveDataTable" />
+    </ToolBar>
+    
+    <TabPane fx:id="dataTableTabPane"
+             VBox.vgrow="ALWAYS" />
+</fx:root>

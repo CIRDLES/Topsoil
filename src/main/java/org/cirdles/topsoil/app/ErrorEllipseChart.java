@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.cirdles.jfxutils;
-
-import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.Tools;
+package org.cirdles.topsoil.app;
 
 /**
  *
- * @author pfif
+ * @author John Zeringue
  */
-public class ParsedField extends ConverterField<String>{
+public class ErrorEllipseChart extends DefaultJavaScriptChart {
+    
+    private static final String RESOURCE_NAME = "errorellipsechart.js";
 
-    public ParsedField() {
-        super(new SimpleObjectProperty<>(""), Tools.SUPERSCRIPTPARSER_CONVERTER);
+    public ErrorEllipseChart() {
+        super(RESOURCE_NAME, ErrorEllipseChart.class);
     }
     
 }
