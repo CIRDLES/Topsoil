@@ -36,6 +36,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputDialog;
@@ -74,11 +75,11 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             = APPLICATION_DIRECTORY.resolve("Data Sets");
 
     @FXML
-    private Menu chartsMenu;
+    Menu chartsMenu;
     @FXML
-    private Menu datasetsMenu;
+    Menu datasetsMenu;
     @FXML
-    private TabPane dataTableTabPane;
+    TabPane dataTableTabPane;
 
     // JFB
     private final int ERROR_CHART_REQUIRED_COL_COUNT = 5;
@@ -140,6 +141,10 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         dataTableTab.setContent(dataTable);
 
         dataTableTabPane.getTabs().add(dataTableTab);
+        
+        // focus on new tab
+        SelectionModel<Tab> selectionModel = dataTableTabPane.getSelectionModel();
+        selectionModel.select(dataTableTab);
 
         return dataTableTab;
     }
