@@ -17,21 +17,44 @@ package org.cirdles.topsoil.app;
 
 import org.cirdles.OSXIncompatible;
 import javafx.scene.Scene;
+import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
 /**
  *
  * @author John Zeringue
  */
 public class TopsoilMainWindowTest extends ApplicationTest {
+    
+    private TopsoilMainWindow topsoilMainWindow;
 
     @Override
     public void start(Stage stage) throws Exception {
-        Scene scene = new Scene(new TopsoilMainWindow());
+        topsoilMainWindow = new TopsoilMainWindow();
+        
+        Scene scene = new Scene(topsoilMainWindow);
         stage.setScene(scene);
         stage.show();
+    }
+    
+    @Test
+    public void testFocusOnNewTab() {
+        // ensure there is at least one tab already open
+        clickOn("Create Data Table");
+        
+        // create another tab
+        // should be focused
+        clickOn("Create Data Table");
+        
+        verifyThat(topsoilMainWindow.dataTableTabPane, (TabPane tabPane) -> {
+            int numberOfTabs = tabPane.getTabs().size();
+            int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+            
+            return selectedIndex == numberOfTabs - 1;
+        });
     }
 
     @Test
@@ -39,4 +62,5 @@ public class TopsoilMainWindowTest extends ApplicationTest {
     public void testCancelImportFile() {
         clickOn("File").clickOn("Import from TSV").closeCurrentWindow();
     }
+    
 }
