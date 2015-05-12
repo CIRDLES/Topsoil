@@ -283,9 +283,6 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     void importFromFile(Path filePath) {
         TSVTable dataTable = getCurrentTable().orElseGet(this::createTable);
 
-        // JFB for now, assume error chart is only chart style
-        dataTable.setRequiredColumnCount(ERROR_CHART_REQUIRED_COL_COUNT);
-
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
             DatasetReader tableReader = new TSVDatasetReader(response);
 
@@ -296,7 +293,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            DatasetWriter tableWriter = new TSVDatasetWriter(dataTable.getRequiredColumnCount());
+            DatasetWriter tableWriter = new TSVDatasetWriter();
             try {
                 tableWriter.write(dataTable.getDataset(), Topsoil.LAST_TABLE_PATH);
             } catch (IOException ex) {

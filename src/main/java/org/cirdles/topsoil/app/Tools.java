@@ -107,7 +107,7 @@ public class Tools {
 
     public static void saveTable(TSVTable dataTable) {
         if (!dataTable.getItems().isEmpty()) {
-            DatasetWriter tableWriter = new TSVDatasetWriter(dataTable.getRequiredColumnCount());
+            DatasetWriter tableWriter = new TSVDatasetWriter();
             try {
                 tableWriter.write(dataTable.getDataset(), LAST_TABLE_PATH);
             } catch (IOException ex) {
