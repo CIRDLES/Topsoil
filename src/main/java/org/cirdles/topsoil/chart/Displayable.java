@@ -17,15 +17,36 @@ package org.cirdles.topsoil.chart;
 
 import javafx.scene.Node;
 import javax.swing.JComponent;
+import org.w3c.dom.Document;
 
 /**
+ * An interface for objects that are displayable in a couple of common formats.
  *
  * @author John Zeringue
  */
 public interface Displayable {
-    
-    public Node displayAsNode();
-    
+
+    /**
+     * Returns a {@link JComponent} representing this {@code Displayable}.
+     *
+     * @return a {@code JComponent} that may or may not be unique
+     */
     public JComponent displayAsJComponent();
-    
+
+    /**
+     * Returns a {@link Node} representing this {@code Displayable}. This method
+     * should only be called from the JavaFX Application Thread.
+     *
+     * @return a {@code Node} that may or may not be unique
+     * @see javafx.application.Platform
+     */
+    public Node displayAsNode();
+
+    /**
+     * Returns a {@link Document} representing this {@code Displayable}.
+     * 
+     * @return a {@code Document} that may or may not be unique
+     */
+    public Document displayAsSVGDocument();
+
 }
