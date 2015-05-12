@@ -30,7 +30,7 @@ public interface Dataset {
     
     public Optional<String> getName();
 
-    public List<Field> getFields();
+    public List<Field<?>> getFields();
 
     public List<Entry> getEntries();
 

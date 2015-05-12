@@ -15,49 +15,14 @@
  */
 package org.cirdles.topsoil.app.utils;
 
-import au.com.bytecode.opencsv.CSVWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Field;
-
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVDatasetWriter implements DatasetWriter {
+public class TSVDatasetWriter extends DSVDatasetWriter {
 
-    @Override
-    public void write(Dataset dataset, OutputStream destination)
-            throws IOException {
-        Writer outputStreamWriter
-                = new OutputStreamWriter(destination, Charset.forName("UTF-8"));
-
-        try (CSVWriter tsvWriter = new CSVWriter(outputStreamWriter, '\t')) {
-            int numberOfFields = dataset.getFields().size();
-
-            String[] line = new String[numberOfFields];
-
-            for (int i = 0; i < dataset.getFields().size(); i++) {
-                line[i] = dataset.getFields().get(i).getName();
-            }
-
-            tsvWriter.writeNext(line);
-
-            // write data
-            dataset.getEntries().forEach(entry -> {
-                for (int i = 0; i < dataset.getFields().size(); i++) {
-                    Field field = dataset.getFields().get(i);
-                    line[i] = entry.get(field).orElse("").toString();
-                }
-
-                // write current line
-                tsvWriter.writeNext(line);
-            });
-        }
+    public TSVDatasetWriter() {
+        super('\t');
     }
 
 }
