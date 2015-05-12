@@ -83,18 +83,4 @@ public class TSVDatasetWriterTest {
         assertEquals(EXPECTED_WITH_DEFAULT_CONSTRUCTOR, tsvString);
     }
 
-    private static final String EXPECTED_WITH_FIVE_COLUMN_MINIMUM = ""
-            + "\"A\"\t\"B\"\t\"C\"\t\"D\"\t\"fill-0\"\n"
-            + "\"1\"\t\"2\"\t\"3\"\t\"4\"\t\"0\"\n"
-            + "\"1\"\t\"2\"\t\"3\"\t\"4\"\t\"0\"\n";
-
-    @Test
-    public void testWriteWithFiveColumnMinimum() throws Exception {
-        DatasetWriter datasetWriter = new TSVDatasetWriter(5);
-
-        String tsvString = datasetWriter.write(dataset);
-
-        assertEquals(EXPECTED_WITH_FIVE_COLUMN_MINIMUM, tsvString);
-    }
-
 }

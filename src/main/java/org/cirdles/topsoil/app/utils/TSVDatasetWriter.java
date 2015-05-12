@@ -23,25 +23,12 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import org.cirdles.topsoil.data.Dataset;
 import org.cirdles.topsoil.data.Field;
-import org.cirdles.topsoil.data.PaddableDataset;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
 public class TSVDatasetWriter implements DatasetWriter {
-
-    // JFB
-    // used to fill out missing columns
-    private final int requiredColumnCount;
-
-    public TSVDatasetWriter() {
-        this(0);
-    }
-
-    public TSVDatasetWriter(int requiredColumnCount) {
-        this.requiredColumnCount = requiredColumnCount;
-    }
 
     @Override
     public void write(Dataset dataset, OutputStream destination)
@@ -50,27 +37,20 @@ public class TSVDatasetWriter implements DatasetWriter {
                 = new OutputStreamWriter(destination, Charset.forName("UTF-8"));
 
         try (CSVWriter tsvWriter = new CSVWriter(outputStreamWriter, '\t')) {
-            int actualColumnCount = Math.max(
-                    requiredColumnCount, dataset.getFields().size());
-            
-            PaddableDataset paddedDataset = new PaddableDataset(dataset);
-            
-            while (paddedDataset.getFields().size() < actualColumnCount) {
-                paddedDataset.padWithZeros();
-            }
+            int numberOfFields = dataset.getFields().size();
 
-            String[] line = new String[actualColumnCount];
+            String[] line = new String[numberOfFields];
 
-            for (int i = 0; i < paddedDataset.getFields().size(); i++) {
-                line[i] = paddedDataset.getFields().get(i).getName();
+            for (int i = 0; i < dataset.getFields().size(); i++) {
+                line[i] = dataset.getFields().get(i).getName();
             }
 
             tsvWriter.writeNext(line);
 
             // write data
-            paddedDataset.getEntries().forEach(entry -> {
-                for (int i = 0; i < paddedDataset.getFields().size(); i++) {
-                    Field field = paddedDataset.getFields().get(i);
+            dataset.getEntries().forEach(entry -> {
+                for (int i = 0; i < dataset.getFields().size(); i++) {
+                    Field field = dataset.getFields().get(i);
                     line[i] = entry.get(field).orElse("").toString();
                 }
 

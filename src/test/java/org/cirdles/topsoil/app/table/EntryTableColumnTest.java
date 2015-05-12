@@ -56,8 +56,6 @@ public class EntryTableColumnTest extends ApplicationTest {
        //Create a TSVTable
        TSVTable testTSVTable = new TSVTable(sampleTSVPath);
        testTSVTable.setId("tsvTable");
-
-       testTSVTable.setRequiredColumnCount(5);
        
        //Create a dataset
        Dataset dataset = Dataset.EMPTY_DATASET;
@@ -71,7 +69,7 @@ public class EntryTableColumnTest extends ApplicationTest {
            Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
        }
 
-       DatasetWriter tableWriter = new TSVDatasetWriter(testTSVTable.getRequiredColumnCount());
+       DatasetWriter tableWriter = new TSVDatasetWriter();
        try {
            //Write the extracted data into the table
            tableWriter.write(testTSVTable.getDataset(), Topsoil.LAST_TABLE_PATH);

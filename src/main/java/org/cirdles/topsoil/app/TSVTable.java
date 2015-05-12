@@ -42,13 +42,8 @@ public class TSVTable extends TableView<Entry> {
 
     private Path savePath;
     private Dataset dataset;
-    
-    // JFB
-    // zroe means ignore, positive means fill to this count if data not present
-    private int requiredColumnCount;
 
     public TSVTable() {
-        this.requiredColumnCount = 0;
         this.setEditable(true);
         
         this.setOnKeyPressed((KeyEvent event) -> {
@@ -152,21 +147,13 @@ public class TSVTable extends TableView<Entry> {
             throw new IllegalArgumentException("Cannot save to null path.");
         }
 
-        DatasetWriter tableWriter = new TSVDatasetWriter(requiredColumnCount);
+        DatasetWriter tableWriter = new TSVDatasetWriter();
         
         try {
             tableWriter.write(getDataset(), savePath);
         } catch (IOException ex) {
             Logger.getLogger(TSVTable.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    public void saveToPathWithRequiredColumnCount(Path savePath){
-        
-    }
-    
-    public boolean hasRequiredColumnCount(){
-        return getColumns().size() >= requiredColumnCount;
     }
 
     /**
@@ -187,17 +174,4 @@ public class TSVTable extends TableView<Entry> {
         this.savePath = savePath;
     }
 
-    /**
-     * @param requiredColumnCount the requiredColumnCount to set
-     */
-    public void setRequiredColumnCount(int requiredColumnCount) {
-        this.requiredColumnCount = requiredColumnCount;
-    }
-
-    /**
-     * @return the requiredColumnCount
-     */
-    public int getRequiredColumnCount() {
-        return requiredColumnCount;
-    }
 }
