@@ -9,6 +9,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'findbugs'
 
+import org.apache.tools.ant.filters.ReplaceTokens
+
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -29,12 +31,32 @@ task debug(dependsOn: project.classes, type: JavaExec) {
     debug = true
 }
 
+// BEGIN BETTER VERSIONING
+def getVersionName = { ->
+    def stdout = new ByteArrayOutputStream()
+
+    exec {
+        commandLine 'git', 'describe', '--tags'
+            standardOutput = stdout
+    }
+
+    return stdout.toString().trim()
+}
+
+processResources {
+    from('src/main/resources') {
+        include '*.properties'
+        filter(ReplaceTokens, tokens: [version: getVersionName()])
+    }
+}
+// END BETTER VERSIONING
+
 task jarWithDependencies(type: Jar) {
     manifest {
         attributes 'Main-Class': mainClass
     }
 
-    baseName = project.name + '-with-dependencies'
+    baseName = project.name + '-' + getVersionName()
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
