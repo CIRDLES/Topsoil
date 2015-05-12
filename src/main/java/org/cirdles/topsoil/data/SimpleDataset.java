@@ -14,12 +14,12 @@ import java.util.Optional;
  */
 public class SimpleDataset implements Dataset {
  
-    private final List<Field> fields;
+    private final List<Field<?>> fields;
     private final List<Entry> entries;
     
     private Optional<String> name = Optional.empty();
 
-    public SimpleDataset(List<Field> fields, List<Entry> entries) {
+    public SimpleDataset(List<Field<?>> fields, List<Entry> entries) {
         this.fields = fields;
         this.entries = entries;
     }
@@ -30,7 +30,7 @@ public class SimpleDataset implements Dataset {
     }
 
     @Override
-    public List<Field> getFields() {
+    public List<Field<?>> getFields() {
         return fields;
     }
 

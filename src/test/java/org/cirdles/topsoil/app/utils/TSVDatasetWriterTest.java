@@ -39,7 +39,7 @@ public class TSVDatasetWriterTest {
     private static final Field<Number> FIELD_C;
     private static final Field<Number> FIELD_D;
 
-    private static final List<Field> FIELDS = Arrays.asList(
+    private static final List<Field<?>> FIELDS = Arrays.asList(
             FIELD_A = new NumberField("A"),
             FIELD_B = new NumberField("B"),
             FIELD_C = new NumberField("C"),
@@ -69,10 +69,11 @@ public class TSVDatasetWriterTest {
         dataset = new SimpleDataset(FIELDS, entries);
     }
 
-    private static final String EXPECTED_WITH_DEFAULT_CONSTRUCTOR = ""
-            + "\"A\"\t\"B\"\t\"C\"\t\"D\"\n"
-            + "\"1\"\t\"2\"\t\"3\"\t\"4\"\n"
-            + "\"1\"\t\"2\"\t\"3\"\t\"4\"\n";
+    private static final String EXPECTED_WITH_DEFAULT_CONSTRUCTOR = (""
+            + "\"A\" \"B\" \"C\" \"D\"\n"
+            + "\"1\" \"2\" \"3\" \"4\"\n"
+            + "\"1\" \"2\" \"3\" \"4\"\n"
+            + "").replaceAll(" ", "\t");
 
     @Test
     public void testWriteWithDefaultConstructor() throws Exception {
