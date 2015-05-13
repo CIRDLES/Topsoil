@@ -90,7 +90,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                 }
 
             };
-
+    
     private static final List<VariableFormat> UNCERTAINTY_FORMATS
             = Arrays.asList(
                     ONE_SIGMA_ABSOLUTE,
@@ -129,7 +129,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
         // build the HTML template (comments show implicit elements/tags)
         HTML_TEMPLATE
-                = ("<!DOCTYPE html>\n"
+                = "<!DOCTYPE html>\n"
                 // <html>
                 // <head>
                 + "<style>\n"
@@ -146,7 +146,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                 + "<script src=\"%s\"></script>\n" // JS file for chart
                 // </body>
                 // </html>
-                + "").replaceAll("%20", "%%20"); // excape appropriate percents
+                + ""; // fixes autoformatting in Netbeans
     }
 
     private final Collection<Runnable> initializationCallbacks = new ArrayList<>();
