@@ -20,7 +20,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import javafx.fxml.FXML;
 import org.cirdles.javafx.CustomVBox;
-import org.cirdles.string.LevenshteinDistance;
+import org.cirdles.commons.string.LevenshteinDistance;
 import org.cirdles.topsoil.chart.Variable;
 import org.cirdles.topsoil.data.Field;
 
