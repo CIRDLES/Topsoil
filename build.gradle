@@ -1,7 +1,7 @@
 // BEGIN JAVASCRIPT SUPPORT
 plugins {
-    id "com.eriwen.gradle.js" version "1.12.1"
-    id "com.github.rundis.buster" version "0.2.4.2"
+    id 'com.eriwen.gradle.js' version '1.12.1'
+    id 'com.github.rundis.buster' version '0.2.4.2'
 }
 // END JAVASCRIPT SUPPORT
 
@@ -37,7 +37,7 @@ def getVersionName = { ->
 
     exec {
         commandLine 'git', 'describe', '--tags'
-            standardOutput = stdout
+        standardOutput = stdout
     }
 
     return stdout.toString().trim()
@@ -63,7 +63,7 @@ task jarWithDependencies(type: Jar) {
 
 test {
     useJUnit {
-        if (System.getProperty("os.name").startsWith("Mac OS")) {
+        if (System.getProperty('os.name').startsWith('Mac OS')) {
             excludeCategories 'org.cirdles.OSXIncompatible'
         }
     }
@@ -100,11 +100,16 @@ tasks.withType(FindBugs) {
 
 repositories {
     jcenter()
+
+    maven {
+        url 'https://jitpack.io'
+    }
 }
 
 dependencies {
     compile 'org.controlsfx:controlsfx:8.20.8'
     compile 'net.sf.opencsv:opencsv:2.3'
+    compile 'com.github.cirdles:commons:3214847'
 
     testCompile 'junit:junit:4.10'
     testCompile 'com.google.jimfs:jimfs:1.0'
