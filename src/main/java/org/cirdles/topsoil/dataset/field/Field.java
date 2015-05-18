@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.data;
+package org.cirdles.topsoil.dataset.field;
+
+import javafx.util.StringConverter;
 
 /**
  *
- * @author CIRDLES
+ * @author John Zeringue
  * @param <T>
  */
-public abstract class BaseField<T> implements Field<T> {
-
-    private final String name;
-
-    public BaseField(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the name
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
+public interface Field<T> {
+    
+    public String getName();
+    
+    public StringConverter<T> getStringConverter();
+    
 }

@@ -29,7 +29,7 @@ import org.cirdles.topsoil.app.utils.DatasetReader;
 import org.cirdles.topsoil.app.utils.DatasetWriter;
 import org.cirdles.topsoil.app.utils.TSVDatasetReader;
 import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
-import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.dataset.Dataset;
 import org.junit.Test;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;

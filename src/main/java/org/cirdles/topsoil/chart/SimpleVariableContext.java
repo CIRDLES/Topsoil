@@ -18,8 +18,8 @@ package org.cirdles.topsoil.chart;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.field.Field;
 
 public class SimpleVariableContext implements VariableContext {
 

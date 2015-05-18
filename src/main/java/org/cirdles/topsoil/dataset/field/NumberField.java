@@ -14,33 +14,45 @@
  * limitations under the License.
  */
 
-package org.cirdles.topsoil.data;
+package org.cirdles.topsoil.dataset.field;
 
+import static java.lang.Double.NaN;
 import javafx.util.StringConverter;
 
 /**
  *
  * @author zeringuej
  */
-public class TextField extends BaseField<String> {
-    
-    public TextField(String name) {
+public class NumberField extends BaseField<Number> {
+
+    public NumberField(String name) {
         super(name);
     }
 
     @Override
-    public StringConverter<String> getStringConverter() {
-        return new StringConverter<String>() {
+    public StringConverter<Number> getStringConverter() {
+        return new StringConverter<Number>() {
 
             @Override
-            public String toString(String string) {
-                return string;
+            public String toString(Number number) {
+                if (number == null) {
+                    return "---";
+                }
+                
+                return number.toString();
             }
 
             @Override
-            public String fromString(String string) {
-                return string;
+            public Number fromString(String string) {
+
+                //Check for valid numbers
+                try {
+                    return Double.valueOf(string);
+                } catch (NumberFormatException e) {
+                    return NaN;
+                }
             }
+            
         };
     }
     

@@ -21,8 +21,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.chart.IndependentVariable;
 import org.cirdles.topsoil.chart.Variable;
-import org.cirdles.topsoil.data.Field;
-import org.cirdles.topsoil.data.NumberField;
+import org.cirdles.topsoil.dataset.field.Field;
+import org.cirdles.topsoil.dataset.field.NumberField;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 

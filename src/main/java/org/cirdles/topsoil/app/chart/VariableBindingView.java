@@ -22,7 +22,7 @@ import javafx.fxml.FXML;
 import org.cirdles.javafx.CustomVBox;
 import org.cirdles.commons.string.LevenshteinDistance;
 import org.cirdles.topsoil.chart.Variable;
-import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.dataset.field.Field;
 
 /**
  * This UI element is used by the user to choose which column in the main table

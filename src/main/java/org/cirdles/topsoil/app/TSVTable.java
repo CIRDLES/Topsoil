@@ -30,10 +30,10 @@ import org.cirdles.topsoil.app.utils.TSVDatasetReader;
 import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
 import org.cirdles.topsoil.app.utils.DatasetReader;
 import org.cirdles.topsoil.app.utils.DatasetWriter;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.data.NumberField;
-import org.cirdles.topsoil.data.TextField;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.NumberField;
+import org.cirdles.topsoil.dataset.field.TextField;
 
 /**
  * A table containing data used to generate charts. Implements some shortcuts.

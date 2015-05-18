@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.data;
+package org.cirdles.topsoil.dataset.entry;
 
+import org.cirdles.topsoil.dataset.field.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
  *
  * @author John Zeringue
  */
-public interface Entry {
-    
-    public <T> Optional<T> get(Field<? extends T> field);
-    
-    public <T> void set(Field<? super T> field, T value);
+public class SimpleEntry implements Entry {
+
+    private final Map<Field, Object> fieldsToValues;
+
+    public SimpleEntry() {
+        fieldsToValues = new HashMap<>();
+    }
+
+    @Override
+    public <T> Optional<T> get(Field<? extends T> field) {
+        return Optional.ofNullable((T) fieldsToValues.get(field));
+    }
+
+    @Override
+    public <T> void set(Field<? super T> field, T value) {
+        fieldsToValues.put(field, value);
+    }
     
 }

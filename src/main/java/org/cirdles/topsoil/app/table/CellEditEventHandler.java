@@ -9,8 +9,8 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
-import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
 
 /**
  * Manage the event of a cell edition

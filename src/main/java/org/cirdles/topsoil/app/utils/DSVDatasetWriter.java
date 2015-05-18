@@ -23,8 +23,8 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.field.Field;
 
 /**
  *

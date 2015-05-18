@@ -23,13 +23,13 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.data.Field;
-import org.cirdles.topsoil.data.NumberField;
-import org.cirdles.topsoil.data.SimpleDataset;
-import org.cirdles.topsoil.data.SimpleEntry;
-import org.cirdles.topsoil.data.TextField;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
+import org.cirdles.topsoil.dataset.field.NumberField;
+import org.cirdles.topsoil.dataset.SimpleDataset;
+import org.cirdles.topsoil.dataset.entry.SimpleEntry;
+import org.cirdles.topsoil.dataset.field.TextField;
 
 /**
  *
