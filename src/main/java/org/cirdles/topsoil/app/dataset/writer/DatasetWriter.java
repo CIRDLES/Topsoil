@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.utils;
+package org.cirdles.topsoil.app.dataset.writer;
 
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.cirdles.topsoil.dataset.Dataset;
@@ -30,27 +29,28 @@ import org.cirdles.topsoil.dataset.Dataset;
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public interface DatasetReader {
+public interface DatasetWriter {
 
-    public Dataset read(InputStream source) throws IOException;
+    public void write(Dataset dataset, OutputStream destination)
+            throws IOException;
 
-    public default Dataset read(String source) throws IOException {
-        return read(new ByteArrayInputStream(source.getBytes(getCharset())));
-    }
-
-    public default Dataset read(File source)
-            throws FileNotFoundException, IOException {
-        try (InputStream inputStream = new FileInputStream(source)) {
-            return read(inputStream);
+    public default String write(Dataset dataset) throws IOException {
+        try (OutputStream outputStream = new ByteArrayOutputStream()) {
+            write(dataset, outputStream);
+            return outputStream.toString();
         }
     }
 
-    public default Dataset read(Path source) throws IOException {
-        return read(Files.newInputStream(source));
+    public default void write(Dataset dataset, File destination)
+            throws FileNotFoundException, IOException {
+        try (OutputStream outputStream = new FileOutputStream(destination)) {
+            write(dataset, outputStream);
+        }
     }
 
-    public default Charset getCharset() {
-        return Charset.forName("UTF-8");
+    public default void write(Dataset dataset, Path destination)
+            throws IOException {
+        write(dataset, Files.newOutputStream(destination));
     }
 
 }

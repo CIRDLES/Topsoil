@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.utils;
+package org.cirdles.topsoil.app.dataset.reader;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import org.cirdles.topsoil.dataset.Dataset;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVDatasetReader extends DSVDatasetReader {
+public interface DatasetReader {
 
-    public TSVDatasetReader() {
-        super('\t');
-    }
+    public Dataset read(InputStream source) throws IOException;
 
-    public TSVDatasetReader(boolean expectingHeaders) {
-        super('\t', expectingHeaders);
-    }
+    public Dataset read(String source) throws IOException;
+
+    public Dataset read(File source) throws IOException;
+
+    public Dataset read(Path source) throws IOException;
 
 }
