@@ -15,7 +15,7 @@
  */
 package org.cirdles.topsoil.chart;
 
-import org.cirdles.topsoil.data.Entry;
+import org.cirdles.topsoil.dataset.entry.Entry;
 
 /**
  *

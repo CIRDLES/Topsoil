@@ -33,8 +33,8 @@ import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
 import org.cirdles.topsoil.app.utils.DatasetReader;
 import org.cirdles.topsoil.app.utils.DatasetWriter;
 import org.cirdles.topsoil.app.utils.YesNoAlert;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Entry;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.entry.Entry;
 
 /**
  * Shortcut tools to be used anywhere in the program.

@@ -16,8 +16,8 @@
 package org.cirdles.topsoil.app.utils;
 
 import java.io.IOException;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.field.Field;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;

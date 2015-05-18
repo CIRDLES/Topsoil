@@ -15,7 +15,7 @@
  */
 package org.cirdles.topsoil.chart;
 
-import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.dataset.field.Field;
 
 public class SimpleVariableBinding<T> implements VariableBinding<T> {
 

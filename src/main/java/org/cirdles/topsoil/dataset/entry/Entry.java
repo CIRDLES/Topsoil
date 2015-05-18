@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.chart;
+package org.cirdles.topsoil.dataset.entry;
 
-import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
+import java.util.Optional;
 
 /**
  *
  * @author John Zeringue
  */
-public interface VariableFormat<T> {
-
-    public String getName();
-
-    public T normalize(VariableBinding<T> binding, Entry entry);
-
-    public static <T> VariableFormat<T> identity() {
-        return new IdentityVariableFormat<>();
-    }
-
+public interface Entry {
+    
+    public <T> Optional<T> get(Field<? extends T> field);
+    
+    public <T> void set(Field<? super T> field, T value);
+    
 }

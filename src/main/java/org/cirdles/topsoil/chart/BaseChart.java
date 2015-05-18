@@ -17,7 +17,7 @@ package org.cirdles.topsoil.chart;
 
 import java.util.Optional;
 import org.cirdles.topsoil.chart.setting.SettingScope;
-import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.dataset.Dataset;
 
 /**
  * A partial implementation of {@link Chart} that stores and retrieves set data.

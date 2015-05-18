@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.dataset.Dataset;
 
 /**
  *

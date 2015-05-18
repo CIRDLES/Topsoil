@@ -19,8 +19,8 @@ import java.beans.EventHandler;
 import javafx.beans.value.ObservableValueBase;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
-import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
 
 /**
  *

@@ -18,9 +18,9 @@ package org.cirdles.topsoil.chart;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.Entry;
-import org.cirdles.topsoil.data.Field;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
 
 /**
  *

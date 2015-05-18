@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.DatasetManager;
-import org.cirdles.topsoil.data.SimpleDataset;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.DatasetManager;
+import org.cirdles.topsoil.dataset.SimpleDataset;
 
 /**
  *

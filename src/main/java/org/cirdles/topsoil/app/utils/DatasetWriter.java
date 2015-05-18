@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.dataset.Dataset;
 
 /**
  *

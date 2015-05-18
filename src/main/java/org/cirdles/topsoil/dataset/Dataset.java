@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.data;
+package org.cirdles.topsoil.dataset;
 
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
 import static java.util.Collections.emptyList;
 import java.util.List;
 import java.util.Optional;

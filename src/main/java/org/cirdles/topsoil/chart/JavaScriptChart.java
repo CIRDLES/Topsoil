@@ -34,7 +34,7 @@ import javafx.scene.web.WebView;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import netscape.javascript.JSObject;
-import org.cirdles.topsoil.data.Entry;
+import org.cirdles.topsoil.dataset.entry.Entry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import javafx.scene.Node;
 import org.cirdles.topsoil.chart.setting.SettingScope;
-import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.dataset.Dataset;
 
 /**
  * A generalized chart that can express itself as a {@link Node}.

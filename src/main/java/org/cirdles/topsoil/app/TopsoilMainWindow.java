@@ -50,8 +50,8 @@ import org.cirdles.topsoil.app.utils.TSVDatasetReader;
 import org.cirdles.topsoil.app.utils.TSVDatasetWriter;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
-import org.cirdles.topsoil.data.Dataset;
-import org.cirdles.topsoil.data.DatasetManager;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.DatasetManager;
 
 /**
  * FXML Controller class

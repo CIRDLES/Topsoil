@@ -22,7 +22,7 @@ import javafx.scene.control.DialogPane;
 import org.cirdles.topsoil.chart.SimpleVariableContext;
 import org.cirdles.topsoil.chart.Variable;
 import org.cirdles.topsoil.chart.VariableContext;
-import org.cirdles.topsoil.data.Dataset;
+import org.cirdles.topsoil.dataset.Dataset;
 
 /**
  *
