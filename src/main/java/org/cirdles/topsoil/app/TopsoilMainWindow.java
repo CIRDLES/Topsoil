@@ -136,7 +136,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
         textInputDialog.setContentText("Data set name:");
         textInputDialog.showAndWait().ifPresent(datasetName -> {
-            Path datasetPath = DATASETS_DIRECTORY.resolve(datasetName + ".tsv");
+            Path datasetPath = DATASETS_DIRECTORY
+                    .resolve("open")
+                    .resolve(datasetName + ".tsv");
 
             getCurrentTable().ifPresent(table -> table.saveToPath(datasetPath));
             getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
