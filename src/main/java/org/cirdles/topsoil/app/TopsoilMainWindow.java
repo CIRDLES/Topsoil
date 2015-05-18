@@ -230,7 +230,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
     }
 
     void importFromFile(Path filePath) {
-        TSVTable dataTable = getCurrentTable().orElseGet(this::createTable);
+        TSVTable dataTable = createTable();
 
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
             DatasetReader tableReader = new TSVDatasetReader(response);
