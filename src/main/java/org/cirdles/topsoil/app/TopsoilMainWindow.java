@@ -114,6 +114,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         dataTableTab.setOnClosed(event -> {
             if (dataTableTab.getContent() instanceof TSVTable) {
                 TSVTable table = (TSVTable) dataTableTab.getContent();
+                datasetManager.close(table.getDataset());
             }
         });
 
