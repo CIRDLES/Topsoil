@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.dataset.writer;
+package org.cirdles.topsoil.app.utils;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import java.io.IOException;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.dataset.reader;
+package org.cirdles.topsoil.app.utils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import java.io.IOException;
@@ -35,7 +35,7 @@ import org.cirdles.topsoil.dataset.field.TextField;
  *
  * @author John Zeringue
  */
-public class DSVDatasetReader extends BaseDatasetReader {
+public class DSVDatasetReader implements DatasetReader {
     
     private char delimiter;
     private boolean expectingHeaders;

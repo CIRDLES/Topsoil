@@ -15,8 +15,6 @@
  */
 package org.cirdles.topsoil.app.utils;
 
-import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
 import java.io.IOException;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.field.Field;

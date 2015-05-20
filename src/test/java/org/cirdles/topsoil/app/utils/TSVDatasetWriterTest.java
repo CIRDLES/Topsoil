@@ -15,8 +15,6 @@
  */
 package org.cirdles.topsoil.app.utils;
 
-import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
-import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

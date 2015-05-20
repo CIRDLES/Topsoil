@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.dataset.reader;
+package org.cirdles.topsoil.app.utils;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVDatasetReader extends DSVDatasetReader {
+public class TSVDatasetWriter extends DSVDatasetWriter {
 
-    public TSVDatasetReader() {
+    public TSVDatasetWriter() {
         super('\t');
-    }
-
-    public TSVDatasetReader(boolean expectingHeaders) {
-        super('\t', expectingHeaders);
     }
 
 }
