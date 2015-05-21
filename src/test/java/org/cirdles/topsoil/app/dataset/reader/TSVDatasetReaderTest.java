@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.utils;
+package org.cirdles.topsoil.app.dataset.reader;
 
-import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
 import java.io.IOException;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.field.Field;
@@ -67,7 +65,6 @@ public class TSVDatasetReaderTest {
 
         assertEquals(1., dataset.getEntries().get(0).get(fieldA).get());
         assertEquals(6., dataset.getEntries().get(1).get(fieldC).get());
-
     }
 
     @Test
@@ -93,6 +90,12 @@ public class TSVDatasetReaderTest {
 
         assertTrue(dataset.getFields().isEmpty());
         assertTrue(dataset.getEntries().isEmpty());
+    }
+    
+    @Test
+    public void testReadsUnacknowledgedHeaders() throws IOException {
+        // shouldn't throw exception
+        datasetReaderWithoutHeaders.read(tsvWithHeaders);
     }
 
 }

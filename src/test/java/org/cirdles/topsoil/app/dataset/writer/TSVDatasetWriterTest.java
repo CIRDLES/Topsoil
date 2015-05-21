@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.utils;
+package org.cirdles.topsoil.app.dataset.writer;
 
-import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
-import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
