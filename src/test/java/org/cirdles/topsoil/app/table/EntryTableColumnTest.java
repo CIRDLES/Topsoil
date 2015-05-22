@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2015 CIRDLES.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.cirdles.topsoil.app.table;
 
@@ -19,8 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
+import static javafx.scene.input.KeyCode.ENTER;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.TSVTable;
 import org.cirdles.topsoil.app.TSVTableTest;
@@ -58,12 +67,11 @@ public class EntryTableColumnTest extends ApplicationTest {
        testTSVTable.setId("tsvTable");
        
        //Create a dataset
-       Dataset dataset = Dataset.EMPTY_DATASET;
        DatasetReader tableReader = new TSVDatasetReader(true);
 
        try {
            //Extract the data from the sample file
-           dataset = tableReader.read(sampleTSVPath);
+           Dataset dataset = tableReader.read(sampleTSVPath);
            testTSVTable.setDataset(dataset);
        } catch (IOException ex) {
            Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
@@ -92,19 +100,30 @@ public class EntryTableColumnTest extends ApplicationTest {
     //Test if the filter is correctly working on a non-number input
     @Test
     public void testInputNotANumber() {
+        TableCell cell = cell("#tsvTable", 0, 0);
         
         //Get the value of the first cell, before any editing
-        String value = cell("#tsvTable", 0, 0).getText();
+        String value = cell.getText();
         
-        doubleClickOn(cell("#tsvTable", 0, 0), MouseButton.PRIMARY) //Double-click on the first cell
+        doubleClickOn(cell) //Double-click on the first cell
                 .write("test") //Write "test"
-                .push(KeyCode.ENTER) //Press ENTER for committing
-                .push(KeyCode.ENTER); //Press ENTER to close the Warning Dialog
+                .push(ENTER) //Press ENTER for committing
+                .push(ENTER); //Press ENTER to close the Warning Dialog
         
         //Check that the first cell content hasn't been modified
-        verifyThat(cell("#tsvTable", 0, 0), hasText(value));
+        verifyThat(cell, hasText(value));
     }
     
+    @Test
+    public void testChangeCellValue() {
+        TableCell cell = cell("#tsvTable", 0, 0);
+        
+        doubleClickOn(cell)
+                .write("123")
+                .push(ENTER);
+                
+        verifyThat(cell, hasText("123.0"));
+    }
     
     /*
      * ---TEMPORARY STORAGE---

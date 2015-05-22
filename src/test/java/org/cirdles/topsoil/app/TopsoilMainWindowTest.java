@@ -56,11 +56,5 @@ public class TopsoilMainWindowTest extends ApplicationTest {
             return selectedIndex == numberOfTabs - 1;
         });
     }
-
-    @Test
-    @Category(OSXIncompatible.class)
-    public void testCancelImportFile() {
-        clickOn("File").clickOn("Import from TSV").closeCurrentWindow();
-    }
     
 }
