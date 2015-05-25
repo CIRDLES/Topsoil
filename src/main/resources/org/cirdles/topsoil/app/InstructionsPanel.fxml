@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.Line?>
+
+<fx:root type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml/1"
+         alignment="TOP_CENTER">
+        
+    <Text style="-fx-font-weight: BOLD; -fx-font-size: 72pt;">
+        TOPSOIL
+    </Text>
+
+    <Text textAlignment="CENTER" style="-fx-font-size: 20pt;">
+        Welcome to Topsoil
+    </Text>
+    
+    <VBox style="-fx-font-size: 12pt;" spacing="20" >
+        <padding>
+            <Insets left="50" top="50" right="50" bottom="50" />
+        </padding>
+        <Label wrapText="true" 
+               text="%importContent"/>
+        <Label wrapText="true"
+               text="%createTab"/>
+        <Line style="fx-padding:50" startX="0" endX="1050"/>
+        <Label wrapText="true"
+               text="%drawChart"/>
+    </VBox>
+
+</fx:root>
