@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import static javafx.concurrent.Worker.State.SUCCEEDED;
 import javafx.scene.Node;
@@ -38,6 +40,8 @@ import static org.cirdles.topsoil.chart.Variables.SIGMA_X;
 import static org.cirdles.topsoil.chart.Variables.SIGMA_Y;
 import static org.cirdles.topsoil.chart.Variables.X;
 import static org.cirdles.topsoil.chart.Variables.Y;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.entry.EntryListener;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -106,7 +110,6 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
     private WebView webView;
     private boolean initialized = false;
-
     /**
      * Creates a new {@link JavaScriptChart} using the specified source file.
      *
@@ -238,6 +241,56 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         return webView;
     }
 
+    /**
+     * Sets this {@link Chart}'s data by passing rows of length 5 with variables
+     * in the following order: <code>x</code>, <code>σx</code>, <code>y</code>,
+     * <code>σy</code>, <code>ρ</code>.
+     *
+     * @param variableContext
+     */
+    @Override
+    public void setData(VariableContext variableContext) {
+        super.setData(variableContext);
+
+        EntryListener listener = (entry, field) -> {
+            drawChart(variableContext);
+        };
+
+        ObservableList<Entry> entries = variableContext.getDataset().getEntries();
+        //Listen to the entries (= value changes)
+        entries.forEach(entry -> entry.addListener(listener));
+        //Listen to the dataset (= adding/removal of entries)
+        entries.addListener((ListChangeListener.Change<? extends Entry> c) -> {
+            drawChart(variableContext);
+        });
+        
+        drawChart(variableContext);
+    }
+    
+    public void drawChart(VariableContext variableContext) {
+        // pass the data to JavaScript
+        // this seems excessive but passing a double[][] creates a single array
+        // of undefined objects on the other side of things
+        afterInitialization(() -> {
+            getTopsoil().get().call("clearData"); // old data must be cleared
+
+            variableContext.getDataset().getEntries().forEach(entry -> {
+                JSObject row = (JSObject) getWebEngine().get()
+                        .executeScript("new Object()");
+
+                variableContext.getBindings().forEach(variableBinding -> {
+                    row.setMember(
+                            variableBinding.getVariable().getName(),
+                            variableBinding.getValue(entry));
+                });
+
+                getTopsoil().get().call("addData", row);
+            });
+
+            getTopsoil().get().call("showData");
+        });
+    }
+
     @Override
     public Node displayAsNode() {
         return getWebView().orElseGet(this::initializeWebView);
@@ -277,39 +330,4 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
         return svgDocument;
     }
-
-    /**
-     * Sets this {@link Chart}'s data by passing rows of length 5 with variables
-     * in the following order: <code>x</code>, <code>σx</code>, <code>y</code>,
-     * <code>σy</code>, <code>ρ</code>.
-     *
-     * @param variableContext
-     */
-    @Override
-    public void setData(VariableContext variableContext) {
-        super.setData(variableContext);
-
-        // pass the data to JavaScript
-        // this seems excessive but passing a double[][] creates a single array
-        // of undefined objects on the other side of things
-        afterInitialization(() -> {
-            getTopsoil().get().call("clearData"); // old data must be cleared
-
-            variableContext.getDataset().getEntries().forEach(entry -> {
-                JSObject row = (JSObject) getWebEngine().get()
-                        .executeScript("new Object()");
-
-                variableContext.getBindings().forEach(variableBinding -> {
-                    row.setMember(
-                            variableBinding.getVariable().getName(),
-                            variableBinding.getValue(entry));
-                });
-
-                getTopsoil().get().call("addData", row);
-            });
-
-            getTopsoil().get().call("showData");
-        });
-    }
-
 }

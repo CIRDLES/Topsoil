@@ -34,7 +34,7 @@
         var y = chart.y = d3.scale.linear()
                 .range([chart.height, 0]);
 
-        if (data.length > 0) {
+        if (data.length > 0){
             chart.settings.transaction(function (t) {
                 t.set(X_MIN, d3.min(data, function (d) {
                     return d.x - d.sigma_x;

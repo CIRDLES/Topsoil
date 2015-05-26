@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -39,6 +40,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.app.chart.VariableBindingDialog;
@@ -52,6 +54,7 @@ import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.DatasetManager;
+
 
 /**
  * FXML Controller class
@@ -251,6 +254,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
+            
+            //set Tab title
+            getCurrentTab().ifPresent(tab -> tab.setText(filePath.getFileName().toString().split("\\.")[0]));
         });
     }
 
@@ -270,7 +276,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         new VariableBindingDialog(chart.getVariables(), dataset).showAndWait()
                 .ifPresent(variableContext -> {
                     chart.setData(variableContext);
-
+                  
                     Parent chartWindow = new ChartWindow(chart);
                     Scene scene = new Scene(chartWindow, 1200, 800);
 
