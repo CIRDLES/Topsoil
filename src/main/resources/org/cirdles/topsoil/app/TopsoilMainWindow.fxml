@@ -13,8 +13,10 @@
          xmlns:fx="http://javafx.com/fxml/1">
     <MenuBar useSystemMenuBar="true" >
         <Menu text="%fileMenu">
+            <MenuItem text="%importFromCSV"
+                      onAction="#importFromCSV" />
             <MenuItem text="%importFromTSV"
-                      onAction="#importFromFile" />
+                      onAction="#importFromTSV" />
         </Menu>
         
         <Menu text="Charts" fx:id="chartsMenu">

@@ -21,11 +21,12 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -40,7 +41,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.app.chart.VariableBindingDialog;
@@ -48,13 +48,14 @@ import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
 import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
 import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.app.dataset.TSVDatasetManager;
+import org.cirdles.topsoil.app.dataset.reader.CSVDatasetReader;
+import org.cirdles.topsoil.app.dataset.reader.DSVDatasetReader;
 import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
 import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.DatasetManager;
-
 
 /**
  * FXML Controller class
@@ -126,7 +127,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         dataTableTab.setContent(dataTable);
 
         dataTableTabPane.getTabs().add(dataTableTab);
-        
+
         // focus on new tab
         SelectionModel<Tab> selectionModel = dataTableTabPane.getSelectionModel();
         selectionModel.select(dataTableTab);
@@ -235,48 +236,64 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
         return (TSVTable) createTab().getContent();
     }
 
-    void importFromFile(Path filePath) {
+    void importFromFile(Path filePath,
+            Function<Boolean, DatasetReader> datasetReaderConstructor) {
         TSVTable dataTable = createTable();
 
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
-            DatasetReader tableReader = new TSVDatasetReader(response);
-
             try {
-                Dataset dataset = tableReader.read(filePath);
+                DatasetReader datasetReader
+                        = datasetReaderConstructor.apply(response);
+                
+                Dataset dataset = datasetReader.read(filePath);
                 dataTable.setDataset(dataset);
             } catch (IOException ex) {
                 Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            DatasetWriter tableWriter = new TSVDatasetWriter();
-            try {
-                tableWriter.write(dataTable.getDataset(), Topsoil.LAST_TABLE_PATH);
-            } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            }
-            
             //set Tab title
-            getCurrentTab().ifPresent(tab -> tab.setText(filePath.getFileName().toString().split("\\.")[0]));
+            getCurrentTab().ifPresent(tab -> {
+                tab.setText(filePath.getFileName().toString().split("\\.")[0]);
+            });
         });
     }
 
-    @FXML
-    void importFromFile() {
-        FileChooser tsvChooser = new FileChooser();
-        tsvChooser.setInitialDirectory(Topsoil.USER_HOME.toFile());
-        tsvChooser.setSelectedExtensionFilter(
-                new FileChooser.ExtensionFilter("Table Files", "TSV"));
+    void importFromCSV(Path filePath) {
+        importFromFile(filePath, CSVDatasetReader::new);
+    }
 
-        Optional.ofNullable(tsvChooser.showOpenDialog(getScene().getWindow()))
+    void importFromTSV(Path filePath) {
+        importFromFile(filePath, TSVDatasetReader::new);
+    }
+
+    void importFromFile(FileChooser.ExtensionFilter extensionFilter,
+            Consumer<Path> importFromFile) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(Topsoil.USER_HOME.toFile());
+        fileChooser.setSelectedExtensionFilter(extensionFilter);
+
+        Optional.ofNullable(fileChooser.showOpenDialog(getScene().getWindow()))
                 .map(File::toPath)
-                .ifPresent(this::importFromFile);
+                .ifPresent(importFromFile);
+    }
+
+    @FXML
+    void importFromCSV() {
+        importFromFile(new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
+                this::importFromCSV);
+    }
+
+    @FXML
+    void importFromTSV() {
+        importFromFile(new FileChooser.ExtensionFilter("TSV Files", "*.tsv"),
+                this::importFromTSV);
     }
 
     void initializeAndShow(Chart chart, Dataset dataset) {
         new VariableBindingDialog(chart.getVariables(), dataset).showAndWait()
                 .ifPresent(variableContext -> {
                     chart.setData(variableContext);
-                  
+
                     Parent chartWindow = new ChartWindow(chart);
                     Scene scene = new Scene(chartWindow, 1200, 800);
 
