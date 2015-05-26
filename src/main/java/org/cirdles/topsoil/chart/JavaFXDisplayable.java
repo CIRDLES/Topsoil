@@ -15,6 +15,11 @@
  */
 package org.cirdles.topsoil.chart;
 
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -31,21 +36,40 @@ public interface JavaFXDisplayable extends Displayable {
     @Override
     public default JComponent displayAsJComponent() {
         JFXPanel jfxPanel = new JFXPanel();
-        
-        Node node = displayAsNode();
-        Parent parent;
-        
-        // cast/wrap node as appropriate
-        if (node instanceof Parent) {
-            parent = (Parent) node;
-        } else {
-            parent = new VBox(node);
+
+        Task<Void> initializeJFXPanel = new Task<Void>() {
+
+            @Override
+            protected Void call() throws Exception {
+                Node node = displayAsNode();
+                Parent parent;
+
+                // cast/wrap node as appropriate
+                if (node instanceof Parent) {
+                    parent = (Parent) node;
+                } else {
+                    parent = new VBox(node);
+                }
+
+                Scene scene = new Scene(parent);
+                jfxPanel.setScene(scene);
+
+                return null;
+            }
+
+        };
+
+        Platform.runLater(initializeJFXPanel);
+
+        // synchronize initializeJFXPanel
+        try {
+            initializeJFXPanel.get();
+        } catch (InterruptedException | ExecutionException ex) {
+            Logger.getLogger(JavaFXDisplayable.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
-        
-        Scene scene = new Scene(parent);
-        jfxPanel.setScene(scene);
-        
+
         return jfxPanel;
     }
-    
+
 }

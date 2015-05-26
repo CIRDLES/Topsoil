@@ -15,26 +15,29 @@
  */
 package org.cirdles.topsoil.chart;
 
-import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
-import javafx.concurrent.Worker.State;
+import static javafx.concurrent.Worker.State.SUCCEEDED;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import netscape.javascript.JSObject;
-import org.cirdles.topsoil.dataset.entry.Entry;
+import static org.cirdles.topsoil.chart.Variables.RHO;
+import static org.cirdles.topsoil.chart.Variables.SIGMA_X;
+import static org.cirdles.topsoil.chart.Variables.SIGMA_Y;
+import static org.cirdles.topsoil.chart.Variables.X;
+import static org.cirdles.topsoil.chart.Variables.Y;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -45,87 +48,32 @@ import org.w3c.dom.Element;
  */
 public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
-    private static final VariableFormat<Number> ONE_SIGMA_ABSOLUTE
-            = new BaseVariableFormat<Number>("1σ (Abs)") {
+    private static final Logger LOGGER = Logger.getLogger(JavaScriptChart.class.getName());
 
-                @Override
-                public Number normalize(VariableBinding<Number> binding,
-                        Entry entry) {
-                    return entry.get(binding.getField()).get().doubleValue();
-                }
-
-            };
-
-    private static final VariableFormat<Number> ONE_SIGMA_PERCENT
-            = new DependentVariableFormat<Number>("1σ (%)") {
-
-                @Override
-                public Number normalize(Number variableValue,
-                        Number dependencyValue) {
-                    return variableValue.doubleValue()
-                    * dependencyValue.doubleValue() / 100;
-                }
-
-            };
-
-    private static final VariableFormat<Number> TWO_SIGMA_ABSOLUTE
-            = new BaseVariableFormat<Number>("2σ (Abs)") {
-
-                @Override
-                public Number normalize(VariableBinding<Number> binding,
-                        Entry entry) {
-                    return entry.get(binding.getField()).get().doubleValue() / 2;
-                }
-
-            };
-
-    private static final VariableFormat<Number> TWO_SIGMA_PERCENT
-            = new DependentVariableFormat<Number>("2σ (%)") {
-
-                @Override
-                public Number normalize(Number variableValue,
-                        Number dependencyValue) {
-                    return variableValue.doubleValue()
-                    * dependencyValue.doubleValue() / 200;
-                }
-
-            };
-    
-    private static final List<VariableFormat> UNCERTAINTY_FORMATS
-            = Arrays.asList(
-                    ONE_SIGMA_ABSOLUTE,
-                    ONE_SIGMA_PERCENT,
-                    TWO_SIGMA_ABSOLUTE,
-                    TWO_SIGMA_PERCENT
-            );
-
-    private static final Variable X = new IndependentVariable("x");
-    private static final Variable SIGMA_X = new DependentVariable("sigma_x", X, UNCERTAINTY_FORMATS);
-    private static final Variable Y = new IndependentVariable("y");
-    private static final Variable SIGMA_Y = new DependentVariable("sigma_y", Y, UNCERTAINTY_FORMATS);
-    private static final Variable RHO = new IndependentVariable("rho");
-
-    private static final List<Variable> VARIABLES
-            = Arrays.asList(X, SIGMA_X, Y, SIGMA_Y, RHO);
+    private static final List<Variable> VARIABLES = Arrays.asList(
+            X, SIGMA_X,
+            Y, SIGMA_Y,
+            RHO
+    );
 
     private static final String HTML_TEMPLATE;
 
     static {
         // prepare the local URL for Firebug Lite
-        final String FIREBUG_LITE_URL
-                = JavaScriptChart.class.getResource("firebug-lite.js").toExternalForm();
+        final URL FIREBUG_LITE_URL
+                = JavaScriptChart.class.getResource("firebug-lite.js");
 
         // prepare the local URL for d3.js
-        final String D3_JS_URL
-                = JavaScriptChart.class.getResource("d3.js").toExternalForm();
+        final URL D3_JS_URL
+                = JavaScriptChart.class.getResource("d3.js");
 
         // prepare the local URL for numeric.js
-        final String NUMERIC_JS_URL
-                = JavaScriptChart.class.getResource("numeric.js").toExternalForm();
+        final URL NUMERIC_JS_URL
+                = JavaScriptChart.class.getResource("numeric.js");
 
         // prepare the local URL for topsoil.js
-        final String TOPSOIL_JS_URL
-                = JavaScriptChart.class.getResource("topsoil.js").toExternalForm();
+        final URL TOPSOIL_JS_URL
+                = JavaScriptChart.class.getResource("topsoil.js");
 
         // build the HTML template (comments show implicit elements/tags)
         HTML_TEMPLATE
@@ -149,15 +97,14 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                 + ""; // fixes autoformatting in Netbeans
     }
 
-    private final Collection<Runnable> initializationCallbacks = new ArrayList<>();
+    private final Collection<Runnable> afterLoadCallbacks = new ArrayList<>();
+
+    private final Collection<Runnable> initializationCallbacks
+            = new ArrayList<>();
 
     private final Path sourcePath;
 
     private WebView webView;
-    private WebEngine webEngine;
-    private JSObject topsoil;
-
-    private boolean loaded = false;
     private boolean initialized = false;
 
     /**
@@ -167,29 +114,37 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
      */
     public JavaScriptChart(Path sourcePath) {
         if (Files.isDirectory(sourcePath)) {
-            throw new IllegalArgumentException("sourcePath cannot be a directory");
+            throw new IllegalArgumentException("sourcePath must be a file");
         }
 
         this.sourcePath = sourcePath;
     }
 
-    /**
-     * Motivated similarly to {@link #afterLoad(java.lang.Runnable)} but needed
-     * to prevent data from being passed into the JavaScript environment before
-     * everything is ready.
-     *
-     * @param callback the runnable to be run after this
-     * {@link JavaScriptChart}'s {@link WebView} has been initialized
-     */
-    private void afterInitialization(Runnable callback) {
-        // if already initialized, just run the callback
-        if (initialized) {
-            callback.run();
-            return;
-        }
+    public Path getSourcePath() {
+        return sourcePath;
+    }
 
-        // otherwise add the runnable to the collection of callbacks
-        initializationCallbacks.add(callback);
+    Optional<WebView> getWebView() {
+        return Optional.ofNullable(webView);
+    }
+
+    Optional<WebEngine> getWebEngine() {
+        return getWebView().map(WebView::getEngine);
+    }
+
+    Optional<JSObject> getTopsoil() {
+        return getWebEngine().map(webEngine -> {
+            return (JSObject) webEngine.executeScript("topsoil");
+        });
+    }
+
+    public void fitData() {
+        getTopsoil().get().call("showData");
+    }
+
+    @Override
+    public List<Variable> getVariables() {
+        return VARIABLES;
     }
 
     /**
@@ -205,87 +160,122 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
      * {@link JavaScriptChart}'s HTML has been loaded
      */
     private void afterLoad(Runnable callback) {
-        // if already loaded, just run the callback
-        if (loaded) {
+        boolean loadSucceeded = getWebEngine()
+                .map(WebEngine::getLoadWorker)
+                .map(Worker::getState)
+                .map(state -> state == SUCCEEDED)
+                .orElse(false);
+
+        if (loadSucceeded) {
             callback.run();
-            return;
+        } else {
+            afterLoadCallbacks.add(callback);
         }
-
-        // otherwise add a new listener that triggers the callback
-        webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
-
-            @Override
-            public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-                if (newValue == Worker.State.SUCCEEDED) {
-                    loaded = true;
-
-                    // run the callback
-                    callback.run();
-
-                    // remove this listener since the callback should only be run once
-                    webEngine.getLoadWorker().stateProperty().removeListener(this);
-                }
-            }
-
-        });
     }
 
-    @Override
-    public Node displayAsNode() {
-        // this chart's node (a WebView) is lazily instantiated
-        initializeWebViewIfNeeded();
+    /**
+     * Motivated similarly to {@link #afterLoad(java.lang.Runnable)} but needed
+     * to prevent data from being passed into the JavaScript environment before
+     * everything is ready.
+     *
+     * @param callback the runnable to be run after this
+     * {@link JavaScriptChart}'s {@link WebView} has been initialized
+     */
+    private void afterInitialization(Runnable callback) {
+        if (initialized) {
+            callback.run();
+        } else {
+            initializationCallbacks.add(callback);
+        }
+    }
 
-        return webView;
+    String buildContent() {
+        return String.format(HTML_TEMPLATE, getSourcePath().toUri());
     }
 
     /**
      * Initializes this {@link JavaScriptChart}'s {@link WebView} and related
      * objects if it has not already been done.
      */
-    private void initializeWebViewIfNeeded() {
-        // if webView is not null, initialization is not needed
-        if (webView != null) {
-            return;
-        }
-
+    private WebView initializeWebView() {
         // initialize webView and associated variables
         webView = new WebView();
-        webEngine = webView.getEngine();
+
+        getWebEngine().get().getLoadWorker().stateProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue == SUCCEEDED) {
+                        afterLoadCallbacks.forEach(Runnable::run);
+                        afterLoadCallbacks.clear();
+                    }
+                });
 
         // useful for debugging
-        webEngine.setOnAlert(event -> {
+        getWebEngine().get().setOnAlert(event -> {
             System.out.println(event.getData());
-        });
-        webEngine.setOnError(event -> {
-            System.err.println(event.getMessage());
         });
 
         // used as a callback for webEngine.loadContent(HTML_TEMPLATE)
         afterLoad(() -> {
-            topsoil = (JSObject) webEngine.executeScript("topsoil");
-
             // setup setting scope
-            topsoil.call("setupSettingScope", getSettingScope());
-            topsoil.call("showData");
+            getTopsoil().get().call("setupSettingScope", getSettingScope());
+            getTopsoil().get().call("showData");
+
             getSettingScope().addListener(settingNames -> {
-                webEngine.executeScript("chart.update(ts.data);");
+                getWebEngine().get().executeScript("chart.update(ts.data);");
             });
 
             // initialization is over
             initialized = true;
             // so we need to trigger callbacks
-            initializationCallbacks.stream().forEach(Runnable::run);
+            initializationCallbacks.forEach(Runnable::run);
             // and take that memory back
             initializationCallbacks.clear();
         });
 
-        String chartURL = null;
+        // asynchronous
+        getWebEngine().get().loadContent(buildContent());
+
+        return webView;
+    }
+
+    @Override
+    public Node displayAsNode() {
+        return getWebView().orElseGet(this::initializeWebView);
+    }
+
+    /**
+     * Returns the contents of the {@link Node} representation of this
+     * {@link Chart} as a SVG document.
+     *
+     * @return a new {@link Document} with SVG contents if
+     * {@link JavaScriptChart#asNode()} has been called for this instance
+     */
+    @Override
+    public Document displayAsSVGDocument() {
+        Document svgDocument = null;
+
         try {
-            chartURL = sourcePath.toUri().toURL().toExternalForm();
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(JavaScriptChart.class.getName()).log(Level.SEVERE, null, ex);
+            // create a new document that will be the SVG
+            svgDocument = DocumentBuilderFactory.newInstance()
+                    .newDocumentBuilder().newDocument();
+            // ugly but acceptable since we control SVG creation
+            svgDocument.setStrictErrorChecking(false);
+
+            // the SVG element in the HTML should have the ID "chart"
+            Element svgElement = getWebEngine().get()
+                    .getDocument().getElementById("chart");
+            // additional configuration to make the SVG standalone
+            svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svgElement.setAttribute("version", "1.1");
+
+            // set the svg element as the document root (must be imported first)
+            svgDocument.appendChild(svgDocument.importNode(svgElement, true));
+
+        } catch (ParserConfigurationException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
         }
-        webEngine.loadContent(String.format(HTML_TEMPLATE, chartURL)); // asynchronous
+
+        return svgDocument;
     }
 
     /**
@@ -299,17 +289,15 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
     public void setData(VariableContext variableContext) {
         super.setData(variableContext);
 
-        // this chart's node (a WebView) is lazily instantiated
-        initializeWebViewIfNeeded();
-
         // pass the data to JavaScript
         // this seems excessive but passing a double[][] creates a single array
         // of undefined objects on the other side of things
         afterInitialization(() -> {
-            topsoil.call("clearData"); // old data must be cleared away
+            getTopsoil().get().call("clearData"); // old data must be cleared
 
             variableContext.getDataset().getEntries().forEach(entry -> {
-                JSObject row = (JSObject) webEngine.executeScript("new Object()");
+                JSObject row = (JSObject) getWebEngine().get()
+                        .executeScript("new Object()");
 
                 variableContext.getBindings().forEach(variableBinding -> {
                     row.setMember(
@@ -317,55 +305,10 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                             variableBinding.getValue(entry));
                 });
 
-                topsoil.call("addData", row);
+                getTopsoil().get().call("addData", row);
             });
 
-            topsoil.call("showData");
-        });
-    }
-
-    @Override
-    public List<Variable> getVariables() {
-        return VARIABLES;
-    }
-
-    /**
-     * Returns the contents of the {@link Node} representation of this
-     * {@link Chart} as a SVG document.
-     *
-     * @return a new {@link Document} with SVG contents if
-     * {@link JavaScriptChart#asNode()} has been called for this instance
-     */
-    public Document toSVG() {
-        Document svgDocument = null;
-
-        try {
-            // create a new document that will be the SVG
-            svgDocument = DocumentBuilderFactory.newInstance()
-                    .newDocumentBuilder().newDocument();
-            // ugly but acceptable since we control SVG creation
-            svgDocument.setStrictErrorChecking(false);
-
-            // the SVG element in the HTML should have the ID "chart"
-            Element svgElement = webEngine.getDocument().getElementById("chart");
-            // additional configuration to make the SVG standalone
-            svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-            svgElement.setAttribute("version", "1.1");
-
-            // set the svg element as the document root (must be imported first)
-            svgDocument.appendChild(svgDocument.importNode(svgElement, true));
-
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(JavaScriptChart.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return svgDocument;
-    }
-
-    public void fitData() {
-        afterInitialization(() -> {
-            topsoil.call("showData");
+            getTopsoil().get().call("showData");
         });
     }
 

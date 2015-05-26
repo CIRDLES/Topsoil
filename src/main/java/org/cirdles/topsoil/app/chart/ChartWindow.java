@@ -48,7 +48,7 @@ public class ChartWindow extends CustomVBox<ChartWindow> {
             
             Button saveToSVG = new Button("Save as SVG");
             saveToSVG.setOnAction(mouseEvent -> {
-                new SVGSaver().save(javaScriptChart.toSVG());
+                new SVGSaver().save(javaScriptChart.displayAsSVGDocument());
             });
             
             Button fitData = new Button("Fit data");
