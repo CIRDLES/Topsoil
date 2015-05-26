@@ -34,10 +34,10 @@ import org.junit.Before;
  */
 public class TSVDatasetWriterTest {
 
-    private static final Field<Number> FIELD_A;
-    private static final Field<Number> FIELD_B;
-    private static final Field<Number> FIELD_C;
-    private static final Field<Number> FIELD_D;
+    private static final Field<Double> FIELD_A;
+    private static final Field<Double> FIELD_B;
+    private static final Field<Double> FIELD_C;
+    private static final Field<Double> FIELD_D;
 
     private static final List<Field<?>> FIELDS = Arrays.asList(
             FIELD_A = new NumberField("A"),
@@ -51,10 +51,10 @@ public class TSVDatasetWriterTest {
     public Entry dummyEntry() {
         Entry entry = new SimpleEntry();
 
-        entry.set(FIELD_A, 1);
-        entry.set(FIELD_B, 2);
-        entry.set(FIELD_C, 3);
-        entry.set(FIELD_D, 4);
+        entry.set(FIELD_A, 1.);
+        entry.set(FIELD_B, 2.);
+        entry.set(FIELD_C, 3.);
+        entry.set(FIELD_D, 4.);
 
         return entry;
     }
@@ -70,10 +70,10 @@ public class TSVDatasetWriterTest {
     }
 
     private static final String EXPECTED_WITH_DEFAULT_CONSTRUCTOR = (""
-            + "\"A\" \"B\" \"C\" \"D\"\n"
-            + "\"1\" \"2\" \"3\" \"4\"\n"
-            + "\"1\" \"2\" \"3\" \"4\"\n"
-            + "").replaceAll(" ", "\t");
+            + "\"A\"   \"B\"   \"C\"   \"D\"\n"
+            + "\"1.0\" \"2.0\" \"3.0\" \"4.0\"\n"
+            + "\"1.0\" \"2.0\" \"3.0\" \"4.0\"\n"
+            + "").replaceAll(" +", "\t");
 
     @Test
     public void testWriteWithDefaultConstructor() throws Exception {
