@@ -42,6 +42,7 @@ import static org.cirdles.topsoil.chart.Variables.X;
 import static org.cirdles.topsoil.chart.Variables.Y;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.entry.EntryListener;
+import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -274,7 +275,9 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         afterInitialization(() -> {
             getTopsoil().get().call("clearData"); // old data must be cleared
 
-            variableContext.getDataset().getEntries().forEach(entry -> {
+            variableContext.getDataset().getEntries()
+                    .filtered(entry -> entry.get(SELECTED).orElse(true))
+                    .forEach(entry -> {
                 JSObject row = (JSObject) getWebEngine().get()
                         .executeScript("new Object()");
 
