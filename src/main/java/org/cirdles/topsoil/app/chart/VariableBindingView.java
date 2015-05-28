@@ -15,11 +15,11 @@
  */
 package org.cirdles.topsoil.app.chart;
 
+import com.johnzeringue.extendsfx.layout.CustomVBox;
 import static java.util.Comparator.comparing;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import javafx.fxml.FXML;
-import org.cirdles.javafx.CustomVBox;
 import org.cirdles.commons.string.LevenshteinDistance;
 import org.cirdles.topsoil.chart.Variable;
 import org.cirdles.topsoil.dataset.field.Field;

@@ -15,12 +15,12 @@
  */
 package org.cirdles.topsoil.app;
 
+import com.johnzeringue.extendsfx.annotation.ResourceBundle;
+import com.johnzeringue.extendsfx.layout.CustomVBox;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -41,17 +40,13 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.app.chart.VariableBindingDialog;
 import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
 import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.app.dataset.TSVDatasetManager;
 import org.cirdles.topsoil.app.dataset.reader.CSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.reader.DSVDatasetReader;
 import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;
@@ -62,7 +57,8 @@ import org.cirdles.topsoil.dataset.DatasetManager;
  *
  * @author John Zeringue
  */
-public class TopsoilMainWindow extends CustomVBox implements Initializable {
+@ResourceBundle("Resources")
+public class TopsoilMainWindow extends CustomVBox {
 
     private static final Logger LOGGER
             = Logger.getLogger(TopsoilMainWindow.class.getName());
@@ -72,6 +68,9 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
     private final static Path DATASETS_DIRECTORY
             = APPLICATION_DIRECTORY.resolve("Data Sets");
+    
+    @FXML
+    java.util.ResourceBundle resources;
 
     @FXML
     Menu chartsMenu;
@@ -84,12 +83,8 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
 
     /**
      * Initializes the controller class.
-     *
-     * @param url
-     * @param resources
      */
-    @Override
-    public void initialize(URL url, ResourceBundle resources) {
+    private void initialize() {
         datasetManager = new TSVDatasetManager(DATASETS_DIRECTORY);
         datasetManager.getDatasets().stream()
                 .filter(datasetManager::isOpen)
@@ -248,7 +243,7 @@ public class TopsoilMainWindow extends CustomVBox implements Initializable {
                 Dataset dataset = datasetReader.read(filePath);
                 dataTable.setDataset(dataset);
             } catch (IOException ex) {
-                Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
 
             //set Tab title

@@ -3,7 +3,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
-<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml"
+<fx:root xmlns:fx="http://javafx.com/fxml"
+         type="org.cirdles.topsoil.app.component.SettingsPanel"
          minWidth="300"
          spacing="10">
     
@@ -13,4 +14,5 @@
     
     <!-- children -->
     <Label text="Settings" />
+    
 </fx:root>

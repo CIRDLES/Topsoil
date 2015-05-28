@@ -15,12 +15,10 @@
  */
 package org.cirdles.topsoil.app;
 
-import org.cirdles.OSXIncompatible;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
 /**

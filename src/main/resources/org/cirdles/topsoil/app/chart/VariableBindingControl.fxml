@@ -6,9 +6,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root xmlns:fx="http://javafx.com/fxml/1" type="HBox"
-        alignment="CENTER"
-        spacing="8">
+<fx:root xmlns:fx="http://javafx.com/fxml/1"
+         type="org.cirdles.topsoil.app.chart.VariableBindingControl"
+         alignment="CENTER"
+         spacing="8">
     
     <Label fx:id="variableNameLabel"
            alignment="CENTER_RIGHT" 
@@ -17,4 +18,5 @@
                prefWidth="120" />
     <ChoiceBox fx:id="variableFormatChoiceBox"
                prefWidth="80" />
+    
 </fx:root>

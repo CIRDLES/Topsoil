@@ -25,6 +25,7 @@ import javafx.scene.control.ToolBar;
  * @author John Zeringue
  * @param <T> the type of {@link CustomToolBar} to be instantiated
  */
+@Deprecated
 public abstract class CustomToolBar<T extends CustomToolBar> extends ToolBar {
 
     private static final CustomComponentInitializer initializer

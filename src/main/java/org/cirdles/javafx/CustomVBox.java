@@ -25,6 +25,7 @@ import javafx.scene.layout.VBox;
  * @author John Zeringue
  * @param <T> the type of {@link CustomVBox} to be instantiated
  */
+@Deprecated
 public abstract class CustomVBox<T extends CustomVBox> extends VBox {
 
     private static final CustomComponentInitializer initializer
