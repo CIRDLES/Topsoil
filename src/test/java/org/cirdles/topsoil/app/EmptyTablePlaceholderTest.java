@@ -15,26 +15,27 @@
  */
 package org.cirdles.topsoil.app;
 
-import com.johnzeringue.extendsfx.annotation.ResourceBundle;
-import com.johnzeringue.extendsfx.layout.CustomVBox;
-import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.junit.Test;
+import org.testfx.framework.junit.ApplicationTest;
 
 /**
  *
  * @author John Zeringue
  */
-@ResourceBundle("Resources")
-public class EmptyTablePlaceholder extends CustomVBox<EmptyTablePlaceholder> {
+public class EmptyTablePlaceholderTest extends ApplicationTest {
 
-    private TSVTable dataTable;
-
-    public EmptyTablePlaceholder(TSVTable dataTable) {
-        super(self -> self.dataTable = dataTable);
+    @Override
+    public void start(Stage stage) throws Exception {
+        Scene scene = new Scene(new EmptyTablePlaceholder(null));
+        stage.setScene(scene);
+        stage.show();
     }
     
-    @FXML
-    private void pasteFromClipboardIntoDataTable() {
-        dataTable.pasteFromClipboard();
+    @Test
+    public void testLoadsFXML() {
+        
     }
-
+    
 }

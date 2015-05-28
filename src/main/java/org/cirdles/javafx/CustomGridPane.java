@@ -25,6 +25,7 @@ import javafx.scene.layout.GridPane;
  * @author John Zeringue
  * @param <T> the type of {@link CustomGridPane} to be instantiated
  */
+@Deprecated
 public abstract class CustomGridPane<T extends CustomGridPane> extends GridPane {
 
     private static final CustomComponentInitializer initializer

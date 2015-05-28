@@ -26,6 +26,7 @@ import javafx.scene.layout.HBox;
  * @author John Zeringue
  * @param <T> the type of {@link CustomHBox} to be instantiated
  */
+@Deprecated
 public abstract class CustomHBox<T extends CustomHBox> extends HBox {
 
     private static final CustomComponentInitializer initializer

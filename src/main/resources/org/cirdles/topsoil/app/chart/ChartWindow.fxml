@@ -6,7 +6,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root xmlns:fx="http://javafx.com/fxml/1" type="VBox">
+<fx:root xmlns:fx="http://javafx.com/fxml/1"
+         type="org.cirdles.topsoil.app.chart.ChartWindow">
+    
     <ToolBar fx:id="chartToolBar" />
     <HBox fx:id="chartAndConfig" /> 
+    
 </fx:root>

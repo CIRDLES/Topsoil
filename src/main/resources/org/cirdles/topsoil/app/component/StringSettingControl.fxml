@@ -2,12 +2,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml"
+<fx:root xmlns:fx="http://javafx.com/fxml"
+         type="org.cirdles.topsoil.app.component.StringSettingControl"
          spacing="10">
+    
     <Label fx:id="settingLabel"
            styleClass="setting name"
            minWidth="50" />
     <TextField fx:id="settingField"
                styleClass="setting field"
                minWidth="100" />
+    
 </fx:root>

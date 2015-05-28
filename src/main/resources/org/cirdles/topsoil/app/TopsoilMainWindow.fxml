@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.cirdles.topsoil.app.*?>
 
-<fx:root type="javafx.scene.layout.VBox"
+<fx:root type="org.cirdles.topsoil.app.TopsoilMainWindow"
          prefHeight="800"
          prefWidth="1200"
          xmlns:fx="http://javafx.com/fxml/1">

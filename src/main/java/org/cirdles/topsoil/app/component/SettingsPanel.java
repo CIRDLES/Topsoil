@@ -15,12 +15,12 @@
  */
 package org.cirdles.topsoil.app.component;
 
+import com.johnzeringue.extendsfx.layout.CustomVBox;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
-import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.chart.setting.SettingScope;
 
 /**

@@ -15,11 +15,11 @@
  */
 package org.cirdles.topsoil.app.chart;
 
+import com.johnzeringue.extendsfx.layout.CustomVBox;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
-import org.cirdles.javafx.CustomVBox;
 import org.cirdles.topsoil.app.component.SettingsPanel;
 import org.cirdles.topsoil.app.utils.SVGSaver;
 import org.cirdles.topsoil.chart.Chart;

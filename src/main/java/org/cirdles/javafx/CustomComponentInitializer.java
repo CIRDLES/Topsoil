@@ -29,6 +29,7 @@ import org.cirdles.topsoil.app.builder.TopsoilBuilderFactory;
  *
  * @author John Zeringue
  */
+@Deprecated
 public class CustomComponentInitializer {
     
     private static final ResourceBundle resources = ResourceBundle.getBundle("Resources");

@@ -15,11 +15,7 @@
  */
 package org.cirdles.topsoil.app.component;
 
-import java.util.Optional;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import org.cirdles.javafx.CustomHBox;
+import com.johnzeringue.extendsfx.layout.CustomHBox;
 import org.cirdles.topsoil.chart.setting.SettingScope;
 
 /**
