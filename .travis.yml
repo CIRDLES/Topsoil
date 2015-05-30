@@ -15,7 +15,7 @@ env:
 
 before_script: npm install -g buster
 
-script: ./gradlew check busterTest --info
+script: ./gradlew check busterTest
 
 notifications:
   webhooks:
