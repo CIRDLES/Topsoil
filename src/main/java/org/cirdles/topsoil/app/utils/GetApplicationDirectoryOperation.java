@@ -48,11 +48,11 @@ public class GetApplicationDirectoryOperation extends PlatformDependentOperation
     * 
     * @param String... params
     * @return Path the path on MacOS 
-    **/	
+    **/
     @Override
     protected Path performOnMacOS(String... params) {
         validateParams(params);
-		//Apps in Mac stored in the Application Support folder/directory in the users home directory
+        //Apps in Mac stored in the Application Support folder/directory in the users home directory
         return Paths.get(System.getProperty("user.home"), "Library/Application Support", params[0]);
     }
 
@@ -65,7 +65,7 @@ public class GetApplicationDirectoryOperation extends PlatformDependentOperation
     @Override
     protected Path performOnLinux(String... params) {
         validateParams(params);
-		//Apps in Linux are stored in a hidden directory the user's home directory 
+        //Apps in Linux are stored in a hidden directory the user's home directory
         return Paths.get(System.getProperty("user.home"), buildLinuxFolderName(params[0]));
     }
 
@@ -74,10 +74,10 @@ public class GetApplicationDirectoryOperation extends PlatformDependentOperation
     * 
     * @param String the name of the application 
     * @return String the Linux folder name as a String
-    **/	
+    **/
     String buildLinuxFolderName(String applicationName) {
-    	//Building folder names in Linux requires getting rid of white space and replacing with the '-' character 
-    	//and making all it all lowercase. 
+        //Building folder names in Linux requires getting rid of white space and replacing with the '-' character
+        //and making all it all lowercase.
         return "." + applicationName.trim().replaceAll(" +", "-").toLowerCase();
     }
 

@@ -40,7 +40,7 @@ public class EntryRowFactory implements Callback<TableView<Entry>, TableRow<Entr
             Optional.ofNullable(newValue).ifPresent(entry -> {
                 entry.set(ROW, row);
                 
-                if(entry.get(SELECTED).orElse(true)) {
+                if (entry.get(SELECTED).orElse(true)) {
                     row.setOpacity(1);
                 } else {
                     row.setOpacity(0.35);

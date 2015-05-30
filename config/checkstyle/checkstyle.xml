@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+          "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+          "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+ 
+<module name = "Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="fileExtensions" value="java, properties, xml"/>
+    
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
+    <module name="NewlineAtEndOfFile"/>
+    
+    <module name="TreeWalker">
+        <!-- blocks -->
+        <module name="AvoidNestedBlocks"/>
+        <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock"/>
+        <module name="LeftCurly"/>
+        <module name="NeedBraces"/>
+        <module name="RightCurly"/>
+
+        <!-- design -->
+        <module name="InnerTypeLast"/>
+        <module name="InterfaceIsType"/>
+
+        <!-- imports -->
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+
+        <!-- metrics -->
+        <module name="BooleanExpressionComplexity"/>
+        <module name="CyclomaticComplexity"/>
+
+        <!-- modifiers -->
+        <module name="ModifierOrder"/>
+
+        <!-- whitespace -->
+        <module name="ParenPad"/>
+        <module name="WhitespaceAround"/>
+    </module>
+</module>

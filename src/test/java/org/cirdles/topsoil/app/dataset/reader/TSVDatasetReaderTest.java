@@ -28,14 +28,14 @@ import org.junit.Before;
  */
 public class TSVDatasetReaderTest {
 
-    private final static String tsvWithHeaders
+    private static final String tsvWithHeaders
             = (""
             + "A B C\n"
             + "1 2 3\n"
             + "4 5 6\n"
             + "").replaceAll(" ", "\t");
 
-    private final static String tsvWithoutHeaders
+    private static final String tsvWithoutHeaders
             = (""
             + "1 2 3\n"
             + "4 5 6\n"

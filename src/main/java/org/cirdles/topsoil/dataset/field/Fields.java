@@ -27,7 +27,7 @@ public final class Fields {
     
     public static final BooleanField SELECTED = new BooleanField("Selected");
     
-    public static final Field<TableRow<Entry>> ROW = new Field(){
+    public static final Field<TableRow<Entry>> ROW = new Field() {
 
         @Override
         public String getName() {

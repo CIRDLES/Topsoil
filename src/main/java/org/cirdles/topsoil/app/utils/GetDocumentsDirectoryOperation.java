@@ -66,10 +66,9 @@ public class GetDocumentsDirectoryOperation extends PlatformDependentOperation<S
 
         validateParams(params);
 
-        if (params.length == 1 ) {
+        if (params.length == 1) {
             return Paths.get(System.getProperty("user.home"), "Documents", params[0]);
-        }
-        else {
+        } else {
             return Paths.get(System.getProperty("user.home"), "Documents");
         }
     }
@@ -83,10 +82,10 @@ public class GetDocumentsDirectoryOperation extends PlatformDependentOperation<S
     void validateParams(String... params) {
 
 
-        boolean stillValid1 = params.length ==0;
-        boolean stillValid2 = params.length >=1;
+        boolean stillValid1 = params.length == 0;
+        boolean stillValid2 = params.length >= 1;
 
-        if(stillValid1) {
+        if (stillValid1) {
 
             stillValid1 &= params != null;
 
@@ -99,7 +98,7 @@ public class GetDocumentsDirectoryOperation extends PlatformDependentOperation<S
             stillValid2 &= !"".equals(directoryName);
 
         }
-        if(!stillValid1 && !stillValid2) {
+        if (!stillValid1 && !stillValid2) {
             throw new IllegalArgumentException("Valid directory name must be provided");
         }
     }

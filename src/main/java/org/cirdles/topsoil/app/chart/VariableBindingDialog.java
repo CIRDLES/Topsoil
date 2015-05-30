@@ -19,7 +19,6 @@ import java.util.List;
 import javafx.scene.control.ButtonType;
 import static javafx.scene.control.ButtonType.OK;
 import javafx.scene.control.Dialog;
-import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.Variable;
 import org.cirdles.topsoil.chart.VariableContext;
 import org.cirdles.topsoil.dataset.Dataset;

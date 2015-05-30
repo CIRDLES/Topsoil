@@ -63,10 +63,10 @@ public class TopsoilMainWindow extends CustomVBox {
     private static final Logger LOGGER
             = Logger.getLogger(TopsoilMainWindow.class.getName());
 
-    private final static Path APPLICATION_DIRECTORY
+    private static final Path APPLICATION_DIRECTORY
             = new GetApplicationDirectoryOperation().perform("Topsoil");
 
-    private final static Path DATASETS_DIRECTORY
+    private static final Path DATASETS_DIRECTORY
             = APPLICATION_DIRECTORY.resolve("Data Sets");
     
     @FXML

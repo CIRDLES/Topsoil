@@ -6,8 +6,10 @@ plugins {
 // END JAVASCRIPT SUPPORT
 
 apply plugin: 'java'
-apply plugin: 'maven'
+
+apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
+apply plugin: 'maven'
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
@@ -29,6 +31,10 @@ task run(dependsOn: project.classes, type: JavaExec) {
 task debug(dependsOn: project.classes, type: JavaExec) {
     configJavaExec(it)
     debug = true
+}
+
+checkstyle {
+    toolVersion = '6.6'
 }
 
 // BEGIN BETTER VERSIONING

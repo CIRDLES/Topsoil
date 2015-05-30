@@ -16,7 +16,6 @@
 package org.cirdles.javafx;
 
 import java.util.function.Consumer;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.HBox;
 
 /**
