@@ -15,23 +15,13 @@
  */
 package org.cirdles.topsoil.app;
 
-import java.io.IOException;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
 import static javafx.scene.control.ButtonType.YES;
 import javafx.scene.control.TableView;
-import javafx.scene.input.Clipboard;
 import javafx.util.StringConverter;
-import static org.cirdles.topsoil.app.Topsoil.LAST_TABLE_PATH;
-import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
-import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
 import org.cirdles.topsoil.app.utils.YesNoAlert;
-import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.entry.Entry;
 
 /**
@@ -85,40 +75,6 @@ public class Tools {
                 callback.accept(buttonType == YES);
             }
         });
-    }
-
-    public static void pasteFromClipboard(TSVTable dataTable) {
-        Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
-            DatasetReader tableReader = new TSVDatasetReader(response);
-
-            try {
-                Dataset dataset
-                        = tableReader.read(Clipboard.getSystemClipboard().getString());
-
-            } catch (IOException ex) {
-                Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            saveTable(dataTable);
-        });
-    }
-
-    public static void saveTable(TSVTable dataTable) {
-        if (!dataTable.getItems().isEmpty()) {
-            DatasetWriter tableWriter = new TSVDatasetWriter();
-            try {
-                tableWriter.write(dataTable.getDataset(), LAST_TABLE_PATH);
-            } catch (IOException ex) {
-                Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            boolean lastTableFileDeleted = LAST_TABLE_PATH.toFile().delete();
-
-            if (!lastTableFileDeleted) {
-                Logger.getLogger(LOGGER_NAME).log(Level.FINE,
-                        "Last table file was not able to be deleted");
-            }
-        }
     }
 
     public static void clearTable(TableView<Entry> dataTable) {

@@ -32,9 +32,7 @@ import org.cirdles.topsoil.app.TSVTable;
 import org.cirdles.topsoil.app.TSVTableTest;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
 import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.junit.Test;
 import static org.testfx.api.FxAssert.verifyThat;
@@ -72,14 +70,6 @@ public class EntryTableColumnTest extends ApplicationTest {
             testTSVTable.setDataset(dataset);
         } catch (IOException ex) {
             Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        DatasetWriter tableWriter = new TSVDatasetWriter();
-        try {
-            //Write the extracted data into the table
-            tableWriter.write(testTSVTable.getDataset(), Topsoil.LAST_TABLE_PATH);
-        } catch (IOException ex) {
-            Logger.getLogger(TSVTableTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return testTSVTable;
