@@ -1,36 +1,35 @@
 language: java
 
+jdk:
+  - oraclejdk8
+
 sudo: false
 cache:
   directories:
-  - "$HOME/.m2/repository"
-  - "$HOME/.gradle/caches/"
+    - $HOME/.gradle/caches/modules-2/files-2.1
+    - $HOME/.gradle/caches/modules-2/metadata-2.6
+    - $HOME/.gradle/wrapper
 
-jdk:
-- oraclejdk8
-
-# setup jobs.
 env:
-- _JAVA_OPTIONS="-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dtestfx.setup.timeout=2500"
+  - _JAVA_OPTIONS="-Djava.awt.headless=true -Dtestfx.robot=glass
+    -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k
+    -Dtestfx.setup.timeout=2500"
 
-before_script: npm install -g buster
-
+before_script: npm install buster@0.7.18
 script: ./gradlew check busterTest
 
-notifications:
-  webhooks:
-    urls: https://webhooks.gitter.im/e/7545741f25d3397d0a1e
-    on_success: change
-
 before_deploy: ./gradlew jarWithDependencies
-
 deploy:
   provider: releases
   api_key:
     secure: emz/zr7vXQ21U0zE/RIa/hmIbbHsfw45ZD1L3Gv0qHvSgZCay4iPjm9bZkktUihhXLVneu/3OYktMuLKBwBU9N/jARvTL3514R8rUign1m1FqAhn1PsL9pRSnh9IeLMAw5zGptld0YERqCff6AC5PNwGIvRDJubReS5rE42BeII=
   file_glob: true
   file: build/libs/topsoil-v*.jar
-  skip_cleanup: true
   on:
     repo: CIRDLES/Topsoil
     tags: true
+
+notifications:
+  webhooks:
+    urls: https://webhooks.gitter.im/e/7545741f25d3397d0a1e
+    on_success: change
