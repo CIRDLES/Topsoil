@@ -72,7 +72,7 @@ public class EntryRowContextMenu extends ContextMenu {
         toggleSelectedMenuItem = new MenuItem();
         
         toggleSelectedMenuItem.setOnAction(event -> {
-            if(row.getItem().get(SELECTED).orElse(true)) {
+            if (row.getItem().get(SELECTED).orElse(true)) {
                 deselectEntries();
             } else {
                 selectEntries();

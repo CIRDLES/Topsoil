@@ -5,7 +5,6 @@
  */
 package org.cirdles.topsoil.app.utils;
 
-import java.nio.file.Path;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -62,6 +61,7 @@ public class GetApplicationDirectoryOperationTest {
             instance.validateParams(params);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException ex) {
+            // expected
         }
         
         // invalid params - null first param
@@ -70,6 +70,7 @@ public class GetApplicationDirectoryOperationTest {
             instance.validateParams(params);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException ex) {
+            // expected
         }
         
         // invalid params - empty string
@@ -78,6 +79,7 @@ public class GetApplicationDirectoryOperationTest {
             instance.validateParams(params);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException ex) {
+            // expected
         }
     }
 

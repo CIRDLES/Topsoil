@@ -17,12 +17,11 @@ package org.cirdles.topsoil.chart;
 
 import java.util.List;
 import java.util.Optional;
-import javafx.scene.Node;
 import org.cirdles.topsoil.chart.setting.SettingScope;
 import org.cirdles.topsoil.dataset.Dataset;
 
 /**
- * A generalized chart that can express itself as a {@link Node}.
+ * A generalized chart that can express itself as a {@link javafx.scene.Node}.
  *
  * @author John Zeringue
  */

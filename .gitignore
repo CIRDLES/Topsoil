@@ -4,7 +4,11 @@ build/
 
 # Netbeans
 nbactions.xml
-.nb-gradle*
+.nb-*
+
+# Intellij
+.idea/
+*.iml
 
 # TestFX
 screenshot*.png
