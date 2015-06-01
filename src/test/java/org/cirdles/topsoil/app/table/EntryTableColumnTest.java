@@ -57,21 +57,16 @@ public class EntryTableColumnTest extends ApplicationTest {
             Logger.getLogger(TSVTableTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //Create a TSVTable
-        TSVTable testTSVTable = new TSVTable(sampleTSVPath);
+        TSVTable testTSVTable = new TSVTable();
+
         tableSelector = new TableSelector(testTSVTable);
-
-        //Create a dataset
         DatasetReader tableReader = new TSVDatasetReader(true);
-
         try {
-            //Extract the data from the sample file
             Dataset dataset = tableReader.read(sampleTSVPath);
             testTSVTable.setDataset(dataset);
         } catch (IOException ex) {
             Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         return testTSVTable;
     }
 

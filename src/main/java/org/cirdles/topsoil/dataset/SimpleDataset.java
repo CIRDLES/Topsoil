@@ -56,6 +56,7 @@ public class SimpleDataset implements Dataset {
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = Optional.ofNullable(name);
     }

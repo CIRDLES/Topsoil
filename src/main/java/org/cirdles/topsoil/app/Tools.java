@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 import javafx.scene.control.Alert;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
 import static javafx.scene.control.ButtonType.YES;
+import javax.inject.Inject;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.app.utils.YesNoAlert;
 
@@ -27,6 +28,7 @@ import org.cirdles.topsoil.app.utils.YesNoAlert;
  */
 public class Tools {
 
+    @Inject
     private static ApplicationMetadata metadata;
 
     /**
