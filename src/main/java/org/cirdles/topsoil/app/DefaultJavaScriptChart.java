@@ -62,7 +62,7 @@ public class DefaultJavaScriptChart extends JavaScriptChart {
                             return null;
                         }
                     });
-            
+
             path = fileSystem.getPath(uriParts[1]);
         } else { // assume file scheme
             path = Paths.get(uri);

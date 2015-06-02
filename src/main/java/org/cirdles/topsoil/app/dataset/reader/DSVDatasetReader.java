@@ -36,10 +36,10 @@ import org.cirdles.topsoil.dataset.field.TextField;
  * @author John Zeringue
  */
 public class DSVDatasetReader extends BaseDatasetReader {
-    
+
     private char delimiter;
     private boolean expectingHeaders;
-    
+
     public DSVDatasetReader(char delimiter) {
         this(delimiter, true);
     }
@@ -60,7 +60,7 @@ public class DSVDatasetReader extends BaseDatasetReader {
 
         return isSquare;
     }
-    
+
     void validate(List<String[]> lines) {
         if (!isSquare(lines)) {
             throw new IllegalArgumentException("DSV data must be square");
@@ -134,5 +134,5 @@ public class DSVDatasetReader extends BaseDatasetReader {
 
         return new SimpleDataset(fields, entries);
     }
-    
+
 }

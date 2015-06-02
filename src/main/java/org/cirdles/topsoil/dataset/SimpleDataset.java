@@ -27,10 +27,10 @@ import org.cirdles.topsoil.dataset.entry.Entry;
  * @author John Zeringue
  */
 public class SimpleDataset implements Dataset {
- 
+
     private final List<Field<?>> fields;
     private final ObservableList<Entry> entries;
-    
+
     private Optional<String> name = Optional.empty();
 
     public SimpleDataset(List<Field<?>> fields, List<Entry> entries) {
@@ -51,7 +51,7 @@ public class SimpleDataset implements Dataset {
     @Override
     public ObservableList<Entry> getEntries() {
         return entries;
-    }    
+    }
 
     /**
      * @param name the name to set

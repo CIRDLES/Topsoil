@@ -44,16 +44,16 @@ public class StringSettingControl extends SettingControl<String> {
     private void initialize() {
         // setting label should show the setting's name
         settingLabel.setText(getSettingName());
-        
+
         getSettingScope().get(getSettingName()).ifPresent(value -> {
             update((String) value);
         });
-        
+
         // on slider change
         settingField.textProperty().addListener((observable, oldValue, newValue) -> {
             // update the setting and label values
             settingScope.set(settingName, newValue);
         });
     }
-    
+
 }

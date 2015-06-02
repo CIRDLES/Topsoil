@@ -33,126 +33,126 @@ import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
  * @author parizotclement
  */
 public class EntryRowContextMenu extends ContextMenu {
-    
+
     private final TableRow<Entry> row;
-    
+
     private MenuItem toggleSelectedMenuItem;
     private MenuItem addRowMenuItem;
     private MenuItem removeRowMenuItem;
 
     public EntryRowContextMenu(TableRow<Entry> row) {
         this.row = row;
-        
+
         initializeThis();
     }
-    
+
     TableView<Entry> getTable() {
         return row.getTableView();
     }
-    
+
     void selectEntries() {
         getTable().getSelectionModel().getSelectedItems().stream()
                 .forEach(entry -> {
                     entry.set(SELECTED, true);
-                    
+
                     entry.get(ROW).ifPresent(entryRow -> entryRow.setOpacity(1));
                 });
     }
-    
+
     void deselectEntries() {
         getTable().getSelectionModel().getSelectedItems().stream()
                 .forEach(entry -> {
                    entry.set(SELECTED, false);
-                   
+
                    entry.get(ROW).ifPresent(entryRow -> entryRow.setOpacity(0.35));
                 });
     }
-    
+
     MenuItem toggleSelectedMenuItem() {
         toggleSelectedMenuItem = new MenuItem();
-        
+
         toggleSelectedMenuItem.setOnAction(event -> {
             if (row.getItem().get(SELECTED).orElse(true)) {
                 deselectEntries();
             } else {
                 selectEntries();
             }
-            
+
             getTable().getSelectionModel().clearSelection();
         });
-        
+
         return toggleSelectedMenuItem;
     }
-    
+
     MenuItem addRowMenuItem() {
         addRowMenuItem = new MenuItem("Add row");
-        
+
         addRowMenuItem.setOnAction(event -> {
             int nextIndex = row.getIndex() + 1;
             Entry entry = new SimpleEntry();
-            
+
             getTable().getColumns().stream().forEach(tableColumn -> {
                 EntryTableColumn column = (EntryTableColumn) tableColumn;
                 entry.set(column.getField(), NaN);
             });
-            
+
             getTable().getItems().add(nextIndex, entry);
             getTable().getSelectionModel().clearAndSelect(nextIndex);
         });
-        
+
         return addRowMenuItem;
     }
-    
+
     MenuItem removeRowMenuItem() {
         removeRowMenuItem  = new MenuItem();
-        
+
         removeRowMenuItem .setOnAction(event -> {
             Collection<Entry> selectedItems = getTable().getSelectionModel().getSelectedItems();
-            
+
             getTable().getItems().removeAll(selectedItems);
             getTable().getSelectionModel().clearSelection();
         });
-        
+
         return removeRowMenuItem ;
     }
-    
+
     String toggleSelectedMenuItemText() {
         return row.getItem().get(SELECTED).orElse(true) ? "Deselect" : "Select";
     }
-    
+
     void updateToggleSelectedMenuItem() {
         toggleSelectedMenuItem.setText(toggleSelectedMenuItemText());
     }
-    
+
     boolean multipleItemsSelected() {
         return getTable().getSelectionModel().getSelectedItems().size() > 1;
     }
-    
+
     void updateAddRowMenuItem() {
         addRowMenuItem.setDisable(multipleItemsSelected());
     }
-    
+
     String removeRowMenuItemText() {
         return multipleItemsSelected() ? "Remove rows" : "Remove row";
     }
-    
+
     void updateRemoveRowMenuItem() {
         removeRowMenuItem.setText(removeRowMenuItemText());
     }
-    
+
     void updateMenuItems(WindowEvent event) {
         updateToggleSelectedMenuItem();
         updateAddRowMenuItem();
         updateRemoveRowMenuItem();
     }
-    
+
     private void initializeThis() {
         getItems().addAll(
                 toggleSelectedMenuItem(),
                 addRowMenuItem(),
                 removeRowMenuItem()
         );
-        
+
         setOnShowing(this::updateMenuItems);
     }
 }

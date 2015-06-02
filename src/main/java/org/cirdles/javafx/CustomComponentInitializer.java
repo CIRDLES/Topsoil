@@ -31,7 +31,7 @@ import org.cirdles.topsoil.app.builder.TopsoilBuilderFactory;
  */
 @Deprecated
 public class CustomComponentInitializer {
-    
+
     private static final ResourceBundle resources = ResourceBundle.getBundle("Resources");
 
     /**
@@ -62,7 +62,7 @@ public class CustomComponentInitializer {
         fxmlLoader.setRoot(node);
         fxmlLoader.setController(node);
         fxmlLoader.setResources(resources);
-        
+
         // this package should be nice and general, but this is necessary
         // for some components at the moment
         // this should be refactored away later

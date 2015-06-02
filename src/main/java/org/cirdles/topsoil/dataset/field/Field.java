@@ -23,9 +23,9 @@ import javafx.util.StringConverter;
  * @param <T>
  */
 public interface Field<T> {
-    
+
     public String getName();
-    
+
     public StringConverter<T> getStringConverter();
-    
+
 }

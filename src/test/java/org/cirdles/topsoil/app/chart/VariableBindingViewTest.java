@@ -35,7 +35,7 @@ public class VariableBindingViewTest extends ApplicationTest {
     private final List<Variable> variables = Arrays.asList(
             new IndependentVariable("Test Variable")
     );
-    
+
     private final List<Field> fields = Arrays.asList(
             new NumberField("Test Field")
     );

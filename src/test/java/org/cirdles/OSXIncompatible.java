@@ -1,5 +1,3 @@
-package org.cirdles;
-
 /*
  * Copyright 2015 CIRDLES.
  *
@@ -15,12 +13,12 @@ package org.cirdles;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+package org.cirdles;
 
 /**
  *
  * @author John Zeringue
  */
 public interface OSXIncompatible {
-    
+
 }

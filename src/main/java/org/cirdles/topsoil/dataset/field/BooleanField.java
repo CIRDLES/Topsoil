@@ -40,8 +40,8 @@ public class BooleanField extends BaseField<Boolean> {
             public Boolean fromString(String string) {
                 return Boolean.valueOf(string);
             }
-            
+
         };
     }
-    
+
 }

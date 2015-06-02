@@ -71,7 +71,7 @@ public class TSVDatasetManager implements DatasetManager {
         if (isOpen(dataset)) {
             return;
         }
-        
+
         try {
             Path datasetPath = datasetToPath.get(dataset);
             Files.move(datasetPath, getOpenPath().resolve(datasetPath.getFileName()));
@@ -89,7 +89,7 @@ public class TSVDatasetManager implements DatasetManager {
         if (isClosed(dataset)) {
             return;
         }
-        
+
         try {
             Path datasetPath = datasetToPath.get(dataset);
             Files.move(datasetPath, getClosedPath().resolve(datasetPath.getFileName()));
@@ -104,13 +104,13 @@ public class TSVDatasetManager implements DatasetManager {
         try {
             // create the path if it does not yet exist
             Files.createDirectories(path);
-            
+
             Files.walk(path, 1).forEach(datasetPath -> {
                 try {
                     if (Files.isDirectory(datasetPath)) {
                         return;
                     }
-                    
+
                     SimpleDataset dataset = (SimpleDataset) datasetReader.read(datasetPath);
 
                     datasets.add(dataset);

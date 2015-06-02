@@ -32,10 +32,10 @@ public class SettingScopeTest {
     public void testApply() {
         String settingName = "Test Setting";
         String expectedValue = "test value";
-        
+
         SettingTransaction transaction = new SettingTransaction();
         transaction.set(settingName, expectedValue);
-        
+
         SettingScope instance = new SettingScope();
         instance.apply(transaction);
 
@@ -52,7 +52,7 @@ public class SettingScopeTest {
     public void testTransaction() {
         String settingName = "Test Setting";
         String expectedValue = "test value";
-        
+
         SettingScope instance = new SettingScope();
         instance.transaction(t -> {
             t.set(settingName, expectedValue);
@@ -71,7 +71,7 @@ public class SettingScopeTest {
     public void testGet() {
         String settingName = "Test Setting";
         String expectedValue = "test value";
-        
+
         SettingScope instance = new SettingScope();
         instance.set(settingName, expectedValue);
 
@@ -109,19 +109,19 @@ public class SettingScopeTest {
         String settingName = "Test Setting";
         String expectedValue1 = "test value 1";
         String expectedValue2 = "test value 2";
-        
+
         SettingScope instance = new SettingScope();
-        
+
         assertFalse(instance.get(settingName).isPresent());
-        
+
         instance.set(settingName, expectedValue1);
-        
+
         assertTrue(instance.get(settingName).isPresent());
         assertEquals(expectedValue1, instance.get(settingName).get());
-        
+
         instance.set(settingName, expectedValue2);
-        
+
         assertEquals(expectedValue2, instance.get(settingName).get());
     }
-    
+
 }

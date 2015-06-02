@@ -36,7 +36,7 @@ public class SimpleVariableContext implements VariableContext {
                 .map(VariableBinding::getVariable)
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     public Dataset getDataset() {
         return dataset;

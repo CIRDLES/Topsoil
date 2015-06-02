@@ -63,7 +63,7 @@ public class GetApplicationDirectoryOperationTest {
         } catch (IllegalArgumentException ex) {
             // expected
         }
-        
+
         // invalid params - null first param
         params = new String[]{null};
         try {
@@ -72,7 +72,7 @@ public class GetApplicationDirectoryOperationTest {
         } catch (IllegalArgumentException ex) {
             // expected
         }
-        
+
         // invalid params - empty string
         params = new String[]{""};
         try {

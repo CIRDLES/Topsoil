@@ -56,5 +56,5 @@ public abstract class CustomGridPane<T extends CustomGridPane> extends GridPane 
         preinitialization.accept((T) this);
         initializer.initialize(this);
     }
-    
+
 }

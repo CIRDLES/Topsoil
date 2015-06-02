@@ -68,7 +68,7 @@ public class TopsoilMainWindow extends CustomVBox {
 
     private static final Path DATASETS_DIRECTORY
             = APPLICATION_DIRECTORY.resolve("Data Sets");
-    
+
     @FXML
     java.util.ResourceBundle resources;
 
@@ -239,7 +239,7 @@ public class TopsoilMainWindow extends CustomVBox {
             try {
                 DatasetReader datasetReader
                         = datasetReaderConstructor.apply(response);
-                
+
                 Dataset dataset = datasetReader.read(filePath);
                 dataTable.setDataset(dataset);
             } catch (IOException ex) {

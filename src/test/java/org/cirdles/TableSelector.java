@@ -25,7 +25,7 @@ import javafx.scene.control.TableCell;
 /**
  * Utility Class
  * Allow to select tables, rows and cells for the TestFX tests
- * 
+ *
  * @author parizotclement
  * @param <T>
  */

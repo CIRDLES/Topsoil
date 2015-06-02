@@ -27,30 +27,30 @@ import org.junit.Before;
  * @author John Zeringue
  */
 public class ScatterplotChartTest {
-    
+
     private Chart chart;
-    
+
     @Before
     public void setUpChart() {
         chart = new ScatterplotChart();
     }
-    
+
     @Test
     public void testGetSettingScope() {
         chart.getSettingScope();
     }
-    
+
     @Test
     public void testGetVariables() {
         chart.getVariables();
     }
-    
+
     @Test
     public void testSetData() {
         VariableContext variableContext
                 = new SimpleVariableContext(EMPTY_DATASET);
-        
+
         chart.setData(variableContext);
     }
-    
+
 }

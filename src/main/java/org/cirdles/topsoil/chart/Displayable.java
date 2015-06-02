@@ -44,7 +44,7 @@ public interface Displayable {
 
     /**
      * Returns a {@link Document} representing this {@code Displayable}.
-     * 
+     *
      * @return a {@code Document} that may or may not be unique
      */
     public Document displayAsSVGDocument();

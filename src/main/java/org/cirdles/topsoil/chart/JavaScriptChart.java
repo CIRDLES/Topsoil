@@ -215,7 +215,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
         // useful for debugging
         getWebEngine().get().setOnAlert(event -> {
-            System.out.println(event.getData());
+            LOGGER.log(Level.INFO, event.getData());
         });
 
         // used as a callback for webEngine.loadContent(HTML_TEMPLATE)
@@ -264,10 +264,10 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         entries.addListener((ListChangeListener.Change<? extends Entry> c) -> {
             drawChart(variableContext);
         });
-        
+
         drawChart(variableContext);
     }
-    
+
     public void drawChart(VariableContext variableContext) {
         // pass the data to JavaScript
         // this seems excessive but passing a double[][] creates a single array

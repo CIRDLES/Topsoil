@@ -24,14 +24,14 @@ import java.util.List;
  * @author John Zeringue
  */
 public final class SettingTransaction implements Iterable<SettingOperation> {
-    
+
     private static final SettingOperationFactory operationFactory;
     static {
         operationFactory = new SettingScope.OperationFactory();
     }
-    
+
     private final List<SettingOperation> operations;
-    
+
     public SettingTransaction() {
         operations = new ArrayList<>();
     }
@@ -39,11 +39,11 @@ public final class SettingTransaction implements Iterable<SettingOperation> {
     private void add(SettingOperation operation) {
         operations.add(operation);
     }
-    
+
     public void get(String settingName) {
         add(operationFactory.buildGet(settingName));
     }
-    
+
     public void set(String settingName, Object value) {
         add(operationFactory.buildSet(settingName, value));
     }
@@ -52,5 +52,5 @@ public final class SettingTransaction implements Iterable<SettingOperation> {
     public Iterator<SettingOperation> iterator() {
         return operations.iterator();
     }
-    
+
 }

@@ -23,7 +23,7 @@ import org.cirdles.topsoil.dataset.field.Field;
  */
 @FunctionalInterface
 public interface EntryListener {
-    
+
     public void changed(Entry entry, Field field);
-    
+
 }

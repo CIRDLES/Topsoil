@@ -26,34 +26,34 @@ import org.junit.Before;
  * @author John Zeringue
  */
 public class NumberFieldTest {
-    
+
     private Field<Double> numberField;
     private StringConverter<Double> stringConverter;
-    
+
     @Before
     public void setUpField() {
         numberField = new NumberField("Test Field");
         stringConverter = numberField.getStringConverter();
     }
-    
+
     @Test
     public void testGenerics() {
         new SimpleEntry().set(numberField, 3.07); // should compile
     }
-    
+
     @Test
     public void testStringConverterConvertsDouble() {
         assertEquals("3.07", stringConverter.toString(3.07));
     }
-    
+
     @Test
     public void testStringConverterConvertsNullDouble() {
         assertEquals("---", stringConverter.toString(null));
     }
-    
+
     @Test
     public void testStringConverterConvertsString() {
         assertEquals(3.07, stringConverter.fromString("3.07"), 10e-10);
     }
-    
+
 }

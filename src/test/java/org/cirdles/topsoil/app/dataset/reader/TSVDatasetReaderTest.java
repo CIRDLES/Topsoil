@@ -91,7 +91,7 @@ public class TSVDatasetReaderTest {
         assertTrue(dataset.getFields().isEmpty());
         assertTrue(dataset.getEntries().isEmpty());
     }
-    
+
     @Test
     public void testReadsUnacknowledgedHeaders() throws IOException {
         // shouldn't throw exception

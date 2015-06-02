@@ -46,11 +46,11 @@ public class SettingScope {
         if (!changedSettings.isEmpty()) {
             String[] changedSettingsArray = changedSettings.toArray(new String[0]);
             listeners.forEach(listener -> listener.accept(changedSettingsArray));
-            
+
             changedSettings.clear();
         }
     }
-    
+
     public void transaction(Consumer<SettingTransaction> transactionConsumer) {
         SettingTransaction transaction = new SettingTransaction();
         transactionConsumer.accept(transaction);
@@ -78,7 +78,7 @@ public class SettingScope {
     public void addListener(Consumer<String[]> listener) {
         listeners.add(listener);
     }
-    
+
     public SettingTransactor buildTransactor() {
         return new SettingTransactor(this);
     }

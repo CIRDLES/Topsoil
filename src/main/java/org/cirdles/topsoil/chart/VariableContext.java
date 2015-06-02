@@ -29,7 +29,7 @@ import org.cirdles.topsoil.dataset.field.Field;
 public interface VariableContext {
 
     public Collection<Variable> getVariables();
-    
+
     public Dataset getDataset();
 
     public Collection<VariableBinding> getBindings();
@@ -47,7 +47,7 @@ public interface VariableContext {
     public default <T> void addBinding(Variable<T> variable, Field<T> field) {
         addBinding(variable, field, variable.getFormats().get(0));
     }
-    
+
     public default <T> Optional<T> getValue(Variable<T> variable, Entry entry) {
         return getBindingForVariable(variable).map(binding -> {
             return binding.getFormat().normalize(binding, entry);

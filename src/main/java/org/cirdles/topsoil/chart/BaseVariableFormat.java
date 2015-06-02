@@ -21,9 +21,9 @@ package org.cirdles.topsoil.chart;
  * @param <T>
  */
 public abstract class BaseVariableFormat<T> implements VariableFormat<T> {
-    
+
     private final String name;
-    
+
     public BaseVariableFormat(String name) {
         this.name = name;
     }
@@ -32,5 +32,5 @@ public abstract class BaseVariableFormat<T> implements VariableFormat<T> {
     public String getName() {
         return name;
     }
-    
+
 }

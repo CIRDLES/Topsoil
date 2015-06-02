@@ -23,7 +23,7 @@ import java.util.List;
  * @param <T>
  */
 public class DependentVariable<T> extends BaseVariable<T> {
-    
+
     private final Variable<T> dependency;
 
     public DependentVariable(String name, Variable<T> dependency) {
@@ -36,9 +36,9 @@ public class DependentVariable<T> extends BaseVariable<T> {
         super(name, formats);
         this.dependency = dependency;
     }
-    
+
     public Variable<T> getDependency() {
         return dependency;
     }
-    
+
 }

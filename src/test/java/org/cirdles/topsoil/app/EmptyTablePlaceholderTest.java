@@ -32,10 +32,10 @@ public class EmptyTablePlaceholderTest extends ApplicationTest {
         stage.setScene(scene);
         stage.show();
     }
-    
+
     @Test
     public void testLoadsFXML() {
-        
+
     }
-    
+
 }

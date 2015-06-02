@@ -44,7 +44,7 @@ public class SimpleEntry implements Entry {
     @Override
     public <T> void set(Field<? super T> field, T value) {
         fieldsToValues.put(field, value);
-        
+
         listeners.forEach(listener -> {
             listener.changed(this, field);
         });

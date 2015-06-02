@@ -29,12 +29,12 @@ public class NumberSettingControl extends SettingControl<Number> {
     public NumberSettingControl(SettingScope settingScope, String settingName) {
         super(settingScope, settingName);
     }
-    
+
     @Override
     public void update(Number value) {
         // both the slider and the value label should reflect the current value
         double doubleValue = ((Number) value).doubleValue();
-        
+
         settingSlider.setValue(doubleValue);
         settingValue.setText(String.format("%.2f", doubleValue));
     }
@@ -50,16 +50,16 @@ public class NumberSettingControl extends SettingControl<Number> {
     private void initialize() {
         // setting label should show the setting's name
         settingLabel.setText(getSettingName());
-        
+
         getSettingScope().get(getSettingName()).ifPresent(value -> {
             update((Number) value);
         });
-        
+
         // on slider change
         settingSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             // update the setting and label values
             settingScope.set(settingName, newValue);
         });
     }
-    
+
 }

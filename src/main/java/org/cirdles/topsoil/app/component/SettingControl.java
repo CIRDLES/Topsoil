@@ -33,15 +33,15 @@ public abstract class SettingControl<T> extends CustomHBox<SettingControl> {
             self.settingName = settingName;
         });
     }
-    
+
     public String getSettingName() {
         return settingName;
     }
-    
+
     public SettingScope getSettingScope() {
         return settingScope;
     }
-    
+
     public abstract void update(T value);
 
 }
