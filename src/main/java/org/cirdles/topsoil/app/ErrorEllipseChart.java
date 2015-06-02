@@ -20,11 +20,11 @@ package org.cirdles.topsoil.app;
  * @author John Zeringue
  */
 public class ErrorEllipseChart extends DefaultJavaScriptChart {
-    
+
     private static final String RESOURCE_NAME = "errorellipsechart.js";
 
     public ErrorEllipseChart() {
         super(RESOURCE_NAME, ErrorEllipseChart.class);
     }
-    
+
 }

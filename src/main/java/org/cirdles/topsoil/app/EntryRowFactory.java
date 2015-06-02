@@ -24,31 +24,31 @@ import static org.cirdles.topsoil.dataset.field.Fields.ROW;
 import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
 
 /**
- * The row Factory for the TSVTable 
+ * The row Factory for the TSVTable
  * Define the Context Menu
- * 
+ *
  * @author parizotclement
  */
 public class EntryRowFactory implements Callback<TableView<Entry>, TableRow<Entry>> {
-        
+
     @Override
     public TableRow<Entry> call(TableView<Entry> param) {
         TableRow<Entry> row = new TableRow<>();
         row.setContextMenu(new EntryRowContextMenu(row));
-        
+
         row.itemProperty().addListener((observable, oldValue, newValue) -> {
             Optional.ofNullable(newValue).ifPresent(entry -> {
                 entry.set(ROW, row);
-                
+
                 if (entry.get(SELECTED).orElse(true)) {
                     row.setOpacity(1);
                 } else {
                     row.setOpacity(0.35);
                 }
             });
-        
+
         });
-        
+
         return row;
     }
 

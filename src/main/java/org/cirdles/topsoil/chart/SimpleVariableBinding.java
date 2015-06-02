@@ -28,7 +28,7 @@ public class SimpleVariableBinding<T> implements VariableBinding<T> {
             VariableContext context) {
         this(variable, field, variable.getFormats().get(0), context);
     }
-    
+
     public SimpleVariableBinding(Variable<T> variable, Field<T> field,
             VariableFormat<T> format, VariableContext context) {
         this.variable = variable;

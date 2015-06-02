@@ -24,5 +24,5 @@ public interface SettingOperationFactory {
     public SettingOperation buildGet(String settingName);
 
     public SettingOperation<Void> buildSet(String settingName, Object value);
-    
+
 }

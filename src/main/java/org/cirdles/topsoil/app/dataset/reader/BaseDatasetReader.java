@@ -30,9 +30,9 @@ import org.cirdles.topsoil.dataset.Dataset;
  * @author John Zeringue
  */
 public abstract class BaseDatasetReader implements DatasetReader {
-    
+
     private static final Charset UTF_8 = Charset.forName("UTF-8");
-    
+
     @Override
     public Dataset read(String source) throws IOException {
         return read(new ByteArrayInputStream(source.getBytes(UTF_8)));
@@ -49,5 +49,5 @@ public abstract class BaseDatasetReader implements DatasetReader {
     public Dataset read(Path source) throws IOException {
         return read(Files.newInputStream(source));
     }
-    
+
 }

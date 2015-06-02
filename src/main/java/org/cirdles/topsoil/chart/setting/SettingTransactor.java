@@ -20,24 +20,24 @@ package org.cirdles.topsoil.chart.setting;
  * @author John Zeringue
  */
 public class SettingTransactor {
-    
+
     private final SettingScope settingScope;
-    
+
     private SettingTransaction currentTransaction;
-    
+
     public SettingTransactor(SettingScope settingScope) {
         this.settingScope = settingScope;
-        
+
         currentTransaction = new SettingTransaction();
     }
-    
+
     public void set(String settingName, Object value) {
         currentTransaction.set(settingName, value);
     }
-    
+
     public void apply() {
         settingScope.apply(currentTransaction);
         currentTransaction = new SettingTransaction();
     }
-    
+
 }

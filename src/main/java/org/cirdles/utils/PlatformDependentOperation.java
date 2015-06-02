@@ -23,9 +23,9 @@ package org.cirdles.utils;
  * @param <Result>
  */
 public abstract class PlatformDependentOperation<Params, Result> {
-    
+
     private static final String OS_NAME = System.getProperty("os.name");
-    
+
     public final Result perform(Params... params) {
         if (OS_NAME.startsWith("Windows")) {
             return performOnWindows(params);
@@ -34,14 +34,14 @@ public abstract class PlatformDependentOperation<Params, Result> {
         } else if (OS_NAME.equals("Linux")) {
             return performOnLinux(params);
         }
-        
+
         throw new RuntimeException("Unrecognized platform " + OS_NAME);
     }
-    
+
     protected abstract Result performOnWindows(Params... params);
-    
+
     protected abstract Result performOnMacOS(Params... params);
-    
+
     protected abstract Result performOnLinux(Params... params);
-    
+
 }

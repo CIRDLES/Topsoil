@@ -19,14 +19,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BaseVariable<T> implements Variable<T> {
-    
+
     private final String name;
     private final List<VariableFormat> formats;
 
     public BaseVariable(String name) {
         this(name, Arrays.asList(VariableFormat.identity()));
     }
-    
+
     public BaseVariable(String name, List<VariableFormat> formats) {
         this.name = name;
         this.formats = formats;
@@ -41,5 +41,5 @@ public class BaseVariable<T> implements Variable<T> {
     public List<VariableFormat> getFormats() {
         return formats;
     }
-    
+
 }

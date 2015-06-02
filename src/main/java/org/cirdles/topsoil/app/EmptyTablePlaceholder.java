@@ -31,7 +31,7 @@ public class EmptyTablePlaceholder extends CustomVBox<EmptyTablePlaceholder> {
     public EmptyTablePlaceholder(TSVTable dataTable) {
         super(self -> self.dataTable = dataTable);
     }
-    
+
     @FXML
     private void pasteFromClipboardIntoDataTable() {
         dataTable.pasteFromClipboard();

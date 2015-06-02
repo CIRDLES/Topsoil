@@ -20,11 +20,11 @@ package org.cirdles.topsoil.app;
  * @author John Zeringue
  */
 public class ScatterplotChart extends DefaultJavaScriptChart {
-    
+
     private static final String RESOURCE_NAME = "scatterplot.js";
 
     public ScatterplotChart() {
         super(RESOURCE_NAME, ScatterplotChart.class);
     }
-    
+
 }

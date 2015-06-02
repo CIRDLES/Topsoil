@@ -23,9 +23,9 @@ import java.util.List;
  * @param <T>
  */
 public interface Variable<T> {
-    
+
     public String getName();
-    
+
     public List<VariableFormat> getFormats();
-    
+
 }

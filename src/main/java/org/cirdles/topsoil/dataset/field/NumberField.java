@@ -38,7 +38,7 @@ public class NumberField extends BaseField<Double> {
                 if (number == null) {
                     return "---";
                 }
-                
+
                 return number.toString();
             }
 
@@ -52,8 +52,8 @@ public class NumberField extends BaseField<Double> {
                     return NaN;
                 }
             }
-            
+
         };
     }
-    
+
 }

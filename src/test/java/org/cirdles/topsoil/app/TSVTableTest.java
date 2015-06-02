@@ -75,5 +75,5 @@ public class TSVTableTest extends ApplicationTest {
         verifyThat(tsvTable, hasTableCell(0.702153693)); // a number in the middle
 
         verifyThat(tsvTable, hasItems(17)); // sample.tsv contains 17 lines
-    }   
+    }
 }

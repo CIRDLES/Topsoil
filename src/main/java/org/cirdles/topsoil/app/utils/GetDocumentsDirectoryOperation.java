@@ -81,7 +81,6 @@ public class GetDocumentsDirectoryOperation extends PlatformDependentOperation<S
      **/
     void validateParams(String... params) {
 
-
         boolean stillValid1 = params.length == 0;
         boolean stillValid2 = params.length >= 1;
 

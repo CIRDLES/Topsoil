@@ -27,26 +27,26 @@ import org.cirdles.topsoil.dataset.field.Field;
  * @param <T>
  */
 public class EntryTableColumn<T> extends TableColumn<Entry, T> {
-    
+
     private final Field<T> field;
 
     public EntryTableColumn(Field<T> field) {
         this.field = field;
-        
+
         setText(field.getName());
-        setCellFactory(TextFieldTableCell.forTableColumn(field.getStringConverter()));       
-        setOnEditCommit(new CellEditEventHandler<>(field)); 
-        
+        setCellFactory(TextFieldTableCell.forTableColumn(field.getStringConverter()));
+        setOnEditCommit(new CellEditEventHandler<>(field));
+
         setCellValueFactory((CellDataFeatures<Entry, T> param) -> new ObservableValueBase<T>() {
-            
+
             @Override
             public T getValue() {
                 return param.getValue().get(field).get();
             }
         });
-    }  
+    }
 
     public Field<T> getField() {
         return field;
-    }   
+    }
 }

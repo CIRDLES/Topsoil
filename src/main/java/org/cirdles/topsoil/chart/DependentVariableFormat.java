@@ -32,7 +32,7 @@ public abstract class DependentVariableFormat<T> extends BaseVariableFormat<T> {
     public final T normalize(VariableBinding<T> binding, Entry entry) {
         T variableValue = entry.get(binding.getField()).get();
         T dependencyValue;
-        
+
         if (binding.getVariable() instanceof DependentVariable) {
             DependentVariable<T> dependentVariable
                     = (DependentVariable<T>) binding.getVariable();
@@ -41,10 +41,10 @@ public abstract class DependentVariableFormat<T> extends BaseVariableFormat<T> {
         } else {
             throw new IllegalArgumentException();
         }
-        
+
         return normalize(variableValue, dependencyValue);
     }
-    
+
     public abstract T normalize(T variableValue, T dependencyValue);
-    
+
 }

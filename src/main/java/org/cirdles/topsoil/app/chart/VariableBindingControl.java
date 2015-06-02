@@ -53,7 +53,7 @@ public class VariableBindingControl<T> extends CustomHBox<VariableBindingControl
         if (variable.getFormats().size() <= 1) {
             variableFormatChoiceBox.setVisible(false);
         }
-        
+
         variableFormatChoiceBox.setConverter(new StringConverter<VariableFormat<T>>() {
 
             @Override
@@ -93,23 +93,23 @@ public class VariableBindingControl<T> extends CustomHBox<VariableBindingControl
 
         initializeVariableFormatChoiceBox();
     }
-    
+
     public Variable<T> getVariable() {
         return variable;
     }
-    
+
     public Field<T> getFieldSelection() {
         return fieldChoiceBox.getSelectionModel().getSelectedItem();
     }
-    
+
     public void setFieldSelection(Field<T> field) {
         fieldChoiceBox.getSelectionModel().select(field);
     }
-    
+
     public VariableFormat<T> getVariableFormatSelection() {
         return variableFormatChoiceBox.getSelectionModel().getSelectedItem();
     }
-    
+
     public void setVariableFormatSelection(VariableFormat<T> variableFormat) {
         variableFormatChoiceBox.getSelectionModel().select(variableFormat);
     }

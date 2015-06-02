@@ -20,7 +20,7 @@ package org.cirdles.topsoil.app.dataset.reader;
  * @author John Zeringue
  */
 public class CSVDatasetReader extends DSVDatasetReader {
-    
+
     public CSVDatasetReader() {
         super(',');
     }
@@ -28,5 +28,5 @@ public class CSVDatasetReader extends DSVDatasetReader {
     public CSVDatasetReader(boolean expectingHeaders) {
         super(',', expectingHeaders);
     }
-    
+
 }

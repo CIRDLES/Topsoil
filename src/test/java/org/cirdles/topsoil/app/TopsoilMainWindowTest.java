@@ -26,33 +26,33 @@ import org.testfx.framework.junit.ApplicationTest;
  * @author John Zeringue
  */
 public class TopsoilMainWindowTest extends ApplicationTest {
-    
+
     private TopsoilMainWindow topsoilMainWindow;
 
     @Override
     public void start(Stage stage) throws Exception {
         topsoilMainWindow = new TopsoilMainWindow();
-        
+
         Scene scene = new Scene(topsoilMainWindow);
         stage.setScene(scene);
         stage.show();
     }
-    
+
     @Test
     public void testFocusOnNewTab() {
         // ensure there is at least one tab already open
         clickOn("Create Data Table");
-        
+
         // create another tab
         // should be focused
         clickOn("Create Data Table");
-        
+
         verifyThat(topsoilMainWindow.dataTableTabPane, (TabPane tabPane) -> {
             int numberOfTabs = tabPane.getTabs().size();
             int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-            
+
             return selectedIndex == numberOfTabs - 1;
         });
     }
-    
+
 }

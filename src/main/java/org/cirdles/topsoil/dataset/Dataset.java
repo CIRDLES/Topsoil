@@ -30,11 +30,11 @@ public interface Dataset {
 
     public static final Dataset EMPTY_DATASET
             = new SimpleDataset(emptyList(), emptyList());
-    
+
     public Optional<String> getName();
 
     public List<Field<?>> getFields();
 
     public ObservableList<Entry> getEntries();
-    
+
 }

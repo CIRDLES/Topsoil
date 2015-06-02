@@ -12,7 +12,18 @@
     </module>
 
     <module name="NewlineAtEndOfFile"/>
-    
+
+    <module name="RegexpSingleline">
+       <!-- no trailing whitespace -->
+       <property name="format" value="\s+$"/>
+       <property name="message" value="Trailing whitespace."/>
+    </module>
+
+    <module name="RegexpMultiline">
+        <property name="format" value="\n(\s*\n){2}"/>
+        <property name="message" value="Consecutive blank lines."/>
+    </module> 
+
     <module name="TreeWalker">
         <!-- blocks -->
         <module name="AvoidNestedBlocks"/>
@@ -37,6 +48,13 @@
         <!-- modifiers -->
         <module name="ModifierOrder"/>
 
+        <!-- regexp -->
+        <module name="RegexpSinglelineJava">
+            <!-- use logger instead -->
+            <property name="format" value="System\.(out|err)\.print(f|ln)?\("/>
+            <property name="message" value="Printing to standard I/O."/>
+        </module>
+ 
         <!-- whitespace -->
         <module name="ParenPad"/>
         <module name="WhitespaceAround"/>

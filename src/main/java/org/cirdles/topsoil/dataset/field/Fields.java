@@ -24,9 +24,9 @@ import org.cirdles.topsoil.dataset.entry.Entry;
  * @author parizotclement
  */
 public final class Fields {
-    
+
     public static final BooleanField SELECTED = new BooleanField("Selected");
-    
+
     public static final Field<TableRow<Entry>> ROW = new Field() {
 
         @Override
@@ -38,7 +38,7 @@ public final class Fields {
         public StringConverter getStringConverter() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-        
+
     };
-    
+
 }

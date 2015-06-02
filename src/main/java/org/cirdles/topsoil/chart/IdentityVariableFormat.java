@@ -17,7 +17,6 @@ package org.cirdles.topsoil.chart;
 
 import org.cirdles.topsoil.dataset.entry.Entry;
 
-
 public class IdentityVariableFormat<T> extends BaseVariableFormat<T> {
 
     public IdentityVariableFormat() {
@@ -28,5 +27,5 @@ public class IdentityVariableFormat<T> extends BaseVariableFormat<T> {
     public T normalize(VariableBinding<T> binding, Entry entry) {
         return entry.get(binding.getField()).get();
     }
-    
+
 }

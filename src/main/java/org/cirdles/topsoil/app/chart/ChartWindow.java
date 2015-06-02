@@ -30,47 +30,47 @@ import org.cirdles.topsoil.chart.JavaScriptChart;
  * @author John Zeringue
  */
 public class ChartWindow extends CustomVBox<ChartWindow> {
-    
+
     @FXML
     private ToolBar chartToolBar;
     @FXML
     private HBox chartAndConfig;
-    
+
     private Chart chart;
-    
+
     public ChartWindow(Chart chart) {
         super(self -> self.chart = chart);
     }
-    
+
     private void initializeToolbar() {
         if (chart instanceof JavaScriptChart) {
             JavaScriptChart javaScriptChart = (JavaScriptChart) chart;
-            
+
             Button saveToSVG = new Button("Save as SVG");
             saveToSVG.setOnAction(mouseEvent -> {
                 new SVGSaver().save(javaScriptChart.displayAsSVGDocument());
             });
-            
+
             Button fitData = new Button("Fit data");
             fitData.setOnAction(mouseEvent -> {
                 javaScriptChart.fitData();
             });
-            
+
             chartToolBar.getItems().addAll(saveToSVG, fitData);
         }
     }
-    
+
     private void initializeChartAndConfig() {
         chartAndConfig.getChildren().setAll(
                 chart.displayAsNode(),
                 new SettingsPanel(chart.getSettingScope())
         );
     }
-    
+
     @FXML
     private void initialize() {
         initializeToolbar();
         initializeChartAndConfig();
     }
-    
+
 }

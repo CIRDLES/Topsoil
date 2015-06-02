@@ -24,17 +24,17 @@ import org.cirdles.topsoil.dataset.field.Field;
  * @param <T>
  */
 public interface VariableBinding<T> {
-    
+
     public Variable<T> getVariable();
-    
+
     public Field<T> getField();
-    
+
     public VariableFormat<T> getFormat();
-    
+
     public VariableContext getContext();
-    
+
     public default T getValue(Entry entry) {
         return getFormat().normalize(this, entry);
     }
-    
+
 }

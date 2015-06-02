@@ -73,7 +73,7 @@ public class DSVDatasetWriter implements DatasetWriter {
 
         Writer writer
                 = new OutputStreamWriter(destination, Charset.forName("UTF-8"));
-        
+
         dsvWriter = new CSVWriter(writer, getDelimiter());
 
         writeFields(dataset);

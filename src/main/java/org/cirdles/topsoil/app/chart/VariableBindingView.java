@@ -44,7 +44,7 @@ public class VariableBindingView<T> extends CustomVBox<VariableBindingView<T>> {
 
     private void initializeControl(Variable<T> variable) {
         int index = getChildren().size();
-        
+
         VariableBindingControl control
                 = new VariableBindingControl(variable, fields);
 
@@ -69,7 +69,7 @@ public class VariableBindingView<T> extends CustomVBox<VariableBindingView<T>> {
     private void initialize() {
         variables.forEach(this::initializeControl);
     }
-    
+
     public List<VariableBindingControl<T>> getControls() {
         return getChildren().stream()
                 .map(child -> (VariableBindingControl<T>) child)

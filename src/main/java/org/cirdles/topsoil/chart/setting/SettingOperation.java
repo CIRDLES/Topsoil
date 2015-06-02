@@ -22,7 +22,7 @@ package org.cirdles.topsoil.chart.setting;
  */
 @FunctionalInterface
 public interface SettingOperation<T> {
-    
+
     public T applyTo(SettingScope settingScope);
-    
+
 }
