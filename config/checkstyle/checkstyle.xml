@@ -50,9 +50,10 @@
 
         <!-- regexp -->
         <module name="RegexpSinglelineJava">
-            <!-- use logger instead -->
             <property name="format" value="System\.(out|err)\.print(f|ln)?\("/>
-            <property name="message" value="Printing to standard I/O."/>
+
+            <property name="message"
+                value="Printing to standard I/O. Please use Logger instead."/>
         </module>
  
         <!-- whitespace -->
