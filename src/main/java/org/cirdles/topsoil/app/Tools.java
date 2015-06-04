@@ -19,43 +19,12 @@ import java.util.function.Consumer;
 import javafx.scene.control.Alert;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
 import static javafx.scene.control.ButtonType.YES;
-import javafx.scene.control.TableView;
-import javafx.util.StringConverter;
 import org.cirdles.topsoil.app.utils.YesNoAlert;
-import org.cirdles.topsoil.dataset.entry.Entry;
 
 /**
  * Shortcut tools to be used anywhere in the program.
  */
 public class Tools {
-
-    private static final String LOGGER_NAME = Tools.class.getName();
-
-    public static final StringConverter<Number> DYNAMIC_STRING_CONVERTER = new StringConverter<Number>() {
-
-        @Override
-        public String toString(Number object) {
-            return String.format("%.10f", object.doubleValue()).replaceFirst("[\\.,]?0+$", "");
-        }
-
-        @Override
-        public Number fromString(String string) {
-            return Double.valueOf(string);
-        }
-    };
-
-    public static final StringConverter<Number> DYNAMIC_NUMBER_CONVERTER_TO_INTEGER = new StringConverter<Number>() {
-
-        @Override
-        public String toString(Number object) {
-            return String.valueOf(object.intValue());
-        }
-
-        @Override
-        public Number fromString(String string) {
-            return Integer.valueOf(string);
-        }
-    };
 
     /**
      * Prompts the user for a yes or no response with a custom message. If the
@@ -77,8 +46,4 @@ public class Tools {
         });
     }
 
-    public static void clearTable(TableView<Entry> dataTable) {
-        dataTable.getItems().clear();
-        dataTable.getColumns().clear();
-    }
 }
