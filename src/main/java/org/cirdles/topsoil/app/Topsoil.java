@@ -16,9 +16,10 @@
  */
 package org.cirdles.topsoil.app;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import javafx.application.Application;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -28,14 +29,12 @@ import javafx.stage.Stage;
  */
 public class Topsoil extends Application {
 
-    public static final String APP_NAME = "Topsoil";
-
-    public static final Path USER_HOME
-            = Paths.get(System.getProperty("user.home"));
-
     @Override
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(new TopsoilMainWindow());
+        Injector injector = Guice.createInjector(new AppModule());
+        Parent root = injector.getInstance(TopsoilMainWindow.class);
+
+        Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

@@ -19,12 +19,15 @@ import java.util.function.Consumer;
 import javafx.scene.control.Alert;
 import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
 import static javafx.scene.control.ButtonType.YES;
+import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.app.utils.YesNoAlert;
 
 /**
  * Shortcut tools to be used anywhere in the program.
  */
 public class Tools {
+
+    private static ApplicationMetadata metadata;
 
     /**
      * Prompts the user for a yes or no response with a custom message. If the
@@ -37,7 +40,7 @@ public class Tools {
      */
     public static void yesNoPrompt(String message, Consumer<Boolean> callback) {
         Alert alert = new YesNoAlert(message);
-        alert.setTitle(Topsoil.APP_NAME);
+        alert.setTitle(metadata.getName());
 
         alert.showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData() != CANCEL_CLOSE) {

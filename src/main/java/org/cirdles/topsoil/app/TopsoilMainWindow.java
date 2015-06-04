@@ -40,6 +40,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javax.inject.Inject;
 import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.app.chart.VariableBindingDialog;
 import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
@@ -47,6 +48,7 @@ import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.app.dataset.TSVDatasetManager;
 import org.cirdles.topsoil.app.dataset.reader.CSVDatasetReader;
 import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
+import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;
@@ -70,9 +72,6 @@ public class TopsoilMainWindow extends CustomVBox {
             = APPLICATION_DIRECTORY.resolve("Data Sets");
 
     @FXML
-    java.util.ResourceBundle resources;
-
-    @FXML
     Menu chartsMenu;
     @FXML
     Menu datasetsMenu;
@@ -80,6 +79,20 @@ public class TopsoilMainWindow extends CustomVBox {
     TabPane dataTableTabPane;
 
     private DatasetManager datasetManager;
+
+    private final ApplicationMetadata metadata;
+
+    @Inject
+    public TopsoilMainWindow(ApplicationMetadata metadata) {
+        this.metadata = metadata;
+
+        // something like "Topsoil [0.3.4]"
+        String nameAndVersion = String.format("%s [%s]",
+                metadata.getName(),
+                metadata.getVersion());
+
+        setWindowTitle(nameAndVersion);
+    }
 
     /**
      * Initializes the controller class.
@@ -91,12 +104,6 @@ public class TopsoilMainWindow extends CustomVBox {
                 .forEach(this::loadDataset);
 
         reloadDatasetMenu();
-
-        // set the window title to something like "Topsoil [0.3.4]"
-        String applicationName = resources.getString("applicationName");
-        String applicationVersion = resources.getString("applicationVersion");
-        setWindowTitle(
-                String.format("%s [%s]", applicationName, applicationVersion));
     }
 
     Optional<TSVTable> getCurrentTable() {
@@ -191,7 +198,7 @@ public class TopsoilMainWindow extends CustomVBox {
                 dataTableTabPane.getSelectionModel().getSelectedItem());
     }
 
-    void setWindowTitle(String title) {
+    private void setWindowTitle(String title) {
         // while the code below is long and ugly, anonymous inner classes are
         // necessary (in Java 8) in order to allow the listeners to reference
         // and remove themselves
@@ -261,10 +268,14 @@ public class TopsoilMainWindow extends CustomVBox {
         importFromFile(filePath, TSVDatasetReader::new);
     }
 
+    private File userHome() {
+        return new File(System.getProperty("user.home"));
+    }
+
     void importFromFile(FileChooser.ExtensionFilter extensionFilter,
             Consumer<Path> importFromFile) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(Topsoil.USER_HOME.toFile());
+        fileChooser.setInitialDirectory(userHome());
         fileChooser.setSelectedExtensionFilter(extensionFilter);
 
         Optional.ofNullable(fileChooser.showOpenDialog(getScene().getWindow()))
