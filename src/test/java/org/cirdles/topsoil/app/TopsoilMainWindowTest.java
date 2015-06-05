@@ -18,6 +18,8 @@ package org.cirdles.topsoil.app;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
+import org.cirdles.topsoil.app.metadata.TestApplicationMetadata;
 import org.junit.Test;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
@@ -31,7 +33,8 @@ public class TopsoilMainWindowTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
-        topsoilMainWindow = new TopsoilMainWindow();
+        ApplicationMetadata metadata = new TestApplicationMetadata();
+        topsoilMainWindow = new TopsoilMainWindow(metadata);
 
         Scene scene = new Scene(topsoilMainWindow);
         stage.setScene(scene);

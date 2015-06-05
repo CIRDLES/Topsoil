@@ -51,7 +51,7 @@ def getVersionName = { ->
 
 processResources {
     from('src/main/resources') {
-        include '*.properties'
+        include '**/*.properties'
         filter(ReplaceTokens, tokens: [version: getVersionName()])
     }
 }
@@ -117,6 +117,7 @@ dependencies {
     compile 'net.sf.opencsv:opencsv:2.3'
     compile 'com.github.cirdles:commons:3214847'
     compile 'com.github.johnzeringue:extendsfx:1.0.0-alpha.1'
+    compile 'com.google.inject:guice:4.0'
 
     testCompile 'junit:junit:4.10'
     testCompile 'com.google.jimfs:jimfs:1.0'
