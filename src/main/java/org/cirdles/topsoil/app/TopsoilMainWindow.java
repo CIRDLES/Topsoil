@@ -31,6 +31,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionModel;
@@ -104,15 +105,30 @@ public class TopsoilMainWindow extends CustomVBox {
                 .forEach(this::loadDataset);
 
         reloadDatasetMenu();
+
+        if (datasetManager.getDatasets().isEmpty()) {
+            createInstructionsPanel();
+        }
+    }
+
+    Optional<TabContents> getCurrentTabContents() {
+        if (!getCurrentTab().isPresent()) {
+            //No tab
+            warningPrompt("There's no table open.");
+            return Optional.empty();
+
+        } else {
+            return getCurrentTab().map(tab -> (TabContents) tab.getContent());
+        }
     }
 
     Optional<TSVTable> getCurrentTable() {
-        return getCurrentTab().map(tab -> (TSVTable) tab.getContent());
+        return getCurrentTabContents().flatMap(TabContents::getTable);
     }
 
     @FXML
     void createDataTable() {
-        createTab();
+        createTable();
     }
 
     Tab createTab() {
@@ -124,10 +140,6 @@ public class TopsoilMainWindow extends CustomVBox {
             }
         });
 
-        TSVTable dataTable = new TSVTable();
-        dataTable.setPlaceholder(new EmptyTablePlaceholder(dataTable));
-        dataTableTab.setContent(dataTable);
-
         dataTableTabPane.getTabs().add(dataTableTab);
 
         // focus on new tab
@@ -137,22 +149,47 @@ public class TopsoilMainWindow extends CustomVBox {
         return dataTableTab;
     }
 
+    TSVTable createTable() {
+        Tab tab = createTab();
+
+        TSVTable dataTable = new TSVTable();
+        dataTable.setPlaceholder(new EmptyTablePlaceholder(dataTable));
+        TabContents content = new TabContents(dataTable);
+        tab.setContent(content);
+
+        return dataTable;
+    }
+
+    void createInstructionsPanel() {
+        Tab instructionsTab = createTab();
+        instructionsTab.setText("Start Page");
+
+        InstructionsPanel instructions = new InstructionsPanel();
+        TabContents content = new TabContents(instructions);
+        instructionsTab.setContent(content);
+    }
+
     @FXML
     void saveDataTable() {
-        TextInputDialog textInputDialog = new TextInputDialog();
 
-        textInputDialog.setContentText("Data set name:");
-        textInputDialog.showAndWait().ifPresent(datasetName -> {
-            Path datasetPath = DATASETS_DIRECTORY
-                    .resolve("open")
-                    .resolve(datasetName + ".tsv");
+        if (getCurrentTable().isPresent()) {
+            TextInputDialog textInputDialog = new TextInputDialog();
+            textInputDialog.setContentText("Data set name:");
+            textInputDialog.showAndWait().ifPresent(datasetName -> {
 
-            getCurrentTable().ifPresent(table -> table.saveToPath(datasetPath));
-            getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
-        });
+                Path datasetPath = DATASETS_DIRECTORY
+                        .resolve("open")
+                        .resolve(datasetName + ".tsv");
 
-        // reload
-        reloadDatasetMenu();
+                getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
+                getCurrentTable().ifPresent(table -> table.saveToPath(datasetPath));
+                // reload
+                reloadDatasetMenu();
+            });
+        } else {
+            //Not a TSVTable
+            warningPrompt("You can't save this table.");
+        }
     }
 
     void createDatasetMenuItem(Dataset dataset) {
@@ -172,6 +209,7 @@ public class TopsoilMainWindow extends CustomVBox {
         datasetsMenu.getItems().clear();
 
         datasetManager.getDatasets().forEach(this::createDatasetMenuItem);
+
     }
 
     void loadDataset(Dataset dataset) {
@@ -232,10 +270,6 @@ public class TopsoilMainWindow extends CustomVBox {
         };
 
         sceneProperty().addListener(sceneListener);
-    }
-
-    public TSVTable createTable() {
-        return (TSVTable) createTab().getContent();
     }
 
     void importFromFile(Path filePath,
@@ -310,19 +344,31 @@ public class TopsoilMainWindow extends CustomVBox {
     }
 
     private void initializeAndShow(JavaScriptChart javaScriptChart) {
-        getCurrentTable().map(TSVTable::getDataset).ifPresent(dataset -> {
-            initializeAndShow(javaScriptChart, dataset);
+        getCurrentTable().ifPresent(table -> {
+            initializeAndShow(javaScriptChart, table.getDataset());
         });
     }
 
     @FXML
     void createScatterplot() {
-        initializeAndShow(new ScatterplotChart());
+        if (checkTSVTable()) {
+                initializeAndShow(new ScatterplotChart());
+        }
     }
 
     @FXML
     void createErrorEllipseChart() {
-        initializeAndShow(new ErrorEllipseChart());
+        if (checkTSVTable()) {
+                initializeAndShow(new ErrorEllipseChart());
+        }
+    }
+
+    private boolean checkTSVTable() {
+        if (!getCurrentTable().isPresent()) {
+            //Not a TSVTable
+            warningPrompt("You can't draw a chart from this tab.\nPlease select a valid tab first.");
+        }
+        return getCurrentTable().isPresent();
     }
 
     @FXML
@@ -332,7 +378,25 @@ public class TopsoilMainWindow extends CustomVBox {
 
     @FXML
     void emptyTable() {
-        getCurrentTable().ifPresent(TSVTable::clear);
+        if (getCurrentTable().isPresent()) {
+            getCurrentTable().get().clear();
+        } else {
+            //Not a TSVTable
+            warningPrompt("You can't clear this panel.");
+        }
     }
 
+    /**
+     * Display a warning dialog to the user with a custom message.
+     *
+     * @param message the message to be displayed
+     */
+    private void warningPrompt(String message) {
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("WARNING");
+        alert.setHeaderText(message);
+
+        alert.showAndWait();
+    }
 }

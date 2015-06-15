@@ -47,8 +47,6 @@ public class CellEditEventHandler<T> implements EventHandler<CellEditEvent<Entry
 
     /**
      * Display a warning dialog to the user with a custom message.
-     * THe user can close it with a OK button.
-     *
      * @param message the message to be displayed
      */
     private void warningPrompt(String message) {
