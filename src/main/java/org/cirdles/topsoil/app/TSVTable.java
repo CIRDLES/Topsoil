@@ -16,8 +16,7 @@
 package org.cirdles.topsoil.app;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
@@ -28,10 +27,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.cirdles.topsoil.app.table.EntryTableColumn;
 import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
 import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
 import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.DatasetResource;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.dataset.field.TextField;
@@ -41,8 +39,8 @@ import org.cirdles.topsoil.dataset.field.TextField;
  */
 public class TSVTable extends TableView<Entry> {
 
-    private Path savePath;
-    private Dataset dataset;
+    private Optional<DatasetResource> datasetResource = Optional.empty();
+    private Optional<Dataset> unsavedDataset = Optional.empty(); //Due to pasteFromClipboard
 
     public TSVTable() {
         this.setEditable(true);
@@ -58,13 +56,28 @@ public class TSVTable extends TableView<Entry> {
         setRowFactory(new EntryRowFactory());
     }
 
-    public TSVTable(Path savePath) {
-        this();
+    public void setDatasetResource(DatasetResource datasetResource) {
+        clear();
 
-        this.savePath = savePath;
-        load();
+        // create columns for fields
+        datasetResource.getDataset().getFields().stream().forEach(field -> {
+            if (field instanceof NumberField) {
+                NumberField numberField = (NumberField) field;
+                getColumns().add(new EntryTableColumn<>(numberField));
+            } else if (field instanceof TextField) {
+                TextField textField = (TextField) field;
+                getColumns().add(new EntryTableColumn<>(textField));
+            }
+        });
+
+        // set data
+        setItems(FXCollections.observableList(datasetResource.getDataset().getEntries()));
+
+        this.datasetResource = Optional.of(datasetResource);
+        unsavedDataset = Optional.empty();
     }
 
+    //Method used by tests and by PasteFromClipboard method for unsaved data
     public void setDataset(Dataset dataset) {
         clear();
 
@@ -82,11 +95,15 @@ public class TSVTable extends TableView<Entry> {
         // set data
         setItems(FXCollections.observableList(dataset.getEntries()));
 
-        this.dataset = dataset;
+        unsavedDataset = Optional.ofNullable(dataset);
     }
 
-    public Dataset getDataset() {
-        return dataset;
+    public Optional<DatasetResource> getDatasetResource() {
+        return datasetResource;
+    }
+
+    public Optional<Dataset> getDataset() {
+        return unsavedDataset;
     }
 
     /**
@@ -103,10 +120,6 @@ public class TSVTable extends TableView<Entry> {
             } catch (IOException ex) {
                 Logger.getLogger(TSVTable.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            if (savePath != null) {
-                saveToPath(savePath);
-            }
         });
     }
 
@@ -116,66 +129,5 @@ public class TSVTable extends TableView<Entry> {
     public void clear() {
         getItems().clear();
         getColumns().clear();
-    }
-
-    public void load() {
-        if (savePath != null) {
-            loadFromPath(savePath);
-        }
-    }
-
-    public void loadFromPath(Path loadPath) {
-        if (Files.exists(loadPath)) {
-            DatasetReader tableReader = new TSVDatasetReader(true);
-            try {
-                Dataset dataset = tableReader.read(loadPath);
-                setDataset(dataset);
-            } catch (IOException ex) {
-                Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    public void save() {
-        if (savePath != null) {
-            saveToPath(savePath);
-        }
-    }
-
-    /**
-     * Saves the table at the given path in TSV format.
-     *
-     * @param savePath
-     */
-    public void saveToPath(Path savePath) {
-        if (savePath == null) {
-            throw new IllegalArgumentException("Cannot save to null path.");
-        }
-
-        DatasetWriter tableWriter = new TSVDatasetWriter();
-
-        try {
-            tableWriter.write(getDataset(), savePath);
-        } catch (IOException ex) {
-            Logger.getLogger(TSVTable.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Gets the saveToPath path.
-     *
-     * @return
-     */
-    public Path getSavePath() {
-        return savePath;
-    }
-
-    /**
-     * Sets the saveToPath path.
-     *
-     * @param savePath
-     */
-    public void setSavePath(Path savePath) {
-        this.savePath = savePath;
     }
 }

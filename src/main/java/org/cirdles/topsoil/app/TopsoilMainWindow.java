@@ -19,6 +19,7 @@ import com.johnzeringue.extendsfx.annotation.ResourceBundle;
 import com.johnzeringue.extendsfx.layout.CustomVBox;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -31,9 +32,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputDialog;
@@ -45,14 +48,15 @@ import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.app.chart.VariableBindingDialog;
 import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
 import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
-import org.cirdles.topsoil.app.dataset.TSVDatasetManager;
 import org.cirdles.topsoil.app.dataset.reader.CSVDatasetReader;
 import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.DatasetManager;
+import org.cirdles.topsoil.dataset.DatasetResource;
+import org.cirdles.topsoil.dataset.DatasetResourceFactory;
+import org.cirdles.topsoil.dataset.DatasetResourceLoader;
 
 /**
  * FXML Controller class
@@ -78,7 +82,8 @@ public class TopsoilMainWindow extends CustomVBox {
     @FXML
     TabPane dataTableTabPane;
 
-    private DatasetManager datasetManager;
+    private DatasetResourceLoader datasetResourceLoader;
+    private DatasetResourceFactory datasetResourceFactory;
 
     private final ApplicationMetadata metadata;
 
@@ -97,11 +102,15 @@ public class TopsoilMainWindow extends CustomVBox {
     /**
      * Initializes the controller class.
      */
-    private void initialize() {
-        datasetManager = new TSVDatasetManager(DATASETS_DIRECTORY);
-        datasetManager.getDatasets().stream()
-                .filter(datasetManager::isOpen)
-                .forEach(this::loadDataset);
+    public void initialize() {
+        datasetResourceLoader = new DatasetResourceLoader(DATASETS_DIRECTORY);
+        datasetResourceFactory = new DatasetResourceFactory(DATASETS_DIRECTORY);
+
+        datasetResourceLoader.getDatasetResources(DATASETS_DIRECTORY).stream()
+                .filter(DatasetResource::isOpen)
+                .forEach(datasetResource -> {
+                    loadDataset(datasetResource);
+                });
 
         reloadDatasetMenu();
     }
@@ -117,12 +126,7 @@ public class TopsoilMainWindow extends CustomVBox {
 
     Tab createTab() {
         Tab dataTableTab = new Tab("Untitled Data");
-        dataTableTab.setOnClosed(event -> {
-            if (dataTableTab.getContent() instanceof TSVTable) {
-                TSVTable table = (TSVTable) dataTableTab.getContent();
-                datasetManager.close(table.getDataset());
-            }
-        });
+        dataTableTab.setOnCloseRequest(new CloseTabEventHandler(response -> saveDataTable()));
 
         TSVTable dataTable = new TSVTable();
         dataTable.setPlaceholder(new EmptyTablePlaceholder(dataTable));
@@ -130,67 +134,145 @@ public class TopsoilMainWindow extends CustomVBox {
 
         dataTableTabPane.getTabs().add(dataTableTab);
 
-        // focus on new tab
-        SelectionModel<Tab> selectionModel = dataTableTabPane.getSelectionModel();
-        selectionModel.select(dataTableTab);
+        dataTableTabPane.getSelectionModel().select(dataTableTab);
 
         return dataTableTab;
     }
 
     @FXML
     void saveDataTable() {
-        TextInputDialog textInputDialog = new TextInputDialog();
+        getCurrentTable().ifPresent(table -> {
+            TextInputDialog textInputDialog = new TextInputDialog();
 
-        textInputDialog.setContentText("Data set name:");
-        textInputDialog.showAndWait().ifPresent(datasetName -> {
-            Path datasetPath = DATASETS_DIRECTORY
-                    .resolve("open")
-                    .resolve(datasetName + ".tsv");
+            textInputDialog.setContentText("Data set name:");
+            textInputDialog.showAndWait().ifPresent((String datasetName) -> {
 
-            getCurrentTable().ifPresent(table -> table.saveToPath(datasetPath));
-            getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
+                Path datasetPath = DATASETS_DIRECTORY
+                        .resolve("open")
+                        .resolve(datasetName + ".tsv");
+
+                if (!Files.exists(datasetPath)
+                        && !Files.exists(DATASETS_DIRECTORY.resolve("closed").resolve(datasetName + ".tsv"))) {
+
+                    //TSVTable either have a dataset or a DatasetResource
+                    Dataset data = table.getDataset()
+                            .orElse(table.getDatasetResource().get().getDataset());
+
+                    //Close the current dataset
+                    table.getDatasetResource().ifPresent(DatasetResource::close);
+
+                    table.getDataset().ifPresent(dataset -> {
+                        dataset.setName(datasetName);
+                        table.setDatasetResource(datasetResourceFactory.makeDatasetResource(dataset));
+                    });
+
+                    getCurrentTab().ifPresent(
+                            tab -> tab.setText(datasetName + ".tsv")
+                    );
+                    reloadDatasetMenu();
+
+                } else {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setHeaderText("This name already exists.");
+                    alert.showAndWait();
+                }
+            });
         });
+    }
 
-        // reload
+    void saveDataTableOnImport(Dataset dataset, String fileName) {
+
+        String datasetName = setDatasetName(fileName.split("\\.")[0]) + ".tsv";
+
+        dataset.setName(datasetName);
+
+        TSVTable dataTable = createTable();
+        dataTable.setDatasetResource(datasetResourceFactory.makeDatasetResource(dataset));
+
+        getCurrentTab().ifPresent(
+                tab -> tab.setText(datasetName)
+        );
+
         reloadDatasetMenu();
     }
 
-    void createDatasetMenuItem(Dataset dataset) {
-        MenuItem datasetMenuItem = dataset.getName()
-                .map(MenuItem::new)
-                .orElseGet(MenuItem::new);
+    private String setDatasetName(String name) {
 
-        datasetMenuItem.setOnAction(event -> {
-            TopsoilMainWindow.this.loadDataset(dataset);
+        StringBuilder fileName = new StringBuilder(name);
+
+        Path openPath = DATASETS_DIRECTORY.resolve("open").resolve(fileName + ".tsv");
+        Path closedPath = DATASETS_DIRECTORY.resolve("closed").resolve(fileName + ".tsv");
+
+        while (Files.exists(openPath) || Files.exists(closedPath)) {
+            fileName.append("-copy");
+        }
+
+        return fileName.toString();
+    }
+
+    void createDatasetMenuItem(DatasetResource datasetResource) {
+        Menu datasetPopMenu = datasetResource.getDataset().getName()
+                .map(Menu::new)
+                .orElseGet(Menu::new);
+
+        MenuItem openMenuItem = new MenuItem("Open");
+        openMenuItem.setOnAction(event -> {
+            loadDataset(datasetResource);
         });
 
-        datasetsMenu.getItems().add(datasetMenuItem);
+        MenuItem deleteMenuItem = new MenuItem("Delete");
+        deleteMenuItem.setOnAction(event -> {
+            deleteDataset(datasetResource);
+        });
+
+        datasetPopMenu.getItems().addAll(openMenuItem, deleteMenuItem);
+        datasetsMenu.getItems().add(datasetPopMenu);
     }
 
     void reloadDatasetMenu() {
         // allows this method to be called multiple times in the same session
         datasetsMenu.getItems().clear();
 
-        datasetManager.getDatasets().forEach(this::createDatasetMenuItem);
+        datasetResourceLoader.getDatasetResources(DATASETS_DIRECTORY).forEach(datasetResource -> {
+            createDatasetMenuItem(datasetResource);
+        });
     }
 
-    void loadDataset(Dataset dataset) {
-        loadDataset(dataset, createTab());
-    }
-
-    void loadDataset(Dataset dataset, Tab tab) {
+    void loadDataset(DatasetResource datasetResource) {
+        Tab tab = createTab();
         Node content = tab.getContent();
 
         if (content instanceof TSVTable) {
             TSVTable table = (TSVTable) content;
 
-            table.setDataset(dataset);
-            datasetManager.open(dataset);
+            datasetResource.open();
+            table.setDatasetResource(datasetResource);
 
-            dataset.getName().ifPresent(name -> {
-                tab.setText(name);
-            });
+            tab.setText(datasetResource.getDataset().getName().orElse("Untitled Data"));
         }
+
+    }
+
+    void deleteDataset(DatasetResource datasetResource) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.getButtonTypes().clear(); //Remove "Ok" and "Cancel" buttons
+        alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText("Are you sure you want to delete "
+                + datasetResource.getDataset().getName().orElse("this dataset")
+                + " ?");
+
+        if (datasetResource.isOpen()) {
+            alert.setContentText(datasetResource.getDataset().getName().orElse("This dataset")
+                    + " is opened and will not be closed.");
+        }
+
+        alert.showAndWait().ifPresent(confirmation -> {
+            if (confirmation.equals(ButtonType.YES)) {
+                datasetResource.delete();
+                reloadDatasetMenu();
+            }
+        });
     }
 
     Optional<Tab> getCurrentTab() {
@@ -240,7 +322,6 @@ public class TopsoilMainWindow extends CustomVBox {
 
     void importFromFile(Path filePath,
             Function<Boolean, DatasetReader> datasetReaderConstructor) {
-        TSVTable dataTable = createTable();
 
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
             try {
@@ -248,15 +329,11 @@ public class TopsoilMainWindow extends CustomVBox {
                         = datasetReaderConstructor.apply(response);
 
                 Dataset dataset = datasetReader.read(filePath);
-                dataTable.setDataset(dataset);
+                saveDataTableOnImport(dataset, filePath.getFileName().toString());
+
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
-
-            //set Tab title
-            getCurrentTab().ifPresent(tab -> {
-                tab.setText(filePath.getFileName().toString().split("\\.")[0]);
-            });
         });
     }
 
@@ -310,9 +387,11 @@ public class TopsoilMainWindow extends CustomVBox {
     }
 
     private void initializeAndShow(JavaScriptChart javaScriptChart) {
-        getCurrentTable().map(TSVTable::getDataset).ifPresent(dataset -> {
-            initializeAndShow(javaScriptChart, dataset);
-        });
+        getCurrentTable()
+                .flatMap(TSVTable::getDatasetResource)
+                .ifPresent(datasetResource -> {
+                    initializeAndShow(javaScriptChart, datasetResource.getDataset());
+                });
     }
 
     @FXML
@@ -326,8 +405,8 @@ public class TopsoilMainWindow extends CustomVBox {
     }
 
     @FXML
-    void pasteFromClipboard() {
-        getCurrentTable().ifPresent(TSVTable::pasteFromClipboard);
+    void loadFromClipboard() {
+        getCurrentTable().ifPresent(tsvTable -> tsvTable.pasteFromClipboard());
     }
 
     @FXML

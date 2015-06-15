@@ -15,22 +15,23 @@
  */
 package org.cirdles.topsoil.dataset;
 
-import java.util.List;
-
 /**
+ * Each DatasetResource handles all CRUD methods for a given Dataset
  *
- * @author John Zeringue
+ * @author parizotclement
  */
-public interface DatasetManager {
+public interface DatasetResource {
 
-    public List<Dataset> getDatasets();
+    public Dataset getDataset();
 
-    public boolean isOpen(Dataset dataset);
+    public void delete();
 
-    public boolean isClosed(Dataset dataset);
+    public void save();
 
-    public void open(Dataset dataset);
+    public void open();
 
-    public void close(Dataset dataset);
+    public void close();
+
+    public boolean isOpen();
 
 }

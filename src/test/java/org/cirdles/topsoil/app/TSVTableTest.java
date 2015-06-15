@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.app;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -23,10 +24,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableView;
 import javafx.stage.Stage;
-import org.cirdles.TableSelector;
-import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
+import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
+import org.cirdles.topsoil.dataset.Dataset;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
@@ -42,8 +43,7 @@ public class TSVTableTest extends ApplicationTest {
     private static final Logger LOGGER
             = Logger.getLogger(TSVTableTest.class.getName());
 
-    private TableView<Entry> tsvTable;
-    private TableSelector<Entry> tableSelector;
+    private TSVTable tsvTable;
 
     private Parent getRootNode() {
         // generate path to the sample TSV file
@@ -56,8 +56,15 @@ public class TSVTableTest extends ApplicationTest {
             LOGGER.log(Level.SEVERE, null, ex);
         }
 
-        tsvTable = new TSVTable(sampleTSVPath);
-        tableSelector = new TableSelector(tsvTable);
+        tsvTable = new TSVTable();
+
+        DatasetReader tableReader = new TSVDatasetReader(true);
+        try {
+            Dataset dataset = tableReader.read(sampleTSVPath);
+            tsvTable.setDataset(dataset);
+        } catch (IOException ex) {
+            Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         return tsvTable;
     }
