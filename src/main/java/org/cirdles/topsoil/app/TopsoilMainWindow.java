@@ -17,42 +17,38 @@ package org.cirdles.topsoil.app;
 
 import com.johnzeringue.extendsfx.annotation.ResourceBundle;
 import com.johnzeringue.extendsfx.layout.CustomVBox;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionModel;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javax.inject.Inject;
 import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.app.chart.VariableBindingDialog;
-import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.app.dataset.TSVDatasetManager;
 import org.cirdles.topsoil.app.dataset.reader.CSVDatasetReader;
+import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
 import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
+import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.DatasetManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * FXML Controller class
@@ -63,7 +59,7 @@ import org.cirdles.topsoil.dataset.DatasetManager;
 public class TopsoilMainWindow extends CustomVBox {
 
     private static final Logger LOGGER
-            = Logger.getLogger(TopsoilMainWindow.class.getName());
+            = LoggerFactory.getLogger(TopsoilMainWindow.class);
 
     private static final Path APPLICATION_DIRECTORY
             = new GetApplicationDirectoryOperation().perform("Topsoil");
@@ -250,7 +246,7 @@ public class TopsoilMainWindow extends CustomVBox {
                 Dataset dataset = datasetReader.read(filePath);
                 dataTable.setDataset(dataset);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.error(null, ex);
             }
 
             //set Tab title

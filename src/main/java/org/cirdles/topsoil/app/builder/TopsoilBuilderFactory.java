@@ -15,17 +15,20 @@
  */
 package org.cirdles.topsoil.app.builder;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.util.Builder;
 import javafx.util.BuilderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author zeringuej
  */
 public class TopsoilBuilderFactory implements BuilderFactory {
+
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(TopsoilBuilderFactory.class);
 
     private final String packageName = this.getClass().getPackage().getName();
     private final BuilderFactory defaultBuilderFactory = new JavaFXBuilderFactory();
@@ -37,7 +40,7 @@ public class TopsoilBuilderFactory implements BuilderFactory {
         } catch (ClassNotFoundException ex) {
             return defaultBuilderFactory.getBuilder(type);
         } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(TopsoilBuilderFactory.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
 
         return null;

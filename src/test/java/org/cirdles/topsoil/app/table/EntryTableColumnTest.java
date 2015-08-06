@@ -15,28 +15,28 @@
  */
 package org.cirdles.topsoil.app.table;
 
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.TableCell;
+import javafx.stage.Stage;
+import org.cirdles.TableSelector;
+import org.cirdles.topsoil.app.TSVTable;
+import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
+import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testfx.framework.junit.ApplicationTest;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.TableCell;
+
 import static javafx.scene.input.KeyCode.ENTER;
-import javafx.stage.Stage;
-import org.cirdles.TableSelector;
-import org.cirdles.topsoil.app.TSVTable;
-import org.cirdles.topsoil.app.TSVTableTest;
-import org.cirdles.topsoil.app.Topsoil;
-import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.junit.Test;
 import static org.testfx.api.FxAssert.verifyThat;
-import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.matcher.control.LabeledMatchers.hasText;
 
 /**
@@ -44,6 +44,9 @@ import static org.testfx.matcher.control.LabeledMatchers.hasText;
  * @author parizotclement
  */
 public class EntryTableColumnTest extends ApplicationTest {
+
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(EntryTableColumnTest.class);
 
     private TableSelector tableSelector;
 
@@ -54,7 +57,7 @@ public class EntryTableColumnTest extends ApplicationTest {
             URI sampleTSV_URI = getClass().getResource("../sample.tsv").toURI();
             sampleTSVPath = Paths.get(sampleTSV_URI);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(TSVTableTest.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
 
         //Create a TSVTable
@@ -69,7 +72,7 @@ public class EntryTableColumnTest extends ApplicationTest {
             Dataset dataset = tableReader.read(sampleTSVPath);
             testTSVTable.setDataset(dataset);
         } catch (IOException ex) {
-            Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
 
         return testTSVTable;

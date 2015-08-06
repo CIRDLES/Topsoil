@@ -15,25 +15,21 @@
  */
 package org.cirdles.topsoil.app.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
-import static javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM;
-import static javax.xml.transform.OutputKeys.INDENT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Document;
+import java.io.*;
+import java.util.Optional;
+
+import static javax.xml.transform.OutputKeys.*;
 
 /**
  * The purpose of SVGSaver.java is to save a vector image displayed in Topsoil's
@@ -44,7 +40,7 @@ import org.w3c.dom.Document;
 public class SVGSaver {
 
     private static final Logger LOGGER
-            = Logger.getLogger(SVGSaver.class.getName());
+            = LoggerFactory.getLogger(SVGSaver.class);
 
     private static final String SVG_DOCTYPE_PUBLIC = "-//W3C//DTD SVG 1.1//EN";
 
@@ -66,7 +62,7 @@ public class SVGSaver {
             try {
                 writeSVGToOutputStream(svgDocument, stream);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.error(null, ex);
             }
         });
     }
@@ -96,7 +92,7 @@ public class SVGSaver {
                     try {
                         return new FileOutputStream(file);
                     } catch (FileNotFoundException ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.error(null, ex);
                         return null;
                     }
                 });
@@ -122,7 +118,7 @@ public class SVGSaver {
             transformer.transform(
                     new DOMSource(svgDocument), new StreamResult(outputStream));
         } catch (TransformerException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         } finally {
             outputStream.close();
         }
