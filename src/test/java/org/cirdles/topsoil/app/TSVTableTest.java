@@ -15,12 +15,6 @@
  */
 package org.cirdles.topsoil.app;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
@@ -28,10 +22,18 @@ import javafx.stage.Stage;
 import org.cirdles.TableSelector;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testfx.framework.junit.ApplicationTest;
 
-import static org.testfx.api.FxAssert.*;
-import static org.testfx.matcher.control.TableViewMatchers.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.hasItems;
+import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
 
 /**
  *
@@ -40,7 +42,7 @@ import static org.testfx.matcher.control.TableViewMatchers.*;
 public class TSVTableTest extends ApplicationTest {
 
     private static final Logger LOGGER
-            = Logger.getLogger(TSVTableTest.class.getName());
+            = LoggerFactory.getLogger(TSVTableTest.class);
 
     private TableView<Entry> tsvTable;
     private TableSelector<Entry> tableSelector;
@@ -53,7 +55,7 @@ public class TSVTableTest extends ApplicationTest {
             URI sampleTSV_URI = getClass().getResource("sample.tsv").toURI();
             sampleTSVPath = Paths.get(sampleTSV_URI);
         } catch (URISyntaxException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
 
         tsvTable = new TSVTable(sampleTSVPath);

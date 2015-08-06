@@ -15,31 +15,35 @@
  */
 package org.cirdles.topsoil.app;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.cirdles.topsoil.app.table.EntryTableColumn;
-import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
 import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
+import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
 import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
+import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
+import org.cirdles.topsoil.app.table.EntryTableColumn;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.dataset.field.TextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * A table containing data used to generate charts. Implements some shortcuts.
  */
 public class TSVTable extends TableView<Entry> {
+
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(TSVTable.class);
 
     private Path savePath;
     private Dataset dataset;
@@ -101,7 +105,7 @@ public class TSVTable extends TableView<Entry> {
                         = tableReader.read(Clipboard.getSystemClipboard().getString());
                 setDataset(dataset);
             } catch (IOException ex) {
-                Logger.getLogger(TSVTable.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error(null, ex);
             }
 
             if (savePath != null) {
@@ -131,7 +135,7 @@ public class TSVTable extends TableView<Entry> {
                 Dataset dataset = tableReader.read(loadPath);
                 setDataset(dataset);
             } catch (IOException ex) {
-                Logger.getLogger(Topsoil.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error(null, ex);
             }
         }
     }
@@ -157,7 +161,7 @@ public class TSVTable extends TableView<Entry> {
         try {
             tableWriter.write(getDataset(), savePath);
         } catch (IOException ex) {
-            Logger.getLogger(TSVTable.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
     }
 

@@ -15,9 +15,6 @@
  */
 package org.cirdles.topsoil.chart;
 
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.embed.swing.JFXPanel;
@@ -25,7 +22,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
-import javax.swing.JComponent;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -65,8 +65,7 @@ public interface JavaFXDisplayable extends Displayable {
         try {
             initializeJFXPanel.get();
         } catch (InterruptedException | ExecutionException ex) {
-            Logger.getLogger(JavaFXDisplayable.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(JavaFXDisplayable.class).error(null, ex);
         }
 
         return jfxPanel;

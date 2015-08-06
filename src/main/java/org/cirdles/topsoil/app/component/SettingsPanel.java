@@ -16,18 +16,22 @@
 package org.cirdles.topsoil.app.component;
 
 import com.johnzeringue.extendsfx.layout.CustomVBox;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import org.cirdles.topsoil.chart.setting.SettingScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author John Zeringue
  */
 public class SettingsPanel extends CustomVBox<SettingsPanel> {
+
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(SettingsPanel.class);
 
     private SettingScope settingScope;
     private Map<String, SettingControl> settingControls;
@@ -66,7 +70,7 @@ public class SettingsPanel extends CustomVBox<SettingsPanel> {
         } else if (value instanceof String) {
             newControl = new StringSettingControl(settingScope, settingName);
         } else {
-            Logger.getGlobal().log(Level.WARNING, value.getClass() + " not handled");
+            LOGGER.warn(value.getClass() + " not handled");
         }
 
         settingControls.put(settingName, newControl);

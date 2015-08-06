@@ -15,21 +15,18 @@
  */
 package org.cirdles.topsoil.app.dataset;
 
-import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
 import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.DatasetManager;
 import org.cirdles.topsoil.dataset.SimpleDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
  *
@@ -38,7 +35,7 @@ import org.cirdles.topsoil.dataset.SimpleDataset;
 public class TSVDatasetManager implements DatasetManager {
 
     private static final Logger LOGGER
-            = Logger.getLogger(TSVDatasetManager.class.getName());
+            = LoggerFactory.getLogger(TSVDatasetManager.class);
 
     private final Path basePath;
     private final DatasetReader datasetReader;
@@ -54,7 +51,7 @@ public class TSVDatasetManager implements DatasetManager {
             // safer than Files.createDirectory
             Files.createDirectories(basePath);
         } catch (IOException ex) {
-            Logger.getLogger(TSVDatasetManager.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
     }
 
@@ -76,7 +73,7 @@ public class TSVDatasetManager implements DatasetManager {
             Path datasetPath = datasetToPath.get(dataset);
             Files.move(datasetPath, getOpenPath().resolve(datasetPath.getFileName()));
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
     }
 
@@ -94,7 +91,7 @@ public class TSVDatasetManager implements DatasetManager {
             Path datasetPath = datasetToPath.get(dataset);
             Files.move(datasetPath, getClosedPath().resolve(datasetPath.getFileName()));
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
     }
 
@@ -117,11 +114,11 @@ public class TSVDatasetManager implements DatasetManager {
                     dataset.setName(datasetPath.getFileName().toString());
                     datasetToPath.put(dataset, datasetPath);
                 } catch (IOException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.error(null, ex);
                 }
             });
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
 
         return datasets;

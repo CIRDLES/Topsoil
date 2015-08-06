@@ -15,36 +15,30 @@
  */
 package org.cirdles.topsoil.chart;
 
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
-import static javafx.concurrent.Worker.State.SUCCEEDED;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import netscape.javascript.JSObject;
-import static org.cirdles.topsoil.chart.Variables.RHO;
-import static org.cirdles.topsoil.chart.Variables.SIGMA_X;
-import static org.cirdles.topsoil.chart.Variables.SIGMA_Y;
-import static org.cirdles.topsoil.chart.Variables.X;
-import static org.cirdles.topsoil.chart.Variables.Y;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.entry.EntryListener;
-import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+
+import static javafx.concurrent.Worker.State.SUCCEEDED;
+import static org.cirdles.topsoil.chart.Variables.*;
+import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
 
 /**
  * A {@link Chart} that uses JavaScript and HTML to power its visualizations.
@@ -53,7 +47,8 @@ import org.w3c.dom.Element;
  */
 public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
-    private static final Logger LOGGER = Logger.getLogger(JavaScriptChart.class.getName());
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(JavaScriptChart.class);
 
     private static final List<Variable> VARIABLES = Arrays.asList(
             X, SIGMA_X,
@@ -215,7 +210,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
         // useful for debugging
         getWebEngine().get().setOnAlert(event -> {
-            LOGGER.log(Level.INFO, event.getData());
+            LOGGER.info(event.getData());
         });
 
         // used as a callback for webEngine.loadContent(HTML_TEMPLATE)
@@ -304,7 +299,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
      * {@link Chart} as a SVG document.
      *
      * @return a new {@link Document} with SVG contents if
-     * {@link JavaScriptChart#asNode()} has been called for this instance
+     * {@link JavaScriptChart#displayAsNode()} has been called for this instance
      */
     @Override
     public Document displayAsSVGDocument() {
@@ -328,7 +323,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
             svgDocument.appendChild(svgDocument.importNode(svgElement, true));
 
         } catch (ParserConfigurationException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(null, ex);
         }
 
         return svgDocument;
