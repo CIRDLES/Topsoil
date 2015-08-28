@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.utils;
+package org.cirdles.topsoil.app.util;
 
 import javafx.scene.control.Alert;
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;

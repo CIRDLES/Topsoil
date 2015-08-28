@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.cirdles.utils;
+package org.cirdles.topsoil.app.util;
 
 /**
  *
