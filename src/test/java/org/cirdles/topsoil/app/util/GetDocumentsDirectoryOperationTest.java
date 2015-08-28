@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.cirdles.topsoil.app.utils;
+package org.cirdles.topsoil.app.util;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

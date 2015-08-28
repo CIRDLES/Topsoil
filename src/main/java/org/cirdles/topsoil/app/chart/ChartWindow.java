@@ -21,7 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import org.cirdles.topsoil.app.component.SettingsPanel;
-import org.cirdles.topsoil.app.utils.SVGSaver;
+import org.cirdles.topsoil.app.util.SVGSaver;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 

@@ -34,7 +34,7 @@ import org.cirdles.topsoil.app.dataset.reader.CSVDatasetReader;
 import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
 import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
-import org.cirdles.topsoil.app.utils.GetApplicationDirectoryOperation;
+import org.cirdles.topsoil.app.util.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;

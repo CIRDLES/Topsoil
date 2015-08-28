@@ -21,7 +21,7 @@ import static javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE;
 import static javafx.scene.control.ButtonType.YES;
 import javax.inject.Inject;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
-import org.cirdles.topsoil.app.utils.YesNoAlert;
+import org.cirdles.topsoil.app.util.YesNoAlert;
 
 /**
  * Shortcut tools to be used anywhere in the program.
