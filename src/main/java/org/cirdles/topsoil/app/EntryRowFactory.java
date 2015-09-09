@@ -24,7 +24,7 @@ import static org.cirdles.topsoil.dataset.field.Fields.ROW;
 import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
 
 /**
- * The row Factory for the TSVTable
+ * The row Factory for the TsvTable
  * Define the Context Menu
  *
  * @author parizotclement

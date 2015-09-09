@@ -15,24 +15,25 @@
  */
 package org.cirdles.topsoil.app.dataset.writer;
 
+import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.entry.SimpleEntry;
+import org.cirdles.topsoil.dataset.field.Field;
+import org.cirdles.topsoil.dataset.field.NumberField;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.field.Field;
-import org.cirdles.topsoil.dataset.field.NumberField;
-import org.cirdles.topsoil.dataset.SimpleDataset;
-import org.cirdles.topsoil.dataset.entry.SimpleEntry;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
  * @author John Zeringue
  */
-public class TSVDatasetWriterTest {
+public class TsvRawDataWriterTest {
 
     private static final Field<Double> FIELD_A;
     private static final Field<Double> FIELD_B;
@@ -46,7 +47,7 @@ public class TSVDatasetWriterTest {
             FIELD_D = new NumberField("D")
     );
 
-    private Dataset dataset;
+    private RawData rawData;
 
     public Entry dummyEntry() {
         Entry entry = new SimpleEntry();
@@ -66,7 +67,7 @@ public class TSVDatasetWriterTest {
         entries.add(dummyEntry());
         entries.add(dummyEntry());
 
-        dataset = new SimpleDataset(FIELDS, entries);
+        rawData = new RawData(FIELDS, entries);
     }
 
     private static final String EXPECTED_WITH_DEFAULT_CONSTRUCTOR = (""
@@ -77,9 +78,9 @@ public class TSVDatasetWriterTest {
 
     @Test
     public void testWriteWithDefaultConstructor() throws Exception {
-        DatasetWriter datasetWriter = new TSVDatasetWriter();
+        RawDataWriter rawDataWriter = new TsvRawDataWriter();
 
-        String tsvString = datasetWriter.write(dataset);
+        String tsvString = rawDataWriter.write(rawData);
 
         assertEquals(EXPECTED_WITH_DEFAULT_CONSTRUCTOR, tsvString);
     }

@@ -19,13 +19,13 @@ package org.cirdles.topsoil.app.dataset.reader;
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public class TSVDatasetReader extends DSVDatasetReader {
+public class TsvRawDataReader extends DsvRawDataReader {
 
-    public TSVDatasetReader() {
+    public TsvRawDataReader() {
         super('\t');
     }
 
-    public TSVDatasetReader(boolean expectingHeaders) {
+    public TsvRawDataReader(boolean expectingHeaders) {
         super('\t', expectingHeaders);
     }
 

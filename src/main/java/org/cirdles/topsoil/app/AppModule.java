@@ -16,7 +16,14 @@
 package org.cirdles.topsoil.app;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import org.cirdles.topsoil.app.flyway.FlywayModule;
 import org.cirdles.topsoil.app.metadata.MetadataModule;
+import org.cirdles.topsoil.app.sqlite.SQLiteMyBatisModule;
+import org.cirdles.topsoil.app.util.UtilModule;
+
+import javax.inject.Named;
+import java.nio.file.Path;
 
 /**
  *
@@ -26,9 +33,19 @@ public class AppModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        install(new FlywayModule());
         install(new MetadataModule());
+        install(new SQLiteMyBatisModule());
+        install(new UtilModule());
 
         requestStaticInjection(Tools.class);
+    }
+
+    @Provides
+    @Named("JDBC.schema")
+    String provideJdbcSchema(
+            @Named("applicationDirectory") Path applicationDirectory) {
+        return applicationDirectory.resolve("data.db").toString();
     }
 
 }

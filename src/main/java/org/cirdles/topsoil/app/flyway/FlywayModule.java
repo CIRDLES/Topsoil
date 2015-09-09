@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app;
+package org.cirdles.topsoil.app.flyway;
 
-import com.johnzeringue.extendsfx.annotation.ResourceBundle;
-import com.johnzeringue.extendsfx.layout.CustomVBox;
-import javafx.fxml.FXML;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import org.flywaydb.core.Flyway;
+
+import javax.sql.DataSource;
 
 /**
- *
- * @author John Zeringue
+ * Created by johnzeringue on 8/28/15.
  */
-@ResourceBundle("Resources")
-public class EmptyTablePlaceholder extends CustomVBox<EmptyTablePlaceholder> {
+public class FlywayModule extends AbstractModule {
 
-    private TsvTable dataTable;
-
-    public EmptyTablePlaceholder(TsvTable dataTable) {
-        super(self -> self.dataTable = dataTable);
+    @Override
+    protected void configure() {
+        bind(FlywayMigrateTask.class);
     }
 
-    @FXML
-    private void pasteFromClipboardIntoDataTable() {
-        dataTable.pasteFromClipboard();
+    @Provides
+    Flyway provideFlyway(DataSource dataSource) {
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(dataSource);
+        return flyway;
     }
 
 }

@@ -15,26 +15,48 @@
  */
 package org.cirdles.topsoil.app;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.dataset.DatasetMapper;
+import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.app.metadata.TestApplicationMetadata;
+import org.junit.Rule;
 import org.junit.Test;
-import static org.testfx.api.FxAssert.verifyThat;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
+
+import static org.testfx.api.FxAssert.verifyThat;
 /**
  *
  * @author John Zeringue
  */
 public class TopsoilMainWindowTest extends ApplicationTest {
 
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+    @Mock
+    private DatasetMapper datasetMapper;
+
+    @Mock
+    private FlywayMigrateTask flywayMigrateTask;
+
     private TopsoilMainWindow topsoilMainWindow;
 
     @Override
     public void start(Stage stage) throws Exception {
         ApplicationMetadata metadata = new TestApplicationMetadata();
-        topsoilMainWindow = new TopsoilMainWindow(metadata);
+
+        topsoilMainWindow = new TopsoilMainWindow(
+                metadata,
+                datasetMapper,
+                flywayMigrateTask);
 
         Scene scene = new Scene(topsoilMainWindow);
         stage.setScene(scene);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app;
+package org.cirdles.topsoil.app.dataset.reader;
 
-import com.johnzeringue.extendsfx.annotation.ResourceBundle;
-import com.johnzeringue.extendsfx.layout.CustomVBox;
-import javafx.fxml.FXML;
+import org.cirdles.topsoil.dataset.RawData;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
 
 /**
  *
- * @author John Zeringue
+ * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-@ResourceBundle("Resources")
-public class EmptyTablePlaceholder extends CustomVBox<EmptyTablePlaceholder> {
+public interface RawDataReader {
 
-    private TsvTable dataTable;
+    public RawData read(InputStream source) throws IOException;
 
-    public EmptyTablePlaceholder(TsvTable dataTable) {
-        super(self -> self.dataTable = dataTable);
-    }
+    public RawData read(String source) throws IOException;
 
-    @FXML
-    private void pasteFromClipboardIntoDataTable() {
-        dataTable.pasteFromClipboard();
-    }
+    public RawData read(File source) throws IOException;
+
+    public RawData read(Path source) throws IOException;
 
 }

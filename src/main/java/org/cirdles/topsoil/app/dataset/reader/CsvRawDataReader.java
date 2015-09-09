@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.dataset.writer;
+package org.cirdles.topsoil.app.dataset.reader;
 
 /**
  *
- * @author John Zeringue <john.joseph.zeringue@gmail.com>
+ * @author John Zeringue
  */
-public class TSVDatasetWriter extends DSVDatasetWriter {
+public class CsvRawDataReader extends DsvRawDataReader {
 
-    public TSVDatasetWriter() {
-        super('\t');
+    public CsvRawDataReader() {
+        super(',');
+    }
+
+    public CsvRawDataReader(boolean expectingHeaders) {
+        super(',', expectingHeaders);
     }
 
 }

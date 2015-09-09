@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,34 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.table;
+package org.cirdles.topsoil.app;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableCell;
+import javafx.scene.control.TableView;
 import javafx.stage.Stage;
-import org.cirdles.TableSelector;
-import org.cirdles.topsoil.app.TsvTable;
 import org.cirdles.topsoil.app.dataset.TsvDataset;
 import org.cirdles.topsoil.dataset.Dataset;
-import org.junit.Ignore;
+import org.cirdles.topsoil.dataset.entry.Entry;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.framework.junit.ApplicationTest;
 
-import static javafx.scene.input.KeyCode.ENTER;
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.LabeledMatchers.hasText;
+import static org.testfx.matcher.control.TableViewMatchers.hasItems;
+import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
 
 /**
  *
- * @author parizotclement
+ * @author John Zeringue
  */
-public class EntryTableColumnTest extends ApplicationTest {
+public class TsvTableTest extends ApplicationTest {
 
     private static final Logger LOGGER
-            = LoggerFactory.getLogger(EntryTableColumnTest.class);
+            = LoggerFactory.getLogger(TsvTableTest.class);
 
     private static final String RAW_DATA = "" +
             "207Pb*/235U\t±2σ (%)\t206Pb*/238U\t±2σ (%)\tcorr coef\n" +
@@ -62,14 +60,13 @@ public class EntryTableColumnTest extends ApplicationTest {
             "29.979576581\t1.595745814\t0.724426340\t1.458894294\t0.914239775\n" +
             "29.344673618\t1.551935035\t0.714166474\t1.420060290\t0.915025602";
 
-    private TableSelector tableSelector;
+    private TableView<Entry> tsvTable;
 
     private Parent getRootNode() {
         Dataset dataset = new TsvDataset("Test", RAW_DATA);
-        TsvTable testTsvTable = new TsvTable(dataset);
-        tableSelector = new TableSelector(testTsvTable);
+        tsvTable = new TsvTable(dataset);
 
-        return testTsvTable;
+        return tsvTable;
     }
 
     @Override
@@ -79,35 +76,12 @@ public class EntryTableColumnTest extends ApplicationTest {
         stage.show();
     }
 
-    //Test if the filter is correctly working on a non-number input
     @Test
-    @Ignore
-    public void testInputNotANumber() {
-        TableCell cell = tableSelector.cell(0, 0);
+    public void testCorrectlyLoadABasicDataset() {
+        verifyThat(tsvTable, hasTableCell(29.165688743)); // the first number in the file
+        verifyThat(tsvTable, hasTableCell(0.702153693)); // a number in the middle
 
-        //Get the value of the first cell, before any editing
-        String value = cell.getText();
-
-        doubleClickOn(cell) //Double-click on the first cell
-                .write("test") //Write "test"
-                .push(ENTER) //Press ENTER for committing
-                .push(ENTER); //Press ENTER to close the Warning Dialog
-
-        //Check that the first cell content hasn't been modified
-        verifyThat(cell, hasText(value));
-    }
-
-    //Test if the filter is correctly working on a number input
-    @Test
-    @Ignore
-    public void testChangeCellValue() {
-        TableCell cell = tableSelector.cell(0, 0);
-
-        doubleClickOn(cell)
-                .write("123")
-                .push(ENTER);
-
-        verifyThat(cell, hasText("123.0"));
+        verifyThat(tsvTable, hasItems(17)); // RAW_DATA contains 17 lines
     }
 
 }

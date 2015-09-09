@@ -16,27 +16,29 @@
 package org.cirdles.topsoil.app.dataset.writer;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.dataset.field.Field;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
+
 import static java.util.stream.Collectors.toList;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.field.Field;
 
 /**
  *
  * @author John Zeringue
  */
-public class DSVDatasetWriter implements DatasetWriter {
+public class DsvRawDataWriter implements RawDataWriter {
 
     private final char delimiter;
 
     private CSVWriter dsvWriter;
 
-    public DSVDatasetWriter(char delimiter) {
+    public DsvRawDataWriter(char delimiter) {
         this.delimiter = delimiter;
     }
 
@@ -44,18 +46,18 @@ public class DSVDatasetWriter implements DatasetWriter {
         return delimiter;
     }
 
-    void writeFields(Dataset dataset) {
-        String[] line = dataset.getFields().stream()
+    void writeFields(RawData rawData) {
+        String[] line = rawData.getFields().stream()
                 .map(Field::getName)
                 .toArray(String[]::new);
 
         dsvWriter.writeNext(line);
     }
 
-    void writeEntries(Dataset dataset) {
-        List<String[]> lines = dataset.getEntries().stream()
+    void writeEntries(RawData rawData) {
+        List<String[]> lines = rawData.getEntries().stream()
                 .map(entry -> {
-                    return dataset.getFields().stream()
+                    return rawData.getFields().stream()
                             .map(entry::get)
                             .map(value -> value
                                     .map(Object::toString)
@@ -68,7 +70,7 @@ public class DSVDatasetWriter implements DatasetWriter {
     }
 
     @Override
-    public void write(Dataset dataset, OutputStream destination)
+    public void write(RawData rawData, OutputStream destination)
             throws IOException {
 
         Writer writer
@@ -76,8 +78,8 @@ public class DSVDatasetWriter implements DatasetWriter {
 
         dsvWriter = new CSVWriter(writer, getDelimiter());
 
-        writeFields(dataset);
-        writeEntries(dataset);
+        writeFields(rawData);
+        writeEntries(rawData);
 
         dsvWriter.close();
         dsvWriter = null; // allow dsvWriter to be garbage collected

@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.dataset.reader;
+package org.cirdles.topsoil.app.util;
+
+import com.google.inject.AbstractModule;
+
+import java.nio.file.Path;
+
+import static com.google.inject.name.Names.named;
 
 /**
- *
- * @author John Zeringue
+ * Created by johnzeringue on 9/8/15.
  */
-public class CSVDatasetReader extends DSVDatasetReader {
+public class UtilModule extends AbstractModule {
 
-    public CSVDatasetReader() {
-        super(',');
-    }
-
-    public CSVDatasetReader(boolean expectingHeaders) {
-        super(',', expectingHeaders);
+    @Override
+    protected void configure() {
+        bind(Path.class)
+                .annotatedWith(named("applicationDirectory"))
+                .toProvider(ApplicationDirectoryProvider.class);
     }
 
 }

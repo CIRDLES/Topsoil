@@ -15,12 +15,10 @@
  */
 package org.cirdles.topsoil.dataset;
 
-import org.cirdles.topsoil.dataset.field.Field;
-import static java.util.Collections.emptyList;
-import java.util.List;
-import java.util.Optional;
-import javafx.collections.ObservableList;
 import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
+
+import java.util.List;
 
 /**
  *
@@ -28,13 +26,12 @@ import org.cirdles.topsoil.dataset.entry.Entry;
  */
 public interface Dataset {
 
-    public static final Dataset EMPTY_DATASET
-            = new SimpleDataset(emptyList(), emptyList());
-
-    public Optional<String> getName();
+    public String getName();
 
     public List<Field<?>> getFields();
 
-    public ObservableList<Entry> getEntries();
+    public List<Entry> getEntries();
+
+    public RawData getRawData();
 
 }

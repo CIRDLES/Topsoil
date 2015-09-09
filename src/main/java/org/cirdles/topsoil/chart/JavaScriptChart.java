@@ -15,8 +15,6 @@
  */
 package org.cirdles.topsoil.chart;
 
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
@@ -252,13 +250,9 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
             drawChart(variableContext);
         };
 
-        ObservableList<Entry> entries = variableContext.getDataset().getEntries();
+        List<Entry> entries = variableContext.getDataset().getEntries();
         //Listen to the entries (= value changes)
         entries.forEach(entry -> entry.addListener(listener));
-        //Listen to the dataset (= adding/removal of entries)
-        entries.addListener((ListChangeListener.Change<? extends Entry> c) -> {
-            drawChart(variableContext);
-        });
 
         drawChart(variableContext);
     }
@@ -271,7 +265,8 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
             getTopsoil().get().call("clearData"); // old data must be cleared
 
             variableContext.getDataset().getEntries()
-                    .filtered(entry -> entry.get(SELECTED).orElse(true))
+                    .stream()
+                    .filter(entry -> entry.get(SELECTED).orElse(true))
                     .forEach(entry -> {
                 JSObject row = (JSObject) getWebEngine().get()
                         .executeScript("new Object()");
