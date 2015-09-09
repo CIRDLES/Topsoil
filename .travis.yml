@@ -9,10 +9,6 @@ cache:
 jdk:
 - oraclejdk8
 
-# setup jobs.
-env:
-- _JAVA_OPTIONS="-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dtestfx.setup.timeout=2500"
-
 before_script: npm install -g buster
 
 script: ./gradlew check busterTest
