@@ -13,28 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app;
+package org.cirdles.topsoil.dataset;
 
-import com.johnzeringue.extendsfx.annotation.ResourceBundle;
-import com.johnzeringue.extendsfx.layout.CustomVBox;
-import javafx.fxml.FXML;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
+
+import java.util.List;
 
 /**
- *
- * @author John Zeringue
+ * Created by johnzeringue on 8/30/15.
  */
-@ResourceBundle("Resources")
-public class EmptyTablePlaceholder extends CustomVBox<EmptyTablePlaceholder> {
+public class RawData {
 
-    private TsvTable dataTable;
+    private final List<Field<?>> fields;
+    private final List<Entry> entries;
 
-    public EmptyTablePlaceholder(TsvTable dataTable) {
-        super(self -> self.dataTable = dataTable);
+    public RawData(List<Field<?>> fields, List<Entry> entries) {
+        this.fields = fields;
+        this.entries = entries;
     }
 
-    @FXML
-    private void pasteFromClipboardIntoDataTable() {
-        dataTable.pasteFromClipboard();
+    public List<Field<?>> getFields() {
+        return fields;
+    }
+
+    public List<Entry> getEntries() {
+        return entries;
     }
 
 }

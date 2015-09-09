@@ -18,9 +18,13 @@ package org.cirdles.topsoil.app;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.SimpleVariableContext;
 import org.cirdles.topsoil.chart.VariableContext;
-import static org.cirdles.topsoil.dataset.Dataset.EMPTY_DATASET;
-import org.junit.Test;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.dataset.SimpleDataset;
 import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  *
@@ -47,8 +51,11 @@ public class ScatterplotChartTest {
 
     @Test
     public void testSetData() {
+        RawData rawData = new RawData(new ArrayList<>(), new ArrayList<>());
+        Dataset dataset = new SimpleDataset("Test", rawData);
+
         VariableContext variableContext
-                = new SimpleVariableContext(EMPTY_DATASET);
+                = new SimpleVariableContext(dataset);
 
         chart.setData(variableContext);
     }

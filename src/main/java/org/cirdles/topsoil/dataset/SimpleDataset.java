@@ -15,12 +15,10 @@
  */
 package org.cirdles.topsoil.dataset;
 
-import org.cirdles.topsoil.dataset.field.Field;
-import java.util.List;
-import java.util.Optional;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
+
+import java.util.List;
 
 /**
  *
@@ -28,36 +26,32 @@ import org.cirdles.topsoil.dataset.entry.Entry;
  */
 public class SimpleDataset implements Dataset {
 
-    private final List<Field<?>> fields;
-    private final ObservableList<Entry> entries;
+    private final String name;
+    private final RawData rawData;
 
-    private Optional<String> name = Optional.empty();
-
-    public SimpleDataset(List<Field<?>> fields, List<Entry> entries) {
-        this.fields = fields;
-        this.entries = FXCollections.observableArrayList(entries);
+    public SimpleDataset(String name, RawData rawData) {
+        this.name = name;
+        this.rawData = rawData;
     }
 
     @Override
-    public Optional<String> getName() {
+    public String getName() {
         return name;
     }
 
     @Override
     public List<Field<?>> getFields() {
-        return fields;
+        return rawData.getFields();
     }
 
     @Override
-    public ObservableList<Entry> getEntries() {
-        return entries;
+    public List<Entry> getEntries() {
+        return rawData.getEntries();
     }
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = Optional.ofNullable(name);
+    @Override
+    public RawData getRawData() {
+        return rawData;
     }
 
 }

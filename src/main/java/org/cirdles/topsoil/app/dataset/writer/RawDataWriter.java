@@ -15,42 +15,38 @@
  */
 package org.cirdles.topsoil.app.dataset.writer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import org.cirdles.topsoil.dataset.RawData;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.cirdles.topsoil.dataset.Dataset;
 
 /**
  *
  * @author John Zeringue <john.joseph.zeringue@gmail.com>
  */
-public interface DatasetWriter {
+public interface RawDataWriter {
 
-    public void write(Dataset dataset, OutputStream destination)
+    public void write(RawData rawData, OutputStream destination)
             throws IOException;
 
-    public default String write(Dataset dataset) throws IOException {
+    public default String write(RawData rawData) throws IOException {
         try (OutputStream outputStream = new ByteArrayOutputStream()) {
-            write(dataset, outputStream);
+            write(rawData, outputStream);
             return outputStream.toString();
         }
     }
 
-    public default void write(Dataset dataset, File destination)
+    public default void write(RawData rawData, File destination)
             throws FileNotFoundException, IOException {
         try (OutputStream outputStream = new FileOutputStream(destination)) {
-            write(dataset, outputStream);
+            write(rawData, outputStream);
         }
     }
 
-    public default void write(Dataset dataset, Path destination)
+    public default void write(RawData rawData, Path destination)
             throws IOException {
-        write(dataset, Files.newOutputStream(destination));
+        write(rawData, Files.newOutputStream(destination));
     }
 
 }

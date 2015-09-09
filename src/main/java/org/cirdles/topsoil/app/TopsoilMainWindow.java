@@ -29,16 +29,18 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.app.chart.VariableBindingDialog;
-import org.cirdles.topsoil.app.dataset.TSVDatasetManager;
-import org.cirdles.topsoil.app.dataset.reader.CSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
+import org.cirdles.topsoil.app.dataset.DatasetMapper;
+import org.cirdles.topsoil.app.dataset.reader.CsvRawDataReader;
+import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
+import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
+import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.app.util.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.DatasetManager;
+import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.dataset.SimpleDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +58,7 @@ import java.util.function.Function;
  * @author John Zeringue
  */
 @ResourceBundle("Resources")
-public class TopsoilMainWindow extends CustomVBox {
+public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(TopsoilMainWindow.class);
@@ -74,13 +76,26 @@ public class TopsoilMainWindow extends CustomVBox {
     @FXML
     TabPane dataTableTabPane;
 
-    private DatasetManager datasetManager;
-
-    private final ApplicationMetadata metadata;
+    private ApplicationMetadata metadata;
+    private DatasetMapper datasetMapper;
+    private FlywayMigrateTask flywayMigrate;
 
     @Inject
-    public TopsoilMainWindow(ApplicationMetadata metadata) {
-        this.metadata = metadata;
+    public TopsoilMainWindow(
+            ApplicationMetadata metadata,
+            DatasetMapper datasetMapper,
+            FlywayMigrateTask flywayMigrate) {
+        super(self -> {
+            self.metadata = metadata;
+            self.datasetMapper = datasetMapper;
+            self.flywayMigrate = flywayMigrate;
+        });
+    }
+
+    @FXML
+    private void initialize() {
+        flywayMigrate.setOnSucceeded(event -> reloadDatasetMenu());
+        new Thread(flywayMigrate).start();
 
         // something like "Topsoil [0.3.4]"
         String nameAndVersion = String.format("%s [%s]",
@@ -90,20 +105,8 @@ public class TopsoilMainWindow extends CustomVBox {
         setWindowTitle(nameAndVersion);
     }
 
-    /**
-     * Initializes the controller class.
-     */
-    private void initialize() {
-        datasetManager = new TSVDatasetManager(DATASETS_DIRECTORY);
-        datasetManager.getDatasets().stream()
-                .filter(datasetManager::isOpen)
-                .forEach(this::loadDataset);
-
-        reloadDatasetMenu();
-    }
-
-    Optional<TSVTable> getCurrentTable() {
-        return getCurrentTab().map(tab -> (TSVTable) tab.getContent());
+    Optional<TsvTable> getCurrentTable() {
+        return getCurrentTab().map(tab -> (TsvTable) tab.getContent());
     }
 
     @FXML
@@ -113,14 +116,14 @@ public class TopsoilMainWindow extends CustomVBox {
 
     Tab createTab() {
         Tab dataTableTab = new Tab("Untitled Data");
+
         dataTableTab.setOnClosed(event -> {
-            if (dataTableTab.getContent() instanceof TSVTable) {
-                TSVTable table = (TSVTable) dataTableTab.getContent();
-                datasetManager.close(table.getDataset());
+            if (dataTableTab.getContent() instanceof TsvTable) {
+                TsvTable table = (TsvTable) dataTableTab.getContent();
             }
         });
 
-        TSVTable dataTable = new TSVTable();
+        TsvTable dataTable = new TsvTable();
         dataTable.setPlaceholder(new EmptyTablePlaceholder(dataTable));
         dataTableTab.setContent(dataTable);
 
@@ -139,11 +142,13 @@ public class TopsoilMainWindow extends CustomVBox {
 
         textInputDialog.setContentText("Data set name:");
         textInputDialog.showAndWait().ifPresent(datasetName -> {
-            Path datasetPath = DATASETS_DIRECTORY
-                    .resolve("open")
-                    .resolve(datasetName + ".tsv");
+            getCurrentTable()
+                    .map(TsvTable::getDataset)
+                    .map(dataset -> new SimpleDataset(
+                            datasetName,
+                            dataset.getRawData()))
+                    .ifPresent(datasetMapper::addDataset);
 
-            getCurrentTable().ifPresent(table -> table.saveToPath(datasetPath));
             getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
         });
 
@@ -152,9 +157,7 @@ public class TopsoilMainWindow extends CustomVBox {
     }
 
     void createDatasetMenuItem(Dataset dataset) {
-        MenuItem datasetMenuItem = dataset.getName()
-                .map(MenuItem::new)
-                .orElseGet(MenuItem::new);
+        MenuItem datasetMenuItem = new MenuItem(dataset.getName());
 
         datasetMenuItem.setOnAction(event -> {
             TopsoilMainWindow.this.loadDataset(dataset);
@@ -167,7 +170,7 @@ public class TopsoilMainWindow extends CustomVBox {
         // allows this method to be called multiple times in the same session
         datasetsMenu.getItems().clear();
 
-        datasetManager.getDatasets().forEach(this::createDatasetMenuItem);
+        datasetMapper.getDatasets().forEach(this::createDatasetMenuItem);
     }
 
     void loadDataset(Dataset dataset) {
@@ -177,15 +180,10 @@ public class TopsoilMainWindow extends CustomVBox {
     void loadDataset(Dataset dataset, Tab tab) {
         Node content = tab.getContent();
 
-        if (content instanceof TSVTable) {
-            TSVTable table = (TSVTable) content;
-
+        if (content instanceof TsvTable) {
+            TsvTable table = (TsvTable) content;
             table.setDataset(dataset);
-            datasetManager.open(dataset);
-
-            dataset.getName().ifPresent(name -> {
-                tab.setText(name);
-            });
+            tab.setText(dataset.getName());
         }
     }
 
@@ -230,20 +228,22 @@ public class TopsoilMainWindow extends CustomVBox {
         sceneProperty().addListener(sceneListener);
     }
 
-    public TSVTable createTable() {
-        return (TSVTable) createTab().getContent();
+    public TsvTable createTable() {
+        return (TsvTable) createTab().getContent();
     }
 
     void importFromFile(Path filePath,
-            Function<Boolean, DatasetReader> datasetReaderConstructor) {
-        TSVTable dataTable = createTable();
+                        Function<Boolean, RawDataReader> datasetReaderConstructor) {
+        TsvTable dataTable = createTable();
 
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
             try {
-                DatasetReader datasetReader
+                RawDataReader rawDataReader
                         = datasetReaderConstructor.apply(response);
 
-                Dataset dataset = datasetReader.read(filePath);
+                RawData rawData = rawDataReader.read(filePath);
+                Dataset dataset = new SimpleDataset("Unnamed dataset", rawData);
+
                 dataTable.setDataset(dataset);
             } catch (IOException ex) {
                 LOGGER.error(null, ex);
@@ -257,11 +257,11 @@ public class TopsoilMainWindow extends CustomVBox {
     }
 
     void importFromCSV(Path filePath) {
-        importFromFile(filePath, CSVDatasetReader::new);
+        importFromFile(filePath, CsvRawDataReader::new);
     }
 
     void importFromTSV(Path filePath) {
-        importFromFile(filePath, TSVDatasetReader::new);
+        importFromFile(filePath, TsvRawDataReader::new);
     }
 
     private File userHome() {
@@ -306,7 +306,7 @@ public class TopsoilMainWindow extends CustomVBox {
     }
 
     private void initializeAndShow(JavaScriptChart javaScriptChart) {
-        getCurrentTable().map(TSVTable::getDataset).ifPresent(dataset -> {
+        getCurrentTable().map(TsvTable::getDataset).ifPresent(dataset -> {
             initializeAndShow(javaScriptChart, dataset);
         });
     }
@@ -323,12 +323,12 @@ public class TopsoilMainWindow extends CustomVBox {
 
     @FXML
     void pasteFromClipboard() {
-        getCurrentTable().ifPresent(TSVTable::pasteFromClipboard);
+        getCurrentTable().ifPresent(TsvTable::pasteFromClipboard);
     }
 
     @FXML
     void emptyTable() {
-        getCurrentTable().ifPresent(TSVTable::clear);
+        getCurrentTable().ifPresent(TsvTable::clear);
     }
 
 }

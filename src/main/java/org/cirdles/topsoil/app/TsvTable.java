@@ -21,12 +21,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.cirdles.topsoil.app.dataset.reader.DatasetReader;
-import org.cirdles.topsoil.app.dataset.reader.TSVDatasetReader;
-import org.cirdles.topsoil.app.dataset.writer.DatasetWriter;
-import org.cirdles.topsoil.app.dataset.writer.TSVDatasetWriter;
+import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
+import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
 import org.cirdles.topsoil.app.table.EntryTableColumn;
 import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.dataset.SimpleDataset;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.dataset.field.TextField;
@@ -34,21 +34,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * A table containing data used to generate charts. Implements some shortcuts.
  */
-public class TSVTable extends TableView<Entry> {
+public class TsvTable extends TableView<Entry> {
 
     private static final Logger LOGGER
-            = LoggerFactory.getLogger(TSVTable.class);
+            = LoggerFactory.getLogger(TsvTable.class);
 
-    private Path savePath;
     private Dataset dataset;
 
-    public TSVTable() {
+    public TsvTable() {
         this.setEditable(true);
         this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -62,11 +59,9 @@ public class TSVTable extends TableView<Entry> {
         setRowFactory(new EntryRowFactory());
     }
 
-    public TSVTable(Path savePath) {
+    public TsvTable(Dataset dataset) {
         this();
-
-        this.savePath = savePath;
-        load();
+        setDataset(dataset);
     }
 
     public void setDataset(Dataset dataset) {
@@ -98,18 +93,19 @@ public class TSVTable extends TableView<Entry> {
      */
     public void pasteFromClipboard() {
         Tools.yesNoPrompt("Does the pasted data contain headers?", response -> {
-            DatasetReader tableReader = new TSVDatasetReader(response);
+            RawDataReader tableReader = new TsvRawDataReader(response);
 
             try {
-                Dataset dataset
-                        = tableReader.read(Clipboard.getSystemClipboard().getString());
+                RawData rawData = tableReader.read(
+                        Clipboard.getSystemClipboard().getString());
+
+                Dataset dataset = new SimpleDataset(
+                        "Untitled dataset",
+                        rawData);
+
                 setDataset(dataset);
             } catch (IOException ex) {
                 LOGGER.error(null, ex);
-            }
-
-            if (savePath != null) {
-                saveToPath(savePath);
             }
         });
     }
@@ -122,64 +118,4 @@ public class TSVTable extends TableView<Entry> {
         getColumns().clear();
     }
 
-    public void load() {
-        if (savePath != null) {
-            loadFromPath(savePath);
-        }
-    }
-
-    public void loadFromPath(Path loadPath) {
-        if (Files.exists(loadPath)) {
-            DatasetReader tableReader = new TSVDatasetReader(true);
-            try {
-                Dataset dataset = tableReader.read(loadPath);
-                setDataset(dataset);
-            } catch (IOException ex) {
-                LOGGER.error(null, ex);
-            }
-        }
-    }
-
-    public void save() {
-        if (savePath != null) {
-            saveToPath(savePath);
-        }
-    }
-
-    /**
-     * Saves the table at the given path in TSV format.
-     *
-     * @param savePath
-     */
-    public void saveToPath(Path savePath) {
-        if (savePath == null) {
-            throw new IllegalArgumentException("Cannot save to null path.");
-        }
-
-        DatasetWriter tableWriter = new TSVDatasetWriter();
-
-        try {
-            tableWriter.write(getDataset(), savePath);
-        } catch (IOException ex) {
-            LOGGER.error(null, ex);
-        }
-    }
-
-    /**
-     * Gets the saveToPath path.
-     *
-     * @return
-     */
-    public Path getSavePath() {
-        return savePath;
-    }
-
-    /**
-     * Sets the saveToPath path.
-     *
-     * @param savePath
-     */
-    public void setSavePath(Path savePath) {
-        this.savePath = savePath;
-    }
 }

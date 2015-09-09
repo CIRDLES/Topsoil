@@ -16,6 +16,13 @@
 package org.cirdles.topsoil.app.dataset.reader;
 
 import au.com.bytecode.opencsv.CSVReader;
+import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.entry.SimpleEntry;
+import org.cirdles.topsoil.dataset.field.Field;
+import org.cirdles.topsoil.dataset.field.NumberField;
+import org.cirdles.topsoil.dataset.field.TextField;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,28 +30,23 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.field.Field;
-import org.cirdles.topsoil.dataset.field.NumberField;
-import org.cirdles.topsoil.dataset.SimpleDataset;
-import org.cirdles.topsoil.dataset.entry.SimpleEntry;
-import org.cirdles.topsoil.dataset.field.TextField;
+
+import static java.util.Collections.emptyList;
 
 /**
  *
  * @author John Zeringue
  */
-public class DSVDatasetReader extends BaseDatasetReader {
+public class DsvRawDataReader extends BaseRawDataReader {
 
     private char delimiter;
     private boolean expectingHeaders;
 
-    public DSVDatasetReader(char delimiter) {
+    public DsvRawDataReader(char delimiter) {
         this(delimiter, true);
     }
 
-    public DSVDatasetReader(char delimiter, boolean expectingHeaders) {
+    public DsvRawDataReader(char delimiter, boolean expectingHeaders) {
         this.delimiter = delimiter;
         this.expectingHeaders = expectingHeaders;
     }
@@ -94,7 +96,7 @@ public class DSVDatasetReader extends BaseDatasetReader {
     }
 
     @Override
-    public Dataset read(InputStream source) throws IOException {
+    public RawData read(InputStream source) throws IOException {
         Reader reader = new InputStreamReader(source, Charset.forName("UTF-8"));
         CSVReader dsvReader = new CSVReader(reader, delimiter);
 
@@ -102,7 +104,7 @@ public class DSVDatasetReader extends BaseDatasetReader {
         validate(lines);
 
         if (lines.isEmpty()) {
-            return Dataset.EMPTY_DATASET;
+            return new RawData(emptyList(), emptyList());
         }
 
         int headerCount = lines.get(0).length;
@@ -132,7 +134,7 @@ public class DSVDatasetReader extends BaseDatasetReader {
             entries.add(entry);
         }
 
-        return new SimpleDataset(fields, entries);
+        return new RawData(fields, entries);
     }
 
 }
