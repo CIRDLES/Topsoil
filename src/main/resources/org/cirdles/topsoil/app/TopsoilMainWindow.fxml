@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import org.cirdles.topsoil.app.*?>
-
+<?import javafx.scene.layout.VBox?>
+<?import org.cirdles.topsoil.app.TopsoilMainWindow?>
 <fx:root type="org.cirdles.topsoil.app.TopsoilMainWindow"
          prefHeight="800"
          prefWidth="1200"
@@ -18,16 +14,17 @@
             <MenuItem text="%importFromTSV"
                       onAction="#importFromTSV" />
         </Menu>
-        
+
         <Menu text="Charts" fx:id="chartsMenu">
             <MenuItem text="scatterplot"
                       onAction="#createScatterplot" />
             <MenuItem text="error ellipse chart"
                       onAction="#createErrorEllipseChart" />
         </Menu>
-        
+
         <Menu text="Datasets" fx:id="datasetsMenu"/>
     </MenuBar>
+
     <ToolBar>
         <Button text="%clearTableMessage"
                 onAction="#emptyTable"
@@ -35,9 +32,11 @@
         <Button text="Create Data Table"
                 onAction="#createDataTable" />
         <Button text="Save Data Table"
-                onAction="#saveDataTable" />
+                onAction="#saveDataTable"
+                disable="true"
+                fx:id="saveDataTableButton" />
     </ToolBar>
-    
+
     <TabPane fx:id="dataTableTabPane"
              VBox.vgrow="ALWAYS" />
 </fx:root>

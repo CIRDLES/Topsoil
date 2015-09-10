@@ -17,12 +17,14 @@ package org.cirdles.topsoil.app;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.Scene;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
 import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.app.metadata.TestApplicationMetadata;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -78,6 +80,36 @@ public class TopsoilMainWindowTest extends ApplicationTest {
 
             return selectedIndex == numberOfTabs - 1;
         });
+    }
+
+    @Test
+    public void testSaveDataButtonInitiallyDisabled() {
+        verifyThat("#saveDataTableButton", button -> button.isDisabled());
+    }
+
+    @Test
+    public void testSaveDataButtonEnablesAfterNewDataTable() {
+        clickOn("Create Data Table");
+        verifyThat("#saveDataTableButton", button -> !button.isDisabled());
+    }
+
+    @Test
+    @Ignore
+    public void testSaveDataButtonDisablesAfterTabsAreClosed() {
+        clickOn("Create Data Table");
+        clickOn("Create Data Table");
+
+        Tab tab1 = topsoilMainWindow.dataTableTabPane.getTabs().remove(0);
+        tab1.getOnClosed().handle(null);
+
+        // shouldn't be disabled yet
+        // one tab is still open
+        verifyThat("#saveDataTableButton", button -> !button.isDisabled());
+
+        Tab tab2 = topsoilMainWindow.dataTableTabPane.getTabs().remove(0);
+        tab2.getOnClosed().handle(null);
+
+        verifyThat("#saveDataTableButton", button -> button.isDisabled());
     }
 
 }

@@ -68,6 +68,8 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     Menu datasetsMenu;
     @FXML
     TabPane dataTableTabPane;
+    @FXML
+    Button saveDataTableButton;
 
     private ApplicationMetadata metadata;
     private DatasetMapper datasetMapper;
@@ -111,8 +113,8 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         Tab dataTableTab = new Tab("Untitled Data");
 
         dataTableTab.setOnClosed(event -> {
-            if (dataTableTab.getContent() instanceof TsvTable) {
-                TsvTable table = (TsvTable) dataTableTab.getContent();
+            if (!getCurrentTable().isPresent()) {
+                saveDataTableButton.setDisable(true);
             }
         });
 
@@ -125,6 +127,8 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         // focus on new tab
         SelectionModel<Tab> selectionModel = dataTableTabPane.getSelectionModel();
         selectionModel.select(dataTableTab);
+
+        saveDataTableButton.setDisable(false);
 
         return dataTableTab;
     }
