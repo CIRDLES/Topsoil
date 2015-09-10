@@ -35,7 +35,6 @@ import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
 import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
-import org.cirdles.topsoil.app.util.GetApplicationDirectoryOperation;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 import org.cirdles.topsoil.dataset.Dataset;
@@ -62,12 +61,6 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(TopsoilMainWindow.class);
-
-    private static final Path APPLICATION_DIRECTORY
-            = new GetApplicationDirectoryOperation().perform("Topsoil");
-
-    private static final Path DATASETS_DIRECTORY
-            = APPLICATION_DIRECTORY.resolve("Data Sets");
 
     @FXML
     Menu chartsMenu;

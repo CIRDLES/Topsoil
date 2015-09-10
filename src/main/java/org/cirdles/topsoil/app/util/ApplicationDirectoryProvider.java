@@ -17,44 +17,56 @@ package org.cirdles.topsoil.app.util;
 
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Created by johnzeringue on 9/8/15.
+ * Provides the application storage directory across multiple platforms.
  */
 public class ApplicationDirectoryProvider
         extends PlatformDependentProvider<Path> {
 
     private final ApplicationMetadata metadata;
+    private final String appData;
+    private final String userHome;
 
     @Inject
-    public ApplicationDirectoryProvider(ApplicationMetadata metadata) {
+    public ApplicationDirectoryProvider(
+            ApplicationMetadata metadata,
+            // nullable because appdata is set on Linux and Mac OS
+            @Named("appdata") @Nullable String appData,
+            @Named("os.name") String osName,
+            @Named("user.home") String userHome) {
+        super(osName);
         this.metadata = metadata;
+        this.appData = appData;
+        this.userHome = userHome;
     }
 
     @Override
-    protected Path performOnWindows() {
-        return Paths.get(System.getenv("appdata"), metadata.getName());
+    protected Path getOnWindows() {
+        return Paths.get(appData, metadata.getName());
     }
 
     @Override
-    protected Path performOnMacOS() {
+    protected Path getOnMacOS() {
         return Paths.get(
-                System.getProperty("user.home"),
+                userHome,
                 "Library",
                 "Application Support",
                 metadata.getName());
     }
 
-    private String buildLinuxPath() {
+    private String buildLinuxDirectoryName() {
         return "." + metadata.getName().trim().replaceAll("\\s+", "-").toLowerCase();
     }
 
     @Override
-    protected Path performOnLinux() {
-        return Paths.get(buildLinuxPath());
+    protected Path getOnLinux() {
+        return Paths.get(userHome, buildLinuxDirectoryName());
     }
 
 }

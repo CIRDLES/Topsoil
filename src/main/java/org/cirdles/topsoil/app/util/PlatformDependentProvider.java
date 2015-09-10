@@ -20,29 +20,33 @@ import javax.inject.Provider;
 import static java.lang.String.format;
 
 /**
- * Created by johnzeringue on 9/8/15.
+ * A provider that can act differently across different platforms.
  */
 public abstract class PlatformDependentProvider<T> implements Provider<T> {
 
-    private static final String OS_NAME = System.getProperty("os.name");
+    private final String osName;
+
+    protected PlatformDependentProvider(String osName) {
+        this.osName = osName;
+    }
 
     public final T get() {
-        if (OS_NAME.startsWith("Windows")) {
-            return performOnWindows();
-        } else if (OS_NAME.startsWith("Mac OS")) {
-            return performOnMacOS();
-        } else if (OS_NAME.equals("Linux")) {
-            return performOnLinux();
+        if (osName.startsWith("Windows")) {
+            return getOnWindows();
+        } else if (osName.startsWith("Mac OS")) {
+            return getOnMacOS();
+        } else if (osName.equals("Linux")) {
+            return getOnLinux();
         }
 
         throw new RuntimeException(
-                format("Unrecognized platform %s.", OS_NAME));
+                format("Unrecognized platform %s.", osName));
     }
 
-    protected abstract T performOnWindows();
+    protected abstract T getOnWindows();
 
-    protected abstract T performOnMacOS();
+    protected abstract T getOnMacOS();
 
-    protected abstract T performOnLinux();
+    protected abstract T getOnLinux();
 
 }

@@ -16,7 +16,9 @@
 package org.cirdles.topsoil.app.util;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
+import javax.inject.Named;
 import java.nio.file.Path;
 
 import static com.google.inject.name.Names.named;
@@ -31,6 +33,24 @@ public class UtilModule extends AbstractModule {
         bind(Path.class)
                 .annotatedWith(named("applicationDirectory"))
                 .toProvider(ApplicationDirectoryProvider.class);
+    }
+
+    @Provides
+    @Named("appdata")
+    String provideAppData() {
+        return System.getenv("appdata");
+    }
+
+    @Provides
+    @Named("os.name")
+    String provideOsName() {
+        return System.getProperty("os.name");
+    }
+
+    @Provides
+    @Named("user.home")
+    String provideUserHome() {
+        return System.getProperty("user.home");
     }
 
 }

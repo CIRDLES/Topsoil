@@ -38,7 +38,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 public class TopsoilMainWindowTest extends ApplicationTest {
 
     @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
