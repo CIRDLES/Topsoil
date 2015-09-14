@@ -15,16 +15,22 @@
  */
 package org.cirdles.topsoil.app;
 
+import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.chart.JavaScriptChart;
+
 /**
  *
  * @author John Zeringue
  */
-public class ErrorEllipseChart extends DefaultJavaScriptChart {
+public class ErrorEllipseChart extends JavaScriptChart {
+
+    private static final ResourceExtractor RESOURCE_EXTRACTOR
+            = new ResourceExtractor(ErrorEllipseChart.class);
 
     private static final String RESOURCE_NAME = "errorellipsechart.js";
 
     public ErrorEllipseChart() {
-        super(RESOURCE_NAME, ErrorEllipseChart.class);
+        super(RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME));
     }
 
 }

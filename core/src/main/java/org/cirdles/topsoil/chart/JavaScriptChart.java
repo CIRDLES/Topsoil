@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.entry.EntryListener;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -57,25 +58,32 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
     private static final String HTML_TEMPLATE;
 
     static {
-        // prepare the local URL for Firebug Lite
-        final URL FIREBUG_LITE_URL
-                = JavaScriptChart.class.getResource("firebug-lite.js");
+        final ResourceExtractor RESOURCE_EXTRACTOR
+                = new ResourceExtractor(JavaScriptChart.class);
 
-        // prepare the local URL for d3.js
-        final URL D3_JS_URL
-                = JavaScriptChart.class.getResource("d3.js");
+        // prepare the local URI for Firebug Lite
+        final URI FIREBUG_LITE_URI = RESOURCE_EXTRACTOR
+                .extractResourceAsPath("firebug-lite.js")
+                .toUri();
 
-        // prepare the local URL for numeric.js
-        final URL NUMERIC_JS_URL
-                = JavaScriptChart.class.getResource("numeric.js");
+        // prepare the local URI for d3.js
+        final URI D3_JS_URI = RESOURCE_EXTRACTOR
+                .extractResourceAsPath("d3.js")
+                .toUri();
 
-        // prepare the local URL for topsoil.js
-        final URL TOPSOIL_JS_URL
-                = JavaScriptChart.class.getResource("topsoil.js");
+        // prepare the local URI for numeric.js
+        final URI NUMERIC_JS_URI = RESOURCE_EXTRACTOR
+                .extractResourceAsPath("numeric.js")
+                .toUri();
+
+        // prepare the local URI for topsoil.js
+        final URI TOPSOIL_JS_URI = RESOURCE_EXTRACTOR
+                .extractResourceAsPath("topsoil.js")
+                .toUri();
 
         // build the HTML template (comments show implicit elements/tags)
-        HTML_TEMPLATE
-                = "<!DOCTYPE html>\n"
+        HTML_TEMPLATE = (""
+                + "<!DOCTYPE html>\n"
                 // <html>
                 // <head>
                 + "<style>\n"
@@ -85,14 +93,14 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                 + "</style>\n"
                 // </head>
                 + "<body>"
-                + "<script src=\"" + FIREBUG_LITE_URL + "\"></script>\n"
-                + "<script src=\"" + D3_JS_URL + "\"></script>\n"
-                + "<script src=\"" + NUMERIC_JS_URL + "\"></script>\n"
-                + "<script src=\"" + TOPSOIL_JS_URL + "\"></script>\n"
+                + "<script src=\"" + FIREBUG_LITE_URI + "\"></script>\n"
+                + "<script src=\"" + D3_JS_URI + "\"></script>\n"
+                + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
+                + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
                 + "<script src=\"%s\"></script>\n" // JS file for chart
                 // </body>
                 // </html>
-                + ""; // fixes autoformatting in Netbeans
+                + "").replaceAll("%20", "%%20");
     }
 
     private final Collection<Runnable> afterLoadCallbacks = new ArrayList<>();
@@ -323,4 +331,5 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
         return svgDocument;
     }
+
 }
