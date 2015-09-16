@@ -9,6 +9,11 @@ visualizations for geochronologists and other earth scientists. The project is
 led and maintained by [CIRDLES](http://cirdles.org), an undergraduate research
 lab at the College of Charleston in Charleston, South Carolina.
 
+Emily Coleman is our latest member. She's gonna have an awesome pull request
+for me by next Wednesday ;-)
+
+This is another paragraph. How do you like it?
+
 The name "Topsoil" is an anagram of "Isoplot", the name of an enormously
 successful Microsoft Excel Add-In with similar capabilities that now works
 only in older versions of Excel.
