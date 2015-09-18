@@ -1,0 +1,81 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+ext.mainClass = 'org.cirdles.topsoil.app.Topsoil'
+
+def configJavaExec = { JavaExec task ->
+    task.main = mainClass
+    task.classpath = sourceSets.main.runtimeClasspath
+    task.standardInput = System.in
+}
+
+task run(dependsOn: project.classes, type: JavaExec) {
+    configJavaExec(it)
+}
+
+task debug(dependsOn: project.classes, type: JavaExec) {
+    configJavaExec(it)
+    debug = true
+}
+
+// BEGIN BETTER VERSIONING
+def getVersionName = { ->
+    def stdout = new ByteArrayOutputStream()
+
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+
+    return stdout.toString().trim()
+}
+
+processResources {
+    from('src/main/resources') {
+        include '**/*.properties'
+        filter(ReplaceTokens, tokens: [version: getVersionName()])
+    }
+}
+// END BETTER VERSIONING
+
+task jarWithDependencies(type: Jar) {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+
+    baseName = 'topsoil-' + getVersionName()
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+test {
+    systemProperty 'java.awt.headless', true
+    systemProperty 'prism.order', 'sw'
+    systemProperty 'prism.text', 't2k'
+    systemProperty 'testfx.headless', true
+    systemProperty 'testfx.robot', 'glass'
+    systemProperty 'testfx.setup.timeout', 2500
+}
+
+dependencies {
+    compile project(':core')
+
+    compile 'com.github.cirdles:commons:3214847'
+    compile 'com.github.johnzeringue:extendsfx:1.0.0-alpha.1'
+    compile 'com.google.code.findbugs:jsr305:3.0.0'
+    compile 'com.google.inject:guice:4.0'
+    compile 'com.google.inject.extensions:guice-multibindings:4.0'
+    compile 'net.sf.opencsv:opencsv:2.3'
+    compile 'org.controlsfx:controlsfx:8.20.8'
+    compile 'org.flywaydb:flyway-core:3.2.1';
+    compile 'org.mybatis:mybatis:3.3.0'
+    compile 'org.mybatis:mybatis-guice:3.7'
+    compile 'org.springframework:spring-jdbc:4.2.0.RELEASE'
+    compile 'org.xerial:sqlite-jdbc:3.8.11.1'
+
+    testCompile 'com.google.jimfs:jimfs:1.0'
+    testCompile 'org.testfx:openjfx-monocle:1.8.0_20'
+    testCompile 'org.testfx:testfx-junit:4.0.+'
+}

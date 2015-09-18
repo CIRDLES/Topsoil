@@ -25,7 +25,7 @@ deploy:
   api_key:
     secure: emz/zr7vXQ21U0zE/RIa/hmIbbHsfw45ZD1L3Gv0qHvSgZCay4iPjm9bZkktUihhXLVneu/3OYktMuLKBwBU9N/jARvTL3514R8rUign1m1FqAhn1PsL9pRSnh9IeLMAw5zGptld0YERqCff6AC5PNwGIvRDJubReS5rE42BeII=
   file_glob: true
-  file: build/libs/topsoil-v*.jar
+  file: app/build/libs/topsoil-v*.jar
   skip_cleanup: true
   on:
     repo: CIRDLES/Topsoil
