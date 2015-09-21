@@ -28,4 +28,6 @@ public interface DatasetMapper {
 
     List<Dataset> getDatasets();
 
+    void removeDataset(Dataset dataset);
+
 }

@@ -20,11 +20,11 @@
 <mapper namespace="org.cirdles.topsoil.app.dataset.DatasetMapper">
     <resultMap
             id="dataset"
-            type="org.cirdles.topsoil.app.dataset.TsvDataset">
-        <constructor>
-            <arg column="name" javaType="String"/>
-            <arg column="raw_data" javaType="String"/>
-        </constructor>
+            type="org.cirdles.topsoil.app.dataset.DatasetMapperDataset">
+        <id column="id" property="id"/>
+
+        <result column="name" property="name"/>
+        <result column="raw_data" property="rawData"/>
     </resultMap>
 
     <insert id="addDataset">
@@ -34,6 +34,12 @@
 
     <select id="getDatasets"
             resultMap="dataset">
-        SELECT name, raw_data FROM dataset
+        SELECT id, name, raw_data
+        FROM dataset
     </select>
+
+    <delete id="removeDataset">
+        DELETE FROM dataset
+        WHERE id = #{id}
+    </delete>
 </mapper>
