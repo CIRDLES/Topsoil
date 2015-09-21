@@ -141,9 +141,6 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         textInputDialog.showAndWait().ifPresent(datasetName -> {
             getCurrentTable()
                     .map(TsvTable::getDataset)
-                    .map(dataset -> new SimpleDataset(
-                            datasetName,
-                            dataset.getRawData()))
                     .ifPresent(datasetMapper::addDataset);
 
             getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
