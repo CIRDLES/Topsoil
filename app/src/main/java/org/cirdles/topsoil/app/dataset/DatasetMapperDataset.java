@@ -54,9 +54,4 @@ public class DatasetMapperDataset implements Dataset {
         return rawData.getEntries();
     }
 
-    @Override
-    public RawData getRawData() {
-        return rawData;
-    }
-
 }

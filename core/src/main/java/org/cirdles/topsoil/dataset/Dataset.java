@@ -32,6 +32,4 @@ public interface Dataset {
 
     public List<Entry> getEntries();
 
-    public RawData getRawData();
-
 }
