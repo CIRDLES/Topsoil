@@ -21,8 +21,10 @@ import javafx.scene.control.TableCell;
 import javafx.stage.Stage;
 import org.cirdles.TableSelector;
 import org.cirdles.topsoil.app.TsvTable;
-import org.cirdles.topsoil.app.dataset.TsvDataset;
+import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
 import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.dataset.SimpleDataset;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -64,8 +66,9 @@ public class EntryTableColumnTest extends ApplicationTest {
 
     private TableSelector tableSelector;
 
-    private Parent getRootNode() {
-        Dataset dataset = new TsvDataset("Test", RAW_DATA);
+    private Parent getRootNode() throws Exception {
+        RawData rawData = new TsvRawDataReader().read(RAW_DATA);
+        Dataset dataset = new SimpleDataset("Test", rawData);
         TsvTable testTsvTable = new TsvTable(dataset);
         tableSelector = new TableSelector(testTsvTable);
 

@@ -15,33 +15,48 @@
  */
 package org.cirdles.topsoil.app.dataset;
 
-import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
+import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.SimpleDataset;
+import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.dataset.field.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by johnzeringue on 9/3/15.
  */
-public class TsvDataset extends SimpleDataset {
+public class DatasetMapperDataset implements Dataset {
 
     private static final Logger LOGGER
-            = LoggerFactory.getLogger(TsvDataset.class);
+            = LoggerFactory.getLogger(DatasetMapperDataset.class);
 
-    private static RawData safeRead(String rawData) {
-        try {
-            return new TsvRawDataReader().read(rawData);
-        } catch (IOException ex) {
-            LOGGER.error(null, ex);
-            throw new RuntimeException(ex);
-        }
+    private Long id;
+    private String name;
+    private RawData rawData;
+
+    public DatasetMapperDataset() {
     }
 
-    public TsvDataset(String name, String rawData) {
-        super(name, safeRead(rawData));
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public List<Field<?>> getFields() {
+        return rawData.getFields();
+    }
+
+    @Override
+    public List<Entry> getEntries() {
+        return rawData.getEntries();
+    }
+
+    @Override
+    public RawData getRawData() {
+        return rawData;
     }
 
 }

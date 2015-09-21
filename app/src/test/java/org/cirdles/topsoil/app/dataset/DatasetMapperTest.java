@@ -17,9 +17,12 @@ package org.cirdles.topsoil.app.dataset;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
 import org.cirdles.topsoil.app.flyway.FlywayModule;
 import org.cirdles.topsoil.app.sqlite.SQLiteMyBatisModule;
 import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.dataset.SimpleDataset;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +32,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static com.google.inject.name.Names.named;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.*;
 
 /**
  * Created by johnzeringue on 9/8/15.
@@ -63,7 +66,8 @@ public class DatasetMapperTest {
 
     @Before
     public void setUp() throws Throwable {
-        dataset = new TsvDataset("Dataset", "A\tB\n1\t2");
+        RawData rawData = new TsvRawDataReader().read("A\tB\n1\t2");
+        dataset = new SimpleDataset("Dataset", rawData);
         datasetMapper = getDatasetMapper();
     }
 
@@ -78,7 +82,7 @@ public class DatasetMapperTest {
     }
 
     @Test
-    public void testGetDatasets() throws Exception {
+    public void testGetDatasets() {
         assertTrue(datasetMapper.getDatasets().isEmpty());
 
         for (int i = 0; i < 3; i++) {
@@ -93,6 +97,18 @@ public class DatasetMapperTest {
                 .getFields()
                 .get(0)
                 .getName());
+    }
+
+    @Test
+    public void testRemoveDataset() {
+        for (int i = 0; i < 3; i++) {
+            datasetMapper.addDataset(dataset);
+        }
+
+        Dataset targetDataset = datasetMapper.getDatasets().get(0);
+        datasetMapper.removeDataset(targetDataset);
+
+        assertThat(datasetMapper.getDatasets(), hasSize(2));
     }
 
 }

@@ -153,21 +153,41 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         reloadDatasetMenu();
     }
 
-    void createDatasetMenuItem(Dataset dataset) {
-        MenuItem datasetMenuItem = new MenuItem(dataset.getName());
+    void createDatasetSubmenu(Dataset dataset) {
+        Menu datasetSubmenu = new Menu(dataset.getName());
 
-        datasetMenuItem.setOnAction(event -> {
-            TopsoilMainWindow.this.loadDataset(dataset);
+        MenuItem loadDatasetMenuItem = new MenuItem("Load dataset");
+        loadDatasetMenuItem.setOnAction(event -> {
+            loadDataset(dataset);
         });
 
-        datasetsMenu.getItems().add(datasetMenuItem);
+        MenuItem deleteDatasetMenuItem = new MenuItem("Delete dataset");
+        deleteDatasetMenuItem.setOnAction(event -> {
+            String confirmationMessage = String.format(
+                    "Are you sure that you want to delete \"%s\"?",
+                    dataset.getName());
+
+            new Alert(Alert.AlertType.CONFIRMATION, confirmationMessage)
+                    .showAndWait()
+                    .filter(response -> response == ButtonType.OK)
+                    .ifPresent(response -> {
+                        datasetsMenu.getItems().remove(datasetSubmenu);
+                        datasetMapper.removeDataset(dataset);
+                    });
+        });
+
+        datasetSubmenu.getItems().addAll(
+                loadDatasetMenuItem,
+                deleteDatasetMenuItem);
+
+        datasetsMenu.getItems().add(datasetSubmenu);
     }
 
     void reloadDatasetMenu() {
         // allows this method to be called multiple times in the same session
         datasetsMenu.getItems().clear();
 
-        datasetMapper.getDatasets().forEach(this::createDatasetMenuItem);
+        datasetMapper.getDatasets().forEach(this::createDatasetSubmenu);
     }
 
     void loadDataset(Dataset dataset) {
