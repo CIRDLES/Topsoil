@@ -26,15 +26,17 @@
     </MenuBar>
 
     <ToolBar>
-        <Button text="%clearTableMessage"
-                onAction="#emptyTable"
-                fx:id="emptyTableButton" />
         <Button text="Create Data Table"
                 onAction="#createDataTable" />
         <Button text="Save Data Table"
                 onAction="#saveDataTable"
                 disable="true"
                 fx:id="saveDataTableButton" />
+        <Button text="%clearTableMessage"
+                onAction="#emptyTable"
+                disable="true"
+                fx:id="emptyTableButton" />
+
     </ToolBar>
 
     <TabPane fx:id="dataTableTabPane"
