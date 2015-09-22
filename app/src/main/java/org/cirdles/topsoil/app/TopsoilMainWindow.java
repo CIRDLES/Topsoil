@@ -70,6 +70,8 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     TabPane dataTableTabPane;
     @FXML
     Button saveDataTableButton;
+    @FXML
+    Button emptyTableButton;
 
     private ApplicationMetadata metadata;
     private DatasetMapper datasetMapper;
@@ -114,7 +116,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
         dataTableTab.setOnClosed(event -> {
             if (!getCurrentTable().isPresent()) {
-                saveDataTableButton.setDisable(true);
+                setDataTableTabPaneEmpty(true);
             }
         });
 
@@ -128,9 +130,14 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         SelectionModel<Tab> selectionModel = dataTableTabPane.getSelectionModel();
         selectionModel.select(dataTableTab);
 
-        saveDataTableButton.setDisable(false);
+        setDataTableTabPaneEmpty(false);
 
         return dataTableTab;
+    }
+
+    void setDataTableTabPaneEmpty(boolean dataTableTabPaneEmpty) {
+        saveDataTableButton.setDisable(dataTableTabPaneEmpty);
+        emptyTableButton.setDisable(dataTableTabPaneEmpty);
     }
 
     @FXML
