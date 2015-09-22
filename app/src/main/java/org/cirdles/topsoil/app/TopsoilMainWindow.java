@@ -70,7 +70,9 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     TabPane dataTableTabPane;
     @FXML
     Button saveDataTableButton;
-
+    @FXML
+    Button emptyTableButton;
+    
     private ApplicationMetadata metadata;
     private DatasetMapper datasetMapper;
     private FlywayMigrateTask flywayMigrate;
@@ -114,7 +116,8 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
         dataTableTab.setOnClosed(event -> {
             if (!getCurrentTable().isPresent()) {
-                saveDataTableButton.setDisable(true);
+                saveDataTableButton.setDisable(true); 
+                emptyTableButton.setDisable(true);
             }
         });
 
@@ -128,11 +131,16 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         SelectionModel<Tab> selectionModel = dataTableTabPane.getSelectionModel();
         selectionModel.select(dataTableTab);
 
-        saveDataTableButton.setDisable(false);
+        enableDataTable();
 
         return dataTableTab;
     }
 
+    void enableDataTable() {
+        saveDataTableButton.setDisable(false);
+        emptyTableButton.setDisable(false);
+    }
+    
     @FXML
     void saveDataTable() {
         TextInputDialog textInputDialog = new TextInputDialog();
