@@ -68,7 +68,6 @@ dependencies {
     compile 'com.google.inject:guice:4.0'
     compile 'com.google.inject.extensions:guice-multibindings:4.0'
     compile 'net.sf.opencsv:opencsv:2.3'
-    compile 'org.controlsfx:controlsfx:8.20.8'
     compile 'org.flywaydb:flyway-core:3.2.1';
     compile 'org.mybatis:mybatis:3.3.0'
     compile 'org.mybatis:mybatis-guice:3.7'
