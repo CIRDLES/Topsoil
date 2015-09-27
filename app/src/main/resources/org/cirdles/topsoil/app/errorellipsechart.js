@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +33,8 @@
 
         var y = chart.y = d3.scale.linear()
                 .range([chart.height, 0]);
+
+        chart.t = d3.scale.linear();
 
         if (data.length > 0){
             chart.settings.transaction(function (t) {
@@ -124,6 +126,14 @@
                     ",", p3[0], ",", p3[1]);
         };
 
+        var minT = Math.max(
+                newtonMethod(wetherill.x, x.domain()[0]),
+                newtonMethod(wetherill.y, y.domain()[0]));
+
+        var maxT = Math.min(
+                newtonMethod(wetherill.x, x.domain()[1]),
+                newtonMethod(wetherill.y, y.domain()[1]));
+
         // build the concordia line
         chart.area.clipped.select(".concordia")
                 .attr("d", function () {
@@ -140,14 +150,6 @@
                         cubicBezier(path, p1, p2, p3);
                     };
 
-                    var minT = Math.max(
-                            newtonMethod(wetherill.x, x.domain()[0]),
-                            newtonMethod(wetherill.y, y.domain()[0]));
-
-                    var maxT = Math.min(
-                            newtonMethod(wetherill.x, x.domain()[1]),
-                            newtonMethod(wetherill.y, y.domain()[1]));
-
                     // initialize path
                     var path = [];
                     moveTo(path, wetherill(minT).scaleBy(x, y));
@@ -163,6 +165,29 @@
 
                     return path.join("");
                 });
+
+        chart.t.domain([minT, maxT]);
+
+        var ticks;
+        (ticks = chart.area.clipped.selectAll(".tick")
+                .data(chart.t.ticks()))
+                .attr("cx", function (t) { return x(wetherill.x(t)); })
+                .attr("cy", function (t) { return y(wetherill.y(t)); })
+                .enter()
+                .append("circle")
+                .attr("class", "tick")
+                .attr("r", 5);
+
+        var tickLabels;
+        (tickLabels = chart.area.clipped.selectAll(".tickLabel")
+                .data(chart.t.ticks()))
+                .attr("x", function (t) { return x(wetherill.x(t)) + 12; })
+                .attr("y", function (t) { return y(wetherill.y(t)) + 5; })
+                .text(function (t) { return t / 1000000; })
+                .enter()
+                .append("text")
+                .attr("font-family", "sans-serif")
+                .attr("class", "tickLabel");
 
         // update the ellipses
         ellipses.attr("d", function (d) {
@@ -234,6 +259,8 @@
         // exit
         ellipses.exit().remove();
         dots.exit().remove();
+        ticks.exit().remove();
+        tickLabels.exit().remove();
 
         var zoom = d3.behavior.zoom()
                 .x(x)
