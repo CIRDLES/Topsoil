@@ -19,7 +19,7 @@ import com.johnzeringue.extendsfx.annotation.ResourceBundle;
 import com.johnzeringue.extendsfx.layout.CustomVBox;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
+import javafx.fxml.FXML;   
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -72,7 +72,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     Button saveDataTableButton;
     @FXML
     Button emptyTableButton;
-    
+
     private ApplicationMetadata metadata;
     private DatasetMapper datasetMapper;
     private FlywayMigrateTask flywayMigrate;
@@ -116,8 +116,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
         dataTableTab.setOnClosed(event -> {
             if (!getCurrentTable().isPresent()) {
-                saveDataTableButton.setDisable(true); 
-                emptyTableButton.setDisable(true);
+                enableDataTable(true);
             }
         });
 
@@ -131,16 +130,16 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         SelectionModel<Tab> selectionModel = dataTableTabPane.getSelectionModel();
         selectionModel.select(dataTableTab);
 
-        enableDataTable();
+        enableDataTable(false);
 
         return dataTableTab;
     }
 
-    void enableDataTable() {
-        saveDataTableButton.setDisable(false);
-        emptyTableButton.setDisable(false);
+    void enableDataTable(boolean disableVal) {
+        saveDataTableButton.setDisable(disableVal);
+        emptyTableButton.setDisable(disableVal);
     }
-    
+
     @FXML
     void saveDataTable() {
         TextInputDialog textInputDialog = new TextInputDialog();
