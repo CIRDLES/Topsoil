@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,19 +26,19 @@
 
     chart.draw = function (data) {
         if (data.length > 0) {
+            var dataXMin = d3.min(data, function (d) { return d.x; });
+            var dataYMin = d3.min(data, function (d) { return d.y; });
+            var dataXMax = d3.max(data, function (d) { return d.x; });
+            var dataYMax = d3.max(data, function (d) { return d.y; });
+
+            var xRange = dataXMax - dataXMin;
+            var yRange = dataYMax - dataYMin;
+
             chart.settings.transaction(function (t) {
-                t.set(X_MIN, d3.min(data, function (d) {
-                    return d.x;
-                }));
-                t.set(Y_MIN, d3.min(data, function (d) {
-                    return d.y;
-                }));
-                t.set(X_MAX, d3.max(data, function (d) {
-                    return d.x;
-                }));
-                t.set(Y_MAX, d3.max(data, function (d) {
-                    return d.y;
-                }));
+                t.set(X_MIN, dataXMin - 0.05 * xRange);
+                t.set(Y_MIN, dataYMin - 0.05 * yRange);
+                t.set(X_MAX, dataXMax + 0.05 * xRange);
+                t.set(Y_MAX, dataYMax + 0.05 * yRange);
             });
         }
 

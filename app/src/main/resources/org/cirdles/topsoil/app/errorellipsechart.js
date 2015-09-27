@@ -37,19 +37,30 @@
         chart.t = d3.scale.linear();
 
         if (data.length > 0){
+            var dataXMin = d3.min(data, function (d) {
+                return d.x - d.sigma_x;
+            });
+
+            var dataYMin = d3.min(data, function (d) {
+                return d.y - d.sigma_y;
+            });
+
+            var dataXMax = d3.max(data, function (d) {
+                return d.x + d.sigma_x;
+            });
+
+            var dataYMax = d3.max(data, function (d) {
+                return d.y + d.sigma_y;
+            });
+
+            var xRange = dataXMax - dataXMin;
+            var yRange = dataYMax - dataYMin;
+
             chart.settings.transaction(function (t) {
-                t.set(X_MIN, d3.min(data, function (d) {
-                    return d.x - d.sigma_x;
-                }));
-                t.set(Y_MIN, d3.min(data, function (d) {
-                    return d.y - d.sigma_y;
-                }));
-                t.set(X_MAX, d3.max(data, function (d) {
-                    return d.x + d.sigma_x;
-                }));
-                t.set(Y_MAX, d3.max(data, function (d) {
-                    return d.y + d.sigma_y;
-                }));
+                t.set(X_MIN, dataXMin - 0.05 * xRange);
+                t.set(Y_MIN, dataYMin - 0.05 * yRange);
+                t.set(X_MAX, dataXMax + 0.05 * xRange);
+                t.set(Y_MAX, dataYMax + 0.05 * yRange);
             });
         }
 
