@@ -62,7 +62,6 @@ test {
 dependencies {
     compile project(':core')
 
-    compile 'com.github.cirdles:commons:3214847'
     compile 'com.github.johnzeringue:extendsfx:1.0.0-alpha.1'
     compile 'com.google.code.findbugs:jsr305:3.0.0'
     compile 'com.google.inject:guice:4.0'

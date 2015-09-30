@@ -15,16 +15,22 @@
  */
 package org.cirdles.topsoil.app;
 
+import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.chart.JavaScriptChart;
+
 /**
  *
  * @author John Zeringue
  */
-public class ScatterplotChart extends DefaultJavaScriptChart {
+public class ScatterplotChart extends JavaScriptChart {
+
+    private static final ResourceExtractor RESOURCE_EXTRACTOR
+            = new ResourceExtractor(ScatterplotChart.class);
 
     private static final String RESOURCE_NAME = "scatterplot.js";
 
     public ScatterplotChart() {
-        super(RESOURCE_NAME, ScatterplotChart.class);
+        super(RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME));
     }
 
 }
