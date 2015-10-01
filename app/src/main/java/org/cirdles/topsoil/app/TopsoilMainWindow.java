@@ -93,7 +93,10 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
     @FXML
     private void initialize() {
-        flywayMigrate.setOnSucceeded(event -> reloadDatasetMenu());
+        flywayMigrate.setOnSucceeded(event -> {
+            reloadDatasetMenu();
+            loadOpenDatasets();
+        });
         new Thread(flywayMigrate).start();
 
         // something like "Topsoil [0.3.4]"
@@ -102,6 +105,12 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
                 metadata.getVersion());
 
         setWindowTitle(nameAndVersion);
+    }
+
+    private void loadOpenDatasets() {
+        for (Dataset dataset : datasetMapper.getOpenDatasets()) {
+            loadDataset(dataset);
+        }
     }
 
     Optional<TsvTable> getCurrentTable() {
@@ -116,12 +125,6 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     Tab createTab() {
         Tab dataTableTab = new Tab("Untitled Data");
 
-        dataTableTab.setOnClosed(event -> {
-            if (!getCurrentTable().isPresent()) {
-                setDataTableTabPaneEmpty(true);
-            }
-        });
-
         TsvTable dataTable = new TsvTable();
         dataTable.setPlaceholder(new EmptyTablePlaceholder(dataTable));
         dataTableTab.setContent(dataTable);
@@ -133,6 +136,14 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         selectionModel.select(dataTableTab);
 
         setDataTableTabPaneEmpty(false);
+
+        dataTableTab.setOnClosed(event -> {
+            datasetMapper.closeDataset(dataTable.getDataset());
+
+            if (!getCurrentTable().isPresent()) {
+                setDataTableTabPaneEmpty(true);
+            }
+        });
 
         return dataTableTab;
     }
@@ -214,6 +225,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
             TsvTable table = (TsvTable) content;
             table.setDataset(dataset);
             tab.setText(dataset.getName());
+            datasetMapper.openDataset(dataset);
         }
     }
 

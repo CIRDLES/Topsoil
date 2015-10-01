@@ -26,7 +26,13 @@ public interface DatasetMapper {
 
     void addDataset(Dataset dataset);
 
+    void closeDataset(Dataset dataset);
+
     List<Dataset> getDatasets();
+
+    List<Dataset> getOpenDatasets();
+
+    void openDataset(Dataset dataset);
 
     void removeDataset(Dataset dataset);
 
