@@ -146,11 +146,18 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     void saveDataTable() {
         TextInputDialog textInputDialog = new TextInputDialog();
 
-        textInputDialog.setContentText("Data set name:");
+        textInputDialog.setContentText("Dataset name:");
         textInputDialog.showAndWait().ifPresent(datasetName -> {
             getCurrentTable()
                     .map(TsvTable::getDataset)
-                    .ifPresent(datasetMapper::addDataset);
+                    .ifPresent(dataset -> {
+                        RawData rawData = new RawData(
+                                dataset.getFields(),
+                                dataset.getEntries());
+
+                        datasetMapper.addDataset(
+                                new SimpleDataset(datasetName, rawData));
+                    });
 
             getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
         });
