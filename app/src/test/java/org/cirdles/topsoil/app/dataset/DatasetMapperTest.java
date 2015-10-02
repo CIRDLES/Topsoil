@@ -32,7 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static com.google.inject.name.Names.named;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
@@ -82,6 +82,17 @@ public class DatasetMapperTest {
     }
 
     @Test
+    public void testCloseDataset() throws Exception {
+        datasetMapper.addDataset(dataset);
+        Dataset targetDataset = datasetMapper.getDatasets().get(0);
+        datasetMapper.openDataset(targetDataset);
+
+        assertThat(datasetMapper.getOpenDatasets(), hasSize(1));
+        datasetMapper.closeDataset(targetDataset);
+        assertThat(datasetMapper.getOpenDatasets(), is(empty()));
+    }
+
+    @Test
     public void testGetDatasets() {
         assertTrue(datasetMapper.getDatasets().isEmpty());
 
@@ -97,6 +108,35 @@ public class DatasetMapperTest {
                 .getFields()
                 .get(0)
                 .getName());
+    }
+
+    @Test
+    public void testGetOpenDatasets() {
+        assertThat(datasetMapper.getOpenDatasets(), is(empty()));
+
+        // make sure that removing a dataset removes it from the open list
+        datasetMapper.addDataset(dataset);
+        Dataset targetDataset = datasetMapper.getDatasets().get(0);
+        datasetMapper.openDataset(targetDataset);
+
+        assertThat(datasetMapper.getOpenDatasets(), hasSize(1));
+
+        datasetMapper.removeDataset(targetDataset);
+
+        assertThat(datasetMapper.getOpenDatasets(), is(empty()));
+    }
+
+    @Test
+    public void testOpenDataset() {
+        for (int i = 0; i < 3; i++) {
+            datasetMapper.addDataset(dataset);
+        }
+
+        for (Dataset dataset : datasetMapper.getDatasets()) {
+            datasetMapper.openDataset(dataset);
+        }
+
+        assertThat(datasetMapper.getOpenDatasets(), hasSize(3));
     }
 
     @Test

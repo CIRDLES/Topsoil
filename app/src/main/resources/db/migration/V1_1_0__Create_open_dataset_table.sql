@@ -1,0 +1,5 @@
+CREATE TABLE open_dataset (
+  id INTEGER PRIMARY KEY,
+  dataset_id INTEGER REFERENCES dataset(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  created datetime DEFAULT CURRENT_TIMESTAMP
+);

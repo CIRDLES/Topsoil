@@ -32,11 +32,28 @@
         VALUES (#{name}, #{rawData})
     </insert>
 
+    <delete id="closeDataset">
+        DELETE FROM open_dataset
+        WHERE dataset_id = #{id}
+    </delete>
+
     <select id="getDatasets"
             resultMap="dataset">
         SELECT id, name, raw_data
         FROM dataset
     </select>
+
+    <select id="getOpenDatasets"
+            resultMap="dataset">
+        SELECT dataset.id AS id, name, raw_data
+        FROM dataset
+        INNER JOIN open_dataset ON dataset.id = dataset_id
+    </select>
+
+    <insert id="openDataset">
+        INSERT INTO open_dataset (dataset_id)
+        VALUES (#{id})
+    </insert>
 
     <delete id="removeDataset">
         DELETE FROM dataset
