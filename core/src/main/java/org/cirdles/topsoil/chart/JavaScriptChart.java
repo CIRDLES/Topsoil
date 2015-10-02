@@ -205,6 +205,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
     private WebView initializeWebView() {
         // initialize webView and associated variables
         webView = new WebView();
+        webView.setContextMenuEnabled(false);
 
         getWebEngine().get().getLoadWorker().stateProperty().addListener(
                 (observable, oldValue, newValue) -> {
