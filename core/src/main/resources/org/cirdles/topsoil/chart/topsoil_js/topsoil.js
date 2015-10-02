@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2014 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,13 +39,13 @@
         chart.settings = {
             transactor: ts.settingScope.buildTransactor()
         };
-        
+
         chart.settings.transaction = function (consumer) {
             var t = chart.settings.transactor;
             consumer(t);
             t.apply();
         };
-        
+
         var names = ts.settingScope.getSettingNames();
         names.forEach(function (settingName) {
             Object.defineProperty(chart.settings, settingName, {
@@ -98,7 +98,8 @@
             .attr("width", chart.width)
             .attr("height", chart.height)
             .attr("fill", "white")
-            .attr("stroke", "none");
+            .attr("stroke", "black")
+            .attr("stroke-width", "2px");
 
     chart.area.append("defs")
             .append("clipPath")
