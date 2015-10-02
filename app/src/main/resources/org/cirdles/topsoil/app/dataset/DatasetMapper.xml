@@ -51,7 +51,7 @@
     </select>
 
     <insert id="openDataset">
-        INSERT INTO open_dataset (dataset_id)
+        INSERT OR IGNORE INTO open_dataset (dataset_id)
         VALUES (#{id})
     </insert>
 

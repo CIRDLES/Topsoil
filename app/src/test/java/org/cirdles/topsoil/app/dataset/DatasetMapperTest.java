@@ -137,6 +137,13 @@ public class DatasetMapperTest {
         }
 
         assertThat(datasetMapper.getOpenDatasets(), hasSize(3));
+
+        // datasets shouldn't be reopened
+        for (Dataset dataset : datasetMapper.getDatasets()) {
+            datasetMapper.openDataset(dataset);
+        }
+
+        assertThat(datasetMapper.getOpenDatasets(), hasSize(3));
     }
 
     @Test
