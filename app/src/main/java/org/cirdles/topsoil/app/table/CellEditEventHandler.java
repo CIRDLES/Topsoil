@@ -30,18 +30,18 @@ public class CellEditEventHandler<T> implements EventHandler<CellEditEvent<Entry
     public void checkValue(TableColumn.CellEditEvent<Entry, T> event, Field field) {
 
         if (!Double.isNaN((Double) event.getNewValue())) {
-                event.getRowValue().set(field, event.getNewValue());
-            } else {
-                //If the input isn't a number
-                //Display a Warning Dialog and reset the cell's value
-                warningPrompt("Please enter a valid number only !");
-                event.getRowValue().set(field, event.getOldValue());
-            }
+            event.getRowValue().set(field, event.getNewValue());
+        } else {
+            //If the input isn't a number
+            //Display a Warning Dialog and reset the cell's value
+            warningPrompt("Please enter a valid number only !");
+            event.getRowValue().set(field, event.getOldValue());
+        }
 
-            //Workaround for refreshing the cell's value
-            //Otherwise the value isn't updated
-            event.getTableView().getColumns().get(0).setVisible(false);
-            event.getTableView().getColumns().get(0).setVisible(true);
+        //Workaround for refreshing the cell's value
+        //Otherwise the value isn't updated
+        event.getTableView().getColumns().get(0).setVisible(false);
+        event.getTableView().getColumns().get(0).setVisible(true);
 
     }
 

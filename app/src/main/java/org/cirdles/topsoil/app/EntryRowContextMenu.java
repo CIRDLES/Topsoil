@@ -15,8 +15,6 @@
  */
 package org.cirdles.topsoil.app;
 
-import static java.lang.Double.NaN;
-import java.util.Collection;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
@@ -25,6 +23,10 @@ import javafx.stage.WindowEvent;
 import org.cirdles.topsoil.app.table.EntryTableColumn;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.entry.SimpleEntry;
+
+import java.util.Collection;
+
+import static java.lang.Double.NaN;
 import static org.cirdles.topsoil.dataset.field.Fields.ROW;
 import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
 
@@ -62,9 +64,9 @@ public class EntryRowContextMenu extends ContextMenu {
     void deselectEntries() {
         getTable().getSelectionModel().getSelectedItems().stream()
                 .forEach(entry -> {
-                   entry.set(SELECTED, false);
+                    entry.set(SELECTED, false);
 
-                   entry.get(ROW).ifPresent(entryRow -> entryRow.setOpacity(0.35));
+                    entry.get(ROW).ifPresent(entryRow -> entryRow.setOpacity(0.35));
                 });
     }
 

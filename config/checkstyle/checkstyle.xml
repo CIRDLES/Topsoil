@@ -2,11 +2,11 @@
 <!DOCTYPE module PUBLIC
           "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
           "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
- 
+
 <module name = "Checker">
     <property name="charset" value="UTF-8"/>
     <property name="fileExtensions" value="java, properties, xml"/>
-    
+
     <module name="FileTabCharacter">
         <property name="eachLine" value="true"/>
     </module>
@@ -22,7 +22,7 @@
     <module name="RegexpMultiline">
         <property name="format" value="\n(\s*\n){2}"/>
         <property name="message" value="Consecutive blank lines."/>
-    </module> 
+    </module>
 
     <module name="TreeWalker">
         <!-- blocks -->
@@ -45,6 +45,11 @@
         <module name="BooleanExpressionComplexity"/>
         <module name="CyclomaticComplexity"/>
 
+        <!-- miscellaneous -->
+        <module name="Indentation">
+            <property name="lineWrappingIndentation" value="8"/>
+        </module>
+
         <!-- modifiers -->
         <module name="ModifierOrder"/>
 
@@ -55,7 +60,7 @@
             <property name="message"
                 value="Printing to standard I/O. Please use Logger instead."/>
         </module>
- 
+
         <!-- whitespace -->
         <module name="ParenPad"/>
         <module name="WhitespaceAround"/>

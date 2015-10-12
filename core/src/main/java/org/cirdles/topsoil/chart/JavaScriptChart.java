@@ -277,17 +277,17 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                     .stream()
                     .filter(entry -> entry.get(SELECTED).orElse(true))
                     .forEach(entry -> {
-                JSObject row = (JSObject) getWebEngine().get()
-                        .executeScript("new Object()");
+                        JSObject row = (JSObject) getWebEngine().get()
+                                .executeScript("new Object()");
 
-                variableContext.getBindings().forEach(variableBinding -> {
-                    row.setMember(
-                            variableBinding.getVariable().getName(),
-                            variableBinding.getValue(entry));
-                });
+                        variableContext.getBindings().forEach(variableBinding -> {
+                            row.setMember(
+                                    variableBinding.getVariable().getName(),
+                                    variableBinding.getValue(entry));
+                        });
 
-                getTopsoil().get().call("addData", row);
-            });
+                        getTopsoil().get().call("addData", row);
+                    });
 
             getTopsoil().get().call("showData");
         });
