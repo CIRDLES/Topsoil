@@ -75,8 +75,7 @@ public class SVGSaver {
 
         fileChooser.getExtensionFilters().setAll(
                 new ExtensionFilter("All Files", "*"),
-                new ExtensionFilter("SVG Image", "*.svg")
-        );
+                new ExtensionFilter("SVG Image", "*.svg"));
 
         return fileChooser;
     }
