@@ -64,6 +64,13 @@
             });
         }
 
+        // initialize the concordia envelope
+        chart.area.clipped.append("path")
+                .attr("class", "errorEnvelope")
+                .attr("fill", "lightgray")
+                .attr("stroke", "none")
+                .attr("shape-rendering", "geometricPrecision");
+
         // initialize the concordia
         chart.area.clipped.append("path")
                 .attr("class", "concordia")
@@ -130,6 +137,14 @@
             path.push("M", p[0], ",", p[1]);
         };
 
+        var lineTo = function (path, p) {
+            path.push("L", p[0], ",", p[1]);
+        };
+
+        var close = function (path) {
+            path.push("Z");
+        };
+
         var cubicBezier = function (path, p1, p2, p3) {
             path.push(
                     "C", p1[0], ",", p1[1],
@@ -173,6 +188,80 @@
                     for (var i = 0; i < pieces; i++) {
                         approximateSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
                     }
+
+                    return path.join("");
+                });
+
+        chart.area.clipped.select(".errorEnvelope")
+                .attr("d", function () {
+                    var approximateUpperSegment = function (path, minT, maxT) {
+                        var p1 = wetherill.upperEnvelope(minT).plus(
+                            wetherill.prime(minT).times((maxT - minT) / 3))
+                            .scaleBy(x, y);
+                        var p2 = wetherill.upperEnvelope(maxT).minus(
+                            wetherill.prime(maxT).times((maxT - minT) / 3))
+                            .scaleBy(x, y);
+                        var p3 = wetherill.upperEnvelope(maxT).scaleBy(x, y);
+
+                        // append a cubic bezier to the path
+                        cubicBezier(path, p1, p2, p3);
+                    };
+
+                    var approximateLowerSegment = function (path, minT, maxT) {
+                        var p1 = wetherill.lowerEnvelope(minT).plus(
+                            wetherill.prime(minT).times((maxT - minT) / 3))
+                            .scaleBy(x, y);
+                        var p2 = wetherill.lowerEnvelope(maxT).minus(
+                            wetherill.prime(maxT).times((maxT - minT) / 3))
+                            .scaleBy(x, y);
+                        var p3 = wetherill.lowerEnvelope(maxT).scaleBy(x, y);
+
+                        // append a cubic bezier to the path
+                        cubicBezier(path, p1, p2, p3);
+                    };
+
+                    var minT = Math.max(
+                            newtonMethod(wetherill.upperEnvelope.x, x.domain()[0]),
+                            newtonMethod(wetherill.upperEnvelope.y, y.domain()[0]));
+
+                    var maxT = Math.min(
+                            newtonMethod(wetherill.upperEnvelope.x, x.domain()[1]),
+                            newtonMethod(wetherill.upperEnvelope.y, y.domain()[1]));
+
+                    // initialize path
+                    var path = [];
+                    moveTo(path, wetherill.upperEnvelope(minT).scaleBy(x, y));
+
+                    // determine the step size using the number of pieces
+                    var pieces = 30;
+                    var stepSize = (maxT - minT) / pieces;
+
+                    // build the pieces
+                    for (var i = 0; i < pieces; i++) {
+                        approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
+                    }
+
+                    lineTo(path, [x.range()[1], y.range()[1]]);
+
+                    var minT = Math.max(
+                            newtonMethod(wetherill.lowerEnvelope.x, x.domain()[0]),
+                            newtonMethod(wetherill.lowerEnvelope.y, y.domain()[0]));
+
+                    var maxT = Math.min(
+                            newtonMethod(wetherill.lowerEnvelope.x, x.domain()[1]),
+                            newtonMethod(wetherill.lowerEnvelope.y, y.domain()[1]));
+
+                    lineTo(path, wetherill.lowerEnvelope(maxT).scaleBy(x, y));
+
+                    var stepSize = (maxT - minT) / pieces;
+
+                    // build the pieces
+                    for (var i = 0; i < pieces; i++) {
+                        approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
+                    }
+
+                    lineTo(path, [x.range()[0], y.range()[0]]);
+                    close(path);
 
                     return path.join("");
                 });
