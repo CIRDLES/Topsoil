@@ -74,8 +74,8 @@ public class SVGSaver {
         fileChooser.setInitialDirectory(FILE_CHOOSER_INITIAL_DIRECTORY);
 
         fileChooser.getExtensionFilters().setAll(
-                new ExtensionFilter("All Files", "*"),
-                new ExtensionFilter("SVG Image", "*.svg"));
+                new ExtensionFilter("SVG Image", "*.svg"),
+                new ExtensionFilter("All Files", "*.*"));
 
         return fileChooser;
     }
@@ -86,7 +86,7 @@ public class SVGSaver {
      * @return Optional<File> the file path
      */
     private Optional<OutputStream> generateSaveUI() {
-        return Optional.of(getFileChooser().showSaveDialog(null))
+        return Optional.ofNullable(getFileChooser().showSaveDialog(null))
                 .map(file -> {
                     try {
                         return new FileOutputStream(file);
