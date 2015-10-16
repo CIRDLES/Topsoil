@@ -54,7 +54,7 @@ public class ApplicationDirectoryProviderTest {
         assertThat(applicationDirectoryProvider.get(),
                 hasToString(either(
                         is("/home/testuser/.topsoil")).or(
-                        is("/home/testuser\\.topsoil"))));
+                        is("\\home\\testuser\\.topsoil"))));
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ApplicationDirectoryProviderTest {
         assertThat(applicationDirectoryProvider.get(),
                 hasToString(either(
                         is("/Users/testuser/Library/Application Support/Topsoil")).or(
-                        is("/Users/testuser/Library/Application Support\\Topsoil"))));
+                        is("\\Users\\testuser\\Library\\Application Support\\Topsoil"))));
     }
 
     @Test
