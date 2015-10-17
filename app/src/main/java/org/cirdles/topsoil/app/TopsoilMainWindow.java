@@ -52,6 +52,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import org.cirdles.topsoil.app.browse.WebBrowser;
 
 /**
  * FXML Controller class
@@ -63,6 +64,9 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(TopsoilMainWindow.class);
+
+    private static final String TOPSOIL_ISSUES_URI_STRING = "https://github.com/CIRDLES/Topsoil/issues";
+    private static final String TOPSOIL_WIKI_URI_STRING = "https://github.com/CIRDLES/Topsoil/wiki#topsoil";
 
     @FXML
     Menu chartsMenu;
@@ -78,16 +82,19 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     private ApplicationMetadata metadata;
     private DatasetMapper datasetMapper;
     private FlywayMigrateTask flywayMigrate;
+    private WebBrowser webBrowser;
 
     @Inject
     public TopsoilMainWindow(
             ApplicationMetadata metadata,
             DatasetMapper datasetMapper,
-            FlywayMigrateTask flywayMigrate) {
+            FlywayMigrateTask flywayMigrate,
+            WebBrowser webBrowser) {
         super(self -> {
             self.metadata = metadata;
             self.datasetMapper = datasetMapper;
             self.flywayMigrate = flywayMigrate;
+            self.webBrowser = webBrowser;
         });
     }
 
@@ -274,8 +281,9 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         return (TsvTable) createTab().getContent();
     }
 
-    void importFromFile(Path filePath,
-                        Function<Boolean, RawDataReader> datasetReaderConstructor) {
+    void importFromFile(
+            Path filePath,
+            Function<Boolean, RawDataReader> datasetReaderConstructor) {
         TsvTable dataTable = createTable();
 
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
@@ -361,6 +369,16 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     @FXML
     void createUncertaintyEllipseChart() {
         initializeAndShow(new UncertaintyEllipseChart());
+    }
+
+    @FXML
+    void openDocumentationLink() {
+        webBrowser.browse(TOPSOIL_WIKI_URI_STRING);
+    }
+
+    @FXML
+    void openIssuesLink() {
+        webBrowser.browse(TOPSOIL_ISSUES_URI_STRING);
     }
 
     @FXML

@@ -24,6 +24,7 @@ import org.cirdles.topsoil.app.util.UtilModule;
 
 import javax.inject.Named;
 import java.nio.file.Path;
+import org.cirdles.topsoil.app.browse.BrowseModule;
 
 /**
  *
@@ -33,6 +34,7 @@ public class AppModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        install(new BrowseModule());
         install(new FlywayModule());
         install(new MetadataModule());
         install(new SQLiteMyBatisModule());
