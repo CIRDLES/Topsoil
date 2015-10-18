@@ -68,12 +68,12 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
         // prepare the local URI for d3.js
         final URI D3_JS_URI = RESOURCE_EXTRACTOR
-                .extractResourceAsPath("d3.js")
+                .extractResourceAsPath("d3.min.js")
                 .toUri();
 
         // prepare the local URI for numeric.js
         final URI NUMERIC_JS_URI = RESOURCE_EXTRACTOR
-                .extractResourceAsPath("numeric.js")
+                .extractResourceAsPath("numeric.min.js")
                 .toUri();
 
         // prepare the local URI for topsoil.js
