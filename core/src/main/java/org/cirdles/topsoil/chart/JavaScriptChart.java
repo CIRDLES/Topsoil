@@ -61,11 +61,6 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         final ResourceExtractor RESOURCE_EXTRACTOR
                 = new ResourceExtractor(JavaScriptChart.class);
 
-        // prepare the local URI for Firebug Lite
-        final URI FIREBUG_LITE_URI = RESOURCE_EXTRACTOR
-                .extractResourceAsPath("firebug-lite.js")
-                .toUri();
-
         // prepare the local URI for d3.js
         final URI D3_JS_URI = RESOURCE_EXTRACTOR
                 .extractResourceAsPath("d3.min.js")
@@ -93,7 +88,6 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                 + "</style>\n"
                 // </head>
                 + "<body>"
-                + "<script src=\"" + FIREBUG_LITE_URI + "\"></script>\n"
                 + "<script src=\"" + D3_JS_URI + "\"></script>\n"
                 + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
                 + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
