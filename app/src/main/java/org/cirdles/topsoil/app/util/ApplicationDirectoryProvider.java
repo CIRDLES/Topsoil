@@ -16,12 +16,15 @@
 package org.cirdles.topsoil.app.util;
 
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Provides the application storage directory across multiple platforms.
@@ -29,35 +32,56 @@ import java.nio.file.Paths;
 public class ApplicationDirectoryProvider
         extends PlatformDependentProvider<Path> {
 
+    private static Logger LOGGER
+            = LoggerFactory.getLogger(ApplicationDirectoryProvider.class);
+
     private final ApplicationMetadata metadata;
+    private final FileSystem fileSystem;
     private final String appData;
     private final String userHome;
 
     @Inject
     public ApplicationDirectoryProvider(
             ApplicationMetadata metadata,
-            // nullable because appdata is set on Linux and Mac OS
+            FileSystem fileSystem,
+            // nullable because appdata is not set on Linux and Mac OS
             @Named("appdata") @Nullable String appData,
             @Named("os.name") String osName,
             @Named("user.home") String userHome) {
+
         super(osName);
         this.metadata = metadata;
+        this.fileSystem = fileSystem;
         this.appData = appData;
         this.userHome = userHome;
     }
 
+    private void createIfNecessary(Path path) {
+        try {
+            Files.createDirectories(path);
+        } catch (Exception ex) {
+            LOGGER.error(null, ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
     @Override
     protected Path getOnWindows() {
-        return Paths.get(appData, metadata.getName());
+        Path applicationDirectory = fileSystem.getPath(appData, metadata.getName());
+        createIfNecessary(applicationDirectory);
+        return applicationDirectory;
     }
 
     @Override
     protected Path getOnMacOS() {
-        return Paths.get(
+        Path applicationDirectory = fileSystem.getPath(
                 userHome,
                 "Library",
                 "Application Support",
                 metadata.getName());
+
+        createIfNecessary(applicationDirectory);
+        return applicationDirectory;
     }
 
     private String buildLinuxDirectoryName() {
@@ -66,7 +90,12 @@ public class ApplicationDirectoryProvider
 
     @Override
     protected Path getOnLinux() {
-        return Paths.get(userHome, buildLinuxDirectoryName());
+        Path applicationDirectory = fileSystem.getPath(
+                userHome,
+                buildLinuxDirectoryName());
+
+        createIfNecessary(applicationDirectory);
+        return applicationDirectory;
     }
 
 }

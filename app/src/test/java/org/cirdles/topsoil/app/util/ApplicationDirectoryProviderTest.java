@@ -15,6 +15,8 @@
  */
 package org.cirdles.topsoil.app.util;
 
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.junit.Rule;
@@ -23,7 +25,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import static org.hamcrest.Matchers.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -47,14 +53,15 @@ public class ApplicationDirectoryProviderTest {
 
         applicationDirectoryProvider = new ApplicationDirectoryProvider(
                 metadata,
+                Jimfs.newFileSystem(Configuration.unix()),
                 null,
                 "Linux",
                 "/home/testuser");
 
-        assertThat(applicationDirectoryProvider.get(),
-                hasToString(either(
-                        is("/home/testuser/.topsoil")).or(
-                        is("\\home\\testuser\\.topsoil"))));
+        Path applicationDirectory = applicationDirectoryProvider.get();
+
+        assertThat(applicationDirectory, hasToString("/home/testuser/.topsoil"));
+        assertThat(Files.exists(applicationDirectory), is(true));
     }
 
     @Test
@@ -63,14 +70,18 @@ public class ApplicationDirectoryProviderTest {
 
         applicationDirectoryProvider = new ApplicationDirectoryProvider(
                 metadata,
+                Jimfs.newFileSystem(Configuration.osX()),
                 null,
                 "Mac OS X",
                 "/Users/testuser");
 
-        assertThat(applicationDirectoryProvider.get(),
-                hasToString(either(
-                        is("/Users/testuser/Library/Application Support/Topsoil")).or(
-                        is("\\Users\\testuser\\Library\\Application Support\\Topsoil"))));
+        Path applicationDirectory = applicationDirectoryProvider.get();
+
+        assertThat(
+                applicationDirectory,
+                hasToString("/Users/testuser/Library/Application Support/Topsoil"));
+
+        assertThat(Files.exists(applicationDirectory), is(true));
     }
 
     @Test
@@ -79,14 +90,18 @@ public class ApplicationDirectoryProviderTest {
 
         applicationDirectoryProvider = new ApplicationDirectoryProvider(
                 metadata,
+                Jimfs.newFileSystem(Configuration.windows()),
                 "C:\\User\\Test User\\AppData\\Roaming",
                 "Windows XP",
                 null);
 
-        assertThat(applicationDirectoryProvider.get(),
-                hasToString(either(
-                        is("C:\\User\\Test User\\AppData\\Roaming/Topsoil")).or(
-                        is("C:\\User\\Test User\\AppData\\Roaming\\Topsoil"))));
+        Path applicationDirectory = applicationDirectoryProvider.get();
+
+        assertThat(
+                applicationDirectory,
+                hasToString("C:\\User\\Test User\\AppData\\Roaming\\Topsoil"));
+
+        assertThat(Files.exists(applicationDirectory), is(true));
     }
 
 }
