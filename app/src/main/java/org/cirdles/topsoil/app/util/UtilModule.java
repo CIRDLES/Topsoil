@@ -19,6 +19,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
 import static com.google.inject.name.Names.named;
@@ -32,7 +35,13 @@ public class UtilModule extends AbstractModule {
     protected void configure() {
         bind(Path.class)
                 .annotatedWith(named("applicationDirectory"))
-                .toProvider(ApplicationDirectoryProvider.class);
+                .toProvider(ApplicationDirectoryProvider.class)
+                .in(Singleton.class);
+    }
+
+    @Provides
+    FileSystem provideFileSystem() {
+        return FileSystems.getDefault();
     }
 
     @Provides
