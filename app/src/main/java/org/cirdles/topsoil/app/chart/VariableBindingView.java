@@ -16,13 +16,16 @@
 package org.cirdles.topsoil.app.chart;
 
 import com.johnzeringue.extendsfx.layout.CustomVBox;
-import static java.util.Comparator.comparing;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
 import javafx.fxml.FXML;
 import org.cirdles.commons.string.LevenshteinDistance;
 import org.cirdles.topsoil.chart.Variable;
 import org.cirdles.topsoil.dataset.field.Field;
+
+import java.util.List;
+
+import static java.lang.Math.min;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 /**
  * This UI element is used by the user to choose which column in the main table
@@ -42,14 +45,21 @@ public class VariableBindingView<T> extends CustomVBox<VariableBindingView<T>> {
         });
     }
 
-    private void initializeControl(Variable<T> variable) {
-        int index = getChildren().size();
+    private int controlIndex() {
+        return getChildren().size();
+    }
 
+    private void initializeControl(Variable<T> variable) {
         VariableBindingControl control
                 = new VariableBindingControl(variable, fields);
 
         // set field by index
-        Field field = fields.get(index);
+
+        // select the corresponding field index unless there aren't enough
+        // fields
+        int defaultFieldIndex = min(controlIndex(), fields.size() - 1);
+
+        Field field = fields.get(defaultFieldIndex);
         control.setFieldSelection(field);
 
         // set variable format by Levenshtein distance from field name

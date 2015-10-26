@@ -15,13 +15,15 @@
  */
 package org.cirdles.topsoil.app.chart;
 
-import java.util.List;
 import javafx.scene.control.ButtonType;
-import static javafx.scene.control.ButtonType.OK;
 import javafx.scene.control.Dialog;
 import org.cirdles.topsoil.chart.Variable;
 import org.cirdles.topsoil.chart.VariableContext;
 import org.cirdles.topsoil.dataset.Dataset;
+
+import java.util.List;
+
+import static javafx.scene.control.ButtonType.OK;
 
 public class VariableBindingDialog extends Dialog<VariableContext> {
 
