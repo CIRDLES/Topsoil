@@ -37,7 +37,7 @@ import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
-import org.cirdles.topsoil.chart.standard.ErrorEllipseChart;
+import org.cirdles.topsoil.chart.standard.UncertaintyEllipseChart;
 import org.cirdles.topsoil.chart.standard.ScatterplotChart;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
@@ -359,13 +359,8 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     }
 
     @FXML
-    void createErrorEllipseChart() {
-        initializeAndShow(new ErrorEllipseChart());
-    }
-
-    @FXML
-    void pasteFromClipboard() {
-        getCurrentTable().ifPresent(TsvTable::pasteFromClipboard);
+    void createUncertaintyEllipseChart() {
+        initializeAndShow(new UncertaintyEllipseChart());
     }
 
     @FXML

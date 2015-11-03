@@ -18,8 +18,8 @@
         <Menu text="Charts" fx:id="chartsMenu">
             <MenuItem text="scatterplot"
                       onAction="#createScatterplot" />
-            <MenuItem text="error ellipse chart"
-                      onAction="#createErrorEllipseChart" />
+            <MenuItem text="uncertainty ellipse chart"
+                      onAction="#createUncertaintyEllipseChart" />
         </Menu>
 
         <Menu text="Datasets" fx:id="datasetsMenu"/>

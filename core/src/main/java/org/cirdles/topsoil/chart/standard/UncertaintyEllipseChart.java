@@ -22,14 +22,14 @@ import org.cirdles.topsoil.chart.JavaScriptChart;
  *
  * @author John Zeringue
  */
-public class ErrorEllipseChart extends JavaScriptChart {
+public class UncertaintyEllipseChart extends JavaScriptChart {
 
     private static final ResourceExtractor RESOURCE_EXTRACTOR
-            = new ResourceExtractor(ErrorEllipseChart.class);
+            = new ResourceExtractor(UncertaintyEllipseChart.class);
 
-    private static final String RESOURCE_NAME = "errorellipsechart.js";
+    private static final String RESOURCE_NAME = "uncertaintyellipsechart.js";
 
-    public ErrorEllipseChart() {
+    public UncertaintyEllipseChart() {
         super(RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME));
     }
 
