@@ -66,7 +66,7 @@
 
         // initialize the concordia envelope
         chart.area.clipped.append("path")
-                .attr("class", "errorEnvelope")
+                .attr("class", "uncertaintyEnvelope")
                 .attr("fill", "lightgray")
                 .attr("stroke", "none")
                 .attr("shape-rendering", "geometricPrecision");
@@ -192,7 +192,7 @@
                     return path.join("");
                 });
 
-        chart.area.clipped.select(".errorEnvelope")
+        chart.area.clipped.select(".uncertaintyEnvelope")
                 .attr("d", function () {
                     var approximateUpperSegment = function (path, minT, maxT) {
                         var p1 = wetherill.upperEnvelope(minT).plus(
