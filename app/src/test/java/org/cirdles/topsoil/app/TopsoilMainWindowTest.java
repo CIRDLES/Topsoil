@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.browse.WebBrowser;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
 import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
@@ -33,6 +34,7 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 
 import static org.testfx.api.FxAssert.verifyThat;
+
 /**
  *
  * @author John Zeringue
@@ -49,6 +51,9 @@ public class TopsoilMainWindowTest extends ApplicationTest {
     @Mock
     private FlywayMigrateTask flywayMigrateTask;
 
+    @Mock
+    private WebBrowser webBrowser;
+
     private TopsoilMainWindow topsoilMainWindow;
 
     @Override
@@ -58,7 +63,8 @@ public class TopsoilMainWindowTest extends ApplicationTest {
         topsoilMainWindow = new TopsoilMainWindow(
                 metadata,
                 datasetMapper,
-                flywayMigrateTask);
+                flywayMigrateTask,
+                webBrowser);
 
         Scene scene = new Scene(topsoilMainWindow);
         stage.setScene(scene);
