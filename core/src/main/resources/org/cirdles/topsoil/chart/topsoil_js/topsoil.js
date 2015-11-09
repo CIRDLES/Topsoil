@@ -35,28 +35,14 @@
     };
 
     topsoil.showData = function () {
-        // build settings
-        chart.settings = {
-            transactor: ts.settingScope.buildTransactor()
-        };
+        chart.properties = {};
 
-        chart.settings.transaction = function (consumer) {
-            var t = chart.settings.transactor;
-            consumer(t);
-            t.apply();
-        };
-
-        var names = ts.settingScope.getSettingNames();
-        names.forEach(function (settingName) {
-            Object.defineProperty(chart.settings, settingName, {
-                get: function () {
-                    return ts.settingScope.get(settingName).get();
-                },
-                set: function (value) {
-                    ts.settingScope.set(settingName, value);
-                }
-            });
-        });
+        // copy initial properties
+        for (var key in chart.initialProperties) {
+            if (chart.initialProperties.hasOwnProperty(key)) {
+                chart.properties[key] = chart.initialProperties[key];
+            }
+        }
 
         chart.draw(ts.data);
     };
@@ -107,29 +93,16 @@
             .append("use")
             .attr("xlink:href", "#" + chart.plotArea.attr("id"));
 
-    // creates a buffer until the settings manager is set up
-    chart.settings = [];
-    chart.settings.addSetting = function (name, value) {
-        chart.settings.push({name: name, value: value, 0: name, 1: value});
-
-        return chart.settings; // so that this method can be chained
-    };
-
     /*
-     * SETTINGS
+     * PROPERTY
      */
-
-    // constants for setting names
-    window.X_MAX = "X Max";
-    window.X_MIN = "X Min";
-    window.Y_MAX = "Y Max";
-    window.Y_MIN = "Y Min";
-
-    topsoil.setupSettingScope = function (settingScope) {
-        ts.settingScope = settingScope;
-
-        chart.settings.forEach(function (setting) {
-            settingScope.set(setting.name, setting.value);
-        });
+    topsoil.getProperty = chart.getProperty = function (key) {
+        return chart.properties[key];
     };
+
+    topsoil.setProperty = chart.setProperty = function (key, value) {
+        chart.properties[key] = value;
+        chart.update(ts.data);
+    };
+
 })();

@@ -17,14 +17,19 @@
 (function () {
     "use strict";
 
-    chart.settings
-            .addSetting(X_MAX, 100)
-            .addSetting(X_MIN, 0)
-            .addSetting(Y_MAX, 100)
-            .addSetting(Y_MIN, 0)
-            .addSetting("Title", "Scatterplot");
+    chart.initialProperties = {
+        'Title': 'Scatterplot',
+        'Point Fill Color': 'steelblue'
+    };
 
     chart.draw = function (data) {
+        // defaults if no data is provided
+        var xMin = 0;
+        var xMax = 1;
+        var yMin = 0;
+        var yMax = 1;
+
+        // set default bounds relative to data
         if (data.length > 0) {
             var dataXMin = d3.min(data, function (d) { return d.x; });
             var dataYMin = d3.min(data, function (d) { return d.y; });
@@ -34,12 +39,10 @@
             var xRange = dataXMax - dataXMin;
             var yRange = dataYMax - dataYMin;
 
-            chart.settings.transaction(function (t) {
-                t.set(X_MIN, dataXMin - 0.05 * xRange);
-                t.set(Y_MIN, dataYMin - 0.05 * yRange);
-                t.set(X_MAX, dataXMax + 0.05 * xRange);
-                t.set(Y_MAX, dataYMax + 0.05 * yRange);
-            });
+            xMin = dataXMin - 0.05 * xRange;
+            yMin = dataYMin - 0.05 * yRange;
+            xMax = dataXMax + 0.05 * xRange;
+            yMax = dataYMax + 0.05 * yRange;
         }
 
         chart.area.append("text")
@@ -50,21 +53,18 @@
 
         // a mathematical construct
         chart.x = d3.scale.linear()
-                .domain([chart.settings[X_MIN], chart.settings[X_MAX]])
+                .domain([xMin, xMax])
                 .range([0, chart.width]);
 
         chart.y = d3.scale.linear()
-                .domain([chart.settings[Y_MIN], chart.settings[Y_MAX]])
+                .domain([yMin, yMax])
                 .range([chart.height, 0]);
 
         chart.update(data);
     };
 
     chart.update = function (data) {
-        chart.x.domain([chart.settings[X_MIN], chart.settings[X_MAX]]);
-        chart.y.domain([chart.settings[Y_MIN], chart.settings[Y_MAX]]);
-
-        d3.select(".title.text").text(chart.settings["Title"]);
+        d3.select(".title.text").text(chart.getProperty("Title"));
 
         // what actually makes the axis
         var xAxis = d3.svg.axis()
@@ -105,11 +105,11 @@
         points.enter()
                 .append("circle")
                 .attr("class", "point")
-                .attr("fill", "steelblue")
                 .attr("r", 3);
 
         // update all points
         points
+                .attr("fill", chart.getProperty("Point Fill Color"))
                 .attr("cx", function (d) {
                     return chart.x(d.x);
                 })
@@ -123,12 +123,10 @@
                 .y(chart.y)
                 .scaleExtent([0.5, 2.5])
                 .on("zoom", function () {
-                    chart.settings.transaction(function (t) {
-                        t.set(X_MIN, zoom.x().domain()[0]);
-                        t.set(Y_MIN, zoom.y().domain()[0]);
-                        t.set(X_MAX, zoom.x().domain()[1]);
-                        t.set(Y_MAX, zoom.y().domain()[1]);
-                    });
+                    chart.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
+                    chart.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
+
+                    chart.update(data);
                 });
 
         chart.area.clipped.call(zoom);

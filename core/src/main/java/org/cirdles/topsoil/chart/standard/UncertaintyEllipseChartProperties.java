@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.chart.setting;
+package org.cirdles.topsoil.chart.standard;
 
 /**
- *
- * @author John Zeringue
+ * Created by johnzeringue on 11/9/15.
  */
-public interface SettingOperationFactory {
+public final class UncertaintyEllipseChartProperties {
 
-    public SettingOperation buildGet(String settingName);
+    public static final String TITLE = "Title";
+    public static final String X_AXIS = "X Axis";
+    public static final String Y_AXIS = "Y Axis";
+    public static final String UNCERTAINTY = "Uncertainty";
+    public static final String ELLIPSE_FILL_COLOR = "Ellipse Fill Color";
 
-    public SettingOperation<Void> buildSet(String settingName, Object value);
+    private UncertaintyEllipseChartProperties() {
+        // prevents this class from being instantiated
+    }
 
 }
