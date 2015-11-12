@@ -16,6 +16,7 @@
 package org.cirdles.topsoil.chart.standard;
 
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.chart.Displayable;
 import org.cirdles.topsoil.chart.JavaScriptChart;
 
 /**
@@ -29,8 +30,20 @@ public class ScatterplotChart extends JavaScriptChart {
 
     private static final String RESOURCE_NAME = "scatterplot.js";
 
+    private ScatterplotChartPropertiesPanel propertiesPanel;
+
     public ScatterplotChart() {
         super(RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME));
+    }
+
+    @Override
+    public Displayable getPropertiesPanel() {
+        if (propertiesPanel == null) {
+            propertiesPanel = new ScatterplotChartPropertiesPanel(this);
+            initializeFuture.thenRunAsync(propertiesPanel::updateProperties);
+        }
+
+        return propertiesPanel;
     }
 
 }

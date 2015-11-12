@@ -16,8 +16,9 @@
 package org.cirdles.topsoil.chart;
 
 import javafx.scene.Node;
-import javax.swing.JComponent;
 import org.w3c.dom.Document;
+
+import javax.swing.*;
 
 /**
  * An interface for objects that are displayable in a couple of common formats.
@@ -31,7 +32,7 @@ public interface Displayable {
      *
      * @return a {@code JComponent} that may or may not be unique
      */
-    public JComponent displayAsJComponent();
+    JComponent displayAsJComponent();
 
     /**
      * Returns a {@link Node} representing this {@code Displayable}. This method
@@ -40,13 +41,15 @@ public interface Displayable {
      * @return a {@code Node} that may or may not be unique
      * @see javafx.application.Platform
      */
-    public Node displayAsNode();
+    Node displayAsNode();
 
     /**
      * Returns a {@link Document} representing this {@code Displayable}.
      *
      * @return a {@code Document} that may or may not be unique
      */
-    public Document displayAsSVGDocument();
+    default Document displayAsSVGDocument() {
+        throw new UnsupportedOperationException();
+    }
 
 }

@@ -20,7 +20,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
-import org.cirdles.topsoil.app.component.SettingsPanel;
 import org.cirdles.topsoil.app.util.SVGSaver;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
@@ -61,10 +60,14 @@ public class ChartWindow extends CustomVBox<ChartWindow> {
     }
 
     private void initializeChartAndConfig() {
-        chartAndConfig.getChildren().setAll(
-                chart.displayAsNode(),
-                new SettingsPanel(chart.getSettingScope())
-        );
+        try {
+            chartAndConfig.getChildren().setAll(
+                    chart.displayAsNode(),
+                    chart.getPropertiesPanel().displayAsNode());
+        } catch (UnsupportedOperationException ex) {
+            chartAndConfig.getChildren().setAll(
+                    chart.displayAsNode());
+        }
     }
 
     @FXML

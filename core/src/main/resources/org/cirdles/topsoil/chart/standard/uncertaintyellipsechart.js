@@ -17,15 +17,13 @@
 (function () {
     "use strict";
 
-
-    chart.settings
-            .addSetting(X_MAX, 100)
-            .addSetting(X_MIN, 0)
-            .addSetting(Y_MAX, 100)
-            .addSetting(Y_MIN, 0)
-            .addSetting("X Label", "207Pb*/235U")
-            .addSetting("Y Label", "206Pb*/238U")
-            .addSetting("Ellipse Fill", "red");
+    chart.initialProperties = {
+        "Title": "Uncertainty Ellipse Chart",
+        "X Axis": "207Pb*/235U",
+        "Y Axis": "206Pb*/238U",
+        "Uncertainty": 2.0,
+        "Ellipse Fill Color": "red"
+    };
 
     chart.draw = function (data) {
         var x = chart.x = d3.scale.linear()
@@ -35,6 +33,11 @@
                 .range([chart.height, 0]);
 
         chart.t = d3.scale.linear();
+
+        var xMin = 0;
+        var xMax = 1;
+        var yMin = 0;
+        var yMax = 1;
 
         if (data.length > 0){
             var dataXMin = d3.min(data, function (d) {
@@ -56,13 +59,14 @@
             var xRange = dataXMax - dataXMin;
             var yRange = dataYMax - dataYMin;
 
-            chart.settings.transaction(function (t) {
-                t.set(X_MIN, dataXMin - 0.05 * xRange);
-                t.set(Y_MIN, dataYMin - 0.05 * yRange);
-                t.set(X_MAX, dataXMax + 0.05 * xRange);
-                t.set(Y_MAX, dataYMax + 0.05 * yRange);
-            });
+            xMin = dataXMin - 0.05 * xRange;
+            yMin =  dataYMin - 0.05 * yRange;
+            xMax = dataXMax + 0.05 * xRange;
+            yMax = dataYMax + 0.05 * yRange;
         }
+
+        x.domain([xMin, xMax]);
+        y.domain([yMin, yMax]);
 
         // initialize the concordia envelope
         chart.area.clipped.append("path")
@@ -102,11 +106,8 @@
         var x = chart.x;
         var y = chart.y;
 
-        x.domain([chart.settings[X_MIN], chart.settings[X_MAX]]);
-        y.domain([chart.settings[Y_MIN], chart.settings[Y_MAX]]);
-
-        d3.select(".x.axis .label").text(chart.settings["X Label"]);
-        d3.select(".y.axis .label").text(chart.settings["Y Label"]);
+        d3.select(".x.axis .label").text(chart.getProperty("X Axis"));
+        d3.select(".y.axis .label").text(chart.getProperty("Y Axis"));
 
         var xAxis = d3.svg.axis()
                 .scale(x)
@@ -118,12 +119,13 @@
 
         var ellipses;
         (ellipses = chart.area.clipped.selectAll(".ellipse")
-                .data(data)
-                .attr("fill", chart.settings["Ellipse Fill"]))
+                .data(data))
                 .enter().append("path")
                 .attr("class", "ellipse")
                 .attr("fill-opacity", 0.3)
                 .attr("stroke", "black");
+
+        ellipses.attr("fill", chart.getProperty("Ellipse Fill Color"));
 
         var dots;
         (dots = chart.area.clipped.selectAll(".dot")
@@ -327,7 +329,9 @@
                         return path.join("");
                     });
 
-            return ellipsePath(numeric.dot(controlPointsBase, r));
+            return ellipsePath(numeric.mul(
+                chart.getProperty("Uncertainty"),
+                numeric.dot(controlPointsBase, r)));
         });
 
         // update the center points
@@ -378,12 +382,8 @@
                         ty += y.range()[0] - y(0);
                     zoom.translate([tx, ty]);
 
-                    chart.settings.transaction(function (t) {
-                        t.set(X_MIN, zoom.x().domain()[0]);
-                        t.set(Y_MIN, zoom.y().domain()[0]);
-                        t.set(X_MAX, zoom.x().domain()[1]);
-                        t.set(Y_MAX, zoom.y().domain()[1]);
-                    });
+                    chart.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
+                    chart.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
 
                     chart.update(data);
                 });

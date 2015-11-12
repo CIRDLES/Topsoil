@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.chart.setting;
+package org.cirdles.topsoil.chart.standard;
 
 /**
- *
- * @author John Zeringue
- * @param <T>
+ * Created by johnzeringue on 11/9/15.
  */
-@FunctionalInterface
-public interface SettingOperation<T> {
+public final class ScatterplotChartProperties {
 
-    public T applyTo(SettingScope settingScope);
+    public static final String TITLE = "Title";
+    public static final String POINT_FILL_COLOR = "Point Fill Color";
+
+    private ScatterplotChartProperties() {
+        // prevents this class from being instantiated
+    }
 
 }

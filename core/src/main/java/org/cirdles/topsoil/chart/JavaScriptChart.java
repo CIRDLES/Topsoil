@@ -15,7 +15,7 @@
  */
 package org.cirdles.topsoil.chart;
 
-import javafx.concurrent.Worker;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -33,7 +33,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static javafx.concurrent.Worker.State.SUCCEEDED;
 import static org.cirdles.topsoil.chart.Variables.*;
@@ -44,7 +48,7 @@ import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
  *
  * @author John Zeringue
  */
-public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
+public abstract class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(JavaScriptChart.class);
@@ -97,15 +101,13 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                 + "").replaceAll("%20", "%%20");
     }
 
-    private final Collection<Runnable> afterLoadCallbacks = new ArrayList<>();
-
-    private final Collection<Runnable> initializationCallbacks
-            = new ArrayList<>();
+    private final CompletableFuture<Void> loadFuture;
+    protected final CompletableFuture<Void> initializeFuture;
 
     private final Path sourcePath;
 
     private WebView webView;
-    private boolean initialized = false;
+
     /**
      * Creates a new {@link JavaScriptChart} using the specified source file.
      *
@@ -117,6 +119,11 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         }
 
         this.sourcePath = sourcePath;
+        loadFuture = new CompletableFuture<>();
+
+        initializeFuture = loadFuture.thenRunAsync(() -> {
+            getTopsoil().get().call("showData");
+        }, Platform::runLater);
     }
 
     public Path getSourcePath() {
@@ -146,48 +153,6 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         return VARIABLES;
     }
 
-    /**
-     * A utility method for running code after this {@link JavaScriptChart} has
-     * loaded it's HTML. This is necessary because
-     * {@link WebEngine#load(java.lang.String)} and
-     * {@link WebEngine#loadContent(java.lang.String)} are both asynchronous yet
-     * provide no easy way to attach callback functions. If the generated HTML
-     * for this chart has already been loaded, the {@link Runnable} is run
-     * immediately.
-     *
-     * @param callback the runnable to be run after this
-     * {@link JavaScriptChart}'s HTML has been loaded
-     */
-    private void afterLoad(Runnable callback) {
-        boolean loadSucceeded = getWebEngine()
-                .map(WebEngine::getLoadWorker)
-                .map(Worker::getState)
-                .map(state -> state == SUCCEEDED)
-                .orElse(false);
-
-        if (loadSucceeded) {
-            callback.run();
-        } else {
-            afterLoadCallbacks.add(callback);
-        }
-    }
-
-    /**
-     * Motivated similarly to {@link #afterLoad(java.lang.Runnable)} but needed
-     * to prevent data from being passed into the JavaScript environment before
-     * everything is ready.
-     *
-     * @param callback the runnable to be run after this
-     * {@link JavaScriptChart}'s {@link WebView} has been initialized
-     */
-    private void afterInitialization(Runnable callback) {
-        if (initialized) {
-            callback.run();
-        } else {
-            initializationCallbacks.add(callback);
-        }
-    }
-
     String buildContent() {
         return String.format(HTML_TEMPLATE, getSourcePath().toUri());
     }
@@ -201,36 +166,17 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         webView = new WebView();
         webView.setContextMenuEnabled(false);
 
-        getWebEngine().get().getLoadWorker().stateProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    if (newValue == SUCCEEDED) {
-                        afterLoadCallbacks.forEach(Runnable::run);
-                        afterLoadCallbacks.clear();
-                    }
-                });
-
         // useful for debugging
         getWebEngine().get().setOnAlert(event -> {
             LOGGER.info(event.getData());
         });
 
-        // used as a callback for webEngine.loadContent(HTML_TEMPLATE)
-        afterLoad(() -> {
-            // setup setting scope
-            getTopsoil().get().call("setupSettingScope", getSettingScope());
-            getTopsoil().get().call("showData");
-
-            getSettingScope().addListener(settingNames -> {
-                getWebEngine().get().executeScript("chart.update(ts.data);");
-            });
-
-            // initialization is over
-            initialized = true;
-            // so we need to trigger callbacks
-            initializationCallbacks.forEach(Runnable::run);
-            // and take that memory back
-            initializationCallbacks.clear();
-        });
+        getWebEngine().get().getLoadWorker().stateProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue == SUCCEEDED) {
+                        loadFuture.complete(null);
+                    }
+                });
 
         // asynchronous
         getWebEngine().get().loadContent(buildContent());
@@ -264,7 +210,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         // pass the data to JavaScript
         // this seems excessive but passing a double[][] creates a single array
         // of undefined objects on the other side of things
-        afterInitialization(() -> {
+        initializeFuture.thenRunAsync(() -> {
             getTopsoil().get().call("clearData"); // old data must be cleared
 
             variableContext.getDataset().getEntries()
@@ -284,7 +230,7 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
                     });
 
             getTopsoil().get().call("showData");
-        });
+        }, Platform::runLater);
     }
 
     @Override
@@ -325,6 +271,28 @@ public class JavaScriptChart extends BaseChart implements JavaFXDisplayable {
         }
 
         return svgDocument;
+    }
+
+    @Override
+    public Object getProperty(String key) {
+        try {
+            return initializeFuture.thenApplyAsync(aVoid -> getTopsoil()
+                    .orElseThrow(IllegalStateException::new)
+                    .call("getProperty", key), Platform::runLater).get();
+        } catch (ExecutionException | InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void setProperty(String key, Object value) {
+        try {
+            initializeFuture.thenApplyAsync(aVoid -> getTopsoil()
+                    .orElseThrow(IllegalStateException::new)
+                    .call("setProperty", key, value), Platform::runLater).get();
+        } catch (ExecutionException | InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
 }

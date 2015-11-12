@@ -62,7 +62,6 @@ test {
 dependencies {
     compile project(':core')
 
-    compile 'com.github.johnzeringue:extendsfx:1.0.0-alpha.1'
     compile 'com.google.code.findbugs:jsr305:3.0.0'
     compile 'com.google.inject:guice:4.0'
     compile 'com.google.inject.extensions:guice-multibindings:4.0'
@@ -72,8 +71,4 @@ dependencies {
     compile 'org.mybatis:mybatis-guice:3.7'
     compile 'org.springframework:spring-jdbc:4.2.0.RELEASE'
     compile 'org.xerial:sqlite-jdbc:3.8.11.1'
-
-    testCompile 'com.google.jimfs:jimfs:1.0'
-    testCompile 'org.testfx:openjfx-monocle:1.8.0_20'
-    testCompile 'org.testfx:testfx-junit:4.0.+'
 }

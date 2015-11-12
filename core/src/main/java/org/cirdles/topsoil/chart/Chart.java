@@ -15,10 +15,10 @@
  */
 package org.cirdles.topsoil.chart;
 
+import org.cirdles.topsoil.dataset.Dataset;
+
 import java.util.List;
 import java.util.Optional;
-import org.cirdles.topsoil.chart.setting.SettingScope;
-import org.cirdles.topsoil.dataset.Dataset;
 
 /**
  * A generalized chart that can express itself as a {@link javafx.scene.Node}.
@@ -33,19 +33,23 @@ public interface Chart extends Displayable {
      *
      * @return an {@link Optional} containing data of type <code>T</code>
      */
-    public Optional<Dataset> getDataset();
+    Optional<Dataset> getDataset();
 
-    public Optional<VariableContext> getVariableContext();
+    Optional<VariableContext> getVariableContext();
 
     /**
      * Sets this {@link Chart}'s data to the object specified.
      *
      * @param variableContext
      */
-    public void setData(VariableContext variableContext);
+    void setData(VariableContext variableContext);
 
-    public List<Variable> getVariables();
+    List<Variable> getVariables();
 
-    public SettingScope getSettingScope();
+    Object getProperty(String key);
+
+    void setProperty(String key, Object value);
+
+    Displayable getPropertiesPanel();
 
 }

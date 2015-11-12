@@ -20,27 +20,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.chart.Chart;
-import org.cirdles.topsoil.chart.SimpleVariableContext;
-import org.cirdles.topsoil.chart.VariableContext;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.SimpleDataset;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.testfx.framework.junit.ApplicationTest;
 
-import java.util.ArrayList;
-
-import static org.cirdles.topsoil.chart.standard.ScatterplotChartProperties.TITLE;
+import static org.cirdles.topsoil.chart.standard.UncertaintyEllipseChartProperties.TITLE;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 /**
- *
- * @author John Zeringue
+ * Created by johnzeringue on 11/11/15.
  */
-public class ScatterplotChartTest extends ApplicationTest {
+public class UncertaintyEllipseChartTest extends ApplicationTest {
 
     @Rule
     @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
@@ -50,7 +42,7 @@ public class ScatterplotChartTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
-        chart = new ScatterplotChart();
+        chart = new UncertaintyEllipseChart();
 
         Scene scene = new Scene((Parent) chart.displayAsNode());
         stage.setScene(scene);
@@ -58,29 +50,13 @@ public class ScatterplotChartTest extends ApplicationTest {
     }
 
     @Test
-    public void testGetVariables() {
-        chart.getVariables();
+    public void testGetProperty() {
+        assertThat(chart.getProperty(TITLE), is("Uncertainty Ellipse Chart"));
     }
 
     @Test
-    public void testSetData() {
-        RawData rawData = new RawData(new ArrayList<>(), new ArrayList<>());
-        Dataset dataset = new SimpleDataset("Test", rawData);
-
-        VariableContext variableContext
-                = new SimpleVariableContext(dataset);
-
-        chart.setData(variableContext);
-    }
-
-    @Test
-    public void testProperties() throws Throwable {
-        // check a default
-        assertThat(chart.getProperty(TITLE), is("Scatterplot"));
-
+    public void testSetProperty() {
         chart.setProperty(TITLE, "New Title");
-
-        // check that it's changed
         assertThat(chart.getProperty(TITLE), is("New Title"));
     }
 
