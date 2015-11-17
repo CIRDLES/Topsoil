@@ -52,7 +52,9 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -392,7 +394,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     }
 
     @FXML
-    void errorReport() {
+    void issueReport() {
 
         StringBuilder errorURI = new StringBuilder();
         errorURI.append("https://github.com/CIRDLES/Topsoil/issues/new");
@@ -406,12 +408,17 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         errorURI.append("\u003f" + "body" + "\u003d");
 
         // append versions to body of error-report field
-        errorURI.append("Topsoil+Version+" + topsoilVersion);
-        errorURI.append("\u0025" + "A0");
-        errorURI.append("Java+Version+" + javaVersion);
-        errorURI.append("\u0025" + "A0");
-        errorURI.append("Operating+System+" + operatingSystem);
-        errorURI.append("\u0025" + "A0/");
+        try {
+            errorURI.append("Topsoil+Version+" + topsoilVersion);
+            errorURI.append(URLEncoder.encode("\n", "UTF-8"));
+            errorURI.append("Java+Version+" + javaVersion);
+            errorURI.append(URLEncoder.encode("\n", "UTF-8"));
+            errorURI.append("Operating+System+" + operatingSystem);
+            errorURI.append(URLEncoder.encode("\n****\n", "UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        } ;
+
 
         webBrowser.browse(errorURI.toString());
 
