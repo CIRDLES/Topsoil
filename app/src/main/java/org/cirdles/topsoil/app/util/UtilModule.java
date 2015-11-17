@@ -41,6 +41,7 @@ public class UtilModule extends AbstractModule {
                 .in(Singleton.class);
 
         bind(Alerter.class).to(ErrorAlerter.class);
+        bind(IssueCreator.class).to(StandardGitHubIssueCreator.class);
     }
 
     @Provides

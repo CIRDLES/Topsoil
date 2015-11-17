@@ -58,6 +58,7 @@ import org.cirdles.topsoil.app.table.TsvTable;
 import org.cirdles.topsoil.app.util.AboutDialog;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.app.util.IssueCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +107,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     private BuilderFactory builderFactory;
     private DatasetMapper datasetMapper;
     private FlywayMigrateTask flywayMigrate;
+    private IssueCreator issueCreator;
     private WebBrowser webBrowser;
 
     @Inject
@@ -115,6 +117,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
             BuilderFactory builderFactory,
             DatasetMapper datasetMapper,
             FlywayMigrateTask flywayMigrate,
+            IssueCreator issueCreator,
             WebBrowser webBrowser) {
 
         super(self -> {
@@ -123,6 +126,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
             self.builderFactory = builderFactory;
             self.datasetMapper = datasetMapper;
             self.flywayMigrate = flywayMigrate;
+            self.issueCreator = issueCreator;
             self.webBrowser = webBrowser;
         });
     }
@@ -434,6 +438,11 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     @FXML
     void openAboutDialog() {
         aboutDialog.get().run();
+    }
+
+    @FXML
+    void reportIssue() {
+        issueCreator.create();
     }
 
     @Override
