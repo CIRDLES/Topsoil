@@ -65,6 +65,12 @@ public class ScatterplotChartPropertiesPanel
             titleField.setText(title);
             pointFillColorPicker.setValue(pointFillColor);
 
+            titleField
+                    .textProperty()
+                    .addListener((observable, oldValue, newValue) -> {
+                        updateTitle();
+                    });
+
             pointFillColorPicker
                     .valueProperty()
                     .addListener((observable, oldValue, newValue) -> {
@@ -73,7 +79,6 @@ public class ScatterplotChartPropertiesPanel
         });
     }
 
-    @FXML
     private void updateTitle() {
         executor.execute(() -> {
             chart.setProperty("Title", titleField.getText());
@@ -88,7 +93,6 @@ public class ScatterplotChartPropertiesPanel
                 (int) (color.getBlue() * 255));
     }
 
-    @FXML
     private void updatePointFillColor() {
         executor.execute(() -> {
             chart.setProperty(

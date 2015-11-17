@@ -87,6 +87,24 @@ public class UncertaintyEllipseChartPropertiesPanel
             uncertaintyField.setValue(uncertainty);
             ellipseFillColorPicker.setValue(ellipseFillColor);
 
+            titleField
+                    .textProperty()
+                    .addListener(((observable, oldValue, newValue) -> {
+                        updateTitle();
+                    }));
+
+            xAxisField
+                    .textProperty()
+                    .addListener(((observable, oldValue, newValue) -> {
+                        updateXAxis();
+                    }));
+
+            yAxisField
+                    .textProperty()
+                    .addListener(((observable, oldValue, newValue) -> {
+                        updateYAxis();
+                    }));
+
             uncertaintyField
                     .getSelectionModel()
                     .selectedItemProperty()
@@ -102,28 +120,24 @@ public class UncertaintyEllipseChartPropertiesPanel
         });
     }
 
-    @FXML
     private void updateTitle() {
         executor.execute(() -> {
             chart.setProperty(TITLE, titleField.getText());
         });
     }
 
-    @FXML
     private void updateXAxis() {
         executor.execute(() -> {
             chart.setProperty(X_AXIS, xAxisField.getText());
         });
     }
 
-    @FXML
     private void updateYAxis() {
         executor.execute(() -> {
             chart.setProperty(Y_AXIS, yAxisField.getText());
         });
     }
 
-    @FXML
     private void updateUncertainty() {
         executor.execute(() -> {
             chart.setProperty(UNCERTAINTY, uncertaintyField.getValue());
@@ -138,7 +152,6 @@ public class UncertaintyEllipseChartPropertiesPanel
                 (int) (color.getBlue() * 255));
     }
 
-    @FXML
     private void updateEllipseFillColor() {
         executor.execute(() -> {
             chart.setProperty(
