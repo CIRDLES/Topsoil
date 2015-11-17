@@ -88,15 +88,16 @@
                 .attr("transform", "translate(0," + chart.height + ")")
                 .append("text")
                 .attr("class", "label")
-                .attr("x", chart.width)
-                .attr("y", -6);
+                .attr("x", chart.width / 2)
+                .attr("y", 35);
 
         chart.area.append("g")
                 .attr("class", "y axis")
                 .append("text")
                 .attr("class", "label")
                 .attr("transform", "rotate(-90)")
-                .attr("y", 6)
+                .attr("x", -chart.height / 2)
+                .attr("y", -50)
                 .attr("dy", ".71em");
 
         chart.update(data);
