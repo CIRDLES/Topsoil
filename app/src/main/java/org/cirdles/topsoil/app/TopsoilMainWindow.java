@@ -406,7 +406,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         // ?body=
         errorURI.append("\u003f" + "body" + "\u003d");
 
-        //
+        // append versions to body of error-report field
         errorURI.append("Topsoil+Version+" + topsoilVersion);
         errorURI.append("\u0025" + "A0");
         errorURI.append("Java+Version+" + javaVersion);
