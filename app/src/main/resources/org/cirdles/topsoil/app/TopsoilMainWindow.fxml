@@ -29,6 +29,8 @@
                       onAction="#openDocumentationLink"  />
             <MenuItem text="Issues"
                       onAction="#openIssuesLink" />
+            <MenuItem text="Report Error"
+                      onAction="#errorReport" />
         </Menu>
     </MenuBar>
 

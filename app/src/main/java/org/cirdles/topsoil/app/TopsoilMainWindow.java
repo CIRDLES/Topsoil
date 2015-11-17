@@ -24,6 +24,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -46,8 +49,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -385,5 +391,33 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     void emptyTable() {
         getCurrentTable().ifPresent(TsvTable::clear);
     }
+
+    @FXML
+    void errorReport() {
+
+        StringBuilder errorURI = new StringBuilder();
+        errorURI.append("https://github.com/CIRDLES/Topsoil/issues/new");
+
+        String javaVersion = System.getProperty("java.version");
+        String operatingSystem = System.getProperty("os.name") + "\u0025" + "20" + System.getProperty("os.version");
+        operatingSystem = operatingSystem.replace(" ", "+");
+        String topsoilVersion = metadata.getVersion();
+
+        // ?body=
+        errorURI.append("\u003f" + "body" + "\u003d");
+
+        //
+        errorURI.append("Topsoil+Version+" + topsoilVersion);
+        errorURI.append("\u0025" + "A0");
+        errorURI.append("Java+Version+" + javaVersion);
+        errorURI.append("\u0025" + "A0");
+        errorURI.append("Operating+System+" + operatingSystem);
+        errorURI.append("\u0025" + "A0/");
+
+        webBrowser.browse(errorURI.toString());
+
+
+    }
+
 
 }
