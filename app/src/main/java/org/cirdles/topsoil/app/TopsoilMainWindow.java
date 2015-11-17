@@ -392,7 +392,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     }
 
     @FXML
-    void errorReport() {
+    void issueReport() {
 
         StringBuilder errorURI = new StringBuilder();
         errorURI.append("https://github.com/CIRDLES/Topsoil/issues/new");
