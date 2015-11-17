@@ -9,9 +9,7 @@
          xmlns:fx="http://javafx.com/fxml/1">
     <HBox alignment="CENTER">
         <Label>Title:</Label>
-
-        <TextField fx:id="titleField"
-                   onKeyTyped="#updateTitle"/>
+        <TextField fx:id="titleField"/>
     </HBox>
 
     <HBox alignment="CENTER">

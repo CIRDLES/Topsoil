@@ -25,23 +25,17 @@
          xmlns:fx="http://javafx.com/fxml/1">
     <HBox alignment="CENTER">
         <Label>Title:</Label>
-
-        <TextField fx:id="titleField"
-                   onKeyTyped="#updateTitle"/>
+        <TextField fx:id="titleField"/>
     </HBox>
 
     <HBox alignment="CENTER">
         <Label>X Axis:</Label>
-
-        <TextField fx:id="xAxisField"
-                   onKeyTyped="#updateXAxis"/>
+        <TextField fx:id="xAxisField"/>
     </HBox>
 
     <HBox alignment="CENTER">
         <Label>Y Axis:</Label>
-
-        <TextField fx:id="yAxisField"
-                   onKeyTyped="#updateYAxis"/>
+        <TextField fx:id="yAxisField"/>
     </HBox>
 
     <HBox alignment="CENTER">
