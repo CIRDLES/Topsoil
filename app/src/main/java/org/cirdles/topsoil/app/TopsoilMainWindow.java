@@ -24,6 +24,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -46,8 +49,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -384,6 +391,37 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     @FXML
     void emptyTable() {
         getCurrentTable().ifPresent(TsvTable::clear);
+    }
+
+    @FXML
+    void issueReport() {
+
+        StringBuilder errorURI = new StringBuilder();
+        errorURI.append("https://github.com/CIRDLES/Topsoil/issues/new");
+
+        String javaVersion = System.getProperty("java.version");
+        String operatingSystem = System.getProperty("os.name") + "\u0025" + "20" + System.getProperty("os.version");
+        operatingSystem = operatingSystem.replace(" ", "+");
+        String topsoilVersion = metadata.getVersion();
+
+        // ?body=
+        errorURI.append("\u003f" + "body" + "\u003d");
+
+        // append versions to body of error-report field
+        try {
+            errorURI.append("Topsoil+Version+" + topsoilVersion);
+            errorURI.append(URLEncoder.encode("\n", "UTF-8"));
+            errorURI.append("Java+Version+" + javaVersion);
+            errorURI.append(URLEncoder.encode("\n", "UTF-8"));
+            errorURI.append("Operating+System+" + operatingSystem);
+            errorURI.append(URLEncoder.encode("\n****\n", "UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        } ;
+
+
+        webBrowser.browse(errorURI.toString());
+
     }
 
 }
