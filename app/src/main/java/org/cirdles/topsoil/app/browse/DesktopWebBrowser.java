@@ -19,7 +19,9 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import javafx.scene.control.Alert;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import org.cirdles.topsoil.app.util.Alerter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,15 @@ public class DesktopWebBrowser implements WebBrowser {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(DesktopWebBrowser.class);
+
+    private final Desktop desktop;
+    private final Alerter alerter;
+
+    @Inject
+    public DesktopWebBrowser(@Nullable Desktop desktop, Alerter alerter) {
+        this.desktop = desktop;
+        this.alerter = alerter;
+    }
 
     @Override
     public void browse(String uriString) {
@@ -44,32 +55,24 @@ public class DesktopWebBrowser implements WebBrowser {
     }
 
     void checkDesktopAndBrowse(URI uri) {
-        if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-
+        if (desktop != null) {
             if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                browse(desktop, uri);
+                browse(uri);
             } else {
-                errorAlert("Browsing not supported");
+                alerter.alert("Browsing not supported");
             }
         } else {
-            errorAlert("Desktop not supported");
+            alerter.alert("Desktop not supported");
         }
     }
 
-    void browse(Desktop desktop, URI uri) {
+    void browse(URI uri) {
         try {
             desktop.browse(uri);
         } catch (IOException ex) {
             LOGGER.error(null, ex);
-            errorAlert("Browser could not be opened.");
+            alerter.alert("Browser could not be opened.");
         }
-    }
-
-    void errorAlert(String alertMessage) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText(alertMessage);
-        alert.showAndWait();
     }
 
 }

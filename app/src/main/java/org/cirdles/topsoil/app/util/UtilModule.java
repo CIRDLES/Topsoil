@@ -25,6 +25,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
 import static com.google.inject.name.Names.named;
+import java.awt.Desktop;
 
 /**
  * Created by johnzeringue on 9/8/15.
@@ -37,6 +38,21 @@ public class UtilModule extends AbstractModule {
                 .annotatedWith(named("applicationDirectory"))
                 .toProvider(ApplicationDirectoryProvider.class)
                 .in(Singleton.class);
+
+        bind(Alerter.class).to(ErrorAlerter.class);
+    }
+
+    @Provides
+    Desktop provideDesktop() {
+        Desktop desktop;
+
+        if (Desktop.isDesktopSupported()) {
+            desktop = Desktop.getDesktop();
+        } else {
+            desktop = null;
+        }
+
+        return desktop;
     }
 
     @Provides
