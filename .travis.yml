@@ -6,14 +6,16 @@ cache:
   - "$HOME/.m2/repository"
   - "$HOME/.gradle/caches/"
 
-jdk:
-- oraclejdk8
+jdk: oraclejdk8
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-
+matrix:
+  include:
+    - addons:
+        apt:
+          packages:
+            - oracle-java8-installer # latest version
+    - # older version
+     
 before_script: npm install -g buster
 
 script: ./gradlew check busterTest
