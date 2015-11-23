@@ -44,6 +44,12 @@ public class TsvRawDataReaderTest {
             + "4 5 6\n"
             + "").replaceAll(" ", "\t");
 
+    private static final String tsvWithEmptyLines
+            = (""
+            + "1 2 3\n\n"
+            + "4 5 6\n\n"
+            + "").replaceAll(" ", "\t");
+
     private RawDataReader rawDataReaderWithHeaders;
     private RawDataReader rawDataReaderWithoutHeaders;
 
@@ -73,6 +79,23 @@ public class TsvRawDataReaderTest {
     @Test
     public void testReadsTSVFileWithoutHeaders() throws IOException {
         RawData rawData = rawDataReaderWithoutHeaders.read(tsvWithoutHeaders);
+
+        assertEquals(3, rawData.getFields().size());
+        assertEquals(2, rawData.getEntries().size());
+
+        Field field0 = rawData.getFields().get(0);
+        Field field2 = rawData.getFields().get(2);
+
+        assertEquals("Field 0", field0.getName());
+        assertEquals("Field 2", field2.getName());
+
+        assertEquals(1., rawData.getEntries().get(0).get(field0).get());
+        assertEquals(6., rawData.getEntries().get(1).get(field2).get());
+    }
+
+    @Test
+    public void testReadsTSVFileWithEmptyLines() throws IOException {
+        RawData rawData = rawDataReaderWithoutHeaders.read(tsvWithEmptyLines);
 
         assertEquals(3, rawData.getFields().size());
         assertEquals(2, rawData.getEntries().size());

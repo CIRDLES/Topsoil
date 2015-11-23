@@ -30,6 +30,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 
@@ -100,7 +101,12 @@ public class DsvRawDataReader extends BaseRawDataReader {
         Reader reader = new InputStreamReader(source, Charset.forName("UTF-8"));
         CSVReader dsvReader = new CSVReader(reader, delimiter);
 
-        List<String[]> lines = dsvReader.readAll();
+        // filter out empty lines
+        List<String[]> lines = dsvReader.readAll().stream()
+                // a line is empty if it only contains the empty string
+                .filter(line -> line.length != 1 || !line[0].equals(""))
+                .collect(Collectors.toList());
+
         validate(lines);
 
         if (lines.isEmpty()) {
