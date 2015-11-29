@@ -28,7 +28,11 @@ import org.cirdles.topsoil.chart.JavaFXDisplayable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static org.cirdles.topsoil.chart.standard.UncertaintyEllipseChartProperties.*;
+import static org.cirdles.topsoil.chart.standard.UncertaintyEllipseChartProperties.ELLIPSE_FILL_COLOR;
+import static org.cirdles.topsoil.chart.standard.UncertaintyEllipseChartProperties.TITLE;
+import static org.cirdles.topsoil.chart.standard.UncertaintyEllipseChartProperties.UNCERTAINTY;
+import static org.cirdles.topsoil.chart.standard.UncertaintyEllipseChartProperties.X_AXIS;
+import static org.cirdles.topsoil.chart.standard.UncertaintyEllipseChartProperties.Y_AXIS;
 
 /**
  * Created by johnzeringue on 11/8/15.

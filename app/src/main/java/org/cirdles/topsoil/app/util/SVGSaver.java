@@ -26,10 +26,16 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Optional;
 
-import static javax.xml.transform.OutputKeys.*;
+import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
+import static javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM;
+import static javax.xml.transform.OutputKeys.INDENT;
 
 /**
  * The purpose of SVGSaver.java is to save a vector image displayed in Topsoil's
