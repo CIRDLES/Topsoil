@@ -40,7 +40,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static javafx.concurrent.Worker.State.SUCCEEDED;
-import static org.cirdles.topsoil.chart.Variables.*;
+import static org.cirdles.topsoil.chart.Variables.X;
+import static org.cirdles.topsoil.chart.Variables.SIGMA_X;
+import static org.cirdles.topsoil.chart.Variables.Y;
+import static org.cirdles.topsoil.chart.Variables.SIGMA_Y;
+import static org.cirdles.topsoil.chart.Variables.RHO;
 import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
 
 /**

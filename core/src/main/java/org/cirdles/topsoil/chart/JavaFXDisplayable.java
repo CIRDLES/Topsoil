@@ -24,7 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import java.util.concurrent.ExecutionException;
 
 /**

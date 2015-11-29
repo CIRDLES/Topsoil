@@ -18,7 +18,7 @@ package org.cirdles.topsoil.chart;
 import javafx.scene.Node;
 import org.w3c.dom.Document;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 /**
  * An interface for objects that are displayable in a couple of common formats.

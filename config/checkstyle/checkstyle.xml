@@ -38,6 +38,12 @@
         <module name="InterfaceIsType"/>
 
         <!-- imports -->
+        <module name="AvoidStarImport">
+            <property name="excludes" value="org.hamcrest.Matchers"/>
+            <property name="excludes" value="org.junit.Assert"/>
+            <property name="excludes" value="org.mockito.Mockito"/>
+        </module>
+
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
 
