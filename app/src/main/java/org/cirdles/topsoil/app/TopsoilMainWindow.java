@@ -35,6 +35,8 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.BuilderFactory;
+import org.cirdles.topsoil.app.browse.WebBrowser;
 import org.cirdles.topsoil.app.chart.ChartWindow;
 import org.cirdles.topsoil.app.chart.VariableBindingDialog;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
@@ -45,8 +47,8 @@ import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
-import org.cirdles.topsoil.chart.standard.UncertaintyEllipseChart;
 import org.cirdles.topsoil.chart.standard.ScatterplotChart;
+import org.cirdles.topsoil.chart.standard.UncertaintyEllipseChart;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -60,7 +62,6 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import org.cirdles.topsoil.app.browse.WebBrowser;
 
 /**
  * FXML Controller class
@@ -88,6 +89,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     Button emptyTableButton;
 
     private ApplicationMetadata metadata;
+    private BuilderFactory builderFactory;
     private DatasetMapper datasetMapper;
     private FlywayMigrateTask flywayMigrate;
     private WebBrowser webBrowser;
@@ -95,11 +97,13 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     @Inject
     public TopsoilMainWindow(
             ApplicationMetadata metadata,
+            BuilderFactory builderFactory,
             DatasetMapper datasetMapper,
             FlywayMigrateTask flywayMigrate,
             WebBrowser webBrowser) {
         super(self -> {
             self.metadata = metadata;
+            self.builderFactory = builderFactory;
             self.datasetMapper = datasetMapper;
             self.flywayMigrate = flywayMigrate;
             self.webBrowser = webBrowser;
@@ -392,6 +396,11 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     @FXML
     void emptyTable() {
         getCurrentTable().ifPresent(TsvTable::clear);
+    }
+
+    @Override
+    public BuilderFactory getBuilderFactory() {
+        return builderFactory;
     }
 
 }

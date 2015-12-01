@@ -16,10 +16,12 @@
 package org.cirdles.topsoil.app;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
+import javafx.util.BuilderFactory;
 import org.cirdles.topsoil.app.browse.WebBrowser;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
 import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
@@ -59,9 +61,11 @@ public class TopsoilMainWindowTest extends ApplicationTest {
     @Override
     public void start(Stage stage) throws Exception {
         ApplicationMetadata metadata = new TestApplicationMetadata();
+        BuilderFactory builderFactory = new JavaFXBuilderFactory();
 
         topsoilMainWindow = new TopsoilMainWindow(
                 metadata,
+                builderFactory,
                 datasetMapper,
                 flywayMigrateTask,
                 webBrowser);
