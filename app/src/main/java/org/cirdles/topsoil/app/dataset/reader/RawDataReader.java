@@ -24,7 +24,7 @@ import java.nio.file.Path;
 
 /**
  *
- * @author John Zeringue <john.joseph.zeringue@gmail.com>
+ * @author John Zeringue
  */
 public interface RawDataReader {
 

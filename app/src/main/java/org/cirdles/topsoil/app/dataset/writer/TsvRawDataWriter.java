@@ -17,7 +17,7 @@ package org.cirdles.topsoil.app.dataset.writer;
 
 /**
  *
- * @author John Zeringue <john.joseph.zeringue@gmail.com>
+ * @author John Zeringue
  */
 public class TsvRawDataWriter extends DsvRawDataWriter {
 
