@@ -41,19 +41,19 @@
 
         if (data.length > 0){
             var dataXMin = d3.min(data, function (d) {
-                return d.x - d.sigma_x;
+                return d.x - d.sigma_x * chart.getProperty("Uncertainty");
             });
 
             var dataYMin = d3.min(data, function (d) {
-                return d.y - d.sigma_y;
+                return d.y - d.sigma_y * chart.getProperty("Uncertainty");
             });
 
             var dataXMax = d3.max(data, function (d) {
-                return d.x + d.sigma_x;
+                return d.x + d.sigma_x * chart.getProperty("Uncertainty");
             });
 
             var dataYMax = d3.max(data, function (d) {
-                return d.y + d.sigma_y;
+                return d.y + d.sigma_y * chart.getProperty("Uncertainty");
             });
 
             var xRange = dataXMax - dataXMin;
