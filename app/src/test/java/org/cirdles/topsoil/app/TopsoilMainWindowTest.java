@@ -22,11 +22,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import javafx.util.BuilderFactory;
+import javax.inject.Provider;
 import org.cirdles.topsoil.app.browse.WebBrowser;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
 import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.app.metadata.TestApplicationMetadata;
+import org.cirdles.topsoil.app.util.AboutDialog;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,7 +47,11 @@ public class TopsoilMainWindowTest extends ApplicationTest {
 
     @Rule
     @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+
     public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+    @Mock
+    private Provider<AboutDialog> aboutDialog;
 
     @Mock
     private DatasetMapper datasetMapper;
@@ -64,6 +70,7 @@ public class TopsoilMainWindowTest extends ApplicationTest {
         BuilderFactory builderFactory = new JavaFXBuilderFactory();
 
         topsoilMainWindow = new TopsoilMainWindow(
+                aboutDialog,
                 metadata,
                 builderFactory,
                 datasetMapper,
