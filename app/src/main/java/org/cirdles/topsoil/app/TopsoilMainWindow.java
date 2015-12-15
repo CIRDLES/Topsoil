@@ -62,6 +62,8 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import javax.inject.Provider;
+import org.cirdles.topsoil.app.util.AboutDialog;
 
 /**
  * FXML Controller class
@@ -87,7 +89,10 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     Button saveDataTableButton;
     @FXML
     Button emptyTableButton;
+    @FXML
+    Button openDialogButton;
 
+    private Provider<AboutDialog> aboutDialog;
     private ApplicationMetadata metadata;
     private BuilderFactory builderFactory;
     private DatasetMapper datasetMapper;
@@ -96,12 +101,14 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
     @Inject
     public TopsoilMainWindow(
+            Provider<AboutDialog> aboutDialog,
             ApplicationMetadata metadata,
             BuilderFactory builderFactory,
             DatasetMapper datasetMapper,
             FlywayMigrateTask flywayMigrate,
             WebBrowser webBrowser) {
         super(self -> {
+            self.aboutDialog = aboutDialog;
             self.metadata = metadata;
             self.builderFactory = builderFactory;
             self.datasetMapper = datasetMapper;
@@ -396,6 +403,11 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     @FXML
     void emptyTable() {
         getCurrentTable().ifPresent(TsvTable::clear);
+    }
+
+    @FXML
+    void openAboutDialog() {
+        aboutDialog.get().showAndWait();
     }
 
     @Override

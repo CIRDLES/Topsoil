@@ -25,6 +25,8 @@
         <Menu text="Datasets" fx:id="datasetsMenu"/>
 
         <Menu text="Help" fx:id="helpMenu">
+            <MenuItem text="About"
+                      onAction="#openAboutDialog"/>
             <MenuItem text="Documentation"
                       onAction="#openDocumentationLink"  />
             <MenuItem text="Issues"
