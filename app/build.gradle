@@ -1,4 +1,16 @@
+buildscript {
+    repositories {
+        mavenCentral();
+    }
+
+    dependencies {
+        classpath 'org.eclipse.jgit:org.eclipse.jgit:4.1.1.201511131810-r'
+    }
+}
+
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.internal.storage.file.FileRepository
 
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -22,14 +34,10 @@ task debug(dependsOn: project.classes, type: JavaExec) {
 
 // BEGIN BETTER VERSIONING
 def getVersionName = { ->
-    def stdout = new ByteArrayOutputStream()
+    def repo = new FileRepository("$rootDir/.git");
+    def git = new Git(repo);
 
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-
-    return stdout.toString().trim()
+    git.describe().call()
 }
 
 processResources {
