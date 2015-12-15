@@ -16,6 +16,8 @@
         </Menu>
 
         <Menu text="Charts" fx:id="chartsMenu">
+            <MenuItem text="evolution chart"
+                      onAction="#createEvolutionChart" />
             <MenuItem text="scatterplot"
                       onAction="#createScatterplot" />
             <MenuItem text="uncertainty ellipse chart"

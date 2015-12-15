@@ -47,6 +47,7 @@ import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.JavaScriptChart;
+import org.cirdles.topsoil.chart.standard.EvolutionChart;
 import org.cirdles.topsoil.chart.standard.ScatterplotChart;
 import org.cirdles.topsoil.chart.standard.UncertaintyEllipseChart;
 import org.cirdles.topsoil.dataset.Dataset;
@@ -378,6 +379,11 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         getCurrentTable().map(TsvTable::getDataset).ifPresent(dataset -> {
             initializeAndShow(javaScriptChart, dataset);
         });
+    }
+
+    @FXML
+    void createEvolutionChart() {
+        initializeAndShow(new EvolutionChart());
     }
 
     @FXML
