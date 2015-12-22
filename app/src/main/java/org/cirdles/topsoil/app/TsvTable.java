@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * A table containing data used to generate charts. Implements some shortcuts.
+ * A table containing data used to generate plots. Implements some shortcuts.
  */
 public class TsvTable extends TableView<Entry> {
 

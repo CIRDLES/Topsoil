@@ -39,7 +39,7 @@ import static javax.xml.transform.OutputKeys.INDENT;
 
 /**
  * The purpose of SVGSaver.java is to save a vector image displayed in Topsoil's
- * js-charts with the .svg file extension
+ * JavaScript plots with the .svg file extension
  *
  * @author John Zeringue
  */

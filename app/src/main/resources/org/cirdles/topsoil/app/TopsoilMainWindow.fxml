@@ -15,13 +15,13 @@
                       onAction="#importFromTSV" />
         </Menu>
 
-        <Menu text="Charts" fx:id="chartsMenu">
-            <MenuItem text="evolution chart"
-                      onAction="#createEvolutionChart" />
-            <MenuItem text="scatterplot"
-                      onAction="#createScatterplot" />
-            <MenuItem text="uncertainty ellipse chart"
-                      onAction="#createUncertaintyEllipseChart" />
+        <Menu text="Plots" fx:id="plotsMenu">
+            <MenuItem text="Evolution Plot"
+                      onAction="#createEvolutionPlot" />
+            <MenuItem text="Scatter Plot"
+                      onAction="#createScatterPlot" />
+            <MenuItem text="Uncertainty Ellipse Plot"
+                      onAction="#createUncertaintyEllipsePlot" />
         </Menu>
 
         <Menu text="Datasets" fx:id="datasetsMenu"/>
