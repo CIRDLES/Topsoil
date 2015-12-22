@@ -18,7 +18,7 @@ test {
 javascript.source {
     topsoil {
         js {
-            srcDir 'src/main/resources/org/cirdles/topsoil/chart/topsoil_js'
+            srcDir 'src/main/resources/org/cirdles/topsoil/plot/topsoil_js'
             include '*.js'
         }
     }
@@ -26,7 +26,7 @@ javascript.source {
 
 combineJs {
     source = javascript.source.topsoil.js.files
-    dest = file("${project.buildDir}/resources/main/org/cirdles/topsoil/chart/topsoil.js")
+    dest = file("${project.buildDir}/resources/main/org/cirdles/topsoil/plot/topsoil.js")
 }
 
 processResources.dependsOn combineJs

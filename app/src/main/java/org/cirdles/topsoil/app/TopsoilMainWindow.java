@@ -37,19 +37,20 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.BuilderFactory;
 import org.cirdles.topsoil.app.browse.WebBrowser;
-import org.cirdles.topsoil.app.chart.ChartWindow;
-import org.cirdles.topsoil.app.chart.VariableBindingDialog;
+import org.cirdles.topsoil.app.plot.PlotWindow;
+import org.cirdles.topsoil.app.plot.VariableBindingDialog;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
 import org.cirdles.topsoil.app.dataset.reader.CsvRawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
 import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
-import org.cirdles.topsoil.chart.Chart;
-import org.cirdles.topsoil.chart.JavaScriptChart;
-import org.cirdles.topsoil.chart.standard.EvolutionChart;
-import org.cirdles.topsoil.chart.standard.ScatterplotChart;
-import org.cirdles.topsoil.chart.standard.UncertaintyEllipseChart;
+import org.cirdles.topsoil.app.util.AboutDialog;
+import org.cirdles.topsoil.plot.JavaScriptPlot;
+import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.standard.EvolutionPlot;
+import org.cirdles.topsoil.plot.standard.ScatterPlot;
+import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -57,14 +58,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javax.inject.Provider;
-import org.cirdles.topsoil.app.util.AboutDialog;
 
 /**
  * FXML Controller class
@@ -81,7 +81,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     private static final String TOPSOIL_WIKI_URI_STRING = "https://github.com/CIRDLES/Topsoil/wiki#topsoil";
 
     @FXML
-    Menu chartsMenu;
+    Menu plotsMenu;
     @FXML
     Menu datasetsMenu;
     @FXML
@@ -90,8 +90,6 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     Button saveDataTableButton;
     @FXML
     Button emptyTableButton;
-    @FXML
-    Button openDialogButton;
 
     private Provider<AboutDialog> aboutDialog;
     private ApplicationMetadata metadata;
@@ -361,39 +359,39 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
                 this::importFromTSV);
     }
 
-    void initializeAndShow(Chart chart, Dataset dataset) {
-        new VariableBindingDialog(chart.getVariables(), dataset).showAndWait()
+    void initializeAndShow(Plot plot, Dataset dataset) {
+        new VariableBindingDialog(plot.getVariables(), dataset).showAndWait()
                 .ifPresent(variableContext -> {
-                    chart.setData(variableContext);
+                    plot.setData(variableContext);
 
-                    Parent chartWindow = new ChartWindow(chart);
-                    Scene scene = new Scene(chartWindow, 1200, 800);
+                    Parent plotWindow = new PlotWindow(plot);
+                    Scene scene = new Scene(plotWindow, 1200, 800);
 
-                    Stage chartStage = new Stage();
-                    chartStage.setScene(scene);
-                    chartStage.show();
+                    Stage plotStage = new Stage();
+                    plotStage.setScene(scene);
+                    plotStage.show();
                 });
     }
 
-    private void initializeAndShow(JavaScriptChart javaScriptChart) {
+    private void initializeAndShow(JavaScriptPlot javaScriptPlot) {
         getCurrentTable().map(TsvTable::getDataset).ifPresent(dataset -> {
-            initializeAndShow(javaScriptChart, dataset);
+            initializeAndShow(javaScriptPlot, dataset);
         });
     }
 
     @FXML
-    void createEvolutionChart() {
-        initializeAndShow(new EvolutionChart());
+    void createEvolutionPlot() {
+        initializeAndShow(new EvolutionPlot());
     }
 
     @FXML
-    void createScatterplot() {
-        initializeAndShow(new ScatterplotChart());
+    void createScatterPlot() {
+        initializeAndShow(new ScatterPlot());
     }
 
     @FXML
-    void createUncertaintyEllipseChart() {
-        initializeAndShow(new UncertaintyEllipseChart());
+    void createUncertaintyEllipsePlot() {
+        initializeAndShow(new UncertaintyEllipsePlot());
     }
 
     @FXML
