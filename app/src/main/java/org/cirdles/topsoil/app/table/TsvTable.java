@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pfif.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app;
+package org.cirdles.topsoil.app.table;
 
 import javafx.collections.FXCollections;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import org.cirdles.topsoil.app.Tools;
 import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
-import org.cirdles.topsoil.app.table.EntryTableColumn;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -46,14 +45,16 @@ public class TsvTable extends TableView<Entry> {
     private Dataset dataset;
 
     public TsvTable() {
-        this.setEditable(true);
-        this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        setEditable(true);
+        getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        this.setOnKeyPressed((KeyEvent event) -> {
+        setOnKeyPressed(event -> {
             if (event.isShortcutDown() && event.getCode().equals(KeyCode.V)) {
                 pasteFromClipboard();
             }
         });
+
+        setSortPolicy(new TsvTableSortPolicy());
 
         //Context Menu
         setRowFactory(new EntryRowFactory());

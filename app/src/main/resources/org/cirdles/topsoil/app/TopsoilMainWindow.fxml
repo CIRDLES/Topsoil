@@ -2,7 +2,9 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
+<?import org.cirdles.topsoil.app.table.TsvTable?>
 <?import org.cirdles.topsoil.app.TopsoilMainWindow?>
+
 <fx:root type="org.cirdles.topsoil.app.TopsoilMainWindow"
          prefHeight="800"
          prefWidth="1200"

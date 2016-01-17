@@ -15,8 +15,9 @@
  */
 package org.cirdles.topsoil.dataset.entry;
 
-import java.util.ArrayList;
 import org.cirdles.topsoil.dataset.field.Field;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +29,20 @@ import java.util.Optional;
  */
 public class SimpleEntry implements Entry {
 
+    private static long numberOfEntries = 0;
+
+    private final long id;
     private final Map<Field, Object> fieldsToValues;
     private final List<EntryListener> listeners;
 
     public SimpleEntry() {
+        id = numberOfEntriesPlusPlus();
         fieldsToValues = new HashMap<>();
         listeners = new ArrayList<>();
+    }
+
+    private static long numberOfEntriesPlusPlus() {
+        return numberOfEntries++;
     }
 
     @Override
@@ -58,6 +67,16 @@ public class SimpleEntry implements Entry {
     @Override
     public void removeListener(EntryListener listener) {
         listeners.remove(listener);
+    }
+
+    public static int compare(Entry left, Entry right) {
+        if (left instanceof SimpleEntry && right instanceof SimpleEntry) {
+            return Long.compare(
+                    ((SimpleEntry) left).id,
+                    ((SimpleEntry) right).id);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
 }

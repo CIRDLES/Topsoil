@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app;
+package org.cirdles.topsoil.app.table;
 
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import org.junit.Test;
-import org.testfx.framework.junit.ApplicationTest;
+import com.johnzeringue.extendsfx.annotation.ResourceBundle;
+import com.johnzeringue.extendsfx.layout.CustomVBox;
+import javafx.fxml.FXML;
 
 /**
  *
  * @author John Zeringue
  */
-public class EmptyTablePlaceholderTest extends ApplicationTest {
+@ResourceBundle("Resources")
+public class EmptyTablePlaceholder extends CustomVBox<EmptyTablePlaceholder> {
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        Scene scene = new Scene(new EmptyTablePlaceholder(null));
-        stage.setScene(scene);
-        stage.show();
+    private TsvTable dataTable;
+
+    public EmptyTablePlaceholder(TsvTable dataTable) {
+        super(self -> self.dataTable = dataTable);
     }
 
-    @Test
-    public void testLoadsFXML() {
-
+    @FXML
+    private void pasteFromClipboardIntoDataTable() {
+        dataTable.pasteFromClipboard();
     }
 
 }
