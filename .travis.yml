@@ -25,6 +25,8 @@ notifications:
     urls: https://webhooks.gitter.im/e/7545741f25d3397d0a1e
     on_success: change
 
+after_success: ./gradlew jacocoTestReport coveralls
+
 before_deploy: ./gradlew jarWithDependencies
 
 deploy:

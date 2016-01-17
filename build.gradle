@@ -1,5 +1,22 @@
-subprojects {
+plugins {
+    id 'com.github.kt3k.coveralls' version '2.4.0x'
+}
+
+allprojects {
     apply plugin: 'java'
+    apply plugin: 'jacoco'
+
+    repositories {
+        jcenter()
+        mavenLocal()
+
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+}
+
+subprojects {
     apply plugin: 'checkstyle'
     apply plugin: 'findbugs'
     apply plugin: 'maven'
@@ -10,15 +27,6 @@ subprojects {
     checkstyle {
         configFile file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
         toolVersion = '6.11.2'
-    }
-
-    repositories {
-        jcenter()
-        mavenLocal()
-
-        maven {
-            url 'https://jitpack.io'
-        }
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -57,4 +65,21 @@ subprojects {
         testCompile 'org.testfx:openjfx-monocle:1.8.0_20'
         testCompile 'org.testfx:testfx-junit:4.0.+'
     }
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    sourceDirectories = files subprojects.sourceSets.main.allSource.srcDirs
+    classDirectories = files subprojects.sourceSets.main.output
+    executionData = files subprojects.jacocoTestReport.executionData
+
+    reports {
+        html.enabled true
+        xml.enabled true
+    }
+}
+
+coveralls {
+    sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
 }
