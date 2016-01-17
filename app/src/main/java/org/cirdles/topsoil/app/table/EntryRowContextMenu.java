@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app;
+package org.cirdles.topsoil.app.table;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.stage.WindowEvent;
-import org.cirdles.topsoil.app.table.EntryTableColumn;
 import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.entry.SimpleEntry;
 
