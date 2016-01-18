@@ -5,10 +5,13 @@
 <?import org.cirdles.topsoil.app.table.TsvTable?>
 <?import org.cirdles.topsoil.app.TopsoilMainWindow?>
 
+<?import org.cirdles.topsoil.app.menu.PlotMenu?>
+<?import org.cirdles.topsoil.app.menu.IsotopeSystemMenu?>
 <fx:root type="org.cirdles.topsoil.app.TopsoilMainWindow"
          prefHeight="800"
          prefWidth="1200"
          xmlns:fx="http://javafx.com/fxml/1">
+
     <MenuBar useSystemMenuBar="true" >
         <Menu text="%fileMenu">
             <MenuItem text="%importFromCSV"
@@ -17,15 +20,8 @@
                       onAction="#importFromTSV" />
         </Menu>
 
-        <Menu text="Plots" fx:id="plotsMenu">
-            <MenuItem text="Evolution Plot"
-                      onAction="#createEvolutionPlot" />
-            <MenuItem text="Scatter Plot"
-                      onAction="#createScatterPlot" />
-            <MenuItem text="Uncertainty Ellipse Plot"
-                      onAction="#createUncertaintyEllipsePlot" />
-        </Menu>
-
+        <IsotopeSystemMenu fx:id="isotopeSystemMenu"/>
+        <PlotMenu fx:id="plotMenu"/>
         <Menu text="Datasets" fx:id="datasetsMenu"/>
 
         <Menu text="Help" fx:id="helpMenu">

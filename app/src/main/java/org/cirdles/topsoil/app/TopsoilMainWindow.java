@@ -37,25 +37,23 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.BuilderFactory;
 import org.cirdles.topsoil.app.browse.WebBrowser;
-import org.cirdles.topsoil.app.plot.PlotWindow;
-import org.cirdles.topsoil.app.plot.VariableBindingDialog;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
 import org.cirdles.topsoil.app.dataset.reader.CsvRawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
 import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
+import org.cirdles.topsoil.app.menu.IsotopeSystemMenu;
+import org.cirdles.topsoil.app.menu.PlotMenu;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
+import org.cirdles.topsoil.app.plot.PlotWindow;
+import org.cirdles.topsoil.app.plot.VariableBindingDialog;
 import org.cirdles.topsoil.app.table.EmptyTablePlaceholder;
 import org.cirdles.topsoil.app.table.TsvTable;
 import org.cirdles.topsoil.app.util.AboutDialog;
-import org.cirdles.topsoil.plot.JavaScriptPlot;
-import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.standard.EvolutionPlot;
-import org.cirdles.topsoil.plot.standard.ScatterPlot;
-import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
+import org.cirdles.topsoil.plot.Plot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,15 +81,17 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     private static final String TOPSOIL_WIKI_URI_STRING = "https://github.com/CIRDLES/Topsoil/wiki#topsoil";
 
     @FXML
-    Menu plotsMenu;
+    private IsotopeSystemMenu isotopeSystemMenu;
     @FXML
-    Menu datasetsMenu;
+    private PlotMenu plotMenu;
     @FXML
-    TabPane dataTableTabPane;
+    private Menu datasetsMenu;
     @FXML
-    Button saveDataTableButton;
+    private TabPane dataTableTabPane;
     @FXML
-    Button emptyTableButton;
+    private Button saveDataTableButton;
+    @FXML
+    private Button emptyTableButton;
 
     private Provider<AboutDialog> aboutDialog;
     private ApplicationMetadata metadata;
@@ -108,6 +108,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
             DatasetMapper datasetMapper,
             FlywayMigrateTask flywayMigrate,
             WebBrowser webBrowser) {
+
         super(self -> {
             self.aboutDialog = aboutDialog;
             self.metadata = metadata;
@@ -132,12 +133,19 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
                 metadata.getVersion());
 
         setWindowTitle(nameAndVersion);
+
+        isotopeSystemMenu.setPlotMenu(plotMenu);
+        plotMenu.setTopsoilMainWindow(this);
     }
 
     private void loadOpenDatasets() {
         for (Dataset dataset : datasetMapper.getOpenDatasets()) {
             loadDataset(dataset);
         }
+    }
+
+    public TabPane getDataTableTabPane() {
+        return dataTableTabPane;
     }
 
     Optional<TsvTable> getCurrentTable() {
@@ -375,25 +383,10 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
                 });
     }
 
-    private void initializeAndShow(JavaScriptPlot javaScriptPlot) {
+    public void initializeAndShow(Plot plot) {
         getCurrentTable().map(TsvTable::getDataset).ifPresent(dataset -> {
-            initializeAndShow(javaScriptPlot, dataset);
+            initializeAndShow(plot, dataset);
         });
-    }
-
-    @FXML
-    void createEvolutionPlot() {
-        initializeAndShow(new EvolutionPlot());
-    }
-
-    @FXML
-    void createScatterPlot() {
-        initializeAndShow(new ScatterPlot());
-    }
-
-    @FXML
-    void createUncertaintyEllipsePlot() {
-        initializeAndShow(new UncertaintyEllipsePlot());
     }
 
     @FXML
