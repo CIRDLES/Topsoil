@@ -20,6 +20,7 @@ import com.google.inject.Provides;
 import org.cirdles.topsoil.app.browse.BrowseModule;
 import org.cirdles.topsoil.app.builder.BuilderModule;
 import org.cirdles.topsoil.app.flyway.FlywayModule;
+import org.cirdles.topsoil.app.menu.MenuModule;
 import org.cirdles.topsoil.app.metadata.MetadataModule;
 import org.cirdles.topsoil.app.sqlite.SQLiteMyBatisModule;
 import org.cirdles.topsoil.app.util.UtilModule;
@@ -38,6 +39,7 @@ public class AppModule extends AbstractModule {
         install(new BrowseModule());
         install(new BuilderModule());
         install(new FlywayModule());
+        install(new MenuModule());
         install(new MetadataModule());
         install(new SQLiteMyBatisModule());
         install(new UtilModule());

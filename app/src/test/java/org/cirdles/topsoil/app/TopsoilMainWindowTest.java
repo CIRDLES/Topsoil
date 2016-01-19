@@ -22,7 +22,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import javafx.util.BuilderFactory;
-import javax.inject.Provider;
 import org.cirdles.topsoil.app.browse.WebBrowser;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
 import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
@@ -36,6 +35,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
+
+import javax.inject.Provider;
 
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -91,7 +92,7 @@ public class TopsoilMainWindowTest extends ApplicationTest {
         // should be focused
         clickOn("Create Data Table");
 
-        verifyThat(topsoilMainWindow.dataTableTabPane, (TabPane tabPane) -> {
+        verifyThat(topsoilMainWindow.getDataTableTabPane(), (TabPane tabPane) -> {
             int numberOfTabs = tabPane.getTabs().size();
             int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
 
@@ -116,14 +117,14 @@ public class TopsoilMainWindowTest extends ApplicationTest {
         clickOn("Create Data Table");
         clickOn("Create Data Table");
 
-        Tab tab1 = topsoilMainWindow.dataTableTabPane.getTabs().remove(0);
+        Tab tab1 = topsoilMainWindow.getDataTableTabPane().getTabs().remove(0);
         tab1.getOnClosed().handle(null);
 
         // shouldn't be disabled yet
         // one tab is still open
         verifyThat("#saveDataTableButton", button -> !button.isDisabled());
 
-        Tab tab2 = topsoilMainWindow.dataTableTabPane.getTabs().remove(0);
+        Tab tab2 = topsoilMainWindow.getDataTableTabPane().getTabs().remove(0);
         tab2.getOnClosed().handle(null);
 
         verifyThat("#saveDataTableButton", button -> button.isDisabled());
