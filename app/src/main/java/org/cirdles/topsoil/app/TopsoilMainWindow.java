@@ -406,7 +406,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
     @FXML
     void openAboutDialog() {
-        aboutDialog.get().showAndWait();
+        aboutDialog.get().run();
     }
 
     @Override
