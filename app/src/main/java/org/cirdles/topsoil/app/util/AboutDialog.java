@@ -22,11 +22,16 @@ import javax.inject.Inject;
  *
  * @author Emily
  */
-public class AboutDialog extends Dialog<Void> {
+public class AboutDialog extends Dialog<Void> implements Runnable {
 
     @Inject
     public AboutDialog(AboutDialogPane aboutDialogPane) {
         setDialogPane(aboutDialogPane);
+    }
+
+    @Override
+    public void run() {
+        show();
     }
 
 }
