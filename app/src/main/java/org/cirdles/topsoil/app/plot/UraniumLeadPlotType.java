@@ -29,7 +29,7 @@ public enum UraniumLeadPlotType implements PlotType {
     SCATTER_PLOT("Scatter Plot", ScatterPlot::new),
 
     UNCERTAINTY_ELLIPSE_PLOT(
-            "Uncertainty Ellipse Chart",
+            "Uncertainty Ellipse Plot",
             UncertaintyEllipsePlot::new);
 
     private final String name;
