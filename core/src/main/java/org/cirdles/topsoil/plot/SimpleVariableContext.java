@@ -15,11 +15,11 @@
  */
 package org.cirdles.topsoil.plot;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.stream.Collectors;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.field.Field;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class SimpleVariableContext implements VariableContext {
 
@@ -28,13 +28,6 @@ public class SimpleVariableContext implements VariableContext {
 
     public SimpleVariableContext(Dataset dataset) {
         this.dataset = dataset;
-    }
-
-    @Override
-    public Collection<Variable> getVariables() {
-        return getBindings().stream()
-                .map(VariableBinding::getVariable)
-                .collect(Collectors.toList());
     }
 
     @Override
