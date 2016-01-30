@@ -3,18 +3,7 @@ plugins {
     id 'com.eriwen.gradle.js' version '1.12.1'
     id 'com.github.rundis.buster' version '0.2.4.2'
 }
-// END JAVASCRIPT SUPPORT
 
-test {
-    systemProperty 'java.awt.headless', true
-    systemProperty 'prism.order', 'sw'
-    systemProperty 'prism.text', 't2k'
-    systemProperty 'testfx.headless', true
-    systemProperty 'testfx.robot', 'glass'
-    systemProperty 'testfx.setup.timeout', 2500
-}
-
-// BEGIN JAVASCRIPT SUPPORT
 javascript.source {
     topsoil {
         js {
