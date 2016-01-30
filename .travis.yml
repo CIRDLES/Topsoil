@@ -16,7 +16,10 @@ matrix:
             - oracle-java8-installer # latest version
     - # older version
      
-before_script: npm install -g buster
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - npm install -g buster
 
 script: ./gradlew check busterTest
 

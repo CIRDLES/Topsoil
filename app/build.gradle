@@ -58,15 +58,6 @@ task jarWithDependencies(type: Jar) {
     with jar
 }
 
-test {
-    systemProperty 'java.awt.headless', true
-    systemProperty 'prism.order', 'sw'
-    systemProperty 'prism.text', 't2k'
-    systemProperty 'testfx.headless', true
-    systemProperty 'testfx.robot', 'glass'
-    systemProperty 'testfx.setup.timeout', 2500
-}
-
 dependencies {
     compile project(':core')
 
