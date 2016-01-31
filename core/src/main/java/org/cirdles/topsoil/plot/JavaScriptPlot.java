@@ -196,8 +196,8 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
      * @param plotContext
      */
     @Override
-    public void setData(PlotContext plotContext) {
-        super.setData(plotContext);
+    public void setContext(PlotContext plotContext) {
+        super.setContext(plotContext);
 
         EntryListener listener = (entry, field) -> {
             drawPlot(plotContext);

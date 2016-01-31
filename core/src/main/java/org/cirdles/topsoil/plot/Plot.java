@@ -35,14 +35,14 @@ public interface Plot extends Displayable {
      */
     Optional<Dataset> getDataset();
 
-    Optional<PlotContext> getVariableContext();
+    Optional<PlotContext> getContext();
 
     /**
-     * Sets this {@link Plot}'s data to the object specified.
+     * Sets this {@link Plot}'s context to the object specified.
      *
-     * @param plotContext
+     * @param plotContext a plot context
      */
-    void setData(PlotContext plotContext);
+    void setContext(PlotContext plotContext);
 
     List<Variable> getVariables();
 

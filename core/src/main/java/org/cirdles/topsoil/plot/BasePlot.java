@@ -35,12 +35,12 @@ public abstract class BasePlot implements Plot {
     }
 
     @Override
-    public Optional<PlotContext> getVariableContext() {
+    public Optional<PlotContext> getContext() {
         return variableBindings;
     }
 
     @Override
-    public void setData(PlotContext plotContext) {
+    public void setContext(PlotContext plotContext) {
         this.dataset = Optional.ofNullable(plotContext.getDataset());
         this.variableBindings = Optional.ofNullable(plotContext);
     }

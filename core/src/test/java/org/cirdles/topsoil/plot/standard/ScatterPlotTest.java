@@ -70,7 +70,7 @@ public class ScatterPlotTest extends ApplicationTest {
         PlotContext plotContext
                 = new SimplePlotContext(dataset);
 
-        plot.setData(plotContext);
+        plot.setContext(plotContext);
     }
 
     @Test

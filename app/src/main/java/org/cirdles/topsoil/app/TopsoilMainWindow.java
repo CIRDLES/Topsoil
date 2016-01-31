@@ -372,7 +372,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     void initializeAndShow(Plot plot, Dataset dataset) {
         new VariableBindingDialog(plot.getVariables(), dataset).showAndWait()
                 .ifPresent(variableContext -> {
-                    plot.setData(variableContext);
+                    plot.setContext(variableContext);
 
                     Parent plotWindow = new PlotWindow(plot);
                     Scene scene = new Scene(plotWindow, 1200, 800);
