@@ -193,38 +193,38 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
      * in the following order: <code>x</code>, <code>σx</code>, <code>y</code>,
      * <code>σy</code>, <code>ρ</code>.
      *
-     * @param variableContext
+     * @param plotContext
      */
     @Override
-    public void setData(VariableContext variableContext) {
-        super.setData(variableContext);
+    public void setContext(PlotContext plotContext) {
+        super.setContext(plotContext);
 
         EntryListener listener = (entry, field) -> {
-            drawPlot(variableContext);
+            drawPlot(plotContext);
         };
 
-        List<Entry> entries = variableContext.getDataset().getEntries();
+        List<Entry> entries = plotContext.getDataset().getEntries();
         //Listen to the entries (= value changes)
         entries.forEach(entry -> entry.addListener(listener));
 
-        drawPlot(variableContext);
+        drawPlot(plotContext);
     }
 
-    public void drawPlot(VariableContext variableContext) {
+    public void drawPlot(PlotContext plotContext) {
         // pass the data to JavaScript
         // this seems excessive but passing a double[][] creates a single array
         // of undefined objects on the other side of things
         initializeFuture.thenRunAsync(() -> {
             getTopsoil().get().call("clearData"); // old data must be cleared
 
-            variableContext.getDataset().getEntries()
+            plotContext.getDataset().getEntries()
                     .stream()
                     .filter(entry -> entry.get(SELECTED).orElse(true))
                     .forEach(entry -> {
                         JSObject row = (JSObject) getWebEngine().get()
                                 .executeScript("new Object()");
 
-                        variableContext.getBindings().forEach(variableBinding -> {
+                        plotContext.getBindings().forEach(variableBinding -> {
                             row.setMember(
                                     variableBinding.getVariable().getName(),
                                     variableBinding.getValue(entry));

@@ -19,9 +19,9 @@ import java.util.List;
 import static javafx.scene.control.ButtonType.CANCEL;
 import static javafx.scene.control.ButtonType.OK;
 import javafx.scene.control.DialogPane;
-import org.cirdles.topsoil.plot.SimpleVariableContext;
+import org.cirdles.topsoil.plot.SimplePlotContext;
 import org.cirdles.topsoil.plot.Variable;
-import org.cirdles.topsoil.plot.VariableContext;
+import org.cirdles.topsoil.plot.PlotContext;
 import org.cirdles.topsoil.dataset.Dataset;
 
 /**
@@ -50,18 +50,18 @@ public class VariableBindingDialogPane extends DialogPane {
         getButtonTypes().setAll(OK, CANCEL);
     }
 
-    public VariableContext getVariableContext() {
-        VariableContext variableContext = new SimpleVariableContext(dataset);
+    public PlotContext getVariableContext() {
+        PlotContext plotContext = new SimplePlotContext(dataset);
 
         variableBindingView.getControls().forEach(control -> {
-            variableContext.addBinding(
+            plotContext.addBinding(
                     control.getVariable(),
                     control.getFieldSelection(),
                     control.getVariableFormatSelection()
             );
         });
 
-        return variableContext;
+        return plotContext;
     }
 
 }

@@ -27,7 +27,7 @@ import java.util.Optional;
 public abstract class BasePlot implements Plot {
 
     private Optional<Dataset> dataset = Optional.empty();
-    private Optional<VariableContext> variableBindings = Optional.empty();
+    private Optional<PlotContext> variableBindings = Optional.empty();
 
     @Override
     public Optional<Dataset> getDataset() {
@@ -35,14 +35,14 @@ public abstract class BasePlot implements Plot {
     }
 
     @Override
-    public Optional<VariableContext> getVariableContext() {
+    public Optional<PlotContext> getContext() {
         return variableBindings;
     }
 
     @Override
-    public void setData(VariableContext variableContext) {
-        this.dataset = Optional.ofNullable(variableContext.getDataset());
-        this.variableBindings = Optional.ofNullable(variableContext);
+    public void setContext(PlotContext plotContext) {
+        this.dataset = Optional.ofNullable(plotContext.getDataset());
+        this.variableBindings = Optional.ofNullable(plotContext);
     }
 
 }
