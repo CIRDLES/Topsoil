@@ -18,6 +18,13 @@ package org.cirdles.topsoil.plot.standard;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.Displayable;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
+import org.cirdles.topsoil.plot.Variable;
+
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.cirdles.topsoil.plot.Variables.X;
+import static org.cirdles.topsoil.plot.Variables.Y;
 
 /**
  *
@@ -44,6 +51,11 @@ public class ScatterPlot extends JavaScriptPlot {
         }
 
         return propertiesPanel;
+    }
+
+    @Override
+    public List<Variable> getVariables() {
+        return asList(X, Y);
     }
 
 }
