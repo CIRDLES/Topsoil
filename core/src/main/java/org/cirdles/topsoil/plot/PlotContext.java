@@ -27,7 +27,7 @@ import java.util.Optional;
  *
  * @author John Zeringue
  */
-public interface VariableContext {
+public interface PlotContext {
 
     Dataset getDataset();
 

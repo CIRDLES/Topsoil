@@ -18,14 +18,14 @@ package org.cirdles.topsoil.app.plot;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import org.cirdles.topsoil.plot.Variable;
-import org.cirdles.topsoil.plot.VariableContext;
+import org.cirdles.topsoil.plot.PlotContext;
 import org.cirdles.topsoil.dataset.Dataset;
 
 import java.util.List;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class VariableBindingDialog extends Dialog<VariableContext> {
+public class VariableBindingDialog extends Dialog<PlotContext> {
 
     private final List<Variable> variables;
     private final Dataset dataset;
@@ -43,12 +43,12 @@ public class VariableBindingDialog extends Dialog<VariableContext> {
         setResultConverter(this::convertResult);
     }
 
-    VariableContext extractVariableContextFromDialogPane() {
+    PlotContext extractVariableContextFromDialogPane() {
         return ((VariableBindingDialogPane) getDialogPane())
                 .getVariableContext();
     }
 
-    VariableContext convertResult(ButtonType type) {
+    PlotContext convertResult(ButtonType type) {
         if (type == OK) {
             return extractVariableContextFromDialogPane();
         } else {

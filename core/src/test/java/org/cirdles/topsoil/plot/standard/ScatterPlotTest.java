@@ -20,8 +20,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.SimpleVariableContext;
-import org.cirdles.topsoil.plot.VariableContext;
+import org.cirdles.topsoil.plot.SimplePlotContext;
+import org.cirdles.topsoil.plot.PlotContext;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -67,10 +67,10 @@ public class ScatterPlotTest extends ApplicationTest {
         RawData rawData = new RawData(new ArrayList<>(), new ArrayList<>());
         Dataset dataset = new SimpleDataset("Test", rawData);
 
-        VariableContext variableContext
-                = new SimpleVariableContext(dataset);
+        PlotContext plotContext
+                = new SimplePlotContext(dataset);
 
-        plot.setData(variableContext);
+        plot.setData(plotContext);
     }
 
     @Test

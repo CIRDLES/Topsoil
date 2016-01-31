@@ -21,12 +21,12 @@ import org.cirdles.topsoil.dataset.field.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SimpleVariableContext implements VariableContext {
+public class SimplePlotContext implements PlotContext {
 
     private final Collection<VariableBinding> bindings = new ArrayList<>();
     private final Dataset dataset;
 
-    public SimpleVariableContext(Dataset dataset) {
+    public SimplePlotContext(Dataset dataset) {
         this.dataset = dataset;
     }
 

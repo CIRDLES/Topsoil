@@ -31,7 +31,7 @@ public interface VariableBinding<T> {
 
     public VariableFormat<T> getFormat();
 
-    public VariableContext getContext();
+    public PlotContext getContext();
 
     public default T getValue(Entry entry) {
         return getFormat().normalize(this, entry);

@@ -22,15 +22,15 @@ public class SimpleVariableBinding<T> implements VariableBinding<T> {
     private final Variable<T> variable;
     private final Field<T> field;
     private final VariableFormat<T> format;
-    private final VariableContext context;
+    private final PlotContext context;
 
     public SimpleVariableBinding(Variable<T> variable, Field<T> field,
-            VariableContext context) {
+            PlotContext context) {
         this(variable, field, variable.getFormats().get(0), context);
     }
 
     public SimpleVariableBinding(Variable<T> variable, Field<T> field,
-            VariableFormat<T> format, VariableContext context) {
+            VariableFormat<T> format, PlotContext context) {
         this.variable = variable;
         this.field = field;
         this.format = format;
@@ -53,7 +53,7 @@ public class SimpleVariableBinding<T> implements VariableBinding<T> {
     }
 
     @Override
-    public VariableContext getContext() {
+    public PlotContext getContext() {
         return context;
     }
 
