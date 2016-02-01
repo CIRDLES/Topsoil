@@ -16,10 +16,13 @@
 package org.cirdles.topsoil.app.plot;
 
 import com.johnzeringue.extendsfx.layout.CustomVBox;
+import javafx.application.Platform;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import org.cirdles.topsoil.app.util.SVGSaver;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
@@ -55,7 +58,17 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                 javaScriptPlot.fitData();
             });
 
-            plotToolBar.getItems().addAll(saveToSVG, fitData);
+            Text loadingIndicator = new Text("Loading...");
+
+            javaScriptPlot.getLoadFuture().thenRunAsync(() -> {
+                        loadingIndicator.visibleProperty().bind(
+                                javaScriptPlot.getWebEngine().get().getLoadWorker()
+                                        .stateProperty().isEqualTo(Worker.State.RUNNING));
+                    },
+                    Platform::runLater
+            );
+
+            plotToolBar.getItems().addAll(saveToSVG, fitData, loadingIndicator);
         }
     }
 

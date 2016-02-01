@@ -138,8 +138,12 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return Optional.ofNullable(webView);
     }
 
-    Optional<WebEngine> getWebEngine() {
+    public Optional<WebEngine> getWebEngine() {
         return getWebView().map(WebView::getEngine);
+    }
+
+    public CompletableFuture<Void> getLoadFuture() {
+        return loadFuture;
     }
 
     Optional<JSObject> getTopsoil() {
