@@ -33,18 +33,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static javafx.concurrent.Worker.State.SUCCEEDED;
-import static org.cirdles.topsoil.plot.Variables.X;
-import static org.cirdles.topsoil.plot.Variables.SIGMA_X;
-import static org.cirdles.topsoil.plot.Variables.Y;
-import static org.cirdles.topsoil.plot.Variables.SIGMA_Y;
-import static org.cirdles.topsoil.plot.Variables.RHO;
 import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
 
 /**
@@ -56,12 +50,6 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(JavaScriptPlot.class);
-
-    private static final List<Variable> VARIABLES = Arrays.asList(
-            X, SIGMA_X,
-            Y, SIGMA_Y,
-            RHO
-    );
 
     private static final String HTML_TEMPLATE;
 
@@ -154,11 +142,6 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
     public void fitData() {
         getTopsoil().get().call("showData");
-    }
-
-    @Override
-    public List<Variable> getVariables() {
-        return VARIABLES;
     }
 
     String buildContent() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,18 @@
 package org.cirdles.topsoil.plot.standard;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import org.cirdles.topsoil.plot.Plot;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
-import org.testfx.framework.junit.ApplicationTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.TITLE;
 
 /**
- * Created by johnzeringue on 11/11/15.
+ * Created by johnzeringue on 1/31/16.
  */
-public class UncertaintyEllipsePlotTest extends ApplicationTest {
+public class EvolutionPlotTest {
 
     @Rule
     @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
@@ -39,30 +35,14 @@ public class UncertaintyEllipsePlotTest extends ApplicationTest {
 
     private Plot plot;
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        plot = new UncertaintyEllipsePlot();
-
-        Scene scene = new Scene((Parent) plot.displayAsNode());
-        stage.setScene(scene);
-        stage.show();
+    @Before
+    public void setUp() {
+        plot = new EvolutionPlot();
     }
 
     @Test
-    public void testGetProperty() {
-        assertThat(plot.getProperty(TITLE))
-                .isEqualTo("Uncertainty Ellipse Plot");
-    }
-
-    @Test
-    public void testSetProperty() {
-        plot.setProperty(TITLE, "New Title");
-        assertThat(plot.getProperty(TITLE)).isEqualTo("New Title");
-    }
-
-    @Test
-    public void testGetVariables() {
-        assertThat(plot.getVariables()).hasSize(5);
+    public void testGetVariables() throws Exception {
+        assertThat(plot.getVariables()).hasSize(4);
     }
 
 }
