@@ -42,3 +42,6 @@ deploy:
   on:
     repo: CIRDLES/Topsoil
     tags: true
+
+after_deploy: curl --request GET 'https://jitpack.io/com/github/CIRDLES/Topsoil/1.0.0-alpha.7/topsoil-1.0.0-alpha.7.pom'
+
