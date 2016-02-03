@@ -20,6 +20,8 @@ import org.cirdles.topsoil.dataset.Dataset;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
+
 /**
  * A generalized plot that can express itself as a {@link javafx.scene.Node}.
  *
@@ -43,6 +45,10 @@ public interface Plot extends Displayable {
      * @param plotContext a plot context
      */
     void setContext(PlotContext plotContext);
+
+    default List<Constant> getConstants() {
+        return emptyList();
+    }
 
     List<Variable> getVariables();
 

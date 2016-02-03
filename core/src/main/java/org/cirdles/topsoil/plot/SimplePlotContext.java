@@ -23,11 +23,15 @@ import java.util.Collection;
 
 public class SimplePlotContext implements PlotContext {
 
-    private final Collection<VariableBinding> bindings = new ArrayList<>();
+    private final Collection<ConstantBinding> constantBindings;
+    private final Collection<VariableBinding> variableBindings;
     private final Dataset dataset;
 
     public SimplePlotContext(Dataset dataset) {
         this.dataset = dataset;
+
+        constantBindings = new ArrayList<>();
+        variableBindings = new ArrayList<>();
     }
 
     @Override
@@ -36,13 +40,23 @@ public class SimplePlotContext implements PlotContext {
     }
 
     @Override
-    public Collection<VariableBinding> getBindings() {
-        return bindings;
+    public Collection<ConstantBinding> getConstantBindings() {
+        return constantBindings;
+    }
+
+    @Override
+    public Collection<VariableBinding> getVariableBindings() {
+        return variableBindings;
+    }
+
+    @Override
+    public void addBinding(Constant constant, Number value) {
+        constantBindings.add(new SimpleConstantBinding(constant, value));
     }
 
     @Override
     public <T> void addBinding(Variable<T> variable, Field<T> field, VariableFormat<T> format) {
-        bindings.add(new SimpleVariableBinding(variable, field, format, this));
+        variableBindings.add(new SimpleVariableBinding(variable, field, format, this));
     }
 
 }

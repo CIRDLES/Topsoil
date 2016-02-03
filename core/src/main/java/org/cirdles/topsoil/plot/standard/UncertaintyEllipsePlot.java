@@ -16,8 +16,10 @@
 package org.cirdles.topsoil.plot.standard;
 
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.plot.Constant;
 import org.cirdles.topsoil.plot.Displayable;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
+import org.cirdles.topsoil.plot.UraniumLeadConstant;
 import org.cirdles.topsoil.plot.Variable;
 
 import java.util.List;
@@ -44,6 +46,11 @@ public class UncertaintyEllipsePlot extends JavaScriptPlot {
 
     public UncertaintyEllipsePlot() {
         super(RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME));
+    }
+
+    @Override
+    public List<Constant> getConstants() {
+        return asList(UraniumLeadConstant.values());
     }
 
     @Override

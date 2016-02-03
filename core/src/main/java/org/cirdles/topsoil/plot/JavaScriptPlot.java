@@ -211,7 +211,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
                         JSObject row = (JSObject) getWebEngine().get()
                                 .executeScript("new Object()");
 
-                        plotContext.getBindings().forEach(variableBinding -> {
+                        plotContext.getVariableBindings().forEach(variableBinding -> {
                             row.setMember(
                                     variableBinding.getVariable().getName(),
                                     variableBinding.getValue(entry));

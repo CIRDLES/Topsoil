@@ -31,10 +31,18 @@ public interface PlotContext {
 
     Dataset getDataset();
 
-    Collection<VariableBinding> getBindings();
+    Collection<ConstantBinding> getConstantBindings();
+
+    Collection<VariableBinding> getVariableBindings();
+
+    default Optional<ConstantBinding> getBindingForConstant(Constant constant) {
+        return getConstantBindings().stream()
+                .filter(binding -> Objects.equals(binding.getConstant(), constant))
+                .findFirst();
+    }
 
     default <T> Optional<VariableBinding<T>> getBindingForVariable(Variable<T> variable) {
-        return getBindings().stream()
+        return getVariableBindings().stream()
                 .filter(binding -> {
                     return Objects.equals(binding.getVariable(), variable);
                 })
@@ -42,6 +50,8 @@ public interface PlotContext {
                 // cast binding type
                 .map(binding -> (VariableBinding<T>) binding);
     }
+
+    void addBinding(Constant constant, Number value);
 
     default <T> void addBinding(Variable<T> variable, Field<T> field) {
         addBinding(variable, field, variable.getFormats().get(0));
