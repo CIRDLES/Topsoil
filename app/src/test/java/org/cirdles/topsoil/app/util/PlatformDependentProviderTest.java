@@ -49,7 +49,6 @@ public class PlatformDependentProviderTest {
     }
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public ExpectedException exception = ExpectedException.none();
 
     private final String osName;

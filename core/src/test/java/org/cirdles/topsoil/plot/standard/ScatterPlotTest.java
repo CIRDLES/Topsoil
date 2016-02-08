@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.plot.standard;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -42,7 +41,6 @@ import static org.cirdles.topsoil.plot.standard.ScatterPlotProperties.TITLE;
 public class ScatterPlotTest extends ApplicationTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout timeout = Timeout.seconds(5);
 
     private Plot plot;

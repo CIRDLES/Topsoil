@@ -17,7 +17,6 @@ package org.cirdles.topsoil.app.util;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,7 +38,6 @@ import static org.mockito.Mockito.when;
 public class ApplicationDirectoryProviderTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
