@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.plot.standard;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.cirdles.topsoil.plot.Plot;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class EvolutionPlotTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout timeout = Timeout.seconds(5);
 
     private Plot plot;

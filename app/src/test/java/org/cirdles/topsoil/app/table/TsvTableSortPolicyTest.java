@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.app.table;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -45,7 +44,6 @@ import static org.mockito.Mockito.when;
 public class TsvTableSortPolicyTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock

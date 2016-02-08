@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.app;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
@@ -47,8 +46,6 @@ import static org.testfx.api.FxAssert.verifyThat;
 public class TopsoilMainWindowTest extends ApplicationTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock

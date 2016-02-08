@@ -18,7 +18,6 @@ package org.cirdles.topsoil.app.builder;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.util.BuilderFactory;
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,7 +37,6 @@ import static org.mockito.Mockito.when;
 public class GuiceJavaFXBuilderFactoryTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock

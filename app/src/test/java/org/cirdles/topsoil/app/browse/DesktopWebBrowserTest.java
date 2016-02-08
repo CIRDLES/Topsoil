@@ -15,18 +15,21 @@
  */
 package org.cirdles.topsoil.app.browse;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.awt.Desktop;
-import java.io.IOException;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.*;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.awt.Desktop;
+import java.io.IOException;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -35,7 +38,6 @@ import org.mockito.junit.MockitoRule;
 public class DesktopWebBrowserTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
