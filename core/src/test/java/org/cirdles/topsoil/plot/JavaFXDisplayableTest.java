@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.plot;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.layout.VBox;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +28,6 @@ import javax.swing.SwingUtilities;
 public class JavaFXDisplayableTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout timeout = Timeout.seconds(5);
 
     @Test
