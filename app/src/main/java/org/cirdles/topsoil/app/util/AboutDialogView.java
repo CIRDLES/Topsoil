@@ -17,6 +17,7 @@ package org.cirdles.topsoil.app.util;
 
 import com.johnzeringue.extendsfx.annotation.ResourceBundle;
 import com.johnzeringue.extendsfx.layout.CustomVBox;
+import java.util.Properties;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javax.inject.Inject;
@@ -30,9 +31,6 @@ import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 @ResourceBundle("Resources")
 public class AboutDialogView extends CustomVBox<AboutDialogView> {
 
-    private static final String JAVA_VERSION = "Java version: " + System.getProperty("java.version");
-    private static final String OPERATING_SYSTEM = "OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version");
-
     @FXML
     private Label javaVersionLabel;
 
@@ -43,22 +41,35 @@ public class AboutDialogView extends CustomVBox<AboutDialogView> {
     private Label topsoilVersionLabel;
 
     private ApplicationMetadata metadata;
+    private Properties systemProperties;
     private WebBrowser webBrowser;
 
     @Inject
     public AboutDialogView(
             ApplicationMetadata metadata,
+            Properties systemProperties,
             WebBrowser webBrowser) {
         super(self -> {
             self.metadata = metadata;
+            self.systemProperties = systemProperties;
             self.webBrowser = webBrowser;
         });
     }
 
+    private String operatingSystem() {
+        String osName = systemProperties.getProperty("os.name");
+        String osVersion = systemProperties.getProperty("os.version");
+        return "OS: " + osName + " " + osVersion;
+    }
+
+    private String javaVersion() {
+        return "Java version: " + systemProperties.getProperty("java.version");
+    }
+
     @FXML
     private void initialize() {
-        javaVersionLabel.setText(JAVA_VERSION);
-        operatingSystemLabel.setText(OPERATING_SYSTEM);
+        javaVersionLabel.setText(javaVersion());
+        operatingSystemLabel.setText(operatingSystem());
         topsoilVersionLabel.setText("Product version: " + metadata.getVersion());
     }
 

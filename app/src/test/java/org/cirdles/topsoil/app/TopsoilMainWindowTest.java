@@ -36,6 +36,8 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 
 import javax.inject.Provider;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -49,7 +51,10 @@ public class TopsoilMainWindowTest extends ApplicationTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    private Provider<AboutDialog> aboutDialog;
+    private AboutDialog aboutDialog;
+
+    @Mock
+    private Provider<AboutDialog> aboutDialogProvider;
 
     @Mock
     private DatasetMapper datasetMapper;
@@ -68,7 +73,7 @@ public class TopsoilMainWindowTest extends ApplicationTest {
         BuilderFactory builderFactory = new JavaFXBuilderFactory();
 
         topsoilMainWindow = new TopsoilMainWindow(
-                aboutDialog,
+                aboutDialogProvider,
                 metadata,
                 builderFactory,
                 datasetMapper,
@@ -125,6 +130,15 @@ public class TopsoilMainWindowTest extends ApplicationTest {
         tab2.getOnClosed().handle(null);
 
         verifyThat("#saveDataTableButton", button -> button.isDisabled());
+    }
+
+    @Test
+    public void testAboutDialogOpens() {
+        when(aboutDialogProvider.get()).thenReturn(aboutDialog);
+
+        clickOn("Help").clickOn("About");
+
+        verify(aboutDialog).run();
     }
 
 }
