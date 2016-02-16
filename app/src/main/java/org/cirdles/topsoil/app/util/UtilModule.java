@@ -26,6 +26,7 @@ import java.nio.file.Path;
 
 import static com.google.inject.name.Names.named;
 import java.awt.Desktop;
+import java.util.Properties;
 
 /**
  * Created by johnzeringue on 9/8/15.
@@ -58,6 +59,11 @@ public class UtilModule extends AbstractModule {
     @Provides
     FileSystem provideFileSystem() {
         return FileSystems.getDefault();
+    }
+
+    @Provides
+    Properties provideSystemProperties() {
+        return System.getProperties();
     }
 
     @Provides
