@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.app.plot;
 
+import javafx.scene.Node;
 import org.cirdles.topsoil.plot.Plot;
 
 /**
@@ -25,5 +26,7 @@ public interface PlotType {
     String getName();
 
     Plot newInstance();
+
+    Node newPropertiesPanel(Plot plot);
 
 }

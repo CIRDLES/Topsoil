@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.plot;
+package org.cirdles.topsoil.plot.standard;
 
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
 /**
- * A generalized plot that can express itself as a {@link javafx.scene.Node}.
- *
- * @author John Zeringue
+ * Created by johnzeringue on 2/22/16.
  */
-public interface Plot extends Displayable {
+public class EvolutionPlotDefaultProperties extends HashMap<String, Object> {
 
-    List<Map<String, Object>> getData();
+    public EvolutionPlotDefaultProperties() {
+        configure();
+    }
 
-    void setData(List<Map<String, Object>> data);
+    private void configure() {
 
-    Map<String, Object> getProperties();
-
-    void setProperties(Map<String, Object> properties);
+    }
 
 }

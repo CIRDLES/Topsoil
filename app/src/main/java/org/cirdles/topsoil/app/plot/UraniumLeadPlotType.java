@@ -15,10 +15,14 @@
  */
 package org.cirdles.topsoil.app.plot;
 
+import javafx.scene.Node;
+import org.cirdles.topsoil.app.plot.standard.ScatterPlotPropertiesPanel;
+import org.cirdles.topsoil.app.plot.standard.UncertaintyEllipsePlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.standard.ScatterPlot;
 import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -26,18 +30,28 @@ import java.util.function.Supplier;
  */
 public enum UraniumLeadPlotType implements PlotType {
 
-    SCATTER_PLOT("Scatter Plot", ScatterPlot::new),
+    SCATTER_PLOT(
+            "Scatter Plot",
+            ScatterPlot::new,
+            ScatterPlotPropertiesPanel::new),
 
     UNCERTAINTY_ELLIPSE_PLOT(
             "Uncertainty Ellipse Plot",
-            UncertaintyEllipsePlot::new);
+            UncertaintyEllipsePlot::new,
+            UncertaintyEllipsePlotPropertiesPanel::new);
 
     private final String name;
     private final Supplier<Plot> plotSupplier;
+    private final Function<Plot, Node> propertiesPanelConstructor;
 
-    UraniumLeadPlotType(String name, Supplier<Plot> plotSupplier) {
+    UraniumLeadPlotType(
+            String name,
+            Supplier<Plot> plotSupplier,
+            Function<Plot, Node> propertiesPanelConstructor) {
+
         this.name = name;
         this.plotSupplier = plotSupplier;
+        this.propertiesPanelConstructor = propertiesPanelConstructor;
     }
 
     @Override
@@ -48,6 +62,11 @@ public enum UraniumLeadPlotType implements PlotType {
     @Override
     public Plot newInstance() {
         return plotSupplier.get();
+    }
+
+    @Override
+    public Node newPropertiesPanel(Plot plot) {
+        return propertiesPanelConstructor.apply(plot);
     }
 
 }

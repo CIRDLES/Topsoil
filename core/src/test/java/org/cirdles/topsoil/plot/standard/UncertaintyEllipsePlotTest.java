@@ -24,9 +24,6 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.testfx.framework.junit.ApplicationTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.TITLE;
-
 /**
  * Created by johnzeringue on 11/11/15.
  */
@@ -47,20 +44,8 @@ public class UncertaintyEllipsePlotTest extends ApplicationTest {
     }
 
     @Test
-    public void testGetProperty() {
-        assertThat(plot.getProperty(TITLE))
-                .isEqualTo("Uncertainty Ellipse Plot");
-    }
-
-    @Test
-    public void testSetProperty() {
-        plot.setProperty(TITLE, "New Title");
-        assertThat(plot.getProperty(TITLE)).isEqualTo("New Title");
-    }
-
-    @Test
-    public void testGetVariables() {
-        assertThat(plot.getVariables()).hasSize(5);
+    public void testInitialize() {
+        // no-op
     }
 
 }

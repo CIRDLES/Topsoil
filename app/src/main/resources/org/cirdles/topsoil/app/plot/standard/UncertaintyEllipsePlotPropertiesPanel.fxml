@@ -19,9 +19,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
-<?import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotPropertiesPanel?>
+<?import org.cirdles.topsoil.app.plot.standard.UncertaintyEllipsePlotPropertiesPanel?>
 <?import javafx.scene.control.ColorPicker?>
-<fx:root type="org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotPropertiesPanel"
+<fx:root type="UncertaintyEllipsePlotPropertiesPanel"
          xmlns:fx="http://javafx.com/fxml/1">
     <HBox alignment="CENTER">
         <Label>Title:</Label>

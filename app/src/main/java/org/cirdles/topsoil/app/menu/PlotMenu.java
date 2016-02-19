@@ -43,7 +43,7 @@ public class PlotMenu extends Menu {
     private EventHandler<ActionEvent> createPlot(PlotType plotType) {
         return event -> {
             if (topsoilMainWindow != null) {
-                topsoilMainWindow.initializeAndShow(plotType.newInstance());
+                topsoilMainWindow.initializeAndShow(plotType);
             }
         };
     }

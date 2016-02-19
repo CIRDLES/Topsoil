@@ -15,9 +15,11 @@
  */
 package org.cirdles.topsoil.plot;
 
-import org.cirdles.topsoil.dataset.Dataset;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.Optional;
+import static java.util.Collections.emptyList;
 
 /**
  * A partial implementation of {@link Plot} that stores and retrieves set data.
@@ -26,23 +28,36 @@ import java.util.Optional;
  */
 public abstract class BasePlot implements Plot {
 
-    private Optional<Dataset> dataset = Optional.empty();
-    private Optional<PlotContext> variableBindings = Optional.empty();
+    private List<Map<String, Object>> data;
+    private Map<String, Object> properties;
 
-    @Override
-    public Optional<Dataset> getDataset() {
-        return dataset;
+    public BasePlot() {
+        this(new HashMap<>());
+    }
+
+    public BasePlot(Map<String, Object> defaultProperties) {
+        data = emptyList();
+        properties = defaultProperties;
     }
 
     @Override
-    public Optional<PlotContext> getContext() {
-        return variableBindings;
+    public List<Map<String, Object>> getData() {
+        return data;
     }
 
     @Override
-    public void setContext(PlotContext plotContext) {
-        this.dataset = Optional.ofNullable(plotContext.getDataset());
-        this.variableBindings = Optional.ofNullable(plotContext);
+    public void setData(List<Map<String, Object>> data) {
+        this.data = data;
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    @Override
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
 }
