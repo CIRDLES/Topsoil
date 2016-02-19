@@ -28,7 +28,9 @@ import javax.swing.JComponent;
 public interface Displayable {
 
     /**
-     * Returns a {@link JComponent} representing this {@code Displayable}.
+     * Returns a {@link JComponent} representing this {@code Displayable}. This
+     * method must not be called before the AWT/Swing runtime has been
+     * initialized.
      *
      * @return a {@code JComponent} that may or may not be unique
      */
@@ -36,7 +38,7 @@ public interface Displayable {
 
     /**
      * Returns a {@link Node} representing this {@code Displayable}. This method
-     * should only be called from the JavaFX Application Thread.
+     * must not be called before the FX runtime has been initialized.
      *
      * @return a {@code Node} that may or may not be unique
      * @see javafx.application.Platform

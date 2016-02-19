@@ -18,21 +18,11 @@ package org.cirdles.topsoil.plot.standard;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.SimpleDataset;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.PlotContext;
-import org.cirdles.topsoil.plot.SimplePlotContext;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.testfx.framework.junit.ApplicationTest;
-
-import java.util.ArrayList;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.cirdles.topsoil.plot.standard.ScatterPlotProperties.TITLE;
 
 /**
  *
@@ -55,30 +45,8 @@ public class ScatterPlotTest extends ApplicationTest {
     }
 
     @Test
-    public void testGetVariables() {
-        assertThat(plot.getVariables()).hasSize(2);
-    }
-
-    @Test
-    public void testSetData() {
-        RawData rawData = new RawData(new ArrayList<>(), new ArrayList<>());
-        Dataset dataset = new SimpleDataset("Test", rawData);
-
-        PlotContext plotContext
-                = new SimplePlotContext(dataset);
-
-        plot.setContext(plotContext);
-    }
-
-    @Test
-    public void testProperties() throws Throwable {
-        // check a default
-        assertThat(plot.getProperty(TITLE)).isEqualTo("Scatter Plot");
-
-        plot.setProperty(TITLE, "New Title");
-
-        // check that it's changed
-        assertThat(plot.getProperty(TITLE)).isEqualTo("New Title");
+    public void testInitialize() {
+        // no-op
     }
 
 }

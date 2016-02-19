@@ -17,10 +17,8 @@
 (function () {
     "use strict";
 
-    plot.initialProperties = {
-        'Title': 'Scatter Plot',
-        'Point Fill Color': 'steelblue'
-    };
+    plot.dataKeys = ['x', 'y'];
+    plot.propertiesKeys = ['Title', 'Point Fill Color'];
 
     plot.draw = function (data) {
         // defaults if no data is provided

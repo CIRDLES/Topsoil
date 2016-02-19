@@ -19,30 +19,33 @@
 
     // top level containers
     window.topsoil = {data: []};
-    window.plot = {};
+    window.plot = {dataKeys: [], properties: {}, propertiesKeys: []};
 
     // alias topsoil
     window.ts = topsoil;
 
-    // adds a row of data
-    topsoil.addData = function (data) {
-        ts.data.push(data);
+    topsoil.setData = function (data) {
+        topsoil.data = [];
+
+        for (var index = 0; index < data.size(); index++) {
+            var d = {};
+
+            plot.dataKeys.forEach(function(key) {
+                d[key] = data.get(index).get(key);
+            });
+
+            topsoil.data.push(d);
+        }
+
+        plot.draw(topsoil.data);
     };
 
-    // clears all stored data
-    topsoil.clearData = function () {
-        ts.data = [];
-    };
-
-    topsoil.showData = function () {
+    topsoil.setProperties = function (properties) {
         plot.properties = {};
 
-        // copy initial properties
-        for (var key in plot.initialProperties) {
-            if (plot.initialProperties.hasOwnProperty(key)) {
-                plot.properties[key] = plot.initialProperties[key];
-            }
-        }
+        plot.propertiesKeys.forEach(function (key) {
+            plot.properties[key] = properties.get(key);
+        });
 
         plot.draw(ts.data);
     };
@@ -93,16 +96,9 @@
             .append("use")
             .attr("xlink:href", "#" + plot.plotArea.attr("id"));
 
-    /*
-     * PROPERTY
-     */
-    topsoil.getProperty = plot.getProperty = function (key) {
+    // PROPERTIES
+    plot.getProperty = function (key) {
         return plot.properties[key];
-    };
-
-    topsoil.setProperty = plot.setProperty = function (key, value) {
-        plot.properties[key] = value;
-        plot.update(ts.data);
     };
 
 })();

@@ -133,6 +133,7 @@ public class TopsoilMainWindowTest extends ApplicationTest {
     }
 
     @Test
+    @Ignore
     public void testAboutDialogOpens() {
         when(aboutDialogProvider.get()).thenReturn(aboutDialog);
 

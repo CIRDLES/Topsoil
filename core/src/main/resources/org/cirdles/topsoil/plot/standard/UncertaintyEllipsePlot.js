@@ -17,13 +17,14 @@
 (function () {
     "use strict";
 
-    plot.initialProperties = {
-        "Title": "Uncertainty Ellipse Plot",
-        "X Axis": "207Pb*/235U",
-        "Y Axis": "206Pb*/238U",
-        "Uncertainty": 2.0,
-        "Ellipse Fill Color": "red"
-    };
+    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho'];
+
+    plot.propertiesKeys = [
+        'Ellipse Fill Color',
+        'Title',
+        'Uncertainty',
+        'X Axis',
+        'Y Axis'];
 
     plot.draw = function (data) {
         var x = plot.x = d3.scale.linear()
@@ -127,6 +128,7 @@
                 .attr("stroke", "black");
 
         ellipses.attr("fill", plot.getProperty("Ellipse Fill Color"));
+        alert(plot.getProperty("Ellipse Fill Color"));
 
         var dots;
         (dots = plot.area.clipped.selectAll(".dot")

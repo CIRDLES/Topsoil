@@ -20,13 +20,13 @@ import com.google.inject.Provides;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.awt.Desktop;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Properties;
 
 import static com.google.inject.name.Names.named;
-import java.awt.Desktop;
-import java.util.Properties;
 
 /**
  * Created by johnzeringue on 9/8/15.

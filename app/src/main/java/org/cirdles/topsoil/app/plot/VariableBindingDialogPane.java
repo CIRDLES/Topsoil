@@ -15,14 +15,19 @@
  */
 package org.cirdles.topsoil.app.plot;
 
-import java.util.List;
-import static javafx.scene.control.ButtonType.CANCEL;
-import static javafx.scene.control.ButtonType.OK;
 import javafx.scene.control.DialogPane;
+import org.cirdles.topsoil.dataset.Dataset;
+import org.cirdles.topsoil.plot.PlotContext;
 import org.cirdles.topsoil.plot.SimplePlotContext;
 import org.cirdles.topsoil.plot.Variable;
-import org.cirdles.topsoil.plot.PlotContext;
-import org.cirdles.topsoil.dataset.Dataset;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static javafx.scene.control.ButtonType.CANCEL;
+import static javafx.scene.control.ButtonType.OK;
 
 /**
  *
@@ -50,7 +55,7 @@ public class VariableBindingDialogPane extends DialogPane {
         getButtonTypes().setAll(OK, CANCEL);
     }
 
-    public PlotContext getVariableContext() {
+    public List<Map<String, Object>> getData() {
         PlotContext plotContext = new SimplePlotContext(dataset);
 
         variableBindingView.getControls().forEach(control -> {
@@ -61,7 +66,20 @@ public class VariableBindingDialogPane extends DialogPane {
             );
         });
 
-        return plotContext;
+        List<Map<String, Object>> data = new ArrayList<>();
+
+        dataset.getEntries().forEach(entry -> {
+            Map<String, Object> d = new HashMap<>();
+
+            variableBindingView.getControls().forEach(control -> {
+                Variable<?> variable = control.getVariable();
+                d.put(variable.getName(), plotContext.getValue(variable, entry).get());
+            });
+
+            data.add(d);
+        });
+
+        return data;
     }
 
 }

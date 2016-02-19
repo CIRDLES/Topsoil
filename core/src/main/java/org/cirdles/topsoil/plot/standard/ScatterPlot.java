@@ -16,15 +16,7 @@
 package org.cirdles.topsoil.plot.standard;
 
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.plot.Displayable;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
-import org.cirdles.topsoil.plot.Variable;
-
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static org.cirdles.topsoil.plot.Variables.X;
-import static org.cirdles.topsoil.plot.Variables.Y;
 
 /**
  *
@@ -37,25 +29,10 @@ public class ScatterPlot extends JavaScriptPlot {
 
     private static final String RESOURCE_NAME = "ScatterPlot.js";
 
-    private ScatterPlotPropertiesPanel propertiesPanel;
-
     public ScatterPlot() {
-        super(RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME));
-    }
-
-    @Override
-    public Displayable getPropertiesPanel() {
-        if (propertiesPanel == null) {
-            propertiesPanel = new ScatterPlotPropertiesPanel(this);
-            initializeFuture.thenRunAsync(propertiesPanel::updateProperties);
-        }
-
-        return propertiesPanel;
-    }
-
-    @Override
-    public List<Variable> getVariables() {
-        return asList(X, Y);
+        super(
+                RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME),
+                new ScatterPlotDefaultProperties());
     }
 
 }

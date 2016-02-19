@@ -45,6 +45,7 @@ import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.menu.IsotopeSystemMenu;
 import org.cirdles.topsoil.app.menu.PlotMenu;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
+import org.cirdles.topsoil.app.plot.PlotType;
 import org.cirdles.topsoil.app.plot.PlotWindow;
 import org.cirdles.topsoil.app.plot.VariableBindingDialog;
 import org.cirdles.topsoil.app.table.EmptyTablePlaceholder;
@@ -54,6 +55,8 @@ import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
 import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.Variable;
+import org.cirdles.topsoil.plot.Variables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,9 +65,12 @@ import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static java.util.Arrays.asList;
 
 /**
  * FXML Controller class
@@ -369,12 +375,22 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
                 this::importFromTSV);
     }
 
-    void initializeAndShow(Plot plot, Dataset dataset) {
-        new VariableBindingDialog(plot.getVariables(), dataset).showAndWait()
-                .ifPresent(variableContext -> {
-                    plot.setContext(variableContext);
+    void initializeAndShow(PlotType plotType, Dataset dataset) {
+        List<Variable> variables = asList(
+                Variables.X,
+                Variables.SIGMA_X,
+                Variables.Y,
+                Variables.SIGMA_Y,
+                Variables.RHO);
 
-                    Parent plotWindow = new PlotWindow(plot);
+        new VariableBindingDialog(variables, dataset).showAndWait()
+                .ifPresent(data -> {
+                    Plot plot = plotType.newInstance();
+                    plot.setData(data);
+
+                    Parent plotWindow = new PlotWindow(
+                            plot, plotType.newPropertiesPanel(plot));
+
                     Scene scene = new Scene(plotWindow, 1200, 800);
 
                     Stage plotStage = new Stage();
@@ -383,9 +399,9 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
                 });
     }
 
-    public void initializeAndShow(Plot plot) {
+    public void initializeAndShow(PlotType plotType) {
         getCurrentTable().map(TsvTable::getDataset).ifPresent(dataset -> {
-            initializeAndShow(plot, dataset);
+            initializeAndShow(plotType, dataset);
         });
     }
 
