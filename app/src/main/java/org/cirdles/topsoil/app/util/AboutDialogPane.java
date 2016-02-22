@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.app.util;
 
-import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javax.inject.Inject;
@@ -26,15 +25,10 @@ import javax.inject.Inject;
  */
 public class AboutDialogPane extends DialogPane {
 
-    @FXML
-    public String javaVersion;
-
-    @FXML
-    public String operatingSystem;
-
     @Inject
     public AboutDialogPane(AboutDialogView aboutDialogView) {
         setContent(aboutDialogView);
         getButtonTypes().add(ButtonType.CLOSE);
     }
+
 }
