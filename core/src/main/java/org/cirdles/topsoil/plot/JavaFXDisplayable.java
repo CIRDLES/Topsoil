@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 public interface JavaFXDisplayable extends Displayable {
 
     @Override
-    public default JComponent displayAsJComponent() {
+    default JComponent displayAsJComponent() {
         JFXPanel jfxPanel = new JFXPanel();
 
         Task<Void> initializeJFXPanel = new Task<Void>() {

@@ -16,13 +16,12 @@
 package org.cirdles.topsoil.plot;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.entry.EntryListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -33,13 +32,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
+import static javafx.application.Platform.isFxApplicationThread;
 import static javafx.concurrent.Worker.State.SUCCEEDED;
-import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
 
 /**
  * A {@link Plot} that uses JavaScript and HTML to power its visualizations.
@@ -93,12 +93,11 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
                 + "").replaceAll("%20", "%%20");
     }
 
-    private final CompletableFuture<Void> loadFuture;
-    protected final CompletableFuture<Void> initializeFuture;
-
     private final Path sourcePath;
+    private final CompletableFuture<Void> loadFuture;
 
     private WebView webView;
+    private JSObject topsoil;
 
     /**
      * Creates a new {@link JavaScriptPlot} using the specified source file.
@@ -106,127 +105,105 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
      * @param sourcePath the path to a valid JavaScript file
      */
     public JavaScriptPlot(Path sourcePath) {
+        this(sourcePath, new HashMap<>());
+    }
+
+    public JavaScriptPlot(Path sourcePath, Map<String, Object> defaultProperties) {
+        super(defaultProperties);
+
         if (Files.isDirectory(sourcePath)) {
             throw new IllegalArgumentException("sourcePath must be a file");
         }
 
         this.sourcePath = sourcePath;
         loadFuture = new CompletableFuture<>();
-
-        initializeFuture = loadFuture.thenRunAsync(() -> {
-            getTopsoil().get().call("showData");
-        }, Platform::runLater);
     }
 
-    public Path getSourcePath() {
-        return sourcePath;
+    private static <T> T supplyOnFxApplicationThread(Supplier<T> supplier) {
+        T result;
+
+        if (isFxApplicationThread()) {
+            result = supplier.get();
+        } else {
+            Task<T> supplierTask = new Task<T>() {
+                @Override
+                protected T call() throws Exception {
+                    return supplier.get();
+                }
+            };
+
+            Platform.runLater(supplierTask);
+            result = supplier.get();
+        }
+
+        return result;
     }
 
-    Optional<WebView> getWebView() {
-        return Optional.ofNullable(webView);
-    }
-
-    public Optional<WebEngine> getWebEngine() {
-        return getWebView().map(WebView::getEngine);
+    private static void runOnFxApplicationThread(Runnable runnable) {
+        supplyOnFxApplicationThread(() -> {
+            runnable.run();
+            return null;
+        });
     }
 
     public CompletableFuture<Void> getLoadFuture() {
         return loadFuture;
     }
 
-    Optional<JSObject> getTopsoil() {
-        return getWebEngine().map(webEngine -> {
-            return (JSObject) webEngine.executeScript("topsoil");
-        });
-    }
-
-    public void fitData() {
-        getTopsoil().get().call("showData");
-    }
-
     String buildContent() {
-        return String.format(HTML_TEMPLATE, getSourcePath().toUri());
+        return String.format(HTML_TEMPLATE, sourcePath.toUri());
+    }
+
+    public WebEngine getWebEngine() {
+        return webView.getEngine();
     }
 
     /**
      * Initializes this {@link JavaScriptPlot}'s {@link WebView} and related
      * objects if it has not already been done.
      */
-    private WebView initializeWebView() {
-        // initialize webView and associated variables
-        webView = new WebView();
-        webView.setContextMenuEnabled(false);
+    private void initializeWebView() {
+        runOnFxApplicationThread(() -> {
+            // initialize webView and associated variables
+            webView = new WebView();
+            webView.setContextMenuEnabled(false);
 
-        // useful for debugging
-        getWebEngine().get().setOnAlert(event -> {
-            LOGGER.info(event.getData());
-        });
+            WebEngine webEngine = webView.getEngine();
 
-        getWebEngine().get().getLoadWorker().stateProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    if (newValue == SUCCEEDED) {
-                        loadFuture.complete(null);
-                    }
-                });
+            // useful for debugging
+            webEngine.setOnAlert(event -> {
+                LOGGER.info(event.getData());
+            });
 
-        // asynchronous
-        getWebEngine().get().loadContent(buildContent());
+            webEngine.getLoadWorker().stateProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        if (newValue == SUCCEEDED) {
+                            topsoil = (JSObject) webEngine.executeScript("topsoil");
 
-        return webView;
-    }
+                            if (getProperties() != null) {
+                                topsoil.call("setProperties", getProperties());
+                            }
 
-    /**
-     * Sets this {@link Plot}'s data by passing rows of length 5 with variables
-     * in the following order: <code>x</code>, <code>σx</code>, <code>y</code>,
-     * <code>σy</code>, <code>ρ</code>.
-     *
-     * @param plotContext
-     */
-    @Override
-    public void setContext(PlotContext plotContext) {
-        super.setContext(plotContext);
+                            if (getData() != null) {
+                                topsoil.call("setData", getData());
+                            }
 
-        EntryListener listener = (entry, field) -> {
-            drawPlot(plotContext);
-        };
-
-        List<Entry> entries = plotContext.getDataset().getEntries();
-        //Listen to the entries (= value changes)
-        entries.forEach(entry -> entry.addListener(listener));
-
-        drawPlot(plotContext);
-    }
-
-    public void drawPlot(PlotContext plotContext) {
-        // pass the data to JavaScript
-        // this seems excessive but passing a double[][] creates a single array
-        // of undefined objects on the other side of things
-        initializeFuture.thenRunAsync(() -> {
-            getTopsoil().get().call("clearData"); // old data must be cleared
-
-            plotContext.getDataset().getEntries()
-                    .stream()
-                    .filter(entry -> entry.get(SELECTED).orElse(true))
-                    .forEach(entry -> {
-                        JSObject row = (JSObject) getWebEngine().get()
-                                .executeScript("new Object()");
-
-                        plotContext.getBindings().forEach(variableBinding -> {
-                            row.setMember(
-                                    variableBinding.getVariable().getName(),
-                                    variableBinding.getValue(entry));
-                        });
-
-                        getTopsoil().get().call("addData", row);
+                            loadFuture.complete(null);
+                        }
                     });
 
-            getTopsoil().get().call("showData");
-        }, Platform::runLater);
+            // asynchronous
+            webEngine.loadContent(buildContent());
+        });
     }
 
     @Override
     public Node displayAsNode() {
-        return getWebView().orElseGet(this::initializeWebView);
+        if (webView == null) {
+            initializeWebView();
+        }
+
+        return webView;
     }
 
     /**
@@ -248,15 +225,15 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
             svgDocument.setStrictErrorChecking(false);
 
             // the SVG element in the HTML should have the ID "plot"
-            Element svgElement = getWebEngine().get()
+            Element svgElement = webView.getEngine()
                     .getDocument().getElementById("plot");
+
             // additional configuration to make the SVG standalone
             svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
             svgElement.setAttribute("version", "1.1");
 
             // set the svg element as the document root (must be imported first)
             svgDocument.appendChild(svgDocument.importNode(svgElement, true));
-
         } catch (ParserConfigurationException ex) {
             LOGGER.error(null, ex);
         }
@@ -265,24 +242,22 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
     }
 
     @Override
-    public Object getProperty(String key) {
-        try {
-            return initializeFuture.thenApplyAsync(aVoid -> getTopsoil()
-                    .orElseThrow(IllegalStateException::new)
-                    .call("getProperty", key), Platform::runLater).get();
-        } catch (ExecutionException | InterruptedException ex) {
-            throw new RuntimeException(ex);
+    public void setData(List<Map<String, Object>> data) {
+        super.setData(data);
+
+        if (topsoil != null) {
+            runOnFxApplicationThread(() -> topsoil.call("setData", data));
         }
     }
 
     @Override
-    public void setProperty(String key, Object value) {
-        try {
-            initializeFuture.thenApplyAsync(aVoid -> getTopsoil()
-                    .orElseThrow(IllegalStateException::new)
-                    .call("setProperty", key, value), Platform::runLater).get();
-        } catch (ExecutionException | InterruptedException ex) {
-            throw new RuntimeException(ex);
+    public void setProperties(Map<String, Object> properties) {
+        super.setProperties(properties);
+
+        if (topsoil != null) {
+            runOnFxApplicationThread(() -> {
+                topsoil.call("setProperties", properties);
+            });
         }
     }
 

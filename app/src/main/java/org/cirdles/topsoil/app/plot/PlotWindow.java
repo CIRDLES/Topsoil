@@ -19,6 +19,7 @@ import com.johnzeringue.extendsfx.layout.CustomVBox;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
@@ -40,8 +41,13 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
 
     private Plot plot;
 
-    public PlotWindow(Plot plot) {
-        super(self -> self.plot = plot);
+    private Node propertiesPanel;
+
+    public PlotWindow(Plot plot, Node propertiesPanel) {
+        super(self -> {
+            self.plot = plot;
+            self.propertiesPanel = propertiesPanel;
+        });
     }
 
     private void initializeToolbar() {
@@ -53,22 +59,17 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                 new SVGSaver().save(javaScriptPlot.displayAsSVGDocument());
             });
 
-            Button fitData = new Button("Fit data");
-            fitData.setOnAction(mouseEvent -> {
-                javaScriptPlot.fitData();
-            });
-
             Text loadingIndicator = new Text("Loading...");
 
             javaScriptPlot.getLoadFuture().thenRunAsync(() -> {
                         loadingIndicator.visibleProperty().bind(
-                                javaScriptPlot.getWebEngine().get().getLoadWorker()
+                                javaScriptPlot.getWebEngine().getLoadWorker()
                                         .stateProperty().isEqualTo(Worker.State.RUNNING));
                     },
                     Platform::runLater
             );
 
-            plotToolBar.getItems().addAll(saveToSVG, fitData, loadingIndicator);
+            plotToolBar.getItems().addAll(saveToSVG, loadingIndicator);
         }
     }
 
@@ -76,7 +77,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
         try {
             plotAndConfig.getChildren().setAll(
                     plot.displayAsNode(),
-                    plot.getPropertiesPanel().displayAsNode());
+                    propertiesPanel);
         } catch (UnsupportedOperationException ex) {
             plotAndConfig.getChildren().setAll(
                     plot.displayAsNode());

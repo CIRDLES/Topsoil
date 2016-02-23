@@ -16,18 +16,7 @@
 package org.cirdles.topsoil.plot.standard;
 
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.plot.Displayable;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
-import org.cirdles.topsoil.plot.Variable;
-
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static org.cirdles.topsoil.plot.Variables.RHO;
-import static org.cirdles.topsoil.plot.Variables.SIGMA_X;
-import static org.cirdles.topsoil.plot.Variables.SIGMA_Y;
-import static org.cirdles.topsoil.plot.Variables.X;
-import static org.cirdles.topsoil.plot.Variables.Y;
 
 /**
  *
@@ -40,25 +29,10 @@ public class UncertaintyEllipsePlot extends JavaScriptPlot {
 
     private static final String RESOURCE_NAME = "UncertaintyEllipsePlot.js";
 
-    private UncertaintyEllipsePlotPropertiesPanel propertiesPanel;
-
     public UncertaintyEllipsePlot() {
-        super(RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME));
-    }
-
-    @Override
-    public Displayable getPropertiesPanel() {
-        if (propertiesPanel == null) {
-            propertiesPanel = new UncertaintyEllipsePlotPropertiesPanel(this);
-            initializeFuture.thenRunAsync(propertiesPanel::updateProperties);
-        }
-
-        return propertiesPanel;
-    }
-
-    @Override
-    public List<Variable> getVariables() {
-        return asList(X, SIGMA_X, Y, SIGMA_Y, RHO);
+        super(
+                RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME),
+                new UncertaintyEllipsePlotDefaultProperties());
     }
 
 }

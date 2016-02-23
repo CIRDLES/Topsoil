@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,30 +15,23 @@
  */
 package org.cirdles.topsoil.plot.standard;
 
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import org.junit.Test;
-import org.testfx.framework.junit.ApplicationTest;
+import java.util.HashMap;
+
+import static org.cirdles.topsoil.plot.standard.ScatterPlotProperties.POINT_FILL_COLOR;
+import static org.cirdles.topsoil.plot.standard.ScatterPlotProperties.TITLE;
 
 /**
- * Created by johnzeringue on 11/9/15.
+ * Created by johnzeringue on 2/22/16.
  */
-public class ScatterPlotPropertiesPanelTest extends ApplicationTest {
+public class ScatterPlotDefaultProperties extends HashMap<String, Object> {
 
-    private ScatterPlot plot;
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        plot = new ScatterPlot();
-
-        Scene scene = new Scene((Parent) plot.displayAsNode());
-        stage.setScene(scene);
-        stage.show();
+    public ScatterPlotDefaultProperties() {
+        configure();
     }
 
-    @Test
-    public void testConstructor() {
-        new ScatterPlotPropertiesPanel(plot);
+    private void configure() {
+        put(POINT_FILL_COLOR, "steelblue");
+        put(TITLE, "Scatter Plot");
     }
+
 }

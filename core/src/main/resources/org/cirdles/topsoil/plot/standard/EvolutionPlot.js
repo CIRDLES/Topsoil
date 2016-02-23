@@ -17,6 +17,9 @@
 (function () {
     "use strict";
 
+    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y'];
+    plot.propertiesKeys = [];
+
     var INF = Number.MAX_VALUE;
 
     var lambda = {};
