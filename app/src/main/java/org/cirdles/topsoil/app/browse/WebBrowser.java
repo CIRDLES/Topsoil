@@ -24,7 +24,7 @@ public interface WebBrowser {
     /**
      * Attempts to open a link in the desktop's default browser
      *
-     * @param uriString
+     * @param uriString the URI to open
      */
     void browse(String uriString);
 

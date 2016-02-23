@@ -21,7 +21,7 @@ import org.cirdles.topsoil.dataset.field.Field;
 /**
  *
  * @author John Zeringue
- * @param <T>
+ * @param <T> the variable type
  */
 public interface VariableBinding<T> {
 

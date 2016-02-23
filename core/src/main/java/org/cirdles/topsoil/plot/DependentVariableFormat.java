@@ -20,7 +20,7 @@ import org.cirdles.topsoil.dataset.entry.Entry;
 /**
  *
  * @author John Zeringue
- * @param <T>
+ * @param <T> the variable type
  */
 public abstract class DependentVariableFormat<T> extends BaseVariableFormat<T> {
 

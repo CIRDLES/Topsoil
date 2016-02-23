@@ -18,7 +18,7 @@ package org.cirdles.topsoil.plot;
 /**
  *
  * @author John Zeringue
- * @param <T>
+ * @param <T> the variable type
  */
 public abstract class BaseVariableFormat<T> implements VariableFormat<T> {
 
