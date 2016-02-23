@@ -20,7 +20,7 @@ import javafx.util.StringConverter;
 /**
  *
  * @author John Zeringue
- * @param <T>
+ * @param <T> the field type
  */
 public interface Field<T> {
 

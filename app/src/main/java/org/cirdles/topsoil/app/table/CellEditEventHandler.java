@@ -17,7 +17,7 @@ import org.cirdles.topsoil.dataset.field.Field;
  * Used by the class EntryTableColumn
  *
  * @author parizotclement
- * @param <T>
+ * @param <T> the type contained in the cell
  */
 public class CellEditEventHandler<T> implements EventHandler<CellEditEvent<Entry, T>> {
 

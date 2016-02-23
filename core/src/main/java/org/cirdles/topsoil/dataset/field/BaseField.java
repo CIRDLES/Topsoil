@@ -18,7 +18,7 @@ package org.cirdles.topsoil.dataset.field;
 /**
  *
  * @author CIRDLES
- * @param <T>
+ * @param <T> the field type
  */
 public abstract class BaseField<T> implements Field<T> {
 
