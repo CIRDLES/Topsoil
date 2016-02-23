@@ -16,19 +16,20 @@
 package org.cirdles.topsoil.app.plot;
 
 import com.johnzeringue.extendsfx.layout.CustomHBox;
-import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.cirdles.topsoil.dataset.field.Field;
 import org.cirdles.topsoil.plot.Variable;
 import org.cirdles.topsoil.plot.VariableFormat;
-import org.cirdles.topsoil.dataset.field.Field;
+
+import java.util.List;
 
 /**
  *
  * @author John Zeringue
- * @param <T>
+ * @param <T> the variable type
  */
 public class VariableBindingControl<T> extends CustomHBox<VariableBindingControl<T>> {
 

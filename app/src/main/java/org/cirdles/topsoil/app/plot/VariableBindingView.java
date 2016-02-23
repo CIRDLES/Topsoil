@@ -31,7 +31,7 @@ import static java.util.stream.Collectors.toList;
  * This UI element is used by the user to choose which column in the main table
  * determine which value of an ellipse.
  *
- * @param <T>
+ * @param <T> the type of the variable bindings
  */
 public class VariableBindingView<T> extends CustomVBox<VariableBindingView<T>> {
 

@@ -20,7 +20,7 @@ import java.util.List;
 /**
  *
  * @author John Zeringue
- * @param <T>
+ * @param <T> the variable type
  */
 public class DependentVariable<T> extends BaseVariable<T> {
 

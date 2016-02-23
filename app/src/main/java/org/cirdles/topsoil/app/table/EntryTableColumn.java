@@ -24,7 +24,7 @@ import org.cirdles.topsoil.dataset.field.Field;
 /**
  *
  * @author CIRDLES
- * @param <T>
+ * @param <T> the column type
  */
 public class EntryTableColumn<T> extends TableColumn<Entry, T> {
 
