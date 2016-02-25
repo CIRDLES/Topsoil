@@ -1,4 +1,4 @@
-/* 
+/*
 * Copyright 2015 CIRDLES.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,24 +17,25 @@
 buster.spec.expose();
 
 describe("Wetherill", function() {
-    
+    initializeWetherill(constants);
+
     it("can calculate its value at time zero", function() {
         buster.assert.equals(new Vector2D(0, 0), wetherill(0));
     });
-    
+
     it("can calculate it's derivative at time zero", function() {
-        buster.assert.equals(new Vector2D(constants.LAMBDA_235, constants.LAMBDA_238), 
+        buster.assert.equals(new Vector2D(constants.LAMBDA_235, constants.LAMBDA_238),
             wetherill.prime(0));
     });
-    
+
     it("can calculate it's value at time t", function() {
-        buster.assert.equals(new Vector2D((Math.exp(constants.LAMBDA_235 * 10) - 1), 
-            (Math.exp(constants.LAMBDA_238 * 10) - 1)), 
+        buster.assert.equals(new Vector2D((Math.exp(constants.LAMBDA_235 * 10) - 1),
+            (Math.exp(constants.LAMBDA_238 * 10) - 1)),
             wetherill(10));
     });
-    
+
     it("can calculate it's derivative at time t", function() {
-        buster.assert.equals(new Vector2D((constants.LAMBDA_235 * Math.exp(constants.LAMBDA_235 * 10)), 
+        buster.assert.equals(new Vector2D((constants.LAMBDA_235 * Math.exp(constants.LAMBDA_235 * 10)),
             (constants.LAMBDA_238 * Math.exp(constants.LAMBDA_238 * 10))),
             wetherill.prime(10));
     });

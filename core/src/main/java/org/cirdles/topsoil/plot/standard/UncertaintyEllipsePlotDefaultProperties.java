@@ -18,6 +18,8 @@ package org.cirdles.topsoil.plot.standard;
 import java.util.HashMap;
 
 import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.ELLIPSE_FILL_COLOR;
+import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.LAMBDA_235;
+import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.LAMBDA_238;
 import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.TITLE;
 import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.UNCERTAINTY;
 import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.X_AXIS;
@@ -39,6 +41,8 @@ public class UncertaintyEllipsePlotDefaultProperties
         put(UNCERTAINTY, 2);
         put(X_AXIS, "207Pb*/235U");
         put(Y_AXIS, "206Pb*/238U");
+        put(LAMBDA_235, 9.8485e-10);
+        put(LAMBDA_238, 1.55125e-10);
     }
 
 }
