@@ -24,9 +24,16 @@
         'Title',
         'Uncertainty',
         'X Axis',
-        'Y Axis'];
+        'Y Axis',
+        'LAMBDA_235',
+        'LAMBDA_238'];
 
     plot.draw = function (data) {
+        initializeWetherill({
+            LAMBDA_235: plot.getProperty("LAMBDA_235"),
+            LAMBDA_238: plot.getProperty("LAMBDA_238")
+        });
+
         var x = plot.x = d3.scale.linear()
                 .range([0, plot.width]);
 
@@ -128,7 +135,6 @@
                 .attr("stroke", "black");
 
         ellipses.attr("fill", plot.getProperty("Ellipse Fill Color"));
-        alert(plot.getProperty("Ellipse Fill Color"));
 
         var dots;
         (dots = plot.area.clipped.selectAll(".dot")
