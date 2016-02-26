@@ -282,12 +282,14 @@
         var ticks;
         (ticks = plot.area.clipped.selectAll(".tick")
                 .data(plot.t.ticks()))
-                .attr("cx", function (t) { return x(wetherill.x(t)); })
-                .attr("cy", function (t) { return y(wetherill.y(t)); })
                 .enter()
                 .append("circle")
                 .attr("class", "tick")
                 .attr("r", 5);
+
+        ticks
+                .attr("cx", function (t) { return x(wetherill.x(t)); })
+                .attr("cy", function (t) { return y(wetherill.y(t)); });
 
         var tickLabels;
         (tickLabels = plot.area.clipped.selectAll(".tickLabel")
