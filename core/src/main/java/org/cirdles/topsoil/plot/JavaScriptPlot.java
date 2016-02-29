@@ -17,11 +17,14 @@ package org.cirdles.topsoil.plot;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.plot.internal.BoundsToRectangle;
+import org.cirdles.topsoil.plot.internal.IsBlankImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -29,6 +32,10 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.AWTException;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -158,6 +165,18 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return webView.getEngine();
     }
 
+    private BufferedImage screenCapture() {
+        try {
+            Bounds bounds = webView.getBoundsInLocal();
+            Bounds screenBounds = webView.localToScreen(bounds);
+
+            Rectangle screenRect = new BoundsToRectangle().apply(screenBounds);
+            return new Robot().createScreenCapture(screenRect);
+        } catch (AWTException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     /**
      * Initializes this {@link JavaScriptPlot}'s {@link WebView} and related
      * objects if it has not already been done.
@@ -178,6 +197,10 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
             webEngine.getLoadWorker().stateProperty().addListener(
                     (observable, oldValue, newValue) -> {
                         if (newValue == SUCCEEDED) {
+                            if (new IsBlankImage().test(screenCapture())) {
+                                webEngine.loadContent(buildContent());
+                            }
+
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
                             if (getProperties() != null) {
