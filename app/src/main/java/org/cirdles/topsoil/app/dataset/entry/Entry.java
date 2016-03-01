@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2015 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.dataset.reader;
+package org.cirdles.topsoil.app.dataset.entry;
 
-import org.cirdles.topsoil.app.dataset.RawData;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
+import org.cirdles.topsoil.app.dataset.field.Field;
+import java.util.Optional;
 
 /**
  *
  * @author John Zeringue
  */
-public interface RawDataReader {
+public interface Entry {
 
-    public RawData read(InputStream source) throws IOException;
+    public <T> Optional<T> get(Field<? extends T> field);
 
-    public RawData read(String source) throws IOException;
+    public <T> void set(Field<? super T> field, T value);
 
-    public RawData read(File source) throws IOException;
+    public void addListener(EntryListener listener);
 
-    public RawData read(Path source) throws IOException;
+    public void removeListener(EntryListener listener);
 
 }

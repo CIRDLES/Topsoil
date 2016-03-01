@@ -16,8 +16,8 @@
 package org.cirdles.topsoil.app.dataset.writer;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.field.Field;
 
 import java.io.IOException;
 import java.io.OutputStream;

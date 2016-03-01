@@ -17,8 +17,7 @@ package org.cirdles.topsoil.app.plot;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.plot.Variable;
+import org.cirdles.topsoil.app.dataset.Dataset;
 
 import java.util.List;
 import java.util.Map;
