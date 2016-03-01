@@ -19,7 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
-import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -16,12 +16,12 @@
 package org.cirdles.topsoil.app.dataset.reader;
 
 import au.com.bytecode.opencsv.CSVReader;
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.entry.SimpleEntry;
-import org.cirdles.topsoil.dataset.field.Field;
-import org.cirdles.topsoil.dataset.field.NumberField;
-import org.cirdles.topsoil.dataset.field.TextField;
+import org.cirdles.topsoil.app.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.entry.Entry;
+import org.cirdles.topsoil.app.dataset.entry.SimpleEntry;
+import org.cirdles.topsoil.app.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.field.NumberField;
+import org.cirdles.topsoil.app.dataset.field.TextField;
 
 import java.io.IOException;
 import java.io.InputStream;

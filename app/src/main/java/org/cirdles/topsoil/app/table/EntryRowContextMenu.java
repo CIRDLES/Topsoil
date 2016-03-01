@@ -20,14 +20,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.stage.WindowEvent;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.entry.SimpleEntry;
+import org.cirdles.topsoil.app.dataset.entry.Entry;
+import org.cirdles.topsoil.app.dataset.entry.SimpleEntry;
 
 import java.util.Collection;
 
 import static java.lang.Double.NaN;
-import static org.cirdles.topsoil.dataset.field.Fields.ROW;
-import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
+import static org.cirdles.topsoil.app.dataset.field.Fields.ROW;
+import static org.cirdles.topsoil.app.dataset.field.Fields.SELECTED;
 
 /**
  *

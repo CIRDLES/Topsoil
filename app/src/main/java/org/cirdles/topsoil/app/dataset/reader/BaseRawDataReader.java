@@ -15,7 +15,7 @@
  */
 package org.cirdles.topsoil.app.dataset.reader;
 
-import org.cirdles.topsoil.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.RawData;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

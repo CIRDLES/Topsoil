@@ -15,8 +15,8 @@
  */
 package org.cirdles.topsoil.app.dataset.reader;
 
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.field.Field;
 import org.junit.Before;
 import org.junit.Test;
 

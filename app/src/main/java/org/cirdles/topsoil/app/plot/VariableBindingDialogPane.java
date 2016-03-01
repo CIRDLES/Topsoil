@@ -16,10 +16,7 @@
 package org.cirdles.topsoil.app.plot;
 
 import javafx.scene.control.DialogPane;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.plot.PlotContext;
-import org.cirdles.topsoil.plot.SimplePlotContext;
-import org.cirdles.topsoil.plot.Variable;
+import org.cirdles.topsoil.app.dataset.Dataset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
