@@ -26,15 +26,15 @@ import javafx.fxml.FXML;
 @ResourceBundle("Resources")
 public class EmptyTablePlaceholder extends CustomVBox<EmptyTablePlaceholder> {
 
-    private TsvTable dataTable;
+    private TsvTable table;
 
-    public EmptyTablePlaceholder(TsvTable dataTable) {
-        super(self -> self.dataTable = dataTable);
+    public EmptyTablePlaceholder(TsvTable table) {
+        super(self -> self.table = table);
     }
 
     @FXML
-    private void pasteFromClipboardIntoDataTable() {
-        dataTable.pasteFromClipboard();
+    private void pasteFromClipboardIntoTable() {
+        table.pasteFromClipboard();
     }
 
 }

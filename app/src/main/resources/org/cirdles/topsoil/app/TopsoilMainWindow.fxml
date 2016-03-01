@@ -35,12 +35,12 @@
     </MenuBar>
 
     <ToolBar>
-        <Button text="Create Data Table"
-                onAction="#createDataTable" />
-        <Button text="Save Data Table"
-                onAction="#saveDataTable"
+        <Button text="Create Tab"
+                onAction="#createTab" />
+        <Button text="Save Dataset"
+                onAction="#saveDataset"
                 disable="true"
-                fx:id="saveDataTableButton" />
+                fx:id="saveDatasetButton" />
         <Button text="%clearTableMessage"
                 onAction="#emptyTable"
                 disable="true"
@@ -48,6 +48,6 @@
 
     </ToolBar>
 
-    <TabPane fx:id="dataTableTabPane"
+    <TabPane fx:id="tabPane"
              VBox.vgrow="ALWAYS" />
 </fx:root>

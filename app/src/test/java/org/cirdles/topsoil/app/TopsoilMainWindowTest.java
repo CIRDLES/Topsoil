@@ -88,13 +88,13 @@ public class TopsoilMainWindowTest extends ApplicationTest {
     @Test
     public void testFocusOnNewTab() {
         // ensure there is at least one tab already open
-        clickOn("Create Data Table");
+        clickOn("Create Tab");
 
         // create another tab
         // should be focused
-        clickOn("Create Data Table");
+        clickOn("Create Tab");
 
-        verifyThat(topsoilMainWindow.getDataTableTabPane(), (TabPane tabPane) -> {
+        verifyThat(topsoilMainWindow.getTabPane(), (TabPane tabPane) -> {
             int numberOfTabs = tabPane.getTabs().size();
             int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
 
@@ -104,32 +104,32 @@ public class TopsoilMainWindowTest extends ApplicationTest {
 
     @Test
     public void testSaveDataButtonInitiallyDisabled() {
-        verifyThat("#saveDataTableButton", button -> button.isDisabled());
+        verifyThat("#saveDatasetButton", button -> button.isDisabled());
     }
 
     @Test
-    public void testSaveDataButtonEnablesAfterNewDataTable() {
-        clickOn("Create Data Table");
-        verifyThat("#saveDataTableButton", button -> !button.isDisabled());
+    public void testSaveDataButtonEnablesAfterNewTab() {
+        clickOn("Create Tab");
+        verifyThat("#saveDatasetButton", button -> !button.isDisabled());
     }
 
     @Test
     @Ignore
     public void testSaveDataButtonDisablesAfterTabsAreClosed() {
-        clickOn("Create Data Table");
-        clickOn("Create Data Table");
+        clickOn("Create Tab");
+        clickOn("Create Tab");
 
-        Tab tab1 = topsoilMainWindow.getDataTableTabPane().getTabs().remove(0);
+        Tab tab1 = topsoilMainWindow.getTabPane().getTabs().remove(0);
         tab1.getOnClosed().handle(null);
 
         // shouldn't be disabled yet
         // one tab is still open
-        verifyThat("#saveDataTableButton", button -> !button.isDisabled());
+        verifyThat("#saveDatasetButton", button -> !button.isDisabled());
 
-        Tab tab2 = topsoilMainWindow.getDataTableTabPane().getTabs().remove(0);
+        Tab tab2 = topsoilMainWindow.getTabPane().getTabs().remove(0);
         tab2.getOnClosed().handle(null);
 
-        verifyThat("#saveDataTableButton", button -> button.isDisabled());
+        verifyThat("#saveDatasetButton", button -> button.isDisabled());
     }
 
     @Test
