@@ -37,7 +37,10 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.BuilderFactory;
 import org.cirdles.topsoil.app.browse.WebBrowser;
+import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.DatasetMapper;
+import org.cirdles.topsoil.app.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.SimpleDataset;
 import org.cirdles.topsoil.app.dataset.reader.CsvRawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
@@ -47,16 +50,14 @@ import org.cirdles.topsoil.app.menu.PlotMenu;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.app.plot.PlotType;
 import org.cirdles.topsoil.app.plot.PlotWindow;
+import org.cirdles.topsoil.app.plot.Variable;
 import org.cirdles.topsoil.app.plot.VariableBindingDialog;
+import org.cirdles.topsoil.app.plot.Variables;
 import org.cirdles.topsoil.app.table.EmptyTablePlaceholder;
 import org.cirdles.topsoil.app.table.TsvTable;
 import org.cirdles.topsoil.app.util.AboutDialog;
-import org.cirdles.topsoil.app.dataset.Dataset;
-import org.cirdles.topsoil.app.dataset.RawData;
-import org.cirdles.topsoil.app.dataset.SimpleDataset;
+import org.cirdles.topsoil.app.util.ErrorAlerter;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.app.plot.Variable;
-import org.cirdles.topsoil.app.plot.Variables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;
 
@@ -190,6 +192,10 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         emptyTableButton.setDisable(tabPaneEmpty);
     }
 
+    private static Predicate<Dataset> hasName(String name) {
+        return dataset -> dataset.getName().equals(name);
+    }
+
     @FXML
     void saveDataset() {
         TextInputDialog textInputDialog = new TextInputDialog();
@@ -199,12 +205,21 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
             getCurrentTable()
                     .map(TsvTable::getDataset)
                     .ifPresent(dataset -> {
-                        RawData rawData = new RawData(
-                                dataset.getFields(),
-                                dataset.getEntries());
+                        boolean nameInUse = datasetMapper.getDatasets()
+                                .stream()
+                                .anyMatch(hasName(datasetName));
 
-                        datasetMapper.addDataset(
-                                new SimpleDataset(datasetName, rawData));
+                        if (nameInUse) {
+                            new ErrorAlerter().alert("A dataset named \"" +
+                                    datasetName + "\" already exists.");
+                        } else {
+                            RawData rawData = new RawData(
+                                    dataset.getFields(),
+                                    dataset.getEntries());
+
+                            datasetMapper.addDataset(
+                                    new SimpleDataset(datasetName, rawData));
+                        }
                     });
 
             getCurrentTab().ifPresent(tab -> tab.setText(datasetName));
