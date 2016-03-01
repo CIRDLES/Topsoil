@@ -93,9 +93,9 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     @FXML
     private Menu datasetsMenu;
     @FXML
-    private TabPane dataTableTabPane;
+    private TabPane tabPane;
     @FXML
-    private Button saveDataTableButton;
+    private Button saveDatasetButton;
     @FXML
     private Button emptyTableButton;
 
@@ -150,8 +150,8 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
         }
     }
 
-    public TabPane getDataTableTabPane() {
-        return dataTableTabPane;
+    public TabPane getTabPane() {
+        return tabPane;
     }
 
     Optional<TsvTable> getCurrentTable() {
@@ -159,43 +159,39 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     }
 
     @FXML
-    void createDataTable() {
-        createTab();
-    }
-
     Tab createTab() {
-        Tab dataTableTab = new Tab("Untitled Data");
+        Tab tab = new Tab("Untitled Data");
 
-        TsvTable dataTable = new TsvTable();
-        dataTable.setPlaceholder(new EmptyTablePlaceholder(dataTable));
-        dataTableTab.setContent(dataTable);
+        TsvTable table = new TsvTable();
+        table.setPlaceholder(new EmptyTablePlaceholder(table));
+        tab.setContent(table);
 
-        dataTableTabPane.getTabs().add(dataTableTab);
+        tabPane.getTabs().add(tab);
 
         // focus on new tab
-        SelectionModel<Tab> selectionModel = dataTableTabPane.getSelectionModel();
-        selectionModel.select(dataTableTab);
+        SelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
+        selectionModel.select(tab);
 
-        setDataTableTabPaneEmpty(false);
+        setTabPaneEmpty(false);
 
-        dataTableTab.setOnClosed(event -> {
-            datasetMapper.closeDataset(dataTable.getDataset());
+        tab.setOnClosed(event -> {
+            datasetMapper.closeDataset(table.getDataset());
 
             if (!getCurrentTable().isPresent()) {
-                setDataTableTabPaneEmpty(true);
+                setTabPaneEmpty(true);
             }
         });
 
-        return dataTableTab;
+        return tab;
     }
 
-    void setDataTableTabPaneEmpty(boolean dataTableTabPaneEmpty) {
-        saveDataTableButton.setDisable(dataTableTabPaneEmpty);
-        emptyTableButton.setDisable(dataTableTabPaneEmpty);
+    void setTabPaneEmpty(boolean tabPaneEmpty) {
+        saveDatasetButton.setDisable(tabPaneEmpty);
+        emptyTableButton.setDisable(tabPaneEmpty);
     }
 
     @FXML
-    void saveDataTable() {
+    void saveDataset() {
         TextInputDialog textInputDialog = new TextInputDialog();
 
         textInputDialog.setContentText("Dataset name:");
@@ -272,7 +268,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
 
     Optional<Tab> getCurrentTab() {
         return Optional.ofNullable(
-                dataTableTabPane.getSelectionModel().getSelectedItem());
+                tabPane.getSelectionModel().getSelectedItem());
     }
 
     private void setWindowTitle(String title) {
@@ -318,7 +314,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     void importFromFile(
             Path filePath,
             Function<Boolean, RawDataReader> datasetReaderConstructor) {
-        TsvTable dataTable = createTable();
+        TsvTable table = createTable();
 
         Tools.yesNoPrompt("Does the selected file contain headers?", response -> {
             try {
@@ -328,7 +324,7 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
                 RawData rawData = rawDataReader.read(filePath);
                 Dataset dataset = new SimpleDataset("Unnamed dataset", rawData);
 
-                dataTable.setDataset(dataset);
+                table.setDataset(dataset);
             } catch (IOException ex) {
                 LOGGER.error(null, ex);
             }

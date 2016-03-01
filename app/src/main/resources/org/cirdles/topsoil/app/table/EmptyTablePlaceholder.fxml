@@ -27,6 +27,6 @@
 
     <javafx.scene.text.Text text="%emptyTableMessage"/>
     <Button text="%pasteMessage"
-            onAction="#pasteFromClipboardIntoDataTable"/>
+            onAction="#pasteFromClipboardIntoTable"/>
 
 </fx:root>
