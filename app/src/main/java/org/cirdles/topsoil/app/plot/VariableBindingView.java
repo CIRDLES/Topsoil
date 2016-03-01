@@ -18,8 +18,7 @@ package org.cirdles.topsoil.app.plot;
 import com.johnzeringue.extendsfx.layout.CustomVBox;
 import javafx.fxml.FXML;
 import org.cirdles.commons.string.LevenshteinDistance;
-import org.cirdles.topsoil.plot.Variable;
-import org.cirdles.topsoil.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.field.Field;
 
 import java.util.List;
 

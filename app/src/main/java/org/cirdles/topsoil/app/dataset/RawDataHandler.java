@@ -21,7 +21,6 @@ import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
 import org.cirdles.topsoil.app.dataset.writer.RawDataWriter;
 import org.cirdles.topsoil.app.dataset.writer.TsvRawDataWriter;
-import org.cirdles.topsoil.dataset.RawData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

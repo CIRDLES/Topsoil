@@ -19,10 +19,8 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.plot.IndependentVariable;
-import org.cirdles.topsoil.plot.Variable;
-import org.cirdles.topsoil.dataset.field.Field;
-import org.cirdles.topsoil.dataset.field.NumberField;
+import org.cirdles.topsoil.app.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 

@@ -18,12 +18,12 @@ package org.cirdles.topsoil.app.table;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
-import org.cirdles.topsoil.dataset.entry.Entry;
+import org.cirdles.topsoil.app.dataset.entry.Entry;
 
 import java.util.Optional;
 
-import static org.cirdles.topsoil.dataset.field.Fields.ROW;
-import static org.cirdles.topsoil.dataset.field.Fields.SELECTED;
+import static org.cirdles.topsoil.app.dataset.field.Fields.ROW;
+import static org.cirdles.topsoil.app.dataset.field.Fields.SELECTED;
 
 /**
  * The row Factory for the TsvTable

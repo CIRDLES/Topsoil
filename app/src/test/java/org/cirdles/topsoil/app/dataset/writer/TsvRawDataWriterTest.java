@@ -15,11 +15,11 @@
  */
 package org.cirdles.topsoil.app.dataset.writer;
 
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.entry.SimpleEntry;
-import org.cirdles.topsoil.dataset.field.Field;
-import org.cirdles.topsoil.dataset.field.NumberField;
+import org.cirdles.topsoil.app.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.entry.Entry;
+import org.cirdles.topsoil.app.dataset.entry.SimpleEntry;
+import org.cirdles.topsoil.app.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.junit.Before;
 import org.junit.Test;
 

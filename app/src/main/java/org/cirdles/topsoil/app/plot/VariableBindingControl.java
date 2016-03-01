@@ -20,9 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import org.cirdles.topsoil.dataset.field.Field;
-import org.cirdles.topsoil.plot.Variable;
-import org.cirdles.topsoil.plot.VariableFormat;
+import org.cirdles.topsoil.app.dataset.field.Field;
 
 import java.util.List;
 

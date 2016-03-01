@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.dataset.reader;
-
-import org.cirdles.topsoil.app.dataset.RawData;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
+package org.cirdles.topsoil.app.dataset.field;
 
 /**
  *
- * @author John Zeringue
+ * @author CIRDLES
+ * @param <T> the field type
  */
-public interface RawDataReader {
+public abstract class BaseField<T> implements Field<T> {
 
-    public RawData read(InputStream source) throws IOException;
+    private final String name;
 
-    public RawData read(String source) throws IOException;
+    public BaseField(String name) {
+        this.name = name;
+    }
 
-    public RawData read(File source) throws IOException;
-
-    public RawData read(Path source) throws IOException;
-
+    /**
+     * @return the name
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,28 @@ package org.cirdles.topsoil.app.dataset;
 
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 /**
- * Created by johnzeringue on 9/3/15.
+ * Created by johnzeringue on 8/30/15.
  */
-public class DatasetMapperDataset implements Dataset {
+public class RawData {
 
-    private static final Logger LOGGER
-            = LoggerFactory.getLogger(DatasetMapperDataset.class);
+    private final List<Field<?>> fields;
+    private final List<Entry> entries;
 
-    private Long id;
-    private String name;
-    private RawData rawData;
-
-    public DatasetMapperDataset() {
+    public RawData(List<Field<?>> fields, List<Entry> entries) {
+        this.fields = fields;
+        this.entries = entries;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public List<Field<?>> getFields() {
-        return rawData.getFields();
+        return fields;
     }
 
-    @Override
     public List<Entry> getEntries() {
-        return rawData.getEntries();
+        return entries;
     }
 
 }

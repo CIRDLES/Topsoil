@@ -15,8 +15,6 @@
  */
 package org.cirdles.topsoil.app.dataset;
 
-import org.cirdles.topsoil.dataset.Dataset;
-
 import java.util.List;
 
 /**

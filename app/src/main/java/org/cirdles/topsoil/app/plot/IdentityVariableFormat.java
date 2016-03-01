@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.dataset.reader;
+package org.cirdles.topsoil.app.plot;
 
-import org.cirdles.topsoil.app.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.entry.Entry;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
+public class IdentityVariableFormat<T> extends BaseVariableFormat<T> {
 
-/**
- *
- * @author John Zeringue
- */
-public interface RawDataReader {
+    public IdentityVariableFormat() {
+        super("Identity");
+    }
 
-    public RawData read(InputStream source) throws IOException;
-
-    public RawData read(String source) throws IOException;
-
-    public RawData read(File source) throws IOException;
-
-    public RawData read(Path source) throws IOException;
+    @Override
+    public T normalize(VariableBinding<T> binding, Entry entry) {
+        return entry.get(binding.getField()).get();
+    }
 
 }

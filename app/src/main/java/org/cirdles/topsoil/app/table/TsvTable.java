@@ -23,12 +23,12 @@ import javafx.scene.input.KeyCode;
 import org.cirdles.topsoil.app.Tools;
 import org.cirdles.topsoil.app.dataset.reader.RawDataReader;
 import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.SimpleDataset;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.field.NumberField;
-import org.cirdles.topsoil.dataset.field.TextField;
+import org.cirdles.topsoil.app.dataset.Dataset;
+import org.cirdles.topsoil.app.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.SimpleDataset;
+import org.cirdles.topsoil.app.dataset.entry.Entry;
+import org.cirdles.topsoil.app.dataset.field.NumberField;
+import org.cirdles.topsoil.app.dataset.field.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

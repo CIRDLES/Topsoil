@@ -51,12 +51,12 @@ import org.cirdles.topsoil.app.plot.VariableBindingDialog;
 import org.cirdles.topsoil.app.table.EmptyTablePlaceholder;
 import org.cirdles.topsoil.app.table.TsvTable;
 import org.cirdles.topsoil.app.util.AboutDialog;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.SimpleDataset;
+import org.cirdles.topsoil.app.dataset.Dataset;
+import org.cirdles.topsoil.app.dataset.RawData;
+import org.cirdles.topsoil.app.dataset.SimpleDataset;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.Variable;
-import org.cirdles.topsoil.plot.Variables;
+import org.cirdles.topsoil.app.plot.Variable;
+import org.cirdles.topsoil.app.plot.Variables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
