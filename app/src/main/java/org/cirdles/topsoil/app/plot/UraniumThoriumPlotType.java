@@ -19,8 +19,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.plot.standard.ScatterPlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.standard.EvolutionPlot;
-import org.cirdles.topsoil.plot.standard.ScatterPlot;
+import org.cirdles.topsoil.plot.uth.evolution.EvolutionPlot;
+import org.cirdles.topsoil.plot.scatter.ScatterPlot;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

@@ -27,8 +27,8 @@ import org.cirdles.topsoil.plot.Plot;
 
 import java.util.Map;
 
-import static org.cirdles.topsoil.plot.standard.ScatterPlotProperties.POINT_FILL_COLOR;
-import static org.cirdles.topsoil.plot.standard.ScatterPlotProperties.TITLE;
+import static org.cirdles.topsoil.plot.scatter.ScatterPlotProperties.POINT_FILL_COLOR;
+import static org.cirdles.topsoil.plot.scatter.ScatterPlotProperties.TITLE;
 
 /**
  * Created by johnzeringue on 11/8/15.

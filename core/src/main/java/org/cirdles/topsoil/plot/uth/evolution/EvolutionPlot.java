@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.plot.standard;
+package org.cirdles.topsoil.plot.uth.evolution;
 
-import java.util.HashMap;
-
-import static org.cirdles.topsoil.plot.standard.ScatterPlotProperties.POINT_FILL_COLOR;
-import static org.cirdles.topsoil.plot.standard.ScatterPlotProperties.TITLE;
+import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.plot.JavaScriptPlot;
 
 /**
- * Created by johnzeringue on 2/22/16.
+ * Created by johnzeringue on 12/1/15.
  */
-public class ScatterPlotDefaultProperties extends HashMap<String, Object> {
+public class EvolutionPlot extends JavaScriptPlot {
 
-    public ScatterPlotDefaultProperties() {
-        configure();
-    }
+    private static final ResourceExtractor RESOURCE_EXTRACTOR
+            = new ResourceExtractor(EvolutionPlot.class);
 
-    private void configure() {
-        put(POINT_FILL_COLOR, "steelblue");
-        put(TITLE, "Scatter Plot");
+    private static final String RESOURCE_NAME = "EvolutionPlot.js";
+
+    public EvolutionPlot() {
+        super(
+                RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME),
+                new EvolutionPlotDefaultProperties());
     }
 
 }

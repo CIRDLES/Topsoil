@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.plot.standard;
+package org.cirdles.topsoil.plot.upb.uncertainty;
 
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
@@ -22,17 +22,17 @@ import org.cirdles.topsoil.plot.JavaScriptPlot;
  *
  * @author John Zeringue
  */
-public class ScatterPlot extends JavaScriptPlot {
+public class UncertaintyEllipsePlot extends JavaScriptPlot {
 
     private static final ResourceExtractor RESOURCE_EXTRACTOR
-            = new ResourceExtractor(ScatterPlot.class);
+            = new ResourceExtractor(UncertaintyEllipsePlot.class);
 
-    private static final String RESOURCE_NAME = "ScatterPlot.js";
+    private static final String RESOURCE_NAME = "UncertaintyEllipsePlot.js";
 
-    public ScatterPlot() {
+    public UncertaintyEllipsePlot() {
         super(
                 RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME),
-                new ScatterPlotDefaultProperties());
+                new UncertaintyEllipsePlotDefaultProperties());
     }
 
 }

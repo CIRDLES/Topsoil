@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.plot.standard;
+package org.cirdles.topsoil.plot.uth.evolution;
+
+import java.util.HashMap;
 
 /**
  * Created by johnzeringue on 2/22/16.
  */
-public class EvolutionPlotProperties {
+public class EvolutionPlotDefaultProperties extends HashMap<String, Object> {
 
-    private EvolutionPlotProperties() {
-        super();
+    public EvolutionPlotDefaultProperties() {
+        configure();
+    }
+
+    private void configure() {
+
     }
 
 }

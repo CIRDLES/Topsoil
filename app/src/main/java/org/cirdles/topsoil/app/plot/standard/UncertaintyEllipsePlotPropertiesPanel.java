@@ -28,11 +28,11 @@ import org.cirdles.topsoil.plot.Plot;
 
 import java.util.Map;
 
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.ELLIPSE_FILL_COLOR;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.TITLE;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.UNCERTAINTY;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.X_AXIS;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.Y_AXIS;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.ELLIPSE_FILL_COLOR;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.TITLE;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.UNCERTAINTY;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.X_AXIS;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.Y_AXIS;
 
 /**
  * Created by johnzeringue on 11/8/15.

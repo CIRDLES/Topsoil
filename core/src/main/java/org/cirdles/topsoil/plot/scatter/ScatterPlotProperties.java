@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CIRDLES.
+ * Copyright 2016 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.plot.standard;
+package org.cirdles.topsoil.plot.scatter;
 
 /**
  * Created by johnzeringue on 11/9/15.
  */
-public final class UncertaintyEllipsePlotProperties {
+public final class ScatterPlotProperties {
 
     public static final String TITLE = "Title";
-    public static final String X_AXIS = "X Axis";
-    public static final String Y_AXIS = "Y Axis";
-    public static final String UNCERTAINTY = "Uncertainty";
-    public static final String ELLIPSE_FILL_COLOR = "Ellipse Fill Color";
-    public static final String LAMBDA_235 = "LAMBDA_235";
-    public static final String LAMBDA_238 = "LAMBDA_238";
+    public static final String POINT_FILL_COLOR = "Point Fill Color";
 
-    private UncertaintyEllipsePlotProperties() {
+    private ScatterPlotProperties() {
         // prevents this class from being instantiated
     }
 
