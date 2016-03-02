@@ -17,6 +17,7 @@ package org.cirdles.topsoil.app.plot;
 
 import javafx.scene.control.DialogPane;
 import org.cirdles.topsoil.app.dataset.Dataset;
+import org.cirdles.topsoil.app.dataset.field.Fields;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,6 +72,12 @@ public class VariableBindingDialogPane extends DialogPane {
             variableBindingView.getControls().forEach(control -> {
                 Variable<?> variable = control.getVariable();
                 d.put(variable.getName(), plotContext.getValue(variable, entry).get());
+            });
+
+            d.put("Selected", true);
+
+            entry.<Boolean>get(Fields.SELECTED).ifPresent(selected -> {
+                d.put("Selected", selected);
             });
 
             data.add(d);
