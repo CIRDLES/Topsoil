@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.plot.standard;
+package org.cirdles.topsoil.plot.upb.uncertainty;
 
 import java.util.HashMap;
 
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.ELLIPSE_FILL_COLOR;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.LAMBDA_235;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.LAMBDA_238;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.TITLE;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.UNCERTAINTY;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.X_AXIS;
-import static org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlotProperties.Y_AXIS;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.ELLIPSE_FILL_COLOR;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.LAMBDA_235;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.LAMBDA_238;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.TITLE;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.UNCERTAINTY;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.X_AXIS;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.Y_AXIS;
 
 /**
  * Created by johnzeringue on 2/22/16.

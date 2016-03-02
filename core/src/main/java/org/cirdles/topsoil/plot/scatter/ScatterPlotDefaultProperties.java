@@ -13,32 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.plot.standard;
+package org.cirdles.topsoil.plot.scatter;
 
-import org.cirdles.topsoil.plot.Plot;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.Timeout;
+import java.util.HashMap;
+
+import static org.cirdles.topsoil.plot.scatter.ScatterPlotProperties.POINT_FILL_COLOR;
+import static org.cirdles.topsoil.plot.scatter.ScatterPlotProperties.TITLE;
 
 /**
- * Created by johnzeringue on 1/31/16.
+ * Created by johnzeringue on 2/22/16.
  */
-public class EvolutionPlotTest {
+public class ScatterPlotDefaultProperties extends HashMap<String, Object> {
 
-    @Rule
-    public Timeout timeout = Timeout.seconds(5);
-
-    private Plot plot;
-
-    @Before
-    public void setUp() {
-        plot = new EvolutionPlot();
+    public ScatterPlotDefaultProperties() {
+        configure();
     }
 
-    @Test
-    public void testInitialize() {
-        // no-op
+    private void configure() {
+        put(POINT_FILL_COLOR, "steelblue");
+        put(TITLE, "Scatter Plot");
     }
 
 }
