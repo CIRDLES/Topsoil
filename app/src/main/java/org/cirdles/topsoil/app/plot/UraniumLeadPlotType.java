@@ -19,8 +19,8 @@ import javafx.scene.Node;
 import org.cirdles.topsoil.app.plot.standard.ScatterPlotPropertiesPanel;
 import org.cirdles.topsoil.app.plot.standard.UncertaintyEllipsePlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.standard.ScatterPlot;
-import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
+import org.cirdles.topsoil.plot.scatter.ScatterPlot;
+import org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlot;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
