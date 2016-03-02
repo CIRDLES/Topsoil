@@ -17,7 +17,7 @@
 (function () {
     "use strict";
 
-    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho'];
+    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
 
     plot.propertiesKeys = [
         'Ellipse Fill Color',
@@ -134,7 +134,17 @@
                 .attr("fill-opacity", 0.3)
                 .attr("stroke", "black");
 
-        ellipses.attr("fill", plot.getProperty("Ellipse Fill Color"));
+        ellipses.attr("fill", function(d) {
+            var fill;
+
+            if (!d['Selected']) {
+                fill = 'gray';
+            } else {
+                fill = plot.getProperty("Ellipse Fill Color");
+            }
+
+            return fill;
+        });
 
         var dots;
         (dots = plot.area.clipped.selectAll(".dot")
