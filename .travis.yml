@@ -46,5 +46,4 @@ deploy:
 after_deploy:
 - str1=https://jitpack.io/com/github/CIRDLES/Topsoil/
 - str2=/build.log
-
 - curl $str1$TRAVIS_TAG$str2
