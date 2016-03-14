@@ -43,5 +43,8 @@ deploy:
     repo: CIRDLES/Topsoil
     tags: true
 
-after_deploy: curl --request GET 'https://jitpack.io/com/github/CIRDLES/Topsoil/1.0.0-alpha.7/topsoil-1.0.0-alpha.7.pom'
+after_deploy:
+- str1=https://jitpack.io/com/github/CIRDLES/Topsoil/
+- str2=/build.log
 
+- curl $str1$TRAVIS_TAG$str2
