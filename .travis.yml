@@ -44,4 +44,5 @@ deploy:
     tags: true
 
 after_deploy:
+
   - curl $"https://jitpack.io/com/github/CIRDLES/Topsoil/"$TRAVIS_TAG$"/build.log"
