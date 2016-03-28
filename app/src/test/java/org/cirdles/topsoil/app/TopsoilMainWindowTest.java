@@ -27,6 +27,7 @@ import org.cirdles.topsoil.app.flyway.FlywayMigrateTask;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.cirdles.topsoil.app.metadata.TestApplicationMetadata;
 import org.cirdles.topsoil.app.util.AboutDialog;
+import org.cirdles.topsoil.app.util.IssueCreator;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,6 +64,9 @@ public class TopsoilMainWindowTest extends ApplicationTest {
     private FlywayMigrateTask flywayMigrateTask;
 
     @Mock
+    private IssueCreator issueCreator;
+
+    @Mock
     private WebBrowser webBrowser;
 
     private TopsoilMainWindow topsoilMainWindow;
@@ -78,6 +82,7 @@ public class TopsoilMainWindowTest extends ApplicationTest {
                 builderFactory,
                 datasetMapper,
                 flywayMigrateTask,
+                issueCreator,
                 webBrowser);
 
         Scene scene = new Scene(topsoilMainWindow);
