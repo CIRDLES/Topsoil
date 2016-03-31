@@ -108,6 +108,42 @@
                 .attr("y", -50)
                 .attr("dy", ".71em");
 
+        var k = 4 / 3 * (Math.sqrt(2) - 1);
+        var controlPointsBase = [
+            [1, 0],
+            [1, k],
+            [k, 1],
+            [0, 1],
+            [-k, 1],
+            [-1, k],
+            [-1, 0],
+            [-1, -k],
+            [-k, -1],
+            [0, -1],
+            [k, -1],
+            [1, -k],
+            [1, 0]
+        ];
+
+        var cacheData = plot.cacheData = data.map(function (d) {
+            var r = [
+                [d.sigma_x, d.rho * d.sigma_y],
+                [0, d.sigma_y * Math.sqrt(1 - d.rho * d.rho)]
+            ];
+
+            var shift = function(dx, dy) {
+                return function(p) {
+                    return [p[0] + dx, p[1] + dy];
+                };
+            };
+
+            var points = numeric.mul(
+                    plot.getProperty("Uncertainty"),
+                    numeric.dot(controlPointsBase, r));
+
+            return points.map(shift(d.x, d.y));
+        });
+
         plot.update(data);
     };
 
@@ -128,7 +164,7 @@
 
         var ellipses;
         (ellipses = plot.area.clipped.selectAll(".ellipse")
-                .data(data))
+                .data(plot.cacheData))
                 .enter().append("path")
                 .attr("class", "ellipse")
                 .attr("fill-opacity", 0.3)
@@ -314,33 +350,12 @@
 
         // update the ellipses
         ellipses.attr("d", function (d) {
-            var k = 4 / 3 * (Math.sqrt(2) - 1);
-            var r = [
-                [d.sigma_x, d.rho * d.sigma_y],
-                [0, d.sigma_y * Math.sqrt(1 - d.rho * d.rho)]
-            ];
-            var controlPointsBase = [
-                [1, 0],
-                [1, k],
-                [k, 1],
-                [0, 1],
-                [-k, 1],
-                [-1, k],
-                [-1, 0],
-                [-1, -k],
-                [-k, -1],
-                [0, -1],
-                [k, -1],
-                [1, -k],
-                [1, 0]
-            ];
-
             var ellipsePath = d3.svg.line()
                     .x(function (datum) {
-                        return x(datum[0] + d.x);
+                        return x(datum[0]);
                     })
                     .y(function (datum) {
-                        return y(datum[1] + d.y);
+                        return y(datum[1]);
                     })
                     .interpolate(function (points) {
                         var i = 1, path = [points[0][0], ",", points[0][1]];
@@ -350,9 +365,7 @@
                         return path.join("");
                     });
 
-            return ellipsePath(numeric.mul(
-                plot.getProperty("Uncertainty"),
-                numeric.dot(controlPointsBase, r)));
+            return ellipsePath(d);
         });
 
         // update the center points
