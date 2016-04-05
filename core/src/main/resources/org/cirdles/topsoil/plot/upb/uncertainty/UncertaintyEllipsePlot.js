@@ -139,9 +139,12 @@
 
             var points = numeric.mul(
                     plot.getProperty("Uncertainty"),
-                    numeric.dot(controlPointsBase, r));
+                    numeric.dot(controlPointsBase, r))
+                    .map(shift(d.x, d.y));
+            
+            points.Selected = d.Selected;
 
-            return points.map(shift(d.x, d.y));
+            return points;
         });
 
         plot.update(data);
