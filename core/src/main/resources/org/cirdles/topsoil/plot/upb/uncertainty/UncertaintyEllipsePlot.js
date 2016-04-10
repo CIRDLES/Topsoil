@@ -343,13 +343,15 @@
         var tickLabels;
         (tickLabels = plot.area.clipped.selectAll(".tickLabel")
                 .data(plot.t.ticks()))
-                .attr("x", function (t) { return x(wetherill.x(t)) + 12; })
-                .attr("y", function (t) { return y(wetherill.y(t)) + 5; })
-                .text(function (t) { return t / 1000000; })
                 .enter()
                 .append("text")
                 .attr("font-family", "sans-serif")
                 .attr("class", "tickLabel");
+        
+        tickLabels
+                .attr("x", function (t) { return x(wetherill.x(t)) + 12; })
+                .attr("y", function (t) { return y(wetherill.y(t)) + 5; })
+                .text(function (t) { return t / 1000000; });
 
         // update the ellipses
         ellipses.attr("d", function (d) {
