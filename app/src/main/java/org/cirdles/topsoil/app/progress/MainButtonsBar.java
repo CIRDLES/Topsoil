@@ -1,3 +1,5 @@
+package org.cirdles.topsoil.app.progress;
+
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -5,15 +7,15 @@ import javafx.scene.layout.HBox;
 /**
  * Created by sbunce on 5/30/2016.
  */
-public class MainButtonsBar extends HBox{
+public class MainButtonsBar extends HBox {
     private HBox buttonBar = new HBox();
 
-    public MainButtonsBar(){
+    public MainButtonsBar() {
         super();
         this.initialize();
     }
 
-    public void initialize(){
+    public void initialize() {
         buttonBar.setSpacing(10);
         buttonBar.setPadding(new Insets(15, 12, 15, 12));
         buttonBar.setStyle("-fx-background-color: #DCDCDC;");
@@ -30,7 +32,7 @@ public class MainButtonsBar extends HBox{
     }
 
     //Returns compatible type to be added to main window
-    public HBox getButtons(){
+    public HBox getButtons() {
         return buttonBar;
     }
 }

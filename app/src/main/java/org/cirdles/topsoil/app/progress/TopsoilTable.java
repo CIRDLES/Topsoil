@@ -1,5 +1,6 @@
+package org.cirdles.topsoil.app.progress;
+
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 /**

@@ -1,3 +1,5 @@
+package org.cirdles.topsoil.app.progress;
+
 import java.io.File;
 
 /**

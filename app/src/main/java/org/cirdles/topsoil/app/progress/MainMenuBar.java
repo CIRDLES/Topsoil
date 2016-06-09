@@ -1,4 +1,8 @@
-import javafx.scene.control.*;
+package org.cirdles.topsoil.app.progress;
+
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 
 /**
  * Created by sbunce on 5/30/2016.
@@ -7,12 +11,12 @@ import javafx.scene.control.*;
 public class MainMenuBar extends MenuBar {
     private MenuBar menuBar = new MenuBar();
 
-    public MainMenuBar(){
+    public MainMenuBar() {
         super();
         this.initialize();
     }
 
-    public void initialize(){
+    public void initialize() {
         // File Menu
         Menu projectMenu = new Menu("Project");
         MenuItem newProject = new MenuItem("New Project");
@@ -21,7 +25,6 @@ public class MainMenuBar extends MenuBar {
         MenuItem openProject = new MenuItem("Open Project");
         MenuItem mostRecent = new MenuItem("Most Recently Used");
         MenuItem closeProject = new MenuItem("Close Project");
-        SeparatorMenuItem separator = new SeparatorMenuItem();
         projectMenu.getItems()
                 .addAll(newProject,
                         saveProject,
@@ -35,10 +38,12 @@ public class MainMenuBar extends MenuBar {
         MenuItem newTable = new MenuItem("New Table");
         MenuItem saveTable = new MenuItem("Save Table");
         MenuItem saveTableAs = new MenuItem("Save Table As");
+
         //Creates Submenu for Imports
         Menu importTable = new Menu("Import Table");
         importTable.getItems().add(new MenuItem("From File"));
         importTable.getItems().add(new MenuItem("From Clipboard"));
+
         //Creates Submenu for Isotype system selection
         Menu isoSystem = new Menu("Set Isotope System");
         isoSystem.getItems().add(new MenuItem("UPb"));
@@ -70,7 +75,7 @@ public class MainMenuBar extends MenuBar {
     }
 
     //Returns compatible type to be added to main window
-    public MenuBar getMenuBar(){
+    public MenuBar getMenuBar() {
         return menuBar;
     }
 }
