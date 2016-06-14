@@ -7,7 +7,7 @@ public interface IssueCreator {
 
     /**
      * Appends a line of text to the issue body.
-     * @param text
+     * @param text to add to issue body
      */
     void println(String text);
 
