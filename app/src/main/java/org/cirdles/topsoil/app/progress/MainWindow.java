@@ -6,7 +6,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class NewMain extends Application {
+public class MainWindow extends Application {
 
     @Override
     public void start(Stage primaryStage) {
