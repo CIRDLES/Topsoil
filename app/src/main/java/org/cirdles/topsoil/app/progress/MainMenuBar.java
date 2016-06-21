@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.app.progress;
 
 import javafx.scene.Scene;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -70,6 +72,16 @@ public class MainMenuBar extends MenuBar {
         newTableItem = new MenuItem("New Table");
         saveTableItem = new MenuItem("Save Table");
         saveTableAsItem = new MenuItem("Save Table As");
+
+        newTableItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                IsotopeSelectionWindow iso = new IsotopeSelectionWindow();
+            }
+        });
+        //Saves the currently opened table
+        MenuItem saveTable = new MenuItem("Save Table");
+        //Saves the currently opened table as a specified file
+        MenuItem saveTableAs = new MenuItem("Save Table As");
 
         //Creates Submenu for Imports
         Menu importTable = new Menu("Import Table");

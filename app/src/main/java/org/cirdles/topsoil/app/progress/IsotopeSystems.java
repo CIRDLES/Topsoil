@@ -1,12 +1,31 @@
 package org.cirdles.topsoil.app.progress;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import static org.cirdles.topsoil.app.progress.isoSystem.UPb;
+import static org.cirdles.topsoil.app.progress.isoSystem.UTh;
+
 /**
  * Created by sbunce on 6/20/2016.
  */
 
 //Allows for multiple Isotope Systems to be registered and processed
+enum isoSystem {UPb, UTh};
+
 public class IsotopeSystems {
-    public enum isoSystem {UPb, UTh};
+    public isoSystem iso;
+
+    public void setIsoSystem(String s){
+        switch(s){
+            case "UPb":
+                iso = UPb;
+                break;
+            case "UTh":
+                iso = UTh;
+                break;
+        }
+    }
 
     public String getPrintedName(isoSystem iso){
         switch (iso){
@@ -42,6 +61,15 @@ public class IsotopeSystems {
             default:
                 return null;
         }
+    }
+
+    //Used in IsotopeSelectionWindow to create a menu
+    public ObservableList<String> getList(){
+        ObservableList<String> ret = FXCollections.observableArrayList(
+                "UPb",
+                "UTh"
+        );
+        return ret;
     }
 
 }
