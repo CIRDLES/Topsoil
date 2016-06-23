@@ -1,57 +1,96 @@
 package org.cirdles.topsoil.app.progress;
 
+import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 /**
  * Created by sbunce on 5/30/2016.
  */
 
 public class MainMenuBar extends MenuBar {
+
     private MenuBar menuBar = new MenuBar();
 
-    public MainMenuBar() {
+    // Project Menu
+    private MenuItem newProjectItem;
+    private MenuItem saveProjectItem;
+    private MenuItem saveProjectAsItem;
+    private MenuItem openProjectItem;
+    private MenuItem mostRecentItem;
+    private MenuItem closeProjectItem;
+
+    // Table Menu
+    private MenuItem newTableItem;
+    private MenuItem saveTableItem;
+    private MenuItem saveTableAsItem;
+    // Import >
+    private MenuItem tableFromFileItem;
+    private MenuItem tableFromClipboardItem;
+    // Isotope System >
+    private MenuItem uraniumLeadSystemItem;
+    private MenuItem uraniumThoriumSystemItem;
+
+    // Help Menu
+    private MenuItem reportIssueItem;
+    private MenuItem aboutItem;
+
+    // Scene
+    private Scene scene;
+
+    public MainMenuBar(Scene scene) {
         super();
+        this.scene = scene;
         this.initialize();
     }
 
     public void initialize() {
-        // File Menu
+        // Project Menu
         Menu projectMenu = new Menu("Project");
-        MenuItem newProject = new MenuItem("New Project");
-        MenuItem saveProject = new MenuItem("Save Project");
-        MenuItem saveProjectAs = new MenuItem("Save Project As");
-        MenuItem openProject = new MenuItem("Open Project");
-        MenuItem mostRecent = new MenuItem("Most Recently Used");
-        MenuItem closeProject = new MenuItem("Close Project");
+        newProjectItem = new MenuItem("New Project");
+        saveProjectItem = new MenuItem("Save Project");
+        saveProjectAsItem = new MenuItem("Save Project As");
+        openProjectItem = new MenuItem("Open Project");
+        mostRecentItem = new MenuItem("Most Recently Used");
+        closeProjectItem = new MenuItem("Close Project");
         projectMenu.getItems()
-                .addAll(newProject,
-                        saveProject,
-                        saveProjectAs,
-                        openProject,
-                        mostRecent,
-                        closeProject);
+                .addAll(newProjectItem,
+                        saveProjectItem,
+                        saveProjectAsItem,
+                        openProjectItem,
+                        mostRecentItem,
+                        closeProjectItem);
 
         // Table Menu
         Menu tableMenu = new Menu("Table");
-        MenuItem newTable = new MenuItem("New Table");
-        MenuItem saveTable = new MenuItem("Save Table");
-        MenuItem saveTableAs = new MenuItem("Save Table As");
+        newTableItem = new MenuItem("New Table");
+        saveTableItem = new MenuItem("Save Table");
+        saveTableAsItem = new MenuItem("Save Table As");
 
         //Creates Submenu for Imports
         Menu importTable = new Menu("Import Table");
-        importTable.getItems().add(new MenuItem("From File"));
-        importTable.getItems().add(new MenuItem("From Clipboard"));
+        tableFromFileItem = new MenuItem("From File");
+        tableFromClipboardItem = new MenuItem("From Clipboard");
+        importTable.getItems().addAll(
+                tableFromFileItem,
+                tableFromClipboardItem);
 
         //Creates Submenu for Isotype system selection
         Menu isoSystem = new Menu("Set Isotope System");
-        isoSystem.getItems().add(new MenuItem("UPb"));
-        isoSystem.getItems().add(new MenuItem("UTh"));
+        uraniumLeadSystemItem = new MenuItem("UPb");
+        uraniumThoriumSystemItem = new MenuItem("UTh");
+        isoSystem.getItems().addAll(
+                uraniumLeadSystemItem,
+                uraniumThoriumSystemItem);
         tableMenu.getItems()
-                .addAll(newTable,
-                        saveTable,
-                        saveTableAs,
+                .addAll(newTableItem,
+                        saveTableItem,
+                        saveTableAsItem,
                         importTable,
                         isoSystem);
 
@@ -60,11 +99,11 @@ public class MainMenuBar extends MenuBar {
 
         // Help Menu
         Menu helpMenu = new Menu("Help");
-        MenuItem report = new MenuItem("Report Issue");
-        MenuItem about = new MenuItem("About");
+        reportIssueItem = new MenuItem("Report Issue");
+        aboutItem = new MenuItem("About");
         helpMenu.getItems()
-                .addAll(report,
-                        about);
+                .addAll(reportIssueItem,
+                        aboutItem);
 
         // Add menus to menuBar
         menuBar.getMenus()
@@ -72,6 +111,17 @@ public class MainMenuBar extends MenuBar {
                         tableMenu,
                         plotMenu,
                         helpMenu);
+
+        // Import Table from File
+        tableFromFileItem.setOnAction(event -> {
+            try {
+                ((VBox)scene.getRoot()).getChildren().addAll(
+                        MenuItemEventHandler.handleTableFromFile()
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     //Returns compatible type to be added to main window
