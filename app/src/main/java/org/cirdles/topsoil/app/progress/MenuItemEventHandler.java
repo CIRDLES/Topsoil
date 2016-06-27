@@ -17,9 +17,16 @@ public class MenuItemEventHandler {
 
         // select file
         File file = FileParser.openTableDialogue(new Stage());
-        List<UPbDataEntry> entries = FileParser.parseFile(file);
+        boolean hasHeaders = FileParser.containsHeaderDialogue();
+        String [] headers;
+        if (hasHeaders) {
+            headers = FileParser.parseHeaders(file);
+        } else {
+            headers = null;
+        }
+        List<UPbDataEntry> entries = FileParser.parseFile(file, hasHeaders);
         ObservableList<UPbDataEntry> data = FXCollections.observableList(entries);
-        UPbTable table = new UPbTable(data);
+        UPbTable table = new UPbTable(data, headers);
         return table;
     }
 }

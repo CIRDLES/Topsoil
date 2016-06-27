@@ -5,6 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.cirdles.topsoil.app.util.Alerter;
+import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.util.List;
 
@@ -13,34 +15,40 @@ import java.util.List;
  */
 public class UPbTable extends TableView<UPbDataEntry> {
 
+    private Alerter alerter;
+
     private TableColumn leadUraniumCol;
     private TableColumn leadUraniumStDCol;
     private TableColumn leadUraniumCol2;
     private TableColumn leadUraniumStDCol2;
     private TableColumn corrCoefCol;
 
-    String [] headers;
+    private String [] headers;
+    public final String [] DEFAULT_HEADERS =
+            { "207Pb*/235U" , "±2σ (%)" , "206Pb*/238U" , "±2σ (%)" , "Corr Coef" };
 
-    public UPbTable(List<UPbDataEntry> entries) {
+    public UPbTable(List<UPbDataEntry> entries, String [] headers) {
 
         super();
         ObservableList<UPbDataEntry> data = FXCollections.observableList(entries);
 
-        // use default column headers
-        // TODO put default headers in enum
-        String header1 = "207Pb*/235U";
-        String header2 = "±2σ (%)";
-        String header3 = "206Pb*/238U";
-        String header4 = "±2σ (%)";
-        String header5 = "Corr Coef";
+        // enter headers
+        if (headers == null) {
+            this.headers = DEFAULT_HEADERS;
+        } else if (headers.length < 4 || headers.length > 5) {
+            alerter = new ErrorAlerter();
+            alerter.alert("Invalid Headers");
+        } else if (headers.length == 4) {
+            // populate with provided headers and add Corr Coef column
+            for (int i = 0; i < headers.length; i ++) {
+                this.headers[i] = headers[i];
+                this.headers[5] = "Corr Coef";
+            }
+        } else if (headers.length == 5) {
+            this.headers = headers;
+        }
 
-        this.headers = new String[5];
-        this.headers[0] = header1;
-        this.headers[1] = header2;
-        this.headers[2] = header3;
-        this.headers[3] = header4;
-        this.headers[4] = header5;
-
+        // enter data
         this.setItems(data);
         this.setColumns();
         this.getColumns().addAll(

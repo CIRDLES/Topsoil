@@ -2,7 +2,6 @@ package org.cirdles.topsoil.app.progress;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -16,7 +15,6 @@ public class MainWindow extends Application {
         // Menu Bar
         MainMenuBar menuBar = new MainMenuBar(scene);
         MainButtonsBar buttonBar = new MainButtonsBar();
-        TableView table = new TableView();
 
         // Create Scene
         ((VBox) scene.getRoot()).getChildren().addAll(

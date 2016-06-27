@@ -2,15 +2,22 @@ package org.cirdles.topsoil.app.progress;
 
 import java.io.File;
 
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.util.Alerter;
+import org.cirdles.topsoil.app.util.ErrorAlerter;
+import org.cirdles.topsoil.app.util.YesNoAlert;
+
 import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by benjaminmuldrow on 5/25/16.
@@ -27,22 +34,41 @@ public class FileParser {
                 .showOpenDialog(stage);
     }
 
-    public static List<UPbDataEntry> parseFile(File file) throws IOException
-    {
-        String fileName = file.getName();
-        String extension = fileName.substring(
-                fileName.lastIndexOf(".") + 1,
-                fileName.length());
+    public static boolean containsHeaderDialogue() {
+        boolean containsHeaders = false;
+        YesNoAlert alert = new YesNoAlert(
+                "Does the selection contain headers?");
+        Optional<ButtonType> response = alert.showAndWait();
+        if (response.isPresent()) {
+            if (response.get() == ButtonType.YES) {
+                containsHeaders = true;
+            } else { // 'NO' button or 'CANCEL'
+                containsHeaders = false;
+            }
+        } // else containsHeaders is assumed false
+        return containsHeaders;
+    }
+
+    public static List<UPbDataEntry> parseFile(File file, boolean containsHeaders) throws IOException {
+        String extension = getExtension(file);
         if (extension.equals("csv")) {
-            return parseCsv(file);
+            return parseCsv(file, containsHeaders);
         } else if (extension.equals("tsv")) {
-            return parseTsv(file);
+            return parseTsv(file, containsHeaders);
         } else if (extension.equals("txt")) {
-            return parseTxt(file, "\t");
+            return parseTxt(file, "\t", containsHeaders);
         } else {
             return null;
             // TODO throw error if invalid file extension
         }
+    }
+
+    private static String getExtension(File file) {
+        String fileName = file.getName();
+        String extension = fileName.substring(
+                fileName.lastIndexOf(".") + 1,
+                fileName.length());
+        return extension;
     }
 
     /**
@@ -50,9 +76,9 @@ public class FileParser {
      * @param file CSV file to read data from
      * @return String array of values
      */
-    private static List<UPbDataEntry> parseCsv(File file) throws IOException {
+    private static List<UPbDataEntry> parseCsv(File file, boolean containsHeaders) throws IOException {
 
-        return parseTxt(file, ",");
+        return parseTxt(file, ",", containsHeaders);
 
     }
 
@@ -61,9 +87,9 @@ public class FileParser {
      * @param file TSV file to read data from
      * @return String array of values
      */
-    private static List<UPbDataEntry> parseTsv(File file) throws IOException {
+    private static List<UPbDataEntry> parseTsv(File file, boolean containsHeaders) throws IOException {
 
-        return parseTxt(file, "\t");
+        return parseTxt(file, "\t", containsHeaders);
 
     }
 
@@ -73,10 +99,22 @@ public class FileParser {
      * @param delimiter data delimiter
      * @return String array of values
      */
-    private static List<UPbDataEntry> parseTxt(File file, String delimiter) throws IOException {
+    private static List<UPbDataEntry> parseTxt(File file,
+                                               String delimiter,
+                                               boolean containsHeaders)
+            throws IOException {
 
         List<UPbDataEntry> content = new ArrayList<UPbDataEntry>();
         String [] lines = readLines(file);
+
+        // ignore header row if supplied
+        if (containsHeaders) {
+            String [] newlines = new String[lines.length - 1];
+            for (int i = 1; i < lines.length; i++) {
+                newlines[i - 1] = lines[i];
+            }
+            lines = newlines;
+        }
 
         for (String line : lines) {
             String[] contentAsString = line.split(delimiter);
@@ -108,6 +146,20 @@ public class FileParser {
         return content;
     }
 
+    public static String [] parseHeaders(File file) {
+        String [] content = readLines(file);
+        String extension = getExtension(file);
+        if (extension.equals("csv")) {
+            return content[0].split(",");
+        } else if (extension.equals("txt") || extension.equals("tsv")) {
+            return  content[0].split("\t");
+        } else {
+            Alerter alerter = new ErrorAlerter();
+            alerter.alert("Invalid File Type");
+            return null;
+        }
+    }
+
     private static String [] readLines(File file) {
 
         String [] lines;
@@ -117,7 +169,7 @@ public class FileParser {
 
             // Create relevant file readers
             InputStream inputStream = new FileInputStream(file);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(inputStreamReader);
 
             // Parse file content to arrayList
