@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.progress;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -22,6 +24,11 @@ public class MainButtonsBar extends HBox {
 
         Button newTableButton = new Button("Create New Table");
         newTableButton.setPrefSize(150, 30);
+        newTableButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                IsotopeSelectionWindow iso = new IsotopeSelectionWindow();
+            }
+        });
 
         Button clearButton = new Button("Clear Table");
         clearButton.setPrefSize(150, 30);
