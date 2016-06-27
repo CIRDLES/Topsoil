@@ -18,7 +18,7 @@ import javafx.event.ActionEvent;
 public class IsotopeSelectionWindow {
 
     //All possible isotopes, and stores selected isotope
-    private IsotopeSystems selectedIso;
+   // private IsotopeSystems selectedIso;
     //Creates a menu of the isotopes
     private ComboBox items;
     //Creates the stage
@@ -26,8 +26,8 @@ public class IsotopeSelectionWindow {
 
 
     public IsotopeSelectionWindow(){
-        selectedIso = new IsotopeSystems();
-        items = new ComboBox(selectedIso.getList());
+        //selectedIso = new IsotopeSystems();
+        //items = new ComboBox(selectedIso.getList());
         stage = new Stage();
         this.initialize();
     }
@@ -63,7 +63,7 @@ public class IsotopeSelectionWindow {
     public void selectOkay(){
         try {
             String iso = (String) items.getSelectionModel().getSelectedItem();
-            selectedIso.setIsoSystem(iso);
+            //selectedIso.setIsoSystem(iso);
             stage.close();
         } catch (Exception e){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
