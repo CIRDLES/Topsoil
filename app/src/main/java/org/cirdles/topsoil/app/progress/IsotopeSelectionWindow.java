@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -16,23 +15,16 @@ import javafx.event.ActionEvent;
  * Created by sbunce on 6/20/2016.
  */
 public class IsotopeSelectionWindow {
-
-    //All possible isotopes, and stores selected isotope
-   // private IsotopeSystems selectedIso;
-    //Creates a menu of the isotopes
-    private ComboBox items;
+    //TODO fix everything to work with the new enum IsotopeType
     //Creates the stage
     private Stage stage;
 
-
-    public IsotopeSelectionWindow(){
-        //selectedIso = new IsotopeSystems();
-        //items = new ComboBox(selectedIso.getList());
+    public IsotopeSelectionWindow() {
         stage = new Stage();
         this.initialize();
     }
 
-    public void initialize(){
+    public void initialize() {
         stage.setTitle("Select Your Isotope System");
 
         //Creates the layout
@@ -47,7 +39,7 @@ public class IsotopeSelectionWindow {
 
         Label iso = new Label("Isotope System:");
         grid.add(iso, 0, 1);
-        grid.add(items, 1, 1);
+        //grid.add(items, 1, 1);
 
         Button okayButton = new Button("Okay");
         okayButton.setOnAction((EventHandler<ActionEvent>) e -> selectOkay());
@@ -60,12 +52,10 @@ public class IsotopeSelectionWindow {
         stage.show();
     }
 
-    public void selectOkay(){
+    private void selectOkay() {
         try {
-            String iso = (String) items.getSelectionModel().getSelectedItem();
-            //selectedIso.setIsoSystem(iso);
             stage.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -74,7 +64,7 @@ public class IsotopeSelectionWindow {
         }
     }
 
-    public void selectCancel(){
+    private void selectCancel() {
         stage.close();
     }
 }

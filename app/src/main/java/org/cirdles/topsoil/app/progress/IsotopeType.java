@@ -14,12 +14,11 @@ public enum IsotopeType {
     UTh("UTh", "Uranium Thorium",
             new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"});
 
-
     private String abbr;
     private String name;
     private String[] headers;
 
-    private IsotopeType(String abbr, String name, String[] headers){
+    private IsotopeType(String abbr, String name, String[] headers) {
         this.abbr = abbr;
         this.name = name;
         this.headers = headers;
@@ -29,7 +28,7 @@ public enum IsotopeType {
      *
      * @return abbreviated name
      */
-    public String getAbbreviation(){
+    public String getAbbreviation() {
         return abbr;
     }
 
@@ -37,7 +36,7 @@ public enum IsotopeType {
      *
      * @return full name
      */
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -45,7 +44,7 @@ public enum IsotopeType {
      *
      * @return default headers
      */
-    public String[] getHeaders(){
+    public String[] getHeaders() {
         return headers;
     }
 }

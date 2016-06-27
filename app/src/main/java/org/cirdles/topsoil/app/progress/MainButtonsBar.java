@@ -6,8 +6,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 
-
-
 /**
  * Created by sbunce on 5/30/2016.
  */
