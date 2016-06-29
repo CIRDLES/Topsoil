@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 /**
  * Created by sbunce on 6/20/2016.
@@ -56,11 +57,8 @@ public class IsotopeSelectionWindow {
         try {
             stage.close();
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("You must select an isotope type.");
-            alert.showAndWait();
+            ErrorAlerter alert = new ErrorAlerter();
+            alert.alert("You must select an isotope.");
         }
     }
 
