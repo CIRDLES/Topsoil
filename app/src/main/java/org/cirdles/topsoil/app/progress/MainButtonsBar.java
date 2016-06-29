@@ -1,18 +1,27 @@
 package org.cirdles.topsoil.app.progress;
 
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
+import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleNewTable;
 
 /**
  * Created by sbunce on 5/30/2016.
  */
+
+
 public class MainButtonsBar extends HBox {
 
+    //Scene
+    private Scene scene;
     private HBox buttonBar = new HBox();
 
-    public MainButtonsBar() {
+    public MainButtonsBar(Scene scene) {
         super();
+        this.scene = scene;
         this.initialize();
     }
 
@@ -25,6 +34,7 @@ public class MainButtonsBar extends HBox {
         newTableButton.setPrefSize(150, 30);
         newTableButton.setOnAction(event -> {
             MenuItemEventHandler.handleNewTable();
+            //add stuff here
         });
 
         Button clearButton = new Button("Clear Table");

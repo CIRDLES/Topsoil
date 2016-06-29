@@ -13,7 +13,7 @@ public class MainWindow extends Application {
         Scene scene = new Scene(new VBox(), 750, 750);
 
         MainMenuBar menuBar = new MainMenuBar(scene);
-        MainButtonsBar buttonBar = new MainButtonsBar();
+        MainButtonsBar buttonBar = new MainButtonsBar(scene);
 
         // Create Scene
         ((VBox) scene.getRoot()).getChildren().addAll(
