@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,10 +14,19 @@ import java.util.List;
  */
 public class MenuItemEventHandler {
 
-    public static UPbTable handleTableFromFile() throws IOException {
+    /**
+     * Handles importing tables from CSV / TSV files
+     * @return Topsoil Table file
+     * @throws IOException for invalid file selection
+     */
+    public static TopsoilTable handleTableFromFile() throws IOException {
+
+        TopsoilTable table;
 
         // select file
         File file = FileParser.openTableDialogue(new Stage());
+
+        // select headers
         boolean hasHeaders = FileParser.containsHeaderDialogue();
         String [] headers;
         if (hasHeaders) {
@@ -24,9 +34,37 @@ public class MenuItemEventHandler {
         } else {
             headers = null;
         }
-        List<UPbDataEntry> entries = FileParser.parseFile(file, hasHeaders);
-        ObservableList<UPbDataEntry> data = FXCollections.observableList(entries);
-        UPbTable table = new UPbTable(data, headers);
+
+        // select isotope flavor
+        IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+        List<TopsoilDataEntry> entries = FileParser.parseFile(file, hasHeaders);
+        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+
+        // create table
+        if (data == null ||  isotopeType == null) {
+            table = null;
+        } else {
+            table = new TopsoilTable(data, headers, isotopeType);
+        }
+
         return table;
     }
+
+    public static TopsoilTable handleNewTable() {
+
+        TopsoilTable table;
+
+        // select isotope flavor
+        IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+
+        // create empty dataset
+        List<TopsoilDataEntry> entries = new ArrayList<>();
+        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+
+        // create empty table
+        table = new TopsoilTable(data, null, isotopeType);
+
+        return table;
+    }
+
 }

@@ -49,7 +49,7 @@ public class FileParser {
         return containsHeaders;
     }
 
-    public static List<UPbDataEntry> parseFile(File file, boolean containsHeaders) throws IOException {
+    public static List<TopsoilDataEntry> parseFile(File file, boolean containsHeaders) throws IOException {
         String extension = getExtension(file);
         if (extension.equals("csv")) {
             return parseCsv(file, containsHeaders);
@@ -76,7 +76,7 @@ public class FileParser {
      * @param file CSV file to read data from
      * @return String array of values
      */
-    private static List<UPbDataEntry> parseCsv(File file, boolean containsHeaders) throws IOException {
+    private static List<TopsoilDataEntry> parseCsv(File file, boolean containsHeaders) throws IOException {
 
         return parseTxt(file, ",", containsHeaders);
 
@@ -87,7 +87,7 @@ public class FileParser {
      * @param file TSV file to read data from
      * @return String array of values
      */
-    private static List<UPbDataEntry> parseTsv(File file, boolean containsHeaders) throws IOException {
+    private static List<TopsoilDataEntry> parseTsv(File file, boolean containsHeaders) throws IOException {
 
         return parseTxt(file, "\t", containsHeaders);
 
@@ -99,12 +99,12 @@ public class FileParser {
      * @param delimiter data delimiter
      * @return String array of values
      */
-    private static List<UPbDataEntry> parseTxt(File file,
-                                               String delimiter,
-                                               boolean containsHeaders)
+    private static List<TopsoilDataEntry> parseTxt(File file,
+                                                   String delimiter,
+                                                   boolean containsHeaders)
             throws IOException {
 
-        List<UPbDataEntry> content = new ArrayList<UPbDataEntry>();
+        List<TopsoilDataEntry> content = new ArrayList<TopsoilDataEntry>();
         String [] lines = readLines(file);
 
         // ignore header row if supplied
@@ -120,7 +120,7 @@ public class FileParser {
             String[] contentAsString = line.split(delimiter);
             if (contentAsString.length == 4) {              // No Corr Coef provided
                 content.add(
-                        new UPbDataEntry(
+                        new TopsoilDataEntry(
                                 Double.parseDouble(contentAsString[0]),
                                 Double.parseDouble(contentAsString[1]),
                                 Double.parseDouble(contentAsString[2]),
@@ -129,7 +129,7 @@ public class FileParser {
                 );
             } else if (contentAsString.length == 5) {       // Corr Coef Provided
                 content.add(
-                        new UPbDataEntry(
+                        new TopsoilDataEntry(
                                 Double.parseDouble(contentAsString[0]),
                                 Double.parseDouble(contentAsString[1]),
                                 Double.parseDouble(contentAsString[2]),

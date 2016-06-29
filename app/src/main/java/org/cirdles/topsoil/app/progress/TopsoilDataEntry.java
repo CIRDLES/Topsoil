@@ -6,7 +6,10 @@ import javafx.beans.property.SimpleDoubleProperty;
 /**
  * Created by benjaminmuldrow on 6/20/16.
  */
-public class UPbDataEntry {
+public class TopsoilDataEntry {
+
+    // TODO: make more generic
+    // TODO: no-arg constructor (populate with 0's)
 
     private final DoubleProperty leadUranium;
     private final DoubleProperty leadUraniumStD;
@@ -14,10 +17,10 @@ public class UPbDataEntry {
     private final DoubleProperty leadUraniumStD2;
     private final DoubleProperty corrCoef;
 
-    public UPbDataEntry(double leadUranium,
-                        double leadUraniumStD,
-                        double leadUranium2,
-                        double leadUraniumStD2) {
+    public TopsoilDataEntry(double leadUranium,
+                            double leadUraniumStD,
+                            double leadUranium2,
+                            double leadUraniumStD2) {
         this.leadUranium = new SimpleDoubleProperty(leadUranium);
         this.leadUraniumStD = new SimpleDoubleProperty(leadUraniumStD);
         this.leadUranium2 = new SimpleDoubleProperty(leadUranium2);
@@ -25,11 +28,11 @@ public class UPbDataEntry {
         this.corrCoef = new SimpleDoubleProperty(0);
     }
 
-    public UPbDataEntry(double leadUranium,
-                       double leadUraniumStD,
-                       double leadUranium2,
-                       double leadUraniumStD2,
-                       double corrCoef) {
+    public TopsoilDataEntry(double leadUranium,
+                            double leadUraniumStD,
+                            double leadUranium2,
+                            double leadUraniumStD2,
+                            double corrCoef) {
         this.leadUranium = new SimpleDoubleProperty(leadUranium);
         this.leadUraniumStD = new SimpleDoubleProperty(leadUraniumStD);
         this.leadUranium2 = new SimpleDoubleProperty(leadUranium2);

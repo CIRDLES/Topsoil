@@ -7,8 +7,12 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
+import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.io.IOException;
+
+import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleNewTable;
+import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleTableFromFile;
 
 /**
  * Created by sbunce on 5/30/2016.
@@ -125,13 +129,33 @@ public class MainMenuBar extends MenuBar {
 
         // Import Table from File
         tableFromFileItem.setOnAction(event -> {
+
+            TopsoilTable table = null;
+
             try {
-                ((VBox)scene.getRoot()).getChildren().addAll(
-                        MenuItemEventHandler.handleTableFromFile()
-                );
+                table = handleTableFromFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            // display table
+            if (table != null) {
+                ((VBox) scene.getRoot()).getChildren().addAll(table);
+            } else {
+                ErrorAlerter alerter = new ErrorAlerter();
+                alerter.alert("Invalid Table");
+            }
+
+        });
+
+        // New, empty table
+        newTableItem.setOnAction(event -> {
+
+            // get new table
+            TopsoilTable table = handleNewTable();
+
+            // display new table
+            ((VBox) scene.getRoot()).getChildren().addAll(table);
         });
     }
 

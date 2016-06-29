@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by benjaminmuldrow on 6/20/16.
  */
-public class UPbTable extends TableView<UPbDataEntry> {
+public class TopsoilTable extends TableView<TopsoilDataEntry> {
 
     private Alerter alerter;
 
@@ -24,17 +24,15 @@ public class UPbTable extends TableView<UPbDataEntry> {
     private TableColumn corrCoefCol;
 
     private String [] headers;
-    public final String [] DEFAULT_HEADERS =
-            { "207Pb*/235U" , "±2σ (%)" , "206Pb*/238U" , "±2σ (%)" , "Corr Coef" };
 
-    public UPbTable(List<UPbDataEntry> entries, String [] headers) {
+    public TopsoilTable(List<TopsoilDataEntry> entries, String [] headers, IsotopeType isotopeType) {
 
         super();
-        ObservableList<UPbDataEntry> data = FXCollections.observableList(entries);
+        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
 
         // enter headers
         if (headers == null) {
-            this.headers = DEFAULT_HEADERS;
+            this.headers = isotopeType.getHeaders();
         } else if (headers.length < 4 || headers.length > 5) {
             alerter = new ErrorAlerter();
             alerter.alert("Invalid Headers");
@@ -63,27 +61,31 @@ public class UPbTable extends TableView<UPbDataEntry> {
     private void setColumns() {
         leadUraniumCol = new TableColumn(headers[0]);
         leadUraniumCol.setCellValueFactory(
-                new PropertyValueFactory<UPbDataEntry, Double>("leadUranium")
+                new PropertyValueFactory<TopsoilDataEntry, Double>("leadUranium")
         );
 
         leadUraniumStDCol = new TableColumn(headers[1]);
         leadUraniumStDCol.setCellValueFactory(
-                new PropertyValueFactory<UPbDataEntry, Double>("leadUraniumStD")
+                new PropertyValueFactory<TopsoilDataEntry, Double>("leadUraniumStD")
         );
 
         leadUraniumCol2 = new TableColumn(headers[2]);
         leadUraniumCol2.setCellValueFactory(
-                new PropertyValueFactory<UPbDataEntry, Double>("leadUranium2")
+                new PropertyValueFactory<TopsoilDataEntry, Double>("leadUranium2")
         );
 
         leadUraniumStDCol2 = new TableColumn(headers[3]);
         leadUraniumStDCol2.setCellValueFactory(
-                new PropertyValueFactory<UPbDataEntry, Double>("leadUraniumStD2")
+                new PropertyValueFactory<TopsoilDataEntry, Double>("leadUraniumStD2")
         );
 
         corrCoefCol = new TableColumn(headers[4]);
         corrCoefCol.setCellValueFactory(
-                new PropertyValueFactory<UPbDataEntry, Double>("corrCoef")
+                new PropertyValueFactory<TopsoilDataEntry, Double>("corrCoef")
         );
+    }
+
+    public static void createNewRow(TopsoilTable table) {
+        table.getItems().add(new TopsoilDataEntry(0,0,0,0,0));
     }
 }
