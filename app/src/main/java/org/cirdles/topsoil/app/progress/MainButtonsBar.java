@@ -36,6 +36,7 @@ public class MainButtonsBar extends HBox {
         newTableButton.setOnAction(event -> {
             TopsoilTable table = MenuItemEventHandler.handleNewTable();
             tabs.add(table);
+
         });
 
         Button clearButton = new Button("Clear Table");
