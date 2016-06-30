@@ -1,10 +1,8 @@
 package org.cirdles.topsoil.app.progress;
 
-import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.io.IOException;
@@ -44,13 +42,9 @@ public class MainMenuBar extends MenuBar {
     private MenuItem reportIssueItem;
     private MenuItem aboutItem;
 
-    // Scene
-    private Scene scene;
-
     //Passed the main scene and tabbed pane
-    public MainMenuBar(Scene scene, TopsoilTabPane tabs) {
+    public MainMenuBar(TopsoilTabPane tabs) {
         super();
-        this.scene = scene;
         this.initialize(tabs);
     }
 
@@ -78,7 +72,8 @@ public class MainMenuBar extends MenuBar {
         saveTableAsItem = new MenuItem("Save Table As");
 
         newTableItem.setOnAction(event -> {
-            MenuItemEventHandler.handleNewTable();
+            TopsoilTable table = MenuItemEventHandler.handleNewTable();
+            tabs.add(table);
         });
 
         //Saves the currently opened table
