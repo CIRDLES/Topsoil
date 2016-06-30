@@ -19,13 +19,14 @@ public class MainButtonsBar extends HBox {
     private Scene scene;
     private HBox buttonBar = new HBox();
 
-    public MainButtonsBar(Scene scene) {
+    //Passed the main scene and tabbed pane
+    public MainButtonsBar(Scene scene, TopsoilTabPane tabs) {
         super();
         this.scene = scene;
-        this.initialize();
+        this.initialize(tabs);
     }
 
-    public void initialize() {
+    public void initialize(TopsoilTabPane tabs) {
         buttonBar.setSpacing(10);
         buttonBar.setPadding(new Insets(15, 12, 15, 12));
         buttonBar.setStyle("-fx-background-color: #DCDCDC;");
@@ -33,8 +34,8 @@ public class MainButtonsBar extends HBox {
         Button newTableButton = new Button("Create New Table");
         newTableButton.setPrefSize(150, 30);
         newTableButton.setOnAction(event -> {
-            MenuItemEventHandler.handleNewTable();
-            //add stuff here
+            TopsoilTable table = MenuItemEventHandler.handleNewTable();
+            tabs.add(table);
         });
 
         Button clearButton = new Button("Clear Table");
