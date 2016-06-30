@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.progress;
 
+import java.util.Arrays;
+
 /**
  * Created by sbunce on 6/27/2016.
  */
@@ -14,11 +16,11 @@ public enum IsotopeType {
     UTh("UTh", "Uranium Thorium",
             new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"});
 
-    private String abbr;
-    private String name;
-    private String[] headers;
+    private final String abbr;
+    private final String name;
+    private final String[] headers;
 
-    private IsotopeType(String abbr, String name, String[] headers) {
+    IsotopeType(String abbr, String name, String [] headers) {
         this.abbr = abbr;
         this.name = name;
         this.headers = headers;
@@ -29,7 +31,7 @@ public enum IsotopeType {
      * @return abbreviated name
      */
     public String getAbbreviation() {
-        return abbr;
+        return this.abbr;
     }
 
     /**
@@ -37,7 +39,7 @@ public enum IsotopeType {
      * @return full name
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
@@ -45,6 +47,7 @@ public enum IsotopeType {
      * @return default headers
      */
     public String[] getHeaders() {
-        return headers;
+        String[] result = Arrays.copyOf(this.headers, headers.length);
+        return result;
     }
 }

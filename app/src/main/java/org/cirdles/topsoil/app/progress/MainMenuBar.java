@@ -1,8 +1,6 @@
 package org.cirdles.topsoil.app.progress;
 
 import javafx.scene.Scene;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -12,6 +10,7 @@ import org.cirdles.topsoil.app.util.ErrorAlerter;
 import java.io.IOException;
 
 import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleNewTable;
+import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleReportIssue;
 import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleTableFromFile;
 
 /**
@@ -77,15 +76,14 @@ public class MainMenuBar extends MenuBar {
         saveTableItem = new MenuItem("Save Table");
         saveTableAsItem = new MenuItem("Save Table As");
 
-        newTableItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                IsotopeSelectionWindow iso = new IsotopeSelectionWindow();
-            }
+        newTableItem.setOnAction(event -> {
+            MenuItemEventHandler.handleNewTable();
         });
+
         //Saves the currently opened table
-        MenuItem saveTable = new MenuItem("Save Table");
+        saveTableItem = new MenuItem("Save Table");
         //Saves the currently opened table as a specified file
-        MenuItem saveTableAs = new MenuItem("Save Table As");
+        saveTableAsItem = new MenuItem("Save Table As");
 
         //Creates Submenu for Imports
         Menu importTable = new Menu("Import Table");
@@ -132,6 +130,7 @@ public class MainMenuBar extends MenuBar {
 
             TopsoilTable table = null;
 
+            // get table from selections
             try {
                 table = handleTableFromFile();
             } catch (IOException e) {
@@ -156,6 +155,11 @@ public class MainMenuBar extends MenuBar {
 
             // display new table
             ((VBox) scene.getRoot()).getChildren().addAll(table);
+        });
+
+        // Report Issue
+        reportIssueItem.setOnAction(event -> {
+            handleReportIssue();
         });
     }
 

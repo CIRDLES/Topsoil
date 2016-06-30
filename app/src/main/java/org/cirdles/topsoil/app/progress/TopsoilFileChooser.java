@@ -29,8 +29,7 @@ public class TopsoilFileChooser {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Table File");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Table Files", "*.tsv", "*.csv"),
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                new FileChooser.ExtensionFilter("Table Files", "*.tsv", "*.csv", "*.txt"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
         return fileChooser;

@@ -3,7 +3,13 @@ package org.cirdles.topsoil.app.progress;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
+import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
+import org.cirdles.topsoil.app.util.ErrorAlerter;
+import org.cirdles.topsoil.app.util.IssueCreator;
+import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,6 +71,16 @@ public class MenuItemEventHandler {
         table = new TopsoilTable(data, null, isotopeType);
 
         return table;
+    }
+
+    public static void handleReportIssue() {
+        IssueCreator issueCreator = new StandardGitHubIssueCreator(
+                new TopsoilMetadata(),
+                System.getProperties(),
+                new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter()),
+                new StringBuilder()
+        );
+        issueCreator.create();
     }
 
 }

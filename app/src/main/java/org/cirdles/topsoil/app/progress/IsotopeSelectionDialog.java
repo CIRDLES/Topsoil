@@ -42,7 +42,7 @@ public class IsotopeSelectionDialog extends ChoiceDialog<String> {
 
         // check selection
         for (IsotopeType isotopeType : IsotopeType.values()) {
-            if (result.get() == isotopeType.getName()) {
+            if (result.get().equals(isotopeType.getName())) {
                 selection = isotopeType;
             }
         }
