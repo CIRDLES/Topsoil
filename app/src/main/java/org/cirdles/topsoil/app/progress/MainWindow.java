@@ -12,13 +12,15 @@ public class MainWindow extends Application {
 
         Scene scene = new Scene(new VBox(), 750, 750);
 
-        MainMenuBar menuBar = new MainMenuBar(scene);
-        MainButtonsBar buttonBar = new MainButtonsBar();
+        TopsoilTabPane tabs = new TopsoilTabPane();
+        MainMenuBar menuBar = new MainMenuBar(scene, tabs);
+        MainButtonsBar buttonBar = new MainButtonsBar(scene, tabs);
 
         // Create Scene
         ((VBox) scene.getRoot()).getChildren().addAll(
                 menuBar.getMenuBar(),
-                buttonBar.getButtons()
+                buttonBar.getButtons(),
+                tabs
         );
 
         // Display Scene

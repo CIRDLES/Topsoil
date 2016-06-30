@@ -47,13 +47,14 @@ public class MainMenuBar extends MenuBar {
     // Scene
     private Scene scene;
 
-    public MainMenuBar(Scene scene) {
+    //Passed the main scene and tabbed pane
+    public MainMenuBar(Scene scene, TopsoilTabPane tabs) {
         super();
         this.scene = scene;
-        this.initialize();
+        this.initialize(tabs);
     }
 
-    public void initialize() {
+    public void initialize(TopsoilTabPane tabs) {
         // Project Menu
         Menu projectMenu = new Menu("Project");
         newProjectItem = new MenuItem("New Project");
@@ -139,7 +140,7 @@ public class MainMenuBar extends MenuBar {
 
             // display table
             if (table != null) {
-                ((VBox) scene.getRoot()).getChildren().addAll(table);
+                tabs.add(table);
             } else {
                 ErrorAlerter alerter = new ErrorAlerter();
                 alerter.alert("Invalid Table");
@@ -154,7 +155,7 @@ public class MainMenuBar extends MenuBar {
             TopsoilTable table = handleNewTable();
 
             // display new table
-            ((VBox) scene.getRoot()).getChildren().addAll(table);
+            tabs.add(table);
         });
 
         // Report Issue
