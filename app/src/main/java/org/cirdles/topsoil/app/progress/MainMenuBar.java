@@ -14,7 +14,6 @@ import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleTableF
 /**
  * Created by sbunce on 5/30/2016.
  */
-
 public class MainMenuBar extends MenuBar {
 
     private MenuBar menuBar = new MenuBar();
@@ -48,7 +47,7 @@ public class MainMenuBar extends MenuBar {
         this.initialize(tabs);
     }
 
-    public void initialize(TopsoilTabPane tabs) {
+    private void initialize(TopsoilTabPane tabs) {
         // Project Menu
         Menu projectMenu = new Menu("Project");
         newProjectItem = new MenuItem("New Project");
