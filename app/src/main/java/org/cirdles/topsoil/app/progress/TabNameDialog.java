@@ -12,16 +12,18 @@ public class TabNameDialog {
     private String newName;
 
     public TabNameDialog(String oldName) {
-        //Sets default name
         newName = oldName;
-
         TextInputDialog dialog = new TextInputDialog(oldName);
         dialog.setTitle("Tab Name Change");
         dialog.setContentText("Enter the new tab name:");
         dialog.showAndWait();
 
-        if(!dialog.getResult().isEmpty()){
-            newName = dialog.getResult();
+        try {
+            if (!dialog.getResult().isEmpty()) {
+                newName = dialog.getResult();
+            }
+        } catch (Exception e) {
+            //Do nothing
         }
     }
 

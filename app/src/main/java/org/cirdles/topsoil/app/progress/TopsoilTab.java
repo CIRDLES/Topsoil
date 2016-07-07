@@ -25,7 +25,8 @@ public class TopsoilTab extends Tab {
             public void handle(MouseEvent event) {
                 if (event.getClickCount()==2) {
                     TabNameDialog nameChange = new TabNameDialog(tabName);
-                    label.setText(nameChange.getName());
+                    tabName = nameChange.getName();
+                    label.setText(tabName);
                 }
             }
         });
