@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.progress;
 
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 /**
