@@ -1,9 +1,6 @@
 package org.cirdles.topsoil.app.progress;
 
 import javafx.scene.control.TextInputDialog;
-import org.controlsfx.dialog.Dialogs;
-
-import java.util.Optional;
 
 /**
  * Created by sbunce on 7/6/2016.
@@ -27,9 +24,7 @@ public class TabNameDialog {
         }
     }
 
-    public String getName(){
+    public String getName() {
         return newName;
     }
-
-
 }
