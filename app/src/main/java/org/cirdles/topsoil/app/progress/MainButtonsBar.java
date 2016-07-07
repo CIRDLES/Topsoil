@@ -17,7 +17,7 @@ public class MainButtonsBar extends HBox {
         this.initialize(tabs);
     }
 
-    public void initialize(TopsoilTabPane tabs) {
+    private void initialize(TopsoilTabPane tabs) {
         buttonBar.setSpacing(10);
         buttonBar.setPadding(new Insets(15, 12, 15, 12));
         buttonBar.setStyle("-fx-background-color: #DCDCDC;");
