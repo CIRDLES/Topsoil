@@ -7,7 +7,7 @@ import java.util.Arrays;
  */
 public enum IsotopeType {
 
-    //Isotope abbreviation, isotope name, array of default headers as strings
+    //Isotope abbreviation, isotope name, array of default headers as strings, plot type enum
 
     UPb("UPb", "Uranium Lead",
             new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"}),

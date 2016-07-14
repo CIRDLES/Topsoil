@@ -16,8 +16,9 @@ public class TabNameDialog {
         dialog.showAndWait();
 
         try {
-            if (!dialog.getResult().isEmpty()) {
-                newName = dialog.getResult();
+            String temp = parseSpaces(dialog.getResult());
+            if (!temp.isEmpty()) {
+                newName = temp;
             }
         } catch (Exception e) {
             //Do nothing
@@ -26,5 +27,13 @@ public class TabNameDialog {
 
     public String getName() {
         return newName;
+    }
+
+    private static String parseSpaces(String s) {
+        String ret = s;
+        while(ret.substring(ret.length() - 1).equals(" ")) {
+            ret = ret.substring(0, ret.length() - 1);
+        }
+        return ret;
     }
 }
