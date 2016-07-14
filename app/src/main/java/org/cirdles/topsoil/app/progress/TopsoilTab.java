@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
  */
 public class TopsoilTab extends Tab {
 
-    private String tabName = new String("Unnamed Tab");
+    private String tabName = new String("Untitled Data");
     private TopsoilTable table;
 
     private final Label label = new Label(tabName);

@@ -19,4 +19,5 @@ public class TopsoilTabPane extends TabPane {
         this.getTabs().addAll(newTab);
         this.getSelectionModel().select(newTab);
     }
+
 }
