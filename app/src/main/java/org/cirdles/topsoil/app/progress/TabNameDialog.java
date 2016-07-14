@@ -31,7 +31,7 @@ public class TabNameDialog {
 
     private static String parseSpaces(String s) {
         String ret = s;
-        while(ret.substring(ret.length() - 1).equals(" ")) {
+        while (ret.substring(ret.length() - 1).equals(" ")) {
             ret = ret.substring(0, ret.length() - 1);
         }
         return ret;
