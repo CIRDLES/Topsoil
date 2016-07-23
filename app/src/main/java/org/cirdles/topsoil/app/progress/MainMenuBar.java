@@ -3,7 +3,12 @@ package org.cirdles.topsoil.app.progress;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import org.cirdles.topsoil.app.menu.PlotMenu;
+import org.cirdles.topsoil.app.plot.PlotType;
+import org.cirdles.topsoil.app.plot.PlotWindow;
+import org.cirdles.topsoil.app.plot.UraniumLeadPlotType;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
+import org.cirdles.topsoil.plot.Plot;
 
 import java.io.IOException;
 
@@ -54,15 +59,15 @@ public class MainMenuBar extends MenuBar {
         saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
         openProjectItem = new MenuItem("Open Project");
-        mostRecentItem = new MenuItem("Most Recently Used");
         closeProjectItem = new MenuItem("Close Project");
+        mostRecentItem = new MenuItem("Most Recently Used");
         projectMenu.getItems()
                 .addAll(newProjectItem,
                         saveProjectItem,
                         saveProjectAsItem,
                         openProjectItem,
-                        mostRecentItem,
-                        closeProjectItem);
+                        closeProjectItem,
+                        mostRecentItem);
 
         // Table Menu
         Menu tableMenu = new Menu("Table");
@@ -104,6 +109,17 @@ public class MainMenuBar extends MenuBar {
 
         // Plot Menu
         Menu plotMenu = new Menu("Plot");
+        MenuItem generatePlotItem = new MenuItem("Generate Plot");
+        plotMenu.getItems().addAll(generatePlotItem);
+        generatePlotItem.setOnAction(event -> {
+            try {
+                //TODO Pass isotope type and dataset to some class w/initializeAndShow from topsoilmainwindow
+                IsotopeType iso = tabs.getSelectedTab().getIsotopeType();
+                PlotType plotType = MenuItemEventHandler.handlePlotType(iso);
+            } catch (Exception e) {
+                //Do nothing
+            }
+        });
 
         // Help Menu
         Menu helpMenu = new Menu("Help");

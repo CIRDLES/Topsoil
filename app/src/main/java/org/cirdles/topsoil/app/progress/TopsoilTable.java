@@ -49,9 +49,9 @@ public class TopsoilTable {
      */
     private TableColumn [] createColumns(String [] headers) {
 
-        TableColumn [] result = new TableColumn[headers.length];
+        TableColumn[] result = new TableColumn[headers.length];
 
-        for (int i = 0; i < headers.length; i ++) {
+        for (int i = 0; i < headers.length; i++) {
 
             TableColumn<TopsoilDataEntry, Double> column = new TableColumn<>(headers[i]);
             final int columnIndex = i;
@@ -64,8 +64,6 @@ public class TopsoilTable {
                     return (ObservableValue) param.getValue().getProperties().get(columnIndex);
                 }
             });
-
-            result[i] = column;
         }
 
         return result;

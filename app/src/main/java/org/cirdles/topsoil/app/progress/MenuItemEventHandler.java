@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
+import org.cirdles.topsoil.app.plot.PlotType;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 import org.cirdles.topsoil.app.util.IssueCreator;
 import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
@@ -71,6 +72,21 @@ public class MenuItemEventHandler {
         table = new TopsoilTable(null, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
 
         return table;
+    }
+
+    public static PlotType handlePlotType(IsotopeType iso) {
+        PlotType plotType;
+        String name = iso.getName();
+        //TODO add a better way to identify the isotope type
+        if (name.equals("Uranium Lead")) {
+            // Selects plot type
+            plotType = UPbPlotSelectionDialog.selectPlot(new UPbPlotSelectionDialog());
+        } else {
+            // Selects plot type
+            plotType = UThPlotSelectionDialog.selectPlot((new UThPlotSelectionDialog()));
+        }
+
+        return plotType;
     }
 
     public static void handleReportIssue() {
