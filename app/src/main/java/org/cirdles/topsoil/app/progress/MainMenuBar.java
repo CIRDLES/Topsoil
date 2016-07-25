@@ -113,9 +113,10 @@ public class MainMenuBar extends MenuBar {
         plotMenu.getItems().addAll(generatePlotItem);
         generatePlotItem.setOnAction(event -> {
             try {
-                //TODO Pass isotope type and dataset to some class w/initializeAndShow from topsoilmainwindow
                 IsotopeType iso = tabs.getSelectedTab().getIsotopeType();
                 PlotType plotType = MenuItemEventHandler.handlePlotType(iso);
+                //Dataset data = . . .
+                //InitializePlotDialog plotDialog = new InitializePlotDialog(plotType, data);
             } catch (Exception e) {
                 //Do nothing
             }
