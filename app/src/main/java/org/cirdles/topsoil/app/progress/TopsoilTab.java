@@ -31,4 +31,8 @@ public class TopsoilTab extends Tab {
         return table.getTable();
     }
 
+    public IsotopeType getIsotopeType() {
+        return table.getIsotopeType();
+    }
+
 }

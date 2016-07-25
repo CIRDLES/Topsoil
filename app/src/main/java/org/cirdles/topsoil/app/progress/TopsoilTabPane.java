@@ -10,7 +10,7 @@ public class TopsoilTabPane extends TabPane {
 
     //Passed to the MainMenuBar and MainButtons Bar
     public TopsoilTabPane() {
-        //Do nothing
+        super();
     }
 
     //Adds a new tab to the MainWindow tab pane
@@ -21,6 +21,10 @@ public class TopsoilTabPane extends TabPane {
         newTab.setContent(table.getTable());
         this.getTabs().addAll(newTab);
         this.getSelectionModel().select(newTab);
+    }
+
+    public TopsoilTab getSelectedTab() {
+        return (TopsoilTab) this.getSelectionModel().getSelectedItem();
     }
 
 }

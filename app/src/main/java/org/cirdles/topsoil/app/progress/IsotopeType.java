@@ -1,5 +1,8 @@
 package org.cirdles.topsoil.app.progress;
 
+import org.cirdles.topsoil.app.plot.PlotType;
+import org.cirdles.topsoil.app.plot.UraniumLeadPlotType;
+
 import java.util.Arrays;
 
 /**
@@ -7,8 +10,7 @@ import java.util.Arrays;
  */
 public enum IsotopeType {
 
-    //Isotope abbreviation, isotope name, array of default headers as strings, plot type enum
-
+    //Isotope abbreviation, isotope name, array of default headers as strings
     UPb("UPb", "Uranium Lead",
             new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"}),
 
