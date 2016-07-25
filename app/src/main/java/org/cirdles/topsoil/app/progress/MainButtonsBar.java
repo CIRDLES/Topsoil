@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
  */
 public class MainButtonsBar extends HBox {
 
+    //Scene
     private HBox buttonBar = new HBox();
 
     //Passed the main scene and tabbed pane

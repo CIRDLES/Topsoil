@@ -50,7 +50,7 @@ public class MenuItemEventHandler {
         if (data == null ||  isotopeType == null) {
             table = null;
         } else {
-            table = new TopsoilTable(data, headers, isotopeType);
+            table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
         }
 
         return table;
@@ -68,7 +68,7 @@ public class MenuItemEventHandler {
         ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
 
         // create empty table
-        table = new TopsoilTable(data, null, isotopeType);
+        table = new TopsoilTable(null, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
 
         return table;
     }

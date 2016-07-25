@@ -1,91 +1,120 @@
 package org.cirdles.topsoil.app.progress;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
-import java.util.List;
-
 /**
- * Created by benjaminmuldrow on 6/20/16.
+ * Created by benjaminmuldrow on 7/6/16.
  */
-public class TopsoilTable extends TableView<TopsoilDataEntry> {
+public class TopsoilTable {
 
-    private Alerter alerter;
+    private final Alerter alerter = new ErrorAlerter();
+    private String[] headers;
+    private TableView<TopsoilDataEntry> table;
+    private IsotopeType isotopeType;
+    private String title = "Untitled Table";
 
-    private TableColumn leadUraniumCol;
-    private TableColumn leadUraniumStDCol;
-    private TableColumn leadUraniumCol2;
-    private TableColumn leadUraniumStDCol2;
-    private TableColumn corrCoefCol;
+    public TopsoilTable(String [] headers, IsotopeType isotopeType, TopsoilDataEntry... dataEntries) {
 
-    private String [] headers;
+        // initialize table
+        this.table = new TableView<>();
+        this.table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableView.TableViewSelectionModel selectionModel = this.table.getSelectionModel();
+        selectionModel.setCellSelectionEnabled(true);
 
-    public TopsoilTable(List<TopsoilDataEntry> entries, String [] headers, IsotopeType isotopeType) {
+        // initialize isotope type
+        this.isotopeType = isotopeType;
 
-        super();
-        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+        // populate headers
+        this.headers = createHeaders(headers);
 
-        // enter headers
-        if (headers == null) {
-            this.headers = isotopeType.getHeaders();
-        } else if (headers.length < 4 || headers.length > 5) {
-            alerter = new ErrorAlerter();
-            alerter.alert("Invalid Headers");
-        } else if (headers.length == 4) {
-            // populate with provided headers and add Corr Coef column
-            for (int i = 0; i < headers.length; i ++) {
-                this.headers[i] = headers[i];
-                this.headers[5] = "Corr Coef";
-            }
-        } else if (headers.length == 5) {
-            this.headers = headers;
+        // populate table
+        this.table.getColumns().addAll(createColumns(this.headers));
+        if (dataEntries.length == 0) {
+            this.table.getItems().add(new TopsoilDataEntry());
+        } else {
+            this.table.getItems().addAll(dataEntries);
         }
 
-        // enter data
-        this.setItems(data);
-        this.setColumns();
-        this.getColumns().addAll(
-                leadUraniumCol,
-                leadUraniumStDCol,
-                leadUraniumCol2,
-                leadUraniumStDCol2,
-                corrCoefCol
-        );
     }
 
-    private void setColumns() {
-        leadUraniumCol = new TableColumn(headers[0]);
-        leadUraniumCol.setCellValueFactory(
-                new PropertyValueFactory<TopsoilDataEntry, Double>("leadUranium")
-        );
+    /**
+     * Create functional TableColumns dynamically based on header count
+     * @param headers Array of header strings
+     * @return an Array of functional Table Columns
+     */
+    private TableColumn [] createColumns(String [] headers) {
 
-        leadUraniumStDCol = new TableColumn(headers[1]);
-        leadUraniumStDCol.setCellValueFactory(
-                new PropertyValueFactory<TopsoilDataEntry, Double>("leadUraniumStD")
-        );
+        TableColumn [] result = new TableColumn[headers.length];
 
-        leadUraniumCol2 = new TableColumn(headers[2]);
-        leadUraniumCol2.setCellValueFactory(
-                new PropertyValueFactory<TopsoilDataEntry, Double>("leadUranium2")
-        );
+        for (int i = 0; i < headers.length; i ++) {
 
-        leadUraniumStDCol2 = new TableColumn(headers[3]);
-        leadUraniumStDCol2.setCellValueFactory(
-                new PropertyValueFactory<TopsoilDataEntry, Double>("leadUraniumStD2")
-        );
+            TableColumn<TopsoilDataEntry, Double> column = new TableColumn<>(headers[i]);
+            final int columnIndex = i;
 
-        corrCoefCol = new TableColumn(headers[4]);
-        corrCoefCol.setCellValueFactory(
-                new PropertyValueFactory<TopsoilDataEntry, Double>("corrCoef")
-        );
+            // override cell value factory to accept the i'th index of a data entry for the i'th column
+            column.setCellValueFactory(param -> {
+                if (param.getValue().getProperties().size() == 0) {
+                    return (ObservableValue) new SimpleDoubleProperty(0.0);
+                } else {
+                    return (ObservableValue) param.getValue().getProperties().get(columnIndex);
+                }
+            });
+
+            result[i] = column;
+        }
+
+        return result;
     }
 
-    public static void createNewRow(TopsoilTable table) {
-        table.getItems().add(new TopsoilDataEntry(0,0,0,0,0));
+    /**
+     * Create headers based on both isotope flavor and user input
+     * @param headers array of provided headers
+     * @return updated array of headers
+     */
+    private String[] createHeaders(String [] headers) {
+
+        String [] result = new String[this.isotopeType.getHeaders().length];
+
+        // populate headers with defaults if no headers are provided
+        if (headers == null) {
+            result = isotopeType.getHeaders();
+
+        // if some headers are provided, populate
+        } else if (headers.length < isotopeType.getHeaders().length) {
+            int difference = isotopeType.getHeaders().length - headers.length;
+            result = new String[isotopeType.getHeaders().length];
+            for (int i = 0; i < isotopeType.getHeaders().length - difference; i++) {
+                result[i] = headers[i];
+            }
+            for (int i = isotopeType.getHeaders().length - difference;
+                    i < isotopeType.getHeaders().length; i++) {
+                result[i] = isotopeType.getHeaders()[i];
+            }
+
+        // if too many headers are provided, only use the first X (depending on isotope flavor)
+        } else { // if (headers.length >= isotopeType.getHeaders().length)
+            for (int i = 0; i < isotopeType.getHeaders().length; i ++) {
+                result[i] = headers[i];
+            }
+        }
+
+        return result;
+    }
+
+    public TableView getTable() {
+        return this.table;
+    }
+
+    public IsotopeType getIsotopeType() {
+        return this.isotopeType;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
