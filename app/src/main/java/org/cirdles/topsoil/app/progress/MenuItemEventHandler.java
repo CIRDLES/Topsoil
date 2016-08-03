@@ -2,6 +2,8 @@ package org.cirdles.topsoil.app.progress;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
@@ -9,12 +11,13 @@ import org.cirdles.topsoil.app.plot.PlotType;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 import org.cirdles.topsoil.app.util.IssueCreator;
 import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
+import org.cirdles.topsoil.app.util.YesNoAlert;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by benjaminmuldrow on 6/21/16.
@@ -64,12 +67,8 @@ public class MenuItemEventHandler {
         // select isotope flavor
         IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
 
-        // create empty dataset
-        List<TopsoilDataEntry> entries = new ArrayList<>();
-        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-
         // create empty table
-        table = new TopsoilTable(null, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+        table = new TopsoilTable(null, isotopeType, new TopsoilDataEntry[]{});
 
         return table;
     }
@@ -97,6 +96,22 @@ public class MenuItemEventHandler {
                 new StringBuilder()
         );
         issueCreator.create();
+    }
+
+    public static TopsoilTable handleClearTable(TopsoilTable table) {
+
+        // alert user for confirmation
+        Alert confirmAlert = new YesNoAlert("Are you sure you want to clear the table?");
+        Optional<ButtonType> response = confirmAlert.showAndWait();
+        TopsoilTable resultingTable = table;
+
+        // get user confirmation
+        if (response.isPresent()
+                && response.get() == ButtonType.YES) {
+            resultingTable = new TopsoilTable(table.getHeaders(), table.getIsotopeType(), new TopsoilDataEntry[]{});
+        }
+
+        return resultingTable;
     }
 
 }

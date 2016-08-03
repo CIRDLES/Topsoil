@@ -1,8 +1,5 @@
 package org.cirdles.topsoil.app.progress;
 
-import org.cirdles.topsoil.app.plot.PlotType;
-import org.cirdles.topsoil.app.plot.UraniumLeadPlotType;
-
 import java.util.Arrays;
 
 /**

@@ -27,8 +27,12 @@ public class TopsoilTab extends Tab {
         });
     }
 
-    public TableView getTopsoilTable() {
+    public TableView getTable() {
         return table.getTable();
+    }
+
+    public TopsoilTable getTopsoilTable() {
+        return table;
     }
 
     public IsotopeType getIsotopeType() {

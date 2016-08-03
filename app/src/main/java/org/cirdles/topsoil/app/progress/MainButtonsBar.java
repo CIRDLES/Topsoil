@@ -23,6 +23,7 @@ public class MainButtonsBar extends HBox {
         buttonBar.setPadding(new Insets(15, 12, 15, 12));
         buttonBar.setStyle("-fx-background-color: #DCDCDC;");
 
+        // New Table button
         Button newTableButton = new Button("Create New Table");
         newTableButton.setPrefSize(150, 30);
         newTableButton.setOnAction(event -> {
@@ -30,8 +31,14 @@ public class MainButtonsBar extends HBox {
             tabs.add(table);
         });
 
+        // Clear Table button
         Button clearButton = new Button("Clear Table");
         clearButton.setPrefSize(150, 30);
+        clearButton.setOnAction(event -> {
+            // clear table and add an empty row
+            tabs.getSelectedTab().getTopsoilTable().clear();
+            tabs.getSelectedTab().getTopsoilTable().addRow();
+        });
 
         buttonBar.getChildren()
                  .addAll(newTableButton,

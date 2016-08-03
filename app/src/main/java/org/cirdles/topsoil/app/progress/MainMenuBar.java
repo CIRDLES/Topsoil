@@ -3,12 +3,8 @@ package org.cirdles.topsoil.app.progress;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import org.cirdles.topsoil.app.menu.PlotMenu;
 import org.cirdles.topsoil.app.plot.PlotType;
-import org.cirdles.topsoil.app.plot.PlotWindow;
-import org.cirdles.topsoil.app.plot.UraniumLeadPlotType;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
-import org.cirdles.topsoil.plot.Plot;
 
 import java.io.IOException;
 

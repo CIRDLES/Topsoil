@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
@@ -17,6 +18,7 @@ public class TopsoilTable {
     private TableView<TopsoilDataEntry> table;
     private IsotopeType isotopeType;
     private String title = "Untitled Table";
+    private TopsoilDataEntry [] dataEntries;
 
     public TopsoilTable(String [] headers, IsotopeType isotopeType, TopsoilDataEntry... dataEntries) {
 
@@ -25,6 +27,8 @@ public class TopsoilTable {
         this.table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableView.TableViewSelectionModel selectionModel = this.table.getSelectionModel();
         selectionModel.setCellSelectionEnabled(true);
+        this.dataEntries = dataEntries;
+        this.table.setEditable(true);
 
         // initialize isotope type
         this.isotopeType = isotopeType;
@@ -34,12 +38,56 @@ public class TopsoilTable {
 
         // populate table
         this.table.getColumns().addAll(createColumns(this.headers));
-        if (dataEntries.length == 0) {
-            this.table.getItems().add(new TopsoilDataEntry());
-        } else {
+        if (dataEntries.length == 0) { // no data provided
+
+            TopsoilDataEntry dataEntry = new TopsoilDataEntry();
+
+            // add a 0 value for each column
+            for (String header : this.headers) {
+                dataEntry.addEntries(0.0);
+            }
+
+            this.table.getItems().add(dataEntry);
+
+        } else { // data is provided
+
             this.table.getItems().addAll(dataEntries);
+
         }
 
+        // Handle Keyboard Events
+        table.setOnKeyPressed(keyevent -> {
+            // Tab focuses right cell
+            // Shift + Tab focuses left cell
+            if (keyevent.getCode().equals(KeyCode.TAB)) {
+                if (keyevent.isShiftDown()) {
+                    selectionModel.selectLeftCell();
+                } else {
+                    selectionModel.selectRightCell();
+                }
+
+                keyevent.consume();
+
+            // Enter moves down or creates new empty row
+            // Shift + Enter moved up a row
+            } else if (keyevent.getCode().equals(KeyCode.ENTER)) {
+                if (keyevent.isShiftDown()) {
+                    selectionModel.selectAboveCell();
+                } else {
+                    // if on last row
+                    if (selectionModel.getSelectedIndex() == table.getItems().size() - 1) {
+                        // add empty row
+                        addRow();
+                        selectionModel.selectBelowCell();
+                    } else {
+                        // move down
+                        selectionModel.selectBelowCell();
+                    }
+                }
+                keyevent.consume();
+            }
+
+        });
     }
 
     /**
@@ -47,12 +95,13 @@ public class TopsoilTable {
      * @param headers Array of header strings
      * @return an Array of functional Table Columns
      */
-    private TableColumn [] createColumns(String [] headers) {
+    private TableColumn[] createColumns(String [] headers) {
 
         TableColumn[] result = new TableColumn[headers.length];
 
         for (int i = 0; i < headers.length; i++) {
 
+            // make a new column for each header
             TableColumn<TopsoilDataEntry, Double> column = new TableColumn<>(headers[i]);
             final int columnIndex = i;
 
@@ -64,6 +113,14 @@ public class TopsoilTable {
                     return (ObservableValue) param.getValue().getProperties().get(columnIndex);
                 }
             });
+
+            // override cell factory to custom editable cells
+            column.setCellFactory(value -> {
+                return new TopsoilTableCell();
+            });
+
+            // add functional column to the array of columns
+            result[i] = column;
         }
 
         return result;
@@ -104,6 +161,26 @@ public class TopsoilTable {
         return result;
     }
 
+    private TopsoilDataEntry [] extractData() {
+        return this.table.getItems().toArray(new TopsoilDataEntry [this.getTable().getItems().size()]);
+    }
+
+    public void deleteRow(int index) {
+        this.dataEntries[index].getProperties().remove(0, headers.length);
+    }
+
+    public void addRow() {
+        TopsoilDataEntry dataEntry = new TopsoilDataEntry();
+        for (String header : this.headers) {
+            dataEntry.addEntries(0.0);
+        }
+        this.table.getItems().add(dataEntry);
+    }
+
+    public void clear() {
+        this.getTable().getItems().clear();
+    }
+
     public TableView getTable() {
         return this.table;
     }
@@ -114,5 +191,9 @@ public class TopsoilTable {
 
     public String getTitle() {
         return title;
+    }
+
+    public String [] getHeaders() {
+        return this.headers.clone();
     }
 }

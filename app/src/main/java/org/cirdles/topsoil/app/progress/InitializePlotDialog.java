@@ -4,7 +4,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.Dataset;
-import org.cirdles.topsoil.app.plot.*;
+import org.cirdles.topsoil.app.plot.PlotType;
+import org.cirdles.topsoil.app.plot.Variable;
+import org.cirdles.topsoil.app.plot.VariableBindingDialog;
+import org.cirdles.topsoil.app.plot.Variables;
+import org.cirdles.topsoil.app.plot.PlotWindow;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.util.List;
