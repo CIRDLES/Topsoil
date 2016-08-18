@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app.progress.tab;
 
 import javafx.scene.control.TextInputDialog;
 

@@ -1,8 +1,10 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app.progress.menu;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 
 /**
  * Created by sbunce on 5/30/2016.
@@ -28,7 +30,9 @@ public class MainButtonsBar extends HBox {
         newTableButton.setPrefSize(150, 30);
         newTableButton.setOnAction(event -> {
             TopsoilTable table = MenuItemEventHandler.handleNewTable();
-            tabs.add(table);
+            if (table != null) {
+                tabs.add(table);
+            }
         });
 
         // Clear Table button

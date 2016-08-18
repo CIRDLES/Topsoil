@@ -23,7 +23,7 @@ import javafx.util.StringConverter;
  *
  * @author zeringuej
  */
-public class NumberField extends BaseField<Double> {
+public class NumberField extends BaseField implements Field {
 
     public NumberField(String name) {
         super(name);

@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app.progress.table;
 
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;

@@ -1,17 +1,25 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app.progress.table;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
+import org.cirdles.topsoil.app.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.field.NumberField;
+import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by benjaminmuldrow on 7/6/16.
  */
-public class TopsoilTable {
+public class TopsoilTable implements GenericTable {
 
     private final Alerter alerter = new ErrorAlerter();
     private String[] headers;
@@ -19,6 +27,7 @@ public class TopsoilTable {
     private IsotopeType isotopeType;
     private String title = "Untitled Table";
     private TopsoilDataEntry [] dataEntries;
+    private Field[] fields;
 
     public TopsoilTable(String [] headers, IsotopeType isotopeType, TopsoilDataEntry... dataEntries) {
 
@@ -98,11 +107,13 @@ public class TopsoilTable {
     private TableColumn[] createColumns(String [] headers) {
 
         TableColumn[] result = new TableColumn[headers.length];
+        fields = new NumberField[headers.length];
 
         for (int i = 0; i < headers.length; i++) {
 
             // make a new column for each header
             TableColumn<TopsoilDataEntry, Double> column = new TableColumn<>(headers[i]);
+            fields[i] = new NumberField(headers[i]);
             final int columnIndex = i;
 
             // override cell value factory to accept the i'th index of a data entry for the i'th column
@@ -161,14 +172,32 @@ public class TopsoilTable {
         return result;
     }
 
-    private TopsoilDataEntry [] extractData() {
-        return this.table.getItems().toArray(new TopsoilDataEntry [this.getTable().getItems().size()]);
+    /**
+     * Extract data from table as a list of maps of columns : value
+     * @return list of maps of columns : value
+     */
+    public List<Map<String, Object>> extractData() {
+
+        ArrayList<Map<String, Object>> result = new ArrayList<>();
+        HashMap<String, Double> [] columnMaps = new HashMap[this.getHeaders().length];
+        for (int i = 0; i < table.getItems().size(); i ++) {
+            int columnIndex = i % headers.length;
+            columnMaps[columnIndex].put(headers[columnIndex],
+                    table.getItems().get(i).getProperties().get(columnIndex).getValue());
+        }
+        for (HashMap column : columnMaps) {
+            result.add(column);
+        }
+        return result;
+
     }
 
+    @Override
     public void deleteRow(int index) {
         this.dataEntries[index].getProperties().remove(0, headers.length);
     }
 
+    @Override
     public void addRow() {
         TopsoilDataEntry dataEntry = new TopsoilDataEntry();
         for (String header : this.headers) {
@@ -177,10 +206,12 @@ public class TopsoilTable {
         this.table.getItems().add(dataEntry);
     }
 
+    @Override
     public void clear() {
         this.getTable().getItems().clear();
     }
 
+    @Override
     public TableView getTable() {
         return this.table;
     }
@@ -189,10 +220,20 @@ public class TopsoilTable {
         return this.isotopeType;
     }
 
+    public void setIsotopeType(IsotopeType isotopeType) {
+        this.isotopeType = isotopeType;
+    }
+
+    @Override
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
     public String [] getHeaders() {
         return this.headers.clone();
     }

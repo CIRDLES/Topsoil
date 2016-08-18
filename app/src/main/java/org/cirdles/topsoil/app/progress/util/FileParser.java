@@ -1,9 +1,10 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app.progress.util;
 
 import java.io.File;
 
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 import org.cirdles.topsoil.app.util.YesNoAlert;
@@ -34,15 +35,15 @@ public class FileParser {
                 .showOpenDialog(stage);
     }
 
-    public static boolean containsHeaderDialogue() {
-        boolean containsHeaders = false;
+    public static Boolean containsHeaderDialogue() {
+        Boolean containsHeaders = null;
         YesNoAlert alert = new YesNoAlert(
                 "Does the selection contain headers?");
         Optional<ButtonType> response = alert.showAndWait();
         if (response.isPresent()) {
             if (response.get() == ButtonType.YES) {
                 containsHeaders = true;
-            } else { // 'NO' button or 'CANCEL'
+            } else if (response.get() == ButtonType.NO) {
                 containsHeaders = false;
             }
         } // else containsHeaders is assumed false
@@ -127,7 +128,7 @@ public class FileParser {
                                 Double.parseDouble(contentAsString[3])
                         )
                 );
-            } else if (contentAsString.length == 5) {       // Corr Coef Provided
+            } else if (contentAsString.length >= 5) {       // Corr Coef Provided and/or extra columns
                 content.add(
                         new TopsoilDataEntry(
                                 Double.parseDouble(contentAsString[0]),

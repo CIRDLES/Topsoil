@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app.progress.util;
 
 import javafx.stage.FileChooser;
 

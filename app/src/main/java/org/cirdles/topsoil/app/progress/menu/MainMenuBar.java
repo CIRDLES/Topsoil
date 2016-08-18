@@ -1,16 +1,30 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app.progress.menu;
 
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import org.cirdles.topsoil.app.plot.PlotType;
+import javafx.stage.Stage;
+import org.cirdles.topsoil.app.dataset.SimpleDataset;
+import org.cirdles.topsoil.app.plot.PlotWindow;
+import org.cirdles.topsoil.app.plot.Variable;
+import org.cirdles.topsoil.app.plot.VariableBindingDialog;
+import org.cirdles.topsoil.app.progress.TopsoilRawData;
+import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
+import org.cirdles.topsoil.app.progress.plot.PlotDialog;
+import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
+import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
+import org.cirdles.topsoil.plot.Plot;
 
 import java.io.IOException;
+import java.util.List;
 
-import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleNewTable;
-import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleReportIssue;
-import static org.cirdles.topsoil.app.progress.MenuItemEventHandler.handleTableFromFile;
+import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleNewTable;
+import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleReportIssue;
+import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleTableFromFile;
 
 /**
  * Created by sbunce on 5/30/2016.
@@ -103,20 +117,17 @@ public class MainMenuBar extends MenuBar {
                         importTable,
                         isoSystem);
 
+        uraniumLeadSystemItem.setOnAction(event -> {
+            // if the table isn't already UPb
+            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals(IsotopeType.UPb)) {
+                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UPb);
+            }
+        });
+
         // Plot Menu
         Menu plotMenu = new Menu("Plot");
         MenuItem generatePlotItem = new MenuItem("Generate Plot");
-        plotMenu.getItems().addAll(generatePlotItem);
-        generatePlotItem.setOnAction(event -> {
-            try {
-                IsotopeType iso = tabs.getSelectedTab().getIsotopeType();
-                PlotType plotType = MenuItemEventHandler.handlePlotType(iso);
-                //Dataset data = . . .
-                //InitializePlotDialog plotDialog = new InitializePlotDialog(plotType, data);
-            } catch (Exception e) {
-                //Do nothing
-            }
-        });
+        plotMenu.getItems().add(generatePlotItem);
 
         // Help Menu
         Menu helpMenu = new Menu("Help");
@@ -150,7 +161,6 @@ public class MainMenuBar extends MenuBar {
                 tabs.add(table);
             } else {
                 ErrorAlerter alerter = new ErrorAlerter();
-                alerter.alert("Invalid Table");
             }
 
         });
@@ -163,6 +173,37 @@ public class MainMenuBar extends MenuBar {
 
             // display new table
             tabs.add(table);
+        });
+
+        // Generate Plot
+        generatePlotItem.setOnAction(event -> {
+            if (tabs.getTabs().size() > 0) {
+
+                TopsoilTable table = tabs.getSelectedTab().getTopsoilTable();
+
+                // ask the user what kind of plot
+                TopsoilPlotType plotType = new PlotDialog(table.getIsotopeType()).select();
+
+                // variable binding dialog
+                if (plotType != null) {
+                    List<Variable> variables = plotType.getVariables();
+                    SimpleDataset dataset = new SimpleDataset(table.getTitle(), new TopsoilRawData(table).getRawData());
+                    new VariableBindingDialog(variables, dataset).showAndWait()
+                            .ifPresent(data -> {
+                                Plot plot = plotType.getPlot();
+                                plot.setData(data);
+
+                                Parent plotWindow = new PlotWindow(
+                                        plot, plotType.getPropertiesPanel());
+
+                                Scene scene = new Scene(plotWindow, 1200, 800);
+
+                                Stage plotStage = new Stage();
+                                plotStage.setScene(scene);
+                                plotStage.show();
+                            });
+                }
+            }
         });
 
         // Report Issue

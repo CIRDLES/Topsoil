@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app.progress.table;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;

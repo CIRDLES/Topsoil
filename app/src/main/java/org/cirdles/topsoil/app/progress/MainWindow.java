@@ -5,6 +5,11 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.progress.menu.MainButtonsBar;
+import org.cirdles.topsoil.app.progress.menu.MainMenuBar;
+import org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler;
+import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
