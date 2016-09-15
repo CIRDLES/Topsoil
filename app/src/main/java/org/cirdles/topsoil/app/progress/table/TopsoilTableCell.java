@@ -19,10 +19,14 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
 
         this.alerter = new ErrorAlerter();
 
+        // Handle key press events
         this.setOnKeyPressed(keyEvent -> {
 
+            // confirm change
             if (keyEvent.getCode() == KeyCode.ENTER ||
                     keyEvent.getCode() == KeyCode.TAB) {
+
+                // Make sure entry is valid
                 Double newVal = getNumber(textField);
                 if (newVal != null) {
                     commitEdit(newVal);
@@ -31,12 +35,16 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                     cancelEdit();
                     alerter.alert("Entry must be a number");
                 }
+
+            // cancel change
             } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
                 cancelEdit();
             }
+
             keyEvent.consume();
         });
 
+        // Context Menu
         this.setOnContextMenuRequested(menuEvent -> {
             this.setContextMenu(new TopsoilTableCellContextMenu(this));
             menuEvent.consume();
@@ -81,6 +89,9 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         }
     }
 
+    /**
+     * create a text field to be used to edit cell value
+     */
     private void generateTextField() {
         this.textField = new TextField();
         this.textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
@@ -92,6 +103,11 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         });
     }
 
+    /**
+     * get the number contained in a textfield
+     * @param textField textfield to be searched
+     * @return Double value of contents or null if invalid entry
+     */
     private Double getNumber(TextField textField) {
         Double result = null;
         try {

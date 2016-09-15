@@ -77,6 +77,10 @@ public class MenuItemEventHandler {
         return table;
     }
 
+    /**
+     * Handle empty table creation
+     * @return new, empty table
+     */
     public static TopsoilTable handleNewTable() {
 
         TopsoilTable table;
@@ -94,6 +98,7 @@ public class MenuItemEventHandler {
         return table;
     }
 
+    /** Open default web browser and create a new GitHub issue with user specefications already supplied */
     public static void handleReportIssue() {
         IssueCreator issueCreator = new StandardGitHubIssueCreator(
                 new TopsoilMetadata(),
@@ -104,6 +109,11 @@ public class MenuItemEventHandler {
         issueCreator.create();
     }
 
+    /**
+     * Clear a table of all data
+     * @param table to clear
+     * @return updated table
+     */
     public static TopsoilTable handleClearTable(TopsoilTable table) {
 
         // alert user for confirmation

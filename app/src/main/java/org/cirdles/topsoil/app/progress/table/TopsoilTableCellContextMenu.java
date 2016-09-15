@@ -26,6 +26,7 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
         this.cell = cell;
 
         // initialize menu items
+        // TODO rearrange in a more logical sense
         deleteRowItem = new MenuItem("Delete Row");
         copyRowItem = new MenuItem("Copy Row");
         clearRowItem = new MenuItem("Clear Row");

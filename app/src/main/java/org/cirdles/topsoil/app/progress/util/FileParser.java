@@ -147,6 +147,11 @@ public class FileParser {
         return content;
     }
 
+    /**
+     * Read the supplied headers of a file
+     * @param file file to be read
+     * @return array of headers as Strings
+     */
     public static String [] parseHeaders(File file) {
         String [] content = readLines(file);
         String extension = getExtension(file);
@@ -161,6 +166,11 @@ public class FileParser {
         }
     }
 
+    /**
+     * Get file as an array of lines
+     * @param file to be read
+     * @return array of lines as Strings
+     */
     private static String [] readLines(File file) {
 
         String [] lines;

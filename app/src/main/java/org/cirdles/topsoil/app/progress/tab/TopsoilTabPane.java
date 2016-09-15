@@ -6,23 +6,26 @@ import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 
 /**
  * Created by sbunce on 6/29/2016.
+ * Extends JavaFX TabPane class
  */
 public class TopsoilTabPane extends TabPane {
 
-    //Passed to the MainMenuBar and MainButtons Bar
     public TopsoilTabPane() {
         super();
     }
 
-    //Adds a new tab to the MainWindow tab pane
+    // Add a new tab to the MainWindow tab pane
     public void add(TopsoilTable table) {
         Tab newTab = new TopsoilTab(table);
-        newTab.setText(table.getTitle());
         newTab.setContent(table.getTable());
         this.getTabs().addAll(newTab);
         this.getSelectionModel().select(newTab);
     }
 
+    /**
+     * Get the currently selected tab
+     * @return TopsoilTab that is selected
+     */
     public TopsoilTab getSelectedTab() {
         return (TopsoilTab) this.getSelectionModel().getSelectedItem();
     }

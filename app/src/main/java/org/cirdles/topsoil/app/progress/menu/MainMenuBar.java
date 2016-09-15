@@ -12,7 +12,7 @@ import org.cirdles.topsoil.app.plot.Variable;
 import org.cirdles.topsoil.app.plot.VariableBindingDialog;
 import org.cirdles.topsoil.app.progress.TopsoilRawData;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
-import org.cirdles.topsoil.app.progress.plot.PlotDialog;
+import org.cirdles.topsoil.app.progress.plot.PlotChoiceDialog;
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
@@ -182,7 +182,7 @@ public class MainMenuBar extends MenuBar {
                 TopsoilTable table = tabs.getSelectedTab().getTopsoilTable();
 
                 // ask the user what kind of plot
-                TopsoilPlotType plotType = new PlotDialog(table.getIsotopeType()).select();
+                TopsoilPlotType plotType = new PlotChoiceDialog(table.getIsotopeType()).select();
 
                 // variable binding dialog
                 if (plotType != null) {

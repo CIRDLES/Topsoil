@@ -6,9 +6,11 @@ import javafx.scene.control.TextInputDialog;
  * Created by sbunce on 7/6/2016.
  */
 public class TabNameDialog {
+
     private String newName;
 
     public TabNameDialog(String oldName) {
+
         newName = oldName;
         TextInputDialog dialog = new TextInputDialog(oldName);
         dialog.setTitle("Tab Name Change");
@@ -16,7 +18,7 @@ public class TabNameDialog {
         dialog.showAndWait();
 
         try {
-            String temp = parseSpaces(dialog.getResult());
+            String temp = filterSpaces(dialog.getResult());
             if (!temp.isEmpty()) {
                 newName = temp;
             }
@@ -25,15 +27,24 @@ public class TabNameDialog {
         }
     }
 
+    /**
+     * Get the new name entered by the user
+     * @return new name
+     */
     public String getName() {
         return newName;
     }
 
-    private static String parseSpaces(String s) {
-        String ret = s;
-        while (ret.substring(ret.length() - 1).equals(" ")) {
-            ret = ret.substring(0, ret.length() - 1);
+    /**
+     * Filter extraneous spaces out of a string
+     * @param entry original string
+     * @return original string with filtered whitespaces
+     */
+    private static String filterSpaces(String entry) {
+        String result = entry;
+        while (result.substring(result.length() - 1).equals(" ")) {
+            result = result.substring(0, result.length() - 1);
         }
-        return ret;
+        return result;
     }
 }

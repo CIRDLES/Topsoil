@@ -12,7 +12,6 @@ public enum IsotopeType {
             new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"},
             new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT, TopsoilPlotType.UNCERTAINTY_ELLIPSE_PLOT}),
 
-    //TODO headers array is a placeholder for ACTUAL Uranium Thorium headers
     UTh("UTh", "Uranium Thorium",
             new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"},
             new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT});
@@ -54,6 +53,10 @@ public enum IsotopeType {
         return result;
     }
 
+    /**
+     *
+     * @return array of PlotTypes
+     */
     public TopsoilPlotType[] getPlots() {
         return plots.clone();
     }

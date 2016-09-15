@@ -41,7 +41,7 @@ public class MainWindow extends Application {
         // Handle Keyboard Shortcuts
         scene.setOnKeyPressed(keyevent -> {
 
-            // shortcut + T creates a new tab
+            // shortcut + T creates a new tab containing an empty table
             if (keyevent.getCode() == KeyCode.T &&
                     keyevent.isShortcutDown()) {
                 TopsoilTable table = MenuItemEventHandler.handleNewTable();

@@ -8,11 +8,11 @@ import java.util.ArrayList;
 /**
  * Created by benjaminmuldrow on 8/9/16.
  */
-public class PlotDialog extends ChoiceDialog<String> {
+public class PlotChoiceDialog extends ChoiceDialog<String> {
 
     private final IsotopeType type;
 
-    public PlotDialog(IsotopeType type) {
+    public PlotChoiceDialog(IsotopeType type) {
 
         this.type = type;
 

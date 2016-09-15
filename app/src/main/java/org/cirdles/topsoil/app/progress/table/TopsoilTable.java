@@ -126,9 +126,7 @@ public class TopsoilTable implements GenericTable {
             });
 
             // override cell factory to custom editable cells
-            column.setCellFactory(value -> {
-                return new TopsoilTableCell();
-            });
+            column.setCellFactory(value -> new TopsoilTableCell());
 
             // add functional column to the array of columns
             result[i] = column;
@@ -164,9 +162,7 @@ public class TopsoilTable implements GenericTable {
 
         // if too many headers are provided, only use the first X (depending on isotope flavor)
         } else { // if (headers.length >= isotopeType.getHeaders().length)
-            for (int i = 0; i < isotopeType.getHeaders().length; i ++) {
-                result[i] = headers[i];
-            }
+            result = headers.clone();
         }
 
         return result;
