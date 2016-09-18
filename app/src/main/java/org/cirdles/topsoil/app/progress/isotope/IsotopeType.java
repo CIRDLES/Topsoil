@@ -14,7 +14,7 @@ public enum IsotopeType {
 
     UTh("UTh", "Uranium Thorium",
             new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"},
-            new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT});
+            new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT, TopsoilPlotType.EVOLUTION_PLOT});
 
     private final String abbreviation;
     private final String name;
