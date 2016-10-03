@@ -155,6 +155,7 @@ class DeleteRowCommand implements Command {
      * @param cell the TopsoilTableCell that the command came from
      */
     DeleteRowCommand(TopsoilTableCell cell) {
+
         this.index = cell.getIndex();
         this.dataEntry = cell.getDataEntry();
         this.tableView = cell.getTableView();
@@ -213,6 +214,7 @@ class NewRowCommand implements Command {
      * Called to execute the row creation.
      */
     public void execute() {
+
         this.tableView.getItems().add(TopsoilDataEntry.newEmptyDataEntry(this.tableView));
     }
 
@@ -384,8 +386,7 @@ class ClearColumnCommand implements Command {
     public void execute() {
 
         this.column.setCellValueFactory(param -> {
-            this.columnData.add((SimpleDoubleProperty)
-                    param.getValue().getProperties().get(index));
+            this.columnData.add((SimpleDoubleProperty) param.getValue().getProperties().get(index));
             return (ObservableValue) new SimpleDoubleProperty(0.0);
         });
         this.column.setVisible(false);
@@ -437,6 +438,7 @@ class ClearCellCommand implements Command {
      * @param cell  the TopsoilTableCell that the command came from
      */
     ClearCellCommand(TopsoilTableCell cell) {
+
         this.cell = cell;
         this.formerValue = cell.getItem();
         this.row = cell.getDataEntry();
@@ -598,5 +600,4 @@ class TableColumnReorderCommand implements Command {
     public String getActionName() {
         return "Change column position";
     }
-
 }
