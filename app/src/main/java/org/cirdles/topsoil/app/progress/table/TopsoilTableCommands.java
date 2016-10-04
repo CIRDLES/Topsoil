@@ -386,7 +386,8 @@ class ClearColumnCommand implements Command {
     public void execute() {
 
         this.column.setCellValueFactory(param -> {
-            this.columnData.add((SimpleDoubleProperty) param.getValue().getProperties().get(index));
+            this.columnData.add((SimpleDoubleProperty)
+                    param.getValue().getProperties().get(index));
             return (ObservableValue) new SimpleDoubleProperty(0.0);
         });
         this.column.setVisible(false);
