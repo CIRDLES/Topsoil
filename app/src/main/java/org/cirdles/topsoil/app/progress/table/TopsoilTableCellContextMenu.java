@@ -109,9 +109,10 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
         });
 
         clearCellItem.setOnAction(action -> {
-                    ClearCellCommand clearCellCommand = new ClearCellCommand(this.cell);
-                    clearCellCommand.execute();
-                    ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearCellCommand);
+            ClearCellCommand clearCellCommand = new ClearCellCommand(this.cell);
+            clearCellCommand.execute();
+            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane"))
+                    .getSelectedTab().addUndo(clearCellCommand);
         });
 
         // add items to context menu
