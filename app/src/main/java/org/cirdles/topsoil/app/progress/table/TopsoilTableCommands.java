@@ -83,7 +83,10 @@ class TopsoilTableCellEditCommand implements Command {
 
 /**
  * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
+<<<<<<< 2d8c47facf09f00aa4dfd81986045897e8876203
 <<<<<<< 0a4c770e711478c8c9773b6fb6a771f6e0c5b89e
+=======
+>>>>>>> Add undo commands for button bar.
  * <tt>UndoManager</tt> when a row is inserted into the <tt>TableView</tt>.
  * This class creates an empty <tt>TopsoilDataEntry</tt> and inserts is above
  * the selected row.
@@ -135,8 +138,11 @@ class InsertRowCommand implements Command {
 
 /**
  * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
+<<<<<<< 2d8c47facf09f00aa4dfd81986045897e8876203
 =======
 >>>>>>> Implement undo/redo for TableView with Command Pattern
+=======
+>>>>>>> Add undo commands for button bar.
  * <tt>UndoManager</tt> when a row is deleted in the <tt>TableView</tt>. This
  * class stores the <tt>TopsoilDataEntry</tt> that was deleted and the index
  * of the <tt>TableView</tt> from which it was deleted.
@@ -421,6 +427,7 @@ class ClearColumnCommand implements Command {
 
 /**
  * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
+<<<<<<< 2d8c47facf09f00aa4dfd81986045897e8876203
 <<<<<<< 0a4c770e711478c8c9773b6fb6a771f6e0c5b89e
  * <tt>UndoManager</tt> when a <tt>TopsoilTableCell</tt> in the
  * <tt>TableView</tt> is cleared. This class stores the cell, the row it
@@ -430,6 +437,11 @@ class ClearColumnCommand implements Command {
  * is cleared. This class stores the cell, the row it belongs to, and the former
  * value of the cell.
 >>>>>>> Implement undo/redo for TableView with Command Pattern
+=======
+ * <tt>UndoManager</tt> when a <tt>TopsoilTableCell</tt> in the
+ * <tt>TableView</tt> is cleared. This class stores the cell, the row it
+ * belongs to, and the former value of the cell.
+>>>>>>> Add undo commands for button bar.
  *
  * @author marottajb
  * @see Command
