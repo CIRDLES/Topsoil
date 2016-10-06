@@ -37,7 +37,7 @@ class NewTableCommand implements Command {
         this.isotopeType = isotopeType;
     }
 
-     /**
+    /**
      * Called to execute the table creation.
      */
     public void execute() {
