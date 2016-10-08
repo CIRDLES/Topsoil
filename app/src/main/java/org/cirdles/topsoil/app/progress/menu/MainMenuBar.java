@@ -33,6 +33,10 @@ public class MainMenuBar extends MenuBar {
 
     private MenuBar menuBar = new MenuBar();
 
+    // Edit Menu
+    private MenuItem undoItem;
+    private MenuItem redoItem;
+
     // Project Menu
     private MenuItem newProjectItem;
     private MenuItem saveProjectItem;
@@ -63,6 +67,26 @@ public class MainMenuBar extends MenuBar {
     }
 
     private void initialize(TopsoilTabPane tabs) {
+        // Edit Menu
+        Menu editMenu = new Menu("Edit");
+        undoItem = new MenuItem("Undo");
+        redoItem = new MenuItem("Redo");
+
+        undoItem.setOnAction(event -> {
+            if (!tabs.isEmpty()) {
+                tabs.getSelectedTab().undo();
+            }
+        });
+        redoItem.setOnAction(event -> {
+            if (!tabs.isEmpty()) {
+                tabs.getSelectedTab().redo();
+            }
+        });
+
+        editMenu.getItems()
+                .addAll(undoItem,
+                        redoItem);
+
         // Project Menu
         Menu projectMenu = new Menu("Project");
         newProjectItem = new MenuItem("New Project");
@@ -139,7 +163,8 @@ public class MainMenuBar extends MenuBar {
 
         // Add menus to menuBar
         menuBar.getMenus()
-                .addAll(projectMenu,
+                .addAll(editMenu,
+                        projectMenu,
                         tableMenu,
                         plotMenu,
                         helpMenu);

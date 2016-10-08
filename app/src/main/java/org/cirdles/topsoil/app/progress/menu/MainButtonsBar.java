@@ -32,6 +32,8 @@ public class MainButtonsBar extends HBox {
             TopsoilTable table = MenuItemEventHandler.handleNewTable();
             if (table != null) {
                 tabs.add(table);
+                NewTableCommand newTableCommand = new NewTableCommand(tabs, table.getIsotopeType());
+                tabs.getSelectedTab().addUndo(newTableCommand);
             }
         });
 
@@ -39,9 +41,14 @@ public class MainButtonsBar extends HBox {
         Button clearButton = new Button("Clear Table");
         clearButton.setPrefSize(150, 30);
         clearButton.setOnAction(event -> {
-            // clear table and add an empty row
-            tabs.getSelectedTab().getTopsoilTable().clear();
-            tabs.getSelectedTab().getTopsoilTable().addRow();
+            if (!tabs.isEmpty() && !tabs.getSelectedTab().getTopsoilTable().isCleared()) {
+                // clear table and add an empty row
+                ClearTableCommand clearTableCommand =
+                        new ClearTableCommand(tabs.getSelectedTab()
+                                .getTopsoilTable().getTable());
+                clearTableCommand.execute();
+                tabs.getSelectedTab().addUndo(clearTableCommand);
+            }
         });
 
         buttonBar.getChildren()

@@ -30,4 +30,7 @@ public class TopsoilTabPane extends TabPane {
         return (TopsoilTab) this.getSelectionModel().getSelectedItem();
     }
 
+    public boolean isEmpty() {
+        return this.getTabs().isEmpty();
+    }
 }

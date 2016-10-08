@@ -4,6 +4,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
+import org.cirdles.topsoil.app.progress.util.Command;
+import org.cirdles.topsoil.app.progress.util.UndoManager;
 
 /**
  * Created by sbunce on 6/30/2016.
@@ -13,8 +15,10 @@ public class TopsoilTab extends Tab {
 
     private TopsoilTable table;
     private final Label label;
+    private UndoManager undoManager;
 
     public TopsoilTab(TopsoilTable table) {
+        this.undoManager = new UndoManager(50);
         label = new Label(table.getTitle());
         this.setGraphic(label);
         this.table = table;
@@ -42,6 +46,30 @@ public class TopsoilTab extends Tab {
      */
     public TopsoilTable getTopsoilTable() {
         return table;
+    }
+
+    public void addUndo(Command command) {
+        this.undoManager.add(command);
+    }
+
+    public void undo() {
+        this.undoManager.undo();
+    }
+
+    public void redo() {
+        this.undoManager.redo();
+    }
+
+    public String getLastUndoMessage() {
+        return this.undoManager.getUndoName();
+    }
+
+    public String getLastRedoMessage() {
+        return this.undoManager.getRedoName();
+    }
+
+    public void clearUndoHistory() {
+        this.undoManager.clear();
     }
 
 }

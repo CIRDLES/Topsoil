@@ -2,12 +2,14 @@ package org.cirdles.topsoil.app.progress.table;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
+import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
@@ -47,6 +49,7 @@ public class TopsoilTable implements GenericTable {
 
         // populate table
         this.table.getColumns().addAll(createColumns(this.headers));
+        resetIds();
         if (dataEntries.length == 0) { // no data provided
 
             TopsoilDataEntry dataEntry = new TopsoilDataEntry();
@@ -63,6 +66,19 @@ public class TopsoilTable implements GenericTable {
             this.table.getItems().addAll(dataEntries);
 
         }
+
+        // Create undoable Commands for column reordering
+        table.getColumns().addListener((ListChangeListener<TableColumn<TopsoilDataEntry,?>>) c -> {
+            c.next();
+            //   if (c.wasRemoved() && c.wasAdded())
+            if (c.wasReplaced()) {
+                TableColumnReorderCommand reorderCommand = new TableColumnReorderCommand(this.table);
+                ((TopsoilTabPane) this.table.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(reorderCommand);
+                resetIds();
+            } else if (c.wasAdded() ^ c.wasRemoved() ^ c.wasUpdated() ^ c.wasPermutated()) {
+                resetIds();
+            }
+        });
 
         // Handle Keyboard Events
         table.setOnKeyPressed(keyevent -> {
@@ -85,13 +101,11 @@ public class TopsoilTable implements GenericTable {
                 } else {
                     // if on last row
                     if (selectionModel.getSelectedIndex() == table.getItems().size() - 1) {
-                        // add empty row
-                        addRow();
-                        selectionModel.selectBelowCell();
-                    } else {
-                        // move down
-                        selectionModel.selectBelowCell();
+                        NewRowCommand newRowCommand = new NewRowCommand(this.table);
+                        newRowCommand.execute();
+                        ((TopsoilTabPane) this.table.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(newRowCommand);
                     }
+                    selectionModel.selectBelowCell();
                 }
                 keyevent.consume();
             }
@@ -152,13 +166,18 @@ public class TopsoilTable implements GenericTable {
         } else if (headers.length < isotopeType.getHeaders().length) {
             int difference = isotopeType.getHeaders().length - headers.length;
             result = new String[isotopeType.getHeaders().length];
+//            int numHeaders = isotopeType.getHeaders().length;
             for (int i = 0; i < isotopeType.getHeaders().length - difference; i++) {
                 result[i] = headers[i];
             }
+//            System.arraycopy(headers, 0, result, 0, numHeaders - difference);
             for (int i = isotopeType.getHeaders().length - difference;
                     i < isotopeType.getHeaders().length; i++) {
                 result[i] = isotopeType.getHeaders()[i];
             }
+//            System.arraycopy(isotopeType.getHeaders(), (numHeaders - difference),
+//                    result, (numHeaders - difference),
+//                    (numHeaders - (numHeaders - difference)));
 
         // if too many headers are provided, only use the first X (depending on isotope flavor)
         } else { // if (headers.length >= isotopeType.getHeaders().length)
@@ -232,5 +251,27 @@ public class TopsoilTable implements GenericTable {
     @Override
     public String [] getHeaders() {
         return this.headers.clone();
+    }
+
+    public void resetIds() {
+        int id = 0;
+        for (TableColumn<TopsoilDataEntry, ?> column : this.table.getColumns()) {
+            column.setId(Integer.toString(id));
+            id++;
+        }
+    }
+
+    public boolean isCleared() {
+        boolean rtnval = true;
+        if (table.getItems().size() != 1) {
+            rtnval = false;
+        } else {
+            for (int i = 0; i < table.getColumns().size(); i++) {
+                if (Double.compare(table.getItems().get(0).getProperties().get(i).doubleValue(), 0.0) != 0) {
+                    rtnval = false;
+                }
+            }
+        }
+        return rtnval;
     }
 }

@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.progress.table;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
@@ -29,6 +30,16 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                 // Make sure entry is valid
                 Double newVal = getNumber(textField);
                 if (newVal != null) {
+                    // Only create undoable command if value was changed.
+                    if (Double.compare(this.getItem(), newVal) != 0) {
+                        TopsoilTableCellEditCommand cellEditCommand =
+                                new TopsoilTableCellEditCommand(this,
+                                        this.getItem(), newVal);
+                        ((TopsoilTabPane) this.getScene()
+                                .lookup("#TopsoilTabPane")).getSelectedTab()
+                                .addUndo(cellEditCommand);
+                    }
+
                     commitEdit(newVal);
                     updateItem(newVal, textField.getText().isEmpty());
                 } else {
@@ -117,6 +128,14 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         } finally {
             return result;
         }
+    }
+
+    public TopsoilDataEntry getDataEntry() {
+        return this.getTableView().getItems().get(this.getIndex());
+    }
+
+    public int getColumnIndex() {
+        return Integer.parseInt(this.getTableColumn().getId());
     }
 
 }
