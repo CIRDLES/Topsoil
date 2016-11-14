@@ -11,7 +11,11 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.dataset.SimpleDataset;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.plot.*;
+import org.cirdles.topsoil.app.plot.PlotWindow;
+import org.cirdles.topsoil.app.plot.SimplePlotContext;
+import org.cirdles.topsoil.app.plot.Variable;
+import org.cirdles.topsoil.app.plot.VariableBindingDialog;
+import org.cirdles.topsoil.app.plot.VariableBindingDialogPane;
 import org.cirdles.topsoil.app.progress.TopsoilRawData;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
@@ -31,7 +35,8 @@ import org.cirdles.topsoil.app.util.YesNoAlert;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.awt.Desktop;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -179,6 +184,11 @@ public class MenuItemEventHandler {
                 ErrorAlerter error = new ErrorAlerter();
                 error.alert("Project must be a .topsoil file.");
             } else {
+                tabs.getTabs().clear();
+                List<Stage> stages = StageHelper.getStages();
+                for (int index = stages.size() - 1; index > 0; index--) {
+                    stages.get(index).close();
+                }
                 TopsoilSerializer.deserialize(file, tabs);
             }
         }
@@ -221,7 +231,6 @@ public class MenuItemEventHandler {
 //            }
 //
 //            this.generateNewPlot(plotType, table);
-
 
             // Check for open plots of the same type.
             List<Stage> stages = StageHelper.getStages();
@@ -282,7 +291,7 @@ public class MenuItemEventHandler {
 
                     Stage plotStage = new Stage();
                     plotStage.setTitle(plotType.getName() + ": " + table.getTitle());
-                    plotStage.setOnCloseRequest(closeEvent -> table.removeOpenPlot(plotType) );
+                    plotStage.setOnCloseRequest(closeEvent -> table.removeOpenPlot(plotType));
                     plotStage.setScene(scene);
                     plotStage.show();
 
@@ -293,5 +302,4 @@ public class MenuItemEventHandler {
                     table.addOpenPlot(plotInfo);
                 });
     }
-
 }

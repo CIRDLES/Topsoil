@@ -54,11 +54,21 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
         });
     }
 
+    public PlotWindow(Plot plot, Node propertiesPanel, TopsoilTable table) {
+        super(self -> {
+            self.plot = plot;
+            self.propertiesPanel = propertiesPanel;
+            self.table = table;
+        });
+    }
+
     public Plot getPlot() {
         return this.plot;
     }
 
-    public TopsoilTable getTable() { return this.table; }
+    public TopsoilTable getTable() {
+        return this.table;
+    }
 
     private void initializeToolbar() {
         if (plot instanceof JavaScriptPlot) {

@@ -5,7 +5,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.SimpleDataset;
-import org.cirdles.topsoil.app.plot.*;
+import org.cirdles.topsoil.app.plot.PlotWindow;
+import org.cirdles.topsoil.app.plot.SimplePlotContext;
+import org.cirdles.topsoil.app.plot.Variable;
+import org.cirdles.topsoil.app.plot.VariableBindingDialog;
+import org.cirdles.topsoil.app.plot.VariableBindingDialogPane;
 import org.cirdles.topsoil.app.progress.TopsoilRawData;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
@@ -15,7 +19,11 @@ import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.plot.Plot;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +61,7 @@ class SerializableTopsoilSession implements Serializable {
         ObjectStreamClass obj = ObjectStreamClass.lookup(
                 Class.forName(SerializableTopsoilSession.class.getCanonicalName()));
         long svuid = obj.getSerialVersionUID();
-        System.out.println("Customized De-serialization of SerializableTopsoilSession"
+        System.out.println("Customized De-serialization of SerializableTopsoilSession: "
                 + svuid);
     }
 
@@ -103,7 +111,7 @@ class SerializableTopsoilSession implements Serializable {
         tableData.put("IsotopeType", table.getIsotopeType().getAbbreviation());
 
         // Data stored in the TableView
-        ArrayList<Double[]> tableEntries= new ArrayList<>();
+        ArrayList<Double[]> tableEntries = new ArrayList<>();
         for (Object entry : table.getTable().getItems()) {
             tableEntries.add(((TopsoilDataEntry) entry).toArray());
         }
@@ -162,7 +170,7 @@ class SerializableTopsoilSession implements Serializable {
 
         Stage plotStage = new Stage();
         plotStage.setTitle(plotType.getName() + ": " + table.getTitle());
-        plotStage.setOnCloseRequest(closeEvent -> table.removeOpenPlot(plotType) );
+        plotStage.setOnCloseRequest(closeEvent -> table.removeOpenPlot(plotType));
         plotStage.setScene(scene);
         plotStage.show();
     }

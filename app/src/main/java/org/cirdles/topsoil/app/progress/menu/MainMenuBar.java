@@ -1,6 +1,10 @@
 package org.cirdles.topsoil.app.progress.menu;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
@@ -189,18 +193,12 @@ public class MainMenuBar extends MenuBar {
 
     private Menu initializeProjectMenuItems(TopsoilTabPane tabs) {
         Menu projectMenu = new Menu("Project");
-        newProjectItem = new MenuItem("New Project");
-        saveProjectItem = new MenuItem("Save Project");
+//        newProjectItem = new MenuItem("New Project");
+//        saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
         openProjectItem = new MenuItem("Open Project");
-        closeProjectItem = new MenuItem("Close Project");
-        mostRecentItem = new MenuItem("Most Recently Used");
-
-        newProjectItem.setOnAction(event -> {
-            if (!tabs.isEmpty()) {
-                MenuItemEventHandler.handleNewProjectFile(tabs);
-            }
-        });
+//        closeProjectItem = new MenuItem("Close Project");
+//        mostRecentItem = new MenuItem("Most Recently Used");
 
         openProjectItem.setOnAction(event -> {
             if (!tabs.isEmpty()) {
@@ -218,16 +216,23 @@ public class MainMenuBar extends MenuBar {
             } else {
                 MenuItemEventHandler.handleOpenProjectFile(tabs);
             }
+        });
 
+        saveProjectAsItem.setOnAction(event -> {
+            if (!tabs.isEmpty()) {
+                MenuItemEventHandler.handleNewProjectFile(tabs);
+            }
         });
 
         projectMenu.getItems()
-                .addAll(newProjectItem,
-                        saveProjectItem,
-                        saveProjectAsItem,
+                .addAll(
+//                        newProjectItem,
+//                        saveProjectItem,
                         openProjectItem,
-                        closeProjectItem,
-                        mostRecentItem);
+                        saveProjectAsItem
+//                        , closeProjectItem,
+//                        mostRecentItem
+                );
 
         return projectMenu;
     }

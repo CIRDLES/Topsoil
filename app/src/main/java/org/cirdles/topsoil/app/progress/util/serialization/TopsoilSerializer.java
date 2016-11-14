@@ -20,15 +20,13 @@ public class TopsoilSerializer {
 
             out.flush();
             oos.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static void deserialize(File file, TopsoilTabPane tabs) {
         try {
-            tabs.getTabs().clear();
             FileInputStream in = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(in);
 
@@ -37,8 +35,7 @@ public class TopsoilSerializer {
 
             in.close();
             ois.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
