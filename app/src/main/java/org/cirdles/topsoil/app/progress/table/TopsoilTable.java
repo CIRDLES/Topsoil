@@ -9,14 +9,14 @@ import javafx.scene.input.KeyCode;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
+import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
+import org.cirdles.topsoil.plot.Plot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by benjaminmuldrow on 7/6/16.
@@ -30,6 +30,7 @@ public class TopsoilTable implements GenericTable {
     private String title = "Untitled Table";
     private TopsoilDataEntry [] dataEntries;
     private Field[] fields;
+    private HashMap<String, PlotInformation> openPlots;
 
     public TopsoilTable(String [] headers, IsotopeType isotopeType, TopsoilDataEntry... dataEntries) {
 
@@ -111,6 +112,9 @@ public class TopsoilTable implements GenericTable {
             }
 
         });
+
+        // Create hashmap for storing information on open plots for this table.
+        this.openPlots = new HashMap<>();
     }
 
     /**
@@ -273,5 +277,17 @@ public class TopsoilTable implements GenericTable {
             }
         }
         return rtnval;
+    }
+
+    public Collection<PlotInformation> getOpenPlots() {
+        return this.openPlots.values();
+    }
+
+    public void addOpenPlot(PlotInformation plotInfo) {
+        this.openPlots.put(plotInfo.getTopsoilPlotType().getName(), plotInfo);
+    }
+
+    public void removeOpenPlot(TopsoilPlotType plotType) {
+        this.openPlots.remove(plotType.getName());
     }
 }

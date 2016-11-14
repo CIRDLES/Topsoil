@@ -31,7 +31,7 @@ public class FileParser {
 
     public static File openTableDialogue(Stage stage) {
         return TopsoilFileChooser
-                .getTableFilechooser()
+                .getTableFileChooser()
                 .showOpenDialog(stage);
     }
 
