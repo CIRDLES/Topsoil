@@ -56,4 +56,12 @@ public class TopsoilDataEntry implements GenericDataEntry {
         }
         return dataEntry;
     }
+
+    public Double[] toArray() {
+        Double[] arr = new Double[this.properties.size()];
+        for (int i = 0; i < this.properties.size(); i++) {
+            arr[i] = this.properties.get(i).doubleValue();
+        }
+        return arr;
+    }
 }

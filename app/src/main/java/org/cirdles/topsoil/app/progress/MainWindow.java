@@ -1,7 +1,11 @@
 package org.cirdles.topsoil.app.progress;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -40,6 +44,9 @@ public class MainWindow extends Application {
                 buttons,
                 tabs
         );
+
+        // If main window is closed, all other windows close.
+        primaryStage.setOnCloseRequest(event -> verifyWindowClose(event, tabs));
 
         // Display Scene
         primaryStage.setTitle("Topsoil Test");
@@ -88,6 +95,26 @@ public class MainWindow extends Application {
                 keyEvent.isShortcutDown() &&
                 !tabs.isEmpty()) {
             tabs.getSelectedTab().redo();
+        }
+    }
+
+    private static void verifyWindowClose(Event event, TopsoilTabPane tabs) {
+        if (!tabs.isEmpty()) {
+            Alert verification = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Would you like to save your work?",
+                    ButtonType.CANCEL,
+                    ButtonType.NO,
+                    ButtonType.YES);
+            verification.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.CANCEL) {
+                    event.consume();
+                } else {
+                    if (response == ButtonType.YES) {
+                        MenuItemEventHandler.handleNewProjectFile(tabs);
+                    }
+                    Platform.exit();
+                }
+            });
         }
     }
 

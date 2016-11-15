@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.progress.tab;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
@@ -20,6 +22,15 @@ public class TopsoilTabPane extends TabPane {
         newTab.setContent(table.getTable());
         this.getTabs().addAll(newTab);
         this.getSelectionModel().select(newTab);
+    }
+
+    public ObservableList<TopsoilTab> getTopsoilTabs() {
+        ObservableList<Tab> tabs = this.getTabs();
+        ObservableList<TopsoilTab> topsoilTabs = FXCollections.observableArrayList();
+        for (Tab tab : tabs) {
+            topsoilTabs.add((TopsoilTab) tab);
+        }
+        return topsoilTabs;
     }
 
     /**

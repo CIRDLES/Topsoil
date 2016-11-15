@@ -15,7 +15,7 @@ public class TopsoilFileChooser {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Topsoil Project");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Topsoil Projects", "*.topsoil"),
+                new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
         return fileChooser;
@@ -25,7 +25,7 @@ public class TopsoilFileChooser {
      * Open a file choosing dialogue that searches for tables
      * @return instance of FileChooser that looks for .tsv/.csv/.txt files
      */
-    public static FileChooser getTableFilechooser() {
+    public static FileChooser getTableFileChooser() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Table File");
         fileChooser.getExtensionFilters().addAll(
