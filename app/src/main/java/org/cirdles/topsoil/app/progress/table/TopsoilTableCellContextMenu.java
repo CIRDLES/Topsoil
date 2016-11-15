@@ -117,7 +117,12 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
 
         // add items to context menu
         this.getItems().addAll(
-                insertRowItem, deleteRowItem, copyRowItem, clearRowItem,
+                insertRowItem,
+                deleteRowItem,
+                copyRowItem,
+                clearRowItem,
+                new SeparatorMenuItem(),
+                deleteColumnItem,
                 copyColumnItem,
                 clearColumnItem,
                 new SeparatorMenuItem(),
