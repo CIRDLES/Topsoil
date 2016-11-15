@@ -17,8 +17,13 @@
 (function () {
     "use strict";
 
-    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y'];
-    plot.propertiesKeys = [];
+    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho']; //read in Rho
+
+    plot.propertiesKeys = [
+        "Title",
+        "X Axis",
+        "Y Axis",
+        "Uncertainty"];
 
     var INF = Number.MAX_VALUE;
 
@@ -111,7 +116,7 @@
         var yMin = 0;
         var yMax = 1.5;
 
-        if (data.length < 0){
+        if (data.length > 0) {
             var dataXMin = d3.min(data, function (d) {
                 return d.x - d.sigma_x * plot.getProperty("Uncertainty");
             });
@@ -143,6 +148,46 @@
         plot.ar08lim = x.domain();
         plot.ar48lim = y.domain();
 
+        //calculate the ellipses
+        var k = 4 / 3 * (Math.sqrt(2) - 1);
+        var controlPointsBase = [
+            [1, 0],
+            [1, k],
+            [k, 1],
+            [0, 1],
+            [-k, 1],
+            [-1, k],
+            [-1, 0],
+            [-1, -k],
+            [-k, -1],
+            [0, -1],
+            [k, -1],
+            [1, -k],
+            [1, 0]
+        ];
+
+        var cacheData = plot.cacheData = data.map(function (d) {
+            var r = [
+                [d.sigma_x, d.rho * d.sigma_y],
+                [0, d.sigma_y * Math.sqrt(1 - d.rho * d.rho)]
+            ];
+
+            var shift = function(dx, dy) {
+                return function(p) {
+                    return [p[0] + dx, p[1] + dy];
+                };
+            };
+
+            var points = numeric.mul(
+                    plot.getProperty("Uncertainty"),
+                    numeric.dot(controlPointsBase, r))
+                    .map(shift(d.x, d.y));
+
+            return points;
+
+        });
+        //end calculating the ellipses
+
         plot.update(data);
     };
 
@@ -169,7 +214,7 @@
 
         var ellipses;
         (ellipses = plot.area.clipped.selectAll(".ellipse")
-                .data(data))
+                .data(plot.cacheData))
                 .enter().append("path")
                 .attr("class", "ellipse")
                 .attr("fill-opacity", 0.3)
@@ -308,7 +353,7 @@
 
         var any = function (results) {
             return results.reduce(function (prev, curr) {
-                return prev || curr == 1;
+                return prev || curr == 1; //use ===?
             }, false);
         };
 
@@ -361,7 +406,7 @@
             for (var i = 0; i < 100; i++) {
                 var decrement = f(x) / df(x);
 
-                if (decrement === Infinity || decrement === NaN) {
+                if (decrement === Infinity || decrement === NaN) {  //decrement === INF?
                     break;
                 }
 
@@ -429,7 +474,7 @@
                 var tstart = fzero(root, 50e3);
 
                 tv[iunder[iar48under]] = linspace(tstart, 1e6, nts - 1).concat([5e6]);
-            })
+            });
         }
 
         var zeros = function (args_) {
@@ -527,33 +572,12 @@
 
         // update the ellipses
         ellipses.attr("d", function (d) {
-            var k = 4 / 3 * (Math.sqrt(2) - 1);
-            var r = [
-                [d.sigma_x, 0],
-                [0, d.sigma_y]
-            ];
-            var controlPointsBase = [
-                [1, 0],
-                [1, k],
-                [k, 1],
-                [0, 1],
-                [-k, 1],
-                [-1, k],
-                [-1, 0],
-                [-1, -k],
-                [-k, -1],
-                [0, -1],
-                [k, -1],
-                [1, -k],
-                [1, 0]
-            ];
-
             var ellipsePath = d3.svg.line()
                     .x(function (datum) {
-                        return x(datum[0] + d.x);
+                        return x(datum[0]);
                     })
                     .y(function (datum) {
-                        return y(datum[1] + d.y);
+                        return y(datum[1]);
                     })
                     .interpolate(function (points) {
                         var i = 1, path = [points[0][0], ",", points[0][1]];
@@ -563,9 +587,7 @@
                         return path.join("");
                     });
 
-            return ellipsePath(numeric.mul(
-                plot.getProperty("Uncertainty"),
-                numeric.dot(controlPointsBase, r)));
+            return ellipsePath(d);
         });
 
         // update the center points

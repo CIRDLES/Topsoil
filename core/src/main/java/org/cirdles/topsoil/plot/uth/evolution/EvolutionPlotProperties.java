@@ -20,6 +20,14 @@ package org.cirdles.topsoil.plot.uth.evolution;
  */
 public class EvolutionPlotProperties {
 
+    public static final String TITLE = "Title";
+    public static final String X_AXIS = "X Axis";
+    public static final String Y_AXIS = "Y Axis";
+    public static final String UNCERTAINTY = "Uncertainty";
+    public static final String ELLIPSE_FILL_COLOR = "Ellipse Fill Color";
+    public static final String LAMBDA_235 = "LAMBDA_235";
+    public static final String LAMBDA_238 = "LAMBDA_238";
+
     private EvolutionPlotProperties() {
         super();
     }
