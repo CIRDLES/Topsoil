@@ -204,9 +204,9 @@ public class MenuItemEventHandler {
         if (plotType != null) {
 
             /* TODO
-             Once more than one of each type of plot are able to exist, the code
-             below (or some variation) should handle overwrites to similar plots
-             belonging to the same table.
+             Once more than one plot is able to exist at a time, the code
+             below (or some variation) should handle overwrites to similar
+             plots belonging to the same table.
               */
 
 //            boolean shouldGenerate = true;
@@ -235,33 +235,17 @@ public class MenuItemEventHandler {
             // Check for open plots of the same type.
             List<Stage> stages = StageHelper.getStages();
             if (stages.size() > 1) {
-                boolean doesExist = false;
-                int stageIndex;
-                for (stageIndex = 1; stageIndex < stages.size(); stageIndex++) {
-                    if (((PlotWindow) stages.get(stageIndex).getScene().getRoot()).getPlot()
-                            .getProperties().get("Title").equals(plotType.getName())) {
-                        doesExist = true;
-                        Stage stage = stages.get(stageIndex);
-                        Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
-                                "Creating a new " + plotType.getName() +
-                                        " will overwrite the existing " +
-                                        plotType.getName() +
-                                        ". Are you sure you want to continue?",
-                                ButtonType.CANCEL,
-                                ButtonType.YES);
-                        Optional<ButtonType> response = plotOverwrite.showAndWait();
-                        if (response.get() == ButtonType.YES) {
-                            stage.close();
-                            generateNewPlot(plotType, table);
-                        }
-                        break;
-                    }
-                }
-
-                if (!doesExist) {
+                Stage stage = stages.get(1);
+                Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Creating a new plot will overwrite the existing plot. " +
+                                "Are you sure you want to continue?",
+                        ButtonType.CANCEL,
+                        ButtonType.YES);
+                Optional<ButtonType> response = plotOverwrite.showAndWait();
+                if (response.get() == ButtonType.YES) {
+                    stage.close();
                     generateNewPlot(plotType, table);
                 }
-
             } else {
                 generateNewPlot(plotType, table);
             }
