@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.dataset.SimpleDataset;
@@ -16,6 +17,7 @@ import org.cirdles.topsoil.app.plot.SimplePlotContext;
 import org.cirdles.topsoil.app.plot.Variable;
 import org.cirdles.topsoil.app.plot.VariableBindingDialog;
 import org.cirdles.topsoil.app.plot.VariableBindingDialogPane;
+import org.cirdles.topsoil.app.progress.MainWindow;
 import org.cirdles.topsoil.app.progress.TopsoilRawData;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
@@ -56,7 +58,7 @@ public class MenuItemEventHandler {
         boolean valid = true;
 
         // select file
-        File file = FileParser.openTableDialogue(new Stage());
+        File file = FileParser.openTableDialogue(StageHelper.getStages().get(0));
         if (file == null) {
             valid = false;
         }
@@ -153,7 +155,7 @@ public class MenuItemEventHandler {
      * @param tabs  the TopsoilTabPane from which to save tables
      */
     public static void handleNewProjectFile(TopsoilTabPane tabs) {
-        File file = TopsoilFileChooser.getTopsoilFileChooser().showSaveDialog(new Stage());
+        File file = TopsoilFileChooser.getTopsoilFileChooser().showSaveDialog(StageHelper.getStages().get(0));
         if (file != null) {
             String fileName = file.getName();
             String extension = fileName.substring(
@@ -174,7 +176,7 @@ public class MenuItemEventHandler {
      * @param tabs  the TopsoilTabPane to which to add tables
      */
     public static void handleOpenProjectFile(TopsoilTabPane tabs) {
-        File file = TopsoilFileChooser.getTopsoilFileChooser().showOpenDialog(new Stage());
+        File file = TopsoilFileChooser.getTopsoilFileChooser().showOpenDialog(StageHelper.getStages().get(0));
         if (file != null) {
             String fileName = file.getName();
             String extension = fileName.substring(
