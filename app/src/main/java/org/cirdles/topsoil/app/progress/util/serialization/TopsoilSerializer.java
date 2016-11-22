@@ -1,13 +1,10 @@
 package org.cirdles.topsoil.app.progress.util.serialization;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 
 public class TopsoilSerializer {
 
@@ -21,6 +18,8 @@ public class TopsoilSerializer {
             out.flush();
             oos.close();
         } catch (IOException e) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR,
+                    "Unable to save project to file.", ButtonType.OK);
             e.printStackTrace();
         }
     }
@@ -35,8 +34,22 @@ public class TopsoilSerializer {
 
             in.close();
             ois.close();
-        } catch (Exception e) {
+        } catch (InvalidClassException|ClassNotFoundException e) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR,
+                    "This .topsoil file may be outdated.", ButtonType.OK);
+            errorAlert.showAndWait();
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR,
+                    "The specified file does not exist.", ButtonType.OK);
+            errorAlert.showAndWait();
+            e.printStackTrace();
+        } catch (IOException e) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR,
+                    "An unknown error has occurred.", ButtonType.OK);
+            errorAlert.showAndWait();
             e.printStackTrace();
         }
+
     }
 }
