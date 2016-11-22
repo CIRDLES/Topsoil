@@ -3,6 +3,9 @@ package org.cirdles.topsoil.app.progress.tab;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.app.progress.util.Command;
 import org.cirdles.topsoil.app.progress.util.UndoManager;
@@ -14,22 +17,57 @@ import org.cirdles.topsoil.app.progress.util.UndoManager;
 public class TopsoilTab extends Tab {
 
     private TopsoilTable table;
-    private final Label label;
+    private HBox graphic;
+    private final Label titleLabel;
+    private TextField textField;
     private UndoManager undoManager;
 
     public TopsoilTab(TopsoilTable table) {
         this.undoManager = new UndoManager(50);
-        label = new Label(table.getTitle());
-        this.setGraphic(label);
-        this.table = table;
-        this.setContent(this.table.getTable());
-        label.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                TabNameDialog nameChange = new TabNameDialog(label.getText());
-                table.setTitle(nameChange.getName());
-                label.setText(table.getTitle());
+
+        this.graphic = new HBox();
+        Label isotope = new Label(table.getIsotopeType().getAbbreviation() + " - ");
+        isotope.setId("Isotope");
+        titleLabel = new Label(table.getTitle());
+        this.titleLabel.setId("Title");
+        this.graphic.getChildren().addAll(isotope, this.titleLabel);
+        this.graphic.setOnMouseClicked(event -> {
+            if (event.getClickCount() >= 2 && this.graphic.getChildren().contains(this.titleLabel)) {
+                this.startEditingTitle();
             }
         });
+
+        this.setGraphic(graphic);
+
+        this.table = table;
+        this.setContent(this.table.getTable());
+    }
+
+   private void startEditingTitle() {
+       this.textField = generateTitleTextField();
+       this.textField.setText(this.titleLabel.getText());
+       this.titleLabel.setGraphic(this.textField);
+       this.titleLabel.setText(null);
+       this.textField.selectAll();
+    }
+
+    private void finishEditingTitle() {
+        this.titleLabel.setText(this.textField.getText());
+        this.titleLabel.setGraphic(null);
+        this.table.setTitle(this.textField.getText());
+        this.textField = null;
+    }
+
+    private TextField generateTitleTextField() {
+        TextField textField = new TextField();
+        textField.setMinWidth(this.titleLabel.getWidth() - this.titleLabel.getGraphicTextGap() * 2);
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                finishEditingTitle();
+            }
+        });
+
+        return textField;
     }
 
     /**
@@ -59,17 +97,4 @@ public class TopsoilTab extends Tab {
     public void redo() {
         this.undoManager.redo();
     }
-
-    public String getLastUndoMessage() {
-        return this.undoManager.getUndoName();
-    }
-
-    public String getLastRedoMessage() {
-        return this.undoManager.getRedoName();
-    }
-
-    public void clearUndoHistory() {
-        this.undoManager.clear();
-    }
-
 }
