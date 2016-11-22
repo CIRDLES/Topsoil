@@ -4,7 +4,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.app.progress.util.Command;
