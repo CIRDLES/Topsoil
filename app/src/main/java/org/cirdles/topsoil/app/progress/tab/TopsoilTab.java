@@ -4,7 +4,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.app.progress.util.Command;
 import org.cirdles.topsoil.app.progress.util.UndoManager;
@@ -16,8 +15,9 @@ import org.cirdles.topsoil.app.progress.util.UndoManager;
 public class TopsoilTab extends Tab {
 
     private TopsoilTable table;
-    private final Label isotopeLabel;
+//    private final Label isotopeLabel;
     private final String isotopeType;
+    private String actualTitle;
     private final Label titleLabel;
     private TextField textField;
     private UndoManager undoManager;
@@ -26,10 +26,11 @@ public class TopsoilTab extends Tab {
         this.undoManager = new UndoManager(50);
 
         this.isotopeType = table.getIsotopeType().getAbbreviation() + " - ";
-        this.isotopeLabel = new Label(isotopeType);
-        isotopeLabel.setId("Isotope");
+//        this.isotopeLabel = new Label(isotopeType);
+//        isotopeLabel.setId("Isotope");
 
-        titleLabel = new Label(table.getTitle());
+        this.actualTitle = table.getTitle();
+        this.titleLabel = new Label(this.isotopeType + table.getTitle());
         this.titleLabel.setId("Title");
         this.titleLabel.setOnMouseClicked(event -> {
             if (event.getClickCount() >= 2) {
@@ -38,7 +39,7 @@ public class TopsoilTab extends Tab {
             }
         });
 
-        this.titleLabel.setGraphic(isotopeLabel);
+//        this.titleLabel.setGraphic(isotopeLabel);
         this.setGraphic(this.titleLabel);
 
         this.table = table;
@@ -46,22 +47,27 @@ public class TopsoilTab extends Tab {
     }
 
     private void startEditingTitle() {
-       this.textField = generateTitleTextField();
-       this.textField.setText(this.titleLabel.getText());
-       this.titleLabel.setGraphic(this.textField);
-       this.titleLabel.setText(null);
-       this.textField.selectAll();
+        this.textField = generateTitleTextField();
+//        this.textField.setText(this.titleLabel.getText());
+        this.textField.setText(this.actualTitle);
+        this.titleLabel.setGraphic(this.textField);
+        this.titleLabel.setText(null);
+        this.textField.selectAll();
     }
 
     private void finishEditingTitle() {
         this.setTitle(this.textField.getText());
-        this.titleLabel.setGraphic(this.isotopeLabel);
+//        this.titleLabel.setGraphic(this.isotopeLabel);
+        this.titleLabel.setGraphic(null);
         this.textField = null;
     }
 
     public void setTitle(String title) {
-        this.titleLabel.setText(title);
-        this.table.setTitle(title);
+//        this.titleLabel.setText(title);
+        this.titleLabel.setText(this.isotopeType + title);
+        this.actualTitle = title;
+//        this.table.setTitle(title);
+        this.table.setTitle(this.actualTitle);
     }
 
     private TextField generateTitleTextField() {

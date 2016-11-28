@@ -7,7 +7,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.dataset.SimpleDataset;
@@ -17,7 +16,6 @@ import org.cirdles.topsoil.app.plot.SimplePlotContext;
 import org.cirdles.topsoil.app.plot.Variable;
 import org.cirdles.topsoil.app.plot.VariableBindingDialog;
 import org.cirdles.topsoil.app.plot.VariableBindingDialogPane;
-import org.cirdles.topsoil.app.progress.MainWindow;
 import org.cirdles.topsoil.app.progress.TopsoilRawData;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
@@ -91,6 +89,7 @@ public class MenuItemEventHandler {
             table = null;
         } else {
             table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+            table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
         }
 
         return table;

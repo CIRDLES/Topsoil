@@ -29,12 +29,12 @@ public class MainMenuBar extends MenuBar {
     private MenuItem redoItem;
 
     // Project Menu
-    private MenuItem newProjectItem;
-    private MenuItem saveProjectItem;
+//    private MenuItem newProjectItem;
+//    private MenuItem saveProjectItem;
     private MenuItem saveProjectAsItem;
     private MenuItem openProjectItem;
-    private MenuItem mostRecentItem;
-    private MenuItem closeProjectItem;
+//    private MenuItem mostRecentItem;
+//    private MenuItem closeProjectItem;
 
     // Table Menu
     private MenuItem newTableItem;
@@ -232,7 +232,7 @@ public class MainMenuBar extends MenuBar {
                         saveProjectAsItem
 //                        , closeProjectItem,
 //                        mostRecentItem
-                );
+            );
 
         return projectMenu;
     }

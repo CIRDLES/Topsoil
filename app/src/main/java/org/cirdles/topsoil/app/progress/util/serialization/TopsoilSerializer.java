@@ -4,7 +4,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.InvalidClassException;
+import java.io.FileNotFoundException;
 
 public class TopsoilSerializer {
 
@@ -36,7 +43,7 @@ public class TopsoilSerializer {
 
             in.close();
             ois.close();
-        } catch (InvalidClassException|ClassNotFoundException e) {
+        } catch (InvalidClassException | ClassNotFoundException e) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR,
                     "This .topsoil file may be outdated.", ButtonType.OK);
             errorAlert.showAndWait();
