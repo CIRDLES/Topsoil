@@ -16,10 +16,12 @@ public class TopsoilSerializer {
             oos.writeObject(new SerializableTopsoilSession(tabs));
 
             out.flush();
+            out.close();
             oos.close();
         } catch (IOException e) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR,
                     "Unable to save project to file.", ButtonType.OK);
+            errorAlert.showAndWait();
             e.printStackTrace();
         }
     }

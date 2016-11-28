@@ -16,7 +16,8 @@ import org.cirdles.topsoil.app.progress.util.UndoManager;
 public class TopsoilTab extends Tab {
 
     private TopsoilTable table;
-    private HBox graphic;
+    private final Label isotopeLabel;
+    private final String isotopeType;
     private final Label titleLabel;
     private TextField textField;
     private UndoManager undoManager;
@@ -24,25 +25,27 @@ public class TopsoilTab extends Tab {
     public TopsoilTab(TopsoilTable table) {
         this.undoManager = new UndoManager(50);
 
-        this.graphic = new HBox();
-        Label isotope = new Label(table.getIsotopeType().getAbbreviation() + " - ");
-        isotope.setId("Isotope");
+        this.isotopeType = table.getIsotopeType().getAbbreviation() + " - ";
+        this.isotopeLabel = new Label(isotopeType);
+        isotopeLabel.setId("Isotope");
+
         titleLabel = new Label(table.getTitle());
         this.titleLabel.setId("Title");
-        this.graphic.getChildren().addAll(isotope, this.titleLabel);
-        this.graphic.setOnMouseClicked(event -> {
-            if (event.getClickCount() >= 2 && this.graphic.getChildren().contains(this.titleLabel)) {
+        this.titleLabel.setOnMouseClicked(event -> {
+            if (event.getClickCount() >= 2) {
                 this.startEditingTitle();
+                this.textField.requestFocus();
             }
         });
 
-        this.setGraphic(graphic);
+        this.titleLabel.setGraphic(isotopeLabel);
+        this.setGraphic(this.titleLabel);
 
         this.table = table;
         this.setContent(this.table.getTable());
     }
 
-   private void startEditingTitle() {
+    private void startEditingTitle() {
        this.textField = generateTitleTextField();
        this.textField.setText(this.titleLabel.getText());
        this.titleLabel.setGraphic(this.textField);
@@ -51,10 +54,14 @@ public class TopsoilTab extends Tab {
     }
 
     private void finishEditingTitle() {
-        this.titleLabel.setText(this.textField.getText());
-        this.titleLabel.setGraphic(null);
-        this.table.setTitle(this.textField.getText());
+        this.setTitle(this.textField.getText());
+        this.titleLabel.setGraphic(this.isotopeLabel);
         this.textField = null;
+    }
+
+    public void setTitle(String title) {
+        this.titleLabel.setText(title);
+        this.table.setTitle(title);
     }
 
     private TextField generateTitleTextField() {

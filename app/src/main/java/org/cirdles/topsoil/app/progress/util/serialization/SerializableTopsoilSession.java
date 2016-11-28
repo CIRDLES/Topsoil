@@ -60,9 +60,9 @@ class SerializableTopsoilSession implements Serializable {
         in.defaultReadObject();
         ObjectStreamClass obj = ObjectStreamClass.lookup(
                 Class.forName(SerializableTopsoilSession.class.getCanonicalName()));
-        long svuid = obj.getSerialVersionUID();
-        System.out.println("Customized De-serialization of SerializableTopsoilSession: "
-                + svuid);
+//        long svuid = obj.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of SerializableTopsoilSession: "
+//                + svuid);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
