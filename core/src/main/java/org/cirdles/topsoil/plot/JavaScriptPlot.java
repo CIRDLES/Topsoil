@@ -188,6 +188,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
             webView.setContextMenuEnabled(false);
 
             WebEngine webEngine = webView.getEngine();
+            webEngine.setJavaScriptEnabled(true);
 
             // useful for debugging
             webEngine.setOnAlert(event -> {
@@ -262,6 +263,12 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         }
 
         return svgDocument;
+    }
+
+    public void reset() {
+        if (topsoil != null) {
+            runOnFxApplicationThread(() -> topsoil.call("reset"));
+        }
     }
 
     @Override

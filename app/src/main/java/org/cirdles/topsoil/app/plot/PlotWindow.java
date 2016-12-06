@@ -79,6 +79,11 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                 new SVGSaver().save(javaScriptPlot.displayAsSVGDocument());
             });
 
+            Button reset = new Button("Reset");
+            reset.setOnAction(mouseEvent -> {
+                javaScriptPlot.reset();
+            });
+
             Text loadingIndicator = new Text("Loading...");
 
             javaScriptPlot.getLoadFuture().thenRunAsync(() -> {
@@ -89,7 +94,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                     Platform::runLater
             );
 
-            plotToolBar.getItems().addAll(saveToSVG, loadingIndicator);
+            plotToolBar.getItems().addAll(saveToSVG, reset, loadingIndicator);
         }
     }
 
