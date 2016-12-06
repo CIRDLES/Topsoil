@@ -36,8 +36,8 @@ public class EvolutionPlotDefaultProperties extends HashMap<String, Object> {
     private void configure() {
         put(TITLE, "Isochron Plot");
         put(UNCERTAINTY, 2);
-        put(X_AXIS, "207Pb*/235U");
-        put(Y_AXIS, "206Pb*/238U");
+        put(X_AXIS, "[230Th/238U]t");
+        put(Y_AXIS, "[234Pb/238U]t");
     }
 
 }
