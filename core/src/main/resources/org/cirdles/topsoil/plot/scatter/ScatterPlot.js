@@ -147,7 +147,7 @@
         plot.area.clipped.call(zoom);
     };
 
-    plot.reset = function() {
+    topsoil.reset = function() {
         reset();
     }
 
