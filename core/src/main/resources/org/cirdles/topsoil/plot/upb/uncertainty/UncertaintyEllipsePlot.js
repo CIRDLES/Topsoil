@@ -28,6 +28,13 @@
         'LAMBDA_235',
         'LAMBDA_238'];
 
+    var reset;
+
+    var xMin = 0;
+    var xMax = 1;
+    var yMin = 0;
+    var yMax = 1;
+
     plot.draw = function (data) {
         initializeWetherill({
             LAMBDA_235: plot.getProperty("LAMBDA_235"),
@@ -41,11 +48,6 @@
                 .range([plot.height, 0]);
 
         plot.t = d3.scale.linear();
-
-        var xMin = 0;
-        var xMax = 1;
-        var yMin = 0;
-        var yMax = 1;
 
         if (data.length > 0){
             var dataXMin = d3.min(data, function (d) {
@@ -405,27 +407,47 @@
         ticks.exit().remove();
         tickLabels.exit().remove();
 
+        reset = function() {
+            d3.transition().duration(750).tween("zoom", function() {
+                alert(x.domain());
+                var ix = d3.interpolate(x.domain(), [xMin, xMax]),
+                    iy = d3.interpolate(y.domain(), [yMin, yMax]);
+                return function(t) {
+                  zoom.x(x.domain(ix(t))).y(y.domain(iy(t)));
+                  zoomed();
+                };
+              });
+        }
+
         var zoom = d3.behavior.zoom()
                 .x(x)
                 .y(y)
                 .scaleExtent([.5, 2.5])
-                .on("zoom", function () {
-                    var t = zoom.translate();
-                    var tx = t[0];
-                    var ty = t[1];
+                .on("zoom", zoomed);
 
-                    // keep the viewbox northeast of (0, 0)
-                    if (x.domain()[0] < 0)
-                        tx += x.range()[0] - x(0);
-                    if (y.domain()[0] < 0)
-                        ty += y.range()[0] - y(0);
-                    zoom.translate([tx, ty]);
+        function zoomed() {
+            var t = zoom.translate();
+            var tx = t[0];
+            var ty = t[1];
 
-                    plot.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
-                    plot.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
+            // keep the viewbox northeast of (0, 0)
+            if (x.domain()[0] < 0)
+                tx += x.range()[0] - x(0);
+            if (y.domain()[0] < 0)
+                ty += y.range()[0] - y(0);
+            zoom.translate([tx, ty]);
 
-                    plot.update(data);
-                });
+            plot.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
+            plot.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
+
+            plot.update(data);
+        }
+
         plot.area.clipped.call(zoom);
     };
+
+    topsoil.reset = function() {
+        reset();
+    }
+
 })();

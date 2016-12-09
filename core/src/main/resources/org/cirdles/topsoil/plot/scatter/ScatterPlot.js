@@ -20,12 +20,15 @@
     plot.dataKeys = ['x', 'y'];
     plot.propertiesKeys = ['Title', 'Point Fill Color'];
 
+    var reset;
+
+    // defaults if no data is provided
+    var xMin = 0;
+    var xMax = 1;
+    var yMin = 0;
+    var yMax = 1;
+
     plot.draw = function (data) {
-        // defaults if no data is provided
-        var xMin = 0;
-        var xMax = 1;
-        var yMin = 0;
-        var yMax = 1;
 
         // set default bounds relative to data
         if (data.length > 0) {
@@ -115,18 +118,37 @@
                     return plot.y(d.y);
                 });
 
+        reset = function() {
+            d3.transition().duration(750).tween("zoom", function() {
+                var ix = d3.interpolate(plot.x.domain(), [xMin, xMax]);
+                var iy = d3.interpolate(plot.y.domain(), [yMin, yMax]);
+                return function(t) {
+                  zoom.x(plot.x.domain(ix(t))).y(plot.y.domain(iy(t)));
+                  zoomed();
+                };
+              });
+        }
+
         // add pan/zoom
         var zoom = d3.behavior.zoom()
                 .x(plot.x)
                 .y(plot.y)
                 .scaleExtent([0.5, 2.5])
-                .on("zoom", function () {
-                    plot.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
-                    plot.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
+                .on("zoom", zoomed);
 
-                    plot.update(data);
-                });
+        function zoomed() {
+            var t = zoom.translate();
+            plot.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
+            plot.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
+
+            plot.update(data);
+        }
 
         plot.area.clipped.call(zoom);
     };
+
+    topsoil.reset = function() {
+        reset();
+    }
+
 }());

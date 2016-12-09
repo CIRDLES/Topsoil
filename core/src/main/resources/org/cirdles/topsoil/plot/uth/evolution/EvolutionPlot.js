@@ -17,13 +17,15 @@
 (function () {
     "use strict";
 
-    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho']; //read in Rho
+    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho'];
 
     plot.propertiesKeys = [
         "Title",
         "X Axis",
         "Y Axis",
         "Uncertainty"];
+
+    var reset;
 
     var INF = Number.MAX_VALUE;
 
@@ -80,12 +82,10 @@
         return dot(dot(mxp.QUTh[1], mxp.GUTh(t)), mxp.QinvUTh); // For the 234 concentration only (to solve for root)
     };
 
-    plot.initialProperties = {
-        "Title": "Isochron Plot",
-        "X Axis": "230Th/238U",
-        "Y Axis": "234U/238U",
-        "Uncertainty": 2.0
-    };
+    var xMin = 0;
+    var xMax = 1.5;
+    var yMin = 0;
+    var yMax = 2;
 
     plot.draw = function (data) {
         var x = plot.x = d3.scale.linear()
@@ -111,12 +111,8 @@
                 .attr("y", -50)
                 .attr("dy", ".71em");
 
-        var xMin = 0;
-        var xMax = 2;
-        var yMin = 0;
-        var yMax = 1.5;
-
-        if (data.length > 0) {
+        //initializes plot scale to fit ellipses
+        /*if (data.length > 0) {
             var dataXMin = d3.min(data, function (d) {
                 return d.x - d.sigma_x * plot.getProperty("Uncertainty");
             });
@@ -140,7 +136,7 @@
             yMin =  dataYMin - 0.05 * yRange;
             xMax = dataXMax + 0.05 * xRange;
             yMax = dataYMax + 0.05 * yRange;
-        }
+        }*/
 
         x.domain([xMin, xMax]);
         y.domain([yMin, yMax]);
@@ -655,30 +651,49 @@
                 .attr("stroke", "black")
                 .attr("shape-rendering", "geometricPrecision"); // see SVG docs
 
+        reset = function() {
+            d3.transition().duration(750).tween("zoom", function() {
+                var ix = d3.interpolate(x.domain(), [xMin, xMax]),
+                    iy = d3.interpolate(y.domain(), [yMin, yMax]);
+                return function(t) {
+                  zoom.x(x.domain(ix(t))).y(y.domain(iy(t)));
+                  zoomed();
+                };
+              });
+        }
+
         var zoom = d3.behavior.zoom()
                 .x(x)
                 .y(y)
                 .scaleExtent([.5, 2.5])
-                .on("zoom", function () {
-                    var t = zoom.translate();
-                    var tx = t[0];
-                    var ty = t[1];
+                .on("zoom", zoomed );
 
-                    // keep the viewbox northeast of (0, 0)
-                    if (x.domain()[0] < 0)
-                        tx += x.range()[0] - x(0);
-                    if (y.domain()[0] < 0)
-                        ty += y.range()[0] - y(0);
-                    zoom.translate([tx, ty]);
+        function zoomed() {
+              var t = zoom.translate();
+              var tx = t[0];
+              var ty = t[1];
 
-                    plot.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
-                    plot.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
+              // keep the viewbox northeast of (0, 0)
+              if (x.domain()[0] < 0)
+                  tx += x.range()[0] - x(0);
+              if (y.domain()[0] < 0)
+                  ty += y.range()[0] - y(0);
+              zoom.translate([tx, ty]);
 
-                    plot.ar08lim = [zoom.x().domain()[0], zoom.x().domain()[1]];
-                    plot.ar48lim = [zoom.y().domain()[0], zoom.y().domain()[1]];
+              plot.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
+              plot.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
 
-                    plot.update(data);
-                });
+              plot.ar08lim = [zoom.x().domain()[0], zoom.x().domain()[1]];
+              plot.ar48lim = [zoom.y().domain()[0], zoom.y().domain()[1]];
+
+              plot.update(data);
+          }
+
         plot.area.clipped.call(zoom);
     }
+
+    topsoil.reset = function() {
+        reset();
+    }
+
 })();
