@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.dataset.SimpleDataset;
@@ -41,12 +42,17 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by benjaminmuldrow on 6/21/16.
+ * A class containing a set of methods for handling actions for
+ * <tt>MenuItems</tt> in the <tt>MainMenuBar</tt>.
+ *
+ * @author benjaminmuldrow
+ * @see MainMenuBar
  */
 public class MenuItemEventHandler {
 
     /**
      * Handles importing tables from CSV / TSV files
+     *
      * @return Topsoil Table file
      * @throws IOException for invalid file selection
      */
@@ -56,7 +62,7 @@ public class MenuItemEventHandler {
         boolean valid = true;
 
         // select file
-        File file = FileParser.openTableDialogue(new Stage());
+        File file = FileParser.openTableDialogue(StageHelper.getStages().get(0));
         if (file == null) {
             valid = false;
         }
@@ -89,6 +95,7 @@ public class MenuItemEventHandler {
             table = null;
         } else {
             table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+            table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
         }
 
         return table;
@@ -96,6 +103,7 @@ public class MenuItemEventHandler {
 
     /**
      * Handle empty table creation
+     *
      * @return new, empty table
      */
     public static TopsoilTable handleNewTable() {
@@ -115,7 +123,10 @@ public class MenuItemEventHandler {
         return table;
     }
 
-    /** Open default web browser and create a new GitHub issue with user specefications already supplied */
+    /**
+     * Open default web browser and create a new GitHub issue with user
+     * specifications already supplied
+     * */
     public static void handleReportIssue() {
         IssueCreator issueCreator = new StandardGitHubIssueCreator(
                 new TopsoilMetadata(),
@@ -128,6 +139,7 @@ public class MenuItemEventHandler {
 
     /**
      * Clear a table of all data
+     *
      * @param table to clear
      * @return updated table
      */
@@ -148,17 +160,99 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Creates a new .topsoil file for the current tabs and plots.
+     * Closes all open tabs in the <tt>TopsoilTabPane</tt>, as well as any
+     * open plots. Used when a project is loaded, or when one is closed.
      *
-     * @param tabs  the TopsoilTabPane from which to save tables
+     * @param tabs  the active TopsoilTabPane
      */
-    public static void handleNewProjectFile(TopsoilTabPane tabs) {
-        File file = TopsoilFileChooser.getTopsoilFileChooser().showSaveDialog(new Stage());
+    private static void closeAllTabsAndPlots(TopsoilTabPane tabs) {
+        tabs.getTabs().clear();
+        List<Stage> stages = StageHelper.getStages();
+        for (int index = stages.size() - 1; index > 0; index--) {
+            stages.get(index).close();
+        }
+    }
+
+    /**
+     * Opens a .topsoil project <tt>File</tt>. If any tabs or plots are open,
+     * they are closed and replaced with the project's information.
+     *
+     * @param tabs  the TopsoilTabPane to which to add tables
+     */
+    public static void handleOpenProjectFile(TopsoilTabPane tabs) {
+        if (!tabs.isEmpty()) {
+            Alert verification = new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Opening a Topsoil project will replace your current tables. Continue?",
+                    ButtonType.CANCEL,
+                    ButtonType.YES
+            );
+            verification.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.YES) {
+                    openProjectFile(tabs);
+                }
+            });
+        } else {
+            openProjectFile(tabs);
+        }
+    }
+
+    /**
+     * Opens a .topsoil <tt>File</tt>.
+     *
+     * @param tabs  the active TopsoilTabPane.
+     */
+    private static void openProjectFile(TopsoilTabPane tabs) {
+        File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
         if (file != null) {
             String fileName = file.getName();
             String extension = fileName.substring(
                     fileName.lastIndexOf(".") + 1,
                     fileName.length());
+            if (!extension.equals("topsoil")) {
+                ErrorAlerter error = new ErrorAlerter();
+                error.alert("Project must be a .topsoil file.");
+            } else {
+                closeAllTabsAndPlots(tabs);
+                TopsoilSerializer.deserialize(file, tabs);
+            }
+        }
+    }
+
+    /**
+     * Saves changes to an open .topsoil project.
+     * <p>
+     *     If the project is open, but the file can't be found (e.g. if the
+     *     file was deleted externally while the project was open), then the
+     *     user is forced to "Save As".
+     * </p>
+     *
+     * @param tabs  the active TopsoilTabPane
+     */
+    public static void handleSaveProjectFile(TopsoilTabPane tabs) {
+        if (TopsoilSerializer.isProjectOpen()) {
+            if (TopsoilSerializer.projectFileExists()) {
+                File file = TopsoilSerializer.getCurrentProjectFile();
+                saveProjectFile(file, tabs);
+            } else {
+                handleSaveAsProjectFile(tabs);
+            }
+        }
+    }
+
+    /**
+     * Saves an open .topsoil project.
+     *
+     * @param file  the open .topsoil project File
+     * @param tabs  the active TopsoilTabPane
+     */
+    private static void saveProjectFile(File file, TopsoilTabPane tabs) {
+        if (file != null) {
+            String fileName = file.getName();
+            String extension = fileName.substring(
+                    fileName.lastIndexOf(".") + 1,
+                    fileName.length());
+            System.out.println(file);
             if (!extension.equals("topsoil")) {
                 ErrorAlerter error = new ErrorAlerter();
                 error.alert("Project must be a .topsoil file.");
@@ -169,32 +263,44 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Opens a .topsoil file.
+     * Creates a new .topsoil file for the current tabs and plots.
      *
-     * @param tabs  the TopsoilTabPane to which to add tables
+     * @param tabs  the TopsoilTabPane from which to save tables
      */
-    public static void handleOpenProjectFile(TopsoilTabPane tabs) {
-        File file = TopsoilFileChooser.getTopsoilFileChooser().showOpenDialog(new Stage());
-        if (file != null) {
-            String fileName = file.getName();
-            String extension = fileName.substring(
-                    fileName.lastIndexOf(".") + 1,
-                    fileName.length());
-            if (!extension.equals("topsoil")) {
-                ErrorAlerter error = new ErrorAlerter();
-                error.alert("Project must be a .topsoil file.");
-            } else {
-                tabs.getTabs().clear();
-                List<Stage> stages = StageHelper.getStages();
-                for (int index = stages.size() - 1; index > 0; index--) {
-                    stages.get(index).close();
-                }
-                TopsoilSerializer.deserialize(file, tabs);
-            }
-        }
+    public static void handleSaveAsProjectFile(TopsoilTabPane tabs) {
+        FileChooser fileChooser =  TopsoilFileChooser.getTopsoilSaveFileChooser();
+        File file = fileChooser.showSaveDialog(StageHelper.getStages().get(0));
+
+        saveProjectFile(file, tabs);
+        TopsoilSerializer.setCurrentProjectFile(file);
     }
 
-    public static void handlePlotGenerationForSelectedTable(TopsoilTabPane tabs) {
+    /**
+     * Closes the project file, and closes all open tabs and plots.
+     *
+     * @param tabs  the active TopsoilTabPane
+     */
+    public static void handleCloseProjectFile(TopsoilTabPane tabs) {
+        Alert saveAndCloseAlert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Do you want to save your changes?",
+                ButtonType.CANCEL, ButtonType.NO, ButtonType.YES);
+        saveAndCloseAlert.showAndWait().ifPresent(response -> {
+            if (response != ButtonType.CANCEL) {
+                if (response == ButtonType.YES) {
+                    MenuItemEventHandler.handleSaveProjectFile(tabs);
+                }
+                closeAllTabsAndPlots(tabs);
+                TopsoilSerializer.closeProjectFile();
+            }
+        });
+    }
+
+    /**
+     * Generates a plot for the selected <tt>TopsoilTab</tt>.
+     *
+     * @param tabs  the active TopsoilTabPane
+     */
+    public static void handlePlotGenerationForSelectedTab(TopsoilTabPane tabs) {
         TopsoilTable table = tabs.getSelectedTab().getTopsoilTable();
 
         // ask the user what kind of plot
@@ -204,9 +310,9 @@ public class MenuItemEventHandler {
         if (plotType != null) {
 
             /* TODO
-             Once more than one of each type of plot are able to exist, the code
-             below (or some variation) should handle overwrites to similar plots
-             belonging to the same table.
+             Once more than one plot is able to exist at a time, the code
+             below (or some variation) should handle overwrites to similar
+             plots belonging to the same table.
               */
 
 //            boolean shouldGenerate = true;
@@ -235,39 +341,29 @@ public class MenuItemEventHandler {
             // Check for open plots of the same type.
             List<Stage> stages = StageHelper.getStages();
             if (stages.size() > 1) {
-                boolean doesExist = false;
-                int stageIndex;
-                for (stageIndex = 1; stageIndex < stages.size(); stageIndex++) {
-                    if (((PlotWindow) stages.get(stageIndex).getScene().getRoot()).getPlot()
-                            .getProperties().get("Title").equals(plotType.getName())) {
-                        doesExist = true;
-                        Stage stage = stages.get(stageIndex);
-                        Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
-                                "Creating a new " + plotType.getName() +
-                                        " will overwrite the existing " +
-                                        plotType.getName() +
-                                        ". Are you sure you want to continue?",
-                                ButtonType.CANCEL,
-                                ButtonType.YES);
-                        Optional<ButtonType> response = plotOverwrite.showAndWait();
-                        if (response.get() == ButtonType.YES) {
-                            stage.close();
-                            generateNewPlot(plotType, table);
-                        }
-                        break;
-                    }
-                }
-
-                if (!doesExist) {
+                Stage stage = stages.get(1);
+                Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Creating a new plot will overwrite the existing plot. " +
+                                "Are you sure you want to continue?",
+                        ButtonType.CANCEL,
+                        ButtonType.YES);
+                Optional<ButtonType> response = plotOverwrite.showAndWait();
+                if (response.get() == ButtonType.YES) {
+                    stage.close();
                     generateNewPlot(plotType, table);
                 }
-
             } else {
                 generateNewPlot(plotType, table);
             }
         }
     }
 
+    /**
+     * Generates a plot of plotType for the specified <tt>TopsoilTable</tt>.
+     *
+     * @param plotType  the TopsoilPlotType of the plot
+     * @param table the TopsoilTable data to reference
+     */
     private static void generateNewPlot(TopsoilPlotType plotType, TopsoilTable table) {
         List<Variable> variables = plotType.getVariables();
         SimpleDataset dataset = new SimpleDataset(table.getTitle(), new TopsoilRawData(table).getRawData());

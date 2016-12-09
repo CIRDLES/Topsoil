@@ -16,9 +16,6 @@
 package org.cirdles.topsoil.plot.uth.evolution;
 
 import java.util.HashMap;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.ELLIPSE_FILL_COLOR;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.LAMBDA_235;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.LAMBDA_238;
 import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.TITLE;
 import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.UNCERTAINTY;
 import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.X_AXIS;

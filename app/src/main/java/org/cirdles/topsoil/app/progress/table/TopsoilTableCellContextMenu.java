@@ -13,7 +13,8 @@ import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
  */
 public class TopsoilTableCellContextMenu extends ContextMenu {
 
-    private MenuItem insertRowItem;
+    private MenuItem addRowAboveItem;
+    private MenuItem addRowBelowItem;
     private MenuItem deleteRowItem;
     private MenuItem deleteColumnItem;
     private MenuItem copyCellItem;
@@ -31,7 +32,8 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
 
         // initialize menu items
         // TODO rearrange in a more logical sense
-        insertRowItem = new MenuItem("Insert Row");
+        addRowAboveItem = new MenuItem("Add Row Above");
+        addRowBelowItem = new MenuItem("Add Row Below");
         deleteRowItem = new MenuItem("Delete Row");
         copyRowItem = new MenuItem("Copy Row");
         clearRowItem = new MenuItem("Clear Row");
@@ -44,8 +46,14 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
         clearCellItem = new MenuItem("Clear Cell");
 
         // add actions
-        insertRowItem.setOnAction(action -> {
-            InsertRowCommand insertRowCommand = new InsertRowCommand(this.cell);
+        addRowAboveItem.setOnAction(action -> {
+            InsertRowCommand insertRowCommand = new InsertRowCommand(this.cell, this.cell.getIndex());
+            insertRowCommand.execute();
+            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(insertRowCommand);
+        });
+
+        addRowBelowItem.setOnAction(action -> {
+            InsertRowCommand insertRowCommand = new InsertRowCommand(this.cell, this.cell.getIndex() + 1);
             insertRowCommand.execute();
             ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(insertRowCommand);
         });
@@ -117,7 +125,8 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
 
         // add items to context menu
         this.getItems().addAll(
-                insertRowItem,
+                addRowAboveItem,
+                addRowBelowItem,
                 deleteRowItem,
                 copyRowItem,
                 clearRowItem,

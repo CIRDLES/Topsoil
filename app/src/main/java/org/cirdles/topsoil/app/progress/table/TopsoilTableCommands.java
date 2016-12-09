@@ -105,9 +105,9 @@ class InsertRowCommand implements Command {
      *
      * @param cell  the cell from which the command was called
      */
-    InsertRowCommand(TopsoilTableCell cell) {
+    InsertRowCommand(TopsoilTableCell cell, int index) {
         this.tableView = cell.getTableView();
-        this.index = cell.getIndex();
+        this.index = index;
     }
 
     /**

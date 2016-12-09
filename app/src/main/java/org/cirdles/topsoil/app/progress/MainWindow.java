@@ -110,7 +110,7 @@ public class MainWindow extends Application {
                     event.consume();
                 } else {
                     if (response == ButtonType.YES) {
-                        MenuItemEventHandler.handleNewProjectFile(tabs);
+                        MenuItemEventHandler.handleSaveAsProjectFile(tabs);
                     }
                     Platform.exit();
                 }
