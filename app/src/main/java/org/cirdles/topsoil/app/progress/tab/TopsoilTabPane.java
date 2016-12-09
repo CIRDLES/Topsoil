@@ -54,15 +54,17 @@ public class TopsoilTabPane extends TabPane {
         }
 
         // If the table is being read in, and starts with "Table".
-        if (title.substring(0, 5).equals("Table")) {
-            try {
-                // The table is default-named.
-                int number = Integer.parseInt(title.substring(5));
-                this.untitledCount = Math.max(this.untitledCount, number);
-            } catch (NumberFormatException e) {
-                // Do nothing, is not a default-named table.
+        if (title.length() > 5) {
+            if (title.substring(0, 5).equals("Table")) {
+                try {
+                    // The table is default-named.
+                    int number = Integer.parseInt(title.substring(5));
+                    this.untitledCount = Math.max(this.untitledCount, number);
+                } catch (NumberFormatException e) {
+                    // Do nothing, is not a default-named table.
+                }
+                return new TopsoilTab(table);
             }
-            return new TopsoilTab(table);
         }
         // The table has a custom name.
         return new TopsoilTab(table);
