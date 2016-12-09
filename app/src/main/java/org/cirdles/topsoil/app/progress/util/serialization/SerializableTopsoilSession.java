@@ -29,6 +29,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A serializable class which stores information about all open tables and
+ * plots for serialization to a .topsoil file. Data is read from a
+ * <tt>TopsoilTabPane</tt>, whose <tt>TopsoilTab</tt>s each contain a
+ * <tt>TopsoilTable</tt> for housing information about a specific table. Data
+ * for each table is stored inside of a <tt>HashMap</tt>, then added to an
+ * <tt>ArrayList</tt>. Data for plots are stored within the HashMap for the
+ * table that they belong to.
+ *
+ * @author marottajb
+ * @see TopsoilSerializer
+ * @see TopsoilTabPane
+ * @see TopsoilTab
+ * @see TopsoilTable
+ */
 class SerializableTopsoilSession implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,6 +52,12 @@ class SerializableTopsoilSession implements Serializable {
     private Map<String, IsotopeType> isotopeType;
     private Map<String, TopsoilPlotType> topsoilPlotType;
 
+    /**
+     * Constructs an instance of <tt>SerializableTopsoilSession</tt>, using
+     * the provided <tt>TopsoilTabPane</tt> as a data source.
+     *
+     * @param tabs  a TopsoilTabPane which contains tables
+     */
     public SerializableTopsoilSession(TopsoilTabPane tabs) {
         this.data = new ArrayList<>();
 
@@ -69,6 +90,12 @@ class SerializableTopsoilSession implements Serializable {
         out.defaultWriteObject();
     }
 
+    /**
+     * Adds each stored <tt>TopsoilTable</tt> and their corresponding plots
+     * to the specified <tt>TopsoilTabPane</tt>.
+     *
+     * @param tabs  the target TopsoilTabPane
+     */
     public void loadDataToTopsoilTabPane(TopsoilTabPane tabs) {
         TopsoilTable table;
         for (Map<String, Serializable> tableData : this.data) {
@@ -94,6 +121,12 @@ class SerializableTopsoilSession implements Serializable {
         }
     }
 
+    /**
+     * Takes data from a <tt>TopsoilTable</tt> and puts it into a
+     * <tt>HashMap</tt>, ensuring that the data is serializable.
+     *
+     * @param table the TopsoilTable containing the target data
+     */
     private void storeTable(TopsoilTable table) {
         HashMap<String, Serializable> tableData = new HashMap<>();
 
@@ -120,22 +153,48 @@ class SerializableTopsoilSession implements Serializable {
         // Plots which visualize data stored in the TableView
         ArrayList<HashMap<String, Serializable>> plots = new ArrayList<>();
         for (PlotInformation plotInfo : table.getOpenPlots()) {
-            plots.add(this.storePlotInformation(plotInfo));
+            plots.add(this.convertPlotInformation(plotInfo));
         }
         tableData.put("Plots", plots);
 
         this.data.add(tableData);
     }
 
-    private HashMap<String, Serializable> storePlotInformation(PlotInformation plotInfo) {
+    /**
+     * Converts <tt>PlotInformation</tt> stored within a
+     * <tt>TopsoilTable</tt> into a <tt>HashMap</tt>.
+     *
+     * @param plotInfo  a PlotInformation object
+     * @return  a HashMap<String, Serializable> containing plot information
+     */
+    private HashMap<String, Serializable> convertPlotInformation(PlotInformation plotInfo) {
         HashMap<String, Serializable> plotOptions = new HashMap<>();
-        plotOptions.put("Topsoil Plot Type", plotInfo.getTopsoilPlotType().getName());
+        plotOptions.put("Topsoil Plot Typ" +
+                "e", plotInfo.getTopsoilPlotType().getName());
+        //TODO Store bindings for a table once binding is done prior to table
+        // creation.
         plotOptions.put("Variable Bindings", plotInfo.getVariableBindingNames());
         plotOptions.put("Properties", plotInfo.getPlotProperties());
 
         return plotOptions;
     }
 
+    //TODO Associate variable bindings with a table instead of a plot.
+    /**
+     * Called inside of loadDataToTopsoilPane(). Opens a plot which
+     * was stored inside of a <tt>TopsoilTable</tt>. plotOptions should be a
+     * Map following the same structure as the properties defined by that
+     * plot type.
+     *
+     * FAIRLY HACKY: This method of opening plots assumes that the variable
+     * bindings for each column in the table were left to their defaults.
+     * Once the variable binding is done prior to table creation, and is more
+     * easily accessible, this method should be updated, as well as this
+     * class updated to store variable bindings for a table.
+     *
+     * @param table the TopsoilTable which the plot belongs to
+     * @param plotOptions   a Map containing the stored plot properties
+     */
     private void openPlotWithOptions(TopsoilTable table, Map<String, Serializable> plotOptions) {
         TopsoilPlotType plotType = this.topsoilPlotType.get(plotOptions.get("Topsoil Plot Type"));
         List<Variable> variables = plotType.getVariables();
@@ -171,6 +230,7 @@ class SerializableTopsoilSession implements Serializable {
         Stage plotStage = new Stage();
         plotStage.setTitle(plotType.getName() + ": " + table.getTitle());
         plotStage.setOnCloseRequest(closeEvent -> table.removeOpenPlot(plotType));
+        plotInfo.setStage(plotStage);
         plotStage.setScene(scene);
         plotStage.show();
     }

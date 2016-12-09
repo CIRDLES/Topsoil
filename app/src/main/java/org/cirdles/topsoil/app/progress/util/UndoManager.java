@@ -3,10 +3,11 @@ package org.cirdles.topsoil.app.progress.util;
 import java.util.ArrayDeque;
 
 /**
- * A container for undoable Command objects. An UndoManager stores Command
- * objects and handles undo and redo operations. Command objects are stored in
- * a pair of ArrayDeques, one for executed Commands, and the other for undone
- * Commands. Each stores up to maxSize commands.
+ * A container for undoable <tt>Command</tt> objects. An <tt>UndoManager</tt>
+ * stores Command objects and handles undo and redo operations. Command
+ * objects are stored in a pair of <tt>ArrayDeque</tt>s, one for executed
+ * Commands, and the other for undone Commands. Each stores up to maxSize
+ * commands.
  *
  * @author marottajb
  * @see Command
@@ -18,7 +19,8 @@ public class UndoManager {
     private ArrayDeque<Command> redo;
 
     /**
-     * Constructs an empty UndoManager, with ArrayDeques of size maxSize.
+     * Constructs an empty <tt>UndoManager</tt>, with undo and redo
+     * <tt>ArrayDeque</tt>s of size maxSize.
      *
      * @param maxSize   the maximum number of commands that can be stored
      */
@@ -29,7 +31,8 @@ public class UndoManager {
     }
 
     /**
-     * Adds a newly executed command instance to the UndoManager.
+     * Adds a newly executed <tt>Command</tt> instance to the
+     * <tt>UndoManager</tt>.
      *
      * @param command   new Command instance
      */
@@ -44,8 +47,8 @@ public class UndoManager {
     }
 
     /**
-     * Undoes the most recently executed command, and moves the command to the
-     * redo ArrayDeque.
+     * Undoes the most recently executed <tt>Command</tt>, and moves the
+     * Command to the redo <tt>ArrayDeque</tt>.
      */
     public void undo() {
         if (!undo.isEmpty()) {
@@ -56,8 +59,8 @@ public class UndoManager {
     }
 
     /**
-     * Re-executes the most recently undone command, and moves the command to
-     * the undo ArrayDeque.
+     * Re-executes the most recently undone <tt>Command</tt>, and moves the
+     * Command to the undo <tt>ArrayDeque</tt>.
      */
     public void redo() {
         if (!redo.isEmpty()) {
@@ -68,7 +71,8 @@ public class UndoManager {
     }
 
     /**
-     * Returns a short description of the most recently executed command.
+     * Returns a short description of the most recently executed
+     * <tt>Command</tt>.
      *
      * @return the name of the command
      */
@@ -77,7 +81,7 @@ public class UndoManager {
     }
 
     /**
-     * Returns a short description of the most recently undone command.
+     * Returns a short description of the most recently undone <tt>Command</tt>.
      *
      * @return the name of the command
      */
@@ -86,8 +90,8 @@ public class UndoManager {
     }
 
     /**
-     * Clears both the undo and redo ArrayDeques, effectively erasing the
-     * command history.
+     * Clears both the undo and redo <tt>ArrayDeque</tt>s, effectively erasing
+     * the <tt>Command</tt> history.
      */
     public void clear() {
         undo.clear();

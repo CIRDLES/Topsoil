@@ -7,21 +7,31 @@ import javafx.scene.control.TextField;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.app.progress.util.Command;
 import org.cirdles.topsoil.app.progress.util.UndoManager;
+import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
 
 /**
- * Created by sbunce on 6/30/2016.
- * Extends JavaFX Tab class
+ * A custom <tt>Tab</tt> which stores a <tt>TopsoilTable</tt>.
+ *
+ * @author sbunce
+ * @see Tab
+ * @see TopsoilTabPane
+ * @see TopsoilTable
  */
 public class TopsoilTab extends Tab {
 
     private TopsoilTable table;
-//    private final Label isotopeLabel;
+    //    private final Label isotopeLabel;
     private final String isotopeType;
     private String actualTitle;
     private final Label titleLabel;
     private TextField textField;
     private UndoManager undoManager;
 
+    /**
+     * Constructs a <tt>TopsoilTab</tt> for the specified <tt>TopsoilTable</tt>.
+     *
+     * @param table the TopsoilTable to store
+     */
     public TopsoilTab(TopsoilTable table) {
         this.undoManager = new UndoManager(50);
 
@@ -46,6 +56,11 @@ public class TopsoilTab extends Tab {
         this.setContent(this.table.getTable());
     }
 
+
+    /**
+     * Begins editing the <tt>TopsoilTab</tt>'s title by providing a
+     * <tt>TextField</tt>.
+     */
     private void startEditingTitle() {
         this.textField = generateTitleTextField();
 //        this.textField.setText(this.titleLabel.getText());
@@ -55,6 +70,10 @@ public class TopsoilTab extends Tab {
         this.textField.selectAll();
     }
 
+    /**
+     * Saves the text in the title <tt>TextField</tt> to the
+     * <tt>TopsoilTab</tt>.
+     */
     private void finishEditingTitle() {
         this.setTitle(this.textField.getText());
 //        this.titleLabel.setGraphic(this.isotopeLabel);
@@ -62,6 +81,12 @@ public class TopsoilTab extends Tab {
         this.textField = null;
     }
 
+    /**
+     * Sets the title of the <tt>TopsoilTab</tt> and the
+     * <tt>TopsoilTable</tt> to the provided <tt>String</tt>.
+     *
+     * @param title the new title
+     */
     public void setTitle(String title) {
 //        this.titleLabel.setText(title);
         this.titleLabel.setText(this.isotopeType + title);
@@ -98,15 +123,48 @@ public class TopsoilTab extends Tab {
         return table;
     }
 
+    /**
+     * Adds a new <tt>Command</tt> to this <tt>TopsoilTab</tt>'s <tt>UndoManager</tt>.
+     *
+     * @param command   the Command to add
+     */
     public void addUndo(Command command) {
         this.undoManager.add(command);
     }
 
+    /**
+     * Undoes the last executed <tt>Command</tt> in this <tt>TopsoilTab</tt>'s
+     * <tt>UndoManager</tt>.
+     */
     public void undo() {
         this.undoManager.undo();
     }
 
+    /**
+     * Gets a short message describing the last executed <tt>Command</tt> in
+     * this <tt>TopsoilTab</tt>'s<tt>UndoManager</tt>.
+     *
+     * @return  a short description of the last executed command
+     */
+    public String getLastUndoMessage() {
+        return this.undoManager.getUndoName();
+    }
+
+    /**
+     * Re-executes the last undone <tt>Command</tt> in this <tt>TopsoilTab</tt>'s
+     * <tt>UndoManager</tt>.
+     */
     public void redo() {
         this.undoManager.redo();
+    }
+
+    /**
+     * Gets a short message describing the last undone <tt>Command</tt> in
+     * this <tt>TopsoilTab</tt>'s <tt>UndoManager</tt>.
+     *
+     * @return  a short description of the last undone command
+     */
+    public String getLastRedoMessage() {
+        return this.undoManager.getRedoName();
     }
 }

@@ -1,14 +1,13 @@
 package org.cirdles.topsoil.app.progress.menu;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 
+import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.io.IOException;
@@ -30,11 +29,11 @@ public class MainMenuBar extends MenuBar {
 
     // Project Menu
 //    private MenuItem newProjectItem;
-//    private MenuItem saveProjectItem;
+    private MenuItem saveProjectItem;
     private MenuItem saveProjectAsItem;
     private MenuItem openProjectItem;
-//    private MenuItem mostRecentItem;
-//    private MenuItem closeProjectItem;
+    //    private MenuItem mostRecentItem;
+    private MenuItem closeProjectItem;
 
     // Table Menu
     private MenuItem newTableItem;
@@ -60,8 +59,8 @@ public class MainMenuBar extends MenuBar {
     private void initialize(TopsoilTabPane tabs) {
         // Edit Menu
         Menu editMenu = new Menu("Edit");
-        undoItem = new MenuItem("Undo");
-        redoItem = new MenuItem("Redo");
+        undoItem = new MenuItem("Undo \"\"");
+        redoItem = new MenuItem("Redo \"\"");
 
         undoItem.setOnAction(event -> {
             if (!tabs.isEmpty()) {
@@ -78,8 +77,35 @@ public class MainMenuBar extends MenuBar {
                 .addAll(undoItem,
                         redoItem);
 
+        editMenu.setOnShown(event -> {
+            if (tabs.isEmpty()) {
+                undoItem.setText("Undo \"\"");
+                undoItem.setDisable(true);
+                redoItem.setText("Redo \"\"");
+                redoItem.setDisable(true);
+            } else {
+                if (tabs.getSelectedTab().getLastUndoMessage().equals("")) {
+                    undoItem.setText("Undo \"\"");
+                    undoItem.setDisable(true);
+                } else {
+                    undoItem.setText(String.format("Undo \"%s\"",
+                            tabs.getSelectedTab().getLastUndoMessage()));
+                    undoItem.setDisable(false);
+                }
+
+                if (tabs.getSelectedTab().getLastRedoMessage().equals("")) {
+                    redoItem.setText("Redo \"\"");
+                    redoItem.setDisable(true);
+                } else {
+                    redoItem.setText(String.format("Redo \"%s\"",
+                            tabs.getSelectedTab().getLastRedoMessage()));
+                    redoItem.setDisable(false);
+                }
+            }
+        });
+
         // Project Menu
-        Menu projectMenu = initializeProjectMenuItems(tabs);
+        Menu projectMenu = setProjectMenuItems(tabs);
 
         // Table Menu
         Menu tableMenu = new Menu("Table");
@@ -181,7 +207,7 @@ public class MainMenuBar extends MenuBar {
         // Generate Plot
         generatePlotItem.setOnAction(event -> {
             if (!tabs.isEmpty()) {
-                MenuItemEventHandler.handlePlotGenerationForSelectedTable(tabs);
+                MenuItemEventHandler.handlePlotGenerationForSelectedTab(tabs);
             }
         });
 
@@ -191,48 +217,43 @@ public class MainMenuBar extends MenuBar {
         });
     }
 
-    private Menu initializeProjectMenuItems(TopsoilTabPane tabs) {
+    private Menu setProjectMenuItems(TopsoilTabPane tabs) {
         Menu projectMenu = new Menu("Project");
 //        newProjectItem = new MenuItem("New Project");
-//        saveProjectItem = new MenuItem("Save Project");
+        saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
         openProjectItem = new MenuItem("Open Project");
-//        closeProjectItem = new MenuItem("Close Project");
+        closeProjectItem = new MenuItem("Close Project");
 //        mostRecentItem = new MenuItem("Most Recently Used");
 
-        openProjectItem.setOnAction(event -> {
-            if (!tabs.isEmpty()) {
-                Alert verification = new Alert(
-                        Alert.AlertType.CONFIRMATION,
-                        "Opening a Topsoil project will replace your current tables. Continue?",
-                        ButtonType.CANCEL,
-                        ButtonType.YES
-                );
-                verification.showAndWait().ifPresent(response -> {
-                    if (response == ButtonType.YES) {
-                        MenuItemEventHandler.handleOpenProjectFile(tabs);
-                    }
-                });
-            } else {
-                MenuItemEventHandler.handleOpenProjectFile(tabs);
-            }
-        });
+        openProjectItem.setOnAction(event -> MenuItemEventHandler
+                .handleOpenProjectFile(tabs));
+
+        saveProjectItem.setOnAction(event -> MenuItemEventHandler.handleSaveProjectFile(tabs));
 
         saveProjectAsItem.setOnAction(event -> {
             if (!tabs.isEmpty()) {
-                MenuItemEventHandler.handleNewProjectFile(tabs);
+                MenuItemEventHandler.handleSaveAsProjectFile(tabs);
             }
         });
+
+        closeProjectItem.setOnAction(event -> MenuItemEventHandler.handleCloseProjectFile(tabs));
 
         projectMenu.getItems()
                 .addAll(
 //                        newProjectItem,
-//                        saveProjectItem,
                         openProjectItem,
+                        closeProjectItem,
+                        saveProjectItem,
                         saveProjectAsItem
-//                        , closeProjectItem,
-//                        mostRecentItem
-            );
+//                        , mostRecentItem
+                );
+
+        projectMenu.setOnShown(event -> {
+            saveProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
+            saveProjectAsItem.setDisable(tabs.isEmpty());
+            closeProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
+        });
 
         return projectMenu;
     }
