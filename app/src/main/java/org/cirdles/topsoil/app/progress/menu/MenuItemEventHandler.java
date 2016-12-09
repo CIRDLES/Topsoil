@@ -33,6 +33,7 @@ import org.cirdles.topsoil.app.util.ErrorAlerter;
 import org.cirdles.topsoil.app.util.IssueCreator;
 import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
 import org.cirdles.topsoil.app.util.YesNoAlert;
+import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.awt.Desktop;
@@ -347,11 +348,20 @@ public class MenuItemEventHandler {
                                 "Are you sure you want to continue?",
                         ButtonType.CANCEL,
                         ButtonType.YES);
-                Optional<ButtonType> response = plotOverwrite.showAndWait();
-                if (response.get() == ButtonType.YES) {
-                    stage.close();
-                    generateNewPlot(plotType, table);
-                }
+                plotOverwrite.showAndWait().ifPresent(response -> {
+                            if (response == ButtonType.YES) {
+                                for (PlotInformation plotInfo : tabs.getSelectedTab()
+                                        .getTopsoilTable().getOpenPlots()) {
+                                    try {
+                                        ((JavaScriptPlot) plotInfo.getPlot()).finalize();
+                                    } catch (Throwable t) {
+                                        t.printStackTrace();
+                                    }
+                                }
+                                stage.close();
+                                generateNewPlot(plotType, table);
+                            }
+                        });
             } else {
                 generateNewPlot(plotType, table);
             }
