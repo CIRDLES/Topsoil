@@ -1,8 +1,10 @@
 package org.cirdles.topsoil.app.progress.table;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
@@ -18,6 +20,9 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     public TopsoilTableCell() {
         super();
 
+        this.setFont(Font.font("Monospaced"));
+        this.setAlignment(Pos.TOP_RIGHT);
+
         this.alerter = new ErrorAlerter();
 
         // Handle key press events
@@ -30,9 +35,10 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                 // Make sure entry is valid
                 Double newVal = getNumber(textField);
                 if (newVal != null) {
-                    addUndo(this.getItem(), newVal);
+                    double oldVal = this.getItem();
                     commitEdit(newVal);
                     updateItem(newVal, textField.getText().isEmpty());
+                    addUndo(oldVal, newVal);
                 } else {
                     cancelEdit();
                     alerter.alert("Entry must be a number");
@@ -111,12 +117,14 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      */
     private void generateTextField() {
         this.textField = new TextField();
+        this.textField.setFont(Font.font("Monospaced"));
         this.textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         this.textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             // if new value contains non-numerics or is empty
             if (!newValue) {
-                addUndo(this.getItem(), getNumber(this.textField));
+                double oldVal = this.getItem();
                 commitEdit(getNumber(this.textField));
+                addUndo(oldVal, this.getItem());
             }
         });
     }
