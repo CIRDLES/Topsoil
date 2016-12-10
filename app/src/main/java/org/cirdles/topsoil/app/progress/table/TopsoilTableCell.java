@@ -30,16 +30,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                 // Make sure entry is valid
                 Double newVal = getNumber(textField);
                 if (newVal != null) {
-                    // Only create undoable command if value was changed.
-                    if (Double.compare(this.getItem(), newVal) != 0) {
-                        TopsoilTableCellEditCommand cellEditCommand =
-                                new TopsoilTableCellEditCommand(this,
-                                        this.getItem(), newVal);
-                        ((TopsoilTabPane) this.getScene()
-                                .lookup("#TopsoilTabPane")).getSelectedTab()
-                                .addUndo(cellEditCommand);
-                    }
-
+                    addUndo(this.getItem(), newVal);
                     commitEdit(newVal);
                     updateItem(newVal, textField.getText().isEmpty());
                 } else {
@@ -79,6 +70,21 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         this.setGraphic(null);
     }
 
+    public void addUndo(Double oldVal, Double newVal) {
+
+        // Only create undoable command if value was changed.
+        if (Double.compare(this.getItem(), newVal) != 0) {
+            TopsoilTableCellEditCommand cellEditCommand =
+                    new TopsoilTableCellEditCommand(this,
+                            this.getItem(), newVal);
+            ((TopsoilTabPane) this.getScene()
+                    .lookup("#TopsoilTabPane")).getSelectedTab()
+                    .addUndo(cellEditCommand);
+        }
+
+        super.commitEdit(newVal);
+    }
+
     @Override
     public void updateItem(Double item, boolean isEmpty) {
         super.updateItem(item, isEmpty);
@@ -109,6 +115,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         this.textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             // if new value contains non-numerics or is empty
             if (!newValue) {
+                addUndo(this.getItem(), getNumber(this.textField));
                 commitEdit(getNumber(this.textField));
             }
         });
