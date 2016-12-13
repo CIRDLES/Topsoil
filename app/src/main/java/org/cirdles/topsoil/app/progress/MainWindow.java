@@ -10,6 +10,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.progress.menu.MainButtonsBar;
@@ -31,6 +32,7 @@ public class MainWindow extends Application {
 
         TopsoilTabPane tabs = new TopsoilTabPane();
         tabs.setId("TopsoilTabPane");
+        VBox.setVgrow(tabs, Priority.ALWAYS);
         MainMenuBar menuBar = new MainMenuBar(tabs);
         MenuBar mBar = menuBar.getMenuBar();
         mBar.setId("MenuBar");

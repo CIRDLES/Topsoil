@@ -6,6 +6,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
@@ -149,6 +150,9 @@ public class TopsoilTable implements GenericTable {
             // override cell factory to custom editable cells
             column.setCellFactory(value -> new TopsoilTableCell());
 
+            // disable column sorting
+            column.setSortable(false);
+
             // add functional column to the array of columns
             result[i] = column;
         }
@@ -173,18 +177,15 @@ public class TopsoilTable implements GenericTable {
         } else if (headers.length < isotopeType.getHeaders().length) {
             int difference = isotopeType.getHeaders().length - headers.length;
             result = new String[isotopeType.getHeaders().length];
-//            int numHeaders = isotopeType.getHeaders().length;
-            for (int i = 0; i < isotopeType.getHeaders().length - difference; i++) {
-                result[i] = headers[i];
-            }
-//            System.arraycopy(headers, 0, result, 0, numHeaders - difference);
-            for (int i = isotopeType.getHeaders().length - difference;
-                    i < isotopeType.getHeaders().length; i++) {
-                result[i] = isotopeType.getHeaders()[i];
-            }
-//            System.arraycopy(isotopeType.getHeaders(), (numHeaders - difference),
-//                    result, (numHeaders - difference),
-//                    (numHeaders - (numHeaders - difference)));
+            int numHeaders = isotopeType.getHeaders().length;
+
+            // Copy headers to result.
+            System.arraycopy(headers, 0, result, 0, numHeaders - difference);
+
+            // Fill in with normal headers.
+            System.arraycopy(isotopeType.getHeaders(), (numHeaders - difference),
+                    result, (numHeaders - difference),
+                    (numHeaders - (numHeaders - difference)));
 
         // if too many headers are provided, only use the first X (depending on isotope flavor)
         } else { // if (headers.length >= isotopeType.getHeaders().length)

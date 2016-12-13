@@ -1,11 +1,15 @@
 package org.cirdles.topsoil.app.progress.table;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by benjaminmuldrow on 7/27/16.
@@ -17,6 +21,9 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
 
     public TopsoilTableCell() {
         super();
+
+        this.setFont(Font.font("Monospaced"));
+        this.setAlignment(Pos.TOP_RIGHT);
 
         this.alerter = new ErrorAlerter();
 
@@ -30,18 +37,10 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                 // Make sure entry is valid
                 Double newVal = getNumber(textField);
                 if (newVal != null) {
-                    // Only create undoable command if value was changed.
-                    if (Double.compare(this.getItem(), newVal) != 0) {
-                        TopsoilTableCellEditCommand cellEditCommand =
-                                new TopsoilTableCellEditCommand(this,
-                                        this.getItem(), newVal);
-                        ((TopsoilTabPane) this.getScene()
-                                .lookup("#TopsoilTabPane")).getSelectedTab()
-                                .addUndo(cellEditCommand);
-                    }
-
+                    double oldVal = this.getItem();
                     commitEdit(newVal);
                     updateItem(newVal, textField.getText().isEmpty());
+                    addUndo(oldVal, newVal);
                 } else {
                     cancelEdit();
                     alerter.alert("Entry must be a number");
@@ -79,9 +78,28 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         this.setGraphic(null);
     }
 
+    public void addUndo(Double oldVal, Double newVal) {
+
+        // Only create undoable command if value was changed.
+        if (Double.compare(this.getItem(), newVal) != 0) {
+            TopsoilTableCellEditCommand cellEditCommand =
+                    new TopsoilTableCellEditCommand(this,
+                            this.getItem(), newVal);
+            ((TopsoilTabPane) this.getScene()
+                    .lookup("#TopsoilTabPane")).getSelectedTab()
+                    .addUndo(cellEditCommand);
+        }
+
+        super.commitEdit(newVal);
+    }
+
     @Override
     public void updateItem(Double item, boolean isEmpty) {
         super.updateItem(item, isEmpty);
+
+        DecimalFormat df = new DecimalFormat();
+        df.setMinimumFractionDigits(9);
+        df.setMaximumFractionDigits(9);
 
         if (isEmpty) {
             setText(null);
@@ -89,12 +107,12 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         } else {
             if (isEditing()) {
                 if (textField != null) {
-                    textField.setText(getItem().toString());
+                    textField.setText(df.format(getItem()));
                     setText(null);
                     setGraphic(textField);
                 }
             } else {
-                setText(getItem().toString());
+                setText(df.format(getItem()));
                 setGraphic(null);
             }
         }
@@ -105,11 +123,14 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      */
     private void generateTextField() {
         this.textField = new TextField();
+        this.textField.setFont(Font.font("Monospaced"));
         this.textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         this.textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             // if new value contains non-numerics or is empty
             if (!newValue) {
+                double oldVal = this.getItem();
                 commitEdit(getNumber(this.textField));
+                addUndo(oldVal, this.getItem());
             }
         });
     }
