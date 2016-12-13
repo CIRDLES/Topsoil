@@ -9,6 +9,8 @@ import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by benjaminmuldrow on 7/27/16.
  */
@@ -95,18 +97,22 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     public void updateItem(Double item, boolean isEmpty) {
         super.updateItem(item, isEmpty);
 
+        DecimalFormat df = new DecimalFormat();
+        df.setMinimumFractionDigits(9);
+        df.setMaximumFractionDigits(9);
+
         if (isEmpty) {
             setText(null);
             setGraphic(null);
         } else {
             if (isEditing()) {
                 if (textField != null) {
-                    textField.setText(getItem().toString());
+                    textField.setText(df.format(getItem()));
                     setText(null);
                     setGraphic(textField);
                 }
             } else {
-                setText(getItem().toString());
+                setText(df.format(getItem()));
                 setGraphic(null);
             }
         }
