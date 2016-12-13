@@ -17,8 +17,15 @@
 (function () {
     "use strict";
 
-    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y'];
-    plot.propertiesKeys = [];
+    plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho'];
+
+    plot.propertiesKeys = [
+        "Title",
+        "X Axis",
+        "Y Axis",
+        "Uncertainty"];
+
+    var reset;
 
     var INF = Number.MAX_VALUE;
 
@@ -75,12 +82,10 @@
         return dot(dot(mxp.QUTh[1], mxp.GUTh(t)), mxp.QinvUTh); // For the 234 concentration only (to solve for root)
     };
 
-    plot.initialProperties = {
-        "Title": "Isochron Plot",
-        "X Axis": "230Th/238U",
-        "Y Axis": "234U/238U",
-        "Uncertainty": 2.0
-    };
+    var xMin = 0;
+    var xMax = 1.5;
+    var yMin = 0;
+    var yMax = 2;
 
     plot.draw = function (data) {
         var x = plot.x = d3.scale.linear()
@@ -106,12 +111,8 @@
                 .attr("y", -50)
                 .attr("dy", ".71em");
 
-        var xMin = 0;
-        var xMax = 2;
-        var yMin = 0;
-        var yMax = 1.5;
-
-        if (data.length < 0){
+        //initializes plot scale to fit ellipses
+        /*if (data.length > 0) {
             var dataXMin = d3.min(data, function (d) {
                 return d.x - d.sigma_x * plot.getProperty("Uncertainty");
             });
@@ -135,13 +136,53 @@
             yMin =  dataYMin - 0.05 * yRange;
             xMax = dataXMax + 0.05 * xRange;
             yMax = dataYMax + 0.05 * yRange;
-        }
+        }*/
 
         x.domain([xMin, xMax]);
         y.domain([yMin, yMax]);
 
         plot.ar08lim = x.domain();
         plot.ar48lim = y.domain();
+
+        //calculate the ellipses
+        var k = 4 / 3 * (Math.sqrt(2) - 1);
+        var controlPointsBase = [
+            [1, 0],
+            [1, k],
+            [k, 1],
+            [0, 1],
+            [-k, 1],
+            [-1, k],
+            [-1, 0],
+            [-1, -k],
+            [-k, -1],
+            [0, -1],
+            [k, -1],
+            [1, -k],
+            [1, 0]
+        ];
+
+        var cacheData = plot.cacheData = data.map(function (d) {
+            var r = [
+                [d.sigma_x, d.rho * d.sigma_y],
+                [0, d.sigma_y * Math.sqrt(1 - d.rho * d.rho)]
+            ];
+
+            var shift = function(dx, dy) {
+                return function(p) {
+                    return [p[0] + dx, p[1] + dy];
+                };
+            };
+
+            var points = numeric.mul(
+                    plot.getProperty("Uncertainty"),
+                    numeric.dot(controlPointsBase, r))
+                    .map(shift(d.x, d.y));
+
+            return points;
+
+        });
+        //end calculating the ellipses
 
         plot.update(data);
     };
@@ -169,7 +210,7 @@
 
         var ellipses;
         (ellipses = plot.area.clipped.selectAll(".ellipse")
-                .data(data))
+                .data(plot.cacheData))
                 .enter().append("path")
                 .attr("class", "ellipse")
                 .attr("fill-opacity", 0.3)
@@ -308,7 +349,7 @@
 
         var any = function (results) {
             return results.reduce(function (prev, curr) {
-                return prev || curr == 1;
+                return prev || curr == 1; //use ===?
             }, false);
         };
 
@@ -361,7 +402,7 @@
             for (var i = 0; i < 100; i++) {
                 var decrement = f(x) / df(x);
 
-                if (decrement === Infinity || decrement === NaN) {
+                if (decrement === Infinity || decrement === NaN) {  //decrement === INF?
                     break;
                 }
 
@@ -429,7 +470,7 @@
                 var tstart = fzero(root, 50e3);
 
                 tv[iunder[iar48under]] = linspace(tstart, 1e6, nts - 1).concat([5e6]);
-            })
+            });
         }
 
         var zeros = function (args_) {
@@ -527,33 +568,12 @@
 
         // update the ellipses
         ellipses.attr("d", function (d) {
-            var k = 4 / 3 * (Math.sqrt(2) - 1);
-            var r = [
-                [d.sigma_x, 0],
-                [0, d.sigma_y]
-            ];
-            var controlPointsBase = [
-                [1, 0],
-                [1, k],
-                [k, 1],
-                [0, 1],
-                [-k, 1],
-                [-1, k],
-                [-1, 0],
-                [-1, -k],
-                [-k, -1],
-                [0, -1],
-                [k, -1],
-                [1, -k],
-                [1, 0]
-            ];
-
             var ellipsePath = d3.svg.line()
                     .x(function (datum) {
-                        return x(datum[0] + d.x);
+                        return x(datum[0]);
                     })
                     .y(function (datum) {
-                        return y(datum[1] + d.y);
+                        return y(datum[1]);
                     })
                     .interpolate(function (points) {
                         var i = 1, path = [points[0][0], ",", points[0][1]];
@@ -563,9 +583,7 @@
                         return path.join("");
                     });
 
-            return ellipsePath(numeric.mul(
-                plot.getProperty("Uncertainty"),
-                numeric.dot(controlPointsBase, r)));
+            return ellipsePath(d);
         });
 
         // update the center points
@@ -633,30 +651,49 @@
                 .attr("stroke", "black")
                 .attr("shape-rendering", "geometricPrecision"); // see SVG docs
 
+        reset = function() {
+            d3.transition().duration(750).tween("zoom", function() {
+                var ix = d3.interpolate(x.domain(), [xMin, xMax]),
+                    iy = d3.interpolate(y.domain(), [yMin, yMax]);
+                return function(t) {
+                  zoom.x(x.domain(ix(t))).y(y.domain(iy(t)));
+                  zoomed();
+                };
+              });
+        }
+
         var zoom = d3.behavior.zoom()
                 .x(x)
                 .y(y)
                 .scaleExtent([.5, 2.5])
-                .on("zoom", function () {
-                    var t = zoom.translate();
-                    var tx = t[0];
-                    var ty = t[1];
+                .on("zoom", zoomed );
 
-                    // keep the viewbox northeast of (0, 0)
-                    if (x.domain()[0] < 0)
-                        tx += x.range()[0] - x(0);
-                    if (y.domain()[0] < 0)
-                        ty += y.range()[0] - y(0);
-                    zoom.translate([tx, ty]);
+        function zoomed() {
+              var t = zoom.translate();
+              var tx = t[0];
+              var ty = t[1];
 
-                    plot.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
-                    plot.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
+              // keep the viewbox northeast of (0, 0)
+              if (x.domain()[0] < 0)
+                  tx += x.range()[0] - x(0);
+              if (y.domain()[0] < 0)
+                  ty += y.range()[0] - y(0);
+              zoom.translate([tx, ty]);
 
-                    plot.ar08lim = [zoom.x().domain()[0], zoom.x().domain()[1]];
-                    plot.ar48lim = [zoom.y().domain()[0], zoom.y().domain()[1]];
+              plot.x.domain([zoom.x().domain()[0], zoom.x().domain()[1]]);
+              plot.y.domain([zoom.y().domain()[0], zoom.y().domain()[1]]);
 
-                    plot.update(data);
-                });
+              plot.ar08lim = [zoom.x().domain()[0], zoom.x().domain()[1]];
+              plot.ar48lim = [zoom.y().domain()[0], zoom.y().domain()[1]];
+
+              plot.update(data);
+          }
+
         plot.area.clipped.call(zoom);
     }
+
+    topsoil.reset = function() {
+        reset();
+    }
+
 })();

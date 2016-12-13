@@ -1,9 +1,3 @@
-Topsoil
-=======
-
-[![Join the chat at https://gitter.im/CIRDLES/Topsoil](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CIRDLES/Topsoil?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/CIRDLES/Topsoil.svg?branch=master)](https://travis-ci.org/CIRDLES/Topsoil)
-[![Coverage Status](https://coveralls.io/repos/CIRDLES/Topsoil/badge.svg?branch=master&service=github)](https://coveralls.io/github/CIRDLES/Topsoil?branch=master)
 
 Topsoil is a desktop application and Java library that creates data
 visualizations for geochronologists and other earth scientists. The project is
@@ -25,3 +19,5 @@ Getting Started
 Instructions on how to install and first use Topsoil, along with other
 documentation, can be found in the
 [wiki](https://github.com/CIRDLES/topsoil/wiki).
+=======
+The issues section of this repository will be where individual problems will be addressed.

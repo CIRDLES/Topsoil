@@ -16,6 +16,10 @@
 package org.cirdles.topsoil.plot.uth.evolution;
 
 import java.util.HashMap;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.TITLE;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.UNCERTAINTY;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.X_AXIS;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.Y_AXIS;
 
 /**
  * Created by johnzeringue on 2/22/16.
@@ -27,7 +31,10 @@ public class EvolutionPlotDefaultProperties extends HashMap<String, Object> {
     }
 
     private void configure() {
-
+        put(TITLE, "Isochron Plot");
+        put(UNCERTAINTY, 2);
+        put(X_AXIS, "[230Th/238U]t");
+        put(Y_AXIS, "[234Pb/238U]t");
     }
 
 }

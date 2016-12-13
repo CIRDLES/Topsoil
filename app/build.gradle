@@ -15,7 +15,7 @@ import org.eclipse.jgit.internal.storage.file.FileRepository
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-ext.mainClass = 'org.cirdles.topsoil.app.Topsoil'
+ext.mainClass = 'org.cirdles.topsoil.app.progress.MainWindow'
 
 def configJavaExec = { JavaExec task ->
     task.main = mainClass
