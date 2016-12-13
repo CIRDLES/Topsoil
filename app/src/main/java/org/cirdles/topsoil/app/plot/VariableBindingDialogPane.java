@@ -54,15 +54,7 @@ public class VariableBindingDialogPane extends DialogPane {
     }
 
     public List<Map<String, Object>> getData() {
-        PlotContext plotContext = new SimplePlotContext(dataset);
-
-        variableBindingView.getControls().forEach(control -> {
-            plotContext.addBinding(
-                    control.getVariable(),
-                    control.getFieldSelection(),
-                    control.getVariableFormatSelection()
-            );
-        });
+        PlotContext plotContext = this.getPlotContext();
 
         List<Map<String, Object>> data = new ArrayList<>();
 
@@ -84,6 +76,20 @@ public class VariableBindingDialogPane extends DialogPane {
         });
 
         return data;
+    }
+
+    public PlotContext getPlotContext() {
+        PlotContext plotContext = new SimplePlotContext(dataset);
+
+        variableBindingView.getControls().forEach(control -> {
+            plotContext.addBinding(
+                    control.getVariable(),
+                    control.getFieldSelection(),
+                    control.getVariableFormatSelection()
+            );
+        });
+
+        return plotContext;
     }
 
 }

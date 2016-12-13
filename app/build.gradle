@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.eclipse.jgit:org.eclipse.jgit:4.1.1.201511131810-r'
+        //classpath 'org.eclipse.jgit:org.eclipse.jgit:4.1.1.201511131810-r'
     }
 }
 
@@ -15,7 +15,7 @@ import org.eclipse.jgit.internal.storage.file.FileRepository
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-ext.mainClass = 'org.cirdles.topsoil.app.Topsoil'
+ext.mainClass = 'org.cirdles.topsoil.app.progress.MainWindow'
 
 def configJavaExec = { JavaExec task ->
     task.main = mainClass

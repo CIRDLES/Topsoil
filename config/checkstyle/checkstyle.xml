@@ -7,68 +7,68 @@
     <property name="charset" value="UTF-8"/>
     <property name="fileExtensions" value="java, properties, xml"/>
 
-    <module name="FileTabCharacter">
-        <property name="eachLine" value="true"/>
-    </module>
+    <!--<module name="FileTabCharacter">-->
+        <!--<property name="eachLine" value="true"/>-->
+    <!--</module>-->
 
-    <module name="NewlineAtEndOfFile"/>
+    <!--<module name="NewlineAtEndOfFile"/>-->
 
-    <module name="RegexpSingleline">
-       <!-- no trailing whitespace -->
-       <property name="format" value="\s+$"/>
-       <property name="message" value="Trailing whitespace."/>
-    </module>
+    <!--<module name="RegexpSingleline">-->
+       <!--&lt;!&ndash; no trailing whitespace &ndash;&gt;-->
+       <!--<property name="format" value="\s+$"/>-->
+       <!--<property name="message" value="Trailing whitespace."/>-->
+    <!--</module>-->
 
-    <module name="RegexpMultiline">
-        <property name="format" value="\n(\s*\n){2}"/>
-        <property name="message" value="Consecutive blank lines."/>
-    </module>
+    <!--<module name="RegexpMultiline">-->
+        <!--<property name="format" value="\n(\s*\n){2}"/>-->
+        <!--<property name="message" value="Consecutive blank lines."/>-->
+    <!--</module>-->
 
-    <module name="TreeWalker">
-        <!-- blocks -->
-        <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock"/>
-        <module name="EmptyCatchBlock"/>
-        <module name="LeftCurly"/>
-        <module name="NeedBraces"/>
-        <module name="RightCurly"/>
+    <!--<module name="TreeWalker">-->
+        <!--&lt;!&ndash; blocks &ndash;&gt;-->
+        <!--<module name="AvoidNestedBlocks"/>-->
+        <!--<module name="EmptyBlock"/>-->
+        <!--<module name="EmptyCatchBlock"/>-->
+        <!--<module name="LeftCurly"/>-->
+        <!--<module name="NeedBraces"/>-->
+        <!--<module name="RightCurly"/>-->
 
-        <!-- design -->
-        <module name="InnerTypeLast"/>
-        <module name="InterfaceIsType"/>
+        <!--&lt;!&ndash; design &ndash;&gt;-->
+        <!--<module name="InnerTypeLast"/>-->
+        <!--<module name="InterfaceIsType"/>-->
 
-        <!-- imports -->
-        <module name="AvoidStarImport">
-            <property name="excludes" value="org.hamcrest.Matchers"/>
-            <property name="excludes" value="org.junit.Assert"/>
-            <property name="excludes" value="org.mockito.Mockito"/>
-        </module>
+        <!--&lt;!&ndash; imports &ndash;&gt;-->
+        <!--<module name="AvoidStarImport">-->
+            <!--<property name="excludes" value="org.hamcrest.Matchers"/>-->
+            <!--<property name="excludes" value="org.junit.Assert"/>-->
+            <!--<property name="excludes" value="org.mockito.Mockito"/>-->
+        <!--</module>-->
 
-        <module name="RedundantImport"/>
-        <module name="UnusedImports"/>
+        <!--<module name="RedundantImport"/>-->
+        <!--<module name="UnusedImports"/>-->
 
-        <!-- metrics -->
-        <module name="BooleanExpressionComplexity"/>
-        <module name="CyclomaticComplexity"/>
+        <!--&lt;!&ndash; metrics &ndash;&gt;-->
+        <!--<module name="BooleanExpressionComplexity"/>-->
+        <!--<module name="CyclomaticComplexity"/>-->
 
-        <!-- miscellaneous -->
-        <module name="Indentation">
-            <property name="lineWrappingIndentation" value="8"/>
-        </module>
+        <!--&lt;!&ndash; miscellaneous &ndash;&gt;-->
+        <!--<module name="Indentation">-->
+            <!--<property name="lineWrappingIndentation" value="8"/>-->
+        <!--</module>-->
 
-        <!-- modifiers -->
-        <module name="ModifierOrder"/>
+        <!--&lt;!&ndash; modifiers &ndash;&gt;-->
+        <!--<module name="ModifierOrder"/>-->
 
-        <!-- regexp -->
-        <module name="RegexpSinglelineJava">
-            <property name="format" value="System\.(out|err)\.print(f|ln)?\("/>
+        <!--&lt;!&ndash; regexp &ndash;&gt;-->
+        <!--<module name="RegexpSinglelineJava">-->
+            <!--<property name="format" value="System\.(out|err)\.print(f|ln)?\("/>-->
 
-            <property name="message"
-                value="Printing to standard I/O. Please use Logger instead."/>
-        </module>
+            <!--<property name="message"-->
+                <!--value="Printing to standard I/O. Please use Logger instead."/>-->
+        <!--</module>-->
 
-        <!-- whitespace -->
-        <module name="ParenPad"/>
-        <module name="WhitespaceAround"/>
-    </module>
+        <!--&lt;!&ndash; whitespace &ndash;&gt;-->
+        <!--<module name="ParenPad"/>-->
+        <!--<module name="WhitespaceAround"/>-->
+    <!--</module>-->
 </module>

@@ -415,9 +415,8 @@ public class TopsoilMainWindow extends CustomVBox<TopsoilMainWindow> {
     }
 
     public void initializeAndShow(PlotType plotType) {
-        getCurrentTable().map(TsvTable::getDataset).ifPresent(dataset -> {
-            initializeAndShow(plotType, dataset);
-        });
+        Dataset data = getCurrentTable().get().getDataset();
+        initializeAndShow(plotType, data);
     }
 
     @FXML
