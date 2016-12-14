@@ -1,6 +1,6 @@
 // BEGIN JAVASCRIPT SUPPORT
 plugins {
-    id 'com.eriwen.gradle.js' version '1.12.1'
+    id "com.eriwen.gradle.js" version "2.14.1"
     id 'com.github.rundis.buster' version '0.2.4.2'
 }
 
