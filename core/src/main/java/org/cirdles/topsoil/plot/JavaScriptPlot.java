@@ -290,9 +290,4 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
             });
         }
     }
-
-    public void finalize() throws Throwable {
-        super.finalize();
-    }
-
 }
