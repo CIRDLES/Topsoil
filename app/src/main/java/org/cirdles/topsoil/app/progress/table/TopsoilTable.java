@@ -6,7 +6,6 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
@@ -41,7 +40,7 @@ public class TopsoilTable implements GenericTable {
         // initialize table
         this.table = new TableView<>();
         this.table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableView.TableViewSelectionModel selectionModel = this.table.getSelectionModel();
+        TableView.TableViewSelectionModel<TopsoilDataEntry> selectionModel = this.table.getSelectionModel();
         selectionModel.setCellSelectionEnabled(true);
         this.dataEntries = dataEntries;
         this.table.setEditable(true);
@@ -91,9 +90,21 @@ public class TopsoilTable implements GenericTable {
             // Shift + Tab focuses left cell
             if (keyevent.getCode().equals(KeyCode.TAB)) {
                 if (keyevent.isShiftDown()) {
-                    selectionModel.selectLeftCell();
+                    if (selectionModel.getSelectedCells().get(0).getColumn() == 0 &&
+                            selectionModel.getSelectedIndex() != 0) {
+                        selectionModel.select(selectionModel.getSelectedIndex() - 1, this.table.getColumns().get
+                                (this.getHeaders().length - 1));
+                    } else {
+                        selectionModel.selectLeftCell();
+                    }
                 } else {
-                    selectionModel.selectRightCell();
+                    if (selectionModel.getSelectedCells().get(0).getColumn() ==
+                        this.getHeaders().length - 1 && selectionModel.getSelectedIndex() !=
+                                                        this.table.getItems().size() - 1) {
+                        selectionModel.select(selectionModel.getSelectedIndex() + 1, this.table.getColumns().get(0));
+                    } else {
+                        selectionModel.selectRightCell();
+                    }
                 }
 
                 keyevent.consume();

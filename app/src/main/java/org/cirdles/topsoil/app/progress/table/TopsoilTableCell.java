@@ -10,45 +10,53 @@ import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
- * Created by benjaminmuldrow on 7/27/16.
+ *
+ * @author benjaminmuldrow
+ *
  */
 public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
 
     private TextField textField;
     private Alerter alerter;
+    private NumberFormat df;
 
-    public TopsoilTableCell() {
+    TopsoilTableCell() {
         super();
 
         this.setFont(Font.font("Monospaced"));
         this.setAlignment(Pos.TOP_RIGHT);
 
+        this.df = DecimalFormat.getNumberInstance();
+        this.df.setMinimumFractionDigits(9);
+        this.df.setMaximumFractionDigits(9);
+
         this.alerter = new ErrorAlerter();
 
-        // Handle key press events
+        //Handle key press events
         this.setOnKeyPressed(keyEvent -> {
-
             // confirm change
-            if (keyEvent.getCode() == KeyCode.ENTER ||
-                    keyEvent.getCode() == KeyCode.TAB) {
+            if (keyEvent.getCode() == KeyCode.ENTER || keyEvent.getCode() == KeyCode.TAB) {
 
                 // Make sure entry is valid
-                Double newVal = getNumber(textField);
-                if (newVal != null) {
-                    double oldVal = this.getItem();
+                Double newVal = getNumber(this.textField);
+                if (newVal == null) {
+                    alerter.alert("Entry must be a number.");
+                    cancelEdit();
+                } else if (Double.compare(this.getItem(), newVal) != 0) {
                     commitEdit(newVal);
-                    updateItem(newVal, textField.getText().isEmpty());
-                    addUndo(oldVal, newVal);
+                    addUndo(this.getItem(), newVal);
                 } else {
                     cancelEdit();
-                    alerter.alert("Entry must be a number");
                 }
+                selectNextCell();
 
-            // cancel change
+                // cancel change
             } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
                 cancelEdit();
+                selectNextCell();
             }
 
             keyEvent.consume();
@@ -74,32 +82,13 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     @Override
     public void cancelEdit() {
         super.cancelEdit();
-        this.setText(getItem().toString());
+        this.setText(df.format(this.getItem()));
         this.setGraphic(null);
-    }
-
-    public void addUndo(Double oldVal, Double newVal) {
-
-        // Only create undoable command if value was changed.
-        if (Double.compare(this.getItem(), newVal) != 0) {
-            TopsoilTableCellEditCommand cellEditCommand =
-                    new TopsoilTableCellEditCommand(this,
-                            this.getItem(), newVal);
-            ((TopsoilTabPane) this.getScene()
-                    .lookup("#TopsoilTabPane")).getSelectedTab()
-                    .addUndo(cellEditCommand);
-        }
-
-        super.commitEdit(newVal);
     }
 
     @Override
     public void updateItem(Double item, boolean isEmpty) {
         super.updateItem(item, isEmpty);
-
-        DecimalFormat df = new DecimalFormat();
-        df.setMinimumFractionDigits(9);
-        df.setMaximumFractionDigits(9);
 
         if (isEmpty) {
             setText(null);
@@ -107,15 +96,20 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         } else {
             if (isEditing()) {
                 if (textField != null) {
-                    textField.setText(df.format(getItem()));
-                    setText(null);
-                    setGraphic(textField);
+                    textField.setText(this.getItem().toString());
                 }
+                setText(null);
+                setGraphic(this.textField);
             } else {
-                setText(df.format(getItem()));
+                setText(this.df.format(getItem()));
                 setGraphic(null);
             }
         }
+    }
+
+    private void addUndo(Double oldVal, Double newVal) {
+        TableCellEditCommand cellEditCommand = new TableCellEditCommand(this, oldVal, newVal);
+        ((TopsoilTabPane) this.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(cellEditCommand);
     }
 
     /**
@@ -125,14 +119,6 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         this.textField = new TextField();
         this.textField.setFont(Font.font("Monospaced"));
         this.textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-        this.textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            // if new value contains non-numerics or is empty
-            if (!newValue) {
-                double oldVal = this.getItem();
-                commitEdit(getNumber(this.textField));
-                addUndo(oldVal, this.getItem());
-            }
-        });
     }
 
     /**
@@ -141,22 +127,30 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      * @return Double value of contents or null if invalid entry
      */
     private Double getNumber(TextField textField) {
-        Double result = null;
         try {
-            result = new Double(textField.getText());
+            return Double.valueOf(textField.getText());
         } catch (NumberFormatException e) {
-            //
-        } finally {
-            return result;
+            return null;
         }
     }
 
-    public TopsoilDataEntry getDataEntry() {
+    TopsoilDataEntry getDataEntry() {
         return this.getTableView().getItems().get(this.getIndex());
     }
 
-    public int getColumnIndex() {
+    int getColumnIndex() {
         return Integer.parseInt(this.getTableColumn().getId());
+    }
+
+    private void selectNextCell() {
+        if (this.getColumnIndex() == this.getTableView().getColumns().size() - 1) {
+            if (this.getIndex() != this.getTableView().getItems().size() - 1)
+                this.getTableView().getSelectionModel().select(this.getIndex() + 1,
+                                                               this.getTableView().getColumns().get(0));
+        } else {
+            this.getTableView().getSelectionModel().select(this.getIndex(), this.getTableView().getColumns()
+                                                                                .get(this.getColumnIndex() + 1));
+        }
     }
 
 }
