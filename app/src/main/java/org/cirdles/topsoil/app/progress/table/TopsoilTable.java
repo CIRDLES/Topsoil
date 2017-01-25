@@ -22,7 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by benjaminmuldrow on 7/6/16.
+ * This is the core data model for a table. It contains the <tt>TableView</tt> used to display the data, as well as
+ * any information about open plots which reference this data model.
+ *
+ * @author benjaminmuldrow
+ *
+ * @see TableView
+ * @see TopsoilDataEntry
  */
 public class TopsoilTable implements GenericTable {
 
@@ -226,52 +232,32 @@ public class TopsoilTable implements GenericTable {
 
     }
 
-    @Override
-    public void deleteRow(int index) {
-        this.dataEntries[index].getProperties().remove(0, headers.length);
-    }
-
-    @Override
-    public void addRow() {
-        TopsoilDataEntry dataEntry = new TopsoilDataEntry();
-        for (String header : this.headers) {
-            dataEntry.addEntries(0.0);
-        }
-        this.table.getItems().add(dataEntry);
-    }
-
-    @Override
-    public void clear() {
-        this.getTable().getItems().clear();
-    }
-
-    @Override
-    public TableView getTable() {
-        return this.table;
-    }
-
+    /**
+     * Returns the <tt>IsotopeType</tt> of the current <tt>TopsoilTable</tt>.
+     *
+     * @return  the table's IsotopeType
+     */
     public IsotopeType getIsotopeType() {
         return this.isotopeType;
     }
 
+    /**
+     * Sets the <tt>IsotopeType</tt> of the current <tt>TopsoilTable</tt>.
+     *
+     * @param isotopeType   the new IsotopeType
+     */
     public void setIsotopeType(IsotopeType isotopeType) {
         this.isotopeType = isotopeType;
     }
 
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Override
-    public String [] getHeaders() {
-        return this.headers.clone();
-    }
-
+    /**
+     * Resets the string ids associated with each <tt>TableColumn</tt> in the <tt>TopsoilTable</tt>'s
+     * <tt>TableView</tt>.
+     * <p>Each TableColumn has an associated String id assigned to it, increasing numerically from 1, left to right.
+     * This is to keep track of the order of the columns before and after they are re-ordered due to clicking and
+     * dragging.
+     * </p>
+     */
     public void resetIds() {
         int id = 0;
         for (TableColumn<TopsoilDataEntry, ?> column : this.table.getColumns()) {
@@ -280,6 +266,12 @@ public class TopsoilTable implements GenericTable {
         }
     }
 
+    /**
+     * Returns true if the <tt>TableView</tt> is empty. In this case, "empty" means that it has one data entry filled
+     * with 0.0s.
+     *
+     * @return  true or false
+     */
     public boolean isCleared() {
         boolean rtnval = true;
         if (table.getItems().size() != 1) {
@@ -294,15 +286,76 @@ public class TopsoilTable implements GenericTable {
         return rtnval;
     }
 
+    /**
+     * Returns a Collection of <tt>PlotInformation</tt>, each containing information on an open plot associated with
+     * this data table.
+     *
+     * @return  a Collection of PlotInformation objects
+     */
     public Collection<PlotInformation> getOpenPlots() {
         return this.openPlots.values();
     }
 
+    /**
+     * Adds information about an open plot to this data table.
+     *
+     * @param plotInfo  a new PlotInformation
+     */
     public void addOpenPlot(PlotInformation plotInfo) {
         this.openPlots.put(plotInfo.getTopsoilPlotType().getName(), plotInfo);
     }
 
+    /**
+     * Removes information about an open plot to this data table (typically once the table has been closed).
+     *
+     * @param plotType  the TopsoilPlotType of the plot to be removed
+     */
     public void removeOpenPlot(TopsoilPlotType plotType) {
         this.openPlots.remove(plotType.getName());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void deleteRow(int index) {
+        this.dataEntries[index].getProperties().remove(0, headers.length);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addRow() {
+        TopsoilDataEntry dataEntry = new TopsoilDataEntry();
+        for (String header : this.headers) {
+            dataEntry.addEntries(0.0);
+        }
+        this.table.getItems().add(dataEntry);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void clear() {
+        this.getTable().getItems().clear();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TableView getTable() {
+        return this.table;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String [] getHeaders() {
+        return this.headers.clone();
+    }
+
 }
