@@ -292,6 +292,7 @@ public class TopsoilTable implements GenericTable {
     }
 
     public void removeOpenPlot(TopsoilPlotType plotType) {
+        this.openPlots.get(plotType.getName()).killPlot();
         this.openPlots.remove(plotType.getName());
     }
 }

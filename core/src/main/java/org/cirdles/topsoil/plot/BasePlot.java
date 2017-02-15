@@ -60,4 +60,7 @@ public abstract class BasePlot implements Plot {
         this.properties = properties;
     }
 
+    public void killPlot() throws Throwable {
+        super.finalize();
+    }
 }
