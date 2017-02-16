@@ -74,7 +74,10 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     @Override
     public void cancelEdit() {
         super.cancelEdit();
-        this.setText(getItem().toString());
+        DecimalFormat df = new DecimalFormat();
+        df.setMinimumFractionDigits(9);
+        df.setMaximumFractionDigits(9);
+        this.setText(df.format(getItem()));
         this.setGraphic(null);
     }
 
