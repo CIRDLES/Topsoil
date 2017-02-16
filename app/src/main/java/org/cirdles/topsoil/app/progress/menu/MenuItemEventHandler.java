@@ -131,6 +131,7 @@ public class MenuItemEventHandler {
      * specifications already supplied
      * */
     public static void handleReportIssue() {
+        System.out.println("here");
         IssueCreator issueCreator = new StandardGitHubIssueCreator(
                 new TopsoilMetadata(),
                 System.getProperties(),
@@ -192,11 +193,13 @@ public class MenuItemEventHandler {
             );
             verification.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.YES) {
-                    openProjectFile(tabs);
+                    File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
+                    openProjectFile(tabs, file);
                 }
             });
         } else {
-            openProjectFile(tabs);
+            File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
+            openProjectFile(tabs, file);
         }
     }
 
@@ -205,8 +208,7 @@ public class MenuItemEventHandler {
      *
      * @param tabs  the active TopsoilTabPane.
      */
-    private static void openProjectFile(TopsoilTabPane tabs) {
-        File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
+    public static void openProjectFile(TopsoilTabPane tabs, File file) {
         if (file != null) {
             String fileName = file.getName();
             String extension = fileName.substring(

@@ -19,7 +19,7 @@
 
     <ImageView fitWidth="100"
                preserveRatio="true">
-        <Image url="/org/cirdles/topsoil/app/util/cirdlesLogo.png"/>
+        <Image url="/org/cirdles/topsoil/app/util/cirdlesLogo_purple.png"/>
     </ImageView>
 
     <Hyperlink text="Welcome to Topsoil"

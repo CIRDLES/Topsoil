@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="450.0" prefWidth="550.0" style="-fx-background-color: f4f4f4;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.progress.TopsoilSplashScreen">
+   <children>
+      <VBox alignment="CENTER" minWidth="-Infinity" prefHeight="340.0" prefWidth="400.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" minWidth="-Infinity" prefHeight="150.0" prefWidth="550.0">
+               <children>
+                  <ImageView fitHeight="180.0" fitWidth="206.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@topsoil-logo-text.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="25.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER" minWidth="-Infinity" prefHeight="170.0" prefWidth="550.0">
+               <children>
+                  <VBox prefHeight="170.0" prefWidth="190.0">
+                     <children>
+                        <Label text=" Links">
+                           <font>
+                              <Font name="System Bold" size="22.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="5.0" />
+                           </VBox.margin>
+                        </Label>
+                        <VBox>
+                           <children>
+                              <Hyperlink fx:id="github" onAction="#openGitHub" text="GitHub">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Hyperlink>
+                              <Hyperlink fx:id="cirdles" onAction="#openCIRDLES" text="CIRDLES.org">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Hyperlink>
+                              <Hyperlink fx:id="releaseLog" onAction="#openReleaseLog" text="Release Log">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Hyperlink>
+                           </children>
+                        </VBox>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <VBox alignment="TOP_RIGHT" prefHeight="170.0" prefWidth="190.0">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <children>
+                        <Label text=" Recent Files ">
+                           <font>
+                              <Font name="System Bold" size="22.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="5.0" />
+                           </VBox.margin>
+                        </Label>
+                        <VBox fx:id="recentFileContainer" alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Hyperlink fx:id="recentFile1" text="recentFile1">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Hyperlink>
+                              <Hyperlink fx:id="recentFile2" text="recentFile2">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Hyperlink>
+                              <Hyperlink fx:id="recentFile3" text="recentFile3">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Hyperlink>
+                              <Hyperlink fx:id="moreRecentFiles" style="-fx-border-color: lightblue;" text=". . .">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Hyperlink>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="550.0">
+               <children>
+                  <ImageView fitHeight="28.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@cirdles-logo-yellow.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="90.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Label text="Powered by CIRDLES" textFill="#949494">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
