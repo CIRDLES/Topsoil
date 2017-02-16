@@ -7,6 +7,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.progress.table.TopsoilTableCell;
 
 /**
  * Created by benjaminmuldrow on 8/1/16.

@@ -19,7 +19,7 @@ import java.util.ArrayDeque;
  * @see org.cirdles.topsoil.app.progress.util.Command
  * @see org.cirdles.topsoil.app.progress.util.UndoManager
  */
-class TopsoilTableCellEditCommand implements Command {
+class TableCellEditCommand implements Command {
 
     private TopsoilTableCell cell;
     private TopsoilDataEntry row;
@@ -34,7 +34,7 @@ class TopsoilTableCellEditCommand implements Command {
      * @param formerValue   the former Double value of the cell
      * @param newValue  the new Double value of the cell
      */
-    TopsoilTableCellEditCommand(TopsoilTableCell cell, Double formerValue,
+    TableCellEditCommand(TopsoilTableCell cell, Double formerValue,
                                 Double newValue) {
         this.cell = cell;
         this.row = cell.getDataEntry();
@@ -64,10 +64,9 @@ class TopsoilTableCellEditCommand implements Command {
      */
     private void changeCellValue(Double value) {
 
-        this.row.changeEntry(cell.getColumnIndex(),
-                new SimpleDoubleProperty(value));
-        this.cell.updateItem(this.row.getProperties()
-                .get(cell.getColumnIndex()).doubleValue(), false);
+        this.row.changeEntry(cell.getColumnIndex(), new SimpleDoubleProperty(value));
+        this.cell.getTableColumn().setVisible(false);
+        this.cell.getTableColumn().setVisible(true);
     }
 
     /**
@@ -83,10 +82,6 @@ class TopsoilTableCellEditCommand implements Command {
 
 /**
  * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
-<<<<<<< 2d8c47facf09f00aa4dfd81986045897e8876203
-<<<<<<< 0a4c770e711478c8c9773b6fb6a771f6e0c5b89e
-=======
->>>>>>> Add undo commands for button bar.
  * <tt>UndoManager</tt> when a row is inserted into the <tt>TableView</tt>.
  * This class creates an empty <tt>TopsoilDataEntry</tt> and inserts is above
  * the selected row.
@@ -138,11 +133,6 @@ class InsertRowCommand implements Command {
 
 /**
  * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
-<<<<<<< 2d8c47facf09f00aa4dfd81986045897e8876203
-=======
->>>>>>> Implement undo/redo for TableView with Command Pattern
-=======
->>>>>>> Add undo commands for button bar.
  * <tt>UndoManager</tt> when a row is deleted in the <tt>TableView</tt>. This
  * class stores the <tt>TopsoilDataEntry</tt> that was deleted and the index
  * of the <tt>TableView</tt> from which it was deleted.
@@ -155,7 +145,7 @@ class DeleteRowCommand implements Command {
 
     private int index;
     private TopsoilDataEntry dataEntry;
-    private TableView tableView;
+    private TableView<TopsoilDataEntry> tableView;
 
     /**
      * Constructs a new delete row command. Gets the row, its index, and the
@@ -207,14 +197,14 @@ class DeleteRowCommand implements Command {
  */
 class NewRowCommand implements Command {
 
-    private TableView tableView;
+    private TableView<TopsoilDataEntry> tableView;
 
     /**
      * Constructs a new new row command for the specified table view.
      *
      * @param tableView the TableView in question
      */
-    NewRowCommand(TableView tableView) {
+    NewRowCommand(TableView<TopsoilDataEntry> tableView) {
         this.tableView = tableView;
     }
 
@@ -286,10 +276,8 @@ class ClearRowCommand implements Command {
      */
     public void undo() {
         TopsoilDataEntry dataEntry = new TopsoilDataEntry();
-        int i = 0;
-        for (Object column : this.tableView.getColumns()) {
+        for (int i = 0; i < this.tableView.getColumns().size(); i++) {
             dataEntry.addEntries(this.row.getProperties().get(i).getValue());
-            i++;
         }
         this.tableView.getItems().remove(index);
         this.tableView.getItems().add(index, dataEntry);
@@ -318,7 +306,7 @@ class ClearRowCommand implements Command {
  */
 class DeleteColumnCommand implements Command {
 
-    private TableView tableView;
+    private TableView<TopsoilDataEntry> tableView;
     private TableColumn<TopsoilDataEntry, Double> column;
     private int index;
 
@@ -402,7 +390,6 @@ class ClearColumnCommand implements Command {
         this.column.setVisible(true);
     }
 
-    // TODO unknown bug breaks table on undo
     /**
      * Called to undo the column deletion.
      */
@@ -427,21 +414,9 @@ class ClearColumnCommand implements Command {
 
 /**
  * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
-<<<<<<< 2d8c47facf09f00aa4dfd81986045897e8876203
-<<<<<<< 0a4c770e711478c8c9773b6fb6a771f6e0c5b89e
  * <tt>UndoManager</tt> when a <tt>TopsoilTableCell</tt> in the
  * <tt>TableView</tt> is cleared. This class stores the cell, the row it
  * belongs to, and the former value of the cell.
-=======
- * <tt>UndoManager</tt> when a <tt>TopsoilTableCell</tt> in the <tt>TableView</tt>
- * is cleared. This class stores the cell, the row it belongs to, and the former
- * value of the cell.
->>>>>>> Implement undo/redo for TableView with Command Pattern
-=======
- * <tt>UndoManager</tt> when a <tt>TopsoilTableCell</tt> in the
- * <tt>TableView</tt> is cleared. This class stores the cell, the row it
- * belongs to, and the former value of the cell.
->>>>>>> Add undo commands for button bar.
  *
  * @author marottajb
  * @see Command
@@ -486,10 +461,9 @@ class ClearCellCommand implements Command {
      * @param value the Double value to assign
      */
     private void changeCellValue(Double value) {
-        this.row.changeEntry(this.cell.getColumnIndex(),
-                new SimpleDoubleProperty(value));
-        this.cell.updateItem(this.row.getProperties()
-                .get(this.cell.getColumnIndex()).doubleValue(), false);
+        this.row.changeEntry(this.cell.getColumnIndex(), new SimpleDoubleProperty(value));
+        this.cell.getTableColumn().setVisible(false);
+        this.cell.getTableColumn().setVisible(true);
     }
 
     /**

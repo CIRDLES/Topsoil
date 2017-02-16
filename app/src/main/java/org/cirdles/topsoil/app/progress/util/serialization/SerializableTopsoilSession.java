@@ -20,8 +20,6 @@ import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
