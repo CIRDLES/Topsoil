@@ -209,8 +209,7 @@ class SerializableTopsoilSession implements Serializable {
         plot.setData(fieldData);
         plot.setProperties((Map<String, Object>) plotOptions.get("Properties"));
 
-        Parent plotWindow = new PlotWindow(
-                plot, plotType.getPropertiesPanel());
+        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
 
         SimplePlotContext plotContext =
                 (SimplePlotContext)

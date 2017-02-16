@@ -3,6 +3,8 @@ package org.cirdles.topsoil.app.progress.util.serialization;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.plot.VariableBinding;
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
+import org.cirdles.topsoil.plot.BasePlot;
+import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.util.Collection;
@@ -110,5 +112,13 @@ public class PlotInformation {
      */
     public HashMap<String, String> getVariableBindingNames() {
         return this.variableBindings;
+    }
+
+    public void killPlot() {
+        try {
+            ((JavaScriptPlot) this.plot).killPlot();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 }

@@ -39,6 +39,8 @@ import org.cirdles.topsoil.plot.Plot;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -350,13 +352,15 @@ public class MenuItemEventHandler {
                         ButtonType.YES);
                 plotOverwrite.showAndWait().ifPresent(response -> {
                             if (response == ButtonType.YES) {
-                                for (PlotInformation plotInfo : tabs.getSelectedTab()
-                                        .getTopsoilTable().getOpenPlots()) {
-                                    try {
-                                        ((JavaScriptPlot) plotInfo.getPlot()).finalize();
-                                    } catch (Throwable t) {
-                                        t.printStackTrace();
-                                    }
+                                Collection<PlotInformation> plots = tabs
+                                        .getSelectedTab().getTopsoilTable()
+                                        .getOpenPlots();
+                                TopsoilTable topsoilTable = tabs
+                                        .getSelectedTab()
+                                        .getTopsoilTable();
+                                for (PlotInformation plotInfo : plots) {
+                                    topsoilTable.removeOpenPlot(plotInfo
+                                            .getTopsoilPlotType());
                                 }
                                 stage.close();
                                 generateNewPlot(plotType, table);
@@ -384,8 +388,7 @@ public class MenuItemEventHandler {
                     Plot plot = plotType.getPlot();
 
                     plot.setData(data);
-                    Parent plotWindow = new PlotWindow(
-                            plot, plotType.getPropertiesPanel());
+                    Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
 
                     SimplePlotContext plotContext =
                             (SimplePlotContext)
