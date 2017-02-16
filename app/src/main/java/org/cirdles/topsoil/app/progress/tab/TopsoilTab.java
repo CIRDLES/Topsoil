@@ -7,7 +7,6 @@ import javafx.scene.control.TextField;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.app.progress.util.Command;
 import org.cirdles.topsoil.app.progress.util.UndoManager;
-import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
 
 /**
  * A custom <tt>Tab</tt> which stores a <tt>TopsoilTable</tt>.
