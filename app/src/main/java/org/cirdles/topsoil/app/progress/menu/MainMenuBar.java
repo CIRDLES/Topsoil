@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.progress.menu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
@@ -23,11 +24,7 @@ public class MainMenuBar extends MenuBar {
 
     private MenuBar menuBar = new MenuBar();
 
-    // Edit Menu
-    private MenuItem undoItem;
-    private MenuItem redoItem;
-
-    // Project Menu
+    // File Menu
 //    private MenuItem newProjectItem;
     private MenuItem saveProjectItem;
     private MenuItem saveProjectAsItem;
@@ -35,10 +32,16 @@ public class MainMenuBar extends MenuBar {
     //    private MenuItem mostRecentItem;
     private MenuItem closeProjectItem;
 
+    // Edit Menu
+    private MenuItem undoItem;
+    private MenuItem redoItem;
+
     // Table Menu
     private MenuItem newTableItem;
     private MenuItem saveTableItem;
     private MenuItem saveTableAsItem;
+    private MenuItem clearTableItem;
+
     // Import >
     private MenuItem tableFromFileItem;
     private MenuItem tableFromClipboardItem;
@@ -113,6 +116,7 @@ public class MainMenuBar extends MenuBar {
         newTableItem = new MenuItem("New Table");
         saveTableItem = new MenuItem("Save Table");
         saveTableAsItem = new MenuItem("Save Table As");
+        clearTableItem = new MenuItem("Clear Table");
 
         newTableItem.setOnAction(event -> {
             TopsoilTable table = MenuItemEventHandler.handleNewTable();
@@ -123,6 +127,15 @@ public class MainMenuBar extends MenuBar {
         saveTableItem = new MenuItem("Save Table");
         //Saves the currently opened table as a specified file
         saveTableAsItem = new MenuItem("Save Table As");
+
+        clearTableItem.setOnAction(action -> {
+            // clear table and add an empty row
+            ClearTableCommand clearTableCommand =
+                    new ClearTableCommand(tabs.getSelectedTab()
+                                              .getTopsoilTable().getTable());
+            clearTableCommand.execute();
+            tabs.getSelectedTab().addUndo(clearTableCommand);
+        });
 
         //Creates Submenu for Imports
         Menu importTable = new Menu("Import Table");
@@ -141,10 +154,26 @@ public class MainMenuBar extends MenuBar {
                 uraniumThoriumSystemItem);
         tableMenu.getItems()
                 .addAll(newTableItem,
+                        new SeparatorMenuItem(),
                         saveTableItem,
                         saveTableAsItem,
+                        new SeparatorMenuItem(),
+                        clearTableItem,
+                        new SeparatorMenuItem(),
                         importTable,
                         isoSystem);
+
+        tableMenu.setOnShown(event -> {
+            if (tabs.isEmpty()) {
+                clearTableItem.setDisable(true);
+            } else {
+                if (!tabs.getSelectedTab().getTopsoilTable().isCleared()) {
+                    clearTableItem.setDisable(false);
+                } else {
+                    clearTableItem.setDisable(true);
+                }
+            }
+        });
 
         uraniumLeadSystemItem.setOnAction(event -> {
             // if the table isn't already UPb
@@ -253,6 +282,7 @@ public class MainMenuBar extends MenuBar {
 //                        newProjectItem,
                         openProjectItem,
                         closeProjectItem,
+                        new SeparatorMenuItem(),
                         saveProjectItem,
                         saveProjectAsItem
 //                        , mostRecentItem

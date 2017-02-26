@@ -43,15 +43,15 @@ public class MainWindow extends Application {
         MainMenuBar menuBar = new MainMenuBar(tabs);
         MenuBar mBar = menuBar.getMenuBar();
         mBar.setId("MenuBar");
-        MainButtonsBar buttonBar = new MainButtonsBar(tabs);
-        HBox buttons = buttonBar.getButtons();
-        VBox.setVgrow(buttons, Priority.NEVER);
-        buttons.setId("HBox");
+//        MainButtonsBar buttonBar = new MainButtonsBar(tabs);
+//        HBox buttons = buttonBar.getButtons();
+//        VBox.setVgrow(buttons, Priority.NEVER);
+//        buttons.setId("HBox");
 
         // Create Scene
         ((VBox) scene.getRoot()).getChildren().addAll(
                 mBar,
-                buttons,
+                //buttons,
                 tabs
         );
 
