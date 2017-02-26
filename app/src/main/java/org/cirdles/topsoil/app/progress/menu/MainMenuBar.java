@@ -57,6 +57,10 @@ public class MainMenuBar extends MenuBar {
     }
 
     private void initialize(TopsoilTabPane tabs) {
+
+        // File Menu
+        Menu fileMenu = setFileMenuItems(tabs);
+
         // Edit Menu
         Menu editMenu = new Menu("Edit");
         undoItem = new MenuItem("Undo \"\"");
@@ -103,9 +107,6 @@ public class MainMenuBar extends MenuBar {
                 }
             }
         });
-
-        // Project Menu
-        Menu projectMenu = setProjectMenuItems(tabs);
 
         // Table Menu
         Menu tableMenu = new Menu("Table");
@@ -167,8 +168,8 @@ public class MainMenuBar extends MenuBar {
 
         // Add menus to menuBar
         menuBar.getMenus()
-                .addAll(editMenu,
-                        projectMenu,
+                .addAll(fileMenu,
+                        editMenu,
                         tableMenu,
                         plotMenu,
                         helpMenu);
@@ -217,8 +218,8 @@ public class MainMenuBar extends MenuBar {
         });
     }
 
-    private Menu setProjectMenuItems(TopsoilTabPane tabs) {
-        Menu projectMenu = new Menu("Project");
+    private Menu setFileMenuItems(TopsoilTabPane tabs) {
+        Menu fileMenu = new Menu("File");
 //        newProjectItem = new MenuItem("New Project");
         saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
@@ -239,7 +240,7 @@ public class MainMenuBar extends MenuBar {
 
         closeProjectItem.setOnAction(event -> MenuItemEventHandler.handleCloseProjectFile(tabs));
 
-        projectMenu.getItems()
+        fileMenu.getItems()
                 .addAll(
 //                        newProjectItem,
                         openProjectItem,
@@ -249,13 +250,13 @@ public class MainMenuBar extends MenuBar {
 //                        , mostRecentItem
                 );
 
-        projectMenu.setOnShown(event -> {
+        fileMenu.setOnShown(event -> {
             saveProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
             saveProjectAsItem.setDisable(tabs.isEmpty());
             closeProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
         });
 
-        return projectMenu;
+        return fileMenu;
     }
 
     //Returns compatible type to be added to main window
