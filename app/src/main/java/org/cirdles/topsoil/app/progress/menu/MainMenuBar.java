@@ -158,6 +158,14 @@ public class MainMenuBar extends MenuBar {
         MenuItem generatePlotItem = new MenuItem("Generate Plot");
         plotMenu.getItems().add(generatePlotItem);
 
+        plotMenu.setOnShown(event -> {
+            if (tabs.isEmpty()) {
+                generatePlotItem.setDisable(true);
+            } else {
+                generatePlotItem.setDisable(false);
+            }
+        });
+
         // Help Menu
         Menu helpMenu = new Menu("Help");
         reportIssueItem = new MenuItem("Report Issue");
