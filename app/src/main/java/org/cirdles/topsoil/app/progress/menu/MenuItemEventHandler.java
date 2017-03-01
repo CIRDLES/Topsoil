@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.Clipboard;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
@@ -39,10 +40,7 @@ import org.cirdles.topsoil.plot.Plot;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * A class containing a set of methods for handling actions for
@@ -61,46 +59,82 @@ public class MenuItemEventHandler {
      */
     public static TopsoilTable handleTableFromFile() throws IOException {
 
-        TopsoilTable table;
-        boolean valid = true;
+        TopsoilTable table = null;
 
         // select file
         File file = FileParser.openTableDialogue(StageHelper.getStages().get(0));
-        if (file == null) {
-            valid = false;
-        }
 
-        // select headers
-        String [] headers = null;
-        Boolean hasHeaders = null;
-        if (valid) {
+        if (file != null && FileParser.isSupportedTableFile(file)) {
+
+            // select headers
+            String[] headers = null;
+            Boolean hasHeaders;
+
             hasHeaders = FileParser.containsHeaderDialogue();
-            if (hasHeaders == null) {
-                valid = false;
-            } else if (hasHeaders) {
-                headers = FileParser.parseHeaders(file);
-            } else {
-                headers = null;
+
+            // hasHeaders would only be null if the user clicked "Cancel".
+            if (hasHeaders != null) {
+                if (hasHeaders) {
+                    headers = FileParser.parseHeaders(file);
+                }
+
+                // select isotope flavor
+                IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+
+                // isotopeType would only be null if the user clicked "Cancel".
+                if (isotopeType != null) {
+                    List<TopsoilDataEntry> entries = FileParser.parseFile(file, hasHeaders);
+
+                    // create table
+                    if (entries == null) {
+                        table = null;
+                    } else {
+                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                        table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                        table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+                    }
+                }
             }
         }
 
-        // select isotope flavor
-        IsotopeType isotopeType = null;
-        ObservableList<TopsoilDataEntry> data = null;
-        if (valid) {
-            isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
-            List<TopsoilDataEntry> entries = FileParser.parseFile(file, hasHeaders);
-            data = FXCollections.observableList(entries);
-        }
+        return table;
+    }
 
-        // create table
-        if (data == null ||  isotopeType == null) {
-            table = null;
-        } else {
-            table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
-            table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
-        }
+    public static TopsoilTable handleTableFromClipboard() {
 
+        TopsoilTable table = null;
+        String content = Clipboard.getSystemClipboard().getString();
+
+        String delim = FileParser.getDelimiter(content);
+
+        if (delim != null) {
+
+            String[] headers = null;
+            Boolean hasHeaders;
+
+            hasHeaders = FileParser.containsHeaderDialogue();
+
+            if (hasHeaders != null) {
+                if (hasHeaders) {
+                    headers = FileParser.parseHeaders(content, delim);
+                }
+
+                // select isotope flavor
+                IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+
+                if (isotopeType != null) {
+                    List<TopsoilDataEntry> entries = FileParser.parseClipboard(hasHeaders, delim);
+
+                    // create table
+                    if (entries == null) {
+                        table = null;
+                    } else {
+                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                        table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                    }
+                }
+            }
+        }
         return table;
     }
 

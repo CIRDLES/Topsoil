@@ -4,18 +4,19 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 
+import org.cirdles.topsoil.app.progress.util.FileParser;
 import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.io.IOException;
 
-import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleNewTable;
-import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleReportIssue;
-import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleTableFromFile;
+import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.*;
 
 /**
  * Created by sbunce on 5/30/2016.
@@ -131,8 +132,7 @@ public class MainMenuBar extends MenuBar {
         clearTableItem.setOnAction(action -> {
             // clear table and add an empty row
             ClearTableCommand clearTableCommand =
-                    new ClearTableCommand(tabs.getSelectedTab()
-                                              .getTopsoilTable().getTable());
+                    new ClearTableCommand(tabs.getSelectedTab().getTopsoilTable().getTable());
             clearTableCommand.execute();
             tabs.getSelectedTab().addUndo(clearTableCommand);
         });
@@ -145,6 +145,14 @@ public class MainMenuBar extends MenuBar {
                 tableFromFileItem,
                 tableFromClipboardItem);
 
+        importTable.setOnShown(event -> {
+            if (Clipboard.getSystemClipboard().hasString()) {
+                tableFromClipboardItem.setDisable(false);
+            } else {
+                tableFromClipboardItem.setDisable(true);
+            }
+        });
+
         //Creates Submenu for Isotype system selection
         Menu isoSystem = new Menu("Set Isotope System");
         uraniumLeadSystemItem = new MenuItem("UPb");
@@ -152,6 +160,17 @@ public class MainMenuBar extends MenuBar {
         isoSystem.getItems().addAll(
                 uraniumLeadSystemItem,
                 uraniumThoriumSystemItem);
+
+        isoSystem.setOnShown(event -> {
+            if (tabs.isEmpty()) {
+                uraniumLeadSystemItem.setDisable(true);
+                uraniumThoriumSystemItem.setDisable(true);
+            } else {
+                uraniumLeadSystemItem.setDisable(false);
+                uraniumThoriumSystemItem.setDisable(false);
+            }
+        });
+
         tableMenu.getItems()
                 .addAll(newTableItem,
                         new SeparatorMenuItem(),
@@ -177,7 +196,7 @@ public class MainMenuBar extends MenuBar {
 
         uraniumLeadSystemItem.setOnAction(event -> {
             // if the table isn't already UPb
-            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals(IsotopeType.UPb)) {
+            if (!(tabs.getSelectedTab().getTopsoilTable().getIsotopeType() == IsotopeType.UPb)) {
                 tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UPb);
             }
         });
@@ -224,6 +243,25 @@ public class MainMenuBar extends MenuBar {
             }
 
             // display table
+            if (table != null) {
+                tabs.add(table);
+            } else {
+                ErrorAlerter alerter = new ErrorAlerter();
+            }
+
+        });
+
+        //Import Table from Clipboard
+        tableFromClipboardItem.setOnAction(action -> {
+
+            TopsoilTable table = null;
+
+            try {
+                table = handleTableFromClipboard();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             if (table != null) {
                 tabs.add(table);
             } else {

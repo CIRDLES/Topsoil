@@ -38,7 +38,7 @@ public class MainWindow extends Application {
 
         TopsoilTabPane tabs = new TopsoilTabPane();
         tabs.setId("TopsoilTabPane");
-//        tabs.setPadding(new Insets(0.0, 5.0, 0.0, 5.0));
+        tabs.setPadding(new Insets(0.0, 5.0, 0.0, 5.0));
         VBox.setVgrow(tabs, Priority.ALWAYS);
         MainMenuBar menuBar = new MainMenuBar(tabs);
         MenuBar mBar = menuBar.getMenuBar();
