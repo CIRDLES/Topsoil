@@ -38,20 +38,20 @@ public class MainWindow extends Application {
 
         TopsoilTabPane tabs = new TopsoilTabPane();
         tabs.setId("TopsoilTabPane");
-//        tabs.setPadding(new Insets(0.0, 5.0, 0.0, 5.0));
+        tabs.setPadding(new Insets(0.0, 5.0, 0.0, 5.0));
         VBox.setVgrow(tabs, Priority.ALWAYS);
         MainMenuBar menuBar = new MainMenuBar(tabs);
         MenuBar mBar = menuBar.getMenuBar();
         mBar.setId("MenuBar");
-        MainButtonsBar buttonBar = new MainButtonsBar(tabs);
-        HBox buttons = buttonBar.getButtons();
-        VBox.setVgrow(buttons, Priority.NEVER);
-        buttons.setId("HBox");
+//        MainButtonsBar buttonBar = new MainButtonsBar(tabs);
+//        HBox buttons = buttonBar.getButtons();
+//        VBox.setVgrow(buttons, Priority.NEVER);
+//        buttons.setId("HBox");
 
         // Create Scene
         ((VBox) scene.getRoot()).getChildren().addAll(
                 mBar,
-                buttons,
+                //buttons,
                 tabs
         );
 

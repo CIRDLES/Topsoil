@@ -160,7 +160,12 @@ public class TopsoilTable implements GenericTable {
                 if (param.getValue().getProperties().size() == 0) {
                     return (ObservableValue) new SimpleDoubleProperty(0.0);
                 } else {
-                    return (ObservableValue) param.getValue().getProperties().get(columnIndex);
+                    // If data was incomplete i.e. length of line is too short for number of columns.
+                    if (param.getValue().getProperties().size() < columnIndex + 1) {
+                        return (ObservableValue) new SimpleDoubleProperty(Double.NaN);
+                    } else {
+                        return (ObservableValue) param.getValue().getProperties().get(columnIndex);
+                    }
                 }
             });
 
@@ -184,7 +189,7 @@ public class TopsoilTable implements GenericTable {
      */
     private String[] createHeaders(String [] headers) {
 
-        String [] result = new String[this.isotopeType.getHeaders().length];
+        String [] result;
 
         // populate headers with defaults if no headers are provided
         if (headers == null) {
@@ -339,7 +344,7 @@ public class TopsoilTable implements GenericTable {
 
     /** {@inheritDoc} */
     @Override
-    public TableView getTable() {
+    public TableView<TopsoilDataEntry> getTable() {
         return this.table;
     }
 
