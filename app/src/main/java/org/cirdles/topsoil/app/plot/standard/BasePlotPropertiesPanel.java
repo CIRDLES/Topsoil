@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 CIRDLES.
+ * Copyright 2017 CIRDLES.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,15 @@ import org.cirdles.topsoil.plot.Plot;
 
 import java.util.Map;
 
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.*;
+import static org.cirdles.topsoil.plot.base.BasePlotProperties.*;
+
 
 /**
- * Created by johnzeringue on 11/8/15.
+ * Created by Emily on 3/14/17.
  */
-public class UncertaintyEllipsePlotPropertiesPanel
-        extends CustomVBox<UncertaintyEllipsePlotPropertiesPanel>
+
+public class BasePlotPropertiesPanel
+        extends CustomVBox<BasePlotPropertiesPanel>
         implements JavaFXDisplayable {
 
     @FXML
@@ -54,11 +56,14 @@ public class UncertaintyEllipsePlotPropertiesPanel
     private ColorPicker ellipseFillColorPicker;
 
     @FXML
-    private CheckBox concordiaVisibilityBox;
+    private CheckBox ellipseVisibilityBox;
+
+    @FXML
+    private ChoiceBox<String> isotopeField;
 
     private Plot plot;
 
-    public UncertaintyEllipsePlotPropertiesPanel(Plot plot) {
+    public BasePlotPropertiesPanel(Plot plot) {
         super(self -> {
             self.plot = plot;
         });
@@ -105,8 +110,12 @@ public class UncertaintyEllipsePlotPropertiesPanel
         yAxisField.setText((String) plot.getProperties().get(Y_AXIS));
         yAxisField.textProperty().addListener(updateProperty(Y_AXIS));
 
-        concordiaVisibilityBox.setSelected(false);
-        concordiaVisibilityBox.selectedProperty().addListener(updateProperty(CONCORDIA_LINE));
+        ellipseVisibilityBox.setSelected(false);
+        ellipseVisibilityBox.selectedProperty().addListener(updateProperty(ELLIPSES));
+
+        isotopeField.getItems().addAll("Generic", "Uranium Lead");
+        isotopeField.setValue(((String) plot.getProperties().get(ISOTOPE)));
+        isotopeField.valueProperty().addListener(updateProperty(ISOTOPE));
     }
 
     @Override

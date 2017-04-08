@@ -16,10 +16,7 @@
 package org.cirdles.topsoil.plot.uth.evolution;
 
 import java.util.HashMap;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.TITLE;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.UNCERTAINTY;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.X_AXIS;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.Y_AXIS;
+import static org.cirdles.topsoil.plot.uth.evolution.EvolutionPlotProperties.*;
 
 /**
  * Created by johnzeringue on 2/22/16.

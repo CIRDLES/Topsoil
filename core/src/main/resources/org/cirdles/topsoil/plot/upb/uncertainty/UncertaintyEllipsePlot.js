@@ -25,6 +25,7 @@
         'Uncertainty',
         'X Axis',
         'Y Axis',
+        'Concordia Line',
         'LAMBDA_235',
         'LAMBDA_238'];
 
@@ -42,10 +43,10 @@
         });
 
         var x = plot.x = d3.scale.linear()
-                .range([0, plot.width]);
+            .range([0, plot.width]);
 
         var y = plot.y = d3.scale.linear()
-                .range([plot.height, 0]);
+            .range([plot.height, 0]);
 
         plot.t = d3.scale.linear();
 
@@ -80,35 +81,35 @@
 
         // initialize the concordia envelope
         plot.area.clipped.append("path")
-                .attr("class", "uncertaintyEnvelope")
-                .attr("fill", "lightgray")
-                .attr("stroke", "none")
-                .attr("shape-rendering", "geometricPrecision");
+            .attr("class", "uncertaintyEnvelope")
+            .attr("fill", "lightgray")
+            .attr("stroke", "none")
+            .attr("shape-rendering", "geometricPrecision");
 
         // initialize the concordia
         plot.area.clipped.append("path")
-                .attr("class", "concordia")
-                .attr("fill", "none")
-                .attr("stroke", "blue")
-                .attr("stroke-width", 2)
-                .attr("shape-rendering", "geometricPrecision");
+            .attr("class", "concordia")
+            .attr("fill", "none")
+            .attr("stroke", "blue")
+            .attr("stroke-width", 2)
+            .attr("shape-rendering", "geometricPrecision");
 
         plot.area.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + plot.height + ")")
-                .append("text")
-                .attr("class", "label")
-                .attr("x", plot.width / 2)
-                .attr("y", 35);
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + plot.height + ")")
+            .append("text")
+            .attr("class", "label")
+            .attr("x", plot.width / 2)
+            .attr("y", 35);
 
         plot.area.append("g")
-                .attr("class", "y axis")
-                .append("text")
-                .attr("class", "label")
-                .attr("transform", "rotate(-90)")
-                .attr("x", -plot.height / 2)
-                .attr("y", -50)
-                .attr("dy", ".71em");
+            .attr("class", "y axis")
+            .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -plot.height / 2)
+            .attr("y", -50)
+            .attr("dy", ".71em");
 
         var k = 4 / 3 * (Math.sqrt(2) - 1);
         var controlPointsBase = [
@@ -140,10 +141,10 @@
             };
 
             var points = numeric.mul(
-                    plot.getProperty("Uncertainty"),
-                    numeric.dot(controlPointsBase, r))
-                    .map(shift(d.x, d.y));
-            
+                plot.getProperty("Uncertainty"),
+                numeric.dot(controlPointsBase, r))
+                .map(shift(d.x, d.y));
+
             points.Selected = d.Selected;
 
             return points;
@@ -160,20 +161,20 @@
         d3.select(".y.axis .label").text(plot.getProperty("Y Axis"));
 
         var xAxis = d3.svg.axis()
-                .scale(x)
-                .orient("bottom");
+            .scale(x)
+            .orient("bottom");
 
         var yAxis = d3.svg.axis()
-                .scale(y)
-                .orient("left");
+            .scale(y)
+            .orient("left");
 
         var ellipses;
         (ellipses = plot.area.clipped.selectAll(".ellipse")
-                .data(plot.cacheData))
-                .enter().append("path")
-                .attr("class", "ellipse")
-                .attr("fill-opacity", 0.3)
-                .attr("stroke", "black");
+            .data(plot.cacheData))
+            .enter().append("path")
+            .attr("class", "ellipse")
+            .attr("fill-opacity", 0.3)
+            .attr("stroke", "black");
 
         ellipses.attr("fill", function(d) {
             var fill;
@@ -189,10 +190,10 @@
 
         var dots;
         (dots = plot.area.clipped.selectAll(".dot")
-                .data(data))
-                .enter().append("circle")
-                .attr("class", "dot")
-                .attr("r", 1.5);
+            .data(data))
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", 1.5);
 
         // utilities for generating path data elements
         var moveTo = function (path, p) {
@@ -209,221 +210,220 @@
 
         var cubicBezier = function (path, p1, p2, p3) {
             path.push(
-                    "C", p1[0], ",", p1[1],
-                    ",", p2[0], ",", p2[1],
-                    ",", p3[0], ",", p3[1]);
+                "C", p1[0], ",", p1[1],
+                ",", p2[0], ",", p2[1],
+                ",", p3[0], ",", p3[1]);
         };
 
         var minT = Math.max(
-                newtonMethod(wetherill.x, x.domain()[0]),
-                newtonMethod(wetherill.y, y.domain()[0]));
+            newtonMethod(wetherill.x, x.domain()[0]),
+            newtonMethod(wetherill.y, y.domain()[0]));
 
         var maxT = Math.min(
-                newtonMethod(wetherill.x, x.domain()[1]),
-                newtonMethod(wetherill.y, y.domain()[1]));
+            newtonMethod(wetherill.x, x.domain()[1]),
+            newtonMethod(wetherill.y, y.domain()[1]));
 
         // build the concordia line
         plot.area.clipped.select(".concordia")
-                .attr("d", function () {
-                    var approximateSegment = function (path, minT, maxT) {
-                        var p1 = wetherill(minT).plus(
-                                wetherill.prime(minT).times((maxT - minT) / 3))
-                                .scaleBy(x, y);
-                        var p2 = wetherill(maxT).minus(
-                                wetherill.prime(maxT).times((maxT - minT) / 3))
-                                .scaleBy(x, y);
-                        var p3 = wetherill(maxT).scaleBy(x, y);
+            .attr("d", function () {
+                var approximateSegment = function (path, minT, maxT) {
+                    var p1 = wetherill(minT).plus(
+                        wetherill.prime(minT).times((maxT - minT) / 3))
+                        .scaleBy(x, y);
+                    var p2 = wetherill(maxT).minus(
+                        wetherill.prime(maxT).times((maxT - minT) / 3))
+                        .scaleBy(x, y);
+                    var p3 = wetherill(maxT).scaleBy(x, y);
 
-                        // append a cubic bezier to the path
-                        cubicBezier(path, p1, p2, p3);
-                    };
+                    // append a cubic bezier to the path
+                    cubicBezier(path, p1, p2, p3);
+                };
 
-                    // initialize path
-                    var path = [];
-                    moveTo(path, wetherill(minT).scaleBy(x, y));
+                // initialize path
+                var path = [];
+                moveTo(path, wetherill(minT).scaleBy(x, y));
 
-                    // determine the step size using the number of pieces
-                    var pieces = 30;
-                    var stepSize = (maxT - minT) / pieces;
+                // determine the step size using the number of pieces
+                var pieces = 30;
+                var stepSize = (maxT - minT) / pieces;
 
-                    // build the pieces
-                    for (var i = 0; i < pieces; i++) {
-                        approximateSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
-                    }
+                // build the pieces
+                for (var i = 0; i < pieces; i++) {
+                    approximateSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
+                }
 
-                    return path.join("");
-                });
+                return path.join("");
+            });
 
         plot.area.clipped.select(".uncertaintyEnvelope")
-                .attr("d", function () {
-                    var approximateUpperSegment = function (path, minT, maxT) {
-                        var p1 = wetherill.upperEnvelope(minT).plus(
-                            wetherill.prime(minT).times((maxT - minT) / 3))
-                            .scaleBy(x, y);
-                        var p2 = wetherill.upperEnvelope(maxT).minus(
-                            wetherill.prime(maxT).times((maxT - minT) / 3))
-                            .scaleBy(x, y);
-                        var p3 = wetherill.upperEnvelope(maxT).scaleBy(x, y);
+            .attr("d", function () {
+                var approximateUpperSegment = function (path, minT, maxT) {
+                    var p1 = wetherill.upperEnvelope(minT).plus(
+                        wetherill.prime(minT).times((maxT - minT) / 3))
+                        .scaleBy(x, y);
+                    var p2 = wetherill.upperEnvelope(maxT).minus(
+                        wetherill.prime(maxT).times((maxT - minT) / 3))
+                        .scaleBy(x, y);
+                    var p3 = wetherill.upperEnvelope(maxT).scaleBy(x, y);
 
-                        // append a cubic bezier to the path
-                        cubicBezier(path, p1, p2, p3);
-                    };
+                    // append a cubic bezier to the path
+                    cubicBezier(path, p1, p2, p3);
+                };
 
-                    var approximateLowerSegment = function (path, minT, maxT) {
-                        var p1 = wetherill.lowerEnvelope(minT).plus(
-                            wetherill.prime(minT).times((maxT - minT) / 3))
-                            .scaleBy(x, y);
-                        var p2 = wetherill.lowerEnvelope(maxT).minus(
-                            wetherill.prime(maxT).times((maxT - minT) / 3))
-                            .scaleBy(x, y);
-                        var p3 = wetherill.lowerEnvelope(maxT).scaleBy(x, y);
+                var approximateLowerSegment = function (path, minT, maxT) {
+                    var p1 = wetherill.lowerEnvelope(minT).plus(
+                        wetherill.prime(minT).times((maxT - minT) / 3))
+                        .scaleBy(x, y);
+                    var p2 = wetherill.lowerEnvelope(maxT).minus(
+                        wetherill.prime(maxT).times((maxT - minT) / 3))
+                        .scaleBy(x, y);
+                    var p3 = wetherill.lowerEnvelope(maxT).scaleBy(x, y);
 
-                        // append a cubic bezier to the path
-                        cubicBezier(path, p1, p2, p3);
-                    };
+                    // append a cubic bezier to the path
+                    cubicBezier(path, p1, p2, p3);
+                };
 
-                    var minT = Math.max(
-                            newtonMethod(wetherill.upperEnvelope.x, x.domain()[0]),
-                            newtonMethod(wetherill.upperEnvelope.y, y.domain()[0]));
+                var minT = Math.max(
+                    newtonMethod(wetherill.upperEnvelope.x, x.domain()[0]),
+                    newtonMethod(wetherill.upperEnvelope.y, y.domain()[0]));
 
-                    var maxT = Math.min(
-                            newtonMethod(wetherill.upperEnvelope.x, x.domain()[1]),
-                            newtonMethod(wetherill.upperEnvelope.y, y.domain()[1]));
+                var maxT = Math.min(
+                    newtonMethod(wetherill.upperEnvelope.x, x.domain()[1]),
+                    newtonMethod(wetherill.upperEnvelope.y, y.domain()[1]));
 
-                    // initialize path
-                    var path = [];
-                    moveTo(path, wetherill.upperEnvelope(minT).scaleBy(x, y));
+                // initialize path
+                var path = [];
+                moveTo(path, wetherill.upperEnvelope(minT).scaleBy(x, y));
 
-                    // determine the step size using the number of pieces
-                    var pieces = 30;
-                    var stepSize = (maxT - minT) / pieces;
+                // determine the step size using the number of pieces
+                var pieces = 30;
+                var stepSize = (maxT - minT) / pieces;
 
-                    // build the pieces
-                    for (var i = 0; i < pieces; i++) {
-                        approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
-                    }
+                // build the pieces
+                for (var i = 0; i < pieces; i++) {
+                    approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
+                }
 
-                    lineTo(path, [x.range()[1], y.range()[1]]);
+                lineTo(path, [x.range()[1], y.range()[1]]);
 
-                    var minT = Math.max(
-                            newtonMethod(wetherill.lowerEnvelope.x, x.domain()[0]),
-                            newtonMethod(wetherill.lowerEnvelope.y, y.domain()[0]));
+                var minT = Math.max(
+                    newtonMethod(wetherill.lowerEnvelope.x, x.domain()[0]),
+                    newtonMethod(wetherill.lowerEnvelope.y, y.domain()[0]));
 
-                    var maxT = Math.min(
-                            newtonMethod(wetherill.lowerEnvelope.x, x.domain()[1]),
-                            newtonMethod(wetherill.lowerEnvelope.y, y.domain()[1]));
+                var maxT = Math.min(
+                    newtonMethod(wetherill.lowerEnvelope.x, x.domain()[1]),
+                    newtonMethod(wetherill.lowerEnvelope.y, y.domain()[1]));
 
-                    lineTo(path, wetherill.lowerEnvelope(maxT).scaleBy(x, y));
+                lineTo(path, wetherill.lowerEnvelope(maxT).scaleBy(x, y));
 
-                    var stepSize = (maxT - minT) / pieces;
+                var stepSize = (maxT - minT) / pieces;
 
-                    // build the pieces
-                    for (var i = 0; i < pieces; i++) {
-                        approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
-                    }
+                // build the pieces
+                for (var i = 0; i < pieces; i++) {
+                    approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
+                }
 
-                    lineTo(path, [x.range()[0], y.range()[0]]);
-                    close(path);
+                lineTo(path, [x.range()[0], y.range()[0]]);
+                close(path);
 
-                    return path.join("");
-                });
+                return path.join("");
+            });
 
         plot.t.domain([minT, maxT]);
 
-        var ticks;
-        (ticks = plot.area.clipped.selectAll(".tick")
-                .data(plot.t.ticks()))
-                .enter()
-                .append("circle")
-                .attr("class", "tick")
-                .attr("r", 5);
+        var concordiaTicks;
+        (concordiaTicks = plot.area.clipped.selectAll(".concordiaTick")
+            .data(plot.t.ticks()))
+            .enter()
+            .append("circle")
+            .attr("class", "concordiaTick")
+            .attr("r", 5);
 
-        ticks
-                .attr("cx", function (t) { return x(wetherill.x(t)); })
-                .attr("cy", function (t) { return y(wetherill.y(t)); });
+        concordiaTicks
+            .attr("cx", function (t) { return x(wetherill.x(t)); })
+            .attr("cy", function (t) { return y(wetherill.y(t)); });
 
         var tickLabels;
         (tickLabels = plot.area.clipped.selectAll(".tickLabel")
-                .data(plot.t.ticks()))
-                .enter()
-                .append("text")
-                .attr("font-family", "sans-serif")
-                .attr("class", "tickLabel");
-        
+            .data(plot.t.ticks()))
+            .enter()
+            .append("text")
+            .attr("font-family", "sans-serif")
+            .attr("class", "tickLabel");
+
         tickLabels
-                .attr("x", function (t) { return x(wetherill.x(t)) + 12; })
-                .attr("y", function (t) { return y(wetherill.y(t)) + 5; })
-                .text(function (t) { return t / 1000000; });
+            .attr("x", function (t) { return x(wetherill.x(t)) + 12; })
+            .attr("y", function (t) { return y(wetherill.y(t)) + 5; })
+            .text(function (t) { return t / 1000000; });
 
         // update the ellipses
         ellipses.attr("d", function (d) {
             var ellipsePath = d3.svg.line()
-                    .x(function (datum) {
-                        return x(datum[0]);
-                    })
-                    .y(function (datum) {
-                        return y(datum[1]);
-                    })
-                    .interpolate(function (points) {
-                        var i = 1, path = [points[0][0], ",", points[0][1]];
-                        while (i + 3 <= points.length) {
-                            cubicBezier(path, points[i++], points[i++], points[i++]);
-                        }
-                        return path.join("");
-                    });
+                .x(function (datum) {
+                    return x(datum[0]);
+                })
+                .y(function (datum) {
+                    return y(datum[1]);
+                })
+                .interpolate(function (points) {
+                    var i = 1, path = [points[0][0], ",", points[0][1]];
+                    while (i + 3 <= points.length) {
+                        cubicBezier(path, points[i++], points[i++], points[i++]);
+                    }
+                    return path.join("");
+                });
 
             return ellipsePath(d);
         });
 
         // update the center points
         dots
-                .attr("cx", function (d) {
-                    return x(d.x);
-                })
-                .attr("cy", function (d) {
-                    return y(d.y);
-                });
+            .attr("cx", function (d) {
+                return x(d.x);
+            })
+            .attr("cy", function (d) {
+                return y(d.y);
+            });
 
         // retick the axes
         plot.area.selectAll(".x.axis")
-                .call(xAxis);
+            .call(xAxis);
 
         plot.area.selectAll(".y.axis")
-                .call(yAxis);
+            .call(yAxis);
 
         // axis styling
         plot.area.selectAll(".axis text")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", "10px");
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "10px");
 
         plot.area.selectAll(".axis path, .axis line")
-                .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("shape-rendering", "geometricPrecision"); // see SVG docs
+            .attr("fill", "none")
+            .attr("stroke", "black")
+            .attr("shape-rendering", "geometricPrecision"); // see SVG docs
 
         // exit
         ellipses.exit().remove();
         dots.exit().remove();
-        ticks.exit().remove();
+        concordiaTicks.exit().remove();
         tickLabels.exit().remove();
 
         reset = function() {
             d3.transition().duration(750).tween("zoom", function() {
-                alert(x.domain());
                 var ix = d3.interpolate(x.domain(), [xMin, xMax]),
                     iy = d3.interpolate(y.domain(), [yMin, yMax]);
                 return function(t) {
-                  zoom.x(x.domain(ix(t))).y(y.domain(iy(t)));
-                  zoomed();
+                    zoom.x(x.domain(ix(t))).y(y.domain(iy(t)));
+                    zoomed();
                 };
-              });
-        }
+            });
+        };
 
         var zoom = d3.behavior.zoom()
-                .x(x)
-                .y(y)
-                .scaleExtent([.5, 2.5])
-                .on("zoom", zoomed);
+            .x(x)
+            .y(y)
+            .scaleExtent([.5, 2.5])
+            .on("zoom", zoomed);
 
         function zoomed() {
             var t = zoom.translate();
@@ -443,7 +443,22 @@
             plot.update(data);
         }
 
+        plot.setConcordiaVisibility();
+
         plot.area.clipped.call(zoom);
+    };
+
+    plot.setConcordiaVisibility = function () {
+
+        d3.selectAll(".concordiaTick")
+            .style("opacity", plot.getProperty('Concordia Line') ? 1 : 0);
+        d3.selectAll(".tickLabel")
+            .style("opacity", plot.getProperty('Concordia Line') ? 1 : 0);
+        d3.selectAll(".uncertaintyEnvelope")
+            .style("opacity", plot.getProperty('Concordia Line') ? 1 : 0);
+        d3.selectAll(".concordia")
+            .style("opacity", plot.getProperty('Concordia Line') ? 1 : 0);
+
     };
 
     topsoil.reset = function() {
