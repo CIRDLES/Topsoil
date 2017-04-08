@@ -64,10 +64,12 @@ class SerializableTopsoilSession implements Serializable {
 
         this.isotopeType.put("UPb", IsotopeType.UPb);
         this.isotopeType.put("UTh", IsotopeType.UTh);
+        this.isotopeType.put("Gen", IsotopeType.Generic);
 
         topsoilPlotType.put("Scatter Plot", TopsoilPlotType.SCATTER_PLOT);
         topsoilPlotType.put("Uncertainty Ellipse Plot", TopsoilPlotType.UNCERTAINTY_ELLIPSE_PLOT);
         topsoilPlotType.put("Evolution Plot", TopsoilPlotType.EVOLUTION_PLOT);
+        topsoilPlotType.put("Base Plot", TopsoilPlotType.BASE_PLOT);
 
         List<TopsoilTab> topsoilTabs = tabs.getTopsoilTabs();
         for (TopsoilTab tab : topsoilTabs) {

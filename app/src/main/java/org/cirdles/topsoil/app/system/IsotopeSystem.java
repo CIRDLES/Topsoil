@@ -16,6 +16,7 @@
 package org.cirdles.topsoil.app.system;
 
 import org.cirdles.topsoil.app.plot.PlotType;
+import org.cirdles.topsoil.app.plot.GenericPlotType;
 import org.cirdles.topsoil.app.plot.UraniumLeadPlotType;
 import org.cirdles.topsoil.app.plot.UraniumThoriumPlotType;
 
@@ -29,7 +30,8 @@ import static java.util.Arrays.asList;
 public enum IsotopeSystem {
 
     URANIUM_LEAD("U-Pb", UraniumLeadPlotType.values()),
-    URANIUM_THORIUM("U-Th", UraniumThoriumPlotType.values());
+    URANIUM_THORIUM("U-Th", UraniumThoriumPlotType.values()),
+    GENERIC("Gen", GenericPlotType.values());
 
     private final String name;
     private final List<PlotType> plotTypes;
