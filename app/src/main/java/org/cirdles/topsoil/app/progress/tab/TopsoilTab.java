@@ -1,10 +1,11 @@
 package org.cirdles.topsoil.app.progress.tab;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
+import org.cirdles.topsoil.app.progress.table.TopsoilTableController;
 import org.cirdles.topsoil.app.progress.util.Command;
 import org.cirdles.topsoil.app.progress.util.UndoManager;
 
@@ -18,41 +19,42 @@ import org.cirdles.topsoil.app.progress.util.UndoManager;
  */
 public class TopsoilTab extends Tab {
 
-    private TopsoilTable table;
-    //    private final Label isotopeLabel;
-    private final String isotopeType;
-    private String actualTitle;
-    private final Label titleLabel;
-    private TextField textField;
+    private TopsoilTableController tableController;
     private UndoManager undoManager;
+
+    private String isotopePrefix;
+    private SimpleStringProperty actualTitle;
+    private Label titleLabel;
+    private TextField textField;
+
+    private TopsoilTabContent tabContent;
 
     /**
      * Constructs a <tt>TopsoilTab</tt> for the specified <tt>TopsoilTable</tt>.
      *
-     * @param table the TopsoilTable to store
+     * @param tabContent the TopsoilTabContent for visualizing the data
      */
-    public TopsoilTab(TopsoilTable table) {
+    public TopsoilTab(TopsoilTabContent tabContent, TopsoilTableController tableController) {
+        this.tabContent = tabContent;
+        this.tableController = tableController;
         this.undoManager = new UndoManager(50);
 
-        this.isotopeType = table.getIsotopeType().getAbbreviation() + " - ";
-//        this.isotopeLabel = new Label(isotopeType);
-//        isotopeLabel.setId("Isotope");
+        this.isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";
 
-        this.actualTitle = table.getTitle();
-        this.titleLabel = new Label(this.isotopeType + table.getTitle());
+        this.actualTitle = new SimpleStringProperty(tableController.getTable().getTitle());
+        this.actualTitle.bindBidirectional(tableController.getTable().titleProperty()); // bind to TopsoilTable titleProperty
+
+        this.titleLabel = new Label(isotopePrefix + actualTitle.get());
         this.titleLabel.setId("Title");
         this.titleLabel.setOnMouseClicked(event -> {
             if (event.getClickCount() >= 2) {
-                this.startEditingTitle();
-                this.textField.requestFocus();
+                startEditingTitle();
+                textField.requestFocus();
             }
         });
 
-//        this.titleLabel.setGraphic(isotopeLabel);
-        this.setGraphic(this.titleLabel);
-
-        this.table = table;
-        this.setContent(this.table.getTable());
+        this.setGraphic(titleLabel);
+        this.setContent(tableController.getTabContent().getTableView());
     }
 
 
@@ -62,11 +64,11 @@ public class TopsoilTab extends Tab {
      */
     private void startEditingTitle() {
         this.textField = generateTitleTextField();
-//        this.textField.setText(this.titleLabel.getText());
-        this.textField.setText(this.actualTitle);
+        this.textField.setText(this.actualTitle.get());
+        this.textField.selectAll();
+
         this.titleLabel.setGraphic(this.textField);
         this.titleLabel.setText(null);
-        this.textField.selectAll();
     }
 
     /**
@@ -87,11 +89,8 @@ public class TopsoilTab extends Tab {
      * @param title the new title
      */
     public void setTitle(String title) {
-//        this.titleLabel.setText(title);
-        this.titleLabel.setText(this.isotopeType + title);
-        this.actualTitle = title;
-//        this.table.setTitle(title);
-        this.table.setTitle(this.actualTitle);
+        this.titleLabel.setText(this.isotopePrefix + title);
+        this.actualTitle.set(title);
     }
 
     private TextField generateTitleTextField() {
@@ -106,12 +105,8 @@ public class TopsoilTab extends Tab {
         return textField;
     }
 
-    /**
-     * get the TableView object from the tab
-     * @return tableview
-     */
-    public TableView getTable() {
-        return table.getTable();
+    public TopsoilTableController getTableController() {
+        return tableController;
     }
 
     /**
@@ -119,7 +114,11 @@ public class TopsoilTab extends Tab {
      * @return TopsoilTable
      */
     public TopsoilTable getTopsoilTable() {
-        return table;
+        return tableController.getTable();
+    }
+
+    public TopsoilTabContent getTabContent() {
+        return tabContent;
     }
 
     /**

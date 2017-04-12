@@ -1,16 +1,22 @@
 package org.cirdles.topsoil.app.progress.menu;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
+import org.cirdles.topsoil.app.progress.menu.command.ClearTableCommand;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 
-import org.cirdles.topsoil.app.progress.util.FileParser;
 import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
@@ -23,7 +29,11 @@ import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.*;
  */
 public class MainMenuBar extends MenuBar {
 
+    // TODO Hella reorganize
+
     private MenuBar menuBar = new MenuBar();
+    private ResourceExtractor resourceExtractor = new ResourceExtractor(MainMenuBar.class);
+    private final String TOPSOIL_ABOUT_SCREEN_FXML_NAME = "topsoil-about-screen.fxml";
 
     // File Menu
 //    private MenuItem newProjectItem;
@@ -132,7 +142,7 @@ public class MainMenuBar extends MenuBar {
         clearTableItem.setOnAction(action -> {
             // clear table and add an empty row
             ClearTableCommand clearTableCommand =
-                    new ClearTableCommand(tabs.getSelectedTab().getTopsoilTable().getTable());
+                    new ClearTableCommand(tabs.getSelectedTab().getTabContent().getTableView());
             clearTableCommand.execute();
             tabs.getSelectedTab().addUndo(clearTableCommand);
         });
@@ -218,6 +228,7 @@ public class MainMenuBar extends MenuBar {
         Menu helpMenu = new Menu("Help");
         reportIssueItem = new MenuItem("Report Issue");
         aboutItem = new MenuItem("About");
+
         helpMenu.getItems()
                 .addAll(reportIssueItem,
                         aboutItem);
@@ -277,7 +288,9 @@ public class MainMenuBar extends MenuBar {
             TopsoilTable table = handleNewTable();
 
             // display new table
-            tabs.add(table);
+            if (table != null) {
+                tabs.add(table);
+            }
         });
 
         // Generate Plot
@@ -290,6 +303,32 @@ public class MainMenuBar extends MenuBar {
         // Report Issue
         reportIssueItem.setOnAction(event -> {
             handleReportIssue();
+        });
+
+        // About
+        aboutItem.setOnAction(event -> {
+            try {
+                Parent about = FXMLLoader
+                        .load(resourceExtractor.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL
+                                ());
+                Scene aboutScene = new Scene(about, 450, 600);
+                Stage aboutWindow = new Stage(StageStyle.UNDECORATED);
+                aboutWindow.setResizable(false);
+                aboutWindow.setScene(aboutScene);
+
+                aboutWindow.requestFocus();
+                aboutWindow.initOwner(tabs.getScene().getWindow());
+                aboutWindow.initModality(Modality.NONE);
+                // Close window if main window gains focus.
+//                tabs.getScene().getWindow().focusedProperty().addListener((observable, oldValue, newValue) -> {
+//                    if (newValue) {
+//                        aboutWindow.close();
+//                    }
+//                });
+                aboutWindow.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 

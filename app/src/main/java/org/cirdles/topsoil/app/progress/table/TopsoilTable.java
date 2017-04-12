@@ -1,28 +1,20 @@
 package org.cirdles.topsoil.app.progress.table;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.scene.control.TableColumn;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-import javafx.scene.input.KeyCode;
-import org.cirdles.topsoil.app.dataset.field.Field;
-import org.cirdles.topsoil.app.dataset.field.NumberField;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
-import org.cirdles.topsoil.app.util.Alerter;
-import org.cirdles.topsoil.app.util.ErrorAlerter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * This is the core data model for a table. It contains the <tt>TableView</tt> used to display the data, as well as
+ * This is the core data model for a tableView. It contains the <tt>TableView</tt> used to display the data, as well as
  * any information about open plots which reference this data model.
  *
  * @author benjaminmuldrow
@@ -30,217 +22,167 @@ import java.util.Map;
  * @see TableView
  * @see TopsoilDataEntry
  */
-public class TopsoilTable implements GenericTable {
+public class TopsoilTable {
 
-    private final Alerter alerter = new ErrorAlerter();
-    private String[] headers;
-    private TableView<TopsoilDataEntry> table;
+    private ObservableList<TopsoilDataEntry> data;
+    private ObservableList<StringProperty> columnNameProperties;
+    private SimpleStringProperty titleProperty = new SimpleStringProperty("Untitled Table");
     private IsotopeType isotopeType;
-    private String title = "Untitled Table";
-    private TopsoilDataEntry [] dataEntries;
-    private Field[] fields;
     private HashMap<String, PlotInformation> openPlots;
 
-    public TopsoilTable(String [] headers, IsotopeType isotopeType, TopsoilDataEntry... dataEntries) {
+    public TopsoilTable(String[] columnNames, IsotopeType isotopeType, TopsoilDataEntry... dataEntries) {
 
-        // initialize table
-        this.table = new TableView<>();
-        this.table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableView.TableViewSelectionModel<TopsoilDataEntry> selectionModel = this.table.getSelectionModel();
-        selectionModel.setCellSelectionEnabled(true);
-        this.dataEntries = dataEntries;
-        this.table.setEditable(true);
+//        this.dataEntries = dataEntries;
+        this.data = FXCollections.observableArrayList(dataEntries);
 
         // initialize isotope type
         this.isotopeType = isotopeType;
 
-        // populate headers
-        this.headers = createHeaders(headers);
+        // populate columnNameProperties
+        this.columnNameProperties = FXCollections.observableArrayList(createColumnHeaderProperties(columnNames));
 
-        // populate table
-        this.table.getColumns().addAll(createColumns(this.headers));
-        resetIds();
-        if (dataEntries.length == 0) { // no data provided
-
-            TopsoilDataEntry dataEntry = new TopsoilDataEntry();
-
-            // add a 0 value for each column
-            for (String header : this.headers) {
-                dataEntry.addEntries(0.0);
-            }
-
-            this.table.getItems().add(dataEntry);
-
-        } else { // data is provided
-
-            this.table.getItems().addAll(dataEntries);
-
-        }
-
-        // Create undoable Commands for column reordering
-        table.getColumns().addListener((ListChangeListener<TableColumn<TopsoilDataEntry,?>>) c -> {
-            c.next();
-            //   if (c.wasRemoved() && c.wasAdded())
-            if (c.wasReplaced()) {
-                TableColumnReorderCommand reorderCommand = new TableColumnReorderCommand(this.table);
-                ((TopsoilTabPane) this.table.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(reorderCommand);
-                resetIds();
-            } else if (c.wasAdded() ^ c.wasRemoved() ^ c.wasUpdated() ^ c.wasPermutated()) {
-                resetIds();
-            }
-        });
-
-        // Handle Keyboard Events
-        table.setOnKeyPressed(keyevent -> {
-            // Tab focuses right cell
-            // Shift + Tab focuses left cell
-            if (keyevent.getCode().equals(KeyCode.TAB)) {
-                if (keyevent.isShiftDown()) {
-                    if (selectionModel.getSelectedCells().get(0).getColumn() == 0 &&
-                            selectionModel.getSelectedIndex() != 0) {
-                        selectionModel.select(selectionModel.getSelectedIndex() - 1, this.table.getColumns().get
-                                (this.getHeaders().length - 1));
-                    } else {
-                        selectionModel.selectLeftCell();
-                    }
-                } else {
-                    if (selectionModel.getSelectedCells().get(0).getColumn() ==
-                        this.getHeaders().length - 1 && selectionModel.getSelectedIndex() !=
-                                                        this.table.getItems().size() - 1) {
-                        selectionModel.select(selectionModel.getSelectedIndex() + 1, this.table.getColumns().get(0));
-                    } else {
-                        selectionModel.selectRightCell();
-                    }
-                }
-
-                keyevent.consume();
-
-            // Enter moves down or creates new empty row
-            // Shift + Enter moved up a row
-            } else if (keyevent.getCode().equals(KeyCode.ENTER)) {
-                if (keyevent.isShiftDown()) {
-                    selectionModel.selectAboveCell();
-                } else {
-                    // if on last row
-                    if (selectionModel.getSelectedIndex() == table.getItems().size() - 1) {
-                        NewRowCommand newRowCommand = new NewRowCommand(this.table);
-                        newRowCommand.execute();
-                        ((TopsoilTabPane) this.table.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(newRowCommand);
-                    }
-                    selectionModel.selectBelowCell();
-                }
-                keyevent.consume();
-            }
-
-        });
-
-        // Create hashmap for storing information on open plots for this table.
+        // Create hashmap for storing information on open plots for this tableView.
         this.openPlots = new HashMap<>();
-    }
 
-    /**
-     * Create functional TableColumns dynamically based on header count
-     * @param headers Array of header strings
-     * @return an Array of functional Table Columns
-     */
-    private TableColumn[] createColumns(String [] headers) {
-
-        TableColumn[] result = new TableColumn[headers.length];
-        fields = new NumberField[headers.length];
-
-        for (int i = 0; i < headers.length; i++) {
-
-            // make a new column for each header
-            TableColumn<TopsoilDataEntry, Double> column = new TableColumn<>(headers[i]);
-            fields[i] = new NumberField(headers[i]);
-            final int columnIndex = i;
-
-            // override cell value factory to accept the i'th index of a data entry for the i'th column
-            column.setCellValueFactory(param -> {
-                if (param.getValue().getProperties().size() == 0) {
-                    return (ObservableValue) new SimpleDoubleProperty(0.0);
-                } else {
-                    // If data was incomplete i.e. length of line is too short for number of columns.
-                    if (param.getValue().getProperties().size() < columnIndex + 1) {
-                        return (ObservableValue) new SimpleDoubleProperty(Double.NaN);
-                    } else {
-                        return (ObservableValue) param.getValue().getProperties().get(columnIndex);
+        for (TopsoilDataEntry entry : this.data) {
+            for (DoubleProperty property : entry.getProperties()) {
+                property.addListener(c -> {
+                    for (TopsoilDataEntry e : data) {
+                        for (DoubleProperty p : e.getProperties()) {
+                            System.out.print(p.get() + "\t");
+                        }
+                        System.out.println();
                     }
-                }
-            });
-
-            // override cell factory to custom editable cells
-            column.setCellFactory(value -> new TopsoilTableCell());
-
-            // disable column sorting
-            column.setSortable(false);
-
-            // add functional column to the array of columns
-            result[i] = column;
+                });
+            }
         }
-
-        return result;
     }
 
     /**
-     * Create headers based on both isotope flavor and user input
-     * @param headers array of provided headers
-     * @return updated array of headers
+     * Create columnNameProperties based on both isotope flavor and user input
+     * @param columnNames array of provided columnNameProperties
+     * @return updated array of columnNameProperties
      */
-    private String[] createHeaders(String [] headers) {
+    private StringProperty[] createColumnHeaderProperties(String [] columnNames) {
 
-        String [] result;
+        String[] defaultNames = new String[]{"Column1", "Column2", "Column3", "Column4", "Column5"};
+        String[] resultArr;
+        StringProperty[] result;
 
-        // populate headers with defaults if no headers are provided
-        if (headers == null) {
-            result = isotopeType.getHeaders();
+        // As of right now, only create a tableView with the provided column names or with blank names.
+        // TODO populate columnNameProperties with defaults if no columnNameProperties are provided
+        if (columnNames == null) {
+//            resultArr = isotopeType.getHeaders();
+            resultArr = defaultNames;
 
-        // if some headers are provided, populate
-        } else if (headers.length < isotopeType.getHeaders().length) {
-            int difference = isotopeType.getHeaders().length - headers.length;
-            result = new String[isotopeType.getHeaders().length];
-            int numHeaders = isotopeType.getHeaders().length;
+            // if some column names are provided, populate
+        } else if (columnNames.length < defaultNames.length) {
+            int difference = defaultNames.length - columnNames.length;
+            resultArr = new String[defaultNames.length];
+            int numHeaders = defaultNames.length;
 
-            // Copy headers to result.
-            System.arraycopy(headers, 0, result, 0, numHeaders - difference);
+            // Copy provided column names to resultArr.
+            System.arraycopy(columnNames, 0, resultArr, 0, numHeaders - difference);
 
-            // Fill in with normal headers.
-            System.arraycopy(isotopeType.getHeaders(), (numHeaders - difference),
-                    result, (numHeaders - difference),
-                    (numHeaders - (numHeaders - difference)));
+            // Fill in with default column names.
+            System.arraycopy(defaultNames, (numHeaders - difference),
+                             resultArr, (numHeaders - difference),
+                             (numHeaders - (numHeaders - difference)));
 
-        // if too many headers are provided, only use the first X (depending on isotope flavor)
-        } else { // if (headers.length >= isotopeType.getHeaders().length)
-            result = headers.clone();
+
+        }
+        // If too many columnNameProperties are provided, only use the first X (depending on isotope flavor)
+        else {
+            resultArr = columnNames.clone();
+        }
+
+        result = new SimpleStringProperty[resultArr.length];
+
+        for (int i = 0; i < resultArr.length; i++) {
+            result[i] = new SimpleStringProperty(resultArr[i]);
         }
 
         return result;
     }
 
     /**
-     * Extract data from table as a list of maps of columns : value
+     * Extract data from tableView as a list of maps of columns : value
      * @return list of maps of columns : value
      */
-    public List<Map<String, Object>> extractData() {
+//    public List<Map<String, Object>> extractData() {
+//
+//        ArrayList<Map<String, Object>> result = new ArrayList<>();
+//        HashMap<String, Double> [] columnMaps = new HashMap[this.columnNameProperties.size()];
+//        for (int i = 0; i < tableView.getItems().size(); i ++) {
+//            int columnIndex = i % columnNameProperties.size();
+//            columnMaps[columnIndex].put(columnNameProperties.get(columnIndex).get(),
+//                                        tableView.getItems().get(i).getProperties().get(columnIndex).getValue());
+//        }
+//        for (HashMap column : columnMaps) {
+//            result.add(column);
+//        }
+//        return result;
+//
+//    }
 
-        ArrayList<Map<String, Object>> result = new ArrayList<>();
-        HashMap<String, Double> [] columnMaps = new HashMap[this.getHeaders().length];
-        for (int i = 0; i < table.getItems().size(); i ++) {
-            int columnIndex = i % headers.length;
-            columnMaps[columnIndex].put(headers[columnIndex],
-                    table.getItems().get(i).getProperties().get(columnIndex).getValue());
-        }
-        for (HashMap column : columnMaps) {
-            result.add(column);
-        }
-        return result;
-
+    public ObservableList<TopsoilDataEntry> getData() {
+        return data;
     }
+
+    public ObservableList<TopsoilDataEntry> getCopyOfDataAsEntries() {
+        ObservableList<TopsoilDataEntry> newData = FXCollections.observableArrayList();
+        TopsoilDataEntry newEntry;
+        for (TopsoilDataEntry entry : data) {
+            newEntry = new TopsoilDataEntry();
+            for (DoubleProperty property : entry.getProperties()) {
+                newEntry.addValues(property.get());
+            }
+            newData.add(newEntry);
+        }
+        return newData;
+    }
+
+    public List<Double[]> getDataAsArrays() {
+        ArrayList<Double[]> tableEntries = new ArrayList<>();
+        for (TopsoilDataEntry entry : data) {
+            tableEntries.add(entry.toArray());
+        }
+        return tableEntries;
+    }
+
+//    public List<Map<String, Object>> getDataForPlots() {
+//        SimpleDataset dataset = getDataset();
+//
+//        PlotContext plotContext = this.getPlotContext();
+//
+//        List<Map<String, Object>> data = new ArrayList<>();
+//
+//        dataset.getEntries().forEach(entry -> {
+//            Map<String, Object> d = new HashMap<>();
+//
+//            for (int i = 0; i < dataset.getFields().size(); i++) {
+//
+//            }
+//
+////            variableBindingView.getControls().forEach(control -> {
+////                Variable<?> variable = control.getVariable();
+////                d.put(variable.getName(), plotContext.getValue(variable, entry).get());
+////            });
+//
+//            d.put("Selected", true);
+//
+//            entry.<Boolean>get(Fields.SELECTED).ifPresent(selected -> {
+//                d.put("Selected", selected);
+//            });
+//
+//            data.add(d);
+//        });
+//    }
 
     /**
      * Returns the <tt>IsotopeType</tt> of the current <tt>TopsoilTable</tt>.
      *
-     * @return  the table's IsotopeType
+     * @return  the tableView's IsotopeType
      */
     public IsotopeType getIsotopeType() {
         return this.isotopeType;
@@ -254,23 +196,6 @@ public class TopsoilTable implements GenericTable {
     public void setIsotopeType(IsotopeType isotopeType) {
         this.isotopeType = isotopeType;
     }
-
-    /**
-     * Resets the string ids associated with each <tt>TableColumn</tt> in the <tt>TopsoilTable</tt>'s
-     * <tt>TableView</tt>.
-     * <p>Each TableColumn has an associated String id assigned to it, increasing numerically from 1, left to right.
-     * This is to keep track of the order of the columns before and after they are re-ordered due to clicking and
-     * dragging.
-     * </p>
-     */
-    public void resetIds() {
-        int id = 0;
-        for (TableColumn<TopsoilDataEntry, ?> column : this.table.getColumns()) {
-            column.setId(Integer.toString(id));
-            id++;
-        }
-    }
-
     /**
      * Returns true if the <tt>TableView</tt> is empty. In this case, "empty" means that it has one data entry filled
      * with 0.0s.
@@ -278,22 +203,12 @@ public class TopsoilTable implements GenericTable {
      * @return  true or false
      */
     public boolean isCleared() {
-        boolean rtnval = true;
-        if (table.getItems().size() != 1) {
-            rtnval = false;
-        } else {
-            for (int i = 0; i < table.getColumns().size(); i++) {
-                if (Double.compare(table.getItems().get(0).getProperties().get(i).doubleValue(), 0.0) != 0) {
-                    rtnval = false;
-                }
-            }
-        }
-        return rtnval;
+        return data.isEmpty();
     }
 
     /**
      * Returns a Collection of <tt>PlotInformation</tt>, each containing information on an open plot associated with
-     * this data table.
+     * this data tableView.
      *
      * @return  a Collection of PlotInformation objects
      */
@@ -302,7 +217,7 @@ public class TopsoilTable implements GenericTable {
     }
 
     /**
-     * Adds information about an open plot to this data table.
+     * Adds information about an open plot to this data tableView.
      *
      * @param plotInfo  a new PlotInformation
      */
@@ -311,7 +226,7 @@ public class TopsoilTable implements GenericTable {
     }
 
     /**
-     * Removes information about an open plot to this data table (typically once the table has been closed).
+     * Removes information about an open plot to this data tableView (typically once the tableView has been closed).
      *
      * @param plotType  the TopsoilPlotType of the plot to be removed
      */
@@ -320,48 +235,28 @@ public class TopsoilTable implements GenericTable {
         this.openPlots.remove(plotType.getName());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void deleteRow(int index) {
-        this.dataEntries[index].getProperties().remove(0, headers.length);
+    public StringProperty titleProperty() {
+        return titleProperty;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void addRow() {
-        TopsoilDataEntry dataEntry = new TopsoilDataEntry();
-        for (String header : this.headers) {
-            dataEntry.addEntries(0.0);
-        }
-        this.table.getItems().add(dataEntry);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void clear() {
-        this.getTable().getItems().clear();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TableView<TopsoilDataEntry> getTable() {
-        return this.table;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String getTitle() {
-        return title;
+        return titleProperty.get();
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.titleProperty.set(title);
+    }
+
+    public ObservableList<StringProperty> getColumnNameProperties() {
+        return columnNameProperties;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public String [] getHeaders() {
-        return this.headers.clone();
+    public String[] getColumnNames() {
+        String[] result = new String[columnNameProperties.size()];
+        for (int i = 0; i < columnNameProperties.size(); i++) {
+            result[i] = columnNameProperties.get(i).get();
+        }
+        return result;
     }
-
 }

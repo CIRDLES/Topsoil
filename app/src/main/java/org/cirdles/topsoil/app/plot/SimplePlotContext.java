@@ -16,10 +16,11 @@
 package org.cirdles.topsoil.app.plot;
 
 import org.cirdles.topsoil.app.dataset.Dataset;
+import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.field.Fields;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 public class SimplePlotContext implements PlotContext {
 
@@ -45,4 +46,25 @@ public class SimplePlotContext implements PlotContext {
         bindings.add(new SimpleVariableBinding(variable, field, format, this));
     }
 
+    public List<Map<String, Object>> getData() {
+        List<Map<String, Object>> data = new ArrayList<>();
+
+        dataset.getEntries().forEach(entry -> {
+            Map<String, Object> d = new HashMap<>();
+
+            for (VariableBinding binding : bindings) {
+                d.put(binding.getVariable().getName(), getValue(binding.getVariable(), (Entry) entry).get());
+            }
+
+            d.put("Selected", true);
+
+            ((Entry) entry).get(Fields.SELECTED).ifPresent(selected -> {
+                d.put("Selected", selected);
+            });
+
+            data.add(d);
+        });
+
+        return data;
+    }
 }

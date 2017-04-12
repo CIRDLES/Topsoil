@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.progress.util;
 
 import java.io.File;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -118,6 +119,7 @@ public class FileParser {
         if (delim == null) {
             return null;
         }
+
         return parseTxt(readLines(content), delim, containsHeaders);
     }
 
@@ -149,52 +151,9 @@ public class FileParser {
      * @param delimiter data delimiter
      * @return String array of values
      */
-    private static List<TopsoilDataEntry> parseTxt(File file,
-                                                   String delimiter,
-                                                   boolean containsHeaders)
-            throws IOException {
-        Alerter alerter = new ErrorAlerter();
-
-        List<TopsoilDataEntry> content = new ArrayList<TopsoilDataEntry>();
+    private static List<TopsoilDataEntry> parseTxt(File file, String delimiter, boolean containsHeaders) throws IOException {
         String [] lines = readLines(file);
-
-        // ignore header row if supplied
-        if (containsHeaders) {
-            String [] newlines = new String[lines.length - 1];
-            for (int i = 1; i < lines.length; i++) {
-                newlines[i - 1] = lines[i];
-            }
-            lines = newlines;
-        }
-
-        for (String line : lines) {
-            String[] contentAsString = line.split(delimiter, -1);
-            if (contentAsString.length == 4) {              // No Corr Coef provided
-                content.add(
-                        new TopsoilDataEntry(
-                                isDouble(contentAsString[0]) ? Double.parseDouble(contentAsString[0]) : Double.NaN,
-                                isDouble(contentAsString[1]) ? Double.parseDouble(contentAsString[1]) : Double.NaN,
-                                isDouble(contentAsString[2]) ? Double.parseDouble(contentAsString[2]) : Double.NaN,
-                                isDouble(contentAsString[3]) ? Double.parseDouble(contentAsString[3]) : Double.NaN
-                        )
-                );
-            } else if (contentAsString.length >= 5) {       // Corr Coef Provided and/or extra columns
-                content.add(
-                        new TopsoilDataEntry(
-                                isDouble(contentAsString[0]) ? Double.parseDouble(contentAsString[0]) : Double.NaN,
-                                isDouble(contentAsString[1]) ? Double.parseDouble(contentAsString[1]) : Double.NaN,
-                                isDouble(contentAsString[2]) ? Double.parseDouble(contentAsString[2]) : Double.NaN,
-                                isDouble(contentAsString[3]) ? Double.parseDouble(contentAsString[3]) : Double.NaN,
-                                isDouble(contentAsString[4]) ? Double.parseDouble(contentAsString[4]) : Double.NaN
-                        )
-                );
-            } else {
-                // TODO throw exception for invalid file
-                throw new IOException("invalid file");
-            }
-        }
-
-        return content;
+        return parseTxt(lines, delimiter, containsHeaders);
     }
 
     /**
@@ -207,7 +166,11 @@ public class FileParser {
      */
     private static List<TopsoilDataEntry> parseTxt(String[] lines, String delimiter, boolean containsHeaders) {
 
-        List<TopsoilDataEntry> content = new ArrayList<TopsoilDataEntry>();
+        Alerter alerter = new ErrorAlerter();
+
+        // TODO Detect whether the copied data is viable.
+
+        List<TopsoilDataEntry> content = new ArrayList<>();
 
         // ignore header row if supplied
         if (containsHeaders) {
@@ -220,28 +183,17 @@ public class FileParser {
 
         for (String line : lines) {
             String[] contentAsString = line.split(delimiter, -1);
-            if (contentAsString.length == 4) {              // No Corr Coef provided
-                content.add(
-                        new TopsoilDataEntry(
-                                isDouble(contentAsString[0]) ? Double.parseDouble(contentAsString[0]) : Double.NaN,
-                                isDouble(contentAsString[1]) ? Double.parseDouble(contentAsString[1]) : Double.NaN,
-                                isDouble(contentAsString[2]) ?  Double.parseDouble(contentAsString[2]) : Double.NaN,
-                                isDouble(contentAsString[3]) ? Double.parseDouble(contentAsString[3]) : Double.NaN
-                        )
-                );
-            } else if (contentAsString.length >= 5) {       // Corr Coef Provided and/or extra columns
-                content.add(
-                        new TopsoilDataEntry(
-                                isDouble(contentAsString[0]) ? Double.parseDouble(contentAsString[0]) : Double.NaN,
-                                isDouble(contentAsString[1]) ? Double.parseDouble(contentAsString[1]) : Double.NaN,
-                                isDouble(contentAsString[2]) ? Double.parseDouble(contentAsString[2]) : Double.NaN,
-                                isDouble(contentAsString[3]) ? Double.parseDouble(contentAsString[3]) : Double.NaN,
-                                isDouble(contentAsString[4]) ? Double.parseDouble(contentAsString[4]) : Double.NaN
-                        )
-                );
-            } else {
-                return null;
+
+            TopsoilDataEntry entry = new TopsoilDataEntry();
+            // TODO Allow more or less than five columns
+            for (int i = 0; i < contentAsString.length && i < 5; i++) {
+                entry.getProperties().add(isDouble(contentAsString[i]) ? new SimpleDoubleProperty(Double.parseDouble
+                        (contentAsString[i])) : new SimpleDoubleProperty(Double.NaN));
             }
+            content.add(entry);
+            // TODO throw exception for invalid file
+//                throw new IOException("invalid file");
+//            }
         }
 
         return content;
@@ -404,6 +356,7 @@ public class FileParser {
         ChoiceBox<String> delimiterChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(COMMON_DELIMITERS
                                                                                                          .keySet()));
         delimiterChoiceBox.getItems().addAll(otherDelimiterOption, unknownDelimiterOption);
+
         Label otherLabel = new Label("Other: ");
         TextField otherTextField = new TextField();
         otherTextField.setDisable(true);
@@ -432,6 +385,16 @@ public class FileParser {
             BUTTONS AND RETURN
          */
         delimiterRequestDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+
+        delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        delimiterChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
+            if (delimiterChoiceBox.getSelectionModel().getSelectedItem() == null) {
+                delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+            } else {
+                delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
+            }
+        });
+
         delimiterRequestDialog.setResultConverter(value -> {
             if (value == ButtonType.OK) {
                 if (delimiterChoiceBox.getSelectionModel().getSelectedItem().equals(otherDelimiterOption)) {

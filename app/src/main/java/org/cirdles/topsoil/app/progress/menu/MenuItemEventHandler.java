@@ -11,14 +11,10 @@ import javafx.scene.input.Clipboard;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
-import org.cirdles.topsoil.app.dataset.SimpleDataset;
+import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.plot.PlotWindow;
-import org.cirdles.topsoil.app.plot.SimplePlotContext;
-import org.cirdles.topsoil.app.plot.Variable;
-import org.cirdles.topsoil.app.plot.VariableBindingDialog;
-import org.cirdles.topsoil.app.plot.VariableBindingDialogPane;
-import org.cirdles.topsoil.app.progress.TopsoilRawData;
+import org.cirdles.topsoil.app.plot.*;
+import org.cirdles.topsoil.app.progress.dataset.NumberDataset;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.plot.PlotChoiceDialog;
@@ -26,6 +22,7 @@ import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
+import org.cirdles.topsoil.app.progress.table.TopsoilTableController;
 import org.cirdles.topsoil.app.progress.util.FileParser;
 import org.cirdles.topsoil.app.progress.util.TopsoilFileChooser;
 import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
@@ -34,7 +31,6 @@ import org.cirdles.topsoil.app.util.ErrorAlerter;
 import org.cirdles.topsoil.app.util.IssueCreator;
 import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
 import org.cirdles.topsoil.app.util.YesNoAlert;
-import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.awt.Desktop;
@@ -70,7 +66,9 @@ public class MenuItemEventHandler {
             String[] headers = null;
             Boolean hasHeaders;
 
-            hasHeaders = FileParser.containsHeaderDialogue();
+            // TODO For now, the user must have headers in the file. In the future, they can specify.
+//            hasHeaders = FileParser.containsHeaderDialogue();
+            hasHeaders = true;
 
             // hasHeaders would only be null if the user clicked "Cancel".
             if (hasHeaders != null) {
@@ -112,7 +110,9 @@ public class MenuItemEventHandler {
             String[] headers = null;
             Boolean hasHeaders;
 
-            hasHeaders = FileParser.containsHeaderDialogue();
+            // TODO For now, the user must have headers in the file. In the future, they can specify.
+//            hasHeaders = FileParser.containsHeaderDialogue();
+            hasHeaders = true;
 
             if (hasHeaders != null) {
                 if (hasHeaders) {
@@ -191,7 +191,7 @@ public class MenuItemEventHandler {
         // get user confirmation
         if (response.isPresent()
                 && response.get() == ButtonType.YES) {
-            resultingTable = new TopsoilTable(table.getHeaders(), table.getIsotopeType(), new TopsoilDataEntry[]{});
+            resultingTable = new TopsoilTable(table.getColumnNames(), table.getIsotopeType(), new TopsoilDataEntry[]{});
         }
 
         return resultingTable;
@@ -340,44 +340,15 @@ public class MenuItemEventHandler {
      * @param tabs  the active TopsoilTabPane
      */
     public static void handlePlotGenerationForSelectedTab(TopsoilTabPane tabs) {
-        TopsoilTable table = tabs.getSelectedTab().getTopsoilTable();
+        TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
 
         // ask the user what kind of plot
-        TopsoilPlotType plotType = new PlotChoiceDialog(table.getIsotopeType()).select();
+        TopsoilPlotType plotType = new PlotChoiceDialog(tableController.getTable().getIsotopeType()).select();
 
         // variable binding dialog
         if (plotType != null) {
 
-            /* TODO
-             Once more than one plot is able to exist at a time, the code
-             below (or some variation) should handle overwrites to similar
-             plots belonging to the same table.
-              */
-
-//            boolean shouldGenerate = true;
-//            for (PlotInformation plotInfo : table.getOpenPlots()) {
-//                if (plotInfo.getTopsoilPlotType().getName().equals(plotType.getName())) {
-//                    Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
-//                                "Creating a new " +
-//                                        plotType.getName() +
-//                                        " for this table will overwrite the existing " +
-//                                        plotType.getName() +
-//                                        ". Are you sure you want to continue?",
-//                                ButtonType.CANCEL,
-//                                ButtonType.YES);
-//                    Optional<ButtonType> response = plotOverwrite.showAndWait();
-//                    if(response.get() == ButtonType.YES) {
-//                        plotInfo.getStage().close();
-//                    } else {
-//                        shouldGenerate = false;
-//                    }
-//                    break;
-//                }
-//            }
-//
-//            this.generateNewPlot(plotType, table);
-
-            // Check for open plots of the same type.
+            // Check for open plots.
             List<Stage> stages = StageHelper.getStages();
             if (stages.size() > 1) {
                 Stage stage = stages.get(1);
@@ -399,52 +370,62 @@ public class MenuItemEventHandler {
                                             .getTopsoilPlotType());
                                 }
                                 stage.close();
-                                generateNewPlot(plotType, table);
+                                generateNewPlot(plotType, tableController, tabs);
                             }
                         });
             } else {
-                generateNewPlot(plotType, table);
+                generateNewPlot(plotType, tableController, tabs);
             }
         }
     }
 
-    /**
-     * Generates a plot of plotType for the specified <tt>TopsoilTable</tt>.
-     *
-     * @param plotType  the TopsoilPlotType of the plot
-     * @param table the TopsoilTable data to reference
-     */
-    private static void generateNewPlot(TopsoilPlotType plotType, TopsoilTable table) {
-        List<Variable> variables = plotType.getVariables();
-        SimpleDataset dataset = new SimpleDataset(table.getTitle(), new TopsoilRawData(table).getRawData());
-        VariableBindingDialog variableBindingDialog = new VariableBindingDialog(variables, dataset);
-        variableBindingDialog.showAndWait()
-                .ifPresent(data -> {
+    private static void generateNewPlot(TopsoilPlotType plotType, TopsoilTableController tableController,
+                                        TopsoilTabPane tabs) {
+        NumberDataset dataset = tableController.getDataset();
+        SimplePlotContext plotContext = new SimplePlotContext(dataset);
 
-                    Plot plot = plotType.getPlot();
+        // Bind variables
+        Variable<Number> variable;
+        VariableFormat<Number> format;
+        for (int i = 0; i < dataset.getFields().size(); i++) {
+            variable = Variables.VARIABLE_LIST.get(i);
 
-                    plot.setData(data);
-                    Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
+            if (variable == Variables.SIGMA_X) {
+                format = tabs.getSelectedTab().getTabContent().getXUncertainty();
+            } else if (variable == Variables.SIGMA_Y) {
+                format = tabs.getSelectedTab().getTabContent().getYUncertainty();
+            } else {
+                format = variable.getFormats().size() > 0 ? variable.getFormats().get(0) : null;
+            }
 
-                    SimplePlotContext plotContext =
-                            (SimplePlotContext)
-                                    ((VariableBindingDialogPane)
-                                            variableBindingDialog
-                                                    .getDialogPane()).getPlotContext();
+            System.out.println("Variable: " + variable.getName());
+            System.out.println("Field: " + dataset.getFields().get(i).getName());
+            System.out.println("Format: " + format.getName() + "\n");
+            plotContext.addBinding(variable, dataset.getFields().get(i), format);
+        }
 
-                    Scene scene = new Scene(plotWindow, 1200, 800);
+        List<Map<String, Object>> data = plotContext.getData();
 
-                    Stage plotStage = new Stage();
-                    plotStage.setTitle(plotType.getName() + ": " + table.getTitle());
-                    plotStage.setOnCloseRequest(closeEvent -> table.removeOpenPlot(plotType));
-                    plotStage.setScene(scene);
-                    plotStage.show();
+        Plot plot = plotType.getPlot();
+        plot.setData(data);
 
-                    // Store plot information in TopsoilTable
-                    PlotInformation plotInfo = new PlotInformation(plot, plotType);
-                    plotInfo.setVariableBindings(plotContext.getBindings());
-                    plotInfo.setStage(plotStage);
-                    table.addOpenPlot(plotInfo);
-                });
+        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
+        Scene scene = new Scene(plotWindow, 1200, 800);
+        Stage plotStage = new Stage();
+        plotStage.setTitle(plotType.getName() + ": " + dataset.getName());
+        plotStage.setOnCloseRequest(closeEvent -> tableController.getTable().removeOpenPlot(plotType));
+        plotStage.setScene(scene);
+        plotStage.show();
+
+        // Store plot information in TopsoilTable
+        PlotInformation plotInfo = new PlotInformation(plot, plotType);
+        plotInfo.setVariableBindings(plotContext.getBindings());
+        plotInfo.setStage(plotStage);
+        tableController.getTable().addOpenPlot(plotInfo);
+
+    }
+
+    private static <T> Field<T> fieldHelper(Field<T> field) {
+        return field;
     }
 }

@@ -15,6 +15,9 @@
  */
 package org.cirdles.topsoil.app.plot;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
 import static org.cirdles.topsoil.app.plot.VariableFormats.UNCERTAINTY_FORMATS;
 
 /**
@@ -28,6 +31,7 @@ public final class Variables {
     public static final Variable Y;
     public static final Variable SIGMA_Y;
     public static final Variable RHO;
+    public static final List<Variable> VARIABLE_LIST;
 
     static {
         X = new IndependentVariable("x");
@@ -35,6 +39,13 @@ public final class Variables {
         Y = new IndependentVariable("y");
         SIGMA_Y = new DependentVariable("sigma_y", Y, UNCERTAINTY_FORMATS);
         RHO = new IndependentVariable("rho");
+        VARIABLE_LIST = asList(
+                X,
+                Y,
+                SIGMA_X,
+                SIGMA_Y,
+                RHO
+        );
     }
 
 }

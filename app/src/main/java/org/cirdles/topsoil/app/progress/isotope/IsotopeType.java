@@ -2,6 +2,9 @@ package org.cirdles.topsoil.app.progress.isotope;
 
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 /**
  * Created by sbunce on 6/27/2016.
  */
@@ -20,6 +23,14 @@ public enum IsotopeType {
     private final String name;
     private final String[] headers;
     private final TopsoilPlotType[] plots;
+
+    public static final List<IsotopeType> ISOTOPE_TYPES;
+    static {
+        ISOTOPE_TYPES = Collections.unmodifiableList(Arrays.asList(
+                UPb,
+                UTh
+        ));
+    }
 
     IsotopeType(String abbr, String name, String [] headers, TopsoilPlotType [] plots) {
         this.abbreviation = abbr;
