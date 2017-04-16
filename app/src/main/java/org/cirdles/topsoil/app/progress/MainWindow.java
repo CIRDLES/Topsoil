@@ -75,7 +75,7 @@ public class MainWindow extends Application {
                 e.printStackTrace();
             }
 
-            primaryStage.setMinHeight(600.0);
+            primaryStage.setMinHeight(400.0);
             primaryStage.setMinWidth(650.0);
             primaryStage.setTitle("Topsoil");
             primaryStage.setScene(scene);
