@@ -27,6 +27,7 @@ public final class UncertaintyEllipsePlotProperties {
     public static final String ELLIPSE_FILL_COLOR = "Ellipse Fill Color";
     public static final String LAMBDA_235 = "LAMBDA_235";
     public static final String LAMBDA_238 = "LAMBDA_238";
+    public static final String CONCORDIA_LINE = "Concordia Line";
 
     private UncertaintyEllipsePlotProperties() {
         // prevents this class from being instantiated

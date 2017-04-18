@@ -17,13 +17,7 @@ package org.cirdles.topsoil.plot.upb.uncertainty;
 
 import java.util.HashMap;
 
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.ELLIPSE_FILL_COLOR;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.LAMBDA_235;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.LAMBDA_238;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.TITLE;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.UNCERTAINTY;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.X_AXIS;
-import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.Y_AXIS;
+import static org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlotProperties.*;
 
 /**
  * Created by johnzeringue on 2/22/16.
@@ -41,6 +35,7 @@ public class UncertaintyEllipsePlotDefaultProperties
         put(UNCERTAINTY, 2);
         put(X_AXIS, "207Pb*/235U");
         put(Y_AXIS, "206Pb*/238U");
+        put(CONCORDIA_LINE, false);
         put(LAMBDA_235, 9.8485e-10);
         put(LAMBDA_238, 1.55125e-10);
     }
