@@ -82,19 +82,19 @@ plot.draw = function (data) {
         var xRange = dataXMax - dataXMin;
         var yRange = dataYMax - dataYMin;
 
-        xMin = dataXMin - 0.05 * xRange;
-        yMin =  dataYMin - 0.05 * yRange;
-        xMax = dataXMax + 0.05 * xRange;
-        yMax = dataYMax + 0.05 * yRange;
+        plot.xMin = dataXMin - 0.05 * xRange;
+        plot.yMin =  dataYMin - 0.05 * yRange;
+        plot.xMax = dataXMax + 0.05 * xRange;
+        plot.yMax = dataYMax + 0.05 * yRange;
     }
 
     // a mathematical construct
     plot.x = d3.scale.linear()
-        .domain([xMin, xMax])
+        .domain([plot.xMin, plot.xMax])
         .range([0, plot.width]);
 
     plot.y = d3.scale.linear()
-        .domain([yMin, yMax])
+        .domain([plot.yMin, plot.yMax])
         .range([plot.height, 0]);
 
     plot.t = d3.scale.linear();
