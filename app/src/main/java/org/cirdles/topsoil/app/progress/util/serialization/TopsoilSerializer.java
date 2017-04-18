@@ -72,12 +72,10 @@ public class TopsoilSerializer {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR,
                     "This .topsoil file may be outdated.", ButtonType.OK);
             errorAlert.showAndWait();
-            e.printStackTrace();
         } catch (FileNotFoundException e) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR,
                     "The specified file does not exist.", ButtonType.OK);
             errorAlert.showAndWait();
-            e.printStackTrace();
         } catch (IOException e) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR,
                     "An unknown error has occurred.", ButtonType.OK);

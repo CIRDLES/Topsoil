@@ -2,25 +2,20 @@ package org.cirdles.topsoil.app.progress;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
+import javafx.fxml.LoadException;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.progress.menu.MainButtonsBar;
-import org.cirdles.topsoil.app.progress.menu.MainMenuBar;
+import javafx.stage.StageStyle;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
@@ -28,83 +23,96 @@ import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 public class MainWindow extends Application {
+
+    private ResourceExtractor resourceExtractor = new ResourceExtractor(MainWindow.class);
+    private final String TOPSOIL_MAIN_WINDOW_FXML_NAME = "main-window.fxml";
+    private final String TOPSOIL_SPLASH_SCREEN_FXML_NAME = "topsoil-splash-screen.fxml";
+    private final String TOPSOIL_CSS_FILE_NAME = "topsoil-stylesheet.css";
+    private final String TOPSOIL_LOGO_FILE_NAME = "topsoil-logo.png";
 
     @Override
     public void start(Stage primaryStage) {
 
-        Scene scene = new Scene(new VBox(), 750, 750);
-
-        TopsoilTabPane tabs = new TopsoilTabPane();
-        tabs.setId("TopsoilTabPane");
-//        tabs.setPadding(new Insets(0.0, 5.0, 0.0, 5.0));
-        VBox.setVgrow(tabs, Priority.ALWAYS);
-        MainMenuBar menuBar = new MainMenuBar(tabs);
-        MenuBar mBar = menuBar.getMenuBar();
-        mBar.setId("MenuBar");
-        MainButtonsBar buttonBar = new MainButtonsBar(tabs);
-        HBox buttons = buttonBar.getButtons();
-        VBox.setVgrow(buttons, Priority.NEVER);
-        buttons.setId("HBox");
-
-        // Create Scene
-        ((VBox) scene.getRoot()).getChildren().addAll(
-                mBar,
-                buttons,
-                tabs
-        );
-
-        // If there is an error in loading the FXML, the program will still load without the splash screen.
         try {
-            Pane splashScreen = FXMLLoader.load(getClass().getResource("topsoilSplashScreen.fxml"));
-            tabs.setVisible(false);
-            tabs.setMaxHeight(0.0);
-            splashScreen.setId("SplashScreen");
-            VBox.setVgrow(splashScreen, Priority.ALWAYS);
-            HBox.setHgrow(splashScreen, Priority.ALWAYS);
-            ((VBox) scene.getRoot()).getChildren().add(splashScreen);
-            splashScreen.setVisible(true);
+            Parent mainWindow;
+            MainWindowController mainWindowController;
 
-            tabs.getTabs().addListener((ListChangeListener<Tab>) c -> {
-                if (tabs.isEmpty()) {
-                    ((VBox) scene.getRoot()).getChildren().add(splashScreen);
-                    tabs.setMaxHeight(0.0);
-                    tabs.setVisible(false);
-                } else {
-                    ((VBox) scene.getRoot()).getChildren().remove(scene.lookup("#SplashScreen"));
-                    tabs.setMaxHeight(800.0);
-                    tabs.setVisible(true);
-                }
+            // Load FXML for MainWindowController
+            try {
+                FXMLLoader mainFXMLLoader = new FXMLLoader(resourceExtractor.extractResourceAsPath(TOPSOIL_MAIN_WINDOW_FXML_NAME)
+                                                                            .toUri().toURL());
+                mainWindow = mainFXMLLoader.load();
+                mainWindowController = mainFXMLLoader.getController();
+            } catch (IOException|NullPointerException e) {
+                e.printStackTrace();
+                throw new LoadException("Could not load " + TOPSOIL_MAIN_WINDOW_FXML_NAME);
+            }
+
+            Scene scene = new Scene(mainWindow, 750, 750);
+
+            // Load CSS
+            try {
+                String css = resourceExtractor.extractResourceAsFile(TOPSOIL_CSS_FILE_NAME).toURI().toURL()
+                                              .toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                System.err.printf("Could not load CSS.\n");
+            }
+
+            // If main window is closed, all other windows close.
+            primaryStage.setOnCloseRequest(event -> verifyWindowClose(event, mainWindowController.getTabPane()));
+
+            // Load logo for use in window and system task bar
+            try {
+                // TODO ResourceExtractor
+                primaryStage.getIcons().add(new Image(resourceExtractor.extractResourceAsPath(TOPSOIL_LOGO_FILE_NAME)
+                                                                       .toUri().toString()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            primaryStage.setMinHeight(400.0);
+            primaryStage.setMinWidth(650.0);
+            primaryStage.setTitle("Topsoil");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+            // TODO Move to MainWindowController
+            // Load splash screen
+            try {
+                Parent splashScreen = FXMLLoader.load(resourceExtractor.extractResourceAsPath(TOPSOIL_SPLASH_SCREEN_FXML_NAME).toUri().toURL());
+                Scene splashScene = new Scene(splashScreen, 450, 600);
+                Stage splashWindow = new Stage(StageStyle.UNDECORATED);
+                splashWindow.setResizable(false);
+                splashWindow.setScene(splashScene);
+
+                splashWindow.requestFocus();
+                splashWindow.initOwner(primaryStage);
+                splashWindow.initModality(Modality.NONE);
+                // Close window if main window gains focus.
+                primaryStage.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        splashWindow.close();
+                    }
+                });
+                splashWindow.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Handle Keyboard Shortcuts
+            scene.setOnKeyPressed(keyEvent -> {
+                setTableKeyboardShortcuts(keyEvent, mainWindowController.getTabPane());
+                setUndoKeyboardShortcuts(keyEvent, mainWindowController.getTabPane());
+                keyEvent.consume();
             });
-        } catch (IOException e) {
+        } catch (LoadException e) {
             e.printStackTrace();
         }
-
-
-        // If main window is closed, all other windows close.
-        primaryStage.setOnCloseRequest(event -> verifyWindowClose(event, tabs));
-
-        // Display Scene
-        try {
-            primaryStage.getIcons().add(new Image("org/cirdles/topsoil/app/progress/topsoil-logo.png"));
-        } catch (Exception e) {
-            // Inconsequential, the default will load.
-            e.printStackTrace();
-        }
-        primaryStage.setMinHeight(600.0);
-        primaryStage.setMinWidth(650.0);
-        primaryStage.setTitle("Topsoil");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        // Handle Keyboard Shortcuts
-        scene.setOnKeyPressed(keyEvent -> {
-            setTableKeyboardShortcuts(keyEvent, tabs);
-            setUndoKeyboardShortcuts(keyEvent, tabs);
-            keyEvent.consume();
-        });
-
     }
 
     private static void setTableKeyboardShortcuts(KeyEvent keyEvent, TopsoilTabPane tabs) {

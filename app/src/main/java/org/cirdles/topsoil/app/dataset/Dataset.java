@@ -24,11 +24,11 @@ import java.util.List;
  *
  * @author John Zeringue
  */
-public interface Dataset {
+public interface Dataset<T> {
 
     public String getName();
 
-    public List<Field<?>> getFields();
+    public List<Field<T>> getFields();
 
     public List<Entry> getEntries();
 

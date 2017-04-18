@@ -1,23 +1,23 @@
 package org.cirdles.topsoil.app.progress.table;
 
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.HBox;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableCell;
+import org.cirdles.topsoil.app.progress.table.command.*;
 
 /**
  * Created by benjaminmuldrow on 8/1/16.
  */
-public class TopsoilTableCellContextMenu extends ContextMenu {
+class TopsoilTableCellContextMenu extends ContextMenu {
 
     private MenuItem addRowAboveItem;
     private MenuItem addRowBelowItem;
     private MenuItem deleteRowItem;
-    private MenuItem deleteColumnItem;
+//    private MenuItem deleteColumnItem;
+    //TODO Enable Column renaming
+    private MenuItem renameColumnItem;
     private MenuItem copyCellItem;
     private MenuItem copyRowItem;
     private MenuItem copyColumnItem;
@@ -27,7 +27,7 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
 
     private TopsoilTableCell cell;
 
-    public TopsoilTableCellContextMenu(TopsoilTableCell cell) {
+    TopsoilTableCellContextMenu(TopsoilTableCell cell) {
         super();
         this.cell = cell;
 
@@ -39,7 +39,8 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
         copyRowItem = new MenuItem("Copy Row");
         clearRowItem = new MenuItem("Clear Row");
 
-        deleteColumnItem = new MenuItem("Delete Column");
+//        deleteColumnItem = new MenuItem("Delete Column");
+        renameColumnItem = new MenuItem("Rename Column");
         copyColumnItem = new MenuItem("Copy Column");
         clearColumnItem = new MenuItem("Clear Column");
 
@@ -85,10 +86,34 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
             ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearRowCommand);
         });
 
-        deleteColumnItem.setOnAction(action -> {
-            DeleteColumnCommand deleteColumnCommand = new DeleteColumnCommand(this.cell);
-            deleteColumnCommand.execute();
-            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(deleteColumnCommand);
+//        deleteColumnItem.setOnAction(action -> {
+//            DeleteColumnCommand deleteColumnCommand = new DeleteColumnCommand(this.cell);
+//            deleteColumnCommand.execute();
+//            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(deleteColumnCommand);
+//        });
+
+        renameColumnItem.setOnAction(action -> {
+            Dialog<String> columnRenameDialog = new Dialog<>();
+
+            HBox hbox = new HBox(10.0);
+            Label columnNameLabel = new Label("Column Name: ");
+            TextField columnNameTextField = new TextField(this.cell.getTableColumn().getText());
+            hbox.getChildren().addAll(columnNameLabel, columnNameTextField);
+
+            columnRenameDialog.getDialogPane().setContent(hbox);
+            columnRenameDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.APPLY);
+
+            columnRenameDialog.setResultConverter(value -> {
+                if (value == ButtonType.APPLY) {
+                    return columnNameTextField.getText().trim();
+                }
+                return null;
+            });
+
+            columnRenameDialog.showAndWait().ifPresent(result -> {
+//                ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().getTopsoilTable().getColumnNameProperties().get(this.cell.getColumnIndex()).set(result);
+                this.cell.getTableColumn().setText(result);
+            });
         });
 
         copyColumnItem.setOnAction(action -> {
@@ -132,7 +157,8 @@ public class TopsoilTableCellContextMenu extends ContextMenu {
                 copyRowItem,
                 clearRowItem,
                 new SeparatorMenuItem(),
-                deleteColumnItem,
+//                deleteColumnItem,
+                renameColumnItem,
                 copyColumnItem,
                 clearColumnItem,
                 new SeparatorMenuItem(),

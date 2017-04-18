@@ -57,23 +57,23 @@ public class VariableBindingDialogPane extends DialogPane {
         PlotContext plotContext = this.getPlotContext();
 
         List<Map<String, Object>> data = new ArrayList<>();
-
-        dataset.getEntries().forEach(entry -> {
-            Map<String, Object> d = new HashMap<>();
-
-            variableBindingView.getControls().forEach(control -> {
-                Variable<?> variable = control.getVariable();
-                d.put(variable.getName(), plotContext.getValue(variable, entry).get());
-            });
-
-            d.put("Selected", true);
-
-            entry.<Boolean>get(Fields.SELECTED).ifPresent(selected -> {
-                d.put("Selected", selected);
-            });
-
-            data.add(d);
-        });
+//
+//        dataset.getEntries().forEach(entry -> {
+//            Map<String, Object> d = new HashMap<>();
+//
+//            variableBindingView.getControls().forEach(control -> {
+//                Variable<?> variable = control.getVariable();
+//                d.put(variable.getName(), plotContext.getValue(variable, entry).get());
+//            });
+//
+//            d.put("Selected", true);
+//
+//            entry.<Boolean>get(Fields.SELECTED).ifPresent(selected -> {
+//                d.put("Selected", selected);
+//            });
+//
+//            data.add(d);
+//        });
 
         return data;
     }

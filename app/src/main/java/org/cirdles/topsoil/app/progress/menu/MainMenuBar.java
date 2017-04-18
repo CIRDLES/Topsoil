@@ -1,9 +1,19 @@
 package org.cirdles.topsoil.app.progress.menu;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.Clipboard;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
+import org.cirdles.topsoil.app.progress.menu.command.ClearTableCommand;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 
@@ -12,22 +22,20 @@ import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.io.IOException;
 
-import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleNewTable;
-import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleReportIssue;
-import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.handleTableFromFile;
+import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.*;
 
 /**
  * Created by sbunce on 5/30/2016.
  */
 public class MainMenuBar extends MenuBar {
 
+    // TODO Hella reorganize
+
     private MenuBar menuBar = new MenuBar();
+    private ResourceExtractor resourceExtractor = new ResourceExtractor(MainMenuBar.class);
+    private final String TOPSOIL_ABOUT_SCREEN_FXML_NAME = "topsoil-about-screen.fxml";
 
-    // Edit Menu
-    private MenuItem undoItem;
-    private MenuItem redoItem;
-
-    // Project Menu
+    // File Menu
 //    private MenuItem newProjectItem;
     private MenuItem saveProjectItem;
     private MenuItem saveProjectAsItem;
@@ -35,10 +43,16 @@ public class MainMenuBar extends MenuBar {
     //    private MenuItem mostRecentItem;
     private MenuItem closeProjectItem;
 
+    // Edit Menu
+    private MenuItem undoItem;
+    private MenuItem redoItem;
+
     // Table Menu
     private MenuItem newTableItem;
     private MenuItem saveTableItem;
     private MenuItem saveTableAsItem;
+    private MenuItem clearTableItem;
+
     // Import >
     private MenuItem tableFromFileItem;
     private MenuItem tableFromClipboardItem;
@@ -58,6 +72,10 @@ public class MainMenuBar extends MenuBar {
     }
 
     private void initialize(TopsoilTabPane tabs) {
+
+        // File Menu
+        Menu fileMenu = setFileMenuItems(tabs);
+
         // Edit Menu
         Menu editMenu = new Menu("Edit");
         undoItem = new MenuItem("Undo \"\"");
@@ -105,14 +123,12 @@ public class MainMenuBar extends MenuBar {
             }
         });
 
-        // Project Menu
-        Menu projectMenu = setProjectMenuItems(tabs);
-
         // Table Menu
         Menu tableMenu = new Menu("Table");
         newTableItem = new MenuItem("New Table");
         saveTableItem = new MenuItem("Save Table");
         saveTableAsItem = new MenuItem("Save Table As");
+        clearTableItem = new MenuItem("Clear Table");
 
         newTableItem.setOnAction(event -> {
             TopsoilTable table = MenuItemEventHandler.handleNewTable();
@@ -124,6 +140,14 @@ public class MainMenuBar extends MenuBar {
         //Saves the currently opened table as a specified file
         saveTableAsItem = new MenuItem("Save Table As");
 
+        clearTableItem.setOnAction(action -> {
+            // clear table and add an empty row
+            ClearTableCommand clearTableCommand =
+                    new ClearTableCommand(tabs.getSelectedTab().getTabContent().getTableView());
+            clearTableCommand.execute();
+            tabs.getSelectedTab().addUndo(clearTableCommand);
+        });
+
         //Creates Submenu for Imports
         Menu importTable = new Menu("Import Table");
         tableFromFileItem = new MenuItem("From File");
@@ -131,6 +155,14 @@ public class MainMenuBar extends MenuBar {
         importTable.getItems().addAll(
                 tableFromFileItem,
                 tableFromClipboardItem);
+
+        importTable.setOnShown(event -> {
+            if (Clipboard.getSystemClipboard().hasString()) {
+                tableFromClipboardItem.setDisable(false);
+            } else {
+                tableFromClipboardItem.setDisable(true);
+            }
+        });
 
         //Creates Submenu for Isotype system selection
         Menu isoSystem = new Menu("Set Isotope System");
@@ -141,16 +173,45 @@ public class MainMenuBar extends MenuBar {
                 uraniumLeadSystemItem,
                 uraniumThoriumSystemItem,
                 genericSystemItem);
+
+        isoSystem.setOnShown(event -> {
+            if (tabs.isEmpty()) {
+                uraniumLeadSystemItem.setDisable(true);
+                uraniumThoriumSystemItem.setDisable(true);
+                genericSystemItem.setDisable(true);
+            } else {
+                uraniumLeadSystemItem.setDisable(false);
+                uraniumThoriumSystemItem.setDisable(false);
+                genericSystemItem.setDisable(false);
+            }
+        });
+
         tableMenu.getItems()
                 .addAll(newTableItem,
+                        new SeparatorMenuItem(),
                         saveTableItem,
                         saveTableAsItem,
+                        new SeparatorMenuItem(),
+                        clearTableItem,
+                        new SeparatorMenuItem(),
                         importTable,
                         isoSystem);
 
+        tableMenu.setOnShown(event -> {
+            if (tabs.isEmpty()) {
+                clearTableItem.setDisable(true);
+            } else {
+                if (!tabs.getSelectedTab().getTopsoilTable().isCleared()) {
+                    clearTableItem.setDisable(false);
+                } else {
+                    clearTableItem.setDisable(true);
+                }
+            }
+        });
+
         uraniumLeadSystemItem.setOnAction(event -> {
             // if the table isn't already UPb
-            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals(IsotopeType.UPb)) {
+            if (!(tabs.getSelectedTab().getTopsoilTable().getIsotopeType() == IsotopeType.UPb)) {
                 tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UPb);
             }
         });
@@ -172,18 +233,27 @@ public class MainMenuBar extends MenuBar {
         MenuItem generatePlotItem = new MenuItem("Generate Plot");
         plotMenu.getItems().add(generatePlotItem);
 
+        plotMenu.setOnShown(event -> {
+            if (tabs.isEmpty()) {
+                generatePlotItem.setDisable(true);
+            } else {
+                generatePlotItem.setDisable(false);
+            }
+        });
+
         // Help Menu
         Menu helpMenu = new Menu("Help");
         reportIssueItem = new MenuItem("Report Issue");
         aboutItem = new MenuItem("About");
+
         helpMenu.getItems()
                 .addAll(reportIssueItem,
                         aboutItem);
 
         // Add menus to menuBar
         menuBar.getMenus()
-                .addAll(editMenu,
-                        projectMenu,
+                .addAll(fileMenu,
+                        editMenu,
                         tableMenu,
                         plotMenu,
                         helpMenu);
@@ -209,6 +279,25 @@ public class MainMenuBar extends MenuBar {
 
         });
 
+        //Import Table from Clipboard
+        tableFromClipboardItem.setOnAction(action -> {
+
+            TopsoilTable table = null;
+
+            try {
+                table = handleTableFromClipboard();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (table != null) {
+                tabs.add(table);
+            } else {
+                ErrorAlerter alerter = new ErrorAlerter();
+            }
+
+        });
+
         // New, empty table
         newTableItem.setOnAction(event -> {
 
@@ -216,7 +305,9 @@ public class MainMenuBar extends MenuBar {
             TopsoilTable table = handleNewTable();
 
             // display new table
-            tabs.add(table);
+            if (table != null) {
+                tabs.add(table);
+            }
         });
 
         // Generate Plot
@@ -230,10 +321,36 @@ public class MainMenuBar extends MenuBar {
         reportIssueItem.setOnAction(event -> {
             handleReportIssue();
         });
+
+        // About
+        aboutItem.setOnAction(event -> {
+            try {
+                Parent about = FXMLLoader
+                        .load(resourceExtractor.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL
+                                ());
+                Scene aboutScene = new Scene(about, 450, 600);
+                Stage aboutWindow = new Stage(StageStyle.UNDECORATED);
+                aboutWindow.setResizable(false);
+                aboutWindow.setScene(aboutScene);
+
+                aboutWindow.requestFocus();
+                aboutWindow.initOwner(tabs.getScene().getWindow());
+                aboutWindow.initModality(Modality.NONE);
+                // Close window if main window gains focus.
+//                tabs.getScene().getWindow().focusedProperty().addListener((observable, oldValue, newValue) -> {
+//                    if (newValue) {
+//                        aboutWindow.close();
+//                    }
+//                });
+                aboutWindow.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
-    private Menu setProjectMenuItems(TopsoilTabPane tabs) {
-        Menu projectMenu = new Menu("Project");
+    private Menu setFileMenuItems(TopsoilTabPane tabs) {
+        Menu fileMenu = new Menu("File");
 //        newProjectItem = new MenuItem("New Project");
         saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
@@ -254,23 +371,24 @@ public class MainMenuBar extends MenuBar {
 
         closeProjectItem.setOnAction(event -> MenuItemEventHandler.handleCloseProjectFile(tabs));
 
-        projectMenu.getItems()
+        fileMenu.getItems()
                 .addAll(
 //                        newProjectItem,
                         openProjectItem,
                         closeProjectItem,
+                        new SeparatorMenuItem(),
                         saveProjectItem,
                         saveProjectAsItem
 //                        , mostRecentItem
                 );
 
-        projectMenu.setOnShown(event -> {
+        fileMenu.setOnShown(event -> {
             saveProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
             saveProjectAsItem.setDisable(tabs.isEmpty());
             closeProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
         });
 
-        return projectMenu;
+        return fileMenu;
     }
 
     //Returns compatible type to be added to main window

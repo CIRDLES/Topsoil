@@ -6,6 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.progress.table.command.TableCellEditCommand;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
@@ -31,7 +32,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      * Constructs a new TopsoilTableCell. The NumberFormat is introduced, as well as specific KeyEvents handled and a
      * context menu supplied.
      */
-    TopsoilTableCell() {
+    public TopsoilTableCell() {
         super();
 
         this.setFont(Font.font("Monospaced"));
@@ -136,8 +137,8 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         try {
             Double newVal = Double.valueOf(textField.getText());
             if (Double.compare(this.getItem(), newVal) != 0) {
-                commitEdit(newVal);
                 addUndo(this.getItem(), newVal);
+                commitEdit(newVal);
             } else {
                 cancelEdit();
             }
@@ -153,7 +154,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      *
      * @return  TopsoilDataEntry
      */
-    TopsoilDataEntry getDataEntry() {
+    public TopsoilDataEntry getDataEntry() {
         return this.getTableView().getItems().get(this.getIndex());
     }
 
@@ -162,7 +163,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      *
      * @return  int column index
      */
-    int getColumnIndex() {
+    public int getColumnIndex() {
         return Integer.parseInt(this.getTableColumn().getId());
     }
 

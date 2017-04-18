@@ -13,6 +13,8 @@ import org.cirdles.topsoil.plot.scatter.ScatterPlot;
 import org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlot;
 import org.cirdles.topsoil.plot.uth.evolution.EvolutionPlot;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -44,6 +46,15 @@ public enum TopsoilPlotType {
     private final List<Variable> variables;
     private final Plot plot;
     private final Node propertiesPanel;
+
+    public static final List<TopsoilPlotType> TOPSOIL_PLOT_TYPES;
+    static {
+        TOPSOIL_PLOT_TYPES = Collections.unmodifiableList(Arrays.asList(
+                SCATTER_PLOT,
+                UNCERTAINTY_ELLIPSE_PLOT,
+                EVOLUTION_PLOT
+        ));
+    }
 
     TopsoilPlotType(String name, List<Variable> variables, Supplier<? extends Plot> plot,
                            Function<Plot, ? extends Node> propertiesPanel) {

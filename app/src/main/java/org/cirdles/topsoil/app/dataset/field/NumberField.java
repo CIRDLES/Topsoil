@@ -23,18 +23,18 @@ import javafx.util.StringConverter;
  *
  * @author zeringuej
  */
-public class NumberField extends BaseField implements Field {
+public class NumberField extends BaseField<Number> implements Field<Number> {
 
     public NumberField(String name) {
         super(name);
     }
 
     @Override
-    public StringConverter<Double> getStringConverter() {
-        return new StringConverter<Double>() {
+    public StringConverter<Number> getStringConverter() {
+        return new StringConverter<Number>() {
 
             @Override
-            public String toString(Double number) {
+            public String toString(Number number) {
                 if (number == null) {
                     return "---";
                 }
@@ -43,11 +43,11 @@ public class NumberField extends BaseField implements Field {
             }
 
             @Override
-            public Double fromString(String string) {
+            public Number fromString(String string) {
 
                 //Check for valid numbers
                 try {
-                    return Double.valueOf(string);
+                    return (Number) Double.valueOf(string);
                 } catch (NumberFormatException e) {
                     return NaN;
                 }

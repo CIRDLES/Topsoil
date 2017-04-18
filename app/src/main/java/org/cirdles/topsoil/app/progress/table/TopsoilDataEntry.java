@@ -23,11 +23,11 @@ public class TopsoilDataEntry implements GenericDataEntry {
         this.properties = FXCollections.observableArrayList(
                 new ArrayList<DoubleProperty>()
         );
-        addEntries(entries);
+        addValues(entries);
     }
 
     @Override
-    public void addEntries(Double... entries) {
+    public void addValues(Double... entries) {
         for (Double value : entries) {
             this.properties.add(
                     new SimpleDoubleProperty(value)
@@ -35,8 +35,8 @@ public class TopsoilDataEntry implements GenericDataEntry {
         }
     }
 
-    void changeEntry(int index, DoubleProperty value) {
-        this.getProperties().set(index, value);
+    public void setValue(int index, Double value) {
+        this.getProperties().get(index).set(value);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class TopsoilDataEntry implements GenericDataEntry {
     public static TopsoilDataEntry newEmptyDataEntry(TableView tableView) {
         TopsoilDataEntry dataEntry = new TopsoilDataEntry();
         for (Object column : tableView.getColumns()) {
-            dataEntry.addEntries(0.0);
+            dataEntry.addValues(0.0);
         }
         return dataEntry;
     }

@@ -11,7 +11,7 @@ public interface GenericDataEntry {
      * Add value entries to the data etry
      * @param entries simple collection of Double values to enter
      */
-    void addEntries(Double... entries);
+    void addValues(Double... entries);
 
     /**
      * get all properties contained in the data entry

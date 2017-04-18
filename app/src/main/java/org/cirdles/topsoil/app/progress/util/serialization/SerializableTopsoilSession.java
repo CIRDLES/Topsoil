@@ -2,7 +2,6 @@ package org.cirdles.topsoil.app.progress.util.serialization;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.SimpleDataset;
 import org.cirdles.topsoil.app.plot.PlotWindow;
@@ -47,8 +46,20 @@ class SerializableTopsoilSession implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<Map<String, Serializable>> data;
-    private Map<String, IsotopeType> isotopeType;
-    private Map<String, TopsoilPlotType> topsoilPlotType;
+
+    private static Map<String, IsotopeType> ISOTOPE_TYPES;
+    private static Map<String, TopsoilPlotType> TOPSOIL_PLOT_TYPES;
+    static {
+        ISOTOPE_TYPES = new HashMap<>();
+        for (IsotopeType type : IsotopeType.ISOTOPE_TYPES) {
+            ISOTOPE_TYPES.put(type.getAbbreviation(), type);
+        }
+
+        TOPSOIL_PLOT_TYPES = new HashMap<>();
+        for (TopsoilPlotType type : TopsoilPlotType.TOPSOIL_PLOT_TYPES) {
+            TOPSOIL_PLOT_TYPES.put(type.getName(), type);
+        }
+    }
 
     /**
      * Constructs an instance of <tt>SerializableTopsoilSession</tt>, using
@@ -58,18 +69,6 @@ class SerializableTopsoilSession implements Serializable {
      */
     public SerializableTopsoilSession(TopsoilTabPane tabs) {
         this.data = new ArrayList<>();
-
-        this.isotopeType = new HashMap<>();
-        this.topsoilPlotType = new HashMap<>();
-
-        this.isotopeType.put("UPb", IsotopeType.UPb);
-        this.isotopeType.put("UTh", IsotopeType.UTh);
-        this.isotopeType.put("Gen", IsotopeType.Generic);
-
-        topsoilPlotType.put("Scatter Plot", TopsoilPlotType.SCATTER_PLOT);
-        topsoilPlotType.put("Uncertainty Ellipse Plot", TopsoilPlotType.UNCERTAINTY_ELLIPSE_PLOT);
-        topsoilPlotType.put("Evolution Plot", TopsoilPlotType.EVOLUTION_PLOT);
-        topsoilPlotType.put("Base Plot", TopsoilPlotType.BASE_PLOT);
 
         List<TopsoilTab> topsoilTabs = tabs.getTopsoilTabs();
         for (TopsoilTab tab : topsoilTabs) {
@@ -109,7 +108,7 @@ class SerializableTopsoilSession implements Serializable {
 
             table = new TopsoilTable(
                     headers,
-                    this.isotopeType.get((String) tableData.get("IsotopeType")),
+                    this.ISOTOPE_TYPES.get((String) tableData.get("IsotopeType")),
                     dataEntries
             );
             table.setTitle((String) tableData.get("Title"));
@@ -134,26 +133,18 @@ class SerializableTopsoilSession implements Serializable {
         tableData.put("Title", table.getTitle());
 
         // Arrangement of the TableView's headers
-        String[] headers = new String[table.getTable().getColumns().size()];
-        for (int i = 0; i < table.getTable().getColumns().size(); i++) {
-            headers[i] = ((TableColumn) table.getTable().getColumns().get(i)).getText();
-        }
-        tableData.put("Headers", headers);
+        tableData.put("Headers", table.getColumnNames());
 
         // IsotopeType of the TopsoilTable
         tableData.put("IsotopeType", table.getIsotopeType().getAbbreviation());
 
         // Data stored in the TableView
-        ArrayList<Double[]> tableEntries = new ArrayList<>();
-        for (Object entry : table.getTable().getItems()) {
-            tableEntries.add(((TopsoilDataEntry) entry).toArray());
-        }
-        tableData.put("Data", tableEntries);
+        tableData.put("Data", new ArrayList<>(table.getDataAsArrays()));
 
         // Plots which visualize data stored in the TableView
         ArrayList<HashMap<String, Serializable>> plots = new ArrayList<>();
         for (PlotInformation plotInfo : table.getOpenPlots()) {
-            plots.add(this.convertPlotInformation(plotInfo));
+            plots.add(convertPlotInformation(plotInfo));
         }
         tableData.put("Plots", plots);
 
@@ -196,41 +187,41 @@ class SerializableTopsoilSession implements Serializable {
      * @param plotOptions   a Map containing the stored plot properties
      */
     private void openPlotWithOptions(TopsoilTable table, Map<String, Serializable> plotOptions) {
-        TopsoilPlotType plotType = this.topsoilPlotType.get(plotOptions.get("Topsoil Plot Type"));
+        TopsoilPlotType plotType = this.TOPSOIL_PLOT_TYPES.get(plotOptions.get("Topsoil Plot Type"));
         List<Variable> variables = plotType.getVariables();
-        SimpleDataset dataset = new SimpleDataset(table.getTitle(), new TopsoilRawData(table).getRawData());
-        VariableBindingDialog variableBindingDialog = new VariableBindingDialog(variables, dataset);
-
-        // TODO Replace default variable bindings with selected bindings
-        List<Map<String, Object>> fieldData =
-                ((VariableBindingDialogPane)
-                        variableBindingDialog
-                                .getDialogPane()).getData();
-
-        Plot plot = plotType.getPlot();
-        plot.setData(fieldData);
-        plot.setProperties((Map<String, Object>) plotOptions.get("Properties"));
-
-        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
-
-        SimplePlotContext plotContext =
-                (SimplePlotContext)
-                        ((VariableBindingDialogPane)
-                                variableBindingDialog
-                                        .getDialogPane()).getPlotContext();
-
-        // Store plot information in TopsoilTable
-        PlotInformation plotInfo = new PlotInformation(plot, plotType);
-        plotInfo.setVariableBindings(plotContext.getBindings());
-        table.addOpenPlot(plotInfo);
-
-        Scene scene = new Scene(plotWindow, 1200, 800);
-
-        Stage plotStage = new Stage();
-        plotStage.setTitle(plotType.getName() + ": " + table.getTitle());
-        plotStage.setOnCloseRequest(closeEvent -> table.removeOpenPlot(plotType));
-        plotInfo.setStage(plotStage);
-        plotStage.setScene(scene);
-        plotStage.show();
+//        SimpleDataset dataset = new SimpleDataset(table.getTitle(), new TopsoilRawData(table).getRawData());
+//        VariableBindingDialog variableBindingDialog = new VariableBindingDialog(variables, dataset);
+//
+//        // TODO Replace default variable bindings with selected bindings
+//        List<Map<String, Object>> fieldData =
+//                ((VariableBindingDialogPane)
+//                        variableBindingDialog
+//                                .getDialogPane()).getData();
+//
+//        Plot plot = plotType.getPlot();
+//        plot.setData(fieldData);
+//        plot.setProperties((Map<String, Object>) plotOptions.get("Properties"));
+//
+//        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
+//
+//        SimplePlotContext plotContext =
+//                (SimplePlotContext)
+//                        ((VariableBindingDialogPane)
+//                                variableBindingDialog
+//                                        .getDialogPane()).getPlotContext();
+//
+//        // Store plot information in TopsoilTable
+//        PlotInformation plotInfo = new PlotInformation(plot, plotType);
+//        plotInfo.setVariableBindings(plotContext.getBindings());
+//        table.addOpenPlot(plotInfo);
+//
+//        Scene scene = new Scene(plotWindow, 1200, 800);
+//
+//        Stage plotStage = new Stage();
+//        plotStage.setTitle(plotType.getName() + ": " + table.getTitle());
+//        plotStage.setOnCloseRequest(closeEvent -> table.removeOpenPlot(plotType));
+//        plotInfo.setStage(plotStage);
+//        plotStage.setScene(scene);
+//        plotStage.show();
     }
 }

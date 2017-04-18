@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="221.0" prefWidth="750.0" style="-fx-background-color: lightgrey;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="TOP_CENTER" maxWidth="400.0" minWidth="-Infinity" prefHeight="221.0" prefWidth="263.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="300.0" prefHeight="50.0" prefWidth="375.0">
+               <children>
+                  <Label text="Isotope System:">
+                     <HBox.margin>
+                        <Insets left="25.0" right="10.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ChoiceBox prefWidth="150.0">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </ChoiceBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+               <children>
+                  <GridPane>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="120.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints prefHeight="25.0" />
+                        <RowConstraints minHeight="-Infinity" prefHeight="30.0" />
+                        <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+                        <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+                     </rowConstraints>
+                     <children>
+                        <CheckBox mnemonicParsing="false" text="Ellipses" GridPane.rowIndex="1" />
+                        <CheckBox mnemonicParsing="false" text="Dots" GridPane.rowIndex="2" />
+                        <CheckBox mnemonicParsing="false" text="Crosses" GridPane.rowIndex="3" />
+                        <ColorPicker GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ColorPicker GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ColorPicker GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="Plot data as:" />
+                     </children>
+                     <padding>
+                        <Insets left="25.0" />
+                     </padding>
+                  </GridPane>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="150.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="120.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="-Infinity" prefHeight="25.0" vgrow="NEVER" />
+                      <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Features:" />
+                        <ToggleButton mnemonicParsing="false" text="McLean Regression" GridPane.rowIndex="1" />
+                        <ColorPicker GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                     </children>
+                  </GridPane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
