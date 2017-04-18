@@ -59,6 +59,7 @@ public class MainMenuBar extends MenuBar {
     // Isotope System >
     private MenuItem uraniumLeadSystemItem;
     private MenuItem uraniumThoriumSystemItem;
+    private MenuItem genericSystemItem;
 
     // Help Menu
     private MenuItem reportIssueItem;
@@ -167,17 +168,21 @@ public class MainMenuBar extends MenuBar {
         Menu isoSystem = new Menu("Set Isotope System");
         uraniumLeadSystemItem = new MenuItem("UPb");
         uraniumThoriumSystemItem = new MenuItem("UTh");
+        genericSystemItem = new MenuItem("Gen");
         isoSystem.getItems().addAll(
                 uraniumLeadSystemItem,
-                uraniumThoriumSystemItem);
+                uraniumThoriumSystemItem,
+                genericSystemItem);
 
         isoSystem.setOnShown(event -> {
             if (tabs.isEmpty()) {
                 uraniumLeadSystemItem.setDisable(true);
                 uraniumThoriumSystemItem.setDisable(true);
+                genericSystemItem.setDisable(true);
             } else {
                 uraniumLeadSystemItem.setDisable(false);
                 uraniumThoriumSystemItem.setDisable(false);
+                genericSystemItem.setDisable(false);
             }
         });
 
@@ -208,6 +213,18 @@ public class MainMenuBar extends MenuBar {
             // if the table isn't already UPb
             if (!(tabs.getSelectedTab().getTopsoilTable().getIsotopeType() == IsotopeType.UPb)) {
                 tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UPb);
+            }
+        });
+
+        genericSystemItem.setOnAction(event -> {
+            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals((IsotopeType.Generic))) {
+                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.Generic);
+            }
+        });
+
+        uraniumThoriumSystemItem.setOnAction(event -> {
+            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals(IsotopeType.UTh)) {
+                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UTh);
             }
         });
 

@@ -4,9 +4,11 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.plot.Variable;
 import org.cirdles.topsoil.app.plot.Variables;
+import org.cirdles.topsoil.app.plot.standard.BasePlotPropertiesPanel;
 import org.cirdles.topsoil.app.plot.standard.ScatterPlotPropertiesPanel;
 import org.cirdles.topsoil.app.plot.standard.UncertaintyEllipsePlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.base.BasePlot;
 import org.cirdles.topsoil.plot.scatter.ScatterPlot;
 import org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlot;
 import org.cirdles.topsoil.plot.uth.evolution.EvolutionPlot;
@@ -23,6 +25,10 @@ import static java.util.Arrays.asList;
  * Created by benjaminmuldrow on 8/9/16.
  */
 public enum TopsoilPlotType {
+
+    BASE_PLOT("Base Plot",
+            asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
+            BasePlot::new, BasePlotPropertiesPanel::new),
 
     SCATTER_PLOT("Scatter Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
@@ -55,7 +61,7 @@ public enum TopsoilPlotType {
         this.name = name;
         this.variables = variables;
         this.plot = plot.get();
-        this.propertiesPanel = propertiesPanel.apply(plot.get());
+        this.propertiesPanel = propertiesPanel.apply(this.plot);
     }
 
     public static Node emptyPropertyPanel(Plot plot) {

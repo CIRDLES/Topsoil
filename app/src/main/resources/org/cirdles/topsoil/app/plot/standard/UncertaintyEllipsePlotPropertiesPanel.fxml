@@ -19,6 +19,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.CheckBox?>
 <?import org.cirdles.topsoil.app.plot.standard.UncertaintyEllipsePlotPropertiesPanel?>
 <?import javafx.scene.control.ColorPicker?>
 <fx:root type="UncertaintyEllipsePlotPropertiesPanel"
@@ -46,5 +47,10 @@
     <HBox alignment="CENTER">
         <Label>Ellipse Fill Color:</Label>
         <ColorPicker fx:id="ellipseFillColorPicker"/>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT">
+        <Label>Wetherill Concordia Line: </Label>
+        <CheckBox fx:id="concordiaVisibilityBox"/>
     </HBox>
 </fx:root>

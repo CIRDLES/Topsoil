@@ -11,6 +11,10 @@ import java.util.List;
 public enum IsotopeType {
 
     //Isotope abbreviation, isotope name, array of default headers as strings
+    Generic("Gen", "Generic",
+            new String[]{"x", "±2σ (%)", "x", "±2σ (%)", "Corr Coef"},
+            new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT}),
+
     UPb("UPb", "Uranium Lead",
             new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"},
             new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT, TopsoilPlotType.UNCERTAINTY_ELLIPSE_PLOT}),

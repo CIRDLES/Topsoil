@@ -17,8 +17,7 @@ package org.cirdles.topsoil.plot.scatter;
 
 import java.util.HashMap;
 
-import static org.cirdles.topsoil.plot.scatter.ScatterPlotProperties.POINT_FILL_COLOR;
-import static org.cirdles.topsoil.plot.scatter.ScatterPlotProperties.TITLE;
+import static org.cirdles.topsoil.plot.scatter.ScatterPlotProperties.*;
 
 /**
  * Created by johnzeringue on 2/22/16.
@@ -33,5 +32,4 @@ public class ScatterPlotDefaultProperties extends HashMap<String, Object> {
         put(POINT_FILL_COLOR, "steelblue");
         put(TITLE, "Scatter Plot");
     }
-
 }
