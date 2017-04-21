@@ -111,7 +111,10 @@ class TopsoilTableCellContextMenu extends ContextMenu {
             });
 
             columnRenameDialog.showAndWait().ifPresent(result -> {
-//                ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().getTopsoilTable().getColumnNameProperties().get(this.cell.getColumnIndex()).set(result);
+                ColumnRenameCommand columnRenameCommand = new ColumnRenameCommand(cell.getTableColumn(), cell
+                        .getTableColumn().getText(), result);
+                columnRenameCommand.execute();
+                ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(columnRenameCommand);
                 this.cell.getTableColumn().setText(result);
             });
         });
