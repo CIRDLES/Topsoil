@@ -4,8 +4,14 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
@@ -17,6 +23,7 @@ import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.command.TableColumnReorderCommand;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,14 +32,12 @@ import java.util.List;
 public class TopsoilTableController {
 
     private TopsoilTable table;
-    private TopsoilTab tab;
     private TopsoilTabContent tabContent;
 
     private ObservableList<TopsoilDataEntry> tableData;
 
     public TopsoilTableController(TopsoilTable table, TopsoilTabContent tabContent) {
         this.table = table;
-        this.tab = tab;
         this.tabContent = tabContent;
 
         // Get data from the TopsoilTable and put it into the TableView in TabContent.
@@ -43,9 +48,28 @@ public class TopsoilTableController {
         ObservableList<TopsoilDataEntry> data = table.getData();
         for (int i = 0; i < tableData.size(); i++) {
             for (int j = 0; j < tableData.get(i).getProperties().size(); j++) {
-                data.get(i).getProperties().get(j).bindBidirectional(tableData.get(i).getProperties().get(j));
+                data.get(i).getProperties().get(j).bind(tableData.get(i).getProperties().get(j));
             }
         }
+
+        // Listen for changes in the TableView rows
+        tableData.addListener((ListChangeListener<TopsoilDataEntry>) c -> {
+            c.next();
+
+            if (c.wasAdded()) {
+                int index = c.getFrom();
+                TopsoilDataEntry newEntry = tableData.get(index).cloneEntry();
+                for (int i = 0; i < tableData.get(index).getProperties().size(); i++) {
+                    newEntry.getProperties().get(i).bind(tableData.get(index).getProperties().get(i));
+                }
+                table.getData().add(index, newEntry);
+            }
+
+            if (c.wasRemoved()) {
+                int index = c.getFrom();
+                table.getData().remove(index);
+            }
+        });
 
         tabContent.getTableView().setItems(tableData);
 
@@ -75,28 +99,16 @@ public class TopsoilTableController {
         this.table = table;
     }
 
-    public TopsoilTab getTopsoilTab() {
-        return tab;
-    }
-
-    public void setTopsoilTab(TopsoilTab tab) {
-        this.tab = tab;
-    }
-
     public TopsoilTabContent getTabContent() {
         return tabContent;
-    }
-
-    public void setTabContent() {
-        this.tabContent = getTabContent();
     }
 
     private void handleColumnReorder() {
 
         TableView<TopsoilDataEntry> tableView = tabContent.getTableView();
         int numColumns = tableView.getColumns().size();
-        Integer fromIndex = -1;
-        Integer toIndex = -1;
+        int fromIndex = -1;
+        int toIndex = -1;
 
         int[] newColumnOrder = new int[numColumns];
         for (int i = 0; i < numColumns; i++) {
@@ -142,13 +154,15 @@ public class TopsoilTableController {
         }
 
         if (fromIndex >= 0 && toIndex >= 0) {
-            // Order data in TopsoilTable
-            DoubleProperty dataTemp;
+            // Reorder data in TopsoilTable
             for (TopsoilDataEntry entry : table.getData()) {
-                dataTemp = entry.getProperties().get(fromIndex);
-                entry.getProperties().remove(fromIndex.intValue());
-                entry.getProperties().add(toIndex, dataTemp);
+                entry.swap(fromIndex, toIndex);
             }
+
+            // Reorder column name properties in TopsoilTable
+            StringProperty sTemp = table.getColumnNameProperties().get(fromIndex);
+            table.getColumnNameProperties().remove(fromIndex);
+            table.getColumnNameProperties().add(toIndex, sTemp);
 
             TableColumnReorderCommand reorderCommand = new TableColumnReorderCommand(table.getColumnNameProperties(),
                                                                                      tabContent.getTableView(),
@@ -182,12 +196,6 @@ public class TopsoilTableController {
             Field<Number> field = new NumberField(header);
             fields.add(field);
         }
-
-//        for (TableColumn column : tabContent.getTableView().getColumns()) {
-//            String header = column.getText();
-//            Field<Number> field = new NumberField(header);
-//            fields.add(field);
-//        }
 
         // Initialize entries
         List<Entry> entries = new ArrayList<>();

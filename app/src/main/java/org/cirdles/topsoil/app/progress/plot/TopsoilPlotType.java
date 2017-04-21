@@ -50,6 +50,7 @@ public enum TopsoilPlotType {
     public static final List<TopsoilPlotType> TOPSOIL_PLOT_TYPES;
     static {
         TOPSOIL_PLOT_TYPES = Collections.unmodifiableList(Arrays.asList(
+                BASE_PLOT,
                 SCATTER_PLOT,
                 UNCERTAINTY_ELLIPSE_PLOT,
                 EVOLUTION_PLOT

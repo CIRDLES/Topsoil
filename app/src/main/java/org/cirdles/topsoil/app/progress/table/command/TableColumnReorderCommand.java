@@ -53,7 +53,6 @@ public class TableColumnReorderCommand implements Command {
     public void execute() {
         TableColumn<TopsoilDataEntry, ?> columnTemp = tableView.getColumns().get(fromIndex);
         StringProperty nameTemp = columnNameProperties.get(fromIndex);
-        DoubleProperty dataTemp;
 
         // Order TableColumns in TableView
         tableView.getColumns().remove(fromIndex);
@@ -65,9 +64,7 @@ public class TableColumnReorderCommand implements Command {
 
         // Order data in TopsoilTable
         for (TopsoilDataEntry entry : data) {
-            dataTemp = entry.getProperties().get(fromIndex);
-            entry.getProperties().remove(fromIndex);
-            entry.getProperties().add(toIndex, dataTemp);
+            entry.swap(fromIndex, toIndex);
         }
     }
 
@@ -77,7 +74,6 @@ public class TableColumnReorderCommand implements Command {
     public void undo() {
         TableColumn<TopsoilDataEntry, ?> temp = tableView.getColumns().get(toIndex);
         StringProperty temp2 = columnNameProperties.get(toIndex);
-        DoubleProperty dataTemp;
 
         // Order TableColumns in TableView
         tableView.getColumns().remove(toIndex);
@@ -89,9 +85,7 @@ public class TableColumnReorderCommand implements Command {
 
         // Order data in TopsoilTable
         for (TopsoilDataEntry entry : data) {
-            dataTemp = entry.getProperties().get(toIndex);
-            entry.getProperties().remove(toIndex);
-            entry.getProperties().add(fromIndex, dataTemp);
+            entry.swap(fromIndex, toIndex);
         }
     }
 
