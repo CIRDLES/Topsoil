@@ -39,7 +39,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         this.setAlignment(Pos.TOP_RIGHT);
 
         this.df = DecimalFormat.getNumberInstance();
-        this.df.setMinimumFractionDigits(9);
+        //this.df.setMinimumFractionDigits(9);
         this.df.setMaximumFractionDigits(9);
 
         this.alerter = new ErrorAlerter();
@@ -83,7 +83,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     @Override
     public void cancelEdit() {
         super.cancelEdit();
-        this.setText(df.format(this.getItem()));
+        this.alignText(getItem().toString());
         this.setGraphic(null);
     }
 
@@ -103,10 +103,25 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                 setText(null);
                 setGraphic(this.textField);
             } else {
-                setText(this.df.format(getItem()));
+                alignText(getItem().toString());
                 setGraphic(null);
             }
         }
+    }
+    
+    /**
+     * Remove trailing zeroes before setting the cell text value
+     * 
+     * @param cellValue The text value to be checked and set in the cell
+     */
+    private void alignText(String cellValue) {
+        if (cellValue.contains(".")) {
+            String[] decimalPart = cellValue.split("\\.");
+            for(int i = decimalPart[1].length(); i <= this.df.getMaximumFractionDigits(); i++){
+            cellValue += " "; //padding with spaces to align decimals
+            }
+        }
+        setText(cellValue);
     }
 
     /**
