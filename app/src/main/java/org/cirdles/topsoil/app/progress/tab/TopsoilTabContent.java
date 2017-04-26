@@ -48,7 +48,17 @@ public class TopsoilTabContent extends SplitPane {
     // TODO Supply new plot PropertiesPanel
     @FXML private ScrollPane plotPropertiesScrollPane;
 
-    private Map<String, VariableFormat<Number>> stringVariableFormatMap;
+    private static Map<String, VariableFormat<Number>> STRING_TO_VARIABLE_FORMAT_MAP;
+    private static Map<VariableFormat<Number>, String> VARIABLE_FORMAT_TO_STRING_MAP;
+    static {
+        // Map VariableFormat names to the formats for displaying and selecting from the uncertainty ChoiceBoxes.
+        STRING_TO_VARIABLE_FORMAT_MAP = new LinkedHashMap<>();
+        VARIABLE_FORMAT_TO_STRING_MAP = new LinkedHashMap<>();
+        for (VariableFormat<Number> format : VariableFormats.UNCERTAINTY_FORMATS) {
+            STRING_TO_VARIABLE_FORMAT_MAP.put(format.getName(), format);
+            VARIABLE_FORMAT_TO_STRING_MAP.put(format, format.getName());
+        }
+    }
     private ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilTabContent.class);
 
     @FXML
@@ -72,16 +82,10 @@ public class TopsoilTabContent extends SplitPane {
         assert tableView != null : "fx:id=\"tableView\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
         assert addRowButton != null : "fx:id=\"addRowButton\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
 
-        // Map VariableFormat names to the formats for displaying and selecting from the uncertainty ChoiceBoxes.
-        stringVariableFormatMap = new LinkedHashMap<>();
-        for (VariableFormat<Number> format : VariableFormats.UNCERTAINTY_FORMATS) {
-            stringVariableFormatMap.put(format.getName(), format);
-        }
-
         // Add VariableFormats to uncertainty ChoiceBoxes and select TWO_SIGMA_PERCENT by default
-        xUncertaintyChoiceBox.setItems(FXCollections.observableArrayList(stringVariableFormatMap.keySet()));
+        xUncertaintyChoiceBox.setItems(FXCollections.observableArrayList(STRING_TO_VARIABLE_FORMAT_MAP.keySet()));
         xUncertaintyChoiceBox.getSelectionModel().select(VariableFormats.TWO_SIGMA_PERCENT.getName());
-        yUncertaintyChoiceBox.setItems(FXCollections.observableArrayList(stringVariableFormatMap.keySet()));
+        yUncertaintyChoiceBox.setItems(FXCollections.observableArrayList(STRING_TO_VARIABLE_FORMAT_MAP.keySet()));
         yUncertaintyChoiceBox.getSelectionModel().select(VariableFormats.TWO_SIGMA_PERCENT.getName());
 
         // Handle Keyboard Events
@@ -202,11 +206,33 @@ public class TopsoilTabContent extends SplitPane {
     }
 
     public VariableFormat<Number> getXUncertainty() {
-        return stringVariableFormatMap.get(xUncertaintyChoiceBox.getValue());
+        return STRING_TO_VARIABLE_FORMAT_MAP.get(xUncertaintyChoiceBox.getValue());
+    }
+
+    public void setXUncertainty(VariableFormat<Number> format) {
+        String o = VARIABLE_FORMAT_TO_STRING_MAP.get(format);
+        // Find and select the specific item that matches the format.
+        for (String s : xUncertaintyChoiceBox.getItems()) {
+            if (s.equals(o)) {
+                xUncertaintyChoiceBox.getSelectionModel().select(VARIABLE_FORMAT_TO_STRING_MAP.get(format));
+                break;
+            }
+        }
     }
 
     public VariableFormat<Number> getYUncertainty() {
-        return stringVariableFormatMap.get(yUncertaintyChoiceBox.getValue());
+        return STRING_TO_VARIABLE_FORMAT_MAP.get(yUncertaintyChoiceBox.getValue());
+    }
+
+    public void setYUncertainty(VariableFormat<Number> format) {
+        String o = VARIABLE_FORMAT_TO_STRING_MAP.get(format);
+        // Find and select the specific item that matches the format.
+        for (String s : yUncertaintyChoiceBox.getItems()) {
+            if (s.equals(o)) {
+                yUncertaintyChoiceBox.getSelectionModel().select(VARIABLE_FORMAT_TO_STRING_MAP.get(format));
+                break;
+            }
+        }
     }
 
     /**

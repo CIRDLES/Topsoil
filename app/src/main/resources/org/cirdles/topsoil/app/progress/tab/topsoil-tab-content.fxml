@@ -18,14 +18,14 @@
                         <Label fx:id="yLabel" text="Y" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                            <children>
-                              <Label text="X: " fx:id="xUncertaintyLabel" />
-                              <ChoiceBox prefWidth="100.0" fx:id="xUncertaintyChoiceBox" />
+                              <Label text="σX: " fx:id="xUncertaintyLabel" />
+                              <ChoiceBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" fx:id="xUncertaintyChoiceBox" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                            <children>
-                              <Label fx:id="yUncertaintyLabel" text="Y: " />
-                              <ChoiceBox fx:id="yUncertaintyChoiceBox" prefWidth="100.0" />
+                              <Label fx:id="yUncertaintyLabel" text="σY: " />
+                              <ChoiceBox fx:id="yUncertaintyChoiceBox" prefHeight="25.0" prefWidth="80.0" />
                            </children>
                         </HBox>
                         <Label fx:id="corrCoefLabel" text="Corr Coef (ρ)" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />

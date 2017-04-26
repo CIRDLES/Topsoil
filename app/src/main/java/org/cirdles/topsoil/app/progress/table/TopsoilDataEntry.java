@@ -39,6 +39,17 @@ public class TopsoilDataEntry implements GenericDataEntry {
         this.getProperties().get(index).set(value);
     }
 
+    public void swap(int index1, int index2) {
+        DoubleProperty d1 = properties.get(index1);
+        DoubleProperty d2 = properties.get(index2);
+
+        properties.remove(index1);
+        properties.add(index1, d2);
+
+        properties.remove(index2);
+        properties.add(index2, d1);
+    }
+
     @Override
     public ObservableList<DoubleProperty> getProperties() {
         return properties;
@@ -55,6 +66,14 @@ public class TopsoilDataEntry implements GenericDataEntry {
             dataEntry.addValues(0.0);
         }
         return dataEntry;
+    }
+
+    public TopsoilDataEntry cloneEntry() {
+        TopsoilDataEntry newEntry = new TopsoilDataEntry();
+        for (DoubleProperty p : this.getProperties()) {
+            newEntry.addValues(p.get());
+        }
+        return newEntry;
     }
 
     public Double[] toArray() {

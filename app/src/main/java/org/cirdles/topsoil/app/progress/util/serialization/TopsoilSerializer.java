@@ -70,7 +70,7 @@ public class TopsoilSerializer {
             ois.close();
         } catch (InvalidClassException | ClassNotFoundException e) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR,
-                    "This .topsoil file may be outdated.", ButtonType.OK);
+                    "Unable to load .topsoil file. This may be outdated.", ButtonType.OK);
             errorAlert.showAndWait();
         } catch (FileNotFoundException e) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR,

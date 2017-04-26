@@ -12,15 +12,15 @@ public enum IsotopeType {
 
     //Isotope abbreviation, isotope name, array of default headers as strings
     Generic("Gen", "Generic",
-            new String[]{"x", "±2σ (%)", "x", "±2σ (%)", "Corr Coef"},
+            new String[]{"x", "y", "xσ", "yσ", "Corr Coef"},
             new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT}),
 
     UPb("UPb", "Uranium Lead",
-            new String[]{"207Pb*/235U", "±2σ (%)", "206Pb*/238U", "±2σ (%)", "Corr Coef"},
+            new String[]{"207Pb*/235U", "206Pb*/238U", "±2σ (%)", "±2σ (%)", "Corr Coef"},
             new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT, TopsoilPlotType.UNCERTAINTY_ELLIPSE_PLOT}),
 
     UTh("UTh", "Uranium Thorium",
-            new String[]{"[234Pb/238U]t", "±2σ (%)", "[230Th/238U]t", "±2σ (%)", "Corr Coef"},
+            new String[]{"[234Pb/238U]t", "[230Th/238U]t", "±2σ (%)", "±2σ (%)", "Corr Coef"},
             new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT, TopsoilPlotType.EVOLUTION_PLOT});
 
     private final String abbreviation;
@@ -32,7 +32,8 @@ public enum IsotopeType {
     static {
         ISOTOPE_TYPES = Collections.unmodifiableList(Arrays.asList(
                 UPb,
-                UTh
+                UTh,
+                Generic
         ));
     }
 

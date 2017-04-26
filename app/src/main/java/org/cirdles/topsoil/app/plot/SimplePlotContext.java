@@ -46,6 +46,7 @@ public class SimplePlotContext implements PlotContext {
         bindings.add(new SimpleVariableBinding(variable, field, format, this));
     }
 
+    @Override
     public List<Map<String, Object>> getData() {
         List<Map<String, Object>> data = new ArrayList<>();
 

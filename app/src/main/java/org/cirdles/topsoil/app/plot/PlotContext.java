@@ -19,9 +19,7 @@ import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  *
@@ -54,5 +52,7 @@ public interface PlotContext {
     }
 
     <T> void addBinding(Variable<T> variable, Field<T> field, VariableFormat<T> format);
+
+    List<Map<String, Object>> getData();
 
 }

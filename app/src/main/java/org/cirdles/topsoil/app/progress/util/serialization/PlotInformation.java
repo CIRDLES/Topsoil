@@ -1,7 +1,9 @@
 package org.cirdles.topsoil.app.progress.util.serialization;
 
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.plot.PlotContext;
 import org.cirdles.topsoil.app.plot.VariableBinding;
+import org.cirdles.topsoil.app.plot.VariableFormat;
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
 import org.cirdles.topsoil.plot.BasePlot;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
@@ -9,6 +11,7 @@ import org.cirdles.topsoil.plot.Plot;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Stores information about an open <tt>Plot</tt>. Kept inside of
@@ -25,10 +28,12 @@ public class PlotInformation {
 
     private Plot plot;
     private TopsoilPlotType plotType;
-    // HashMap uses the variables name as a key, and the name of the column as the value.
-    private HashMap<String, String> variableBindings;
-    private HashMap<String, Object> plotProperties;
+    private Collection<VariableBinding> variableBindings;
+    private Map<String, Object> plotProperties;
     private Stage stage;
+
+    private VariableFormat<Number> xUncertainty;
+    private VariableFormat<Number> yUncertainty;
 
     /**
      * Constructs an instance of <tt>PlotInformation</tt> for the specified
@@ -37,10 +42,13 @@ public class PlotInformation {
      * @param plot  the Plot object
      * @param plotType  the TopsoilPlotType of the plot
      */
-    public PlotInformation(Plot plot, TopsoilPlotType plotType) {
+    public PlotInformation(Plot plot, TopsoilPlotType plotType, Map<String, Object> plotProperties, PlotContext
+            plotContext, Stage stage) {
         this.plot = plot;
         this.plotType = plotType;
-        this.plotProperties = (HashMap) plot.getProperties();
+        this.plotProperties = plotProperties;
+        this.variableBindings = plotContext.getBindings();
+        this.stage = stage;
     }
 
     /**
@@ -66,11 +74,19 @@ public class PlotInformation {
      *
      * @return  the HashMap of plot properties
      */
-    public HashMap<String, Object> getPlotProperties() {
+    public Map<String, Object> getPlotProperties() {
         return this.plotProperties;
     }
 
-    //TODO Associate variable bindings with a table instead of a plot.
+    /**
+     * Returns a Colletion of the plot's <tt>VariableBinding</tt>s.
+     *
+     * @return  a Collection of VariableBinding names
+     */
+    public Collection<VariableBinding> getVariableBindings() {
+        return this.variableBindings;
+    }
+
     /**
      * Converts the <tt>VariableBinding</tt>s of the <tt>Plot</tt> into a
      * <tt>HashMap</tt> for easy reference and stores them.
@@ -78,21 +94,7 @@ public class PlotInformation {
      * @param bindings  a Collection of VariableBindings
      */
     public void setVariableBindings(Collection<VariableBinding> bindings) {
-
-        // Store each Variable name with its field name.
-        this.variableBindings = new HashMap<>();
-        for (VariableBinding binding : bindings) {
-            variableBindings.put(binding.getVariable().getName(), binding.getField().getName());
-        }
-    }
-
-    /**
-     * Define which open <tt>Stage</tt> is showing the <tt>Plot</tt>.
-     *
-     * @param stage the Stage displaying the plot
-     */
-    public void setStage(Stage stage) {
-        this.stage = stage;
+        this.variableBindings = bindings;
     }
 
     /**
@@ -105,15 +107,17 @@ public class PlotInformation {
     }
 
     /**
-     * Returns the <tt>HashMap</tt> associated with the <tt>Plot</tt>'s
-     * <tt>VariableBinding</tt>s.
+     * Define which open <tt>Stage</tt> is showing the <tt>Plot</tt>.
      *
-     * @return  a HashMap of variable binding names
+     * @param stage the Stage displaying the plot
      */
-    public HashMap<String, String> getVariableBindingNames() {
-        return this.variableBindings;
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
+    /**
+     * Attempts to destroy the plot within its WebEngine, to prevent threading problems.
+     */
     public void killPlot() {
         try {
             ((JavaScriptPlot) this.plot).killPlot();

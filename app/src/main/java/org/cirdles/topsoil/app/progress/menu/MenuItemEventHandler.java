@@ -19,6 +19,7 @@ import org.cirdles.topsoil.app.progress.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.plot.PlotChoiceDialog;
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
+import org.cirdles.topsoil.app.progress.tab.TopsoilTab;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
@@ -165,7 +166,6 @@ public class MenuItemEventHandler {
      * specifications already supplied
      * */
     public static void handleReportIssue() {
-        System.out.println("here");
         IssueCreator issueCreator = new StandardGitHubIssueCreator(
                 new TopsoilMetadata(),
                 System.getProperties(),
@@ -291,7 +291,6 @@ public class MenuItemEventHandler {
             String extension = fileName.substring(
                     fileName.lastIndexOf(".") + 1,
                     fileName.length());
-            System.out.println(file);
             if (!extension.equals("topsoil")) {
                 ErrorAlerter error = new ErrorAlerter();
                 error.alert("Project must be a .topsoil file.");
@@ -310,8 +309,10 @@ public class MenuItemEventHandler {
         FileChooser fileChooser =  TopsoilFileChooser.getTopsoilSaveFileChooser();
         File file = fileChooser.showSaveDialog(StageHelper.getStages().get(0));
 
-        saveProjectFile(file, tabs);
-        TopsoilSerializer.setCurrentProjectFile(file);
+        if (file != null) {
+            saveProjectFile(file, tabs);
+            TopsoilSerializer.setCurrentProjectFile(file);
+        }
     }
 
     /**
@@ -351,7 +352,6 @@ public class MenuItemEventHandler {
             // Check for open plots.
             List<Stage> stages = StageHelper.getStages();
             if (stages.size() > 1) {
-                Stage stage = stages.get(1);
                 Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
                         "Creating a new plot will overwrite the existing plot. " +
                                 "Are you sure you want to continue?",
@@ -359,17 +359,12 @@ public class MenuItemEventHandler {
                         ButtonType.YES);
                 plotOverwrite.showAndWait().ifPresent(response -> {
                             if (response == ButtonType.YES) {
-                                Collection<PlotInformation> plots = tabs
-                                        .getSelectedTab().getTopsoilTable()
-                                        .getOpenPlots();
-                                TopsoilTable topsoilTable = tabs
-                                        .getSelectedTab()
-                                        .getTopsoilTable();
-                                for (PlotInformation plotInfo : plots) {
-                                    topsoilTable.removeOpenPlot(plotInfo
-                                            .getTopsoilPlotType());
+                                for (TopsoilTab tab : tabs.getTopsoilTabs()) {
+                                    for (PlotInformation plotInfo : tab.getTopsoilTable().getOpenPlots()) {
+                                        tab.getTopsoilTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
+                                        plotInfo.getStage().close();
+                                    }
                                 }
-                                stage.close();
                                 generateNewPlot(plotType, tableController, tabs);
                             }
                         });
@@ -398,9 +393,6 @@ public class MenuItemEventHandler {
                 format = variable.getFormats().size() > 0 ? variable.getFormats().get(0) : null;
             }
 
-            System.out.println("Variable: " + variable.getName());
-            System.out.println("Field: " + dataset.getFields().get(i).getName());
-            System.out.println("Format: " + format.getName() + "\n");
             plotContext.addBinding(variable, dataset.getFields().get(i), format);
         }
 
@@ -418,11 +410,33 @@ public class MenuItemEventHandler {
         plotStage.show();
 
         // Store plot information in TopsoilTable
-        PlotInformation plotInfo = new PlotInformation(plot, plotType);
+        PlotInformation plotInfo = new PlotInformation(plot, plotType, plot.getProperties(), plotContext, plotStage);
         plotInfo.setVariableBindings(plotContext.getBindings());
         plotInfo.setStage(plotStage);
         tableController.getTable().addOpenPlot(plotInfo);
 
+    }
+
+    public static void restorePlot(TopsoilTableController tableController, TopsoilPlotType plotType,
+                                   PlotContext plotContext, Map<String, Object> plotProperties) {
+        List<Map<String, Object>> data = plotContext.getData();
+
+        Plot plot = plotType.getPlot();
+        plot.setData(data);
+        plot.setProperties(plotProperties);
+
+        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
+        Scene scene = new Scene(plotWindow, 1200, 800);
+        Stage plotStage = new Stage();
+        plotStage.setTitle(plotType.getName() + ": " + plotContext.getDataset().getName());
+        plotStage.setOnCloseRequest(closeEvent -> tableController.getTable().removeOpenPlot(plotType));
+        plotStage.setScene(scene);
+        plotStage.show();
+
+        // Store plot information in TopsoilTable
+        PlotInformation plotInfo = new PlotInformation(plot, plotType, plotProperties, plotContext, plotStage);
+        plotInfo.setVariableBindings(plotContext.getBindings());
+        tableController.getTable().addOpenPlot(plotInfo);
     }
 
     private static <T> Field<T> fieldHelper(Field<T> field) {

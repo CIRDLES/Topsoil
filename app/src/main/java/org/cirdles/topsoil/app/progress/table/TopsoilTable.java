@@ -7,6 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.Topsoil;
+import org.cirdles.topsoil.app.dataset.field.Field;
+import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
@@ -43,19 +45,6 @@ public class TopsoilTable {
 
         // Create hashmap for storing information on open plots for this tableView.
         this.openPlots = new HashMap<>();
-
-        for (TopsoilDataEntry entry : this.data) {
-            for (DoubleProperty property : entry.getProperties()) {
-                property.addListener(c -> {
-                    for (TopsoilDataEntry e : data) {
-                        for (DoubleProperty p : e.getProperties()) {
-                            System.out.print(p.get() + "\t");
-                        }
-                        System.out.println();
-                    }
-                });
-            }
-        }
     }
 
     /**
@@ -69,8 +58,6 @@ public class TopsoilTable {
         String[] resultArr;
         StringProperty[] result;
 
-        // As of right now, only create a tableView with the provided column names or with blank names.
-        // TODO populate columnNameProperties with defaults if no columnNameProperties are provided
         if (columnNames == null) {
 //            resultArr = isotopeType.getHeaders();
             resultArr = defaultNames;
@@ -105,28 +92,19 @@ public class TopsoilTable {
         return result;
     }
 
-    /**
-     * Extract data from tableView as a list of maps of columns : value
-     * @return list of maps of columns : value
-     */
-//    public List<Map<String, Object>> extractData() {
-//
-//        ArrayList<Map<String, Object>> result = new ArrayList<>();
-//        HashMap<String, Double> [] columnMaps = new HashMap[this.columnNameProperties.size()];
-//        for (int i = 0; i < tableView.getItems().size(); i ++) {
-//            int columnIndex = i % columnNameProperties.size();
-//            columnMaps[columnIndex].put(columnNameProperties.get(columnIndex).get(),
-//                                        tableView.getItems().get(i).getProperties().get(columnIndex).getValue());
-//        }
-//        for (HashMap column : columnMaps) {
-//            result.add(column);
-//        }
-//        return result;
-//
-//    }
-
     public ObservableList<TopsoilDataEntry> getData() {
         return data;
+    }
+
+    public List<Field<Number>> getFields() {
+        List<Field<Number>> fields = new ArrayList<>();
+
+        for (String header : getColumnNames()) {
+            Field<Number> field = new NumberField(header);
+            fields.add(field);
+        }
+
+        return fields;
     }
 
     public ObservableList<TopsoilDataEntry> getCopyOfDataAsEntries() {
@@ -149,35 +127,6 @@ public class TopsoilTable {
         }
         return tableEntries;
     }
-
-//    public List<Map<String, Object>> getDataForPlots() {
-//        SimpleDataset dataset = getDataset();
-//
-//        PlotContext plotContext = this.getPlotContext();
-//
-//        List<Map<String, Object>> data = new ArrayList<>();
-//
-//        dataset.getEntries().forEach(entry -> {
-//            Map<String, Object> d = new HashMap<>();
-//
-//            for (int i = 0; i < dataset.getFields().size(); i++) {
-//
-//            }
-//
-////            variableBindingView.getControls().forEach(control -> {
-////                Variable<?> variable = control.getVariable();
-////                d.put(variable.getName(), plotContext.getValue(variable, entry).get());
-////            });
-//
-//            d.put("Selected", true);
-//
-//            entry.<Boolean>get(Fields.SELECTED).ifPresent(selected -> {
-//                d.put("Selected", selected);
-//            });
-//
-//            data.add(d);
-//        });
-//    }
 
     /**
      * Returns the <tt>IsotopeType</tt> of the current <tt>TopsoilTable</tt>.
