@@ -73,9 +73,9 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     public void startEdit() {
         super.startEdit();
         generateTextField();
-        this.setText(null);                             // Sets the cell's text to null
-        this.textField.setText(getItem().toString());   // Puts the data value into the TextField
-        this.setGraphic(this.textField);                // Sets the TextField as the cell's graphic
+        this.setText(null);                                         // Sets the cell's text to null
+        this.textField.setText(getItem().toString());    // Puts the data value into the TextField
+        this.setGraphic(this.textField);                            // Sets the TextField as the cell's graphic
         this.textField.selectAll();
     }
 
@@ -83,7 +83,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     @Override
     public void cancelEdit() {
         super.cancelEdit();
-        this.alignText(getItem().toString());
+        this.setText(alignText(getItem().toString()));
         this.setGraphic(null);
     }
 
@@ -103,7 +103,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                 setText(null);
                 setGraphic(this.textField);
             } else {
-                alignText(getItem().toString());
+                setText(alignText(getItem().toString()));
                 setGraphic(null);
             }
         }
@@ -114,14 +114,18 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      * 
      * @param cellValue The text value to be checked and set in the cell
      */
-    private void alignText(String cellValue) {
+    private String alignText(String cellValue) {
         if (cellValue.contains(".")) {
             String[] decimalPart = cellValue.split("\\.");
-            for(int i = decimalPart[1].length(); i <= this.df.getMaximumFractionDigits(); i++){
-            cellValue += " "; //padding with spaces to align decimals
+            if(decimalPart[1].length() <= 9){
+                for(int i = decimalPart[1].length(); i < this.df.getMaximumFractionDigits(); i++){
+                    cellValue += " "; //padding with spaces to align decimals
+                }
+            }else{
+                cellValue = decimalPart[0] + "." + decimalPart[1].substring(0, 9);
             }
         }
-        setText(cellValue);
+        return cellValue;
     }
 
     /**
