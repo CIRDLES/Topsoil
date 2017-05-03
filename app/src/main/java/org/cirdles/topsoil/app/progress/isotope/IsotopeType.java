@@ -31,9 +31,9 @@ public enum IsotopeType {
     public static final List<IsotopeType> ISOTOPE_TYPES;
     static {
         ISOTOPE_TYPES = Collections.unmodifiableList(Arrays.asList(
+                Generic,
                 UPb,
-                UTh,
-                Generic
+                UTh
         ));
     }
 

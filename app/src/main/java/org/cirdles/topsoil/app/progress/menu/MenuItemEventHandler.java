@@ -18,6 +18,7 @@ import org.cirdles.topsoil.app.progress.dataset.NumberDataset;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.app.progress.plot.PlotChoiceDialog;
+import org.cirdles.topsoil.app.progress.plot.PlotPropertiesPanelController;
 import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTab;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
@@ -401,11 +402,18 @@ public class MenuItemEventHandler {
         Plot plot = plotType.getPlot();
         plot.setData(data);
 
+        PlotPropertiesPanelController propertiesPanel = tableController.getTabContent().getPlotPropertiesPanelController();
+        propertiesPanel.setPlot(plot);
+        plot.setProperties(propertiesPanel.getProperties());
+
         Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
         Scene scene = new Scene(plotWindow, 1200, 800);
         Stage plotStage = new Stage();
         plotStage.setTitle(plotType.getName() + ": " + dataset.getName());
-        plotStage.setOnCloseRequest(closeEvent -> tableController.getTable().removeOpenPlot(plotType));
+        plotStage.setOnCloseRequest(closeEvent -> {
+            tableController.getTable().removeOpenPlot(plotType);
+            propertiesPanel.removePlot();
+        });
         plotStage.setScene(scene);
         plotStage.show();
 

@@ -2,7 +2,6 @@ package org.cirdles.topsoil.app.progress.tab;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -11,15 +10,11 @@ import javafx.fxml.LoadException;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
 import org.cirdles.topsoil.app.progress.table.TopsoilTableController;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Extends JavaFX TabPane class
@@ -30,9 +25,9 @@ public class TopsoilTabPane extends TabPane {
     private int untitledCount;
     private SimpleBooleanProperty isEmptyProperty = new SimpleBooleanProperty(true);
 
-    private final String TOPSOIL_TAB_FXML_NAME = "topsoil-tab-content.fxml";
+    private final String TOPSOIL_TAB_FXML_PATH = "topsoil-tab-content.fxml";
 
-    private final ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilTabPane.class);
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabPane.class);
 
     public TopsoilTabPane() throws LoadException {
         super();
@@ -45,7 +40,8 @@ public class TopsoilTabPane extends TabPane {
     public void add(TopsoilTable table) {
         try {
             // Load tab content
-            FXMLLoader fxmlLoader = new FXMLLoader(resourceExtractor.extractResourceAsFile(TOPSOIL_TAB_FXML_NAME).toURI().toURL());
+            FXMLLoader fxmlLoader = new FXMLLoader(
+                    RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_TAB_FXML_PATH).toUri().toURL());
             SplitPane tabContentView = fxmlLoader.load();
             TopsoilTabContent tabContent = fxmlLoader.getController();
 

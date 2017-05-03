@@ -1,8 +1,6 @@
 package org.cirdles.topsoil.app.progress.table;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
@@ -29,7 +27,6 @@ public class TopsoilTable {
     private ObservableList<TopsoilDataEntry> data;
     private ObservableList<StringProperty> columnNameProperties;
     private SimpleStringProperty titleProperty = new SimpleStringProperty("Untitled Table");
-    private IsotopeType isotopeType;
     private HashMap<String, PlotInformation> openPlots;
 
     public TopsoilTable(String[] columnNames, IsotopeType isotopeType, TopsoilDataEntry... dataEntries) {
@@ -38,13 +35,34 @@ public class TopsoilTable {
         this.data = FXCollections.observableArrayList(dataEntries);
 
         // initialize isotope type
-        this.isotopeType = isotopeType;
+        this.isotopeTypeObjectProperty = new SimpleObjectProperty<>(isotopeType);
 
         // populate columnNameProperties
         this.columnNameProperties = FXCollections.observableArrayList(createColumnHeaderProperties(columnNames));
 
         // Create hashmap for storing information on open plots for this tableView.
         this.openPlots = new HashMap<>();
+    }
+
+    private ObjectProperty<IsotopeType> isotopeTypeObjectProperty;
+    /**
+     * Returns the <tt>IsotopeType</tt> of the current <tt>TopsoilTable</tt>.
+     *
+     * @return  the tableView's IsotopeType
+     */
+    public IsotopeType getIsotopeType() {
+        return isotopeTypeObjectProperty.get();
+    }
+    /**
+     * Sets the <tt>IsotopeType</tt> of the current <tt>TopsoilTable</tt>.
+     *
+     * @param isotopeType   the new IsotopeType
+     */
+    public void setIsotopeType(IsotopeType isotopeType) {
+        isotopeTypeObjectProperty.set(isotopeType);
+    }
+    public final ObjectProperty<IsotopeType> isotopeTypeObjectProperty() {
+        return isotopeTypeObjectProperty;
     }
 
     /**
@@ -128,23 +146,6 @@ public class TopsoilTable {
         return tableEntries;
     }
 
-    /**
-     * Returns the <tt>IsotopeType</tt> of the current <tt>TopsoilTable</tt>.
-     *
-     * @return  the tableView's IsotopeType
-     */
-    public IsotopeType getIsotopeType() {
-        return this.isotopeType;
-    }
-
-    /**
-     * Sets the <tt>IsotopeType</tt> of the current <tt>TopsoilTable</tt>.
-     *
-     * @param isotopeType   the new IsotopeType
-     */
-    public void setIsotopeType(IsotopeType isotopeType) {
-        this.isotopeType = isotopeType;
-    }
     /**
      * Returns true if the <tt>TableView</tt> is empty. In this case, "empty" means that it has one data entry filled
      * with 0.0s.

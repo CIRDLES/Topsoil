@@ -203,7 +203,9 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
                             }
 
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
+
                             topsoil.setMember("bridge", new Bridge());
+                            System.out.println("ASSIGNED");
 
                             if (getProperties() != null) {
                                 topsoil.call("setProperties", getProperties());
@@ -239,7 +241,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         public void updateIsotope(String isotope) {
             Map<String, String> isoDict = new HashMap<>();
             isoDict.put("Uranium Lead", "Concordia.js");
-
+            System.out.println("HERE");
             if(isoDict.get(isotope) != null) {
                 //add files to webview and adjust properties panel from here
                 final URI ISOTOPE_URI = ISOTOPE_RESOURCE_EXTRACTOR
@@ -252,6 +254,9 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
                     webView.getEngine().loadContent(buildContent());
                 });
             }
+        }
+        public void println(String s) {
+            System.out.println(s);
         }
     }
 

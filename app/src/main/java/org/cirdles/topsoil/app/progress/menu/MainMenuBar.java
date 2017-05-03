@@ -3,10 +3,7 @@ package org.cirdles.topsoil.app.progress.menu;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -32,7 +29,7 @@ public class MainMenuBar extends MenuBar {
     // TODO Hella reorganize
 
     private MenuBar menuBar = new MenuBar();
-    private ResourceExtractor resourceExtractor = new ResourceExtractor(MainMenuBar.class);
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(MainMenuBar.class);
     private final String TOPSOIL_ABOUT_SCREEN_FXML_NAME = "topsoil-about-screen.fxml";
 
     // File Menu
@@ -200,13 +197,19 @@ public class MainMenuBar extends MenuBar {
         tableMenu.setOnShown(event -> {
             if (tabs.isEmpty()) {
                 clearTableItem.setDisable(true);
+                isoSystem.setDisable(true);
             } else {
                 if (!tabs.getSelectedTab().getTopsoilTable().isCleared()) {
                     clearTableItem.setDisable(false);
                 } else {
                     clearTableItem.setDisable(true);
                 }
+                isoSystem.setDisable(false);
             }
+        });
+
+        isoSystem.setOnShown(event -> {
+
         });
 
         uraniumLeadSystemItem.setOnAction(event -> {
@@ -326,7 +329,7 @@ public class MainMenuBar extends MenuBar {
         aboutItem.setOnAction(event -> {
             try {
                 Parent about = FXMLLoader
-                        .load(resourceExtractor.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL
+                        .load(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL
                                 ());
                 Scene aboutScene = new Scene(about, 450, 600);
                 Stage aboutWindow = new Stage(StageStyle.UNDECORATED);

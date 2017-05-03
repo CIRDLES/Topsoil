@@ -62,7 +62,7 @@ public enum TopsoilPlotType {
         this.name = name;
         this.variables = variables;
         this.plot = plot.get();
-        this.propertiesPanel = propertiesPanel.apply(this.plot);
+        this.propertiesPanel = emptyPropertyPanel(this.plot);
     }
 
     public static Node emptyPropertyPanel(Plot plot) {

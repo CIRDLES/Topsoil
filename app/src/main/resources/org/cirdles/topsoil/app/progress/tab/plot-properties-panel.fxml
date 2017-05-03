@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="221.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.progress.plot.PlotPropertiesPanelController">
+   <content>
+      <HBox>
+         <children>
+            <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" HBox.hgrow="NEVER">
+               <children>
+                  <HBox alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" VBox.vgrow="NEVER">
+                     <children>
+                        <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" text="Isotope System:">
+                           <HBox.margin>
+                              <Insets left="10.0" right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <ChoiceBox fx:id="isotopeSystemChoiceBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </HBox.margin>
+                        </ChoiceBox>
+                     </children>
+                  </HBox>
+                  <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                     <children>
+                        <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="135.0" prefWidth="230.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" prefWidth="65.0" />
+                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="165.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="-Infinity" prefHeight="45.0" vgrow="NEVER" />
+                            <RowConstraints minHeight="-Infinity" prefHeight="45.0" vgrow="NEVER" />
+                            <RowConstraints minHeight="-Infinity" prefHeight="45.0" vgrow="NEVER" />
+                          </rowConstraints>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <children>
+                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Title:">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="X-Axis:" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Y-Axis" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <TextField fx:id="titleTextField" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" />
+                              <TextField minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="xAxisTextField" />
+                              <TextField fx:id="yAxisTextField" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                           </children>
+                        </GridPane>
+                        <GridPane HBox.hgrow="NEVER">
+                           <children>
+                              <CheckBox fx:id="ellipsesCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Ellipses" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="15.0" />
+                                 </GridPane.margin>
+                              </CheckBox>
+                              <CheckBox fx:id="pointsCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Points" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="15.0" />
+                                 </GridPane.margin>
+                              </CheckBox>
+                              <CheckBox fx:id="crossesCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Crosses" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="15.0" />
+                                 </GridPane.margin>
+                              </CheckBox>
+                              <ColorPicker fx:id="ellipsesColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ColorPicker fx:id="pointsColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <ColorPicker fx:id="crossesColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" text="Plot data as:">
+                                 <GridPane.margin>
+                                    <Insets left="15.0" />
+                                 </GridPane.margin>
+                              </Label>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="120.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="-Infinity" prefHeight="25.0" />
+                              <RowConstraints minHeight="-Infinity" prefHeight="25.0" />
+                              <RowConstraints minHeight="-Infinity" prefHeight="30.0" />
+                              <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="283.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <GridPane fx:id="featuresGridPane" minHeight="-Infinity" minWidth="-Infinity" prefWidth="283.0">
+                     <children>
+                        <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="Features:">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <ColorPicker GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <CheckBox mnemonicParsing="false" prefHeight="25.0" prefWidth="175.0" text="McLean Regression" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </CheckBox>
+                     </children>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" prefWidth="120.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="-Infinity" prefHeight="25.0" vgrow="NEVER" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                     </rowConstraints>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </GridPane>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </content>
+</ScrollPane>
