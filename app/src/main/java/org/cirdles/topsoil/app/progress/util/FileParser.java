@@ -68,6 +68,23 @@ public class FileParser {
         return containsHeaders;
     }
 
+    public static Boolean detectHeader(String[] lines, String delim) {
+        Boolean containsHeaders = true;
+        
+        // Take the first line of file to search for headers
+        if (lines.length > 1) {
+                lines = Arrays.copyOfRange(lines, 0, 1);
+        }
+        
+        System.out.println(lines.toString());
+//        lines = lines.toString().split(delim+"?");
+//        if(isDouble(lines.toString())) {
+//            containsHeaders = true;
+//        }
+        
+        return containsHeaders;
+    }
+    
     /**
      * Determines whether the specified table file has a supported file extension.
      *
@@ -337,7 +354,7 @@ public class FileParser {
      */
     private static String requestDelimiter() {
         String otherDelimiterOption = "Other";
-        String unknownDelimiterOption = "Don't Know";
+        String unknownDelimiterOption = "Unknown";
         String noDelimiterMessage = "Topsoil is unable to read the data as-is. Make sure the data is complete, or try" +
                                     " putting the data into a .csv or .tsv file.";
 
