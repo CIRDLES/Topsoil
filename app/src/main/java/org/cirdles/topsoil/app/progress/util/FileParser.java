@@ -68,20 +68,31 @@ public class FileParser {
         return containsHeaders;
     }
 
-    public static Boolean detectHeader(String[] lines, String delim) {
+    public static Boolean detectHeader(String content) {
         Boolean containsHeaders = true;
         
-        // Take the first line of file to search for headers
-        if (lines.length > 1) {
-                lines = Arrays.copyOfRange(lines, 0, 1);
+        String[] lines = readLines(content);
+        
+        String[] firstLine = lines[0].split(getDelimiter(content));
+        
+        if(isDouble(firstLine[0])){
+            containsHeaders = false;
         }
         
-        System.out.println(lines.toString());
-//        lines = lines.toString().split(delim+"?");
-//        if(isDouble(lines.toString())) {
-//            containsHeaders = true;
-//        }
+        return containsHeaders;
+    }
+    
+    public static Boolean detectHeader(File file) {
+        Boolean containsHeaders = true;
+       
+        String[] lines = readLines(file);
         
+        String[] firstLine = lines[0].split(getDelimiter(lines));
+        
+        if(isDouble(firstLine[0])){
+            containsHeaders = false;
+        }
+
         return containsHeaders;
     }
     
