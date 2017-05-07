@@ -3,8 +3,8 @@ package org.cirdles.topsoil.app.progress;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.VBox;
-import org.cirdles.topsoil.app.progress.menu.MainMenuBar;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.menu.MainMenuBar;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 
 public class MainWindowController {
 

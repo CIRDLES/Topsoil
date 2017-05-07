@@ -1,29 +1,20 @@
 package org.cirdles.topsoil.app.progress.table;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.progress.TopsoilRawData;
-import org.cirdles.topsoil.app.progress.dataset.NumberDataset;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTab;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabContent;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.dataset.NumberDataset;
+import org.cirdles.topsoil.app.tab.TopsoilTabContent;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.command.TableColumnReorderCommand;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

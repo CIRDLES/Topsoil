@@ -4,7 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.command.*;
 
 /**

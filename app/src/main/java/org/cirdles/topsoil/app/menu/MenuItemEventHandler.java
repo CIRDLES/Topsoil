@@ -29,7 +29,6 @@ import org.cirdles.topsoil.app.progress.util.TopsoilFileChooser;
 import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
 import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
-import org.cirdles.topsoil.app.util.IssueCreator;
 import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
 import org.cirdles.topsoil.app.util.YesNoAlert;
 import org.cirdles.topsoil.plot.Plot;

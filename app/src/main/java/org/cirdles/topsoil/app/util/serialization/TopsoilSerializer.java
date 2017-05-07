@@ -2,7 +2,7 @@ package org.cirdles.topsoil.app.progress.util.serialization;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 
 import java.io.File;
 import java.io.FileOutputStream;

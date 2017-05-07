@@ -6,11 +6,10 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
-import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
-import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
+import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
 
 import java.util.*;

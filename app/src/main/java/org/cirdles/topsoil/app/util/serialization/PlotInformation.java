@@ -4,13 +4,11 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.plot.PlotContext;
 import org.cirdles.topsoil.app.plot.VariableBinding;
 import org.cirdles.topsoil.app.plot.VariableFormat;
-import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
-import org.cirdles.topsoil.plot.BasePlot;
+import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
