@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.menu;
+package org.cirdles.topsoil.app.menu;
 
 import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
@@ -14,21 +14,22 @@ import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.app.plot.*;
-import org.cirdles.topsoil.app.progress.dataset.NumberDataset;
-import org.cirdles.topsoil.app.progress.isotope.IsotopeSelectionDialog;
-import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
-import org.cirdles.topsoil.app.progress.plot.PlotChoiceDialog;
-import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTab;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.table.TopsoilTable;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableController;
-import org.cirdles.topsoil.app.progress.util.FileParser;
-import org.cirdles.topsoil.app.progress.util.TopsoilFileChooser;
-import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
-import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
+import org.cirdles.topsoil.app.dataset.NumberDataset;
+import org.cirdles.topsoil.app.isotope.IsotopeSelectionDialog;
+import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.plot.PlotChoiceDialog;
+import org.cirdles.topsoil.app.plot.TopsoilPlotType;
+import org.cirdles.topsoil.app.tab.TopsoilTab;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.table.TopsoilTable;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
+import org.cirdles.topsoil.app.util.FileParser;
+import org.cirdles.topsoil.app.util.TopsoilFileChooser;
+import org.cirdles.topsoil.app.util.serialization.PlotInformation;
+import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
+import org.cirdles.topsoil.app.util.IssueCreator;
 import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
 import org.cirdles.topsoil.app.util.YesNoAlert;
 import org.cirdles.topsoil.plot.Plot;
@@ -400,7 +401,7 @@ public class MenuItemEventHandler {
         Plot plot = plotType.getPlot();
         plot.setData(data);
 
-        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
+        Parent plotWindow = new PlotWindow(plot);
         Scene scene = new Scene(plotWindow, 1200, 800);
         Stage plotStage = new Stage();
         plotStage.setTitle(plotType.getName() + ": " + dataset.getName());
@@ -424,7 +425,7 @@ public class MenuItemEventHandler {
         plot.setData(data);
         plot.setProperties(plotProperties);
 
-        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
+        Parent plotWindow = new PlotWindow(plot);
         Scene scene = new Scene(plotWindow, 1200, 800);
         Stage plotStage = new Stage();
         plotStage.setTitle(plotType.getName() + ": " + plotContext.getDataset().getName());

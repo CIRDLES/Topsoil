@@ -1,6 +1,6 @@
-package org.cirdles.topsoil.app.progress.isotope;
+package org.cirdles.topsoil.app.isotope;
 
-import org.cirdles.topsoil.app.progress.plot.TopsoilPlotType;
+import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 
 import java.util.Arrays;
 import java.util.Collections;

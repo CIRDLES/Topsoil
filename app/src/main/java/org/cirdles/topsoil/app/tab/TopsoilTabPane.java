@@ -1,8 +1,7 @@
-package org.cirdles.topsoil.app.progress.tab;
+package org.cirdles.topsoil.app.tab;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -11,15 +10,11 @@ import javafx.fxml.LoadException;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.table.TopsoilTable;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableController;
+import org.cirdles.topsoil.app.table.TopsoilTable;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Extends JavaFX TabPane class

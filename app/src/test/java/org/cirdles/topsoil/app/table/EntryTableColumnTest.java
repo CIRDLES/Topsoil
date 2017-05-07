@@ -20,7 +20,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableCell;
 import javafx.stage.Stage;
 import org.cirdles.TableSelector;
-import org.cirdles.topsoil.app.dataset.reader.TsvRawDataReader;
 import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.RawData;
 import org.cirdles.topsoil.app.dataset.SimpleDataset;

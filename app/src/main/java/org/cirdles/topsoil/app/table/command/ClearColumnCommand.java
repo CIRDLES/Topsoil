@@ -1,11 +1,12 @@
-package org.cirdles.topsoil.app.progress.table.command;
+package org.cirdles.topsoil.app.table.command;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableCell;
-import org.cirdles.topsoil.app.progress.util.Command;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.table.TopsoilTableCell;
+import org.cirdles.topsoil.app.util.Command;
+import org.cirdles.topsoil.app.util.UndoManager;
 
 import java.util.ArrayDeque;
 
@@ -17,7 +18,7 @@ import java.util.ArrayDeque;
  *
  * @author marottajb
  * @see Command
- * @see org.cirdles.topsoil.app.progress.util.UndoManager
+ * @see UndoManager
  */
 public class ClearColumnCommand implements Command {
 

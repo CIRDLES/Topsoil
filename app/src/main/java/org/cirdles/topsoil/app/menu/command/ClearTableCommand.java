@@ -1,9 +1,10 @@
-package org.cirdles.topsoil.app.progress.menu.command;
+package org.cirdles.topsoil.app.menu.command;
 
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.util.Command;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.util.Command;
+import org.cirdles.topsoil.app.util.UndoManager;
 
 /**
  * An undoable <tt>Command</tt> instance that is added to a
@@ -12,8 +13,8 @@ import org.cirdles.topsoil.app.progress.util.Command;
  * the user doesn't have to specify again upon a redo.
  *
  * @author marottajb
- * @see org.cirdles.topsoil.app.progress.util.Command
- * @see org.cirdles.topsoil.app.progress.util.UndoManager
+ * @see Command
+ * @see UndoManager
  */
 public class ClearTableCommand implements Command {
 

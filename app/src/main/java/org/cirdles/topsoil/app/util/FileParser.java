@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.util;
+package org.cirdles.topsoil.app.util;
 
 import java.io.File;
 
@@ -11,10 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.util.Alerter;
-import org.cirdles.topsoil.app.util.ErrorAlerter;
-import org.cirdles.topsoil.app.util.YesNoAlert;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
 
 import java.io.FileNotFoundException;
 import java.io.BufferedReader;

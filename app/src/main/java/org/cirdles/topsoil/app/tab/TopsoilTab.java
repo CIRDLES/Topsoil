@@ -1,13 +1,13 @@
-package org.cirdles.topsoil.app.progress.tab;
+package org.cirdles.topsoil.app.tab;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import org.cirdles.topsoil.app.progress.table.TopsoilTable;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableController;
-import org.cirdles.topsoil.app.progress.util.Command;
-import org.cirdles.topsoil.app.progress.util.UndoManager;
+import org.cirdles.topsoil.app.table.TopsoilTable;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
+import org.cirdles.topsoil.app.util.Command;
+import org.cirdles.topsoil.app.util.UndoManager;
 
 /**
  * A custom <tt>Tab</tt> which stores a <tt>TopsoilTable</tt>.

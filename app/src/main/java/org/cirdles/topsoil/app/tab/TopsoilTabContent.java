@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.tab;
+package org.cirdles.topsoil.app.tab;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
@@ -16,12 +16,12 @@ import javafx.scene.layout.GridPane;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.plot.VariableFormat;
 import org.cirdles.topsoil.app.plot.VariableFormats;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableCell;
-import org.cirdles.topsoil.app.progress.table.command.DeleteRowCommand;
-import org.cirdles.topsoil.app.progress.table.command.InsertRowCommand;
-import org.cirdles.topsoil.app.progress.table.command.NewRowCommand;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.table.TopsoilTable;
+import org.cirdles.topsoil.app.table.TopsoilTableCell;
+import org.cirdles.topsoil.app.table.command.DeleteRowCommand;
+import org.cirdles.topsoil.app.table.command.InsertRowCommand;
+import org.cirdles.topsoil.app.table.command.NewRowCommand;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.table.TopsoilTable;
 
 import java.util.*;
 

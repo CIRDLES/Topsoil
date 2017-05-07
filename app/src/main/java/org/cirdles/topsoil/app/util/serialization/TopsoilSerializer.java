@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.util.serialization;
+package org.cirdles.topsoil.app.util.serialization;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;

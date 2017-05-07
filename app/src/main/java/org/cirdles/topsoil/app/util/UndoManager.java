@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.util;
+package org.cirdles.topsoil.app.util;
 
 import java.util.ArrayDeque;
 

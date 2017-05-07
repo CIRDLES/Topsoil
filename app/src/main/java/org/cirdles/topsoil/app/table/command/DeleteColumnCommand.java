@@ -1,10 +1,11 @@
-package org.cirdles.topsoil.app.progress.table.command;
+package org.cirdles.topsoil.app.table.command;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableCell;
-import org.cirdles.topsoil.app.progress.util.Command;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.table.TopsoilTableCell;
+import org.cirdles.topsoil.app.util.Command;
+import org.cirdles.topsoil.app.util.UndoManager;
 
 /**
  * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
@@ -14,7 +15,7 @@ import org.cirdles.topsoil.app.progress.util.Command;
  *
  * @author marottajb
  * @see Command
- * @see org.cirdles.topsoil.app.progress.util.UndoManager
+ * @see UndoManager
  */
 public class DeleteColumnCommand implements Command {
 

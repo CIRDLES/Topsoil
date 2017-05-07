@@ -1,8 +1,9 @@
-package org.cirdles.topsoil.app.progress.table.command;
+package org.cirdles.topsoil.app.table.command;
 
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableCell;
-import org.cirdles.topsoil.app.progress.util.Command;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.table.TopsoilTableCell;
+import org.cirdles.topsoil.app.util.Command;
+import org.cirdles.topsoil.app.util.UndoManager;
 
 /**
  * An undoable <tt>Command</tt> instance that is added to a TopsoilTab's
@@ -12,8 +13,8 @@ import org.cirdles.topsoil.app.progress.util.Command;
  * the cell, and the new value of the cell.
  *
  * @author marottajb
- * @see org.cirdles.topsoil.app.progress.util.Command
- * @see org.cirdles.topsoil.app.progress.util.UndoManager
+ * @see Command
+ * @see UndoManager
  */
 public class TableCellEditCommand implements Command {
 

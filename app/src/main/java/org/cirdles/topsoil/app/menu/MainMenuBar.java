@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.menu;
+package org.cirdles.topsoil.app.menu;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,17 +12,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
-import org.cirdles.topsoil.app.progress.menu.command.ClearTableCommand;
-import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.progress.table.TopsoilTable;
+import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.menu.command.ClearTableCommand;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.table.TopsoilTable;
 
-import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
+import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.io.IOException;
 
-import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.*;
+import static org.cirdles.topsoil.app.menu.MenuItemEventHandler.*;
 
 /**
  * Created by sbunce on 5/30/2016.

@@ -1,12 +1,7 @@
-package org.cirdles.topsoil.app.progress.plot;
+package org.cirdles.topsoil.app.plot;
 
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
-import org.cirdles.topsoil.app.plot.Variable;
-import org.cirdles.topsoil.app.plot.Variables;
-import org.cirdles.topsoil.app.plot.standard.BasePlotPropertiesPanel;
-import org.cirdles.topsoil.app.plot.standard.ScatterPlotPropertiesPanel;
-import org.cirdles.topsoil.app.plot.standard.UncertaintyEllipsePlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlot;
 import org.cirdles.topsoil.plot.scatter.ScatterPlot;
@@ -28,24 +23,23 @@ public enum TopsoilPlotType {
 
     BASE_PLOT("Base Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            BasePlot::new, BasePlotPropertiesPanel::new),
+            BasePlot::new),
 
     SCATTER_PLOT("Scatter Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            ScatterPlot::new, ScatterPlotPropertiesPanel::new),
+            ScatterPlot::new),
 
     UNCERTAINTY_ELLIPSE_PLOT("Uncertainty Ellipse Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            UncertaintyEllipsePlot::new, UncertaintyEllipsePlotPropertiesPanel::new),
+            UncertaintyEllipsePlot::new),
 
     EVOLUTION_PLOT("Evolution Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            EvolutionPlot::new, TopsoilPlotType::emptyPropertyPanel);
+            EvolutionPlot::new);
 
     private final String name;
     private final List<Variable> variables;
     private final Plot plot;
-    private final Node propertiesPanel;
 
     public static final List<TopsoilPlotType> TOPSOIL_PLOT_TYPES;
     static {
@@ -57,16 +51,10 @@ public enum TopsoilPlotType {
         ));
     }
 
-    TopsoilPlotType(String name, List<Variable> variables, Supplier<? extends Plot> plot,
-                           Function<Plot, ? extends Node> propertiesPanel) {
+    TopsoilPlotType(String name, List<Variable> variables, Supplier<? extends Plot> plot) {
         this.name = name;
         this.variables = variables;
         this.plot = plot.get();
-        this.propertiesPanel = propertiesPanel.apply(this.plot);
-    }
-
-    public static Node emptyPropertyPanel(Plot plot) {
-        return new VBox();
     }
 
     public String getName() {
@@ -79,9 +67,5 @@ public enum TopsoilPlotType {
 
     public Plot getPlot() {
         return plot;
-    }
-
-    public Node getPropertiesPanel() {
-        return propertiesPanel;
     }
 }

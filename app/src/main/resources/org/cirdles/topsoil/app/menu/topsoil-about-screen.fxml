@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="containerPane" onMouseDragged="#mouseDraggedEvent" onMousePressed="#mousePressedEvent" prefHeight="600.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.progress.TopsoilSplashScreen">
+<AnchorPane fx:id="containerPane" onMouseDragged="#mouseDraggedEvent" onMousePressed="#mousePressedEvent" prefHeight="600.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.TopsoilSplashScreen">
    <children>
       <VBox alignment="TOP_CENTER" minWidth="-Infinity" prefWidth="450.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>

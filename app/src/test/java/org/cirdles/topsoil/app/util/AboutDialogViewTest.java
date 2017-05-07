@@ -20,7 +20,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.WebBrowser;
-import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;

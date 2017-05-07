@@ -1,7 +1,7 @@
-package org.cirdles.topsoil.app.progress.util;
+package org.cirdles.topsoil.app.util;
 
 import javafx.stage.FileChooser;
-import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
+import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.table;
+package org.cirdles.topsoil.app.table;
 
 import javafx.collections.ObservableList;
 

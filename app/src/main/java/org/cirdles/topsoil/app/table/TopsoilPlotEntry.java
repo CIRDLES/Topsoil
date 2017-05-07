@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.table;
+package org.cirdles.topsoil.app.table;
 
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.entry.EntryListener;

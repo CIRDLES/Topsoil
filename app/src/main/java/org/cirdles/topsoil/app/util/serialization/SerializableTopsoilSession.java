@@ -1,19 +1,19 @@
-package org.cirdles.topsoil.app.progress.util.serialization;
+package org.cirdles.topsoil.app.util.serialization;
 
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.plot.*;
-import org.cirdles.topsoil.app.progress.TopsoilRawData;
+import org.cirdles.topsoil.app.TopsoilRawData;
 import org.cirdles.topsoil.app.dataset.NumberDataset;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.table.TopsoilPlotEntry;
-import org.cirdles.topsoil.app.progress.table.TopsoilTable;
-import org.cirdles.topsoil.app.progress.table.TopsoilTableController;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.table.TopsoilPlotEntry;
+import org.cirdles.topsoil.app.table.TopsoilTable;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.util.serialization;
+package org.cirdles.topsoil.app.util.serialization;
 
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.plot.PlotContext;
@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @see Plot
  * @see TopsoilPlotType
- * @see org.cirdles.topsoil.app.progress.table.TopsoilTable
+ * @see org.cirdles.topsoil.app.table.TopsoilTable
  */
 public class PlotInformation {
 

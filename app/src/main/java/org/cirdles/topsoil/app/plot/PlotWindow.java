@@ -24,7 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import org.cirdles.topsoil.app.progress.table.TopsoilTable;
+import org.cirdles.topsoil.app.table.TopsoilTable;
 import org.cirdles.topsoil.app.util.SVGSaver;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
@@ -45,20 +45,9 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
 
     private Plot plot;
 
-    private Node propertiesPanel;
-
-    public PlotWindow(Plot plot, Node propertiesPanel) {
+    public PlotWindow(Plot plot) {
         super(self -> {
             self.plot = plot;
-            self.propertiesPanel = propertiesPanel;
-        });
-    }
-
-    public PlotWindow(Plot plot, Node propertiesPanel, TopsoilTable table) {
-        super(self -> {
-            self.plot = plot;
-            self.propertiesPanel = propertiesPanel;
-            self.table = table;
         });
     }
 
@@ -99,14 +88,8 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
     }
 
     private void initializePlotAndConfig() {
-        try {
-            plotAndConfig.getChildren().setAll(
-                    plot.displayAsNode(),
-                    propertiesPanel);
-        } catch (UnsupportedOperationException ex) {
-            plotAndConfig.getChildren().setAll(
-                    plot.displayAsNode());
-        }
+        plotAndConfig.getChildren().setAll(
+                plot.displayAsNode());
     }
 
     @FXML

@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress;
+package org.cirdles.topsoil.app;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;

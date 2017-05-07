@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.table;
+package org.cirdles.topsoil.app.table;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

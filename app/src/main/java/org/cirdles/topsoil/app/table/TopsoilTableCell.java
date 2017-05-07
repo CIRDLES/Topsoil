@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.table;
+package org.cirdles.topsoil.app.table;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
@@ -6,7 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.progress.table.command.TableCellEditCommand;
+import org.cirdles.topsoil.app.table.command.TableCellEditCommand;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 

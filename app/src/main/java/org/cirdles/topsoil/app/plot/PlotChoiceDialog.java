@@ -1,7 +1,7 @@
-package org.cirdles.topsoil.app.progress.plot;
+package org.cirdles.topsoil.app.plot;
 
 import javafx.scene.control.ChoiceDialog;
-import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
+import org.cirdles.topsoil.app.isotope.IsotopeType;
 
 import java.util.ArrayList;
 

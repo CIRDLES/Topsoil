@@ -1,14 +1,13 @@
-package org.cirdles.topsoil.app.progress.table.command;
+package org.cirdles.topsoil.app.table.command;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.progress.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.progress.util.Command;
+import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.util.Command;
+import org.cirdles.topsoil.app.util.UndoManager;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,7 +19,7 @@ import java.util.List;
  *
  * @author marottajb
  * @see Command
- * @see org.cirdles.topsoil.app.progress.util.UndoManager
+ * @see UndoManager
  */
 public class TableColumnReorderCommand implements Command {
 

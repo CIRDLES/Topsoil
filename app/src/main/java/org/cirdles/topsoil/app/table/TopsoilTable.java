@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.table;
+package org.cirdles.topsoil.app.table;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,7 +10,7 @@ import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
-import org.cirdles.topsoil.app.progress.util.serialization.PlotInformation;
+import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 
 import java.util.*;
 

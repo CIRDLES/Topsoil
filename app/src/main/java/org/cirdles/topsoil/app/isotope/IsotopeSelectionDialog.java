@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.isotope;
+package org.cirdles.topsoil.app.isotope;
 
 import javafx.collections.FXCollections;
 import javafx.scene.control.ChoiceDialog;

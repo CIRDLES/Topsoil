@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.util;
+package org.cirdles.topsoil.app.util;
 
 /**
  * An undoable action. Instances of the implementing class can be stored in an
@@ -18,14 +18,14 @@ package org.cirdles.topsoil.app.progress.util;
  *
  * @author marottajb
  * @see UndoManager
- * @see org.cirdles.topsoil.app.progress.table.TopsoilTableCellEditCommand
- * @see org.cirdles.topsoil.app.progress.table.ClearCellCommand
- * @see org.cirdles.topsoil.app.progress.table.NewRowCommand
- * @see org.cirdles.topsoil.app.progress.table.ClearRowCommand
- * @see org.cirdles.topsoil.app.progress.table.DeleteRowCommand
- * @see org.cirdles.topsoil.app.progress.table.ClearColumnCommand
- * @see org.cirdles.topsoil.app.progress.table.DeleteColumnCommand
- * @see org.cirdles.topsoil.app.progress.table.TableColumnReorderCommand
+ * @see org.cirdles.topsoil.app.table.TopsoilTableCellEditCommand
+ * @see org.cirdles.topsoil.app.table.ClearCellCommand
+ * @see org.cirdles.topsoil.app.table.NewRowCommand
+ * @see org.cirdles.topsoil.app.table.ClearRowCommand
+ * @see org.cirdles.topsoil.app.table.DeleteRowCommand
+ * @see org.cirdles.topsoil.app.table.ClearColumnCommand
+ * @see org.cirdles.topsoil.app.table.DeleteColumnCommand
+ * @see org.cirdles.topsoil.app.table.TableColumnReorderCommand
  */
 public interface Command {
 

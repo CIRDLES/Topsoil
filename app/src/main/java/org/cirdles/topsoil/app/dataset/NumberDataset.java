@@ -1,9 +1,8 @@
-package org.cirdles.topsoil.app.progress.dataset;
+package org.cirdles.topsoil.app.dataset;
 
-import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
-import org.cirdles.topsoil.app.progress.TopsoilRawData;
+import org.cirdles.topsoil.app.TopsoilRawData;
 
 import java.util.List;
 

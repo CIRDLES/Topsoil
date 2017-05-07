@@ -1,11 +1,11 @@
-package org.cirdles.topsoil.app.progress.table;
+package org.cirdles.topsoil.app.table;
 
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.progress.table.command.*;
+import org.cirdles.topsoil.app.table.command.*;
 
 /**
  * Created by benjaminmuldrow on 8/1/16.

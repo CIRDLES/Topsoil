@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.progress.table;
+package org.cirdles.topsoil.app.table;
 
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
@@ -8,11 +8,11 @@ import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
-import org.cirdles.topsoil.app.progress.TopsoilRawData;
+import org.cirdles.topsoil.app.TopsoilRawData;
 import org.cirdles.topsoil.app.dataset.NumberDataset;
 import org.cirdles.topsoil.app.tab.TopsoilTabContent;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.progress.table.command.TableColumnReorderCommand;
+import org.cirdles.topsoil.app.table.command.TableColumnReorderCommand;
 
 import java.util.ArrayList;
 import java.util.List;
