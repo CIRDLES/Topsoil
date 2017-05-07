@@ -205,7 +205,6 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
                             topsoil.setMember("bridge", new Bridge());
-                            System.out.println("ASSIGNED");
 
                             if (getProperties() != null) {
                                 topsoil.call("setProperties", getProperties());

@@ -106,10 +106,6 @@ public class TopsoilTabPane extends TabPane {
         return tab;
     }
 
-    public void setUntitledCount(int count) {
-        this.untitledCount = count;
-    }
-
     public final BooleanProperty isEmptyProperty() {
         return isEmptyProperty;
     }

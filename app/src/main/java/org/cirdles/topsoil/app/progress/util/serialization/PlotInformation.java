@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.progress.util.serialization;
 
+import javafx.collections.ObservableMap;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.plot.PlotContext;
 import org.cirdles.topsoil.app.plot.VariableBinding;
@@ -29,7 +30,7 @@ public class PlotInformation {
     private Plot plot;
     private TopsoilPlotType plotType;
     private Collection<VariableBinding> variableBindings;
-    private Map<String, Object> plotProperties;
+    private ObservableMap<String, Object> plotProperties;
     private Stage stage;
 
     private VariableFormat<Number> xUncertainty;
@@ -42,7 +43,8 @@ public class PlotInformation {
      * @param plot  the Plot object
      * @param plotType  the TopsoilPlotType of the plot
      */
-    public PlotInformation(Plot plot, TopsoilPlotType plotType, Map<String, Object> plotProperties, PlotContext
+    public PlotInformation(Plot plot, TopsoilPlotType plotType, ObservableMap<String, Object> plotProperties,
+                           PlotContext
             plotContext, Stage stage) {
         this.plot = plot;
         this.plotType = plotType;
@@ -74,7 +76,7 @@ public class PlotInformation {
      *
      * @return  the HashMap of plot properties
      */
-    public Map<String, Object> getPlotProperties() {
+    public ObservableMap<String, Object> getPlotProperties() {
         return this.plotProperties;
     }
 

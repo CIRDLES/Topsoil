@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.app.progress.plot;
 
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -10,6 +12,8 @@ import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
 
+import javax.print.attribute.standard.MediaSize;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -34,17 +38,15 @@ public class PlotPropertiesPanelController {
     @FXML ColorPicker mcLeanRegressionColorPicker;
 
     private static Map<String, IsotopeType> STRING_TO_ISOTOPE_TYPE;
-    private static Map<String, Object> PROPERTIES;
+    private final ObservableMap<String, Object> PROPERTIES = FXCollections.observableMap(new BasePlotDefaultProperties());
     static {
         STRING_TO_ISOTOPE_TYPE = new LinkedHashMap<>();
         for (IsotopeType type : IsotopeType.ISOTOPE_TYPES) {
             STRING_TO_ISOTOPE_TYPE.put(type.getName(), type);
         }
-        PROPERTIES = new BasePlotDefaultProperties();
     }
 
     private Plot plot;
-    private Node thisNode;
 
     @FXML
     public void initialize() {
@@ -60,7 +62,7 @@ public class PlotPropertiesPanelController {
          * Set default Base Plot properties.
          */
         isotopeSystemChoiceBox.getSelectionModel().select(STRING_TO_ISOTOPE_TYPE.get((String) PROPERTIES.get(ISOTOPE_TYPE)).getName());
-
+        
         titleTextField.setText((String) PROPERTIES.get(TITLE));
         xAxisTextField.setText((String) PROPERTIES.get(X_AXIS));
         yAxisTextField.setText((String) PROPERTIES.get(Y_AXIS));
@@ -331,18 +333,7 @@ public class PlotPropertiesPanelController {
         return s.substring(0, s.length() - 2).replaceAll("0x", "#");
     }
 
-    public Map<String, Object> getProperties() {
-        PROPERTIES.put(TITLE, titleProperty.get());
-        PROPERTIES.put(X_AXIS, xAxisTitleProperty.get());
-        PROPERTIES.put(Y_AXIS, yAxisTitleProperty.get());
-        PROPERTIES.put(POINTS, showPointsProperty.get());
-        PROPERTIES.put(ELLIPSES, showEllipsesProperty.get());
-//        PROPERTIES.put(CROSSES, showCrossesProperty.get());
-        PROPERTIES.put(POINT_FILL_COLOR, convertColor(pointsColorProperty.get()));
-        PROPERTIES.put(ELLIPSE_FILL_COLOR, convertColor(ellipsesColorProperty.get()));
-//        PROPERTIES.put(CROSS_FILL_COLOR, convertColor(crossesColorProperty.get()));
-        PROPERTIES.put(ISOTOPE_TYPE, isotopeTypeObjectProperty.get().getName());
-
+    public ObservableMap<String, Object> getProperties() {
         return PROPERTIES;
     }
 
@@ -352,7 +343,7 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(Y_AXIS)) setyAxisTitle((String) plotProperties.get(Y_AXIS));
         if (plotProperties.containsKey(POINTS)) setShowPoints((Boolean) plotProperties.get(POINTS));
         if (plotProperties.containsKey(ELLIPSES)) setshowEllipses((Boolean) plotProperties.get(ELLIPSES));
-//        if (plotProperties.containsKey(CROSSES)) setshowCrosses((Boolean) plotProperties.get(CROSSES));
+//        if (plotProperties.containsKey(CROSSES)) setShowCrosses((Boolean) plotProperties.get(CROSSES));
         if (plotProperties.containsKey(POINT_FILL_COLOR)) setPointsColor(Color.valueOf((String) plotProperties.get(POINT_FILL_COLOR)));
         if (plotProperties.containsKey(ELLIPSE_FILL_COLOR)) setEllipsesColor(Color.valueOf((String) plotProperties.get(ELLIPSE_FILL_COLOR)));
 //        if (plotProperties.containsKey(CROSS_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(CROSS_FILL_COLOR)));

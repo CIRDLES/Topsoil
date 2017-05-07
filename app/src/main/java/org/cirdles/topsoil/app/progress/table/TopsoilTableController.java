@@ -87,12 +87,6 @@ public class TopsoilTableController {
         tabContent.getPlotPropertiesPanelController().isotopeTypeObjectProperty().bindBidirectional(table.isotopeTypeObjectProperty());
     }
 
-    public TopsoilTableController(TopsoilTable table, TopsoilTabContent tabContent, Map<String, Object> plotProperties) {
-        this(table, tabContent);
-
-        this.tabContent.getPlotPropertiesPanelController().setProperties(plotProperties);
-    }
-
     public TopsoilTable getTable() {
         return table;
     }

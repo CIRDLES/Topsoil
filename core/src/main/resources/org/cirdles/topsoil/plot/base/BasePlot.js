@@ -115,7 +115,7 @@ plot.update = function (data) {
     //if the isotope type has changed, alert Java
     if (plot.currentIsotope != plot.getProperty('Isotope')) {
         plot.currentIsotope = plot.getProperty('Isotope');
-        topsoil.bridge.println(plot.getProperty('Isotope'));
+
         topsoil.bridge.updateIsotope(plot.getProperty('Isotope'));
     }
 

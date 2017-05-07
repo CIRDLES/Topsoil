@@ -19,6 +19,7 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.progress.table.TopsoilTable;
+import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
@@ -77,7 +78,16 @@ public class MainWindow extends Application {
 
             primaryStage.setMinHeight(400.0);
             primaryStage.setMinWidth(650.0);
+
             primaryStage.setTitle("Topsoil");
+            TopsoilSerializer.currentProjectFileProperty().addListener(c -> {
+                if (TopsoilSerializer.projectFileExists()) {
+                    primaryStage.setTitle("Topsoil - " + TopsoilSerializer.getCurrentProjectFile().getName());
+                } else {
+                    primaryStage.setTitle("Topsoil");
+                }
+            });
+
             primaryStage.setScene(scene);
             primaryStage.show();
 

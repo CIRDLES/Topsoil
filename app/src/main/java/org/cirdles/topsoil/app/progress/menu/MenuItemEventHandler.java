@@ -11,6 +11,7 @@ import javafx.scene.input.Clipboard;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
+import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.app.plot.*;
@@ -34,6 +35,10 @@ import org.cirdles.topsoil.app.util.IssueCreator;
 import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
 import org.cirdles.topsoil.app.util.YesNoAlert;
 import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.base.BasePlot;
+import org.cirdles.topsoil.plot.scatter.ScatterPlot;
+import org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlot;
+import org.cirdles.topsoil.plot.uth.evolution.EvolutionPlot;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -366,17 +371,87 @@ public class MenuItemEventHandler {
                                         plotInfo.getStage().close();
                                     }
                                 }
-                                generateNewPlot(plotType, tableController, tabs);
+                                PlotContext plotContext = generatePlotContext(tableController);
+                                generatePlot(tableController, plotType, plotContext);
                             }
                         });
             } else {
-                generateNewPlot(plotType, tableController, tabs);
+                PlotContext plotContext = generatePlotContext(tableController);
+                generatePlot(tableController, plotType, plotContext);
             }
         }
     }
 
-    private static void generateNewPlot(TopsoilPlotType plotType, TopsoilTableController tableController,
-                                        TopsoilTabPane tabs) {
+    public static void handlePlotGenerationFromFile(TopsoilTableController tableController, TopsoilPlotType plotType,
+                                                    PlotContext plotContext) {
+        generatePlot(tableController, plotType, plotContext);
+    }
+
+    private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType,
+                                     PlotContext plotContext) {
+
+        List<Map<String, Object>> data = plotContext.getData();
+
+        PlotPropertiesPanelController propertiesPanel = tableController.getTabContent().getPlotPropertiesPanelController();
+        Map<String, Object> plotProperties = propertiesPanel.getProperties();
+
+        Plot plot;
+        switch (plotType) {
+            case BASE_PLOT:
+                plot = new BasePlot();
+                break;
+            case SCATTER_PLOT:
+                plot = new ScatterPlot();
+                break;
+            case UNCERTAINTY_ELLIPSE_PLOT:
+                plot = new UncertaintyEllipsePlot();
+                break;
+            case EVOLUTION_PLOT:
+                plot = new EvolutionPlot();
+                break;
+            default:
+                plot = plotType.getPlot();
+                break;
+        }
+
+        plot.setData(data);
+        plot.setProperties(plotProperties);
+        propertiesPanel.setPlot(plot);
+
+        // Create Plot Scene
+        Parent plotWindow = new PlotWindow(plot);
+        Scene scene = new Scene(plotWindow, 800, 600);
+
+        // Create Plot Stage
+        Stage plotStage = new Stage();
+        plotStage.setScene(scene);
+        plotStage.setResizable(false);
+
+        // Connect Plot with PropertiesPanel
+        plotStage.setTitle(plotType.getName() + ": " + propertiesPanel.getTitle());
+        propertiesPanel.titleProperty().addListener(c -> {
+            if (propertiesPanel.getTitle().length() > 0) {
+                plotStage.setTitle(plotType.getName() + ": " + propertiesPanel.getTitle());
+            } else {
+                plotStage.setTitle(plotType.getName());
+            }
+        });
+
+        plotStage.setOnCloseRequest(closeEvent -> {
+            tableController.getTable().removeOpenPlot(plotType);
+            propertiesPanel.removePlot();
+        });
+
+        // Show Plot
+        plotStage.show();
+
+        // Store plot information in TopsoilTable
+        PlotInformation plotInfo = new PlotInformation(plot, plotType, propertiesPanel.getProperties(), plotContext, plotStage);
+        plotInfo.setVariableBindings(plotContext.getBindings());
+        tableController.getTable().addOpenPlot(plotInfo);
+    }
+
+    private static PlotContext generatePlotContext(TopsoilTableController tableController) {
         NumberDataset dataset = tableController.getDataset();
         SimplePlotContext plotContext = new SimplePlotContext(dataset);
 
@@ -387,9 +462,9 @@ public class MenuItemEventHandler {
             variable = Variables.VARIABLE_LIST.get(i);
 
             if (variable == Variables.SIGMA_X) {
-                format = tabs.getSelectedTab().getTabContent().getXUncertainty();
+                format = tableController.getTabContent().getXUncertainty();
             } else if (variable == Variables.SIGMA_Y) {
-                format = tabs.getSelectedTab().getTabContent().getYUncertainty();
+                format = tableController.getTabContent().getYUncertainty();
             } else {
                 format = variable.getFormats().size() > 0 ? variable.getFormats().get(0) : null;
             }
@@ -397,57 +472,6 @@ public class MenuItemEventHandler {
             plotContext.addBinding(variable, dataset.getFields().get(i), format);
         }
 
-        List<Map<String, Object>> data = plotContext.getData();
-
-        Plot plot = plotType.getPlot();
-        plot.setData(data);
-
-        PlotPropertiesPanelController propertiesPanel = tableController.getTabContent().getPlotPropertiesPanelController();
-        propertiesPanel.setPlot(plot);
-        plot.setProperties(propertiesPanel.getProperties());
-
-        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
-        Scene scene = new Scene(plotWindow, 1200, 800);
-        Stage plotStage = new Stage();
-        plotStage.setTitle(plotType.getName() + ": " + dataset.getName());
-        plotStage.setOnCloseRequest(closeEvent -> {
-            tableController.getTable().removeOpenPlot(plotType);
-            propertiesPanel.removePlot();
-        });
-        plotStage.setScene(scene);
-        plotStage.show();
-
-        // Store plot information in TopsoilTable
-        PlotInformation plotInfo = new PlotInformation(plot, plotType, plot.getProperties(), plotContext, plotStage);
-        plotInfo.setVariableBindings(plotContext.getBindings());
-        plotInfo.setStage(plotStage);
-        tableController.getTable().addOpenPlot(plotInfo);
-
-    }
-
-    public static void restorePlot(TopsoilTableController tableController, TopsoilPlotType plotType,
-                                   PlotContext plotContext, Map<String, Object> plotProperties) {
-        List<Map<String, Object>> data = plotContext.getData();
-
-        Plot plot = plotType.getPlot();
-        plot.setData(data);
-        plot.setProperties(plotProperties);
-
-        Parent plotWindow = new PlotWindow(plot, plotType.getPropertiesPanel());
-        Scene scene = new Scene(plotWindow, 1200, 800);
-        Stage plotStage = new Stage();
-        plotStage.setTitle(plotType.getName() + ": " + plotContext.getDataset().getName());
-        plotStage.setOnCloseRequest(closeEvent -> tableController.getTable().removeOpenPlot(plotType));
-        plotStage.setScene(scene);
-        plotStage.show();
-
-        // Store plot information in TopsoilTable
-        PlotInformation plotInfo = new PlotInformation(plot, plotType, plotProperties, plotContext, plotStage);
-        plotInfo.setVariableBindings(plotContext.getBindings());
-        tableController.getTable().addOpenPlot(plotInfo);
-    }
-
-    private static <T> Field<T> fieldHelper(Field<T> field) {
-        return field;
+        return plotContext;
     }
 }

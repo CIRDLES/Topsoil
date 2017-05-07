@@ -2,7 +2,6 @@ package org.cirdles.topsoil.app.progress.util.serialization;
 
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
-import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.plot.*;
 import org.cirdles.topsoil.app.progress.TopsoilRawData;
 import org.cirdles.topsoil.app.progress.dataset.NumberDataset;
@@ -125,6 +124,9 @@ class SerializableTopsoilSession implements Serializable {
             tableController.getTabContent().setYUncertainty(VARIABLE_FORMATS.get(tableData.get("Y Variable Format " +
                                                                                                "Name")));
 
+            tableController.getTabContent().getPlotPropertiesPanelController().setProperties((HashMap<String, Object>)
+                                                                                                     tableData.get("Plot Properties"));
+
             for (HashMap<String, Serializable> plot : (ArrayList<HashMap>) tableData.get("Plots")) {
                 this.restorePlot(tableController, plot);
             }
@@ -153,11 +155,15 @@ class SerializableTopsoilSession implements Serializable {
         tableData.put("Data", new ArrayList<>(tableController.getTable().getDataAsArrays()));
 
         // Plots which visualize data in this table
-        ArrayList<HashMap<String, Serializable>> plots = new ArrayList<>();
+        ArrayList<Map<String, Serializable>> plots = new ArrayList<>();
         for (PlotInformation plotInfo : tableController.getTable().getOpenPlots()) {
-            plots.add(convertPlotInformation(plotInfo));
+            plots.add(storePlot(plotInfo, tableController.getTabContent().getPlotPropertiesPanelController()
+                                                          .getProperties()));
         }
         tableData.put("Plots", plots);
+
+        tableData.put("Plot Properties", new HashMap<>(tableController.getTabContent().getPlotPropertiesPanelController()
+                                                                      .getProperties()));
 
         tableData.put("X Variable Format Name", tableController.getTabContent().getXUncertainty().getName());
         tableData.put("Y Variable Format Name", tableController.getTabContent().getYUncertainty().getName());
@@ -172,7 +178,7 @@ class SerializableTopsoilSession implements Serializable {
      * @param plotInfo  a PlotInformation object
      * @return  a HashMap<String, Serializable> containing plot information
      */
-    private HashMap<String, Serializable> convertPlotInformation(PlotInformation plotInfo) {
+    private Map<String, Serializable> storePlot(PlotInformation plotInfo, Map<String, Object> properties) {
         HashMap<String, Serializable> plotOptions = new HashMap<>();
 
         plotOptions.put("Topsoil Plot Type", plotInfo.getTopsoilPlotType().getName());
@@ -190,7 +196,7 @@ class SerializableTopsoilSession implements Serializable {
 //        }
 //        plotOptions.put("Variable Bindings", bindings);
 
-        plotOptions.put("Properties", (HashMap<String, Object>) plotInfo.getPlotProperties());
+//        plotOptions.put("Properties", new HashMap<>(properties));
 
         return plotOptions;
     }
@@ -216,8 +222,8 @@ class SerializableTopsoilSession implements Serializable {
         PlotContext plotContext = new SimplePlotContext(dataset);
 
         /*
-        TODO Variable Bindings should be restored from information in the serialized file. Right now, they are
-        TODO re-formed from the order of columns in the TableView.
+        TODO | Variable Bindings should be restored from information in the serialized file. Right now, they are
+        TODO | re-formed from the order of columns in the TableView.
          */
 //        // Bind Variables
 //        Map<String, Serializable> bindingMaps = (Map<String, Serializable>) plot.get("Variable Bindings");
@@ -250,9 +256,6 @@ class SerializableTopsoilSession implements Serializable {
 
         }
 
-        Map<String, Object> plotProperties = (Map<String, Object>) plot.get("Properties");
-
-        MenuItemEventHandler.restorePlot(tableController, TOPSOIL_PLOT_TYPES.get(plot.get("Topsoil Plot Type")),
-                                         plotContext, plotProperties);
+        MenuItemEventHandler.handlePlotGenerationFromFile(tableController, TOPSOIL_PLOT_TYPES.get(plot.get("Topsoil Plot Type")), plotContext);
     }
 }
