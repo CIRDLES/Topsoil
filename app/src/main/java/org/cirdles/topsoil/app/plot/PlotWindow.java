@@ -54,11 +54,9 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
         });
     }
 
-    public PlotWindow(Plot plot, Node propertiesPanel, TopsoilTable table) {
+    public PlotWindow(Plot plot) {
         super(self -> {
             self.plot = plot;
-            self.propertiesPanel = propertiesPanel;
-            self.table = table;
         });
     }
 
@@ -99,14 +97,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
     }
 
     private void initializePlotAndConfig() {
-        try {
-            plotAndConfig.getChildren().setAll(
-                    plot.displayAsNode(),
-                    propertiesPanel);
-        } catch (UnsupportedOperationException ex) {
-            plotAndConfig.getChildren().setAll(
-                    plot.displayAsNode());
-        }
+        plotAndConfig.getChildren().setAll(plot.displayAsNode());
     }
 
     @FXML

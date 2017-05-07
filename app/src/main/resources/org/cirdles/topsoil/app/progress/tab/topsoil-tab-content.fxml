@@ -97,9 +97,6 @@
             </GridPane>
          </children>
       </AnchorPane>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <ScrollPane fx:id="plotPropertiesScrollPane" fitToHeight="true" fitToWidth="true" layoutX="121.0" layoutY="-63.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-         </children></AnchorPane>
+      <AnchorPane fx:id="plotPropertiesAnchorPane" prefHeight="200.0" prefWidth="200.0" />
    </items>
 </SplitPane>

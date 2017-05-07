@@ -1,26 +1,18 @@
 package org.cirdles.topsoil.app.progress;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
  * @author marottajb
@@ -51,7 +43,7 @@ public class TopsoilSplashScreen extends Pane {
     private double yOffset;
 
     // ResourceExtractor
-    private ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilSplashScreen.class);
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilSplashScreen.class);
 
     @FXML
     public void initialize() {
@@ -62,8 +54,8 @@ public class TopsoilSplashScreen extends Pane {
         assert releaseLog != null : "fx:id=\"releaseLog\" was not injected: check your FXML file 'topsoilSplashScreen" +
                                     ".fxml'.";
 
-        topsoilLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
-        cirdlesLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
+        topsoilLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
+        cirdlesLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
 
         browser = new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter());
     }

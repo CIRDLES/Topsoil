@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.progress.util.serialization;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.progress.tab.TopsoilTabPane;
@@ -21,7 +23,7 @@ import java.io.FileNotFoundException;
  */
 public class TopsoilSerializer {
 
-    private static File currentProjectFile;
+    private static ObjectProperty<File> currentProjectFileProperty;
 
     /**
      * Creates a <tt>SerializableTopsoilSession</tt> and writes it to a
@@ -85,6 +87,13 @@ public class TopsoilSerializer {
 
     }
 
+    public static ObjectProperty<File> currentProjectFileProperty() {
+        if (currentProjectFileProperty == null) {
+            currentProjectFileProperty = new SimpleObjectProperty<>(null);
+        }
+        return currentProjectFileProperty;
+    }
+
     /**
      * Gets the .topsoil <tt>File</tt> that is currently open.
      *
@@ -94,7 +103,7 @@ public class TopsoilSerializer {
         if (!isProjectOpen()) {
             return null;
         }
-        return currentProjectFile;
+        return currentProjectFileProperty.get();
     }
 
     /**
@@ -103,14 +112,14 @@ public class TopsoilSerializer {
      * @param file  the open .topsoil File
      */
     public static void setCurrentProjectFile(File file) {
-        currentProjectFile = file;
+        currentProjectFileProperty.set(file);
     }
 
     /**
      * Sets the working .topsoil <tt>File</tt> to null.
      */
     public static void closeProjectFile() {
-        currentProjectFile = null;
+        currentProjectFileProperty.set(null);
     }
 
     /**
@@ -119,7 +128,7 @@ public class TopsoilSerializer {
      * @return  true if currentProjectFile != null
      */
     public static boolean isProjectOpen() {
-        return currentProjectFile != null;
+        return currentProjectFileProperty.get() != null;
     }
 
     /**
@@ -129,7 +138,7 @@ public class TopsoilSerializer {
      * @return  true if the current .topsoil <tt>File</tt>.exists()
      */
     public static boolean projectFileExists() {
-        return (isProjectOpen() && currentProjectFile.exists());
+        return (isProjectOpen() && currentProjectFileProperty.get().exists());
     }
 
 }

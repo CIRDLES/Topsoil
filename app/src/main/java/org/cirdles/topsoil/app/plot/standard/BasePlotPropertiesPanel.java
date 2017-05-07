@@ -31,7 +31,6 @@ import java.util.Map;
 
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.*;
 
-
 /**
  * Created by Emily on 3/14/17.
  */
@@ -114,8 +113,8 @@ public class BasePlotPropertiesPanel
         ellipseVisibilityBox.selectedProperty().addListener(updateProperty(ELLIPSES));
 
         isotopeField.getItems().addAll("Generic", "Uranium Lead");
-        isotopeField.setValue(((String) plot.getProperties().get(ISOTOPE)));
-        isotopeField.valueProperty().addListener(updateProperty(ISOTOPE));
+        isotopeField.setValue(((String) plot.getProperties().get(ISOTOPE_TYPE)));
+        isotopeField.valueProperty().addListener(updateProperty(ISOTOPE_TYPE));
     }
 
     @Override

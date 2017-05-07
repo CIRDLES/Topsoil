@@ -28,24 +28,23 @@ public enum TopsoilPlotType {
 
     BASE_PLOT("Base Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            BasePlot::new, BasePlotPropertiesPanel::new),
+            new BasePlot()),
 
     SCATTER_PLOT("Scatter Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            ScatterPlot::new, ScatterPlotPropertiesPanel::new),
+            new ScatterPlot()),
 
     UNCERTAINTY_ELLIPSE_PLOT("Uncertainty Ellipse Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            UncertaintyEllipsePlot::new, UncertaintyEllipsePlotPropertiesPanel::new),
+            new UncertaintyEllipsePlot()),
 
     EVOLUTION_PLOT("Evolution Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            EvolutionPlot::new, TopsoilPlotType::emptyPropertyPanel);
+            new EvolutionPlot());
 
     private final String name;
     private final List<Variable> variables;
     private final Plot plot;
-    private final Node propertiesPanel;
 
     public static final List<TopsoilPlotType> TOPSOIL_PLOT_TYPES;
     static {
@@ -57,16 +56,10 @@ public enum TopsoilPlotType {
         ));
     }
 
-    TopsoilPlotType(String name, List<Variable> variables, Supplier<? extends Plot> plot,
-                           Function<Plot, ? extends Node> propertiesPanel) {
+    TopsoilPlotType(String name, List<Variable> variables, Plot plot) {
         this.name = name;
         this.variables = variables;
-        this.plot = plot.get();
-        this.propertiesPanel = propertiesPanel.apply(this.plot);
-    }
-
-    public static Node emptyPropertyPanel(Plot plot) {
-        return new VBox();
+        this.plot = plot;
     }
 
     public String getName() {
@@ -79,9 +72,5 @@ public enum TopsoilPlotType {
 
     public Plot getPlot() {
         return plot;
-    }
-
-    public Node getPropertiesPanel() {
-        return propertiesPanel;
     }
 }
