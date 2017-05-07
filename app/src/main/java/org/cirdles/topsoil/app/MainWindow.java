@@ -21,17 +21,18 @@ import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilTable;
 import org.cirdles.topsoil.app.util.Alerter;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
+import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 
 public class MainWindow extends Application {
 
-    private ResourceExtractor resourceExtractor = new ResourceExtractor(MainWindow.class);
-    private final String TOPSOIL_MAIN_WINDOW_FXML_NAME = "main-window.fxml";
-    private final String TOPSOIL_SPLASH_SCREEN_FXML_NAME = "topsoil-splash-screen.fxml";
-    private final String TOPSOIL_CSS_FILE_NAME = "topsoil-stylesheet.css";
-    private final String TOPSOIL_LOGO_FILE_NAME = "topsoil-logo.png";
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(MainWindow.class);
+    private final String TOPSOIL_MAIN_WINDOW_FXML_PATH = "main-window.fxml";
+    private final String TOPSOIL_SPLASH_SCREEN_FXML_PATH = "topsoil-splash-screen.fxml";
+    private final String TOPSOIL_CSS_FILE_PATH = "topsoil-stylesheet.css";
+    private final String TOPSOIL_LOGO_FILE_PATH = "topsoil-logo.png";
 
     @Override
     public void start(Stage primaryStage) {
@@ -42,21 +43,21 @@ public class MainWindow extends Application {
 
             // Load FXML for MainWindowController
             try {
-                FXMLLoader mainFXMLLoader = new FXMLLoader(resourceExtractor.extractResourceAsPath(TOPSOIL_MAIN_WINDOW_FXML_NAME)
-                                                                            .toUri().toURL());
+                FXMLLoader mainFXMLLoader = new FXMLLoader(
+                        RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_MAIN_WINDOW_FXML_PATH).toUri().toURL());
                 mainWindow = mainFXMLLoader.load();
                 mainWindowController = mainFXMLLoader.getController();
             } catch (IOException|NullPointerException e) {
                 e.printStackTrace();
-                throw new LoadException("Could not load " + TOPSOIL_MAIN_WINDOW_FXML_NAME);
+                throw new LoadException("Could not load " + TOPSOIL_MAIN_WINDOW_FXML_PATH);
             }
 
             Scene scene = new Scene(mainWindow, 750, 750);
 
             // Load CSS
             try {
-                String css = resourceExtractor.extractResourceAsFile(TOPSOIL_CSS_FILE_NAME).toURI().toURL()
-                                              .toExternalForm();
+                String css = RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_CSS_FILE_PATH).toUri().toURL()
+                                               .toExternalForm();
                 scene.getStylesheets().add(css);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -69,22 +70,32 @@ public class MainWindow extends Application {
             // Load logo for use in window and system task bar
             try {
                 // TODO ResourceExtractor
-                primaryStage.getIcons().add(new Image(resourceExtractor.extractResourceAsPath(TOPSOIL_LOGO_FILE_NAME)
-                                                                       .toUri().toString()));
+                primaryStage.getIcons().add(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO_FILE_PATH)
+                                                                        .toUri().toString()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             primaryStage.setMinHeight(400.0);
             primaryStage.setMinWidth(650.0);
+
             primaryStage.setTitle("Topsoil");
+            TopsoilSerializer.currentProjectFileProperty().addListener(c -> {
+                if (TopsoilSerializer.projectFileExists()) {
+                    primaryStage.setTitle("Topsoil - " + TopsoilSerializer.getCurrentProjectFile().getName());
+                } else {
+                    primaryStage.setTitle("Topsoil");
+                }
+            });
+
             primaryStage.setScene(scene);
             primaryStage.show();
 
             // TODO Move to MainWindowController
             // Load splash screen
             try {
-                Parent splashScreen = FXMLLoader.load(resourceExtractor.extractResourceAsPath(TOPSOIL_SPLASH_SCREEN_FXML_NAME).toUri().toURL());
+                Parent splashScreen = FXMLLoader.load(
+                        RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_SPLASH_SCREEN_FXML_PATH).toUri().toURL());
                 Scene splashScene = new Scene(splashScreen, 450, 600);
                 Stage splashWindow = new Stage(StageStyle.UNDECORATED);
                 splashWindow.setResizable(false);

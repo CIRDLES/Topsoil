@@ -25,10 +25,13 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
-        if (TopsoilSerializer.projectFileExists() && TopsoilSerializer
-                .getCurrentProjectFile().getParent() != null) {
-            fileChooser.setInitialDirectory(new File(TopsoilSerializer
-                    .getCurrentProjectFile().getParent()));
+
+        if (TopsoilSerializer.projectFileExists()) {
+            try {
+                fileChooser.setInitialDirectory(new File(TopsoilSerializer.getCurrentProjectFile().getParent()));
+            } catch (NullPointerException e) {
+                // FileChooser opens to default directory
+            }
         }
         return fileChooser;
     }
@@ -44,10 +47,13 @@ public class TopsoilFileChooser {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil")
         );
-        if (TopsoilSerializer.projectFileExists() && TopsoilSerializer
-                .getCurrentProjectFile().getParent() != null) {
-            fileChooser.setInitialDirectory(new File(TopsoilSerializer
-                    .getCurrentProjectFile().getParent()));
+
+        if (TopsoilSerializer.projectFileExists()) {
+            try {
+                fileChooser.setInitialDirectory(new File(TopsoilSerializer.getCurrentProjectFile().getParent()));
+            } catch (NullPointerException e) {
+                // FileChooser opens to default directory
+            }
         }
         return fileChooser;
     }

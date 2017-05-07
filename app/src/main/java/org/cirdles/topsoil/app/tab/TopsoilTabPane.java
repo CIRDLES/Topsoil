@@ -25,9 +25,9 @@ public class TopsoilTabPane extends TabPane {
     private int untitledCount;
     private SimpleBooleanProperty isEmptyProperty = new SimpleBooleanProperty(true);
 
-    private final String TOPSOIL_TAB_FXML_NAME = "topsoil-tab-content.fxml";
+    private final String TOPSOIL_TAB_FXML_PATH = "topsoil-tab-content.fxml";
 
-    private final ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilTabPane.class);
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabPane.class);
 
     public TopsoilTabPane() throws LoadException {
         super();
@@ -40,7 +40,8 @@ public class TopsoilTabPane extends TabPane {
     public void add(TopsoilTable table) {
         try {
             // Load tab content
-            FXMLLoader fxmlLoader = new FXMLLoader(resourceExtractor.extractResourceAsFile(TOPSOIL_TAB_FXML_NAME).toURI().toURL());
+            FXMLLoader fxmlLoader = new FXMLLoader(
+                    RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_TAB_FXML_PATH).toUri().toURL());
             SplitPane tabContentView = fxmlLoader.load();
             TopsoilTabContent tabContent = fxmlLoader.getController();
 
@@ -103,10 +104,6 @@ public class TopsoilTabPane extends TabPane {
         tab.setContent(tabContent.getTableView());
         tab.setTitle("Table" + ++this.untitledCount);
         return tab;
-    }
-
-    public void setUntitledCount(int count) {
-        this.untitledCount = count;
     }
 
     public final BooleanProperty isEmptyProperty() {

@@ -44,6 +44,12 @@ public class TopsoilTab extends Tab {
         this.actualTitle = new SimpleStringProperty(tableController.getTable().getTitle());
         this.actualTitle.bindBidirectional(tableController.getTable().titleProperty()); // bind to TopsoilTable titleProperty
 
+        tableController.getTable().isotopeTypeObjectProperty().addListener(c -> {
+            isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";
+            setTitle(this.actualTitle.get());
+        });
+
+
         this.titleLabel = new Label(isotopePrefix + actualTitle.get());
         this.titleLabel.setId("Title");
         this.titleLabel.setOnMouseClicked(event -> {

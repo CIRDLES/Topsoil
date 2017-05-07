@@ -88,8 +88,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
     }
 
     private void initializePlotAndConfig() {
-        plotAndConfig.getChildren().setAll(
-                plot.displayAsNode());
+        plotAndConfig.getChildren().setAll(plot.displayAsNode());
     }
 
     @FXML

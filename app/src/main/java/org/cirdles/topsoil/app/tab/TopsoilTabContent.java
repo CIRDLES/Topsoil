@@ -6,11 +6,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import org.cirdles.commons.util.ResourceExtractor;
@@ -22,7 +25,9 @@ import org.cirdles.topsoil.app.table.command.InsertRowCommand;
 import org.cirdles.topsoil.app.table.command.NewRowCommand;
 import org.cirdles.topsoil.app.table.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilTable;
+import org.cirdles.topsoil.app.progress.plot.PlotPropertiesPanelController;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -46,7 +51,9 @@ public class TopsoilTabContent extends SplitPane {
     @FXML private Button removeRowButton;
 
     // TODO Supply new plot PropertiesPanel
-    @FXML private ScrollPane plotPropertiesScrollPane;
+    @FXML private AnchorPane plotPropertiesAnchorPane;
+    private PlotPropertiesPanelController plotPropertiesPanelController;
+    private final String PROPERTIES_PANEL_FXML_PATH = "plot-properties-panel.fxml";
 
     private static Map<String, VariableFormat<Number>> STRING_TO_VARIABLE_FORMAT_MAP;
     private static Map<VariableFormat<Number>, String> VARIABLE_FORMAT_TO_STRING_MAP;
@@ -59,7 +66,7 @@ public class TopsoilTabContent extends SplitPane {
             VARIABLE_FORMAT_TO_STRING_MAP.put(format, format.getName());
         }
     }
-    private ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilTabContent.class);
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabContent.class);
 
     @FXML
     public void initialize() {
@@ -108,6 +115,23 @@ public class TopsoilTabContent extends SplitPane {
         configureColumns();
         resetIds();
 
+        initializePlotPropertiesPanel();
+
+    }
+
+    private void initializePlotPropertiesPanel() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(PROPERTIES_PANEL_FXML_PATH).toUri().toURL());
+            Node panel = fxmlLoader.load();
+            plotPropertiesPanelController = fxmlLoader.getController();
+            AnchorPane.setTopAnchor(panel, 0.0);
+            AnchorPane.setRightAnchor(panel, 0.0);
+            AnchorPane.setBottomAnchor(panel, 0.0);
+            AnchorPane.setLeftAnchor(panel, 0.0);
+            plotPropertiesAnchorPane.getChildren().add(panel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleTableViewKeyEvent(KeyEvent keyEvent) {
@@ -198,6 +222,10 @@ public class TopsoilTabContent extends SplitPane {
      */
     public TableView<TopsoilDataEntry> getTableView() {
         return tableView;
+    }
+
+    public PlotPropertiesPanelController getPlotPropertiesPanelController() {
+        return plotPropertiesPanelController;
     }
 
     public void setData(ObservableList<TopsoilDataEntry> dataEntries) {

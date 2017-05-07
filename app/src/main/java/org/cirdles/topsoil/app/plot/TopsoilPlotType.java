@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app.plot;
 
-import javafx.scene.Node;
-import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlot;
 import org.cirdles.topsoil.plot.scatter.ScatterPlot;
@@ -11,7 +9,6 @@ import org.cirdles.topsoil.plot.uth.evolution.EvolutionPlot;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
@@ -23,19 +20,19 @@ public enum TopsoilPlotType {
 
     BASE_PLOT("Base Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            BasePlot::new),
+            new BasePlot()),
 
     SCATTER_PLOT("Scatter Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            ScatterPlot::new),
+            new ScatterPlot()),
 
     UNCERTAINTY_ELLIPSE_PLOT("Uncertainty Ellipse Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            UncertaintyEllipsePlot::new),
+            new UncertaintyEllipsePlot()),
 
     EVOLUTION_PLOT("Evolution Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            EvolutionPlot::new);
+            new EvolutionPlot());
 
     private final String name;
     private final List<Variable> variables;
@@ -51,10 +48,10 @@ public enum TopsoilPlotType {
         ));
     }
 
-    TopsoilPlotType(String name, List<Variable> variables, Supplier<? extends Plot> plot) {
+    TopsoilPlotType(String name, List<Variable> variables, Plot plot) {
         this.name = name;
         this.variables = variables;
-        this.plot = plot.get();
+        this.plot = plot;
     }
 
     public String getName() {

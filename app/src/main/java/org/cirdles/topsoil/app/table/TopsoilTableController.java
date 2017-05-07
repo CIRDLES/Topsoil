@@ -8,6 +8,7 @@ import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
+import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.TopsoilRawData;
 import org.cirdles.topsoil.app.dataset.NumberDataset;
 import org.cirdles.topsoil.app.tab.TopsoilTabContent;
@@ -27,9 +28,9 @@ public class TopsoilTableController {
 
     private ObservableList<TopsoilDataEntry> tableData;
 
-    public TopsoilTableController(TopsoilTable table, TopsoilTabContent tabContent) {
-        this.table = table;
-        this.tabContent = tabContent;
+    public TopsoilTableController(TopsoilTable t, TopsoilTabContent content) {
+        this.table = t;
+        this.tabContent = content;
 
         // Get data from the TopsoilTable and put it into the TableView in TabContent.
         this.tableData = table.getCopyOfDataAsEntries();
@@ -80,6 +81,10 @@ public class TopsoilTableController {
             }
             resetIds();
         });
+
+        // Bind isotope type
+        tabContent.getPlotPropertiesPanelController().setIsotopeType(table.getIsotopeType());
+        tabContent.getPlotPropertiesPanelController().isotopeTypeObjectProperty().bindBidirectional(table.isotopeTypeObjectProperty());
     }
 
     public TopsoilTable getTable() {

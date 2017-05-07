@@ -43,7 +43,7 @@ public class TopsoilSplashScreen extends Pane {
     private double yOffset;
 
     // ResourceExtractor
-    private ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilSplashScreen.class);
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilSplashScreen.class);
 
     @FXML
     public void initialize() {
@@ -54,8 +54,8 @@ public class TopsoilSplashScreen extends Pane {
         assert releaseLog != null : "fx:id=\"releaseLog\" was not injected: check your FXML file 'topsoilSplashScreen" +
                                     ".fxml'.";
 
-        topsoilLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
-        cirdlesLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
+        topsoilLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
+        cirdlesLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
 
         browser = new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter());
     }
