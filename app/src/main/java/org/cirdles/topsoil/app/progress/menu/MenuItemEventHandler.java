@@ -67,9 +67,7 @@ public class MenuItemEventHandler {
             String[] headers = null;
             Boolean hasHeaders;
 
-            // TODO For now, the user must have headers in the file. In the future, they can specify.
             hasHeaders = FileParser.detectHeader(file);
-//            hasHeaders = true;
 
             // hasHeaders would only be null if the user clicked "Cancel".
             if (hasHeaders != null) {
