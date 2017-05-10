@@ -7,26 +7,46 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.TableCellEditCommand;
-import org.cirdles.topsoil.app.util.Alerter;
-import org.cirdles.topsoil.app.util.ErrorAlerter;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.util.dialog.Alerter;
+import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 /**
- * A customized <tt>TableCell</tt> used to display data. The String representation of the data is formatted, and all
- * events pertaining to the editing of a cell are handled here.
+ * A customized {@code TableCell} used to display data. The {@code String} representation of the data is formatted, and
+ * all events pertaining to the editing of a cell are handled here.
  *
- * @author benjaminmuldrow
+ * @author Benjamin Muldrow
  *
  * @see TableCell
- * @see TopsoilTable
+ * @see TopsoilDataTable
  */
 public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
 
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * A {@code TextField} used for editing the value of the cell.
+     */
     private TextField textField;
+
+    /**
+     * An {@code Alerter} for displaying messages to the user, particularly those concerning invalid data input.
+     */
     private Alerter alerter;
+
+    /**
+     * A {@code NumberFormat} for standardizing the displayed value in the cell.
+     */
     private NumberFormat df;
+
+    //***********************
+    // Constructors
+    //***********************
 
     /**
      * Constructs a new TopsoilTableCell. The NumberFormat is introduced, as well as specific KeyEvents handled and a
@@ -66,6 +86,19 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
             this.setContextMenu(new TopsoilTableCellContextMenu(this));
             menuEvent.consume();
         });
+    }
+
+    //***********************
+    // Methods
+    //***********************
+
+    /**
+     * Create a {@code TextField} to be used to edit cell value.
+     */
+    private void generateTextField() {
+        this.textField = new TextField();
+        this.textField.setFont(Font.font("Monospaced"));
+        this.textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
     }
 
     /** {@inheritDoc} */
@@ -108,45 +141,6 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
             }
         }
     }
-    
-    /**
-     * Remove trailing zeroes before setting the cell text value
-     * 
-     * @param cellValue The text value to be checked and set in the cell
-     */
-    private String alignText(String cellValue) {
-        if (cellValue.contains(".")) {
-            String[] decimalPart = cellValue.split("\\.");
-            if(decimalPart[1].length() <= 9){
-                for(int i = decimalPart[1].length(); i < this.df.getMaximumFractionDigits(); i++){
-                    cellValue += " "; //padding with spaces to align decimals
-                }
-            }else{
-                cellValue = decimalPart[0] + "." + decimalPart[1].substring(0, 9);
-            }
-        }
-        return cellValue;
-    }
-
-    /**
-     * Creates an undoable <tt>Command</tt> for a value change, then adds it to the <tt>UndoManager</tt>.
-     *
-     * @param oldVal    the old Double data value
-     * @param newVal    the new Double data value
-     */
-    private void addUndo(Double oldVal, Double newVal) {
-        TableCellEditCommand cellEditCommand = new TableCellEditCommand(this, oldVal, newVal);
-        ((TopsoilTabPane) this.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(cellEditCommand);
-    }
-
-    /**
-     * Create a text field to be used to edit cell value.
-     */
-    private void generateTextField() {
-        this.textField = new TextField();
-        this.textField.setFont(Font.font("Monospaced"));
-        this.textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-    }
 
     /**
      * Attempts to commit an edit. If the input is invalid, or if the value is the same as it was previously, the
@@ -169,7 +163,37 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     }
 
     /**
-     * Returns the <tt>TopsoilDataEntry</tt> that the data in the cell belongs to.
+     * Remove trailing zeroes before setting the cell text value
+     *
+     * @param cellValue The text value to be checked and set in the cell
+     */
+    private String alignText(String cellValue) {
+        if (cellValue.contains(".")) {
+            String[] decimalPart = cellValue.split("\\.");
+            if(decimalPart[1].length() <= 9){
+                for(int i = decimalPart[1].length(); i < this.df.getMaximumFractionDigits(); i++){
+                    cellValue += " "; //padding with spaces to align decimals
+                }
+            }else{
+                cellValue = decimalPart[0] + "." + decimalPart[1].substring(0, 9);
+            }
+        }
+        return cellValue;
+    }
+
+    /**
+     * Creates an undoable {@code Command} for a value change, then adds it to the {@code UndoManager}.
+     *
+     * @param oldVal    the old Double data value
+     * @param newVal    the new Double data value
+     */
+    private void addUndo(Double oldVal, Double newVal) {
+        TableCellEditCommand cellEditCommand = new TableCellEditCommand(this, oldVal, newVal);
+        ((TopsoilTabPane) this.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(cellEditCommand);
+    }
+
+    /**
+     * Returns the {@code TopsoilDataEntry} that the data in the cell belongs to.
      *
      * @return  TopsoilDataEntry
      */
@@ -187,8 +211,8 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     }
 
     /**
-     * Selects the next logical cell, depending on the button pressed. If the user presses Tab, the next cell to the
-     * right and down is selected. If the user presses Shift+Tab, the next cell to the left and up is selected.
+     * Selects the next logical cell, depending on the button pressed. If the user presses 'Tab', the next cell to the
+     * right and down is selected. If the user presses 'Shift+Tab', the next cell to the left and up is selected.
      */
     private void selectNextCell() {
         if (this.getColumnIndex() == this.getTableView().getColumns().size() - 1) {

@@ -1,30 +1,60 @@
 package org.cirdles.topsoil.app.table.command;
 
 import javafx.scene.control.TableColumn;
-import org.cirdles.topsoil.app.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.util.Command;
-import org.cirdles.topsoil.app.util.UndoManager;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.tab.TopsoilTab;
+import org.cirdles.topsoil.app.util.undo.Command;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
+ * An undoable {@link Command} instance that can be added to a {@link TopsoilTab}'s {@link UndoManager} when a column is
+ * renamed. This command stores the {@link TableColumn} that was deleted and both the old and new names of the column.
  *
- * @author marottajb
+ * @author Jake Marotta
  * @see Command
  * @see UndoManager
  */
 public class ColumnRenameCommand implements Command {
 
-    TableColumn<TopsoilDataEntry, Double> column;
-    String oldName;
-    String newName;
+    //***********************
+    // Attributes
+    //***********************
 
     /**
+     * The {@code TableColumn} that was renamed.
+     */
+    private TableColumn<TopsoilDataEntry, Double> column;
+
+    /**
+     * The old name of the column.
+     */
+    private String oldName;
+
+    /**
+     * The new name of the column.
+     */
+    private String newName;
+
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code ColumnRenameCommand} for the specified column.
      *
+     * @param column    the TableColumn that was renamed
+     * @param oldName   the old name of the column
+     * @param newName   the new name of the column
      */
     public ColumnRenameCommand(TableColumn<TopsoilDataEntry, Double> column, String oldName, String newName) {
         this.column = column;
         this.oldName = oldName;
         this.newName = newName;
     }
+
+    //***********************
+    // Methods
+    //***********************
 
     /**
      * Called to execute the column rename.
@@ -40,11 +70,7 @@ public class ColumnRenameCommand implements Command {
         column.setText(oldName);
     }
 
-    /**
-     * Called from the <tt>UndoManager</tt> to get a short description of the
-     * command.
-     *
-     * @return the name of the command
+    /** {@inheritDoc}
      */
     public String getActionName() {
         return "Rename column";

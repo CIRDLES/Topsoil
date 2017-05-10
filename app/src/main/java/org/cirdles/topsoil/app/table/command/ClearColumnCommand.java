@@ -1,33 +1,53 @@
 package org.cirdles.topsoil.app.table.command;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
-import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import javafx.scene.control.TableView;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
-import org.cirdles.topsoil.app.util.Command;
-import org.cirdles.topsoil.app.util.UndoManager;
+import org.cirdles.topsoil.app.util.undo.Command;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 import java.util.ArrayDeque;
 
 /**
- * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
- * <tt>UndoManager</tt> when a <tt>TableColumn</tt> in the <tt>TableView</tt>
- * is cleared. This class stores the data from the cleared column, and its
- * index in <tt>TableView</tt>.<i>getColumns()</i>.
+ * An undoable {@link Command} instance that can be added to a TopsoilTab's {@link UndoManager} when a
+ * {@link TableColumn} in the {@code TableView} is cleared. This {@code Command} stores the data from the cleared
+ * column, and its index in {@link TableView#getColumns()}.
  *
- * @author marottajb
+ * @author Jake Marotta
  * @see Command
  * @see UndoManager
  */
 public class ClearColumnCommand implements Command {
 
-    private TableColumn<TopsoilDataEntry, Double> column;
-    private int index;
-    private ArrayDeque<SimpleDoubleProperty> columnData;
+    //***********************
+    // Attributes
+    //***********************
 
     /**
-     * Constructs a new clear column command from the specified cell.
+     * The {@code TableColumn} that was cleared.
+     */
+    private TableColumn<TopsoilDataEntry, Double> column;
+
+    /**
+     * The index of the {@code TableColumn} in {@code TableView.getColumns()}.
+     */
+    private int index;
+
+    /**
+     * An {@code ArrayDeque} that stores the properties from the cleared {@code TableColumn}.
+     */
+    private ArrayDeque<DoubleProperty> columnData;
+
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code ClearColumnCommand} for the specified cell.
      *
      * @param cell  the TopsoilTableCell that the command came from
      */
@@ -38,14 +58,17 @@ public class ClearColumnCommand implements Command {
         this.columnData = new ArrayDeque<>();
     }
 
+    //***********************
+    // Methods
+    //***********************
+
     /**
      * Called to execute the column deletion.
      */
     public void execute() {
 
         this.column.setCellValueFactory(param -> {
-            this.columnData.add((SimpleDoubleProperty)
-                                        param.getValue().getProperties().get(index));
+            this.columnData.add(param.getValue().getProperties().get(index));
             return (ObservableValue) new SimpleDoubleProperty(0.0);
         });
         this.column.setVisible(false);
@@ -57,17 +80,14 @@ public class ClearColumnCommand implements Command {
      */
     public void undo() {
 
-        this.column.setCellValueFactory(param -> (ObservableValue)
-                this.columnData.poll());
+        this.column.setCellValueFactory(param -> (ObservableValue) this.columnData.poll());
+
+        // This is a workaround to force the TableView to update the visible Node
         this.column.setVisible(false);
         this.column.setVisible(true);
     }
 
-    /**
-     * Called from the <tt>UndoManager</tt> to get a short description of the
-     * command.
-     *
-     * @return the name of the command
+    /** {@inheritDoc}
      */
     public String getActionName() {
         return "Clear column";

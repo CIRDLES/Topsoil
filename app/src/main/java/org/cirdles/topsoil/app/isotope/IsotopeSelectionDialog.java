@@ -8,10 +8,19 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by benjaminmuldrow on 6/29/16.
+ * A simple dialog for selecting the {@code IsotopeType} of a {@code TopsoilDataTable}.
+ *
+ * @author Benjamin Muldrow
  */
 public class IsotopeSelectionDialog extends ChoiceDialog<String> {
 
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code IsotopeSelectionDialog}.
+     */
     public IsotopeSelectionDialog() {
         super();
 
@@ -29,10 +38,15 @@ public class IsotopeSelectionDialog extends ChoiceDialog<String> {
 
     }
 
+    //***********************
+    // Methods
+    //***********************
+
     /**
-     * Opens a Dialogue for isotope system selection and returns selected isotope system enum
-     * @param isotopeSelectionDialog An instance of a dialogue
-     * @return selection from the user
+     * Opens a Dialog for isotope system selection and returns the selected {@code IsotopeType}.
+     *
+     * @param isotopeSelectionDialog an instance of IsotopeSelectionDialog
+     * @return user-selected IsotopeType
      */
     public static IsotopeType selectIsotope(IsotopeSelectionDialog isotopeSelectionDialog) {
 

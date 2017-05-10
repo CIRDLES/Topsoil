@@ -18,15 +18,26 @@ import java.io.FileNotFoundException;
 /**
  * A class for reading and writing .topsoil project files.
  *
- * @author marottajb
+ * @author Jake Marotta
  * @see SerializableTopsoilSession
  */
 public class TopsoilSerializer {
 
-    private static ObjectProperty<File> currentProjectFileProperty;
+    //***********************
+    // Attributes
+    //***********************
 
     /**
-     * Creates a <tt>SerializableTopsoilSession</tt> and writes it to a
+     * An {@code ObjectProperty} containing the open .topsoil project {@code File}, if it exists.
+     */
+    private static ObjectProperty<File> currentProjectFile;
+
+    //***********************
+    // Methods
+    //***********************
+
+    /**
+     * Creates a {@link SerializableTopsoilSession} and writes it to a
      * .topsoil file.
      *
      * @param file  the File to write to
@@ -51,9 +62,8 @@ public class TopsoilSerializer {
     }
 
     /**
-     * Reads a .topsoil file into a <tt>SerializableTopsoilSession</tt>, and
-     * loads all of the data it contains into the specified
-     * <tt>TopsoilTabPane</tt>.
+     * Reads a .topsoil {@code File} into a {@link SerializableTopsoilSession}, and loads all of the data it contains
+     * into the specified {@link TopsoilTabPane}.
      *
      * @param file  the File to read from
      * @param tabs  the TopsoilTabPane to add the data to
@@ -87,15 +97,20 @@ public class TopsoilSerializer {
 
     }
 
+    /**
+     * Returns the {@code ObjectProperty} which, if a project is open, contains the currently open project {@code File}.
+     *
+     * @return  an ObjectProperty of type File
+     */
     public static ObjectProperty<File> currentProjectFileProperty() {
-        if (currentProjectFileProperty == null) {
-            currentProjectFileProperty = new SimpleObjectProperty<>(null);
+        if (currentProjectFile == null) {
+            currentProjectFile = new SimpleObjectProperty<>(null);
         }
-        return currentProjectFileProperty;
+        return currentProjectFile;
     }
 
     /**
-     * Gets the .topsoil <tt>File</tt> that is currently open.
+     * Gets the .topsoil {@code File} that is currently open.
      *
      * @return  the loaded .topsoil File
      */
@@ -103,42 +118,42 @@ public class TopsoilSerializer {
         if (!isProjectOpen()) {
             return null;
         }
-        return currentProjectFileProperty.get();
+        return currentProjectFileProperty().get();
     }
 
     /**
-     * Sets the working .topsoil <tt>File</tt>.
+     * Sets the working .topsoil {@code File}.
      *
      * @param file  the open .topsoil File
      */
     public static void setCurrentProjectFile(File file) {
-        currentProjectFileProperty.set(file);
+        currentProjectFileProperty().set(file);
     }
 
     /**
-     * Sets the working .topsoil <tt>File</tt> to null.
+     * Sets the working .topsoil {@code File} to null.
      */
     public static void closeProjectFile() {
-        currentProjectFileProperty.set(null);
+        currentProjectFileProperty().set(null);
     }
 
     /**
-     * Checks whether a .topsoil <tt>File</tt> is open.
+     * Checks whether a .topsoil {@code File} is open.
      *
      * @return  true if currentProjectFile != null
      */
     public static boolean isProjectOpen() {
-        return currentProjectFileProperty.get() != null;
+        return currentProjectFileProperty().get() != null;
     }
 
     /**
-     * Checks whether the current .topsoil <tt>File</tt> exists. Important if
-     * the file was deleted externally while open in Topsoil.
+     * Checks whether the current .topsoil {@code File} exists. Important if the file was deleted externally while
+     * open in Topsoil.
      *
-     * @return  true if the current .topsoil <tt>File</tt>.exists()
+     * @return  true if the current .topsoil {@code File}.exists()
      */
     public static boolean projectFileExists() {
-        return (isProjectOpen() && currentProjectFileProperty.get().exists());
+        return (isProjectOpen() && currentProjectFileProperty().get().exists());
     }
 
 }

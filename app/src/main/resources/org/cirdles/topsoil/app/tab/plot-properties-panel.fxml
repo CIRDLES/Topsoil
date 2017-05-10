@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="221.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.progress.plot.PlotPropertiesPanelController">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="221.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.plot.PlotPropertiesPanelController">
    <content>
       <HBox>
          <children>
@@ -111,8 +111,7 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <ColorPicker GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <CheckBox mnemonicParsing="false" prefHeight="25.0" prefWidth="175.0" text="McLean Regression" GridPane.rowIndex="1">
+                        <CheckBox fx:id="concordiaCheckBox" mnemonicParsing="false" prefHeight="25.0" prefWidth="175.0" text="Wetherill Concordia Line" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>

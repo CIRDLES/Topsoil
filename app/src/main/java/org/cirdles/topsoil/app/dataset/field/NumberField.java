@@ -20,15 +20,31 @@ import static java.lang.Double.NaN;
 import javafx.util.StringConverter;
 
 /**
+ * A {@code Field} that contains {@code Number}s.
  *
- * @author zeringuej
+ * @author John Zeringue
  */
 public class NumberField extends BaseField<Number> implements Field<Number> {
 
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code NumberField} with the specified name.
+     *
+     * @param name  String name
+     */
     public NumberField(String name) {
         super(name);
     }
 
+    //***********************
+    // Methods
+    //***********************
+
+    /** {@inheritDoc}
+     */
     @Override
     public StringConverter<Number> getStringConverter() {
         return new StringConverter<Number>() {

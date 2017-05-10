@@ -6,12 +6,30 @@ import org.cirdles.topsoil.app.isotope.IsotopeType;
 import java.util.ArrayList;
 
 /**
- * Created by benjaminmuldrow on 8/9/16.
+ * A simple {@code ChoiceDialog} that offers a user a choice of plot types based on the current {@link IsotopeType}.
+ *
+ * @author Benjamin Muldrow
  */
 public class PlotChoiceDialog extends ChoiceDialog<String> {
 
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * The current {@code IsotopeType}.
+     */
     private final IsotopeType type;
 
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code PlotChoiceDialog} for the specified {@code IsotopeType}.
+     *
+     * @param type  IsotopeType
+     */
     public PlotChoiceDialog(IsotopeType type) {
 
         this.type = type;
@@ -27,8 +45,13 @@ public class PlotChoiceDialog extends ChoiceDialog<String> {
         this.setSelectedItem(getItems().get(0));
     }
 
+    //***********************
+    // Methods
+    //***********************
+
     /**
      * show dialog and wait for response
+     *
      * @return TopsoilPlotType user's choice of plotType
      */
     public TopsoilPlotType select() {

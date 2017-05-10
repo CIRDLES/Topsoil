@@ -2,27 +2,45 @@ package org.cirdles.topsoil.app.table.command;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
-import org.cirdles.topsoil.app.util.Command;
-import org.cirdles.topsoil.app.util.UndoManager;
+import org.cirdles.topsoil.app.util.undo.Command;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
- * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
- * <tt>UndoManager</tt> when a <tt>TableColumn</tt> in the <tt>TableView</tt>
- * is deleted. This class stores a copy of the deleted column, and its index
- * in <tt>TableView</tt>.<i>getColumns()</i>.
+ * An undoable {@link Command} instance that can be added to a TopsoilTab's {@link UndoManager} when a
+ * {@link TableColumn} in the {@code TableView} is deleted. This command stores a copy of the deleted column, and its
+ * index in {@link TableView#getColumns()}.
  *
- * @author marottajb
+ * @author Jake Marotta
  * @see Command
  * @see UndoManager
  */
 public class DeleteColumnCommand implements Command {
 
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * The {@code TableView} that the column was deleted from.
+     */
     private TableView<TopsoilDataEntry> tableView;
+
+    /**
+     * The {@code TableColumn} that was deleted.
+     */
     private TableColumn<TopsoilDataEntry, Double> column;
+
+    /**
+     * The index in {@code TableView.getColumns()} that the column occupied.
+     */
     private int index;
 
+    //***********************
+    // Constructors
+    //***********************
+    
     /**
      * Constructs a new delete column command from the specified cell.
      *
@@ -34,6 +52,10 @@ public class DeleteColumnCommand implements Command {
         this.index = cell.getColumnIndex();
     }
 
+    //***********************
+    // Methods
+    //***********************
+    
     /**
      * Called to execute the column deletion.
      */
@@ -50,11 +72,7 @@ public class DeleteColumnCommand implements Command {
         this.tableView.getColumns().add(index, this.column);
     }
 
-    /**
-     * Called from the <tt>UndoManager</tt> to get a short description of the
-     * command.
-     *
-     * @return the name of the command
+    /** {@inheritDoc}
      */
     public String getActionName() {
         return "Delete column";

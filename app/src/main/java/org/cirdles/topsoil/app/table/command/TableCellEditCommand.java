@@ -1,27 +1,51 @@
 package org.cirdles.topsoil.app.table.command;
 
-import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import javafx.scene.control.TableView;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
-import org.cirdles.topsoil.app.util.Command;
-import org.cirdles.topsoil.app.util.UndoManager;
+import org.cirdles.topsoil.app.util.undo.Command;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
- * An undoable <tt>Command</tt> instance that is added to a TopsoilTab's
- * <tt>UndoManager</tt> when a cell is edited in the <tt>TableView</tt>. This
- * class stores the <tt>TopsoilTableCell</tt> that was edited, the
- * <tt>TopsoilDataEntry</tt> the cell's value is stored in, the former value of
- * the cell, and the new value of the cell.
+ * An undoable {@link Command} instance that is added to a {@link TopsoilTab}'s {@link UndoManager} when a
+ * {@link TopsoilTableCell} is edited in the {@link TableView}. This command stores the {@code TopsoilTableCell}
+ * that was edited, the {@link TopsoilDataEntry} the cell's value is stored in, and both the former and new value of
+ * the cell.
  *
- * @author marottajb
+ * @author Jake Marotta
  * @see Command
  * @see UndoManager
  */
 public class TableCellEditCommand implements Command {
 
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * The {@code TopsoilTableCell} that was edited.
+     */
     private TopsoilTableCell cell;
+
+    /**
+     * The row of the cell that was edited.
+     */
     private TopsoilDataEntry row;
+
+    /**
+     * The former value of the edited cell.
+     */
     private Double formerValue;
+
+    /**
+     * The new value of the edited cell.
+     */
     private Double newValue;
+
+    //***********************
+    // Constructors
+    //***********************
 
     /**
      * Constructs a cell edit command for the specified cell, its former value,
@@ -39,6 +63,10 @@ public class TableCellEditCommand implements Command {
         this.newValue = newValue;
     }
 
+    //***********************
+    // Methods
+    //***********************
+
     /**
      * Called to execute the cell edit action.
      */
@@ -54,7 +82,7 @@ public class TableCellEditCommand implements Command {
     }
 
     /**
-     * Carries out a change in the data model of the <tt>TableView</tt> for the
+     * Carries out a change in the data model of the {@code TableView} for the
      * cell, then updates the visible table.
      *
      * @param value the Double value to assign
@@ -66,11 +94,7 @@ public class TableCellEditCommand implements Command {
         this.cell.getTableColumn().setVisible(true);
     }
 
-    /**
-     * Called from the <tt>UndoManager</tt> to get a short description of the
-     * command.
-     *
-     * @return the name of the command
+    /** {@inheritDoc}
      */
     public String getActionName() {
         return "Change cell value";

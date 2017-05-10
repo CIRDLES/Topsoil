@@ -19,13 +19,12 @@ import com.johnzeringue.extendsfx.layout.CustomVBox;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import org.cirdles.topsoil.app.table.TopsoilTable;
-import org.cirdles.topsoil.app.util.SVGSaver;
+import org.cirdles.topsoil.app.table.TopsoilDataTable;
+import org.cirdles.topsoil.app.util.file.SVGSaver;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 
@@ -41,7 +40,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
     private HBox plotAndConfig;
 
     // the table which contains the data being used to make the plot
-    private TopsoilTable table;
+    private TopsoilDataTable table;
 
     private Plot plot;
 
@@ -55,7 +54,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
         return this.plot;
     }
 
-    public TopsoilTable getTable() {
+    public TopsoilDataTable getTable() {
         return this.table;
     }
 

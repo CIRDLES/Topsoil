@@ -17,45 +17,120 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.plot.VariableFormat;
-import org.cirdles.topsoil.app.plot.VariableFormats;
+import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
+import org.cirdles.topsoil.app.plot.variable.format.VariableFormats;
+import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
 import org.cirdles.topsoil.app.table.command.DeleteRowCommand;
 import org.cirdles.topsoil.app.table.command.InsertRowCommand;
-import org.cirdles.topsoil.app.table.command.NewRowCommand;
-import org.cirdles.topsoil.app.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.table.TopsoilTable;
-import org.cirdles.topsoil.app.progress.plot.PlotPropertiesPanelController;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.plot.PlotPropertiesPanelController;
 
 import java.io.IOException;
 import java.util.*;
 
 /**
- * A custom <tt>Tab</tt> which displays data from a <tt>TopsoilTable</tt>.
+ * This is the primary view for a {@link TopsoilDataTable}. It contains the {@link TableView} that the data is loaded
+ * into, the {@link PlotPropertiesPanelController} that controls the attributes of any plots for the data, and any
+ * other visual controls in the {@link TopsoilTab}
  *
- * @author sbunce
+ * @author Jake Marotta
+ * @see PlotPropertiesPanelController
  * @see Tab
  * @see TopsoilTabPane
- * @see TopsoilTable
  */
 public class TopsoilTabContent extends SplitPane {
 
-    @FXML private GridPane labelGridPane;
-    @FXML private Label xLabel, yLabel, xUncertaintyLabel, yUncertaintyLabel, corrCoefLabel;
-    @FXML private ChoiceBox<String> xUncertaintyChoiceBox, yUncertaintyChoiceBox;
+    //***********************
+    // Attributes
+    //***********************
 
+    /**
+     * A {@code GridPane} that contains the {@code Label}s and {@code ChoiceBox}es above the {@code TableView}.
+     */
+    @FXML private GridPane labelGridPane;
+
+    /**
+     * A {@code Label} denoting a {@code TableView} column position as the 'X' column.
+     */
+    @FXML private Label xLabel;
+
+    /**
+     * A {@code Label} denoting a {@code TableView} column position as the 'Y' column.
+     */
+    @FXML private Label yLabel;
+
+    /**
+     * A {@code Label} denoting a {@code TableView} column position as the 'σX' column.
+     */
+    @FXML private Label xUncertaintyLabel;
+
+    /**
+     * A {@code Label} denoting a {@code TableView} column position as the 'σY' column.
+     */
+    @FXML private Label yUncertaintyLabel;
+
+    /**
+     * A {@code Label} denoting a {@code TableView} column position as the 'Corr Coef' column.
+     */
+    @FXML private Label corrCoefLabel;
+
+    /**
+     * A {@code ChoiceBox} for selecting the X Uncertainty {@link VariableFormat}.
+     */
+    @FXML private ChoiceBox<String> xUncertaintyChoiceBox;
+
+    /**
+     * A {@code ChoiceBox} for selecting the Y Uncertainty {@link VariableFormat}.
+     */
+    @FXML private ChoiceBox<String> yUncertaintyChoiceBox;
+
+    /**
+     * A {@code TableView} that displays the table data.
+     */
     @FXML private TableView<TopsoilDataEntry> tableView;
+
+    /**
+     * A copy of the data contained in the corresponding {@link TopsoilDataTable}.
+     */
     private ObservableList<TopsoilDataEntry> data;
 
+    /**
+     * A {@code Button} that, when pressed, adds an empty row at the end of the {@code TableView}.
+     */
     @FXML private Button addRowButton;
+
+    /**
+     * A {@code Button} that, when pressed, removes a row at the end of the {@code TableView}.
+     */
     @FXML private Button removeRowButton;
 
-    // TODO Supply new plot PropertiesPanel
+    /**
+     * An {@code AnchorPane} that contains the {@link PlotPropertiesPanelController} for this tab.
+     */
     @FXML private AnchorPane plotPropertiesAnchorPane;
+
+    /**
+     * The {@code PlotPropertiesPanelController} for this tab.
+     */
     private PlotPropertiesPanelController plotPropertiesPanelController;
+
+    /**
+     * The {@code String} path to the {@code .fxml} file for the {@link PlotPropertiesPanelController}.
+     */
     private final String PROPERTIES_PANEL_FXML_PATH = "plot-properties-panel.fxml";
 
+    /**
+     * A {@code Map} of {@code String}s to {@code VariableFormat}s, used for getting values from the two uncertainty 
+     * {@code ChoiceBox}es.
+     */
     private static Map<String, VariableFormat<Number>> STRING_TO_VARIABLE_FORMAT_MAP;
+
+    /**
+     * A {@code Map} of  {@code VariableFormat}s to {@code String}s, used for selecting values in the two uncertainty
+     * {@code ChoiceBox}es.
+     */
     private static Map<VariableFormat<Number>, String> VARIABLE_FORMAT_TO_STRING_MAP;
     static {
         // Map VariableFormat names to the formats for displaying and selecting from the uncertainty ChoiceBoxes.
@@ -66,10 +141,19 @@ public class TopsoilTabContent extends SplitPane {
             VARIABLE_FORMAT_TO_STRING_MAP.put(format, format.getName());
         }
     }
+
+    /**
+     * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
+     */
     private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabContent.class);
 
-    @FXML
-    public void initialize() {
+    //***********************
+    // Methods
+    //***********************
+    
+    /** {@inheritDoc}
+     */
+    @FXML public void initialize() {
         assert labelGridPane != null : "fx:id=\"labelGridPane\" was not injected: check your FXML file " +
                                        "'topsoil-tab.fxml'.";
         assert xLabel != null : "fx:id=\"xLabel\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
@@ -119,6 +203,9 @@ public class TopsoilTabContent extends SplitPane {
 
     }
 
+    /**
+     * Loads and initializes the {@code PlotPropertiesPanelController} from FXML.
+     */
     private void initializePlotPropertiesPanel() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(PROPERTIES_PANEL_FXML_PATH).toUri().toURL());
@@ -134,6 +221,11 @@ public class TopsoilTabContent extends SplitPane {
         }
     }
 
+    /**
+     * Handles keyboard events in the {@code TableView}.
+     *
+     * @param keyEvent  a KeyEvent
+     */
     private void handleTableViewKeyEvent(KeyEvent keyEvent) {
 
         List<TableColumn<TopsoilDataEntry, ?>> columns = tableView.getColumns();
@@ -169,9 +261,10 @@ public class TopsoilTabContent extends SplitPane {
             } else {
                 // if on last row
                 if (selectionModel.getSelectedIndex() == tableView.getItems().size() - 1) {
-                    NewRowCommand newRowCommand = new NewRowCommand(this.tableView);
-                    newRowCommand.execute();
-                    ((TopsoilTabPane) this.tableView.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(newRowCommand);
+                    InsertRowCommand insertRowCommand = new InsertRowCommand(this.tableView);
+                    insertRowCommand.execute();
+                    ((TopsoilTabPane) this.tableView.getScene().lookup("#TopsoilTabPane")).getSelectedTab()
+                                                                                          .addUndo(insertRowCommand);
                 }
                 selectionModel.selectBelowCell();
             }
@@ -179,6 +272,9 @@ public class TopsoilTabContent extends SplitPane {
         }
     }
 
+    /**
+     * Configures the {@code TableColumn}s in the {@code TableView}.
+     */
     private void configureColumns() {
         List<TableColumn<TopsoilDataEntry, ?>> columns = tableView.getColumns();
 
@@ -211,32 +307,55 @@ public class TopsoilTabContent extends SplitPane {
             // disable column sorting
             newColumn.setSortable(false);
 
+//            newColumn.setId(Integer.toString(i + 1));
+
             // add functional column to the array of columns
             columns.set(i, newColumn);
         }
     }
 
     /**
-     * get the TableView object from the tab
-     * @return tableview
+     * Returns the {@code TableView} from this {@code TopsoilTabContent}.
+     *
+     * @return TableView
      */
     public TableView<TopsoilDataEntry> getTableView() {
         return tableView;
     }
 
+    /**
+     * Returns the {@code PlotPropertiesPanelController} from this {@code TopsoilTabContent}.
+     *
+     * @return  PlotPropertiesPanelController
+     */
     public PlotPropertiesPanelController getPlotPropertiesPanelController() {
         return plotPropertiesPanelController;
     }
 
+    /**
+     * Sets the data to be displayed.
+     *
+     * @param dataEntries   an ObservableList of TopsoilDataEntries
+     */
     public void setData(ObservableList<TopsoilDataEntry> dataEntries) {
         this.data = dataEntries;
         tableView.setItems(data);
     }
 
+    /**
+     * Returns the X Uncertainty {@code VariableFormat} as selected in xUncertaintyChoiceBox.
+     *
+     * @return  the selected VariableFormat
+     */
     public VariableFormat<Number> getXUncertainty() {
         return STRING_TO_VARIABLE_FORMAT_MAP.get(xUncertaintyChoiceBox.getValue());
     }
 
+    /**
+     * Sets the selected X Uncertainty {@code VariableFormat} in the xUncertaintyChoiceBox.
+     *
+     * @param format    the VariableFormat to select
+     */
     public void setXUncertainty(VariableFormat<Number> format) {
         String o = VARIABLE_FORMAT_TO_STRING_MAP.get(format);
         // Find and select the specific item that matches the format.
@@ -248,10 +367,20 @@ public class TopsoilTabContent extends SplitPane {
         }
     }
 
+    /**
+     * Returns the Y Uncertainty {@code VariableFormat} as selected in yUncertaintyChoiceBox.
+     *
+     * @return  the selected VariableFormat
+     */
     public VariableFormat<Number> getYUncertainty() {
         return STRING_TO_VARIABLE_FORMAT_MAP.get(yUncertaintyChoiceBox.getValue());
     }
 
+    /**
+     * Sets the selected X Uncertainty {@code VariableFormat} in the xUncertaintyChoiceBox.
+     *
+     * @param format    the VariableFormat to select
+     */
     public void setYUncertainty(VariableFormat<Number> format) {
         String o = VARIABLE_FORMAT_TO_STRING_MAP.get(format);
         // Find and select the specific item that matches the format.
@@ -264,9 +393,9 @@ public class TopsoilTabContent extends SplitPane {
     }
 
     /**
-     * Resets the string ids associated with each <tt>TableColumn</tt> in the <tt>TableView</tt>.
-     * <p>Each TableColumn has an associated String id assigned to it, increasing numerically from 1, left to right.
-     * This is to keep track of the order of the columns before and after they are re-ordered due to clicking and
+     * Resets the {@code String} ids associated with each {@code TableColumn} in the {@code TableView}.
+     * <p>Each {@code TableColumn} has an associated String id assigned to it, increasing numerically from 1, left to
+     * right. This is to keep track of the order of the columns before and after they are re-ordered due to clicking and
      * dragging.
      * </p>
      */
@@ -278,6 +407,9 @@ public class TopsoilTabContent extends SplitPane {
         }
     }
 
+    /**
+     * Appends an empty {@code TopsoilDataEntry} to the end of the {@code TableView}.
+     */
     @FXML private void addRowButtonAction() {
         if (tableView.getItems() != null) {
             InsertRowCommand insertRowCommand = new InsertRowCommand(tableView);
@@ -287,6 +419,9 @@ public class TopsoilTabContent extends SplitPane {
         }
     }
 
+    /**
+     * Removes a {@code TopsoilDataEntry} from the end of the {@code TableView}.
+     */
     @FXML private void removeRowButtonAction() {
         if (tableView.getItems() != null && !tableView.getItems().isEmpty()) {
             DeleteRowCommand deleteRowCommand = new DeleteRowCommand(tableView);

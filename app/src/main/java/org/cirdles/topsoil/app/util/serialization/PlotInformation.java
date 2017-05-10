@@ -4,46 +4,68 @@ import javafx.collections.ObservableMap;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.plot.PlotContext;
 import org.cirdles.topsoil.app.plot.VariableBinding;
-import org.cirdles.topsoil.app.plot.VariableFormat;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
- * Stores information about an open <tt>Plot</tt>. Kept inside of
- * <tt>TopsoilTable</tt> so that each table knows which open plots use its
- * information.
+ * Stores information about an open {@link Plot}.
  *
- * @author marottajb
+ * @author Jake Marotta
  *
  * @see Plot
  * @see TopsoilPlotType
- * @see org.cirdles.topsoil.app.table.TopsoilTable
+ * @see VariableBinding
  */
 public class PlotInformation {
 
-    private Plot plot;
-    private TopsoilPlotType plotType;
-    private Collection<VariableBinding> variableBindings;
-    private ObservableMap<String, Object> plotProperties;
-    private Stage stage;
-
-    private VariableFormat<Number> xUncertainty;
-    private VariableFormat<Number> yUncertainty;
+    //***********************
+    // Attributes
+    //***********************
 
     /**
-     * Constructs an instance of <tt>PlotInformation</tt> for the specified
-     * <tt>Plot</tt> object and <tt>TopsoilPlotType</tt>.
+     * The {@code Plot} instance itself.
+     */
+    private Plot plot;
+
+    /**
+     * The {@code TopsoilPlotType} of the {@code Plot}.
+     */
+    private TopsoilPlotType plotType;
+
+    /**
+     * A {@code Collection} of {@code VariableBinding}s for the {@code Plot}.
+     */
+    private Collection<VariableBinding> variableBindings;
+
+    /**
+     * An {@code ObservableMap} containing plot property values.
+     */
+    private ObservableMap<String, Object> plotProperties;
+
+    /**
+     * The {@code Stage} that is displaying the {@code Plot}.
+     */
+    private Stage stage;
+
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs an instance of {@code PlotInformation} for the specified {@code Plot} object and
+     * {@code TopsoilPlotType}.
      *
      * @param plot  the Plot object
+     * @param plotProperties    an ObservableMap of plot settings
      * @param plotType  the TopsoilPlotType of the plot
+     * @param plotContext a PlotContext
+     * @param stage the Stage displaying the Plot
      */
     public PlotInformation(Plot plot, TopsoilPlotType plotType, ObservableMap<String, Object> plotProperties,
-                           PlotContext
-            plotContext, Stage stage) {
+                           PlotContext plotContext, Stage stage) {
         this.plot = plot;
         this.plotType = plotType;
         this.plotProperties = plotProperties;
@@ -51,8 +73,12 @@ public class PlotInformation {
         this.stage = stage;
     }
 
+    //***********************
+    // Methods
+    //***********************
+
     /**
-     * Returns the <tt>Plot</tt> object.
+     * Returns the {@code Plot} instance.
      *
      * @return  the Plot
      */
@@ -61,7 +87,7 @@ public class PlotInformation {
     }
 
     /**
-     * Returns the <tt>Plot</tt>'s <tt>TopsoilPlotType</tt>.
+     * Returns the {@code Plot}'s {@code TopsoilPlotType}.
      *
      * @return  the plot's TopsoilPlotType
      */
@@ -70,7 +96,7 @@ public class PlotInformation {
     }
 
     /**
-     * Returns the <tt>HashMap</tt> containing the <tt>Plot</tt>'s properties.
+     * Returns the {@code HashMap} containing the {@code Plot}'s properties.
      *
      * @return  the HashMap of plot properties
      */
@@ -79,7 +105,7 @@ public class PlotInformation {
     }
 
     /**
-     * Returns a Colletion of the plot's <tt>VariableBinding</tt>s.
+     * Returns a {@code Collection} of the plot's {@code VariableBinding}s.
      *
      * @return  a Collection of VariableBinding names
      */
@@ -88,8 +114,8 @@ public class PlotInformation {
     }
 
     /**
-     * Converts the <tt>VariableBinding</tt>s of the <tt>Plot</tt> into a
-     * <tt>HashMap</tt> for easy reference and stores them.
+     * Converts the {@code VariableBinding}s of the {@code Plot} into a
+     * {@code HashMap} for easy reference and stores them.
      *
      * @param bindings  a Collection of VariableBindings
      */
@@ -98,7 +124,7 @@ public class PlotInformation {
     }
 
     /**
-     * Returns the <tt>Stage</tt> that is showing the <tt>Plot</tt>.
+     * Returns the {@code Stage} that is showing the {@code Plot}.
      *
      * @return  the Stage displaying the plot
      */
@@ -107,7 +133,7 @@ public class PlotInformation {
     }
 
     /**
-     * Define which open <tt>Stage</tt> is showing the <tt>Plot</tt>.
+     * Define which {@code Stage} displays the {@code Plot}.
      *
      * @param stage the Stage displaying the plot
      */
@@ -116,7 +142,7 @@ public class PlotInformation {
     }
 
     /**
-     * Attempts to destroy the plot within its WebEngine, to prevent threading problems.
+     * Attempts to destroy the {@code Plot} within the {@code WebEngine}, to prevent threading problems.
      */
     public void killPlot() {
         try {

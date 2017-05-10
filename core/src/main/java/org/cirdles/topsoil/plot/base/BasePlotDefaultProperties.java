@@ -26,6 +26,7 @@ public class BasePlotDefaultProperties extends HashMap<String, Object> {
         put(ELLIPSES, false);
 //        put(CROSSES, false);
         put(ISOTOPE_TYPE, "Generic");
+        put(CONCORDIA_LINE, false);
     }
 
 }

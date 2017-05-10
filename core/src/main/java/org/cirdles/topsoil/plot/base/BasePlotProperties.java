@@ -17,6 +17,7 @@ public class BasePlotProperties {
     public static final String LAMBDA_235 = "LAMBDA_235";
     public static final String LAMBDA_238 = "LAMBDA_238";
     public static final String ISOTOPE_TYPE = "Isotope";
+    public static final String CONCORDIA_LINE = "Concordia";
 
     private BasePlotProperties() {
         // prevents this class from being instantiated

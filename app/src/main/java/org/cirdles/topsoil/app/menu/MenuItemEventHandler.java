@@ -18,20 +18,23 @@ import org.cirdles.topsoil.app.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.PlotChoiceDialog;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
+import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
+import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.table.TopsoilTable;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
-import org.cirdles.topsoil.app.util.FileParser;
-import org.cirdles.topsoil.app.util.TopsoilFileChooser;
+import org.cirdles.topsoil.app.util.file.FileParser;
+import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
-import org.cirdles.topsoil.app.progress.plot.PlotPropertiesPanelController;
-import org.cirdles.topsoil.app.util.ErrorAlerter;
-import org.cirdles.topsoil.app.util.IssueCreator;
-import org.cirdles.topsoil.app.util.StandardGitHubIssueCreator;
-import org.cirdles.topsoil.app.util.YesNoAlert;
+import org.cirdles.topsoil.app.plot.PlotPropertiesPanelController;
+import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
+import org.cirdles.topsoil.app.util.issue.IssueCreator;
+import org.cirdles.topsoil.app.util.issue.StandardGitHubIssueCreator;
+import org.cirdles.topsoil.app.util.dialog.YesNoAlert;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlot;
 import org.cirdles.topsoil.plot.scatter.ScatterPlot;
@@ -42,12 +45,12 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A class containing a set of methods for handling actions for
- * <tt>MenuItems</tt> in the <tt>MainMenuBar</tt>.
+ * A class containing a set of methods for handling actions for {@code MenuItem}s in the {@link MainMenuBar}.
  *
- * @author benjaminmuldrow
+ * @author Benjamin Muldrow
  * @see MainMenuBar
  */
 public class MenuItemEventHandler {
@@ -58,12 +61,12 @@ public class MenuItemEventHandler {
      * @return Topsoil Table file
      * @throws IOException for invalid file selection
      */
-    public static TopsoilTable handleTableFromFile() throws IOException {
+    public static TopsoilDataTable handleTableFromFile() throws IOException {
 
-        TopsoilTable table = null;
+        TopsoilDataTable table = null;
 
         // select file
-        File file = FileParser.openTableDialogue(StageHelper.getStages().get(0));
+        File file = FileParser.openTableDialog(StageHelper.getStages().get(0));
 
         if (file != null && FileParser.isSupportedTableFile(file)) {
 
@@ -72,7 +75,7 @@ public class MenuItemEventHandler {
             Boolean hasHeaders;
 
             // TODO For now, the user must have headers in the file. In the future, they can specify.
-//            hasHeaders = FileParser.containsHeaderDialogue();
+//            hasHeaders = FileParser.containsHeaderDialog();
             hasHeaders = true;
 
             // hasHeaders would only be null if the user clicked "Cancel".
@@ -93,7 +96,7 @@ public class MenuItemEventHandler {
                         table = null;
                     } else {
                         ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                        table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                        table = new TopsoilDataTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
                         table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
                     }
                 }
@@ -103,9 +106,14 @@ public class MenuItemEventHandler {
         return table;
     }
 
-    public static TopsoilTable handleTableFromClipboard() {
+    /**
+     * Pareses table data from the system {@code Clipboard} into a new {@code TopsoilDataTable}.
+     *
+     * @return  a new TopsoilDataTable
+     */
+    public static TopsoilDataTable handleTableFromClipboard() {
 
-        TopsoilTable table = null;
+        TopsoilDataTable table = null;
         String content = Clipboard.getSystemClipboard().getString();
 
         String delim = FileParser.getDelimiter(content);
@@ -116,7 +124,7 @@ public class MenuItemEventHandler {
             Boolean hasHeaders;
 
             // TODO For now, the user must have headers in the file. In the future, they can specify.
-//            hasHeaders = FileParser.containsHeaderDialogue();
+//            hasHeaders = FileParser.containsHeaderDialog();
             hasHeaders = true;
 
             if (hasHeaders != null) {
@@ -135,7 +143,7 @@ public class MenuItemEventHandler {
                         table = null;
                     } else {
                         ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                        table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                        table = new TopsoilDataTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
                     }
                 }
             }
@@ -144,13 +152,13 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Handle empty table creation
+     * Handle new {@code TopsoilDataTable} creation.
      *
-     * @return new, empty table
+     * @return new TopsoilDataTable
      */
-    public static TopsoilTable handleNewTable() {
+    public static TopsoilDataTable handleNewTable() {
 
-        TopsoilTable table;
+        TopsoilDataTable table;
 
         // select isotope flavor
         IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
@@ -159,15 +167,14 @@ public class MenuItemEventHandler {
         if (isotopeType == null) {
             table = null;
         } else {
-            table = new TopsoilTable(null, isotopeType, new TopsoilDataEntry[]{});
+            table = new TopsoilDataTable(null, isotopeType, new TopsoilDataEntry[]{});
         }
 
         return table;
     }
 
     /**
-     * Open default web browser and create a new GitHub issue with user
-     * specifications already supplied
+     * Open default browser and create a new GitHub issue with user specifications already supplied
      * */
     public static void handleReportIssue() {
         IssueCreator issueCreator = new StandardGitHubIssueCreator(
@@ -180,30 +187,30 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Clear a table of all data
+     * Clear a table of all data.
      *
-     * @param table to clear
-     * @return updated table
+     * @param table TopsoilDataTable to clear
+     * @return resulting TopsoilDataTable
      */
-    public static TopsoilTable handleClearTable(TopsoilTable table) {
+    public static TopsoilDataTable handleClearTable(TopsoilDataTable table) {
 
         // alert user for confirmation
         Alert confirmAlert = new YesNoAlert("Are you sure you want to clear the table?");
         Optional<ButtonType> response = confirmAlert.showAndWait();
-        TopsoilTable resultingTable = table;
+        TopsoilDataTable resultingTable = table;
 
         // get user confirmation
         if (response.isPresent()
                 && response.get() == ButtonType.YES) {
-            resultingTable = new TopsoilTable(table.getColumnNames(), table.getIsotopeType(), new TopsoilDataEntry[]{});
+            resultingTable = new TopsoilDataTable(table.getColumnNames(), table.getIsotopeType(), new TopsoilDataEntry[]{});
         }
 
         return resultingTable;
     }
 
     /**
-     * Closes all open tabs in the <tt>TopsoilTabPane</tt>, as well as any
-     * open plots. Used when a project is loaded, or when one is closed.
+     * Closes all open tabs in the {@code TopsoilTabPane}, as well as any open plots. Used when a project is loaded,
+     * or when one is closed.
      *
      * @param tabs  the active TopsoilTabPane
      */
@@ -216,8 +223,8 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Opens a .topsoil project <tt>File</tt>. If any tabs or plots are open,
-     * they are closed and replaced with the project's information.
+     * Opens a .topsoil project {@code File}. If any tabs or plots are open, they are closed and replaced with the
+     * project's information.
      *
      * @param tabs  the TopsoilTabPane to which to add tables
      */
@@ -242,9 +249,10 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Opens a .topsoil <tt>File</tt>.
+     * Opens a .topsoil {@code File}.
      *
      * @param tabs  the active TopsoilTabPane.
+     * @param file  the project File
      */
     public static void openProjectFile(TopsoilTabPane tabs, File file) {
         if (file != null) {
@@ -265,9 +273,8 @@ public class MenuItemEventHandler {
     /**
      * Saves changes to an open .topsoil project.
      * <p>
-     *     If the project is open, but the file can't be found (e.g. if the
-     *     file was deleted externally while the project was open), then the
-     *     user is forced to "Save As".
+     *     If the project is open, but the {@code File} can't be found (e.g. if the file was deleted externally while
+     *     the project was open), then the user is forced to "Save As".
      * </p>
      *
      * @param tabs  the active TopsoilTabPane
@@ -288,8 +295,9 @@ public class MenuItemEventHandler {
      *
      * @param file  the open .topsoil project File
      * @param tabs  the active TopsoilTabPane
+     * @return  true if file is successfully saved
      */
-    private static void saveProjectFile(File file, TopsoilTabPane tabs) {
+    private static boolean saveProjectFile(File file, TopsoilTabPane tabs) {
         if (file != null) {
             String fileName = file.getName();
             String extension = fileName.substring(
@@ -300,34 +308,41 @@ public class MenuItemEventHandler {
                 error.alert("Project must be a .topsoil file.");
             } else {
                 TopsoilSerializer.serialize(file, tabs);
+                return true;
             }
         }
+        return false;
     }
 
     /**
      * Creates a new .topsoil file for the current tabs and plots.
      *
      * @param tabs  the TopsoilTabPane from which to save tables
+     * @return  true if the file was successfully saved
      */
-    public static void handleSaveAsProjectFile(TopsoilTabPane tabs) {
+    public static boolean handleSaveAsProjectFile(TopsoilTabPane tabs) {
         FileChooser fileChooser =  TopsoilFileChooser.getTopsoilSaveFileChooser();
         File file = fileChooser.showSaveDialog(StageHelper.getStages().get(0));
 
         if (file != null) {
             saveProjectFile(file, tabs);
             TopsoilSerializer.setCurrentProjectFile(file);
+            return true;
         }
+        return false;
     }
 
     /**
      * Closes the project file, and closes all open tabs and plots.
      *
      * @param tabs  the active TopsoilTabPane
+     * @return  true if the file is successfully closed
      */
-    public static void handleCloseProjectFile(TopsoilTabPane tabs) {
+    public static boolean handleCloseProjectFile(TopsoilTabPane tabs) {
         Alert saveAndCloseAlert = new Alert(Alert.AlertType.CONFIRMATION,
                 "Do you want to save your changes?",
                 ButtonType.CANCEL, ButtonType.NO, ButtonType.YES);
+        AtomicReference<Boolean> reference = new AtomicReference<>(false);
         saveAndCloseAlert.showAndWait().ifPresent(response -> {
             if (response != ButtonType.CANCEL) {
                 if (response == ButtonType.YES) {
@@ -335,12 +350,14 @@ public class MenuItemEventHandler {
                 }
                 closeAllTabsAndPlots(tabs);
                 TopsoilSerializer.closeProjectFile();
+                reference.set(true);
             }
         });
+        return reference.get();
     }
 
     /**
-     * Generates a plot for the selected <tt>TopsoilTab</tt>.
+     * Generates a plot for the selected {@code TopsoilTab}.
      *
      * @param tabs  the active TopsoilTabPane
      */
@@ -364,8 +381,8 @@ public class MenuItemEventHandler {
                 plotOverwrite.showAndWait().ifPresent(response -> {
                             if (response == ButtonType.YES) {
                                 for (TopsoilTab tab : tabs.getTopsoilTabs()) {
-                                    for (PlotInformation plotInfo : tab.getTopsoilTable().getOpenPlots()) {
-                                        tab.getTopsoilTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
+                                    for (PlotInformation plotInfo : tab.getTableController().getTable().getOpenPlots()) {
+                                        tab.getTableController().getTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
                                         plotInfo.getStage().close();
                                     }
                                 }
@@ -380,11 +397,25 @@ public class MenuItemEventHandler {
         }
     }
 
+    /**
+     * Generates a saved {@code Plot} from a .topsoil file.
+     *
+     * @param tableController   the TopsoilTableController for the table
+     * @param plotType  the TopsoilPlotType of the plot
+     * @param plotContext   the PlotContext for the plot
+     */
     public static void handlePlotGenerationFromFile(TopsoilTableController tableController, TopsoilPlotType plotType,
                                                     PlotContext plotContext) {
         generatePlot(tableController, plotType, plotContext);
     }
 
+    /**
+     * Generates a {@code Plot}.
+     *
+     * @param tableController   the TopsoilTableController for the table
+     * @param plotType  the TopsoilPlotType of the plot
+     * @param plotContext   the PlotContext for the plot
+     */
     private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType,
                                      PlotContext plotContext) {
 
@@ -443,12 +474,18 @@ public class MenuItemEventHandler {
         // Show Plot
         plotStage.show();
 
-        // Store plot information in TopsoilTable
+        // Store plot information in TopsoilDataTable
         PlotInformation plotInfo = new PlotInformation(plot, plotType, propertiesPanel.getProperties(), plotContext, plotStage);
         plotInfo.setVariableBindings(plotContext.getBindings());
         tableController.getTable().addOpenPlot(plotInfo);
     }
 
+    /**
+     * Generates a {@code PlotContext} for the given {@code TopsoilTableController}.
+     *
+     * @param tableController   the TopsoilTableController for the table
+     * @return  PlotContext for the table
+     */
     private static PlotContext generatePlotContext(TopsoilTableController tableController) {
         NumberDataset dataset = tableController.getDataset();
         SimplePlotContext plotContext = new SimplePlotContext(dataset);

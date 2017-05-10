@@ -6,38 +6,74 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.LoadException;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.table.TopsoilTable;
+import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
 
 import java.io.IOException;
 
 /**
- * Extends JavaFX TabPane class
+ * A custom {@code TabPane} for managing {@link TopsoilTab}s.
+ *
  * @author sbunce
+ * @see Tab
+ * @see TopsoilTab
  */
 public class TopsoilTabPane extends TabPane {
 
-    private int untitledCount;
-    private SimpleBooleanProperty isEmptyProperty = new SimpleBooleanProperty(true);
+    //***********************
+    // Attributes
+    //***********************
 
+    /**
+     * A count of the number of default-titled tabs in the tab pane.
+     */
+    private int untitledCount;
+
+    /**
+     * A {@code BooleanProperty} that keeps track of whether or not the tab pane has tabs in it.
+     */
+    private BooleanProperty isEmpty = new SimpleBooleanProperty(true);
+
+    /**
+     * A {@code String} path to the {@code .fxml} file for {@code TopsoilTabContent}.
+     */
     private final String TOPSOIL_TAB_FXML_PATH = "topsoil-tab-content.fxml";
 
+    /**
+     * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
+     */
     private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabPane.class);
 
-    public TopsoilTabPane() throws LoadException {
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs an empty {@code TopsoilTabPane}.
+     */
+    public TopsoilTabPane() {
         super();
         this.untitledCount = 0;
-        this.getTabs().addListener((ListChangeListener<? super Tab>) c -> isEmptyProperty.set(this.getTabs().isEmpty
-                ()));
+        this.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
+            isEmptyProperty().set(this.getTabs().isEmpty());
+        });
     }
 
-    // Add a new tab to the MainWindow tab pane
-    public void add(TopsoilTable table) {
+    //***********************
+    // Methods
+    //***********************
+
+    /**
+     * Adds a {@code TopsoilDataTable} to the {@code TopsoilTabPane} by loading a {@code TopsoilTabContent} from FXML, creating a
+     * {@code TopsoilTableController} to manage them, and putting the controller and tab content into a {@code TopsoilTab}.
+     *
+     * @param table the TopsoilDataTable to be added
+     */
+    public void add(TopsoilDataTable table) {
         try {
             // Load tab content
             FXMLLoader fxmlLoader = new FXMLLoader(
@@ -57,6 +93,11 @@ public class TopsoilTabPane extends TabPane {
         }
     }
 
+    /**
+     * Returns the tabs in the {@code TopsoilTabPane} as an ObservableList of {@code TopsoilTab}s.
+     *
+     * @return  an ObservableList of TopsoilTabs
+     */
     public ObservableList<TopsoilTab> getTopsoilTabs() {
         ObservableList<Tab> tabs = this.getTabs();
         ObservableList<TopsoilTab> topsoilTabs = FXCollections.observableArrayList();
@@ -67,13 +108,21 @@ public class TopsoilTabPane extends TabPane {
     }
 
     /**
-     * Get the currently selected tab
-     * @return TopsoilTab that is selected
+     * Returns the currently selected {@code TopsoilTab}.
+     *
+     * @return the current TopsoilTab
      */
     public TopsoilTab getSelectedTab() {
         return (TopsoilTab) this.getSelectionModel().getSelectedItem();
     }
 
+    /**
+     * Creates a new {@code TopsoilTab}. for the specified {@code TopsoilTabContent} and {@code TopsoilTableController}.
+     *
+     * @param tabContent    TopsoilTabContent to display
+     * @param tableController   TopsoilTableController
+     * @return  a new TopsoilTab
+     */
     private TopsoilTab createTopsoilTab(TopsoilTabContent tabContent, TopsoilTableController tableController) {
         String title = tableController.getTable().getTitle();
 
@@ -99,6 +148,13 @@ public class TopsoilTabPane extends TabPane {
         return new TopsoilTab(tabContent, tableController);
     }
 
+    /**
+     * Creates a new {@code TopsoilTab} with a default title, if the {@code TopsoilDataTable} being added does not have its own title.
+     *
+     * @param tabContent    TopsoilTabContent to display
+     * @param tableController   TopsoilTabController
+     * @return  a new default-titled TopsoilTab
+     */
     private TopsoilTab newUntitledTab(TopsoilTabContent tabContent, TopsoilTableController tableController) {
         TopsoilTab tab = new TopsoilTab(tabContent, tableController);
         tab.setContent(tabContent.getTableView());
@@ -107,11 +163,18 @@ public class TopsoilTabPane extends TabPane {
     }
 
     public final BooleanProperty isEmptyProperty() {
-        return isEmptyProperty;
+        if (isEmpty == null) {
+            isEmpty = new SimpleBooleanProperty();
+        }
+        return isEmpty;
     }
-
+    /**
+     * Returns true if there are no tabs in the {@code TopsoilTabPane}.
+     *
+     * @return  true if there are no tabs in the TopsoilTabPane
+     */
     public boolean isEmpty() {
-        return isEmptyProperty.get();
+        return isEmptyProperty().get();
     }
 
 }

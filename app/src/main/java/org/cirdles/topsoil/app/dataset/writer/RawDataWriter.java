@@ -27,14 +27,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
+ * An interface implemented by classes which write {@code RawData} to {@code File}s.
  *
  * @author John Zeringue
  */
 public interface RawDataWriter {
 
+    /**
+     * Writes the provided {@code RawData} to the specified destination.
+     *
+     * @param rawData   RawData
+     * @param destination   OutputStream destination
+     * @throws IOException  .
+     */
     public void write(RawData rawData, OutputStream destination)
             throws IOException;
 
+    /**
+     * Attempts to write the provided {@code RawData} to a {@code String} using a  {@code ByteArrayOutputStream}.
+     *
+     * @param rawData   RawData
+     * @return  String
+     * @throws IOException  .
+     */
     public default String write(RawData rawData) throws IOException {
         try (OutputStream outputStream = new ByteArrayOutputStream()) {
             write(rawData, outputStream);
@@ -42,6 +57,14 @@ public interface RawDataWriter {
         }
     }
 
+    /**
+     * Write the provided {@code RawData} to the specified destination.
+     *
+     * @param rawData   RawData
+     * @param destination   File destination
+     * @throws IOException  .
+     * @throws FileNotFoundException    .
+     */
     public default void write(RawData rawData, File destination)
             throws FileNotFoundException, IOException {
         try (OutputStream outputStream = new FileOutputStream(destination)) {
@@ -49,6 +72,13 @@ public interface RawDataWriter {
         }
     }
 
+    /**
+     * Write the provided {@code RawData} to the specified destination.
+     *
+     * @param rawData   RawData
+     * @param destination   Path destination
+     * @throws IOException  .
+     */
     public default void write(RawData rawData, Path destination)
             throws IOException {
         write(rawData, Files.newOutputStream(destination));

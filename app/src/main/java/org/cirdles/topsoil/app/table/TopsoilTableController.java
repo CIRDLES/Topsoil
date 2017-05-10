@@ -8,35 +8,69 @@ import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.TopsoilRawData;
+import org.cirdles.topsoil.app.dataset.TopsoilRawData;
 import org.cirdles.topsoil.app.dataset.NumberDataset;
 import org.cirdles.topsoil.app.tab.TopsoilTabContent;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.TableColumnReorderCommand;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilPlotEntry;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author marottajb
+ * A class which oversees connections between the {@link TopsoilDataTable} and the {@link TopsoilTabContent} for a
+ * particular set of data. This includes handling the binding of properties, returning complete sets of data, and
+ * ensuring that the two are consistent with one another.
+ *
+ * @author Jake Marotta
+ * @see TopsoilDataTable
+ * @see TopsoilTabContent
  */
 public class TopsoilTableController {
 
-    private TopsoilTable table;
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * The {@code TopsoilDataTable} that is managed by this table controller.
+     */
+    private TopsoilDataTable table;
+
+    /**
+     * The {@code TopsoilTabContent} that is managed by this table controller.
+     */
     private TopsoilTabContent tabContent;
 
+    /**
+     * A copy of the data in {@link TopsoilDataTable}, which is loaded into the {@code TableView} of the
+     * {@link TopsoilTabContent}.
+     */
     private ObservableList<TopsoilDataEntry> tableData;
 
-    public TopsoilTableController(TopsoilTable t, TopsoilTabContent content) {
-        this.table = t;
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code TopsoilTableController} for the specified {@code TopsoilDataTable} and
+     * {@code TopsoilTabContent}.
+     *
+     * @param dataTable the TopsoilDataTable that contains the data
+     * @param content   the TopsoilTabContent that displays the data
+     */
+    public TopsoilTableController(TopsoilDataTable dataTable, TopsoilTabContent content) {
+        this.table = dataTable;
         this.tabContent = content;
 
-        // Get data from the TopsoilTable and put it into the TableView in TabContent.
+        // Get data from the TopsoilDataTable and put it into the TableView in TabContent.
         this.tableData = table.getCopyOfDataAsEntries();
         tabContent.getTableView().setItems(tableData);
 
-        // Bind values in Controller's tableData and TopsoilTable's data.
+        // Bind values in Controller's tableData and TopsoilDataTable's data.
         ObservableList<TopsoilDataEntry> data = table.getData();
         for (int i = 0; i < tableData.size(); i++) {
             for (int j = 0; j < tableData.get(i).getProperties().size(); j++) {
@@ -65,7 +99,7 @@ public class TopsoilTableController {
 
         tabContent.getTableView().setItems(tableData);
 
-        // Bind column names in the TableView to those headers specified in TopsoilTable
+        // Bind column names in the TableView to those headers specified in TopsoilDataTable
         List<StringProperty> headers = table.getColumnNameProperties();
         List<TableColumn<TopsoilDataEntry, ?>> columns = tabContent.getTableView().getColumns();
         for (int i = 0; i < headers.size(); i++) {
@@ -87,18 +121,74 @@ public class TopsoilTableController {
         tabContent.getPlotPropertiesPanelController().isotopeTypeObjectProperty().bindBidirectional(table.isotopeTypeObjectProperty());
     }
 
-    public TopsoilTable getTable() {
+    //***********************
+    // Methods
+    //***********************
+
+    /**
+     * Returns the {@code TopsoilDataTable} managed by this {@code TopsoilTableController}.
+     *
+     * @return  TopsoilDataTable
+     */
+    public TopsoilDataTable getTable() {
         return table;
     }
 
-    public void setTable(TopsoilTable table) {
-        this.table = table;
-    }
-
+    /**
+     * Returns the {@code TopsoilTabContent} managed by this {@code TopsoilTableController}.
+     *
+     * @return  TopsoilTabContent
+     */
     public TopsoilTabContent getTabContent() {
         return tabContent;
     }
 
+    /**
+     * Gets raw data from the {@link TopsoilDataTable} as a {@code TopsoilRawData}.
+     *
+     * @return  a TopsoilRawData of type Number
+     */
+    private TopsoilRawData<Number> getRawData() {
+        // Initialize fields
+        List<Field<Number>> fields = new ArrayList<>();
+
+        for (String header : table.getColumnNames()) {
+            Field<Number> field = new NumberField(header);
+            fields.add(field);
+        }
+
+        // Initialize entries
+        List<Entry> entries = new ArrayList<>();
+
+        // put relevant entries into entry list
+        List<TopsoilDataEntry> tableEntries = table.getCopyOfDataAsEntries();
+        // TODO Take data from TopsoilDataTable.data
+        for (int i = 0; i < tabContent.getTableView().getItems().size(); i ++) {
+            entries.add(new TopsoilPlotEntry());
+            for (int j = 0; j < table.getColumnNames().length; j++) {
+                double currentValue = tableEntries.get(i).getProperties().get(j).getValue();
+                entries.get(i).set(fields.get(j), currentValue);
+            }
+        }
+        return new TopsoilRawData<>(fields, entries);
+    }
+
+    /**
+     * Gets the data in the {@link TopsoilDataTable} as a {@code NumberDataset}.
+     *
+     * @return  a NumberDataset
+     */
+    public NumberDataset getDataset() {
+        return new NumberDataset(table.getTitle(), getRawData());
+    }
+
+    /**
+     * Handles the reordering of columns in the {@code TableView}.
+     * <p>
+     * When the columns in the {@link TopsoilTabContent}'s {@code TableView} are clicked-and-dragged by the user, this
+     * method is called to make sure that the data reflects the change made, and that the reordering can be undone by
+     * the {@link UndoManager}.</p>
+     */
     private void handleColumnReorder() {
 
         TableView<TopsoilDataEntry> tableView = tabContent.getTableView();
@@ -150,12 +240,12 @@ public class TopsoilTableController {
         }
 
         if (fromIndex >= 0 && toIndex >= 0) {
-            // Reorder data in TopsoilTable
+            // Reorder data in TopsoilDataTable
             for (TopsoilDataEntry entry : table.getData()) {
                 entry.swap(fromIndex, toIndex);
             }
 
-            // Reorder column name properties in TopsoilTable
+            // Reorder column name properties in TopsoilDataTable
             StringProperty sTemp = table.getColumnNameProperties().get(fromIndex);
             table.getColumnNameProperties().remove(fromIndex);
             table.getColumnNameProperties().add(toIndex, sTemp);
@@ -170,9 +260,9 @@ public class TopsoilTableController {
     }
 
     /**
-     * Resets the string ids associated with each <tt>TableColumn</tt> in the <tt>TableView</tt>.
-     * <p>Each TableColumn has an associated String id assigned to it, increasing numerically from 1, left to right.
-     * This is to keep track of the order of the columns before and after they are re-ordered due to clicking and
+     * Resets the string ids associated with each {@code TableColumn} in the {@code TableView}.
+     * <p>Each {@code TableColumn} has an associated String id assigned to it, increasing numerically from 1, left to
+     * right. This is to keep track of the order of the columns before and after they are re-ordered due to clicking and
      * dragging.
      * </p>
      */
@@ -182,34 +272,5 @@ public class TopsoilTableController {
             column.setId(Integer.toString(id));
             id++;
         }
-    }
-
-    public TopsoilRawData<Number> getRawData() {
-        // Initialize fields
-        List<Field<Number>> fields = new ArrayList<>();
-
-        for (String header : table.getColumnNames()) {
-            Field<Number> field = new NumberField(header);
-            fields.add(field);
-        }
-
-        // Initialize entries
-        List<Entry> entries = new ArrayList<>();
-
-        // put relevant entries into entry list
-        List<TopsoilDataEntry> tableEntries = table.getCopyOfDataAsEntries();
-        // TODO Take data from TopsoilTable.data
-        for (int i = 0; i < tabContent.getTableView().getItems().size(); i ++) {
-            entries.add(new TopsoilPlotEntry());
-            for (int j = 0; j < table.getColumnNames().length; j++) {
-                double currentValue = tableEntries.get(i).getProperties().get(j).getValue();
-                entries.get(i).set(fields.get(j), currentValue);
-            }
-        }
-        return new TopsoilRawData<>(fields, entries);
-    }
-
-    public NumberDataset getDataset() {
-        return new NumberDataset(table.getTitle(), getRawData());
     }
 }

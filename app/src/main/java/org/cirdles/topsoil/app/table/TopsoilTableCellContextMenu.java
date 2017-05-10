@@ -6,33 +6,92 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.*;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 
 /**
- * Created by benjaminmuldrow on 8/1/16.
+ * A custom {@code ContextMenu} requested by {@link TopsoilTableCell}s. It contains options for manipulating cells,
+ * rows, and columns in the {@link TableView}.
+ *
+ * @author Benjamin Muldrow
  */
 class TopsoilTableCellContextMenu extends ContextMenu {
 
-    private MenuItem addRowAboveItem;
-    private MenuItem addRowBelowItem;
-    private MenuItem deleteRowItem;
-//    private MenuItem deleteColumnItem;
-    //TODO Enable Column renaming
-    private MenuItem renameColumnItem;
-    private MenuItem copyCellItem;
-    private MenuItem copyRowItem;
-    private MenuItem copyColumnItem;
-    private MenuItem clearCellItem;
-    private MenuItem clearRowItem;
-    private MenuItem clearColumnItem;
+    //***********************
+    // Attributes
+    //***********************
 
+    /**
+     * The {@code TopsoilTableCell} that requested the context menu.
+     */
     private TopsoilTableCell cell;
 
+    /**
+     * When clicked, adds a row above the cell's row.
+     */
+    private MenuItem addRowAboveItem;
+
+    /**
+     * When clicked, adds a row below the cell's row.
+     */
+    private MenuItem addRowBelowItem;
+
+    /**
+     * When clicked, deletes the cell's row.
+     */
+    private MenuItem deleteRowItem;
+
+//    private MenuItem deleteColumnItem;
+    //TODO Enable Column renaming
+
+    /**
+     * When clicked, prompts the user to rename the cell's column.
+     */
+    private MenuItem renameColumnItem;
+
+    /**
+     * When clicked, copies the value in the cell to the system {@code Clipboard}.
+     */
+    private MenuItem copyCellItem;
+
+    /**
+     * When clicked, copies the values in the cell's row to the system {@code Clipboard}.
+     */
+    private MenuItem copyRowItem;
+
+    /**
+     * When clicked, copies the values in the cell's column to the system {@code Clipboard}.
+     */
+    private MenuItem copyColumnItem;
+
+    /**
+     * When clicked, sets the value in the cell to 0.0.
+     */
+    private MenuItem clearCellItem;
+
+    /**
+     * When clicked, sets the values of all cells in the cell's row to 0.0.
+     */
+    private MenuItem clearRowItem;
+
+    /**
+     * When clicked, sets the values of all cells in the cell's column to 0.0.
+     */
+    private MenuItem clearColumnItem;
+
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Creates a new TopsoilTableCellContextMenu for the specified cell.
+     *
+     * @param cell  the TopsoilTableCell requesting a context menu
+     */
     TopsoilTableCellContextMenu(TopsoilTableCell cell) {
         super();
         this.cell = cell;
 
         // initialize menu items
-        // TODO rearrange in a more logical sense
         addRowAboveItem = new MenuItem("Add Row Above");
         addRowBelowItem = new MenuItem("Add Row Below");
         deleteRowItem = new MenuItem("Delete Row");
@@ -47,7 +106,10 @@ class TopsoilTableCellContextMenu extends ContextMenu {
         copyCellItem = new MenuItem("Copy Cell");
         clearCellItem = new MenuItem("Clear Cell");
 
-        // add actions
+        //********************//
+        //    ROW ACTIONS     //
+        //********************//
+
         addRowAboveItem.setOnAction(action -> {
             InsertRowCommand insertRowCommand = new InsertRowCommand(this.cell, this.cell.getIndex());
             insertRowCommand.execute();
@@ -85,6 +147,10 @@ class TopsoilTableCellContextMenu extends ContextMenu {
             clearRowCommand.execute();
             ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearRowCommand);
         });
+
+        //***********************//
+        //    COLUMN ACTIONS     //
+        //***********************//
 
 //        deleteColumnItem.setOnAction(action -> {
 //            DeleteColumnCommand deleteColumnCommand = new DeleteColumnCommand(this.cell);
@@ -139,6 +205,10 @@ class TopsoilTableCellContextMenu extends ContextMenu {
             ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearColumnCommand);
         });
 
+        //*********************//
+        //    CELL ACTIONS     //
+        //*********************//
+
         copyCellItem.setOnAction(action -> {
             ClipboardContent content = new ClipboardContent();
             content.putString(Double.toString(this.cell.getItem()));
@@ -152,7 +222,7 @@ class TopsoilTableCellContextMenu extends ContextMenu {
                     .getSelectedTab().addUndo(clearCellCommand);
         });
 
-        // add items to context menu
+        // Add items to context menu
         this.getItems().addAll(
                 addRowAboveItem,
                 addRowBelowItem,
@@ -165,7 +235,8 @@ class TopsoilTableCellContextMenu extends ContextMenu {
                 copyColumnItem,
                 clearColumnItem,
                 new SeparatorMenuItem(),
-                copyCellItem, clearCellItem
+                copyCellItem,
+                clearCellItem
         );
     }
 }

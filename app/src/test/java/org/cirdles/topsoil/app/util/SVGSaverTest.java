@@ -18,6 +18,8 @@ package org.cirdles.topsoil.app.util;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import static org.junit.Assert.assertTrue;
+
+import org.cirdles.topsoil.app.util.file.SVGSaver;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;

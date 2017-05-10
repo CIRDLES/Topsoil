@@ -4,35 +4,77 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import org.cirdles.topsoil.app.table.TopsoilTable;
+import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
-import org.cirdles.topsoil.app.util.Command;
-import org.cirdles.topsoil.app.util.UndoManager;
+import org.cirdles.topsoil.app.util.undo.Command;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
- * A custom <tt>Tab</tt> which stores a <tt>TopsoilTable</tt>.
+ * A custom {@code Tab} which displays data from a {@link TopsoilDataTable} in a {@link TopsoilTabContent}. The
+ * TopsoilDataTable is accessed via a {@link TopsoilTableController}. The {@code TopsoilTabContent} is loaded from
+ * FXML by the {@link TopsoilTabPane}.
  *
  * @author sbunce
  * @see Tab
+ * @see TopsoilTabContent
  * @see TopsoilTabPane
- * @see TopsoilTable
+ * @see TopsoilTableController
  */
 public class TopsoilTab extends Tab {
 
-    private TopsoilTableController tableController;
-    private UndoManager undoManager;
-
-    private String isotopePrefix;
-    private SimpleStringProperty actualTitle;
-    private Label titleLabel;
-    private TextField textField;
-
-    private TopsoilTabContent tabContent;
+    //***********************
+    // Attributes
+    //***********************
 
     /**
-     * Constructs a <tt>TopsoilTab</tt> for the specified <tt>TopsoilTable</tt>.
+     * The {@code TopsoilTableController} that handles this tab's content.
+     */
+    private TopsoilTableController tableController;
+
+    /**
+     * An {@code UndoManager} that handles changes to the table view in this tab's content.
+     */
+    private UndoManager undoManager;
+
+    /**
+     * A {@code String} consisting of the abbreviation of the {@code IsotopeType} of this tab's corresponding {@code
+     * TopsoilDataTable} and a hyphen. It serves as a prefix to the actual title of the tab, to quickly identify the
+     * {@code IsotopeType} of the tab's data.
+     */
+    private String isotopePrefix;
+
+    /**
+     * A {@code StringProperty} containing the real title of the tab, which is also the title of the corresponding
+     * {@code TopsoilDataTable}.
+     */
+    private SimpleStringProperty actualTitle;
+
+    /**
+     * The {@code Label} that conveys the tab's title.
+     */
+    private Label titleLabel;
+
+    /**
+     * A {@code TextField} for editing the tab's title.
+     */
+    private TextField textField;
+
+    /**
+     * The {@code TopsoilTabContent} containing all of the nodes within this tab, including the {@code TableView} and
+     * the {@code PlotPropertiesPanelController}.
+     */
+    private TopsoilTabContent tabContent;
+
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a {@code TopsoilTab} using the specified {@code TopsoilTabContent}, with data from a {@code
+     * TopsoilTableController}.
      *
      * @param tabContent the TopsoilTabContent for visualizing the data
+     * @param tableController   the TopsoilTableController that manages tabContent and the data
      */
     public TopsoilTab(TopsoilTabContent tabContent, TopsoilTableController tableController) {
         this.tabContent = tabContent;
@@ -42,7 +84,7 @@ public class TopsoilTab extends Tab {
         this.isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";
 
         this.actualTitle = new SimpleStringProperty(tableController.getTable().getTitle());
-        this.actualTitle.bindBidirectional(tableController.getTable().titleProperty()); // bind to TopsoilTable titleProperty
+        this.actualTitle.bindBidirectional(tableController.getTable().titleProperty()); // bind to TopsoilDataTable titleProperty
 
         tableController.getTable().isotopeTypeObjectProperty().addListener(c -> {
             isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";
@@ -63,10 +105,13 @@ public class TopsoilTab extends Tab {
         this.setContent(tableController.getTabContent().getTableView());
     }
 
+    //***********************
+    // Methods
+    //***********************
 
     /**
-     * Begins editing the <tt>TopsoilTab</tt>'s title by providing a
-     * <tt>TextField</tt>.
+     * Begins editing the {@code TopsoilTab}'s title by providing a
+     * {@code TextField}.
      */
     private void startEditingTitle() {
         this.textField = generateTitleTextField();
@@ -78,8 +123,8 @@ public class TopsoilTab extends Tab {
     }
 
     /**
-     * Saves the text in the title <tt>TextField</tt> to the
-     * <tt>TopsoilTab</tt>.
+     * Saves the text in the title {@code TextField} to the
+     * {@code TopsoilTab}.
      */
     private void finishEditingTitle() {
         this.setTitle(this.textField.getText());
@@ -89,8 +134,8 @@ public class TopsoilTab extends Tab {
     }
 
     /**
-     * Sets the title of the <tt>TopsoilTab</tt> and the
-     * <tt>TopsoilTable</tt> to the provided <tt>String</tt>.
+     * Sets the title of the {@code TopsoilTab} and the
+     * {@code TopsoilDataTable} to the provided {@code String}.
      *
      * @param title the new title
      */
@@ -99,6 +144,11 @@ public class TopsoilTab extends Tab {
         this.actualTitle.set(title);
     }
 
+    /**
+     * Generates a {@code TextField} for editing the tab's title.
+     *
+     * @return  the generated TextField
+     */
     private TextField generateTitleTextField() {
         TextField textField = new TextField();
         textField.setMinWidth(this.titleLabel.getWidth() - this.titleLabel.getGraphicTextGap() * 2);
@@ -111,24 +161,26 @@ public class TopsoilTab extends Tab {
         return textField;
     }
 
+    /**
+     * Returns the {@code TopsoilTableController} that manages both the data and this tab's content.
+     *
+     * @return  TopsoilTableController
+     */
     public TopsoilTableController getTableController() {
         return tableController;
     }
 
     /**
-     * get the Topsoil Table object from the tab
-     * @return TopsoilTable
+     * Returns the content of this tab.
+     *
+     * @return  TopsoilTabContent
      */
-    public TopsoilTable getTopsoilTable() {
-        return tableController.getTable();
-    }
-
     public TopsoilTabContent getTabContent() {
         return tabContent;
     }
 
     /**
-     * Adds a new <tt>Command</tt> to this <tt>TopsoilTab</tt>'s <tt>UndoManager</tt>.
+     * Adds a new {@code Command} to this {@code TopsoilTab}'s {@link UndoManager}.
      *
      * @param command   the Command to add
      */
@@ -137,16 +189,16 @@ public class TopsoilTab extends Tab {
     }
 
     /**
-     * Undoes the last executed <tt>Command</tt> in this <tt>TopsoilTab</tt>'s
-     * <tt>UndoManager</tt>.
+     * Undoes the last executed {@link Command} in this {@code TopsoilTab}'s
+     * {@link UndoManager}.
      */
     public void undo() {
         this.undoManager.undo();
     }
 
     /**
-     * Gets a short message describing the last executed <tt>Command</tt> in
-     * this <tt>TopsoilTab</tt>'s<tt>UndoManager</tt>.
+     * Gets a short message describing the last executed {@link Command} in
+     * this {@code TopsoilTab}'s {@link UndoManager}.
      *
      * @return  a short description of the last executed command
      */
@@ -155,16 +207,16 @@ public class TopsoilTab extends Tab {
     }
 
     /**
-     * Re-executes the last undone <tt>Command</tt> in this <tt>TopsoilTab</tt>'s
-     * <tt>UndoManager</tt>.
+     * Re-executes the last undone {@link Command} in this {@code TopsoilTab}'s
+     * {@link UndoManager}.
      */
     public void redo() {
         this.undoManager.redo();
     }
 
     /**
-     * Gets a short message describing the last undone <tt>Command</tt> in
-     * this <tt>TopsoilTab</tt>'s <tt>UndoManager</tt>.
+     * Gets a short message describing the last undone {@link Command} in
+     * this {@code TopsoilTab}'s {@link UndoManager}.
      *
      * @return  a short description of the last undone command
      */

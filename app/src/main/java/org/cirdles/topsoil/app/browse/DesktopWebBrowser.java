@@ -21,21 +21,41 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import org.cirdles.topsoil.app.util.Alerter;
+import org.cirdles.topsoil.app.util.dialog.Alerter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A class for opening pages in the system default browser.
  *
- * @author Emily
+ * @author Emily Coleman
+ * @see WebBrowser
  */
 public class DesktopWebBrowser implements WebBrowser {
 
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * {@code Logger} for this class.
+     */
     private static final Logger LOGGER
             = LoggerFactory.getLogger(DesktopWebBrowser.class);
 
+    /**
+     * System desktop.
+     */
     private final Desktop desktop;
+
+    /**
+     * An {@code Alerter} for providing messages to the user.
+     */
     private final Alerter alerter;
+
+    //***********************
+    // Constructors
+    //***********************
 
     @Inject
     public DesktopWebBrowser(@Nullable Desktop desktop, Alerter alerter) {
@@ -43,6 +63,12 @@ public class DesktopWebBrowser implements WebBrowser {
         this.alerter = alerter;
     }
 
+    //***********************
+    // Methods
+    //***********************
+
+    /** {@inheritDoc}
+     */
     @Override
     public void browse(String uriString) {
         try {
@@ -54,7 +80,12 @@ public class DesktopWebBrowser implements WebBrowser {
         }
     }
 
-    void checkDesktopAndBrowse(URI uri) {
+    /**
+     * Checks whether browsin is supported.g
+     *
+     * @param uri   destination URI
+     */
+    private void checkDesktopAndBrowse(URI uri) {
         if (desktop != null) {
             if (desktop.isSupported(Desktop.Action.BROWSE)) {
                 browse(uri);
@@ -66,7 +97,12 @@ public class DesktopWebBrowser implements WebBrowser {
         }
     }
 
-    void browse(URI uri) {
+    /**
+     * Attempts to open a link in the desktop's default browser
+     *
+     * @param uri destination URI
+     */
+    private void browse(URI uri) {
         try {
             desktop.browse(uri);
         } catch (IOException ex) {

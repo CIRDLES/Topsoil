@@ -1,63 +1,77 @@
 package org.cirdles.topsoil.app.table.command;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.table.TopsoilDataEntry;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
-import org.cirdles.topsoil.app.util.Command;
-import org.cirdles.topsoil.app.util.UndoManager;
+import org.cirdles.topsoil.app.util.undo.Command;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
- * An undoable <tt>Command</tt> instance that can be added to a TopsoilTab's
- * <tt>UndoManager</tt> when a row in the <tt>TableView</tt> is cleared. This
- * class stores a copy of the row's <tt>TopsoilDataEntry</tt>, and the row's
+ * An undoable {@link Command} instance that can be added to a TopsoilTab's {@link UndoManager} when a row in the
+ * {@link TableView} is cleared. This {@code Command} stores a copy of the row's {@link TopsoilDataEntry}, and the row's
  * index in the table view.
  *
- * @author marottajb
+ * @author Jake Marotta
  * @see Command
  * @see UndoManager
  */
 public class ClearRowCommand implements Command {
 
-    private TableView<TopsoilDataEntry> tableView;
-    private TopsoilDataEntry row;
-    private int index;
+    //***********************
+    // Attributes
+    //***********************
 
     /**
-     * Constructs a new clear row command from the specified cell.
+     * The {@code TopsoilDataEntry} that was cleared.
+     */
+    private TopsoilDataEntry row;
+
+    /**
+     * The former valued from the {@code TopsoilDataEntry}.
+     */
+    private Double[] rowValues;
+
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code ClearRowCommand} for the specified cell.
      *
      * @param cell  the TopsoilTableCell that the command came from
      */
     public ClearRowCommand(TopsoilTableCell cell) {
-        this.tableView = cell.getTableView();
         this.row = cell.getDataEntry();
-        this.index = cell.getIndex();
+        this.rowValues = row.toArray();
     }
 
+    //***********************
+    // Methods
+    //***********************
+
     /**
-     * Called to execute the row creation.
+     * Called to execute the row clearing.
      */
     public void execute() {
-        this.tableView.getItems().remove(index);
-        this.tableView.getItems().add(index, TopsoilDataEntry.newEmptyDataEntry(this.tableView));
+        for (int i = 0; i < rowValues.length; i++) {
+            row.setValue(i, 0.0);
+        }
     }
 
     /**
-     * Called to undo the row creation.
+     * Called to undo the row clearing.
      */
     public void undo() {
-        TopsoilDataEntry dataEntry = new TopsoilDataEntry();
-        for (int i = 0; i < this.tableView.getColumns().size(); i++) {
-            dataEntry.addValues(this.row.getProperties().get(i).getValue());
+        for (int i = 0; i < rowValues.length; i++) {
+            row.setValue(i, rowValues[i]);
+            System.out.println(row.getProperties().get(i).get());
         }
-        this.tableView.getItems().remove(index);
-        this.tableView.getItems().add(index, dataEntry);
     }
 
-    /**
-     * Called from the <tt>UndoManager</tt> to get a short description of the
-     * command.
-     *
-     * @return the name of the command
+    /** {@inheritDoc}
      */
     public String getActionName() {
         return "Clear row";

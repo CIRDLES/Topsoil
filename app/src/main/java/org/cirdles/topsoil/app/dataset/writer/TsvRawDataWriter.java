@@ -16,11 +16,15 @@
 package org.cirdles.topsoil.app.dataset.writer;
 
 /**
+ * A {@code DsvRawDataWriter} for writing tab-delimited data.
  *
  * @author John Zeringue
  */
 public class TsvRawDataWriter extends DsvRawDataWriter {
 
+    /**
+     * Constructs a new {@code TsvRawDataWriter}.
+     */
     public TsvRawDataWriter() {
         super('\t');
     }

@@ -1,28 +1,43 @@
 package org.cirdles.topsoil.app.menu.command;
 
 import javafx.scene.control.TableView;
+import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.table.TopsoilDataEntry;
-import org.cirdles.topsoil.app.util.Command;
-import org.cirdles.topsoil.app.util.UndoManager;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.util.undo.Command;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
- * An undoable <tt>Command</tt> instance that is added to a
- * <tt>TopsoilTab</tt>'s <tt>UndoManager</tt> when a new tab (and hence, new
- * table) is created. This class stores the isotope type of the new table so
- * the user doesn't have to specify again upon a redo.
+ * An undoable {@code Command} instance that is added to a {@link TopsoilTab}'s {@link UndoManager} when a table is
+ * cleared. This {@code Command} stores the data that was cleared, and the {@link TableView} that the data was
+ * cleared from.
  *
- * @author marottajb
+ * @author Jake Marotta
  * @see Command
  * @see UndoManager
  */
 public class ClearTableCommand implements Command {
 
-    private TableView<TopsoilDataEntry> tableView;
-    private TopsoilDataEntry[] rows;
+    //***********************
+    // Attributes
+    //***********************
 
     /**
-     * Constructs a new clear table command for the specified table view.
+     * The {@code TableView} that was cleared.
+     */
+    private TableView<TopsoilDataEntry> tableView;
+
+    /**
+     * The data that was cleared.
+     */
+    private TopsoilDataEntry[] rows;
+
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code ClearTableCommand} for the specified {@code TableView}.
      *
      * @param tableView the TableView that was cleared
      */
@@ -33,6 +48,10 @@ public class ClearTableCommand implements Command {
             this.rows[i] = this.tableView.getItems().get(i);
         }
     }
+
+    //***********************
+    // Methods
+    //***********************
 
     /**
      * Called to execute the table clearing.
@@ -49,11 +68,7 @@ public class ClearTableCommand implements Command {
         this.tableView.getItems().setAll(this.rows);
     }
 
-    /**
-     * Called from the <tt>UndoManager</tt> to get a short description of the
-     * command.
-     *
-     * @return the name of the command
+    /** {@inheritDoc}
      */
     public String getActionName() {
         return "Clear table";
