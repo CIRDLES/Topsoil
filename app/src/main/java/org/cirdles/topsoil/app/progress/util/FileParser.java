@@ -68,6 +68,34 @@ public class FileParser {
         return containsHeaders;
     }
 
+    public static Boolean detectHeader(String content) {
+        Boolean containsHeaders = true;
+        
+        String[] lines = readLines(content);
+        
+        String[] firstLine = lines[0].split(getDelimiter(content));
+        
+        if(isDouble(firstLine[0])){
+            containsHeaders = false;
+        }
+        
+        return containsHeaders;
+    }
+    
+    public static Boolean detectHeader(File file) {
+        Boolean containsHeaders = true;
+       
+        String[] lines = readLines(file);
+        
+        String[] firstLine = lines[0].split(getDelimiter(lines));
+        
+        if(isDouble(firstLine[0])){
+            containsHeaders = false;
+        }
+
+        return containsHeaders;
+    }
+    
     /**
      * Determines whether the specified table file has a supported file extension.
      *
@@ -169,12 +197,11 @@ public class FileParser {
         Alerter alerter = new ErrorAlerter();
 
         // TODO Detect whether the copied data is viable.
-
         List<TopsoilDataEntry> content = new ArrayList<>();
 
         // ignore header row if supplied
         if (containsHeaders) {
-            String [] newlines = new String[lines.length - 1];
+            String[] newlines = new String[lines.length - 1];
             for (int i = 1; i < lines.length; i++) {
                 newlines[i - 1] = lines[i];
             }
@@ -184,16 +211,19 @@ public class FileParser {
         for (String line : lines) {
             String[] contentAsString = line.split(delimiter, -1);
 
-            TopsoilDataEntry entry = new TopsoilDataEntry();
-            // TODO Allow more or less than five columns
-            for (int i = 0; i < contentAsString.length && i < 5; i++) {
-                entry.getProperties().add(isDouble(contentAsString[i]) ? new SimpleDoubleProperty(Double.parseDouble
-                        (contentAsString[i])) : new SimpleDoubleProperty(Double.NaN));
-            }
-            content.add(entry);
-            // TODO throw exception for invalid file
+            // ignore lines that contains anything else than double values
+            if (isDouble(contentAsString[0])) {
+                TopsoilDataEntry entry = new TopsoilDataEntry();
+                // TODO Allow more or less than five columns
+                for (int i = 0; i < contentAsString.length && i < 5; i++) {
+                    entry.getProperties().add(isDouble(contentAsString[i]) ? new SimpleDoubleProperty(Double.parseDouble(contentAsString[i])) : new SimpleDoubleProperty(Double.NaN));
+                }
+                content.add(entry);
+                // TODO throw exception for invalid file
 //                throw new IOException("invalid file");
 //            }
+            }
+
         }
 
         return content;
@@ -258,9 +288,33 @@ public class FileParser {
         String [] content = readLines(file);
         String extension = getExtension(file);
         if (extension.equals("csv")) {
+            
+            // Check if the second line of file also has headers, and return a concatenation of these if present
+            String[] secondLine = content[1].split(",");
+            if(!(isDouble(secondLine[0]))) {
+                String[] firstLine = content[0].split(",");
+                for(int i = 0; i < firstLine.length ; i++) {
+                    firstLine[i] = firstLine[i].concat("\t"+secondLine[i]);
+                }
+                return firstLine;
+            }
+            
             return content[0].split(",");
+            
         } else if (extension.equals("txt") || extension.equals("tsv")) {
+            
+            // Check if the second line of file also has headers, and return a concatenation of these if present
+            String[] secondLine = content[1].split("\t");
+            if(!(isDouble(secondLine[0]))) {
+                String[] firstLine = content[0].split("\t");
+                for(int i = 0; i < firstLine.length ; i++) {
+                    firstLine[i] = firstLine[i].concat("\t"+secondLine[i]);
+                }
+                return firstLine;
+            }
+            
             return  content[0].split("\t");
+            
         } else {
             Alerter alerter = new ErrorAlerter();
             alerter.alert("Invalid File Type");
@@ -282,6 +336,17 @@ public class FileParser {
             Alerter alerter = new ErrorAlerter();
             alerter.alert("Could not read input.");
         } else {
+            
+            // Check if the second line of content also has headers, and return a concatenation of these if present
+            String[] secondLine = lines[1].split(delim);
+            if(!(isDouble(secondLine[0]))) {
+                String[] firstLine = lines[0].split(delim);
+                for(int i = 0; i < firstLine.length ; i++) {
+                    firstLine[i] = firstLine[i].concat("\t"+secondLine[i]);
+                }
+                return firstLine;
+            }
+            
             rtnval = lines[0].split(delim);
         }
 
@@ -337,7 +402,7 @@ public class FileParser {
      */
     private static String requestDelimiter() {
         String otherDelimiterOption = "Other";
-        String unknownDelimiterOption = "Don't Know";
+        String unknownDelimiterOption = "Unknown";
         String noDelimiterMessage = "Topsoil is unable to read the data as-is. Make sure the data is complete, or try" +
                                     " putting the data into a .csv or .tsv file.";
 
