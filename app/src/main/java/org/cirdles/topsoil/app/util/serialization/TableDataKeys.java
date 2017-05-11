@@ -44,14 +44,9 @@ public class TableDataKeys {
     public static final String TABLE_PLOT_PROPERTIES = "Plot Properties";
 
     /**
-     * A key for the X {@link VariableFormat} of a {@code TopsoilDataTable}.
+     * A key for the {@link VariableFormat} of a {@code TopsoilDataTable}.
      */
-    public static final String TABLE_X_FORMAT = "X Variable Format Name";
-
-    /**
-     * A key for the Y {@link VariableFormat} of a {@code TopsoilDataTable}.
-     */
-    public static final String TABLE_Y_FORMAT = "Y Variable Format Name";
+    public static final String TABLE_UNCERTAINTY_FORMAT = "Uncertainty Format Name";
 
     private TableDataKeys() {
         // Prevents this class from being instantiated.

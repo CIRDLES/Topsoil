@@ -164,8 +164,8 @@ class SerializableTopsoilSession implements Serializable {
         tableData.put(TABLE_PLOT_PROPERTIES, new HashMap<>(tableController.getTabContent().getPlotPropertiesPanelController()
                                                                       .getProperties()));
 
-        tableData.put(TABLE_X_FORMAT, tableController.getTabContent().getXUncertainty().getName());
-        tableData.put(TABLE_Y_FORMAT, tableController.getTabContent().getYUncertainty().getName());
+        tableData.put(TABLE_UNCERTAINTY_FORMAT, tableController.getTabContent().getPlotPropertiesPanelController()
+                                                     .getUncertainty().getName());
 
         this.data.add(tableData);
     }
@@ -251,9 +251,9 @@ class SerializableTopsoilSession implements Serializable {
             Field<Number> field = fields.get(i);
             VariableFormat<Number> format;
             if (variable == Variables.SIGMA_X) {
-                format = tableController.getTabContent().getXUncertainty();
+                format = tableController.getTabContent().getPlotPropertiesPanelController().getUncertainty();
             } else if (variable == Variables.SIGMA_Y) {
-                format = tableController.getTabContent().getYUncertainty();
+                format = tableController.getTabContent().getPlotPropertiesPanelController().getUncertainty();
             } else {
                 format = variable.getFormats().size() > 0 ? variable.getFormats().get(0) : null;
             }
@@ -261,7 +261,7 @@ class SerializableTopsoilSession implements Serializable {
 
         }
 
-        MenuItemEventHandler.handlePlotGenerationFromFile(tableController, TOPSOIL_PLOT_TYPES.get(plot.get("Topsoil Plot Type")), plotContext);
+        MenuItemEventHandler.handlePlotGenerationFromFile(tableController, TOPSOIL_PLOT_TYPES.get(plot.get(PLOT_TYPE)), plotContext);
     }
 
     /**
@@ -273,7 +273,7 @@ class SerializableTopsoilSession implements Serializable {
     public void loadDataToTopsoilTabPane(TopsoilTabPane tabs) {
         TopsoilDataTable table;
         for (Map<String, Serializable> tableData : this.data) {
-            String[] headers = (String[]) tableData.get("Headers");
+            String[] headers = (String[]) tableData.get(TABLE_HEADERS);
 
             ArrayList<Double[]> storedEntries = (ArrayList<Double[]>) tableData.get("Data");
             TopsoilDataEntry[] dataEntries = new TopsoilDataEntry[storedEntries.size()];
@@ -283,22 +283,19 @@ class SerializableTopsoilSession implements Serializable {
 
             table = new TopsoilDataTable(
                     headers,
-                    this.ISOTOPE_TYPES.get((String) tableData.get("IsotopeType")),
+                    this.ISOTOPE_TYPES.get((String) tableData.get(TABLE_ISOTOPE_TYPE)),
                     dataEntries
             );
-            table.setTitle((String) tableData.get("Title"));
+            table.setTitle((String) tableData.get(TABLE_TITLE));
             tabs.add(table);
 
             TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
-            tableController.getTabContent().setXUncertainty(VARIABLE_FORMATS.get(tableData.get("X Variable Format " +
-                                                                                               "Name")));
-            tableController.getTabContent().setYUncertainty(VARIABLE_FORMATS.get(tableData.get("Y Variable Format " +
-                                                                                               "Name")));
+            tableController.getTabContent().getPlotPropertiesPanelController().setUncertainty(VARIABLE_FORMATS.get
+                    (tableData.get(TABLE_UNCERTAINTY_FORMAT)));
+            tableController.getTabContent().getPlotPropertiesPanelController().setProperties((HashMap<String, Object>) tableData.get
+                    (TABLE_PLOT_PROPERTIES));
 
-            tableController.getTabContent().getPlotPropertiesPanelController().setProperties((HashMap<String, Object>)
-                                                                                                     tableData.get("Plot Properties"));
-
-            for (HashMap<String, Serializable> plot : (ArrayList<HashMap<String, Serializable>>) tableData.get("Plots")) {
+            for (HashMap<String, Serializable> plot : (ArrayList<HashMap<String, Serializable>>) tableData.get(TABLE_PLOTS)) {
                 this.loadPlot(tableController, plot);
             }
         }

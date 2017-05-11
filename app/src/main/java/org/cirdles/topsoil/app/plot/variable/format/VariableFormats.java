@@ -104,10 +104,10 @@ public final class VariableFormats {
         };
 
         UNCERTAINTY_FORMATS = unmodifiableList(asList(
-                ONE_SIGMA_ABSOLUTE,
                 ONE_SIGMA_PERCENT,
-                TWO_SIGMA_ABSOLUTE,
-                TWO_SIGMA_PERCENT
+                TWO_SIGMA_PERCENT,
+                ONE_SIGMA_ABSOLUTE,
+                TWO_SIGMA_ABSOLUTE
         ));
     }
 

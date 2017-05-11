@@ -2,7 +2,6 @@ package org.cirdles.topsoil.app.tab;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,9 +16,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.MainWindow;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormats;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
 import org.cirdles.topsoil.app.table.command.DeleteRowCommand;
@@ -77,16 +73,6 @@ public class TopsoilTabContent extends SplitPane {
     @FXML private Label corrCoefLabel;
 
     /**
-     * A {@code ChoiceBox} for selecting the X Uncertainty {@link VariableFormat}.
-     */
-    @FXML private ChoiceBox<String> xUncertaintyChoiceBox;
-
-    /**
-     * A {@code ChoiceBox} for selecting the Y Uncertainty {@link VariableFormat}.
-     */
-    @FXML private ChoiceBox<String> yUncertaintyChoiceBox;
-
-    /**
      * A {@code TableView} that displays the table data.
      */
     @FXML private TableView<TopsoilDataEntry> tableView;
@@ -122,27 +108,6 @@ public class TopsoilTabContent extends SplitPane {
     private final String PROPERTIES_PANEL_FXML_PATH = "plot-properties-panel.fxml";
 
     /**
-     * A {@code Map} of {@code String}s to {@code VariableFormat}s, used for getting values from the two uncertainty 
-     * {@code ChoiceBox}es.
-     */
-    private static Map<String, VariableFormat<Number>> STRING_TO_VARIABLE_FORMAT_MAP;
-
-    /**
-     * A {@code Map} of  {@code VariableFormat}s to {@code String}s, used for selecting values in the two uncertainty
-     * {@code ChoiceBox}es.
-     */
-    private static Map<VariableFormat<Number>, String> VARIABLE_FORMAT_TO_STRING_MAP;
-    static {
-        // Map VariableFormat names to the formats for displaying and selecting from the uncertainty ChoiceBoxes.
-        STRING_TO_VARIABLE_FORMAT_MAP = new LinkedHashMap<>();
-        VARIABLE_FORMAT_TO_STRING_MAP = new LinkedHashMap<>();
-        for (VariableFormat<Number> format : VariableFormats.UNCERTAINTY_FORMATS) {
-            STRING_TO_VARIABLE_FORMAT_MAP.put(format.getName(), format);
-            VARIABLE_FORMAT_TO_STRING_MAP.put(format, format.getName());
-        }
-    }
-
-    /**
      * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
      */
     private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabContent.class);
@@ -165,19 +130,8 @@ public class TopsoilTabContent extends SplitPane {
         assert corrCoefLabel != null : "fx:id=\"corrCoefLabel\" was not injected: check your FXML file " +
                                        "'topsoil-tab.fxml'.";
 
-        assert xUncertaintyChoiceBox != null : "fx:id=\"xUncertaintyChoiceBox\" was not injected: check your FXML " +
-                                               "file 'topsoil-tab.fxml'.";
-        assert yUncertaintyChoiceBox != null : "fx:id=\"yUncertaintyChoiceBox\" was not injected: check your FXML " +
-                                               "file 'topsoil-tab.fxml'.";
-
         assert tableView != null : "fx:id=\"tableView\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
         assert addRowButton != null : "fx:id=\"addRowButton\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
-
-        // Add VariableFormats to uncertainty ChoiceBoxes and select TWO_SIGMA_PERCENT by default
-        xUncertaintyChoiceBox.setItems(FXCollections.observableArrayList(STRING_TO_VARIABLE_FORMAT_MAP.keySet()));
-        xUncertaintyChoiceBox.getSelectionModel().select(VariableFormats.TWO_SIGMA_PERCENT.getName());
-        yUncertaintyChoiceBox.setItems(FXCollections.observableArrayList(STRING_TO_VARIABLE_FORMAT_MAP.keySet()));
-        yUncertaintyChoiceBox.getSelectionModel().select(VariableFormats.TWO_SIGMA_PERCENT.getName());
 
         // Handle Keyboard Events
         tableView.setOnKeyPressed(keyEvent -> handleTableViewKeyEvent(keyEvent));
@@ -340,56 +294,6 @@ public class TopsoilTabContent extends SplitPane {
     public void setData(ObservableList<TopsoilDataEntry> dataEntries) {
         this.data = dataEntries;
         tableView.setItems(data);
-    }
-
-    /**
-     * Returns the X Uncertainty {@code VariableFormat} as selected in xUncertaintyChoiceBox.
-     *
-     * @return  the selected VariableFormat
-     */
-    public VariableFormat<Number> getXUncertainty() {
-        return STRING_TO_VARIABLE_FORMAT_MAP.get(xUncertaintyChoiceBox.getValue());
-    }
-
-    /**
-     * Sets the selected X Uncertainty {@code VariableFormat} in the xUncertaintyChoiceBox.
-     *
-     * @param format    the VariableFormat to select
-     */
-    public void setXUncertainty(VariableFormat<Number> format) {
-        String o = VARIABLE_FORMAT_TO_STRING_MAP.get(format);
-        // Find and select the specific item that matches the format.
-        for (String s : xUncertaintyChoiceBox.getItems()) {
-            if (s.equals(o)) {
-                xUncertaintyChoiceBox.getSelectionModel().select(VARIABLE_FORMAT_TO_STRING_MAP.get(format));
-                break;
-            }
-        }
-    }
-
-    /**
-     * Returns the Y Uncertainty {@code VariableFormat} as selected in yUncertaintyChoiceBox.
-     *
-     * @return  the selected VariableFormat
-     */
-    public VariableFormat<Number> getYUncertainty() {
-        return STRING_TO_VARIABLE_FORMAT_MAP.get(yUncertaintyChoiceBox.getValue());
-    }
-
-    /**
-     * Sets the selected X Uncertainty {@code VariableFormat} in the xUncertaintyChoiceBox.
-     *
-     * @param format    the VariableFormat to select
-     */
-    public void setYUncertainty(VariableFormat<Number> format) {
-        String o = VARIABLE_FORMAT_TO_STRING_MAP.get(format);
-        // Find and select the specific item that matches the format.
-        for (String s : yUncertaintyChoiceBox.getItems()) {
-            if (s.equals(o)) {
-                yUncertaintyChoiceBox.getSelectionModel().select(VARIABLE_FORMAT_TO_STRING_MAP.get(format));
-                break;
-            }
-        }
     }
 
     /**

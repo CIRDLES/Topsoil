@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
+import org.cirdles.topsoil.app.plot.variable.format.VariableFormats;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
 
@@ -31,6 +33,11 @@ public class PlotPropertiesPanelController {
      * A {@code ChoiceBox} allowing the user to select the {@code IsotopeType} of the table and plot.
      */
     @FXML private ChoiceBox<String> isotopeSystemChoiceBox;
+
+    /**
+     * A {@code ChoiceBox} allowing the user to select the uncertainty format of the plot.
+     */
+    @FXML private ChoiceBox<String> uncertaintyChoiceBox;
 
     /**
      * A {@code TextField} for editing the title of the plot.
@@ -93,6 +100,20 @@ public class PlotPropertiesPanelController {
     private static Map<String, IsotopeType> STRING_TO_ISOTOPE_TYPE;
 
     /**
+     * A {@code Map} of {@code String}s to {@code VariableFormat}s, used for getting the value in uncertaintyChoiceBox.
+     */
+    private static Map<String, VariableFormat<Number>> STRING_TO_VARIABLE_FORMAT;
+
+    /**
+     * A {@code Map} of  {@code VariableFormat}s to {@code String}s, used for selecting the value in 
+     * uncertaintyChoiceBox.
+     */
+    private static Map<VariableFormat<Number>, String> VARIABLE_FORMAT_TO_STRING;
+    static {
+        
+    }
+    
+    /**
      * A {@code Map} of plot properties that is constantly updated with values that can be applied to JavaScript plots.
      */
     private final ObservableMap<String, Object> PROPERTIES = FXCollections.observableMap(new BasePlotDefaultProperties());
@@ -100,6 +121,14 @@ public class PlotPropertiesPanelController {
         STRING_TO_ISOTOPE_TYPE = new LinkedHashMap<>();
         for (IsotopeType type : IsotopeType.ISOTOPE_TYPES) {
             STRING_TO_ISOTOPE_TYPE.put(type.getName(), type);
+        }
+
+        // Map VariableFormat names to the formats for displaying and selecting from the uncertainty ChoiceBoxes.
+        STRING_TO_VARIABLE_FORMAT = new LinkedHashMap<>();
+        VARIABLE_FORMAT_TO_STRING = new LinkedHashMap<>();
+        for (VariableFormat<Number> format : VariableFormats.UNCERTAINTY_FORMATS) {
+            STRING_TO_VARIABLE_FORMAT.put(format.getName(), format);
+            VARIABLE_FORMAT_TO_STRING.put(format, format.getName());
         }
     }
 
@@ -120,6 +149,32 @@ public class PlotPropertiesPanelController {
         if (isotopeType == null) {
             isotopeType = new SimpleObjectProperty<>(STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox
                                                                                         .getSelectionModel().getSelectedItem()));
+
+            isotopeType.addListener(c -> {
+                if (STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel().getSelectedItem()) != isotopeType.get()) {
+                    for (String s : isotopeSystemChoiceBox.getItems()) {
+                        if (s.equals(isotopeType.get().getName())) {
+                            isotopeSystemChoiceBox.getSelectionModel().select(s);
+                            break;
+                        }
+                    }
+                }
+
+                switch (getIsotopeType()) {
+                    case Generic:
+                        concordiaCheckBox.setVisible(false);
+                        break;
+                    case UPb:
+                        concordiaCheckBox.setVisible(true);
+                        break;
+                    case UTh:
+                        concordiaCheckBox.setVisible(false);
+                        break;
+                    default:
+                        concordiaCheckBox.setVisible(false);
+                        break;
+                }
+            });
         }
         return isotopeType;
     }
@@ -128,6 +183,29 @@ public class PlotPropertiesPanelController {
     }
     public void setIsotopeType(IsotopeType isotopeType) {
         isotopeTypeObjectProperty().set(isotopeType);
+    }
+
+    /**
+     * A {@code DoubleProperty} containing the uncertainty format of the plot.
+     */
+    private ObjectProperty<VariableFormat<Number>> uncertainty;
+    public final ObjectProperty<VariableFormat<Number>> uncertaintyProperty() {
+        if (uncertainty == null) {
+            uncertainty = new SimpleObjectProperty<>(STRING_TO_VARIABLE_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()));
+
+            uncertainty.addListener(c-> {
+                if (STRING_TO_VARIABLE_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()) != uncertainty.get()) {
+                    uncertaintyChoiceBox.getSelectionModel().select(VARIABLE_FORMAT_TO_STRING.get(uncertainty.get()));
+                }
+            });
+        }
+        return uncertainty;
+    }
+    public VariableFormat<Number> getUncertainty() {
+        return uncertaintyProperty().get();
+    }
+    public void setUncertainty(VariableFormat<Number> d) {
+        uncertaintyChoiceBox.setValue(VARIABLE_FORMAT_TO_STRING.get(d));
     }
 
     /**
@@ -322,8 +400,18 @@ public class PlotPropertiesPanelController {
             isotopeSystemChoiceBox.getItems().add(s);
         }
 
+        for (String s : VARIABLE_FORMAT_TO_STRING.values()) {
+            uncertaintyChoiceBox.getItems().add(s);
+        }
+
         // Set default Base Plot properties.
         isotopeSystemChoiceBox.getSelectionModel().select(STRING_TO_ISOTOPE_TYPE.get((String) PROPERTIES.get(ISOTOPE_TYPE)).getName());
+
+        for (String s : uncertaintyChoiceBox.getItems()) {
+            if (s.equals(VariableFormats.TWO_SIGMA_PERCENT.getName())) {
+                uncertaintyChoiceBox.getSelectionModel().select(s);
+            }
+        }
 
         titleTextField.setText((String) PROPERTIES.get(TITLE));
         xAxisTextField.setText((String) PROPERTIES.get(X_AXIS));
@@ -344,57 +432,30 @@ public class PlotPropertiesPanelController {
         crossesColorPicker.setVisible(false);
 
         concordiaCheckBox.setSelected((Boolean) PROPERTIES.get(CONCORDIA_LINE));
-        switch (getIsotopeType()) {
-            case Generic:
-                concordiaCheckBox.setVisible(false);
-                break;
-            case UPb:
-                concordiaCheckBox.setVisible(true);
-                break;
-            case UTh:
-                concordiaCheckBox.setVisible(false);
-                break;
-            default:
-                concordiaCheckBox.setVisible(false);
-                break;
-        }
 
         // Make sure properties are initialized
-        isotopeSystemChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
-            if (getIsotopeType() != STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel().getSelectedItem())) {
-                isotopeTypeObjectProperty().set(STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel().getSelectedItem()));
-            }
-        });
-        isotopeTypeObjectProperty().addListener(c -> {
-            if (STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel().getSelectedItem()) != getIsotopeType()) {
-                for (String s : isotopeSystemChoiceBox.getItems()) {
-                    if (s.equals(isotopeType.get().getName())) {
-                        isotopeSystemChoiceBox.getSelectionModel().select(s);
-                        break;
-                    }
-                }
-            }
-
-            switch (getIsotopeType()) {
-                case Generic:
-                    concordiaCheckBox.setVisible(false);
-                    break;
-                case UPb:
-                    concordiaCheckBox.setVisible(true);
-                    break;
-                case UTh:
-                    concordiaCheckBox.setVisible(false);
-                    break;
-                default:
-                    concordiaCheckBox.setVisible(false);
-                    break;
-            }
-        });
 
         // Automatically adjust PROPERTIES
         isotopeTypeObjectProperty().addListener(c -> {
             PROPERTIES.put(ISOTOPE_TYPE, isotopeTypeObjectProperty().get().getName());
             updateProperties();
+        });
+        isotopeSystemChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
+            if (getIsotopeType() != STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel()
+                                                                                     .getSelectedItem())) {
+                isotopeTypeObjectProperty().set(STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel()
+                                                                                            .getSelectedItem()));
+            }
+        });
+
+        uncertaintyProperty().addListener(c -> {
+//            PROPERTIES.put(VARIABLE, uncertaintyProperty().get());
+            updateProperties();
+        });
+        uncertaintyChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
+            if (STRING_TO_VARIABLE_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()) != getUncertainty()) {
+                uncertaintyProperty().set(STRING_TO_VARIABLE_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()));
+            }
         });
 
         titleProperty().addListener(c -> {
@@ -422,7 +483,6 @@ public class PlotPropertiesPanelController {
 //            PROPERTIES.put(CROSSES, showCrossesProperty().get());
 //            updateProperties();
 //        });
-
         pointsColorProperty().addListener(c -> {
             PROPERTIES.put(POINT_FILL_COLOR, convertColor(pointsColorProperty().get()));
             updateProperties();
@@ -439,6 +499,7 @@ public class PlotPropertiesPanelController {
             PROPERTIES.put(CONCORDIA_LINE, shouldShowConcordia());
             updateProperties();
         });
+
 
     }
 

@@ -532,10 +532,8 @@ public class MenuItemEventHandler {
         VariableFormat<Number> format;
         for (int i = 0; i < dataset.getFields().size(); i++) {
             variable = Variables.VARIABLE_LIST.get(i);
-            if (variable == Variables.SIGMA_X) {
-                format = tableController.getTabContent().getXUncertainty();
-            } else if (variable == Variables.SIGMA_Y) {
-                format = tableController.getTabContent().getYUncertainty();
+            if (variable == Variables.SIGMA_X || variable == Variables.SIGMA_Y) {
+                format = tableController.getTabContent().getPlotPropertiesPanelController().getUncertainty();
             } else {
                 format = variable.getFormats().size() > 0 ? variable.getFormats().get(0) : null;
             }
