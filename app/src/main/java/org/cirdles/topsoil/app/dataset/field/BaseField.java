@@ -16,20 +16,43 @@
 package org.cirdles.topsoil.app.dataset.field;
 
 /**
+ * An object containing data.
  *
  * @author CIRDLES
  * @param <T> the field type
  */
 public abstract class BaseField<T> implements Field<T> {
 
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * The name of the {@code BaseField}.
+     */
     private final String name;
 
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code BaseField} with the specified name.
+     *
+     * @param name  String name
+     */
     public BaseField(String name) {
         this.name = name;
     }
 
+    //***********************
+    // Methods
+    //***********************
+
     /**
-     * @return the name
+     * Returns the name of the {@code BaseField}.
+     *
+     * @return String name
      */
     @Override
     public String getName() {

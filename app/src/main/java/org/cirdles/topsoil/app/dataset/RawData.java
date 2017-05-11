@@ -21,22 +21,59 @@ import org.cirdles.topsoil.app.dataset.field.Field;
 import java.util.List;
 
 /**
- * Created by johnzeringue on 8/30/15.
+ * Raw data as two {@code List}s, one of {@link Field}s, and the other of {@link Entry}s.
+ *
+ * @author John Zeringue
  */
 public class RawData {
 
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * The {@code List} of {@code Field}s for the {@code RawData}.
+     */
     private final List<Field<?>> fields;
+
+    /**
+     * The {@code List} of {@code Entry}s for the {@code RawData}.
+     */
     private final List<Entry> entries;
 
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code RawData} with the specified {@code Field}s and {@code Entry}s.
+     *
+     * @param fields    Fields for the RawData
+     * @param entries   Entries for the RawData
+     */
     public RawData(List<Field<?>> fields, List<Entry> entries) {
         this.fields = fields;
         this.entries = entries;
     }
 
+    //***********************
+    // Methods
+    //***********************
+
+    /**
+     * Returns the list of {@code Field}s for the {@code RawData}.
+     *
+     * @return  List of Fields
+     */
     public List<Field<?>> getFields() {
         return fields;
     }
 
+    /**
+     * Returns the list of {@code Entry}s for the {@code RawData}.
+     *
+     * @return  List of Entries
+     */
     public List<Entry> getEntries() {
         return entries;
     }

@@ -19,33 +19,71 @@ import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.Fields;
+import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
+import org.cirdles.topsoil.plot.Plot;
 
 import java.util.*;
 
+/**
+ * Acts as context for a {@link Plot}, specifically about the {@link VariableBinding}s for a table's {@link Field}s.
+ */
 public class SimplePlotContext implements PlotContext {
 
+    //***********************
+    // Attributes
+    //***********************
+
+    /**
+     * A {@code Collection} of {@code VariableBinding}s for the {@code Plot}.
+     */
     private final Collection<VariableBinding> bindings = new ArrayList<>();
+
+    /**
+     * The {@code Dataset} for the plot.
+     */
     private final Dataset dataset;
 
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code SimplePlotContext} for the specified {@code Dataset}.
+     *
+     * @param dataset   the Dataset for the plot
+     */
     public SimplePlotContext(Dataset dataset) {
         this.dataset = dataset;
     }
 
+    //***********************
+    // Methods
+    //***********************
+
+    /** {@inheritDoc}
+     */
     @Override
     public Dataset getDataset() {
         return dataset;
     }
 
+    /** {@inheritDoc}
+     */
     @Override
     public Collection<VariableBinding> getBindings() {
         return bindings;
     }
 
+    /** {@inheritDoc}
+     */
     @Override
     public <T> void addBinding(Variable<T> variable, Field<T> field, VariableFormat<T> format) {
         bindings.add(new SimpleVariableBinding(variable, field, format, this));
     }
 
+    /** {@inheritDoc}
+     */
     @Override
     public List<Map<String, Object>> getData() {
         List<Map<String, Object>> data = new ArrayList<>();
