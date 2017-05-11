@@ -84,6 +84,12 @@ public class TopsoilTabPane extends TabPane {
             // Create new TopsoilTab
             TopsoilTab tab = createTopsoilTab(tabContent, new TopsoilTableController(table, tabContent));
 
+            // Set default plot name, x-axis name, and y-axis name.
+            tabContent.getPlotPropertiesPanelController().setTitle(table.getTitle() + " - Plot");
+            // Set to the 1st and 2nd column names; in the table, they are X and Y.
+            tabContent.getPlotPropertiesPanelController().setxAxisTitle(table.getColumnNames()[0]);
+            tabContent.getPlotPropertiesPanelController().setyAxisTitle(table.getColumnNames()[1]);
+
             tab.setContent(tabContentView);
             this.getTabs().addAll(tab);
             this.getSelectionModel().select(tab);
