@@ -17,6 +17,7 @@ package org.cirdles.topsoil.app.util;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
+import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;

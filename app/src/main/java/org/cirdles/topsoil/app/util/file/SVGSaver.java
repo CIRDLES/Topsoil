@@ -121,7 +121,7 @@ public class SVGSaver {
      * @param outputStream Given Path
      * @throws  IOException if transforming fails
      */
-    private void writeSVGToOutputStream(Document svgDocument, OutputStream outputStream)
+    void writeSVGToOutputStream(Document svgDocument, OutputStream outputStream)
             throws IOException {
         try {
             Transformer transformer
