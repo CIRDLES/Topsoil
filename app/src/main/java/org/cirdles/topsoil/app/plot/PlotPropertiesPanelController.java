@@ -8,8 +8,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
 import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
 import org.cirdles.topsoil.app.plot.variable.format.VariableFormats;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
 
@@ -93,6 +95,11 @@ public class PlotPropertiesPanelController {
      * A {@code CheckBox} for toggling the visibility of the concordia line.
      */
     @FXML private CheckBox concordiaCheckBox;
+
+    /**
+     * A {@code Button} that, when pressed, generates a {@link Plot} with the current options for the current table.
+     */
+    @FXML private Button generatePlotButton;
 
     /**
      * A {@code Map} of {@code String}s to {@code IsotopeType}s for getting selections from isotopeSystemChoiceBox.
@@ -404,6 +411,10 @@ public class PlotPropertiesPanelController {
             uncertaintyChoiceBox.getItems().add(s);
         }
 
+        // Called to make sure that isotopeType is initialized before isotopeTypeChoiceBox is set, to determine
+        // whether the concordia feature should be visible.
+        isotopeTypeObjectProperty();
+
         // Set default Base Plot properties.
         isotopeSystemChoiceBox.getSelectionModel().select(STRING_TO_ISOTOPE_TYPE.get((String) PROPERTIES.get(ISOTOPE_TYPE)).getName());
 
@@ -432,8 +443,6 @@ public class PlotPropertiesPanelController {
         crossesColorPicker.setVisible(false);
 
         concordiaCheckBox.setSelected((Boolean) PROPERTIES.get(CONCORDIA_LINE));
-
-        // Make sure properties are initialized
 
         // Automatically adjust PROPERTIES
         isotopeTypeObjectProperty().addListener(c -> {
@@ -568,6 +577,14 @@ public class PlotPropertiesPanelController {
 //        if (plotProperties.containsKey(CROSS_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(CROSS_FILL_COLOR)));
         if (plotProperties.containsKey(ISOTOPE_TYPE)) setIsotopeType(STRING_TO_ISOTOPE_TYPE.get((String) plotProperties.get(ISOTOPE_TYPE)));
         if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) PROPERTIES.get(CONCORDIA_LINE));
+    }
+
+    /**
+     * Generates a {@link Plot} with the specified properties for the current tab.
+     */
+    @FXML private void generatePlotButtonAction() {
+        PlotGenerationHandler.handlePlotGenerationForSelectedTab((TopsoilTabPane) generatePlotButton.getScene().lookup
+                ("#TopsoilTabPane"));
     }
 
 }

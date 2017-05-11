@@ -6,7 +6,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <VBox alignment="TOP_CENTER" style="-fx-background-color: #67ccff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.plot.PlotPropertiesPanelController">
    <children>
       <Label text="Plot Manager" textAlignment="CENTER" underline="true">
@@ -146,9 +145,9 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox HBox.hgrow="NEVER">
+                  <VBox alignment="TOP_RIGHT" HBox.hgrow="NEVER">
                      <children>
-                        <GridPane fx:id="featuresGridPane" minHeight="55.0" minWidth="340.0">
+                        <GridPane fx:id="featuresGridPane" minHeight="55.0" minWidth="340.0" VBox.vgrow="ALWAYS">
                            <children>
                               <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="Features:">
                                  <GridPane.margin>
@@ -178,6 +177,14 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </GridPane>
+                        <Button fx:id="generatePlotButton" mnemonicParsing="false" onAction="#generatePlotButtonAction" text="Generate Plot">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </VBox.margin>
+                        </Button>
                      </children>
                      <HBox.margin>
                         <Insets />

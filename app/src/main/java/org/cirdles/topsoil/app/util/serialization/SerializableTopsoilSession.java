@@ -7,9 +7,8 @@ import org.cirdles.topsoil.app.dataset.field.Field;
 
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 
-import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
-
 import org.cirdles.topsoil.app.plot.PlotContext;
+import org.cirdles.topsoil.app.plot.PlotGenerationHandler;
 import org.cirdles.topsoil.app.plot.SimplePlotContext;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.plot.variable.Variable;
@@ -261,7 +260,9 @@ class SerializableTopsoilSession implements Serializable {
 
         }
 
-        MenuItemEventHandler.handlePlotGenerationFromFile(tableController, TOPSOIL_PLOT_TYPES.get(plot.get(PLOT_TYPE)), plotContext);
+        PlotGenerationHandler.handlePlotGenerationFromFile(tableController,
+                                                                                      TOPSOIL_PLOT_TYPES.get(plot.get
+                (PLOT_TYPE)), plotContext);
     }
 
     /**
