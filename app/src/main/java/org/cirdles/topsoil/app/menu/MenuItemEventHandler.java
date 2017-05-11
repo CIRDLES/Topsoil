@@ -75,8 +75,7 @@ public class MenuItemEventHandler {
             Boolean hasHeaders;
 
             // TODO For now, the user must have headers in the file. In the future, they can specify.
-//            hasHeaders = FileParser.containsHeaderDialog();
-            hasHeaders = true;
+            hasHeaders = FileParser.containsHeaderDialog();
 
             // hasHeaders would only be null if the user clicked "Cancel".
             if (hasHeaders != null) {
@@ -124,8 +123,7 @@ public class MenuItemEventHandler {
             Boolean hasHeaders;
 
             // TODO For now, the user must have headers in the file. In the future, they can specify.
-//            hasHeaders = FileParser.containsHeaderDialog();
-            hasHeaders = true;
+            hasHeaders = FileParser.containsHeaderDialog();
 
             if (hasHeaders != null) {
                 if (hasHeaders) {
