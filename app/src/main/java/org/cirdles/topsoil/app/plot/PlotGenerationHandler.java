@@ -38,36 +38,29 @@ public class PlotGenerationHandler {
     public static void handlePlotGenerationForSelectedTab(TopsoilTabPane tabs) {
         TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
 
-        // ask the user what kind of plot
-        TopsoilPlotType plotType = new PlotChoiceDialog(tableController.getTable().getIsotopeType()).select();
-
-        // variable binding dialog
-        if (plotType != null) {
-
-            // Check for open plots.
-            List<Stage> stages = StageHelper.getStages();
-            if (stages.size() > 1) {
-                Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
-                                                "Creating a new plot will overwrite the existing plot. " +
-                                                "Are you sure you want to continue?",
-                                                ButtonType.CANCEL,
-                                                ButtonType.YES);
-                plotOverwrite.showAndWait().ifPresent(response -> {
-                    if (response == ButtonType.YES) {
-                        for (TopsoilTab tab : tabs.getTopsoilTabs()) {
-                            for (PlotInformation plotInfo : tab.getTableController().getTable().getOpenPlots()) {
-                                tab.getTableController().getTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
-                                plotInfo.getStage().close();
-                            }
+        // Check for open plots.
+        List<Stage> stages = StageHelper.getStages();
+        if (stages.size() > 1) {
+            Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
+                                            "Creating a new plot will overwrite the existing plot. " +
+                                            "Are you sure you want to continue?",
+                                            ButtonType.CANCEL,
+                                            ButtonType.YES);
+            plotOverwrite.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.YES) {
+                    for (TopsoilTab tab : tabs.getTopsoilTabs()) {
+                        for (PlotInformation plotInfo : tab.getTableController().getTable().getOpenPlots()) {
+                            tab.getTableController().getTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
+                            plotInfo.getStage().close();
                         }
-                        PlotContext plotContext = generatePlotContext(tableController);
-                        generatePlot(tableController, plotType, plotContext);
                     }
-                });
-            } else {
-                PlotContext plotContext = generatePlotContext(tableController);
-                generatePlot(tableController, plotType, plotContext);
-            }
+                    PlotContext plotContext = generatePlotContext(tableController);
+                    generatePlot(tableController, TopsoilPlotType.BASE_PLOT, plotContext);
+                }
+            });
+        } else {
+            PlotContext plotContext = generatePlotContext(tableController);
+            generatePlot(tableController, TopsoilPlotType.BASE_PLOT, plotContext);
         }
     }
 
