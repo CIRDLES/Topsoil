@@ -88,10 +88,9 @@ public class PlotGenerationHandler {
      *
      * @param tableController   the TopsoilTableController for the table
      * @param plotType  the TopsoilPlotType of the plot
-     * @param plotContext   the PlotContext for the plot
      */
-    private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType,
-                                     PlotContext plotContext) {
+    private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType, PlotContext
+            plotContext) {
 
         List<Map<String, Object>> data = plotContext.getData();
 
@@ -152,6 +151,13 @@ public class PlotGenerationHandler {
         PlotInformation plotInfo = new PlotInformation(plot, plotType, propertiesPanel.getProperties(), plotContext, plotStage);
         plotInfo.setVariableBindings(plotContext.getBindings());
         tableController.getTable().addOpenPlot(plotInfo);
+
+        // Re-apply data when uncertainty is changed.
+        propertiesPanel.uncertaintyProperty().addListener(c -> {
+            PlotContext newContext = generatePlotContext(tableController);
+            List<Map<String, Object>> newData = newContext.getData();
+            plot.setData(newData);
+        });
     }
 
     /**

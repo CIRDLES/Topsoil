@@ -6,6 +6,9 @@ import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
@@ -87,13 +90,14 @@ public class PlotPropertiesPanelController {
     @FXML private ColorPicker crossesColorPicker;
 
     /**
-     * A {@code GridPane} for organizing various additional plot features.
+     * A {@code VBox} for organizing various additional plot features.
      */
-    @FXML private GridPane featuresGridPane;
+    @FXML private VBox featureBox;
 
     /**
-     * A {@code CheckBox} for toggling the visibility of the concordia line.
+     * An {@code Hbox} containing the controls for the concordia line feature.
      */
+    @FXML private HBox concordiaFeature;
     @FXML private CheckBox concordiaCheckBox;
 
     /**
@@ -169,16 +173,16 @@ public class PlotPropertiesPanelController {
 
                 switch (getIsotopeType()) {
                     case Generic:
-                        concordiaCheckBox.setVisible(false);
+                        concordiaFeature.setVisible(false);
                         break;
                     case UPb:
-                        concordiaCheckBox.setVisible(true);
+                        concordiaFeature.setVisible(true);
                         break;
                     case UTh:
-                        concordiaCheckBox.setVisible(false);
+                        concordiaFeature.setVisible(false);
                         break;
                     default:
-                        concordiaCheckBox.setVisible(false);
+                        concordiaFeature.setVisible(false);
                         break;
                 }
             });
@@ -447,6 +451,10 @@ public class PlotPropertiesPanelController {
         // Automatically adjust PROPERTIES
         isotopeTypeObjectProperty().addListener(c -> {
             PROPERTIES.put(ISOTOPE_TYPE, isotopeTypeObjectProperty().get().getName());
+            // Ensures that Concordia is never shown outside of UPb, while preserving the user's value in the CheckBox
+//            if (isotopeTypeObjectProperty().get() != IsotopeType.UPb) {
+//                PROPERTIES.put(CONCORDIA_LINE, false);
+//            }
             updateProperties();
         });
         isotopeSystemChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
