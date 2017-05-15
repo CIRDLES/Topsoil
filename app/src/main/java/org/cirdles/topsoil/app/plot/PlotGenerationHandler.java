@@ -90,24 +90,7 @@ public class PlotGenerationHandler {
         PlotPropertiesPanelController propertiesPanel = tableController.getTabContent().getPlotPropertiesPanelController();
         Map<String, Object> plotProperties = propertiesPanel.getProperties();
 
-        Plot plot;
-        switch (plotType) {
-            case BASE_PLOT:
-                plot = new BasePlot();
-                break;
-            case SCATTER_PLOT:
-                plot = new ScatterPlot();
-                break;
-            case UNCERTAINTY_ELLIPSE_PLOT:
-                plot = new UncertaintyEllipsePlot();
-                break;
-            case EVOLUTION_PLOT:
-                plot = new EvolutionPlot();
-                break;
-            default:
-                plot = plotType.getPlot();
-                break;
-        }
+        Plot plot = plotType.getPlot();
 
         plot.setData(data);
         plot.setProperties(plotProperties);

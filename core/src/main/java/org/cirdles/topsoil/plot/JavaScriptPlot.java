@@ -105,6 +105,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
     private WebView webView;
     private JSObject topsoil;
+    private final Bridge bridge = new Bridge();
 
     /**
      * Creates a new {@link JavaScriptPlot} using the specified source file.
@@ -204,7 +205,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
-                            topsoil.setMember("bridge", new Bridge());
+                            topsoil.setMember("bridge", bridge);
 
                             if (getProperties() != null) {
                                 topsoil.call("setProperties", getProperties());
