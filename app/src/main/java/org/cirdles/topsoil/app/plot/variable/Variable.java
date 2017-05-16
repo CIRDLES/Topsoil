@@ -15,10 +15,6 @@
  */
 package org.cirdles.topsoil.app.plot.variable;
 
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
-
-import java.util.List;
-
 /**
  * An interface implemented by classes that act as a variable for plotting.
  *
@@ -37,12 +33,5 @@ public interface Variable<T> {
      * @return  String name
      */
     public String getName();
-
-    /**
-     * Returns the formats of a variable as a {@code List} of {@link VariableFormat}s.
-     *
-     * @return  a List of VariableFormats
-     */
-    public List<VariableFormat<T>> getFormats();
 
 }

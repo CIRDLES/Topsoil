@@ -20,7 +20,6 @@ import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.Fields;
 import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.util.*;
@@ -78,8 +77,8 @@ public class SimplePlotContext implements PlotContext {
     /** {@inheritDoc}
      */
     @Override
-    public <T> void addBinding(Variable<T> variable, Field<T> field, VariableFormat<T> format) {
-        bindings.add(new SimpleVariableBinding(variable, field, format, this));
+    public <T> void addBinding(Variable<T> variable, Field<T> field) {
+        bindings.add(new SimpleVariableBinding(variable, field, this));
     }
 
     /** {@inheritDoc}

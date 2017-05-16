@@ -5,15 +5,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormats;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
@@ -110,36 +105,28 @@ public class PlotPropertiesPanelController {
      */
     private static Map<String, IsotopeType> STRING_TO_ISOTOPE_TYPE;
 
-    /**
-     * A {@code Map} of {@code String}s to {@code VariableFormat}s, used for getting the value in uncertaintyChoiceBox.
-     */
-    private static Map<String, VariableFormat<Number>> STRING_TO_VARIABLE_FORMAT;
+    private static Map<String, UncertaintyFormat> STRING_TO_UNCERTAINTY_FORMAT;
+    private static Map<UncertaintyFormat, String> UNCERTAINTY_FORMAT_TO_STRING;
+    private static Map<Double, UncertaintyFormat> DOUBLE_TO_UNCERTAINTY_FORMAT;
 
-    /**
-     * A {@code Map} of  {@code VariableFormat}s to {@code String}s, used for selecting the value in 
-     * uncertaintyChoiceBox.
-     */
-    private static Map<VariableFormat<Number>, String> VARIABLE_FORMAT_TO_STRING;
-    static {
-        
-    }
-    
     /**
      * A {@code Map} of plot properties that is constantly updated with values that can be applied to JavaScript plots.
      */
     private final ObservableMap<String, Object> PROPERTIES = FXCollections.observableMap(new BasePlotDefaultProperties());
+
     static {
-        STRING_TO_ISOTOPE_TYPE = new LinkedHashMap<>();
+        STRING_TO_ISOTOPE_TYPE = new LinkedHashMap<>(IsotopeType.ISOTOPE_TYPES.size());
         for (IsotopeType type : IsotopeType.ISOTOPE_TYPES) {
             STRING_TO_ISOTOPE_TYPE.put(type.getName(), type);
         }
 
-        // Map VariableFormat names to the formats for displaying and selecting from the uncertainty ChoiceBoxes.
-        STRING_TO_VARIABLE_FORMAT = new LinkedHashMap<>();
-        VARIABLE_FORMAT_TO_STRING = new LinkedHashMap<>();
-        for (VariableFormat<Number> format : VariableFormats.UNCERTAINTY_FORMATS) {
-            STRING_TO_VARIABLE_FORMAT.put(format.getName(), format);
-            VARIABLE_FORMAT_TO_STRING.put(format, format.getName());
+        STRING_TO_UNCERTAINTY_FORMAT = new LinkedHashMap<>(UncertaintyFormats.UNCERTAINTY_FORMATS.size());
+        UNCERTAINTY_FORMAT_TO_STRING = new LinkedHashMap<>(UncertaintyFormats.UNCERTAINTY_FORMATS.size());
+        DOUBLE_TO_UNCERTAINTY_FORMAT = new LinkedHashMap<>(UncertaintyFormats.UNCERTAINTY_FORMATS.size());
+        for (UncertaintyFormat format : UncertaintyFormats.UNCERTAINTY_FORMATS) {
+            STRING_TO_UNCERTAINTY_FORMAT.put(format.getName(), format);
+            UNCERTAINTY_FORMAT_TO_STRING.put(format, format.getName());
+            DOUBLE_TO_UNCERTAINTY_FORMAT.put(format.getValue(), format);
         }
     }
 
@@ -197,26 +184,27 @@ public class PlotPropertiesPanelController {
     }
 
     /**
-     * A {@code DoubleProperty} containing the uncertainty format of the plot.
+     * A {@code ObjectProperty} containing the uncertainty format of the plot.
      */
-    private ObjectProperty<VariableFormat<Number>> uncertainty;
-    public final ObjectProperty<VariableFormat<Number>> uncertaintyProperty() {
+    private ObjectProperty<UncertaintyFormat> uncertainty;
+    public final ObjectProperty<UncertaintyFormat> uncertaintyProperty() {
         if (uncertainty == null) {
-            uncertainty = new SimpleObjectProperty<>(STRING_TO_VARIABLE_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()));
+            uncertainty = new SimpleObjectProperty<>(STRING_TO_UNCERTAINTY_FORMAT.get(uncertaintyChoiceBox
+                                                                                         .getSelectionModel().getSelectedItem()));
 
             uncertainty.addListener(c-> {
-                if (STRING_TO_VARIABLE_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()) != uncertainty.get()) {
-                    uncertaintyChoiceBox.getSelectionModel().select(VARIABLE_FORMAT_TO_STRING.get(uncertainty.get()));
+                if (STRING_TO_UNCERTAINTY_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()) != uncertainty.get()) {
+                    uncertaintyChoiceBox.getSelectionModel().select(UNCERTAINTY_FORMAT_TO_STRING.get(uncertainty.get()));
                 }
             });
         }
         return uncertainty;
     }
-    public VariableFormat<Number> getUncertainty() {
+    public UncertaintyFormat getUncertainty() {
         return uncertaintyProperty().get();
     }
-    public void setUncertainty(VariableFormat<Number> d) {
-        uncertaintyChoiceBox.setValue(VARIABLE_FORMAT_TO_STRING.get(d));
+    public void setUncertainty(UncertaintyFormat format) {
+        uncertaintyChoiceBox.setValue(UNCERTAINTY_FORMAT_TO_STRING.get(format));
     }
 
     /**
@@ -411,7 +399,7 @@ public class PlotPropertiesPanelController {
             isotopeSystemChoiceBox.getItems().add(s);
         }
 
-        for (String s : VARIABLE_FORMAT_TO_STRING.values()) {
+        for (String s : STRING_TO_UNCERTAINTY_FORMAT.keySet()) {
             uncertaintyChoiceBox.getItems().add(s);
         }
 
@@ -423,10 +411,12 @@ public class PlotPropertiesPanelController {
         isotopeSystemChoiceBox.getSelectionModel().select(STRING_TO_ISOTOPE_TYPE.get((String) PROPERTIES.get(ISOTOPE_TYPE)).getName());
 
         for (String s : uncertaintyChoiceBox.getItems()) {
-            if (s.equals(VariableFormats.TWO_SIGMA_PERCENT.getName())) {
+            if (s.equals(UncertaintyFormats.TWO_SIGMA_ABSOLUTE.getName())) {
                 uncertaintyChoiceBox.getSelectionModel().select(s);
             }
         }
+
+//        uncertaintyChoiceBox.getSelectionModel().select(UNCERTAINTY_FORMAT_TO_STRING.get(UncertaintyFormats.TWO_SIGMA_ABSOLUTE));
 
         titleTextField.setText((String) PROPERTIES.get(TITLE));
         xAxisTextField.setText((String) PROPERTIES.get(X_AXIS));
@@ -466,12 +456,12 @@ public class PlotPropertiesPanelController {
         });
 
         uncertaintyProperty().addListener(c -> {
-//            PROPERTIES.put(VARIABLE, uncertaintyProperty().get());
+            PROPERTIES.put(UNCERTAINTY, uncertaintyProperty().get().getValue());
             updateProperties();
         });
         uncertaintyChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
-            if (STRING_TO_VARIABLE_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()) != getUncertainty()) {
-                uncertaintyProperty().set(STRING_TO_VARIABLE_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()));
+            if (STRING_TO_UNCERTAINTY_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()) != getUncertainty()) {
+                uncertaintyProperty().set(STRING_TO_UNCERTAINTY_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()));
             }
         });
 
@@ -584,6 +574,8 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(ELLIPSE_FILL_COLOR)) setEllipsesColor(Color.valueOf((String) plotProperties.get(ELLIPSE_FILL_COLOR)));
 //        if (plotProperties.containsKey(CROSS_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(CROSS_FILL_COLOR)));
         if (plotProperties.containsKey(ISOTOPE_TYPE)) setIsotopeType(STRING_TO_ISOTOPE_TYPE.get((String) plotProperties.get(ISOTOPE_TYPE)));
+        if (plotProperties.containsKey(UNCERTAINTY)) setUncertainty(DOUBLE_TO_UNCERTAINTY_FORMAT.get(
+                (Double) plotProperties.get(UNCERTAINTY)));
         if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) PROPERTIES.get(CONCORDIA_LINE));
     }
 

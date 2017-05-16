@@ -19,7 +19,6 @@ import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
 import org.cirdles.topsoil.plot.Plot;
 
 import java.util.*;
@@ -59,22 +58,21 @@ public interface PlotContext {
         return getBindings().stream()
                 .filter(binding -> {
                     return Objects.equals(binding.getVariable(), variable);
-                })
-                .findFirst()
+                }).findFirst()
                 // cast binding type
                 .map(binding -> (VariableBinding<T>) binding);
     }
 
     /**
      * Adds a new {@code VariableBinding} for the specified {@code Variable} and {@code Field} to the {@code
-     * PlotContext}. Takes the first available {@code VariableFormat}.
+     * PlotContext}.
      *
      * @param variable  the Variable to bind
      * @param field the Field to bind
      * @param <T>   the type of variable and field
      */
     default <T> void addBinding(Variable<T> variable, Field<T> field) {
-        addBinding(variable, field, variable.getFormats().get(0));
+        addBinding(variable, field);
     }
 
     /**
@@ -88,20 +86,9 @@ public interface PlotContext {
      */
     default <T> Optional<T> getValue(Variable<T> variable, Entry entry) {
         return getBindingForVariable(variable).map(binding -> {
-            return binding.getFormat().normalize(binding, entry);
+            return binding.getValue(entry);
         });
     }
-
-    /**
-     * Adds a new {@code VariableBinding} for the specified {@code Variable}, {@code Field}, and {@code VariableFormat}
-     * to the {@code PlotContext}.
-     *
-     * @param variable  the Variable to bind
-     * @param field the Field to bind
-     * @param format the VariableFormat of variable
-     * @param <T>   the type of variable and field
-     */
-    <T> void addBinding(Variable<T> variable, Field<T> field, VariableFormat<T> format);
 
     /**
      * Returns the data from the {@code Dataset} as a {@code List} of {@code Map}s of {@code String}s to {@code

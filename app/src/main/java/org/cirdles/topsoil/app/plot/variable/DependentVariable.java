@@ -15,10 +15,6 @@
  */
 package org.cirdles.topsoil.app.plot.variable;
 
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
-
-import java.util.List;
-
 /**
  * A {@code BaseVariable} that is dependent, i.e. it is dependent on some other {@code Variable} that affects the way
  * it normalizes a value.
@@ -49,20 +45,6 @@ public class DependentVariable<T> extends BaseVariable<T> {
      */
     public DependentVariable(String name, Variable<T> dependency) {
         super(name);
-        this.dependency = dependency;
-    }
-
-    /**
-     * Constructs a new {@code DependentVariable} with the specified name, dependency, and list of compatible {@code
-     * VariableFormat}s.
-     *
-     * @param name  String name
-     * @param dependency    a Variable that this variable is dependent on
-     * @param formats   a List of compatible VariableFormats
-     */
-    public DependentVariable(String name, Variable<T> dependency,
-            List<VariableFormat<T>> formats) {
-        super(name, formats);
         this.dependency = dependency;
     }
 

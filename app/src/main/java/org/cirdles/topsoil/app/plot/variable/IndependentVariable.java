@@ -15,10 +15,6 @@
  */
 package org.cirdles.topsoil.app.plot.variable;
 
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
-
-import java.util.List;
-
 /**
  * A {@code BaseVariable} that is independent, i.e. it is not dependent on some other {@code Variable} that would
  * affect its normalization of a value.
@@ -39,16 +35,6 @@ public class IndependentVariable<T> extends BaseVariable<T> {
      */
     public IndependentVariable(String name) {
         super(name);
-    }
-
-    /**
-     * Constructs a new {@code IndependentVariable} with the specified name and list of {@code VariableFormat}s.
-     *
-     * @param name  String name
-     * @param formats   List of compatible VariableFormats
-     */
-    public IndependentVariable(String name, List<VariableFormat<T>> formats) {
-        super(name, formats);
     }
 
 }

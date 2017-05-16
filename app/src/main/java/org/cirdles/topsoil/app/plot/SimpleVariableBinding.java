@@ -18,11 +18,9 @@ package org.cirdles.topsoil.app.plot;
 import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
 
 /**
- * {@code VariableBinding}s are part of a {@link PlotContext} for a specific plot, and allow for values within a
- * context's {@link Dataset} to be normalized based on the {@link VariableFormat} of the associated {@link Variable}.
+ * {@code VariableBinding}s are part of a {@link PlotContext} for a specific plot.
  *
  * @param <T>   the type of VariableBinding
  */
@@ -43,11 +41,6 @@ public class SimpleVariableBinding<T> implements VariableBinding<T> {
     private final Field<T> field;
 
     /**
-     * The format of the {@code Variable}, for normalizing values.
-     */
-    private final VariableFormat<T> format;
-
-    /**
      * The {@code PlotContext} that this binding is associated with.
      */
     private final PlotContext context;
@@ -55,34 +48,17 @@ public class SimpleVariableBinding<T> implements VariableBinding<T> {
     //***********************
     // Constructors
     //***********************
-
-    /**
-     * Constructs a new {@code SimpleVariableBinding} for the specified {@code Variable<T>}, {@code Field<T>}, and
-     * {@code PlotContext}. The first available {@code VariableFormat} for the variable is used.
-     *
-     * @param variable  a Variable of type {@literal <T>}
-     * @param field a Field of type {@literal <T>}
-     * @param context   the PlotContext that this binding is associated with
-     */
-    public SimpleVariableBinding(Variable<T> variable, Field<T> field,
-            PlotContext context) {
-        this(variable, field, variable.getFormats().get(0), context);
-    }
-
     /**
      * Constructs a new {@code SimpleVariableBinding} for the specified {@code Variable<T>}, {@code Field<T>}, {@code
      * VariableFormat<T>}, and {@code PlotContext}.
      *
      * @param variable  a Variable of type {@literal <T>}
      * @param field a Field of type {@literal <T>}
-     * @param format    a VariableFormat of type {@literal <T>}
      * @param context   the PlotContext that this binding is associated with
      */
-    public SimpleVariableBinding(Variable<T> variable, Field<T> field,
-            VariableFormat<T> format, PlotContext context) {
+    public SimpleVariableBinding(Variable<T> variable, Field<T> field, PlotContext context) {
         this.variable = variable;
         this.field = field;
-        this.format = format;
         this.context = context;
     }
 
@@ -102,13 +78,6 @@ public class SimpleVariableBinding<T> implements VariableBinding<T> {
     @Override
     public Field<T> getField() {
         return field;
-    }
-
-    /** {@inheritDoc}
-     */
-    @Override
-    public VariableFormat<T> getFormat() {
-        return format;
     }
 
     /** {@inheritDoc}

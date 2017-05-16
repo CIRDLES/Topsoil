@@ -9,16 +9,11 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.NumberDataset;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.base.BasePlot;
-import org.cirdles.topsoil.plot.scatter.ScatterPlot;
-import org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlot;
-import org.cirdles.topsoil.plot.uth.evolution.EvolutionPlot;
 
 import java.util.List;
 import java.util.Map;
@@ -148,15 +143,9 @@ public class PlotGenerationHandler {
 
         // Bind variables
         Variable<Number> variable;
-        VariableFormat<Number> format;
         for (int i = 0; i < dataset.getFields().size(); i++) {
             variable = Variables.VARIABLE_LIST.get(i);
-            if (variable == Variables.SIGMA_X || variable == Variables.SIGMA_Y) {
-                format = tableController.getTabContent().getPlotPropertiesPanelController().getUncertainty();
-            } else {
-                format = variable.getFormats().size() > 0 ? variable.getFormats().get(0) : null;
-            }
-            plotContext.addBinding(variable, dataset.getFields().get(i), format);
+            plotContext.addBinding(variable, dataset.getFields().get(i));
         }
 
         return plotContext;

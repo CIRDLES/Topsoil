@@ -15,12 +15,6 @@
  */
 package org.cirdles.topsoil.app.plot.variable;
 
-import org.cirdles.topsoil.app.plot.variable.format.IdentityVariableFormat;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
-
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * A class that acts as a plotting variable.
  *
@@ -41,34 +35,17 @@ public class BaseVariable<T> implements Variable<T> {
      */
     private final String name;
 
-    /**
-     * A {@code List} of compatible {@code VariableFormats} for this variable.
-     */
-    private final List<VariableFormat<T>> formats;
-
     //***********************
     // Constructors
     //***********************
 
     /**
-     * Creates a new {@code BaseVariable} with the specified name. The {@link IdentityVariableFormat} is used for the
-     * variable's formats.
+     * Creates a new {@code BaseVariable} with the specified name.
      *
      * @param name  String name
      */
     public BaseVariable(String name) {
-        this(name, Arrays.asList(VariableFormat.identity()));
-    }
-
-    /**
-     * Creates a new {@code BaseVariable} with the specified name and {@code VariableFormat}s.
-     *
-     * @param name  Stirng name
-     * @param formats   List of VariableFormats of type {@literal <T>}
-     */
-    public BaseVariable(String name, List<VariableFormat<T>> formats) {
         this.name = name;
-        this.formats = formats;
     }
 
     //***********************
@@ -80,13 +57,6 @@ public class BaseVariable<T> implements Variable<T> {
     @Override
     public String getName() {
         return name;
-    }
-
-    /** {@inheritDoc}
-     */
-    @Override
-    public List<VariableFormat<T>> getFormats() {
-        return formats;
     }
 
 }

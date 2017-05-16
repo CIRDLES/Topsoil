@@ -15,16 +15,13 @@
  */
 package org.cirdles.topsoil.app.plot;
 
-import org.cirdles.topsoil.app.dataset.Dataset;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormat;
 
 /**
  * An interface implemented by classes which act as a binding between {@link Variable}s and {@link Field}s. {@code
- * VariableBinding}s are part of a {@link PlotContext} for a specific plot, and allow for values within a context's
- * {@link Dataset} to be normalized based on the {@link VariableFormat} of the associated {@code Variable}.
+ * VariableBinding}s are part of a {@link PlotContext} for a specific plot.
  *
  * @author John Zeringue
  * @param <T> the variable type
@@ -47,13 +44,6 @@ public interface VariableBinding<T> {
     public Field<T> getField();
 
     /**
-     * Returns the {@code VariableFormat} of the {@code Variable} for the binding.
-     *
-     * @return  VariableFormat of type {@literal <T>}
-     */
-    public VariableFormat<T> getFormat();
-
-    /**
      * Returns the {@code PlotContext} that this binding is associated with.
      *
      * @return  PlotContext
@@ -68,7 +58,7 @@ public interface VariableBinding<T> {
      * @return a normalized {@literal T} value
      */
     public default T getValue(Entry entry) {
-        return getFormat().normalize(this, entry);
+        return entry.get(getField()).isPresent() ? entry.get(getField()).get() : null;
     }
 
 }
