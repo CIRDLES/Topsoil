@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
+import org.cirdles.topsoil.app.progress.isotope.IsotopeType;
 
 /**
  * Created by benjaminmuldrow on 5/25/16.
@@ -51,6 +52,16 @@ public class FileParser {
         return TopsoilFileChooser
                 .getTableFileChooser()
                 .showOpenDialog(stage);
+    }
+    
+    public static File openExampleTable(IsotopeType isotopeType) {
+        if(isotopeType.equals(IsotopeType.UPb)) {
+            return new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UPb-Example-Data.csv");
+        }
+        else if(isotopeType.equals(IsotopeType.UTh)) {
+            return new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UTh-Example-Data.csv");
+        }
+        return new File("src/main/resources/org/cirdles/topsoil/app/sampledata/Generic-Example-Data.csv");
     }
 
     public static Boolean containsHeaderDialogue() {

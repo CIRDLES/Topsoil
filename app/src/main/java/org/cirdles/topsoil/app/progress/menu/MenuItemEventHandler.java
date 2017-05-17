@@ -38,6 +38,8 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A class containing a set of methods for handling actions for
@@ -155,6 +157,48 @@ public class MenuItemEventHandler {
         } else {
             table = new TopsoilTable(null, isotopeType, new TopsoilDataEntry[]{});
         }
+
+        return table;
+    }
+    
+    /**
+     * Opens a sample data table for a given isotope type. If any tabs or plots are open,
+     * they are closed and replaced with the project's example data.
+     *
+     * @param tabs  the TopsoilTabPane to which to add tables
+     * @param isotopeType the isotope type of the example table to be opened
+     */
+    public static TopsoilTable handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
+        TopsoilTable table = null;
+
+        if (isotopeType != null) {
+            File file = FileParser.openExampleTable(isotopeType);
+
+            List<TopsoilDataEntry> entries = null;
+            String[] headers = null;
+            try {
+                headers = FileParser.parseHeaders(file);
+                entries = FileParser.parseFile(file, true);
+                
+            } catch (IOException ex) { }
+
+            if (entries == null) {
+                    table = null;
+                } else {
+                    ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                    table = new TopsoilTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                    table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+            }
+        }
+
+//// create empty table
+//        if (isotopeType == null) {
+//            table = null;
+//            
+//        } else {
+//            table = new TopsoilTable(null, isotopeType, new TopsoilDataEntry[]{});
+//            
+//        }
 
         return table;
     }

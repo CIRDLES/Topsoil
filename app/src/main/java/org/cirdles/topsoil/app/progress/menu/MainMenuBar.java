@@ -21,6 +21,7 @@ import org.cirdles.topsoil.app.progress.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.ErrorAlerter;
 
 import java.io.IOException;
+import javafx.application.Platform;
 
 import static org.cirdles.topsoil.app.progress.menu.MenuItemEventHandler.*;
 
@@ -42,6 +43,7 @@ public class MainMenuBar extends MenuBar {
     private MenuItem openProjectItem;
     //    private MenuItem mostRecentItem;
     private MenuItem closeProjectItem;
+    private MenuItem exitItem;
 
     // Edit Menu
     private MenuItem undoItem;
@@ -56,10 +58,13 @@ public class MainMenuBar extends MenuBar {
     // Import >
     private MenuItem tableFromFileItem;
     private MenuItem tableFromClipboardItem;
-    // Isotope System >
-    private MenuItem uraniumLeadSystemItem;
-    private MenuItem uraniumThoriumSystemItem;
-    private MenuItem genericSystemItem;
+    // Example Table >
+    private MenuItem uPbExampleTableItem;
+    private MenuItem uThExampleTableItem;
+//    // Isotope System >
+//    private MenuItem uraniumLeadSystemItem;
+//    private MenuItem uraniumThoriumSystemItem;
+//    private MenuItem genericSystemItem;
 
     // Help Menu
     private MenuItem reportIssueItem;
@@ -125,20 +130,20 @@ public class MainMenuBar extends MenuBar {
 
         // Table Menu
         Menu tableMenu = new Menu("Table");
-        newTableItem = new MenuItem("New Table");
-        saveTableItem = new MenuItem("Save Table");
-        saveTableAsItem = new MenuItem("Save Table As");
-        clearTableItem = new MenuItem("Clear Table");
+        newTableItem = new MenuItem("New Empty Data Table");
+        saveTableItem = new MenuItem("Save Data Table");
+        saveTableAsItem = new MenuItem("Save Data Table As");
+        clearTableItem = new MenuItem("Clear Data Table");
 
         newTableItem.setOnAction(event -> {
             TopsoilTable table = MenuItemEventHandler.handleNewTable();
             tabs.add(table);
         });
-
+        
         //Saves the currently opened table
-        saveTableItem = new MenuItem("Save Table");
+        saveTableItem = new MenuItem("Save Data Table");
         //Saves the currently opened table as a specified file
-        saveTableAsItem = new MenuItem("Save Table As");
+        saveTableAsItem = new MenuItem("Save Data Table As");
 
         clearTableItem.setOnAction(action -> {
             // clear table and add an empty row
@@ -149,7 +154,7 @@ public class MainMenuBar extends MenuBar {
         });
 
         //Creates Submenu for Imports
-        Menu importTable = new Menu("Import Table");
+        Menu importTable = new Menu("Import Data Table");
         tableFromFileItem = new MenuItem("From File");
         tableFromClipboardItem = new MenuItem("From Clipboard");
         importTable.getItems().addAll(
@@ -163,39 +168,59 @@ public class MainMenuBar extends MenuBar {
                 tableFromClipboardItem.setDisable(true);
             }
         });
-
-        //Creates Submenu for Isotype system selection
-        Menu isoSystem = new Menu("Set Isotope System");
-        uraniumLeadSystemItem = new MenuItem("UPb");
-        uraniumThoriumSystemItem = new MenuItem("UTh");
-        genericSystemItem = new MenuItem("Gen");
-        isoSystem.getItems().addAll(
-                uraniumLeadSystemItem,
-                uraniumThoriumSystemItem,
-                genericSystemItem);
-
-        isoSystem.setOnShown(event -> {
-            if (tabs.isEmpty()) {
-                uraniumLeadSystemItem.setDisable(true);
-                uraniumThoriumSystemItem.setDisable(true);
-                genericSystemItem.setDisable(true);
-            } else {
-                uraniumLeadSystemItem.setDisable(false);
-                uraniumThoriumSystemItem.setDisable(false);
-                genericSystemItem.setDisable(false);
-            }
+        
+        //Creates Submenu for Example Table
+        Menu exampleTable = new Menu("Open Example Table");
+        uPbExampleTableItem = new MenuItem("Uranium-Lead");
+        uThExampleTableItem = new MenuItem("Uranium-Thorium");
+        exampleTable.getItems().addAll(
+                uPbExampleTableItem,
+                uThExampleTableItem);
+        
+        uPbExampleTableItem.setOnAction(event -> {
+            TopsoilTable table = MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UPb);
+            tabs.add(table);
+        });
+        
+        uThExampleTableItem.setOnAction(event -> {
+            TopsoilTable table = MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UTh);
+            tabs.add(table);
         });
 
+//        //Creates Submenu for Isotype system selection
+//        Menu isoSystem = new Menu("Set Isotope System");
+//        uraniumLeadSystemItem = new MenuItem("UPb");
+//        uraniumThoriumSystemItem = new MenuItem("UTh");
+//        genericSystemItem = new MenuItem("Gen");
+//        isoSystem.getItems().addAll(
+//                uraniumLeadSystemItem,
+//                uraniumThoriumSystemItem,
+//                genericSystemItem);
+//
+//        isoSystem.setOnShown(event -> {
+//            if (tabs.isEmpty()) {
+//                uraniumLeadSystemItem.setDisable(true);
+//                uraniumThoriumSystemItem.setDisable(true);
+//                genericSystemItem.setDisable(true);
+//            } else {
+//                uraniumLeadSystemItem.setDisable(false);
+//                uraniumThoriumSystemItem.setDisable(false);
+//                genericSystemItem.setDisable(false);
+//            }
+//        });
+
         tableMenu.getItems()
-                .addAll(newTableItem,
+                .addAll(importTable,
+                        exampleTable,
                         new SeparatorMenuItem(),
                         saveTableItem,
                         saveTableAsItem,
                         new SeparatorMenuItem(),
-                        clearTableItem,
-                        new SeparatorMenuItem(),
-                        importTable,
-                        isoSystem);
+                        newTableItem,
+                        clearTableItem
+//                        ,new SeparatorMenuItem()
+//                        ,isoSystem
+                );
 
         tableMenu.setOnShown(event -> {
             if (tabs.isEmpty()) {
@@ -209,24 +234,24 @@ public class MainMenuBar extends MenuBar {
             }
         });
 
-        uraniumLeadSystemItem.setOnAction(event -> {
-            // if the table isn't already UPb
-            if (!(tabs.getSelectedTab().getTopsoilTable().getIsotopeType() == IsotopeType.UPb)) {
-                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UPb);
-            }
-        });
-
-        genericSystemItem.setOnAction(event -> {
-            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals((IsotopeType.Generic))) {
-                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.Generic);
-            }
-        });
-
-        uraniumThoriumSystemItem.setOnAction(event -> {
-            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals(IsotopeType.UTh)) {
-                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UTh);
-            }
-        });
+//        uraniumLeadSystemItem.setOnAction(event -> {
+//            // if the table isn't already UPb
+//            if (!(tabs.getSelectedTab().getTopsoilTable().getIsotopeType() == IsotopeType.UPb)) {
+//                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UPb);
+//            }
+//        });
+//
+//        genericSystemItem.setOnAction(event -> {
+//            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals((IsotopeType.Generic))) {
+//                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.Generic);
+//            }
+//        });
+//
+//        uraniumThoriumSystemItem.setOnAction(event -> {
+//            if (!tabs.getSelectedTab().getTopsoilTable().getIsotopeType().equals(IsotopeType.UTh)) {
+//                tabs.getSelectedTab().getTopsoilTable().setIsotopeType(IsotopeType.UTh);
+//            }
+//        });
 
         // Plot Menu
         Menu plotMenu = new Menu("Plot");
@@ -357,7 +382,12 @@ public class MainMenuBar extends MenuBar {
         openProjectItem = new MenuItem("Open Project");
         closeProjectItem = new MenuItem("Close Project");
 //        mostRecentItem = new MenuItem("Most Recently Used");
+        exitItem = new MenuItem("Exit Topsoil");
 
+        exitItem.setOnAction(event -> {
+            Platform.exit();
+        });
+    
         openProjectItem.setOnAction(event -> MenuItemEventHandler
                 .handleOpenProjectFile(tabs));
 
@@ -380,6 +410,8 @@ public class MainMenuBar extends MenuBar {
                         saveProjectItem,
                         saveProjectAsItem
 //                        , mostRecentItem
+                        ,new SeparatorMenuItem(),
+                        exitItem
                 );
 
         fileMenu.setOnShown(event -> {
