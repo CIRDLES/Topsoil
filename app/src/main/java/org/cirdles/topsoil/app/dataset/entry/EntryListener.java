@@ -18,12 +18,19 @@ package org.cirdles.topsoil.app.dataset.entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 
 /**
+ * A custom listener for an {@code Entry} instance.
  *
  * @author parizotclement
  */
 @FunctionalInterface
 public interface EntryListener {
 
+    /**
+     * Called when a value in an {@code Entry} is changed.
+     *
+     * @param entry the Entry that was changed
+     * @param field the Field whose value was affected
+     */
     public void changed(Entry entry, Field field);
 
 }

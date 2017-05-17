@@ -15,7 +15,7 @@
  */
 package org.cirdles.topsoil.app.browse;
 
-import org.cirdles.topsoil.app.util.Alerter;
+import org.cirdles.topsoil.app.util.dialog.Alerter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

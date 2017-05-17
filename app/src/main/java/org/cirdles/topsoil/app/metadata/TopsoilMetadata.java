@@ -19,22 +19,45 @@ import java.util.ResourceBundle;
 import static java.util.ResourceBundle.getBundle;
 
 /**
+ * Stores information about Topsoil.
  *
  * @author John Zeringue
  */
 public class TopsoilMetadata implements ApplicationMetadata {
 
-    public ResourceBundle resourceBundle;
+    //***********************
+    // Attributes
+    //***********************
 
+    /**
+     * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
+     */
+    private ResourceBundle resourceBundle;
+
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Creates a new instance of {@code TopsoilMetadata}.
+     */
     public TopsoilMetadata() {
         resourceBundle = getBundle(TopsoilMetadata.class.getName());
     }
 
+    //***********************
+    // Methods
+    //***********************
+
+    /** {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "Topsoil";
     }
 
+    /** {@inheritDoc}
+     */
     @Override
     public String getVersion() {
         return resourceBundle.getString("version");

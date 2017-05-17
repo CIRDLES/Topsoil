@@ -18,15 +18,31 @@ package org.cirdles.topsoil.app.dataset.field;
 import javafx.util.StringConverter;
 
 /**
+ * A {@code Field} that contains {@code Boolean}s.
  *
  * @author parizotclement
  */
 public class BooleanField extends BaseField<Boolean> {
 
+    //***********************
+    // Constructors
+    //***********************
+
+    /**
+     * Constructs a new {@code BooleanField} with the specified name.
+     *
+     * @param name String name
+     */
     public BooleanField(String name) {
         super(name);
     }
 
+    //***********************
+    // Methods
+    //***********************
+
+    /** {@inheritDoc}
+     */
     @Override
     public StringConverter<Boolean> getStringConverter() {
         return new StringConverter<Boolean>() {

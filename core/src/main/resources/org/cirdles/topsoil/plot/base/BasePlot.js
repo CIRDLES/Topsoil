@@ -16,11 +16,13 @@
 
 plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
 plot.propertiesKeys = [
+    'Point Fill Color',
     'Ellipse Fill Color',
     'Title',
     'Uncertainty',
     'X Axis',
     'Y Axis',
+    'Points',
     'Ellipses',
     'Concordia',
     'Isotope'];
@@ -113,6 +115,7 @@ plot.update = function (data) {
     //if the isotope type has changed, alert Java
     if (plot.currentIsotope != plot.getProperty('Isotope')) {
         plot.currentIsotope = plot.getProperty('Isotope');
+
         topsoil.bridge.updateIsotope(plot.getProperty('Isotope'));
     }
 
