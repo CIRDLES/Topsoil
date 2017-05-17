@@ -51,7 +51,7 @@ public class MainMenuBar extends MenuBar {
      */
     private final String TOPSOIL_ABOUT_SCREEN_FXML_NAME = "../topsoil-about-screen.fxml";
 
-    // File Menu
+    // Project Menu
     /**
      * When clicked, opens a new .topsoil project file.
      */
@@ -120,7 +120,13 @@ public class MainMenuBar extends MenuBar {
     private MenuItem tableFromClipboardItem;
 
     // Example Table >
+    /**
+     * When clicked, imports sample UPb data table 
+     */
     private MenuItem uPbExampleTableItem;
+    /**
+     * When clicked, imports sample UTh data table 
+     */
     private MenuItem uThExampleTableItem;
 
     
@@ -170,8 +176,8 @@ public class MainMenuBar extends MenuBar {
      */
     private void initialize(TopsoilTabPane tabs) {
 
-        // File Menu
-        Menu fileMenu = getFileMenu(tabs);
+        // Project Menu
+        Menu projectMenu = getProjectMenu(tabs);
 
         // Edit Menu
         Menu editMenu = getEditMenu(tabs);
@@ -187,7 +193,7 @@ public class MainMenuBar extends MenuBar {
 
         // Add menus to menuBar
         menuBar.getMenus()
-                .addAll(fileMenu,
+                .addAll(projectMenu,
                         editMenu,
                         tableMenu,
                         plotMenu,
@@ -195,13 +201,13 @@ public class MainMenuBar extends MenuBar {
     }
 
     /**
-     * Creates and returns the 'File' menu.
+     * Creates and returns the 'Project' menu.
      *
      * @param tabs  TopsoilTabPane for the window
-     * @return  'File' Menu
+     * @return  'Project' Menu
      */
-    private Menu getFileMenu(TopsoilTabPane tabs) {
-        Menu fileMenu = new Menu("File");
+    private Menu getProjectMenu(TopsoilTabPane tabs) {
+        Menu projectMenu = new Menu("Project");
 //        newProjectItem = new MenuItem("New Project");
         saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
@@ -227,7 +233,7 @@ public class MainMenuBar extends MenuBar {
             Platform.exit();
         });
         
-        fileMenu.getItems()
+        projectMenu.getItems()
                 .addAll(
 //                        newProjectItem,
                         openProjectItem,
@@ -240,13 +246,13 @@ public class MainMenuBar extends MenuBar {
                         ,exitItem
                 );
 
-        fileMenu.setOnShown(event -> {
+        projectMenu.setOnShown(event -> {
             saveProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
             saveProjectAsItem.setDisable(tabs.isEmpty());
             closeProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
         });
 
-        return fileMenu;
+        return projectMenu;
     }
 
     /**

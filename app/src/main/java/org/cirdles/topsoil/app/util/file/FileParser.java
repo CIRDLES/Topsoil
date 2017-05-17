@@ -101,6 +101,12 @@ public class FileParser {
                 .showOpenDialog(stage);
     }
     
+    /**
+     * Opens a {@code File} containing example data for a given isotopeType.
+     *
+     * @param isotopeType the isotope system to get a relevant set of data
+     * @return  the ressource File located in project resources
+     */
     public static File openExampleTable(IsotopeType isotopeType) {
         if(isotopeType.equals(IsotopeType.UPb)) {
             return new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UPb-Example-Data.csv");

@@ -172,8 +172,7 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Opens a sample data table for a given isotope type. If any tabs or plots are open,
-     * they are closed and replaced with the project's example data.
+     * Handles the opening of sample data table for a given isotope type.
      *
      * @param tabs  the TopsoilTabPane to which to add tables
      * @param isotopeType the isotope type of the example table to be opened
@@ -200,15 +199,6 @@ public class MenuItemEventHandler {
                     table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
             }
         }
-
-//// create empty table
-//        if (isotopeType == null) {
-//            table = null;
-//            
-//        } else {
-//            table = new TopsoilTable(null, isotopeType, new TopsoilDataEntry[]{});
-//            
-//        }
 
         return table;
     }
