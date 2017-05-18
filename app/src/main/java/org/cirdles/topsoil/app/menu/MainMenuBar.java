@@ -319,10 +319,10 @@ public class MainMenuBar extends MenuBar {
      */
     private Menu getTableMenu(TopsoilTabPane tabs) {
         Menu tableMenu = new Menu("Table");
-        newTableItem = new MenuItem("New Table");
-        saveTableItem = new MenuItem("Save Table");
-        saveTableAsItem = new MenuItem("Save Table As");
-        clearTableItem = new MenuItem("Clear Table");
+        newTableItem = new MenuItem("New Data Table");
+        saveTableItem = new MenuItem("Save Data Table");
+        saveTableAsItem = new MenuItem("Save Data Table As");
+        clearTableItem = new MenuItem("Clear Data Table");
 
         // New, empty table
         newTableItem.setOnAction(event -> {
@@ -337,9 +337,9 @@ public class MainMenuBar extends MenuBar {
         });
 
         //Saves the currently opened table
-        saveTableItem = new MenuItem("Save Table");
+        saveTableItem = new MenuItem("Save Data Table");
         //Saves the currently opened table as a specified file
-        saveTableAsItem = new MenuItem("Save Table As");
+        saveTableAsItem = new MenuItem("Save Data Table As");
 
         clearTableItem.setOnAction(action -> {
             // clear table and add an empty row
@@ -350,7 +350,7 @@ public class MainMenuBar extends MenuBar {
         });
 
         //Creates Submenu for Imports
-        Menu importTable = new Menu("Import Table");
+        Menu importTable = new Menu("Import Data Table");
         tableFromFileItem = new MenuItem("From File");
         tableFromClipboardItem = new MenuItem("From Clipboard");
         importTable.getItems().addAll(
@@ -358,7 +358,7 @@ public class MainMenuBar extends MenuBar {
                 tableFromClipboardItem);
 
         //Creates Submenu for Example Table
-        Menu exampleTable = new Menu("Open Example Table");
+        Menu exampleTable = new Menu("Open Example Data Table");
         uPbExampleTableItem = new MenuItem("Uranium-Lead");
         uThExampleTableItem = new MenuItem("Uranium-Thorium");
         exampleTable.getItems().addAll(
