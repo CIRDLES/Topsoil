@@ -183,23 +183,30 @@ public class MenuItemEventHandler {
         if (isotopeType != null) {
             File file = FileParser.openExampleTable(isotopeType);
 
-            List<TopsoilDataEntry> entries = null;
-            String[] headers = null;
-            try {
-                headers = FileParser.parseHeaders(file);
-                entries = FileParser.parseFile(file, true);
+            if(file != null) {
                 
-            } catch (IOException ex) { }
+                List<TopsoilDataEntry> entries = null;
+                String[] headers = null;
+                try {
+                    headers = FileParser.parseHeaders(file);
+                    entries = FileParser.parseFile(file, true);
 
-            if (entries == null) {
-                    table = null;
-                } else {
-                    ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                    table = new TopsoilDataTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
-                    table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+                } catch (IOException ex) { }
+
+                if (entries == null) {
+                        table = null;
+                    } else {
+                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                        table = new TopsoilDataTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                        table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+                }
+                
+            }
+            // If no sample data table is found, an empty table is returned.
+            else {
+                table = new TopsoilDataTable(null, isotopeType, new TopsoilDataEntry[]{});
             }
         }
-
         return table;
     }
     

@@ -108,13 +108,30 @@ public class FileParser {
      * @return  the ressource File located in project resources
      */
     public static File openExampleTable(IsotopeType isotopeType) {
+        File file = null;
+        Alerter alerter = new ErrorAlerter();
         if(isotopeType.equals(IsotopeType.UPb)) {
-            return new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UPb-Example-Data.csv");
+            file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UPb-Example-Data.csv");
+            if(file.exists())
+                return file;
+            else
+                alerter.alert("UPb Sample data table not found. Please check the resource directory.");
         }
         else if(isotopeType.equals(IsotopeType.UTh)) {
-            return new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UTh-Example-Data.csv");
+            file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UTh-Example-Data.csv");
+            if(file.exists())
+                return file;
+            else
+                alerter.alert("UTh Sample data table not found. Please check the resource directory.");
+            
+            return file;
         }
-        return new File("src/main/resources/org/cirdles/topsoil/app/sampledata/Generic-Example-Data.csv");
+        file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/Generic-Example-Data.csv");
+        if(!(file.exists())) {
+            alerter.alert("No sample data table found. Please check the resource directory.");
+            return null;
+        }
+        return file;
     }
 
     /**
