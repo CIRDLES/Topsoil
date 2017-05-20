@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.dataset;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -57,14 +58,14 @@ public class NumberDataset implements Dataset<Number> {
     /** {@inheritDoc}
      */
     @Override
-    public List<Field<Number>> getFields() {
+    public Collection<Field<Number>> getFields() {
         return rawData.getFields();
     }
 
     /** {@inheritDoc}
      */
     @Override
-    public List<Entry> getEntries() {
+    public Collection<Entry> getEntries() {
         return rawData.getEntries();
     }
 }

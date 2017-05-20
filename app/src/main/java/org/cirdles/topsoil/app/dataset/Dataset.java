@@ -18,6 +18,7 @@ package org.cirdles.topsoil.app.dataset;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,17 +39,17 @@ public interface Dataset<T> {
     public String getName();
 
     /**
-     * Returns the {@code Field}s of the {@code Dataset} as a {@code List}.
+     * Returns the {@code Field}s of the {@code Dataset} in a {@code Collection}.
      *
      * @return  List of Fields of type {@literal <T>}
      */
-    public List<Field<T>> getFields();
+    public Collection<Field<T>> getFields();
 
     /**
-     * Returns the {@code Entry}s of the {@code Dataset} as a {@code List}.
+     * Returns the {@code Entry}s of the {@code Dataset} in a {@code Collection}.
      *
      * @return  List of Entries
      */
-    public List<Entry> getEntries();
+    public Collection<Entry> getEntries();
 
 }

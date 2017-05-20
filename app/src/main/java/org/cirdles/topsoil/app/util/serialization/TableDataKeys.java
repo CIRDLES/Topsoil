@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.util.serialization;
 
 import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.plot.UncertaintyFormats;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.plot.Plot;
 
@@ -29,6 +28,11 @@ public class TableDataKeys {
     public static final String TABLE_ISOTOPE_TYPE = "Isotope Type";
 
     /**
+     * A key for the {@link UncertaintyFormat} used for plotting the data in the {@code TopsoilDataTable}.
+     */
+    public static final String TABLE_UNCERTAINTY_FORMAT = "Uncertainty Format Name";
+
+    /**
      * A key for the data from a {@code TopsoilDataTable}.
      */
     public static final String TABLE_DATA = "Data";
@@ -42,11 +46,6 @@ public class TableDataKeys {
      * A key for the plot properties for a {@code TopsoilDataTable}.
      */
     public static final String TABLE_PLOT_PROPERTIES = "Plot Properties";
-
-    /**
-     * A key for the {@link UncertaintyFormats} of a {@code TopsoilDataTable}.
-     */
-    public static final String TABLE_UNCERTAINTY_FORMAT = "Uncertainty Format Name";
 
     private TableDataKeys() {
         // Prevents this class from being instantiated.

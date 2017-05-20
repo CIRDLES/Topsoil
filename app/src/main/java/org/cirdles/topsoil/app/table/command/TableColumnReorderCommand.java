@@ -1,12 +1,13 @@
 package org.cirdles.topsoil.app.table.command;
 
 import javafx.beans.property.StringProperty;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
+import org.cirdles.topsoil.app.table.TopsoilDataTable.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -28,21 +29,9 @@ public class TableColumnReorderCommand implements Command {
     //***********************
 
     /**
-     * A {@code List} of the columns' names as {@code StringProperty}s, from the corresponding
-     * {@link TopsoilDataTable}. These must also be reordered to reflect the change in the {@code TableView}.
-     */
-    private List<StringProperty> columnNameProperties;
-
-    /**
      * The {@code TableView} whose columns where reordered.
      */
-    private TableView<TopsoilDataEntry> tableView;
-
-    /**
-     * The data of the table as contained in the corresponding {@link TopsoilDataTable}. The data in {@code
-     * TopsoilDataTable} must also be reordered to reflect the change in the {@code TableView}.
-     */
-    private ObservableList<TopsoilDataEntry> data;
+    private TopsoilTableController tableController;
 
     /**
      * The former index of the moved column.
@@ -59,22 +48,15 @@ public class TableColumnReorderCommand implements Command {
     //***********************
 
     /**
-     * Constructs a new column reorder command for the table view in which the
-     * column was moved. The former and new index of the moved column is
-     * determined by the order of the String ids of the columns, which
-     * increment from 0.
+     * Constructs a new column reorder command for the table view in which the column was moved, given the {@code
+     * TopsoilTableController} for the table view, the former index, and the new index of the column.
      *
-     * @param columnNameProperties a List of the column names as StringProperties
-     * @param tableView the TableView that the columns belong to
-     * @param data the data from the table as TopsoilDataEntries
+     * @param tableController   the TopsoilTableController for the table
      * @param fromIndex the former index of the moved column
      * @param toIndex   the new index of the moved column
      */
-    public TableColumnReorderCommand(List<StringProperty> columnNameProperties, TableView<TopsoilDataEntry>
-            tableView, ObservableList<TopsoilDataEntry> data, int fromIndex, int toIndex) {
-        this.columnNameProperties = columnNameProperties;
-        this.tableView = tableView;
-        this.data = data;
+    public TableColumnReorderCommand(TopsoilTableController tableController, int fromIndex, int toIndex) {
+        this.tableController = tableController;
         this.fromIndex = fromIndex;
         this.toIndex = toIndex;
     }
@@ -90,21 +72,20 @@ public class TableColumnReorderCommand implements Command {
      * @param toIndex   the column's target index
      */
     private void reorder(int fromIndex, int toIndex) {
-        TableColumn<TopsoilDataEntry, ?> columnTemp = tableView.getColumns().get(fromIndex);
-        StringProperty nameTemp = columnNameProperties.get(fromIndex);
-
         // Order TableColumns in TableView
-        tableView.getColumns().remove(fromIndex);
-        tableView.getColumns().add(toIndex, columnTemp);
+        TableColumn<TopsoilDataEntry, ?> columnTemp = tableController.getTabContent().getTableView().getColumns().remove(fromIndex);
+        tableController.getTabContent().getTableView().getColumns().add(toIndex, columnTemp);
 
         // Order columnNameProperties in TopsoilDataTable
-        columnNameProperties.remove(fromIndex);
-        columnNameProperties.add(toIndex, nameTemp);
+        StringProperty nameTemp = tableController.getTable().getColumnNameProperties().remove(fromIndex);
+        tableController.getTable().getColumnNameProperties().add(toIndex, nameTemp);
 
         // Order data in TopsoilDataTable
-        for (TopsoilDataEntry entry : data) {
-            entry.swap(fromIndex, toIndex);
-        }
+        TopsoilDataColumn tempColumn = tableController.getTable().getDataColumns().remove(fromIndex);
+        tableController.getTable().getDataColumns().add(toIndex, tempColumn);
+
+        tableController.getTable().resetVariableMapping();
+        tableController.resetColumnIndices();
     }
 
     /**

@@ -33,14 +33,14 @@ public final class Variables {
     public static final Variable<Number> X;
 
     /**
-     * A {@code Variable} that acts as an 'Y' variable.
-     */
-    public static final Variable<Number> Y;
-
-    /**
      * A {@code Variable} that acts as an 'σX' variable.
      */
     public static final Variable<Number> SIGMA_X;
+
+    /**
+     * A {@code Variable} that acts as an 'Y' variable.
+     */
+    public static final Variable<Number> Y;
 
     /**
      * A {@code Variable} that acts as an 'σY' variable.
@@ -55,22 +55,29 @@ public final class Variables {
     /**
      * A {@code List} of the {@code Variable}s defined in this class.
      */
-    public static final List<Variable> VARIABLE_LIST;
+    public static final List<Variable<Number>> VARIABLE_LIST;
+
+    /**
+     * A {@code List} of variables that are dependent.
+     */
+    public static final List<Variable> UNCERTAINTY_VARIABLES;
 
     static {
-
         X = new IndependentVariable<>("x");
-        Y = new IndependentVariable<>("y");
         SIGMA_X = new DependentVariable<>("sigma_x", X);
+        Y = new IndependentVariable<>("y");
         SIGMA_Y = new DependentVariable<>("sigma_y", Y);
         RHO = new IndependentVariable<>("rho");
-
         VARIABLE_LIST = asList(
                 X,
                 Y,
                 SIGMA_X,
                 SIGMA_Y,
                 RHO
+        );
+        UNCERTAINTY_VARIABLES = asList(
+                SIGMA_X,
+                SIGMA_Y
         );
     }
 

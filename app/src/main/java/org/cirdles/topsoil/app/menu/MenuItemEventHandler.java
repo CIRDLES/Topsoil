@@ -12,9 +12,11 @@ import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.app.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
+import org.cirdles.topsoil.app.util.dialog.TableUncertaintyChoiceDialog;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
@@ -72,13 +74,23 @@ public class MenuItemEventHandler {
                 if (isotopeType != null) {
                     List<TopsoilDataEntry> entries = FileParser.parseFile(file, hasHeaders);
 
-                    // create table
-                    if (entries == null) {
-                        table = null;
+                    if (entries != null) {
+                        TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
+                        UncertaintyFormat selectedFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
+
+                        if (selectedFormat != null) {
+                            ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                            applyUncertaintyFormat(selectedFormat, data);
+
+                            table = new TopsoilDataTable(headers,
+                                                         isotopeType,
+                                                         selectedFormat,
+                                                         data.toArray(new TopsoilDataEntry[data.size()]));
+                            table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+                        }
                     } else {
-                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                        table = new TopsoilDataTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
-                        table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+                        ErrorAlerter alerter = new ErrorAlerter();
+                        alerter.alert("File is empty!");
                     }
                 }
             }
@@ -118,12 +130,23 @@ public class MenuItemEventHandler {
                 if (isotopeType != null) {
                     List<TopsoilDataEntry> entries = FileParser.parseClipboard(hasHeaders, delim);
 
-                    // create table
-                    if (entries == null) {
-                        table = null;
+                    if (entries != null) {
+
+                        TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
+                        UncertaintyFormat selectedFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
+
+                        if (selectedFormat != null) {
+                            ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                            applyUncertaintyFormat(selectedFormat, data);
+
+                            table = new TopsoilDataTable(headers,
+                                                         isotopeType,
+                                                         selectedFormat,
+                                                         data.toArray(new TopsoilDataEntry[data.size()]));
+                        }
                     } else {
-                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                        table = new TopsoilDataTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                        ErrorAlerter alerter = new ErrorAlerter();
+                        alerter.alert("Clipboard is empty!");
                     }
                 }
             }
@@ -144,10 +167,18 @@ public class MenuItemEventHandler {
         IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
 
         // create empty table
-        if (isotopeType == null) {
-            table = null;
+        if (isotopeType != null) {
+
+            TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
+            UncertaintyFormat selectedFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
+
+            if (selectedFormat != null) {
+                table = new TopsoilDataTable(null, isotopeType, selectedFormat, new TopsoilDataEntry[]{});
+            } else {
+                table = null;
+            }
         } else {
-            table = new TopsoilDataTable(null, isotopeType, new TopsoilDataEntry[]{});
+            table = null;
         }
 
         return table;
@@ -221,7 +252,8 @@ public class MenuItemEventHandler {
         // get user confirmation
         if (response.isPresent()
                 && response.get() == ButtonType.YES) {
-            resultingTable = new TopsoilDataTable(table.getColumnNames(), table.getIsotopeType(), new TopsoilDataEntry[]{});
+            resultingTable = new TopsoilDataTable(table.getColumnNames(), table.getIsotopeType(), table
+                    .getUncertaintyFormat(), new TopsoilDataEntry[]{});
         }
 
         return resultingTable;
@@ -373,5 +405,23 @@ public class MenuItemEventHandler {
             }
         });
         return reference.get();
+    }
+
+    /**
+     * Normalizes the supplied data using the value of the specified {@code UncertaintyFormat}.
+     *
+     * @param format    UncertaintyFormat
+     * @param data  data as a List of TopsoilDataEntries
+     */
+    private static void applyUncertaintyFormat(UncertaintyFormat format, List<TopsoilDataEntry> data) {
+        // If uncertainty uncertaintyFormat is not one sigma absolute, convert uncertainty data to one sigma absolute.
+        if (format != UncertaintyFormat.ONE_SIGMA_ABSOLUTE) {
+            double formatValue = format.getValue();
+
+            for (TopsoilDataEntry entry : data) {
+                entry.getProperties().get(2).set(entry.getProperties().get(2).get() / formatValue);
+                entry.getProperties().get(3).set(entry.getProperties().get(3).get() / formatValue);
+            }
+        }
     }
 }

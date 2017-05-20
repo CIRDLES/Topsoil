@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
 
@@ -120,10 +121,10 @@ public class PlotPropertiesPanelController {
             STRING_TO_ISOTOPE_TYPE.put(type.getName(), type);
         }
 
-        STRING_TO_UNCERTAINTY_FORMAT = new LinkedHashMap<>(UncertaintyFormats.UNCERTAINTY_FORMATS.size());
-        UNCERTAINTY_FORMAT_TO_STRING = new LinkedHashMap<>(UncertaintyFormats.UNCERTAINTY_FORMATS.size());
-        DOUBLE_TO_UNCERTAINTY_FORMAT = new LinkedHashMap<>(UncertaintyFormats.UNCERTAINTY_FORMATS.size());
-        for (UncertaintyFormat format : UncertaintyFormats.UNCERTAINTY_FORMATS) {
+        STRING_TO_UNCERTAINTY_FORMAT = new LinkedHashMap<>(UncertaintyFormat.PLOT_FORMATS.size());
+        UNCERTAINTY_FORMAT_TO_STRING = new LinkedHashMap<>(UncertaintyFormat.PLOT_FORMATS.size());
+        DOUBLE_TO_UNCERTAINTY_FORMAT = new LinkedHashMap<>(UncertaintyFormat.PLOT_FORMATS.size());
+        for (UncertaintyFormat format : UncertaintyFormat.PLOT_FORMATS) {
             STRING_TO_UNCERTAINTY_FORMAT.put(format.getName(), format);
             UNCERTAINTY_FORMAT_TO_STRING.put(format, format.getName());
             DOUBLE_TO_UNCERTAINTY_FORMAT.put(format.getValue(), format);
@@ -411,12 +412,12 @@ public class PlotPropertiesPanelController {
         isotopeSystemChoiceBox.getSelectionModel().select(STRING_TO_ISOTOPE_TYPE.get((String) PROPERTIES.get(ISOTOPE_TYPE)).getName());
 
         for (String s : uncertaintyChoiceBox.getItems()) {
-            if (s.equals(UncertaintyFormats.TWO_SIGMA_ABSOLUTE.getName())) {
+            if (s.equals(UncertaintyFormat.TWO_SIGMA_ABSOLUTE.getName())) {
                 uncertaintyChoiceBox.getSelectionModel().select(s);
             }
         }
 
-//        uncertaintyChoiceBox.getSelectionModel().select(UNCERTAINTY_FORMAT_TO_STRING.get(UncertaintyFormats.TWO_SIGMA_ABSOLUTE));
+//        uncertaintyChoiceBox.getSelectionModel().select(UNCERTAINTY_FORMAT_TO_STRING.get(PlotUncertaintyFormats.TWO_SIGMA_ABSOLUTE));
 
         titleTextField.setText((String) PROPERTIES.get(TITLE));
         xAxisTextField.setText((String) PROPERTIES.get(X_AXIS));

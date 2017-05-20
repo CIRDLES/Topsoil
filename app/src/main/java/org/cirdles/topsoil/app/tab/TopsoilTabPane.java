@@ -80,6 +80,8 @@ public class TopsoilTabPane extends TabPane {
                     RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_TAB_FXML_PATH).toUri().toURL());
             SplitPane tabContentView = fxmlLoader.load();
             TopsoilTabContent tabContent = fxmlLoader.getController();
+            tabContent.setXUncertaintyFormatLabel(table.getUncertaintyFormat().getName());
+            tabContent.setYUncertaintyFormatLabel(table.getUncertaintyFormat().getName());
 
             // Create new TopsoilTab
             TopsoilTab tab = createTopsoilTab(tabContent, new TopsoilTableController(table, tabContent));

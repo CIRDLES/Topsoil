@@ -43,44 +43,19 @@ public class TopsoilTabContent extends SplitPane {
     //***********************
 
     /**
-     * A {@code GridPane} that contains the {@code Label}s and {@code ChoiceBox}es above the {@code TableView}.
+     * A {@code Label} denoting the uncertainty format of the 'σX' {@code TableView} column position.
      */
-    @FXML private GridPane labelGridPane;
+    @FXML private Label xUncertaintyFormatLabel;
 
     /**
-     * A {@code Label} denoting a {@code TableView} column position as the 'X' column.
+     * A {@code Label} denoting the uncertainty format of the 'σY' {@code TableView} column position.
      */
-    @FXML private Label xLabel;
-
-    /**
-     * A {@code Label} denoting a {@code TableView} column position as the 'Y' column.
-     */
-    @FXML private Label yLabel;
-
-    /**
-     * A {@code Label} denoting a {@code TableView} column position as the 'σX' column.
-     */
-    @FXML private Label xUncertaintyLabel;
-
-    /**
-     * A {@code Label} denoting a {@code TableView} column position as the 'σY' column.
-     */
-    @FXML private Label yUncertaintyLabel;
-
-    /**
-     * A {@code Label} denoting a {@code TableView} column position as the 'Corr Coef' column.
-     */
-    @FXML private Label corrCoefLabel;
+    @FXML private Label yUncertaintyFormatLabel;
 
     /**
      * A {@code TableView} that displays the table data.
      */
     @FXML private TableView<TopsoilDataEntry> tableView;
-
-    /**
-     * A copy of the data contained in the corresponding {@link TopsoilDataTable}.
-     */
-    private ObservableList<TopsoilDataEntry> data;
 
     /**
      * A {@code Button} that, when pressed, adds an empty row at the end of the {@code TableView}.
@@ -119,19 +94,6 @@ public class TopsoilTabContent extends SplitPane {
     /** {@inheritDoc}
      */
     @FXML public void initialize() {
-        assert labelGridPane != null : "fx:id=\"labelGridPane\" was not injected: check your FXML file " +
-                                       "'topsoil-tab.fxml'.";
-        assert xLabel != null : "fx:id=\"xLabel\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
-        assert yLabel != null : "fx:id=\"yLabel\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
-        assert xUncertaintyLabel != null : "fx:id=\"xUncertaintyLabel\" was not injected: check your FXML file " +
-                                           "'topsoil-tab.fxml'.";
-        assert yUncertaintyLabel != null : "fx:id=\"yUncertaintyLabel\" was not injected: check your FXML file " +
-                                           "'topsoil-tab.fxml'.";
-        assert corrCoefLabel != null : "fx:id=\"corrCoefLabel\" was not injected: check your FXML file " +
-                                       "'topsoil-tab.fxml'.";
-
-        assert tableView != null : "fx:id=\"tableView\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
-        assert addRowButton != null : "fx:id=\"addRowButton\" was not injected: check your FXML file 'topsoil-tab.fxml'.";
 
         // Handle Keyboard Events
         tableView.setOnKeyPressed(keyEvent -> handleTableViewKeyEvent(keyEvent));
@@ -261,8 +223,6 @@ public class TopsoilTabContent extends SplitPane {
             // disable column sorting
             newColumn.setSortable(false);
 
-//            newColumn.setId(Integer.toString(i + 1));
-
             // add functional column to the array of columns
             columns.set(i, newColumn);
         }
@@ -292,8 +252,7 @@ public class TopsoilTabContent extends SplitPane {
      * @param dataEntries   an ObservableList of TopsoilDataEntries
      */
     public void setData(ObservableList<TopsoilDataEntry> dataEntries) {
-        this.data = dataEntries;
-        tableView.setItems(data);
+        tableView.setItems(dataEntries);
     }
 
     /**
@@ -333,5 +292,23 @@ public class TopsoilTabContent extends SplitPane {
             ((TopsoilTabPane) this.tableView.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo
                     (deleteRowCommand);
         }
+    }
+
+    /**
+     * Sets the text of the xUncertaintyFormatLabel to reflect the uncertainty format of the {@code TopsoilDataTable}.
+     *
+     * @param s String format name
+     */
+    void setXUncertaintyFormatLabel(String s) {
+        xUncertaintyFormatLabel.setText(s);
+    }
+
+    /**
+     * Sets the text of the yUncertaintyFormatLabel to reflect the uncertainty format of the {@code TopsoilDataTable}.
+     *
+     * @param s String format name
+     */
+    void setYUncertaintyFormatLabel(String s) {
+        yUncertaintyFormatLabel.setText(s);
     }
 }

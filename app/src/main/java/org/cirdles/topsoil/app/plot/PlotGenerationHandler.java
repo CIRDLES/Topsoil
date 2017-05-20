@@ -49,13 +49,11 @@ public class PlotGenerationHandler {
                             plotInfo.getStage().close();
                         }
                     }
-                    PlotContext plotContext = generatePlotContext(tableController);
-                    generatePlot(tableController, TopsoilPlotType.BASE_PLOT, plotContext);
+                    generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
                 }
             });
         } else {
-            PlotContext plotContext = generatePlotContext(tableController);
-            generatePlot(tableController, TopsoilPlotType.BASE_PLOT, plotContext);
+            generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
         }
     }
 
@@ -64,11 +62,9 @@ public class PlotGenerationHandler {
      *
      * @param tableController   the TopsoilTableController for the table
      * @param plotType  the TopsoilPlotType of the plot
-     * @param plotContext   the PlotContext for the plot
      */
-    public static void handlePlotGenerationFromFile(TopsoilTableController tableController, TopsoilPlotType plotType,
-                                                    PlotContext plotContext) {
-        generatePlot(tableController, plotType, plotContext);
+    public static void handlePlotGenerationFromFile(TopsoilTableController tableController, TopsoilPlotType plotType) {
+        generatePlot(tableController, plotType);
     }
 
     /**
@@ -77,10 +73,9 @@ public class PlotGenerationHandler {
      * @param tableController   the TopsoilTableController for the table
      * @param plotType  the TopsoilPlotType of the plot
      */
-    private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType, PlotContext
-            plotContext) {
+    private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType) {
 
-        List<Map<String, Object>> data = plotContext.getData();
+        List<Map<String, Object>> data = tableController.getPlotData();
 
         PlotPropertiesPanelController propertiesPanel = tableController.getTabContent().getPlotPropertiesPanelController();
         Map<String, Object> plotProperties = propertiesPanel.getProperties();
@@ -119,35 +114,7 @@ public class PlotGenerationHandler {
         plotStage.show();
 
         // Store plot information in TopsoilDataTable
-        PlotInformation plotInfo = new PlotInformation(plot, plotType, propertiesPanel.getProperties(), plotContext, plotStage);
-        plotInfo.setVariableBindings(plotContext.getBindings());
+        PlotInformation plotInfo = new PlotInformation(plot, plotType, propertiesPanel.getProperties(), plotStage);
         tableController.getTable().addOpenPlot(plotInfo);
-
-        // Re-apply data when uncertainty is changed.
-        propertiesPanel.uncertaintyProperty().addListener(c -> {
-            PlotContext newContext = generatePlotContext(tableController);
-            List<Map<String, Object>> newData = newContext.getData();
-            plot.setData(newData);
-        });
-    }
-
-    /**
-     * Generates a {@code PlotContext} for the given {@code TopsoilTableController}.
-     *
-     * @param tableController   the TopsoilTableController for the table
-     * @return  PlotContext for the table
-     */
-    private static PlotContext generatePlotContext(TopsoilTableController tableController) {
-        NumberDataset dataset = tableController.getDataset();
-        SimplePlotContext plotContext = new SimplePlotContext(dataset);
-
-        // Bind variables
-        Variable<Number> variable;
-        for (int i = 0; i < dataset.getFields().size(); i++) {
-            variable = Variables.VARIABLE_LIST.get(i);
-            plotContext.addBinding(variable, dataset.getFields().get(i));
-        }
-
-        return plotContext;
     }
 }
