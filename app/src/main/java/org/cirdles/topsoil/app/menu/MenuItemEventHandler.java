@@ -192,11 +192,15 @@ public class MenuItemEventHandler {
      */
     public static TopsoilDataTable handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
         TopsoilDataTable table = null;
+        UncertaintyFormat format;
+
+        //TODO Determine format of table.
+        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
 
         if (isotopeType != null) {
             File file = FileParser.openExampleTable(isotopeType);
 
-            if(file != null) {
+            if(file != null && FileParser.isSupportedTableFile(file)) {
                 
                 List<TopsoilDataEntry> entries = null;
                 String[] headers = null;
@@ -210,14 +214,16 @@ public class MenuItemEventHandler {
                         table = null;
                     } else {
                         ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                        table = new TopsoilDataTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                        table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
                         table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
                 }
                 
             }
             // If no sample data table is found, an empty table is returned.
             else {
-                table = new TopsoilDataTable(null, isotopeType, new TopsoilDataEntry[]{});
+                ErrorAlerter alerter = new ErrorAlerter();
+                alerter.alert("Example file invalid. Loading empty data table.");
+                table = new TopsoilDataTable(null, isotopeType, format, new TopsoilDataEntry[]{});
             }
         }
         return table;

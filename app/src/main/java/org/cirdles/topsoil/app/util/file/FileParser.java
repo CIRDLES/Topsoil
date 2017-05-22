@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.util.dialog.Alerter;
 import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
@@ -110,26 +111,41 @@ public class FileParser {
     public static File openExampleTable(IsotopeType isotopeType) {
         File file = null;
         Alerter alerter = new ErrorAlerter();
+
+        String UPB_DATA_FILE_PATH;
+        String UTH_DATA_FILE_PATH;
+        String GEN_DATA_FILE_PATH;
+
+        if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
+            UPB_DATA_FILE_PATH = "app/src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/UPb-Example-Data.csv";
+            UTH_DATA_FILE_PATH = "app/src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/UTh-Example-Data.csv";
+            GEN_DATA_FILE_PATH = "app/src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/Generic-Example-Data.csv";
+        } else {
+            UPB_DATA_FILE_PATH = "src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/UPb-Example-Data.csv";
+            UTH_DATA_FILE_PATH = "src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/UTh-Example-Data.csv";
+            GEN_DATA_FILE_PATH = "src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/Generic-Example-Data.csv";
+
+        }
+
         if(isotopeType.equals(IsotopeType.UPb)) {
-            file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UPb-Example-Data.csv");
-            if(file.exists())
+            file = new File(UPB_DATA_FILE_PATH);
+            if(file.exists()) {
                 return file;
-            else
-                alerter.alert("UPb Sample data table not found. Please check the resource directory.");
-        }
-        else if(isotopeType.equals(IsotopeType.UTh)) {
-            file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UTh-Example-Data.csv");
-            if(file.exists())
+            } else {
+                alerter.alert("UPb sample data table not found. Please check the resource directory.");
+            }
+        } else if(isotopeType.equals(IsotopeType.UTh)) {
+            file = new File(UTH_DATA_FILE_PATH);
+            if(file.exists()) {
                 return file;
-            else
-                alerter.alert("UTh Sample data table not found. Please check the resource directory.");
-            
-            return file;
-        }
-        file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/Generic-Example-Data.csv");
-        if(!(file.exists())) {
-            alerter.alert("No sample data table found. Please check the resource directory.");
-            return null;
+            } else {
+                alerter.alert("UTh sample data table not found. Please check the resource directory.");
+            }
+        } else {
+            file = new File(GEN_DATA_FILE_PATH);
+            if (!(file.exists())) {
+                alerter.alert("No sample data table found. Please check the resource directory.");
+            }
         }
         return file;
     }
@@ -422,8 +438,6 @@ public class FileParser {
             return  content[0].split("\t");
 
         } else {
-            Alerter alerter = new ErrorAlerter();
-            alerter.alert("Invalid File Type");
             return null;
         }
     }
