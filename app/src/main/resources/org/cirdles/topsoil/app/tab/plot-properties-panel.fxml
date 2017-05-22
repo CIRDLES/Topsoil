@@ -1,137 +1,182 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="221.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.plot.PlotPropertiesPanelController">
-   <content>
-      <HBox>
-         <children>
-            <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" HBox.hgrow="NEVER">
+<VBox alignment="TOP_CENTER" style="-fx-background-color: #67ccff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.plot.PlotPropertiesPanelController">
+   <children>
+      <Label text="Plot Manager" textAlignment="CENTER" underline="true">
+         <font>
+            <Font size="16.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="5.0" top="5.0" />
+         </VBox.margin>
+      </Label>
+      <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="200.0" prefViewportWidth="820.0" VBox.vgrow="ALWAYS">
+         <content>
+            <HBox alignment="TOP_CENTER" minHeight="200.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" VBox.vgrow="NEVER">
+                  <VBox HBox.hgrow="NEVER">
                      <children>
-                        <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" text="Isotope System:">
-                           <HBox.margin>
-                              <Insets left="10.0" right="5.0" />
-                           </HBox.margin>
-                        </Label>
-                        <ChoiceBox fx:id="isotopeSystemChoiceBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0">
-                           <HBox.margin>
-                              <Insets left="10.0" right="10.0" />
-                           </HBox.margin>
-                        </ChoiceBox>
-                     </children>
-                  </HBox>
-                  <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
-                     <children>
-                        <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="135.0" prefWidth="230.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" prefWidth="65.0" />
-                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="165.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="-Infinity" prefHeight="45.0" vgrow="NEVER" />
-                            <RowConstraints minHeight="-Infinity" prefHeight="45.0" vgrow="NEVER" />
-                            <RowConstraints minHeight="-Infinity" prefHeight="45.0" vgrow="NEVER" />
-                          </rowConstraints>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
+                        <HBox minHeight="-Infinity" prefHeight="35.0">
                            <children>
-                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Title:">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
+                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" text="Isotope System:">
+                                 <HBox.margin>
+                                    <Insets left="10.0" right="5.0" />
+                                 </HBox.margin>
                               </Label>
-                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="X-Axis:" GridPane.rowIndex="1">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Y-Axis" GridPane.rowIndex="2">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <TextField fx:id="titleTextField" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" />
-                              <TextField minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="xAxisTextField" />
-                              <TextField fx:id="yAxisTextField" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ChoiceBox fx:id="isotopeSystemChoiceBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0">
+                                 <HBox.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </HBox.margin>
+                              </ChoiceBox>
                            </children>
-                        </GridPane>
-                        <GridPane HBox.hgrow="NEVER">
+                           <padding>
+                              <Insets bottom="5.0" top="5.0" />
+                           </padding>
+                        </HBox>
+                        <HBox minHeight="-Infinity" prefHeight="35.0">
                            <children>
-                              <CheckBox fx:id="ellipsesCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Ellipses" GridPane.rowIndex="2">
-                                 <GridPane.margin>
-                                    <Insets left="15.0" />
-                                 </GridPane.margin>
-                              </CheckBox>
-                              <CheckBox fx:id="pointsCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Points" GridPane.rowIndex="1">
-                                 <GridPane.margin>
-                                    <Insets left="15.0" />
-                                 </GridPane.margin>
-                              </CheckBox>
-                              <CheckBox fx:id="crossesCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Crosses" GridPane.rowIndex="3">
-                                 <GridPane.margin>
-                                    <Insets left="15.0" />
-                                 </GridPane.margin>
-                              </CheckBox>
-                              <ColorPicker fx:id="ellipsesColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <ColorPicker fx:id="pointsColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <ColorPicker fx:id="crossesColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" text="Plot data as:">
-                                 <GridPane.margin>
-                                    <Insets left="15.0" />
-                                 </GridPane.margin>
+                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" text="Uncertainty:">
+                                 <HBox.margin>
+                                    <Insets left="10.0" right="5.0" />
+                                 </HBox.margin>
                               </Label>
+                              <ChoiceBox fx:id="uncertaintyChoiceBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0">
+                                 <HBox.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </HBox.margin>
+                              </ChoiceBox>
                            </children>
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="120.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="-Infinity" prefHeight="25.0" />
-                              <RowConstraints minHeight="-Infinity" prefHeight="25.0" />
-                              <RowConstraints minHeight="-Infinity" prefHeight="30.0" />
-                              <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
-                           </rowConstraints>
-                        </GridPane>
+                           <padding>
+                              <Insets bottom="5.0" top="5.0" />
+                           </padding>
+                        </HBox>
+                        <HBox minHeight="100.0" VBox.vgrow="NEVER">
+                           <children>
+                              <GridPane minHeight="135.0" minWidth="215.0" HBox.hgrow="NEVER">
+                                 <children>
+                                    <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Title:">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="5.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="X-Axis:" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="5.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Y-Axis" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="5.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <TextField fx:id="titleTextField" minHeight="25.0" minWidth="120.0" GridPane.columnIndex="1" />
+                                    <TextField minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="xAxisTextField" />
+                                    <TextField fx:id="yAxisTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="NEVER" minWidth="65.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="40.0" vgrow="NEVER" />
+                                    <RowConstraints minHeight="40.0" vgrow="NEVER" />
+                                    <RowConstraints minHeight="40.0" vgrow="NEVER" />
+                                 </rowConstraints>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </GridPane>
+                              <GridPane minHeight="135.0" minWidth="265.0" HBox.hgrow="NEVER">
+                                 <children>
+                                    <CheckBox fx:id="ellipsesCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Unct. Ellipses" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </CheckBox>
+                                    <CheckBox fx:id="pointsCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Points" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </CheckBox>
+                                    <CheckBox fx:id="crossesCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Unct. Crosses" GridPane.rowIndex="3">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </CheckBox>
+                                    <ColorPicker fx:id="ellipsesColorPicker" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </ColorPicker>
+                                    <ColorPicker fx:id="pointsColorPicker" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </ColorPicker>
+                                    <ColorPicker fx:id="crossesColorPicker" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </ColorPicker>
+                                    <Label minHeight="25.0" minWidth="100.0" text="Plot data using:">
+                                       <GridPane.margin>
+                                          <Insets left="15.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="120.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="30.0" />
+                                    <RowConstraints minHeight="30.0" />
+                                    <RowConstraints minHeight="30.0" />
+                                    <RowConstraints minHeight="30.0" vgrow="NEVER" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="283.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <GridPane fx:id="featuresGridPane" minHeight="-Infinity" minWidth="-Infinity" prefWidth="283.0">
+                  </VBox>
+                  <VBox alignment="TOP_RIGHT" HBox.hgrow="NEVER">
                      <children>
-                        <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="Features:">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </Label>
-                        <CheckBox fx:id="concordiaCheckBox" mnemonicParsing="false" prefHeight="25.0" prefWidth="175.0" text="Wetherill Concordia Line" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </CheckBox>
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="Features" textAlignment="CENTER" underline="true" />
+                              <VBox fx:id="featureBox">
+                                 <children>
+                                    <HBox fx:id="concordiaFeature" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <CheckBox fx:id="concordiaCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="175.0" text="Wetherill Concordia Line" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <Button fx:id="generatePlotButton" mnemonicParsing="false" onAction="#generatePlotButtonAction" text="Generate Plot">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
                      </children>
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" prefWidth="180.0" />
-                        <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" prefWidth="120.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="-Infinity" prefHeight="25.0" vgrow="NEVER" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-                     </rowConstraints>
-                     <VBox.margin>
-                        <Insets top="10.0" />
-                     </VBox.margin>
-                  </GridPane>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
                </children>
-            </VBox>
-         </children>
-      </HBox>
-   </content>
-</ScrollPane>
+            </HBox>
+         </content>
+      </ScrollPane>
+   </children>
+</VBox>

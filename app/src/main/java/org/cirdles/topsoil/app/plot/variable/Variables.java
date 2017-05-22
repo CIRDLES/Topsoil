@@ -15,8 +15,6 @@
  */
 package org.cirdles.topsoil.app.plot.variable;
 
-import org.cirdles.topsoil.app.plot.variable.format.VariableFormats;
-
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -32,45 +30,54 @@ public final class Variables {
     /**
      * A {@code Variable} that acts as an 'X' variable.
      */
-    public static final Variable X;
+    public static final Variable<Number> X;
 
     /**
      * A {@code Variable} that acts as an 'σX' variable.
      */
-    public static final Variable SIGMA_X;
+    public static final Variable<Number> SIGMA_X;
 
     /**
      * A {@code Variable} that acts as an 'Y' variable.
      */
-    public static final Variable Y;
+    public static final Variable<Number> Y;
 
     /**
      * A {@code Variable} that acts as an 'σY' variable.
      */
-    public static final Variable SIGMA_Y;
+    public static final Variable<Number> SIGMA_Y;
 
     /**
      * A {@code Variable} that acts as an 'Corr Coef' or 'rho' variable.
      */
-    public static final Variable RHO;
+    public static final Variable<Number> RHO;
 
     /**
      * A {@code List} of the {@code Variable}s defined in this class.
      */
-    public static final List<Variable> VARIABLE_LIST;
+    public static final List<Variable<Number>> VARIABLE_LIST;
+
+    /**
+     * A {@code List} of variables that are dependent.
+     */
+    public static final List<Variable> UNCERTAINTY_VARIABLES;
 
     static {
-        X = new IndependentVariable("x");
-        SIGMA_X = new DependentVariable("sigma_x", X, VariableFormats.UNCERTAINTY_FORMATS);
-        Y = new IndependentVariable("y");
-        SIGMA_Y = new DependentVariable("sigma_y", Y, VariableFormats.UNCERTAINTY_FORMATS);
-        RHO = new IndependentVariable("rho");
+        X = new IndependentVariable<>("x");
+        SIGMA_X = new DependentVariable<>("sigma_x", X);
+        Y = new IndependentVariable<>("y");
+        SIGMA_Y = new DependentVariable<>("sigma_y", Y);
+        RHO = new IndependentVariable<>("rho");
         VARIABLE_LIST = asList(
                 X,
                 Y,
                 SIGMA_X,
                 SIGMA_Y,
                 RHO
+        );
+        UNCERTAINTY_VARIABLES = asList(
+                SIGMA_X,
+                SIGMA_Y
         );
     }
 

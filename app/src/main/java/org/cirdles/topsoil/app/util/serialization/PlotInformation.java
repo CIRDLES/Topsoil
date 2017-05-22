@@ -2,13 +2,9 @@ package org.cirdles.topsoil.app.util.serialization;
 
 import javafx.collections.ObservableMap;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.plot.PlotContext;
-import org.cirdles.topsoil.app.plot.VariableBinding;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
-
-import java.util.Collection;
 
 /**
  * Stores information about an open {@link Plot}.
@@ -17,7 +13,6 @@ import java.util.Collection;
  *
  * @see Plot
  * @see TopsoilPlotType
- * @see VariableBinding
  */
 public class PlotInformation {
 
@@ -34,11 +29,6 @@ public class PlotInformation {
      * The {@code TopsoilPlotType} of the {@code Plot}.
      */
     private TopsoilPlotType plotType;
-
-    /**
-     * A {@code Collection} of {@code VariableBinding}s for the {@code Plot}.
-     */
-    private Collection<VariableBinding> variableBindings;
 
     /**
      * An {@code ObservableMap} containing plot property values.
@@ -61,15 +51,12 @@ public class PlotInformation {
      * @param plot  the Plot object
      * @param plotProperties    an ObservableMap of plot settings
      * @param plotType  the TopsoilPlotType of the plot
-     * @param plotContext a PlotContext
      * @param stage the Stage displaying the Plot
      */
-    public PlotInformation(Plot plot, TopsoilPlotType plotType, ObservableMap<String, Object> plotProperties,
-                           PlotContext plotContext, Stage stage) {
+    public PlotInformation(Plot plot, TopsoilPlotType plotType, ObservableMap<String, Object> plotProperties, Stage stage) {
         this.plot = plot;
         this.plotType = plotType;
         this.plotProperties = plotProperties;
-        this.variableBindings = plotContext.getBindings();
         this.stage = stage;
     }
 
@@ -105,40 +92,12 @@ public class PlotInformation {
     }
 
     /**
-     * Returns a {@code Collection} of the plot's {@code VariableBinding}s.
-     *
-     * @return  a Collection of VariableBinding names
-     */
-    public Collection<VariableBinding> getVariableBindings() {
-        return this.variableBindings;
-    }
-
-    /**
-     * Converts the {@code VariableBinding}s of the {@code Plot} into a
-     * {@code HashMap} for easy reference and stores them.
-     *
-     * @param bindings  a Collection of VariableBindings
-     */
-    public void setVariableBindings(Collection<VariableBinding> bindings) {
-        this.variableBindings = bindings;
-    }
-
-    /**
      * Returns the {@code Stage} that is showing the {@code Plot}.
      *
      * @return  the Stage displaying the plot
      */
     public Stage getStage() {
         return this.stage;
-    }
-
-    /**
-     * Define which {@code Stage} displays the {@code Plot}.
-     *
-     * @param stage the Stage displaying the plot
-     */
-    public void setStage(Stage stage) {
-        this.stage = stage;
     }
 
     /**

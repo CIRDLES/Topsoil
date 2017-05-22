@@ -4,10 +4,11 @@ import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
- * A class containing a {@code List} of {@link Field} objects, and one of {@link Entry} objects. Its purpose is to
+ * A class containing a {@code Collection} of {@link Field} objects, and one of {@link Entry} objects. Its purpose is to
  * contain a "raw" reference to the data stored in a {@link TopsoilDataTable}.
  *
  * @author Benjamin Muldrow
@@ -20,14 +21,14 @@ public class TopsoilRawData<T> {
     //***********************
 
     /**
-     * The {@code List} of {@code Field}s for the {@code TopsoilRawData}.
+     * The {@code Collection} of {@code Field}s for the {@code TopsoilRawData}.
      */
-    private List<Field<T>> fields;
+    private Collection<Field<T>> fields;
 
     /**
-     * The {@code List} of {@code Entry}s for the {@code TopsoilRawData}.
+     * The {@code Collection} of {@code Entry}s for the {@code TopsoilRawData}.
      */
-    private List<Entry> entries;
+    private Collection<Entry> entries;
 
     //***********************
     // Constructors
@@ -39,7 +40,7 @@ public class TopsoilRawData<T> {
      * @param fields    Fields for the TopsoilRawData
      * @param entries   Entries for the TopsoilRawData
      */
-    public TopsoilRawData(List<Field<T>> fields, List<Entry> entries) {
+    public TopsoilRawData(Collection<Field<T>> fields, Collection<Entry> entries) {
         this.fields = fields;
         this.entries = entries;
     }
@@ -49,20 +50,20 @@ public class TopsoilRawData<T> {
     //***********************
 
     /**
-     * Returns the list of {@code Field}s for the {@code TopsoilRawData}.
+     * Returns the collection of {@code Field}s for the {@code TopsoilRawData}.
      *
-     * @return  List of Fields
+     * @return  Collection of Fields
      */
-    public List<Field<T>> getFields() {
+    public Collection<Field<T>> getFields() {
         return fields;
     }
 
     /**
-     * Returns the list of {@code Entry}s for the {@code TopsoilRawData}.
+     * Returns the collection of {@code Entry}s for the {@code TopsoilRawData}.
      *
-     * @return  List of Entries
+     * @return  Collection of Entries
      */
-    public List<Entry> getEntries() {
+    public Collection<Entry> getEntries() {
         return entries;
     }
 }

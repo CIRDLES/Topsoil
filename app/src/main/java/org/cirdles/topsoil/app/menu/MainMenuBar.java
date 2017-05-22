@@ -186,9 +186,6 @@ public class MainMenuBar extends MenuBar {
         // Table Menu
         Menu tableMenu = getTableMenu(tabs);
 
-        // Plot Menu
-        Menu plotMenu = getPlotMenu(tabs);
-
         // Help Menu
         Menu helpMenu = getHelpMenu(tabs);
 
@@ -197,7 +194,6 @@ public class MainMenuBar extends MenuBar {
                 .addAll(projectMenu,
                         editMenu,
                         tableMenu,
-                        plotMenu,
                         helpMenu);
     }
 
@@ -209,12 +205,10 @@ public class MainMenuBar extends MenuBar {
      */
     private Menu getProjectMenu(TopsoilTabPane tabs) {
         Menu projectMenu = new Menu("Project");
-//        newProjectItem = new MenuItem("New Project");
         saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
         openProjectItem = new MenuItem("Open Project");
         closeProjectItem = new MenuItem("Close Project");
-//        mostRecentItem = new MenuItem("Most Recently Used");
         exitItem = new MenuItem("Exit Topsoil");
 
         openProjectItem.setOnAction(event -> MenuItemEventHandler
@@ -251,13 +245,11 @@ public class MainMenuBar extends MenuBar {
         
         projectMenu.getItems()
                 .addAll(
-//                        newProjectItem,
                         openProjectItem,
                         closeProjectItem,
                         new SeparatorMenuItem(),
                         saveProjectItem,
                         saveProjectAsItem
-//                        , mostRecentItem
                         ,new SeparatorMenuItem()
                         ,exitItem
                 );
@@ -507,35 +499,6 @@ public class MainMenuBar extends MenuBar {
         });
 
         return tableMenu;
-    }
-
-    /**
-     * Creates and returns the 'Plot' menu.
-     *
-     * @param tabs  TopsoilTabPane for the window
-     * @return  'Plot' Menu
-     */
-    private Menu getPlotMenu(TopsoilTabPane tabs) {
-        Menu plotMenu = new Menu("Plot");
-        MenuItem generatePlotItem = new MenuItem("Generate Plot");
-        plotMenu.getItems().add(generatePlotItem);
-
-        // Generate Plot
-        generatePlotItem.setOnAction(event -> {
-            if (!tabs.isEmpty()) {
-                MenuItemEventHandler.handlePlotGenerationForSelectedTab(tabs);
-            }
-        });
-
-        plotMenu.setOnShown(event -> {
-            if (tabs.isEmpty()) {
-                generatePlotItem.setDisable(true);
-            } else {
-                generatePlotItem.setDisable(false);
-            }
-        });
-
-        return plotMenu;
     }
 
     /**

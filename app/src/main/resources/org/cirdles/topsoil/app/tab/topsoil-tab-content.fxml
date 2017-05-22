@@ -6,7 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane dividerPositions="0.7" orientation="VERTICAL" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.tab.TopsoilTabContent">
+<SplitPane dividerPositions="0.6" orientation="VERTICAL" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.tab.TopsoilTabContent">
    <items>
       <AnchorPane>
          <children>
@@ -18,14 +18,28 @@
                         <Label fx:id="yLabel" text="Y" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                            <children>
-                              <Label text="σX: " fx:id="xUncertaintyLabel" />
-                              <ChoiceBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" fx:id="xUncertaintyChoiceBox" />
+                              <Label text="σX:" fx:id="xUncertaintyLabel">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin></Label>
+                              <Label text="Format" fx:id="xUncertaintyFormatLabel">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Label>
                            </children>
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                            <children>
-                              <Label fx:id="yUncertaintyLabel" text="σY: " />
-                              <ChoiceBox fx:id="yUncertaintyChoiceBox" prefHeight="25.0" prefWidth="80.0" />
+                              <Label fx:id="yUncertaintyLabel" text="σY:">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin></Label>
+                              <Label fx:id="yUncertaintyFormatLabel" text="Format">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Label>
                            </children>
                         </HBox>
                         <Label fx:id="corrCoefLabel" text="Corr Coef (ρ)" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />

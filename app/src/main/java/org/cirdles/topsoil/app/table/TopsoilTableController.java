@@ -3,22 +3,31 @@ package org.cirdles.topsoil.app.table;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.dataset.field.NumberField;
 import org.cirdles.topsoil.app.dataset.TopsoilRawData;
 import org.cirdles.topsoil.app.dataset.NumberDataset;
+import org.cirdles.topsoil.app.plot.variable.DependentVariable;
+import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.tab.TopsoilTabContent;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.TableColumnReorderCommand;
+import org.cirdles.topsoil.app.table.TopsoilDataTable.TopsoilDataColumn;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilPlotEntry;
+import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * A class which oversees connections between the {@link TopsoilDataTable} and the {@link TopsoilTabContent} for a
@@ -49,7 +58,13 @@ public class TopsoilTableController {
      * A copy of the data in {@link TopsoilDataTable}, which is loaded into the {@code TableView} of the
      * {@link TopsoilTabContent}.
      */
-    private ObservableList<TopsoilDataEntry> tableData;
+    private ObservableList<TopsoilDataEntry> dataEntries;
+
+    /**
+     * A {@code Map} of columns to their indices in the {@code TableView}. This is used for determining where a
+     * column was moved to and from when a user clicks and drags a column.
+     */
+    private Map<TableColumn, Integer> columnsToIndices;
 
     //***********************
     // Constructors
@@ -67,43 +82,83 @@ public class TopsoilTableController {
         this.tabContent = content;
 
         // Get data from the TopsoilDataTable and put it into the TableView in TabContent.
-        this.tableData = table.getCopyOfDataAsEntries();
-        tabContent.getTableView().setItems(tableData);
+        this.dataEntries = table.getDataEntries();
+        tabContent.getTableView().setItems(dataEntries);
 
-        // Bind values in Controller's tableData and TopsoilDataTable's data.
-        ObservableList<TopsoilDataEntry> data = table.getData();
-        for (int i = 0; i < tableData.size(); i++) {
-            for (int j = 0; j < tableData.get(i).getProperties().size(); j++) {
-                data.get(i).getProperties().get(j).bind(tableData.get(i).getProperties().get(j));
+        // Bind values in Controller's dataEntries and TopsoilDataTable's data.
+        ObservableList<TopsoilDataColumn> dataColumns = table.getDataColumns();
+
+        // Apply uncertainty format to uncertainty columns, and bind DoubleProperties.
+        Double uncertaintyFormatValue = table.getUncertaintyFormat().getValue();
+        for (int colIndex = 0; colIndex < dataColumns.size(); colIndex++) {
+            final int col = colIndex;
+
+            for (int rowIndex = 0; rowIndex < dataEntries.size(); rowIndex++) {
+                final int row = rowIndex;
+
+                // TODO Detect the column's variable in a different way than its index.
+//                if (Variables.UNCERTAINTY_VARIABLES.contains(dataColumns.get(colIndex).getVariable())) {
+                if (col == 2 || col == 3) {
+                    dataEntries.get(rowIndex).getProperties().get(colIndex).set(
+                            dataEntries.get(rowIndex).getProperties().get(colIndex).get() * uncertaintyFormatValue);
+                }
+
+                // Apply changes in TableView to data columns.
+                dataEntries.get(rowIndex).getProperties().get(colIndex).addListener(c -> {
+                    Double dataValue = dataEntries.get(row).getProperties().get(col).get();
+
+                    // If the column is representing uncertainty values, apply the uncertainty format to it.
+                    // TODO Detect the column's variable in a different way than its index.
+//                    if (Variables.UNCERTAINTY_VARIABLES.contains(dataColumns.get(col).getVariable())) {
+                    if (col == 2 || col == 3) {
+                        dataColumns.get(col).get(row).set(dataValue / uncertaintyFormatValue);
+                    } else {
+                        dataColumns.get(col).get(row).set(dataValue);
+                    }
+                });
             }
         }
 
         // Listen for changes in the TableView rows
-        tableData.addListener((ListChangeListener<TopsoilDataEntry>) c -> {
+        dataEntries.addListener((ListChangeListener<TopsoilDataEntry>) c -> {
             c.next();
 
             if (c.wasAdded()) {
-                int index = c.getFrom();
-                TopsoilDataEntry newEntry = tableData.get(index).cloneEntry();
-                for (int i = 0; i < tableData.get(index).getProperties().size(); i++) {
-                    newEntry.getProperties().get(i).bind(tableData.get(index).getProperties().get(i));
+                int rowIndex = c.getFrom();
+                TopsoilDataEntry newEntry = dataEntries.get(rowIndex).cloneEntry();
+                for (int i = 0; i < dataEntries.get(rowIndex).getProperties().size(); i++) {
+                    final int colIndex = i;
+                    // Apply changes in table row to data columns
+                    dataEntries.get(rowIndex).getProperties().get(colIndex).addListener(change -> {
+                        // Account for uncertainty values
+                        // TODO Detect the column's variable in a different way than its index.
+//                        if (Variables.UNCERTAINTY_VARIABLES.contains(dataColumns.get(colIndex).getVariable())) {
+                        if (colIndex == 2 || colIndex == 3) {
+                            dataColumns.get(colIndex).get(rowIndex).set(
+                                    dataEntries.get(rowIndex).getProperties().get(colIndex).get() /
+                                    table.getUncertaintyFormat().getValue());
+                        } else {
+                            dataColumns.get(colIndex).get(rowIndex).set(dataEntries.get(rowIndex).getProperties().get
+                                    (colIndex).get());
+                        }
+                    });
                 }
-                table.getData().add(index, newEntry);
+                table.addRow(rowIndex, newEntry);
             }
 
             if (c.wasRemoved()) {
                 int index = c.getFrom();
-                table.getData().remove(index);
+                table.removeRow(index);
             }
         });
 
-        tabContent.getTableView().setItems(tableData);
-
         // Bind column names in the TableView to those headers specified in TopsoilDataTable
+        columnsToIndices = new LinkedHashMap<>();
         List<StringProperty> headers = table.getColumnNameProperties();
         List<TableColumn<TopsoilDataEntry, ?>> columns = tabContent.getTableView().getColumns();
         for (int i = 0; i < headers.size(); i++) {
             columns.get(i).textProperty().bindBidirectional(headers.get(i));
+            columnsToIndices.put(columns.get(i), i);
         }
 
         // Listen for column reordering.
@@ -113,7 +168,7 @@ public class TopsoilTableController {
             if (c.wasReplaced()) {
                 handleColumnReorder();
             }
-            resetIds();
+            resetColumnIndices();
         });
 
         // Bind isotope type
@@ -161,16 +216,57 @@ public class TopsoilTableController {
         List<Entry> entries = new ArrayList<>();
 
         // put relevant entries into entry list
-        List<TopsoilDataEntry> tableEntries = table.getCopyOfDataAsEntries();
+        List<TopsoilDataEntry> tableEntries = table.getDataEntries();
         // TODO Take data from TopsoilDataTable.data
-        for (int i = 0; i < tabContent.getTableView().getItems().size(); i ++) {
-            entries.add(new TopsoilPlotEntry());
+        for (int i = 0; i < tableEntries.size(); i ++) {
+            TopsoilPlotEntry entry = new TopsoilPlotEntry();
             for (int j = 0; j < table.getColumnNames().length; j++) {
-                double currentValue = tableEntries.get(i).getProperties().get(j).getValue();
-                entries.get(i).set(fields.get(j), currentValue);
+                entry.set(fields.get(j), tableEntries.get(i).getProperties().get(j).getValue());
             }
+            entries.add(entry);
         }
         return new TopsoilRawData<>(fields, entries);
+    }
+
+    /**
+     * Returns a {@code Collection} of the {@code Variable}s that have been assigned to columns.
+     *
+     * @return  Collection of Variables
+     */
+    public Collection<Variable<Number>> getAssignedVariables() {
+        return table.getColumnBindings().keySet();
+    }
+
+    /**
+     * Returns the data as a {@code List} of {@code Map}s of {@code String}s to {@code Object}s. The data that is
+     * returned it only data from columns which have been mapped to a variable.
+     *
+     * @return  plotting data as {@literal List<Map<String, Object>>}
+     */
+    public List<Map<String, Object>> getPlotData() {
+        List<Map<String, Object>> data = new ArrayList<>();
+        Map<Variable<Number>, TopsoilDataColumn> variablesToColumns = table.getColumnBindings();
+
+        for (int rowIndex = 0; rowIndex < dataEntries.size(); rowIndex++) {
+            Map<String, Object> entry = new HashMap<>();
+
+            // TODO Customize entry selection.
+            entry.put("Selected", true);
+
+            for (Map.Entry<Variable<Number>, TopsoilDataColumn> variableColumn : variablesToColumns.entrySet()) {
+                Object value;
+                if (variableColumn.getKey().getClass() == DependentVariable.class
+                        && UncertaintyFormat.PERCENT_FORMATS.contains(table.getUncertaintyFormat())) {
+                    value = variableColumn.getValue().get(rowIndex).get() * table.getColumnBindings().get
+                            (((DependentVariable<Number>) variableColumn.getKey()).getDependency()).get(rowIndex).get();
+                } else {
+                    value = variableColumn.getValue().get(rowIndex).get();
+                }
+                entry.put(variableColumn.getKey().getName(), value);
+            }
+            data.add(entry);
+        }
+        return data;
     }
 
     /**
@@ -196,43 +292,42 @@ public class TopsoilTableController {
         int fromIndex = -1;
         int toIndex = -1;
 
-        int[] newColumnOrder = new int[numColumns];
+        Integer[] newOrder = new Integer[numColumns];
         for (int i = 0; i < numColumns; i++) {
-            newColumnOrder[i] = Integer.parseInt(tableView.getColumns().get(i).getId());
+            newOrder[i] = columnsToIndices.get(tableView.getColumns().get(i));
         }
 
-        if (newColumnOrder[0] != 0) {
+        if (newOrder[0] != 0) {
             // if a column was dragged to the beginning
-            if (newColumnOrder[0] > 1) {
+            if (newOrder[0] > 1) {
                 toIndex = 0;
-                fromIndex = newColumnOrder[0];
+                fromIndex = newOrder[0];
                 // if the first column was dragged somewhere else
             } else {
                 fromIndex = 0;
                 toIndex = 0;
-                while (newColumnOrder[toIndex] != fromIndex) {
+                while (newOrder[toIndex] != fromIndex) {
                     toIndex++;
                 }
             }
-        } else if (newColumnOrder[numColumns - 1] != numColumns - 1) {
+        } else if (newOrder[numColumns - 1] != numColumns - 1) {
             // if a column was dragged to the end
-            if (newColumnOrder[numColumns - 1] < numColumns - 2) {
+            if (newOrder[numColumns - 1] < numColumns - 2) {
                 toIndex = numColumns - 1;
-                fromIndex = newColumnOrder[numColumns - 1];
+                fromIndex = newOrder[numColumns - 1];
                 // if the last column was dragged somewhere else
             } else {
                 fromIndex = numColumns - 1;
-                toIndex = newColumnOrder[numColumns - 1];
-                while (newColumnOrder[toIndex] != fromIndex) {
+                toIndex = newOrder[numColumns - 1];
+                while (newOrder[toIndex] != fromIndex) {
                     toIndex--;
                 }
             }
             // any other drag
         } else {
-            for (int j = 1; j < newColumnOrder.length - 2; j++) {
-                if ((newColumnOrder[j - 1] != newColumnOrder[j] - 1)
-                    && (newColumnOrder[j + 1] != newColumnOrder[j] + 1)) {
-                    fromIndex = newColumnOrder[j];
+            for (int j = 1; j <= newOrder.length - 2; j++) {
+                if ((newOrder[j - 1] != newOrder[j] - 1) && (newOrder[j + 1] != newOrder[j] + 1)) {
+                    fromIndex = newOrder[j];
                     toIndex = j;
                     break;
                 }
@@ -240,37 +335,33 @@ public class TopsoilTableController {
         }
 
         if (fromIndex >= 0 && toIndex >= 0) {
+
             // Reorder data in TopsoilDataTable
-            for (TopsoilDataEntry entry : table.getData()) {
-                entry.swap(fromIndex, toIndex);
-            }
+            TopsoilDataColumn tempColumn = table.getDataColumns().remove(fromIndex);
+            table.getDataColumns().add(toIndex, tempColumn);
+
+            table.resetVariableMapping();
 
             // Reorder column name properties in TopsoilDataTable
-            StringProperty sTemp = table.getColumnNameProperties().get(fromIndex);
-            table.getColumnNameProperties().remove(fromIndex);
-            table.getColumnNameProperties().add(toIndex, sTemp);
+            StringProperty tempName = table.getColumnNameProperties().remove(fromIndex);
+            table.getColumnNameProperties().add(toIndex, tempName);
 
-            TableColumnReorderCommand reorderCommand = new TableColumnReorderCommand(table.getColumnNameProperties(),
-                                                                                     tabContent.getTableView(),
-                                                                                     table.getData(),
-                                                                                     fromIndex, toIndex);
+            TableColumnReorderCommand reorderCommand = new TableColumnReorderCommand(this, fromIndex, toIndex);
             ((TopsoilTabPane) tabContent.getTableView().getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo
                     (reorderCommand);
         }
     }
 
     /**
-     * Resets the string ids associated with each {@code TableColumn} in the {@code TableView}.
-     * <p>Each {@code TableColumn} has an associated String id assigned to it, increasing numerically from 1, left to
-     * right. This is to keep track of the order of the columns before and after they are re-ordered due to clicking and
-     * dragging.
-     * </p>
+     * Resets the indices associated with each {@code TableColumn} in the {@code TableView}. This is done after the
+     * order has been changed so that the former and new positions of the moved column can be determined.
      */
-    private void resetIds() {
-        int id = 0;
+    public void resetColumnIndices() {
+        int index = 0;
         for (TableColumn<TopsoilDataEntry, ?> column : tabContent.getTableView().getColumns()) {
-            column.setId(Integer.toString(id));
-            id++;
+            columnsToIndices.put(column, index);
+            index++;
         }
+
     }
 }

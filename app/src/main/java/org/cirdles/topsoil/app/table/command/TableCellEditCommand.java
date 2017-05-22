@@ -29,9 +29,14 @@ public class TableCellEditCommand implements Command {
     private TopsoilTableCell cell;
 
     /**
-     * The row of the cell that was edited.
+     * The index of the row of the cell that was edited.
      */
-    private TopsoilDataEntry row;
+    private int index;
+
+    /**
+     * The {@code TableView} containing the cell that was edited.
+     */
+    private TableView<TopsoilDataEntry> tableView;
 
     /**
      * The former value of the edited cell.
@@ -55,10 +60,10 @@ public class TableCellEditCommand implements Command {
      * @param formerValue   the former Double value of the cell
      * @param newValue  the new Double value of the cell
      */
-    public TableCellEditCommand(TopsoilTableCell cell, Double formerValue,
-                         Double newValue) {
+    public TableCellEditCommand(TopsoilTableCell cell, Double formerValue, Double newValue) {
         this.cell = cell;
-        this.row = cell.getDataEntry();
+        this.tableView = cell.getTableView();
+        this.index = cell.getIndex();
         this.formerValue = formerValue;
         this.newValue = newValue;
     }
@@ -89,7 +94,7 @@ public class TableCellEditCommand implements Command {
      */
     private void changeCellValue(Double value) {
 
-        this.row.setValue(cell.getColumnIndex(), value);
+        this.tableView.getItems().get(index).setValue(cell.getColumnIndex(), value);
         this.cell.getTableColumn().setVisible(false);
         this.cell.getTableColumn().setVisible(true);
     }

@@ -34,6 +34,10 @@ plot.draw = function (data) {
         plot.currentIsotope = plot.getProperty('Isotope');
     }
 
+    if (plot.concordiaShowing == null) {
+        plot.concordiaShowing = plot.getProperty('Concordia');
+    }
+
     // defaults if no data is provided
     var xMin = plot.xMin = 0;
     var xMax = plot.xMax = 1;
@@ -115,8 +119,16 @@ plot.update = function (data) {
     //if the isotope type has changed, alert Java
     if (plot.currentIsotope != plot.getProperty('Isotope')) {
         plot.currentIsotope = plot.getProperty('Isotope');
+    }
 
-        topsoil.bridge.updateIsotope(plot.getProperty('Isotope'));
+    if (plot.currentIsotope == 'Uranium Lead') {
+        if (plot.concordiaShowing != plot.getProperty('Concordia')) {
+            plot.concordiaShowing = plot.getProperty('Concordia');
+            topsoil.bridge.updateConcordia(plot.getProperty('Concordia'));
+        }
+    } else if (plot.concordiaShowing == true) {
+        plot.concordiaShowing = false;
+        topsoil.bridge.updateConcordia(false);
     }
 
     //draw title and axis labels

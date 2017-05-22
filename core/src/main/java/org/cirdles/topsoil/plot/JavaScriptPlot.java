@@ -105,6 +105,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
     private WebView webView;
     private JSObject topsoil;
+    private final Bridge bridge = new Bridge();
 
     /**
      * Creates a new {@link JavaScriptPlot} using the specified source file.
@@ -204,7 +205,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
-                            topsoil.setMember("bridge", new Bridge());
+                            topsoil.setMember("bridge", bridge);
 
                             if (getProperties() != null) {
                                 topsoil.call("setProperties", getProperties());
@@ -240,7 +241,6 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         public void updateIsotope(String isotope) {
             Map<String, String> isoDict = new HashMap<>();
             isoDict.put("Uranium Lead", "Concordia.js");
-            System.out.println("HERE");
             if(isoDict.get(isotope) != null) {
                 //add files to webview and adjust properties panel from here
                 final URI ISOTOPE_URI = ISOTOPE_RESOURCE_EXTRACTOR
@@ -248,6 +248,22 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
                         .toUri();
                 String isotopeHtml = buildContent().concat("<script src=\"" + ISOTOPE_URI.toString() + "\"></script>\n");
                 webView.getEngine().loadContent(isotopeHtml);
+            } else {
+                runOnFxApplicationThread(() -> {
+                    webView.getEngine().loadContent(buildContent());
+                });
+            }
+        }
+        public void updateConcordia(Boolean shouldShow) {
+            if (shouldShow) {
+                runOnFxApplicationThread(() -> {
+                    //add files to webview and adjust properties panel from here
+                    final URI ISOTOPE_URI = ISOTOPE_RESOURCE_EXTRACTOR
+                            .extractResourceAsPath("Concordia.js")
+                            .toUri();
+                    String isotopeHtml = buildContent().concat("<script src=\"" + ISOTOPE_URI.toString() + "\"></script>\n");
+                    webView.getEngine().loadContent(isotopeHtml);
+                });
             } else {
                 runOnFxApplicationThread(() -> {
                     webView.getEngine().loadContent(buildContent());

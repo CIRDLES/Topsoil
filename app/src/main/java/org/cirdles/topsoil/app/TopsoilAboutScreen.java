@@ -98,13 +98,6 @@ public class TopsoilAboutScreen extends Pane {
     /** {@inheritDoc}
      */
     @FXML public void initialize() {
-        assert topsoilLogo != null : "fx:id=\"topsoilLogo\" was not injected: check your FXML file " +
-                                    "'topsoil-about-screen.fxml'.";
-        assert github != null : "fx:id=\"github\" was not injected: check your FXML file 'topsoil-about-screen.fxml'.";
-        assert cirdles != null : "fx:id=\"cirdles\" was not injected: check your FXML file 'topsoil-about-screen.fxml'.";
-        assert releaseLog != null : "fx:id=\"releaseLog\" was not injected: check your FXML file " +
-                                    "'topsoil-about-screen.fxml'.";
-
         topsoilLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
         cirdlesLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
 
