@@ -282,9 +282,9 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return svgDocument;
     }
 
-    public void reset() {
+    public void recenter() {
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("reset"));
+            runOnFxApplicationThread(() -> topsoil.call("recenter"));
         }
     }
 

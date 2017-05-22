@@ -67,9 +67,9 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                 new SVGSaver().save(javaScriptPlot.displayAsSVGDocument());
             });
 
-            Button reset = new Button("Reset");
+            Button reset = new Button("Re-center");
             reset.setOnAction(mouseEvent -> {
-                javaScriptPlot.reset();
+                javaScriptPlot.recenter();
             });
 
             Text loadingIndicator = new Text("Loading...");

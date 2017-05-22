@@ -208,8 +208,8 @@ plot.update = function (data) {
     plot.updateEllipses(plot.cacheData);
     plot.exit();
 
-    //reset the plot to its original view
-    var reset = topsoil.reset = function() {
+    //recenter the plot to its original view
+    var recenter = topsoil.recenter = function() {
         d3.transition().duration(750).tween("zoom", function() {
             var ix = d3.interpolate(plot.x.domain(), [plot.xMin, plot.xMax]);
             var iy = d3.interpolate(plot.y.domain(), [plot.yMin, plot.yMax]);
