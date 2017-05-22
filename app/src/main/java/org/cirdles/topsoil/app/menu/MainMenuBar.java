@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
+import static org.cirdles.topsoil.app.MainWindow.verifyFinalSave;
 import org.cirdles.topsoil.app.TopsoilAboutScreen;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.menu.command.ClearTableCommand;
@@ -230,7 +231,22 @@ public class MainMenuBar extends MenuBar {
         closeProjectItem.setOnAction(event -> MenuItemEventHandler.handleCloseProjectFile(tabs));
 
         exitItem.setOnAction(event -> {
-            Platform.exit();
+            Boolean save = verifyFinalSave();
+            // If save verification was not cancelled
+            if (save != null) {
+                if (save) {
+                    // If file was successfully saved
+                    if (MenuItemEventHandler.handleSaveAsProjectFile(tabs)) {
+                        Platform.exit();
+                    }
+                    // If user doesn't want to save
+                } else {
+                    Platform.exit();
+                }
+            } // If nothing is open.
+            else {
+                Platform.exit();
+            }
         });
         
         projectMenu.getItems()
