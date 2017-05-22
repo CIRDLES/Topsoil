@@ -49,7 +49,7 @@ plot.draw = function (data) {
 
     //create title
     plot.area.append("text")
-        .attr("class", "title text")
+        .attr("class", "titleText")
         .attr("font-family", "sans-serif")
         .attr("font-size", "20px")
         .attr("x", plot.width / 2)
@@ -142,9 +142,16 @@ plot.update = function (data) {
     }
 
     //draw title and axis labels
-    d3.select(".title.text").text(plot.getProperty("Title"));
-    d3.select(".x.axis .label").text(plot.getProperty("X Axis"));
-    d3.select(".y.axis .label").text(plot.getProperty("Y Axis"));
+    d3.select(".titleText")
+        .text(plot.getProperty("Title"))
+        .attr("x", (plot.width / 2) - (d3.select(".titleText").node().getBBox().width) / 2);
+
+    d3.select(".x.axis .label")
+        .text(plot.getProperty("X Axis"))
+        .attr("x", (plot.width) - (d3.select(".x.axis .label").node().getBBox().width));
+    d3.select(".y.axis .label")
+        .text(plot.getProperty("Y Axis"))
+        .attr("x",  -(d3.select(".y.axis .label").node().getBBox().width));
 
     //draw the axes
     var xAxis = d3.svg.axis()
