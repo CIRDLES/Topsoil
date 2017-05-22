@@ -237,7 +237,7 @@ public class MainWindow extends Application {
      *
      * @return true if saving, false if not, null if cancelled
      */
-    private static Boolean verifyFinalSave() {
+    public static Boolean verifyFinalSave() {
         final AtomicReference<Boolean> reference = new AtomicReference<>(null);
         Alert verification = new Alert(Alert.AlertType.CONFIRMATION,
                 "Would you like to save your work?",

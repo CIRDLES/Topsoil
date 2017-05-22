@@ -172,6 +172,45 @@ public class MenuItemEventHandler {
     }
 
     /**
+     * Handles the opening of sample data table for a given isotope type.
+     *
+     * @param tabs  the TopsoilTabPane to which to add tables
+     * @param isotopeType the isotope type of the example table to be opened
+     */
+    public static TopsoilDataTable handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
+        TopsoilDataTable table = null;
+
+        if (isotopeType != null) {
+            File file = FileParser.openExampleTable(isotopeType);
+
+            if(file != null) {
+                
+                List<TopsoilDataEntry> entries = null;
+                String[] headers = null;
+                try {
+                    headers = FileParser.parseHeaders(file);
+                    entries = FileParser.parseFile(file, true);
+
+                } catch (IOException ex) { }
+
+                if (entries == null) {
+                        table = null;
+                    } else {
+                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                        table = new TopsoilDataTable(headers, isotopeType, data.toArray(new TopsoilDataEntry[data.size()]));
+                        table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+                }
+                
+            }
+            // If no sample data table is found, an empty table is returned.
+            else {
+                table = new TopsoilDataTable(null, isotopeType, new TopsoilDataEntry[]{});
+            }
+        }
+        return table;
+    }
+    
+    /**
      * Open default browser and create a new GitHub issue with user specifications already supplied
      * */
     public static void handleReportIssue() {

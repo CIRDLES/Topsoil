@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
+import org.cirdles.topsoil.app.isotope.IsotopeType;
 
 /**
  * A utility file used for parsing data from files into arrays of {@code String}s, which can then be put into a table.
@@ -98,6 +99,39 @@ public class FileParser {
         return TopsoilFileChooser
                 .getTableFileChooser()
                 .showOpenDialog(stage);
+    }
+    
+    /**
+     * Opens a {@code File} containing example data for a given isotopeType.
+     *
+     * @param isotopeType the isotope system to get a relevant set of data
+     * @return  the ressource File located in project resources
+     */
+    public static File openExampleTable(IsotopeType isotopeType) {
+        File file = null;
+        Alerter alerter = new ErrorAlerter();
+        if(isotopeType.equals(IsotopeType.UPb)) {
+            file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UPb-Example-Data.csv");
+            if(file.exists())
+                return file;
+            else
+                alerter.alert("UPb Sample data table not found. Please check the resource directory.");
+        }
+        else if(isotopeType.equals(IsotopeType.UTh)) {
+            file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/UTh-Example-Data.csv");
+            if(file.exists())
+                return file;
+            else
+                alerter.alert("UTh Sample data table not found. Please check the resource directory.");
+            
+            return file;
+        }
+        file = new File("src/main/resources/org/cirdles/topsoil/app/sampledata/Generic-Example-Data.csv");
+        if(!(file.exists())) {
+            alerter.alert("No sample data table found. Please check the resource directory.");
+            return null;
+        }
+        return file;
     }
 
     /**

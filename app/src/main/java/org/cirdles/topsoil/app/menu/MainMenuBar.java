@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
+import static org.cirdles.topsoil.app.MainWindow.verifyFinalSave;
 import org.cirdles.topsoil.app.TopsoilAboutScreen;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.menu.command.ClearTableCommand;
@@ -19,6 +20,7 @@ import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
 import java.io.IOException;
+import javafx.application.Platform;
 
 import static org.cirdles.topsoil.app.menu.MenuItemEventHandler.*;
 
@@ -50,7 +52,7 @@ public class MainMenuBar extends MenuBar {
      */
     private final String TOPSOIL_ABOUT_SCREEN_FXML_NAME = "../topsoil-about-screen.fxml";
 
-    // File Menu
+    // Project Menu
     /**
      * When clicked, opens a new .topsoil project file.
      */
@@ -70,6 +72,11 @@ public class MainMenuBar extends MenuBar {
      * When clicked, closes the current open project file.
      */
     private MenuItem closeProjectItem;
+    
+    /**
+     * When clicked, exits Topsoil.
+     */
+    private MenuItem exitItem;
 
     // Edit Menu
     /**
@@ -113,6 +120,17 @@ public class MainMenuBar extends MenuBar {
      */
     private MenuItem tableFromClipboardItem;
 
+    // Example Table >
+    /**
+     * When clicked, imports sample UPb data table 
+     */
+    private MenuItem uPbExampleTableItem;
+    /**
+     * When clicked, imports sample UTh data table 
+     */
+    private MenuItem uThExampleTableItem;
+
+    
     // Table > Isotope System >
     /**
      * When clicked, changes the table's {@code IsotopeType} to Generic.
@@ -159,8 +177,8 @@ public class MainMenuBar extends MenuBar {
      */
     private void initialize(TopsoilTabPane tabs) {
 
-        // File Menu
-        Menu fileMenu = getFileMenu(tabs);
+        // Project Menu
+        Menu projectMenu = getProjectMenu(tabs);
 
         // Edit Menu
         Menu editMenu = getEditMenu(tabs);
@@ -176,7 +194,7 @@ public class MainMenuBar extends MenuBar {
 
         // Add menus to menuBar
         menuBar.getMenus()
-                .addAll(fileMenu,
+                .addAll(projectMenu,
                         editMenu,
                         tableMenu,
                         plotMenu,
@@ -184,19 +202,20 @@ public class MainMenuBar extends MenuBar {
     }
 
     /**
-     * Creates and returns the 'File' menu.
+     * Creates and returns the 'Project' menu.
      *
      * @param tabs  TopsoilTabPane for the window
-     * @return  'File' Menu
+     * @return  'Project' Menu
      */
-    private Menu getFileMenu(TopsoilTabPane tabs) {
-        Menu fileMenu = new Menu("File");
+    private Menu getProjectMenu(TopsoilTabPane tabs) {
+        Menu projectMenu = new Menu("Project");
 //        newProjectItem = new MenuItem("New Project");
         saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
         openProjectItem = new MenuItem("Open Project");
         closeProjectItem = new MenuItem("Close Project");
 //        mostRecentItem = new MenuItem("Most Recently Used");
+        exitItem = new MenuItem("Exit Topsoil");
 
         openProjectItem.setOnAction(event -> MenuItemEventHandler
                 .handleOpenProjectFile(tabs));
@@ -211,7 +230,26 @@ public class MainMenuBar extends MenuBar {
 
         closeProjectItem.setOnAction(event -> MenuItemEventHandler.handleCloseProjectFile(tabs));
 
-        fileMenu.getItems()
+        exitItem.setOnAction(event -> {
+            Boolean save = verifyFinalSave();
+            // If save verification was not cancelled
+            if (save != null) {
+                if (save) {
+                    // If file was successfully saved
+                    if (MenuItemEventHandler.handleSaveAsProjectFile(tabs)) {
+                        Platform.exit();
+                    }
+                    // If user doesn't want to save
+                } else {
+                    Platform.exit();
+                }
+            } // If nothing is open.
+            else {
+                Platform.exit();
+            }
+        });
+        
+        projectMenu.getItems()
                 .addAll(
 //                        newProjectItem,
                         openProjectItem,
@@ -220,15 +258,17 @@ public class MainMenuBar extends MenuBar {
                         saveProjectItem,
                         saveProjectAsItem
 //                        , mostRecentItem
+                        ,new SeparatorMenuItem()
+                        ,exitItem
                 );
 
-        fileMenu.setOnShown(event -> {
+        projectMenu.setOnShown(event -> {
             saveProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
             saveProjectAsItem.setDisable(tabs.isEmpty());
             closeProjectItem.setDisable(!TopsoilSerializer.isProjectOpen());
         });
 
-        return fileMenu;
+        return projectMenu;
     }
 
     /**
@@ -295,10 +335,10 @@ public class MainMenuBar extends MenuBar {
      */
     private Menu getTableMenu(TopsoilTabPane tabs) {
         Menu tableMenu = new Menu("Table");
-        newTableItem = new MenuItem("New Table");
-        saveTableItem = new MenuItem("Save Table");
-        saveTableAsItem = new MenuItem("Save Table As");
-        clearTableItem = new MenuItem("Clear Table");
+        newTableItem = new MenuItem("New Data Table");
+        saveTableItem = new MenuItem("Save Data Table");
+        saveTableAsItem = new MenuItem("Save Data Table As");
+        clearTableItem = new MenuItem("Clear Data Table");
 
         // New, empty table
         newTableItem.setOnAction(event -> {
@@ -313,9 +353,9 @@ public class MainMenuBar extends MenuBar {
         });
 
         //Saves the currently opened table
-        saveTableItem = new MenuItem("Save Table");
+        saveTableItem = new MenuItem("Save Data Table");
         //Saves the currently opened table as a specified file
-        saveTableAsItem = new MenuItem("Save Table As");
+        saveTableAsItem = new MenuItem("Save Data Table As");
 
         clearTableItem.setOnAction(action -> {
             // clear table and add an empty row
@@ -326,13 +366,32 @@ public class MainMenuBar extends MenuBar {
         });
 
         //Creates Submenu for Imports
-        Menu importTable = new Menu("Import Table");
+        Menu importTable = new Menu("Import Data Table");
         tableFromFileItem = new MenuItem("From File");
         tableFromClipboardItem = new MenuItem("From Clipboard");
         importTable.getItems().addAll(
                 tableFromFileItem,
                 tableFromClipboardItem);
 
+        //Creates Submenu for Example Table
+        Menu exampleTable = new Menu("Open Example Data Table");
+        uPbExampleTableItem = new MenuItem("Uranium-Lead");
+        uThExampleTableItem = new MenuItem("Uranium-Thorium");
+        exampleTable.getItems().addAll(
+                uPbExampleTableItem,
+                uThExampleTableItem);
+        
+        uPbExampleTableItem.setOnAction(event -> {
+            TopsoilDataTable table = MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UPb);
+            tabs.add(table);
+        });
+        
+        uThExampleTableItem.setOnAction(event -> {
+            TopsoilDataTable table = MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UTh);
+            tabs.add(table);
+        });
+
+        
         // Import Table from File
         tableFromFileItem.setOnAction(event -> {
 
@@ -399,14 +458,15 @@ public class MainMenuBar extends MenuBar {
         });
 
         tableMenu.getItems()
-                 .addAll(newTableItem,
+                 .addAll(importTable,
+                         exampleTable,
                          new SeparatorMenuItem(),
                          saveTableItem,
                          saveTableAsItem,
                          new SeparatorMenuItem(),
+                         newTableItem,
                          clearTableItem,
                          new SeparatorMenuItem(),
-                         importTable,
                          isoSystem);
 
         tableMenu.setOnShown(event -> {
