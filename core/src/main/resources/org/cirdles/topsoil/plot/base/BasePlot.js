@@ -27,6 +27,9 @@ plot.propertiesKeys = [
     'Concordia',
     'Isotope'];
 
+plot.dataGroup = plot.area.clipped.append("g")
+    .attr("class", "dataGroup");
+
 plot.draw = function (data) {
 
     //initialize plot.currentIsotope
@@ -48,6 +51,7 @@ plot.draw = function (data) {
     plot.area.append("text")
         .attr("class", "title text")
         .attr("font-family", "sans-serif")
+        .attr("font-size", "20px")
         .attr("x", plot.width / 2)
         .attr("y", -50);
 
@@ -57,6 +61,7 @@ plot.draw = function (data) {
         .attr("transform", "translate(0," + plot.height + ")")
         .append("text")
         .attr("class", "label")
+        .style("font-size", "16px")
         .attr("x", plot.width / 2)
         .attr("y", 35);
 
@@ -66,9 +71,10 @@ plot.draw = function (data) {
         .append("text")
         .attr("class", "label")
         .attr("transform", "rotate(-90)")
+        .style("font-size", "16px")
         .attr("x", -plot.height / 2)
         .attr("y", -50)
-        .attr("dy", ".71em");
+        .attr("dy", ".1em");
 
     //find the extent of the points
     if (data.length > 0) {
@@ -108,9 +114,9 @@ plot.draw = function (data) {
     //calculate constants used to draw ellipses
     plot.cacheData = plot.calcEllipses(data);
 
-    if(plot.getProperty('Isotope') != 'Generic') {
-        plot.linkIsotopeFeatures("draw");
-    }
+    // if(plot.getProperty('Isotope') != 'Generic') {
+    //     plot.linkIsotopeFeatures("draw");
+    // }
 
     plot.update(data);
 };
@@ -122,13 +128,17 @@ plot.update = function (data) {
     }
 
     if (plot.currentIsotope == 'Uranium Lead') {
-        if (plot.concordiaShowing != plot.getProperty('Concordia')) {
-            plot.concordiaShowing = plot.getProperty('Concordia');
-            topsoil.bridge.updateConcordia(plot.getProperty('Concordia'));
+        if (plot.concordiaIsShowing != plot.getProperty('Concordia')) {
+            // topsoil.bridge.updateConcordia(plot.getProperty('Concordia'));
+            if (plot.getProperty('Concordia')) {
+                plot.drawConcordia();
+            } else {
+                plot.removeConcordia();
+            }
         }
-    } else if (plot.concordiaShowing == true) {
+    } else if (plot.concordiaIsShowing == true) {
         plot.concordiaShowing = false;
-        topsoil.bridge.updateConcordia(false);
+        plot.removeConcordia();
     }
 
     //draw title and axis labels
@@ -162,15 +172,14 @@ plot.update = function (data) {
         .attr("stroke", "black")
         .attr("shape-rendering", "geometricPrecision"); // see SVG docs
 
-    if(plot.getProperty('Isotope') != 'Generic') {
-        plot.linkIsotopeFeatures("update");
+    if (plot.concordiaIsShowing) {
+        plot.updateConcordia();
     }
 
     plot.drawEllipses(plot.cacheData);
 
     // the data join (http://bost.ocks.org/mike/join/)
-    var points = plot.area.clipped
-        .selectAll(".point")
+    var points = plot.dataGroup.selectAll(".point")
         .data(data);
 
     // initialize new points
@@ -225,10 +234,6 @@ plot.exit = function() {
     if(plot.getProperty('Ellipses') === true) {
         var ellipses = plot.ellipses;
         ellipses.exit().remove();
-    }
-
-    if(plot.getProperty('Isotope') != 'Generic') {
-        plot.linkIsotopeFeatures("exit");
     }
 };
 
@@ -299,9 +304,10 @@ plot.calcEllipses = function(data) {
 };
 
 plot.drawEllipses = function(cacheData) {
-    var ellipses = plot.ellipses = plot.area.clipped.selectAll(".ellipse")
+    var ellipses = plot.ellipses = plot.dataGroup.selectAll(".ellipse")
         .data(cacheData);
 
+    // TODO "fill-opacity" should be a property
     ellipses.enter().append("path")
         .attr("class", "ellipse")
         .attr("fill-opacity", 0.3)
@@ -353,21 +359,4 @@ plot.updateEllipses = function() {
 plot.setEllipseVisibility = function (data) {
     d3.selectAll(".ellipse")
         .style("opacity", plot.getProperty('Ellipses') ? 1 : 0);
-};
-
-plot.linkIsotopeFeatures = function(feature) {
-    switch (feature) {
-        case "draw":
-            if(plot.drawIsotopeFeatures != null)
-                plot.drawIsotopeFeatures();
-            break;
-        case "update":
-            if(plot.updateIsotopeFeatures != null)
-                plot.updateIsotopeFeatures();
-            break;
-        case "exit":
-            if(plot.exitIsotopeFeatures != null)
-                plot.exitIsotopeFeatures();
-            break;
-    }
 };

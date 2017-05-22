@@ -1,37 +1,37 @@
 /**
- * Created by Emily on 2/24/17.
+ * @author Emily Coleman
  */
 
-plot.drawIsotopeFeatures = function() {
-    plot.drawConcordia();
-};
+if (plot.concordiaIsShowing == null) {
+    plot.concordiaIsShowing = false;
+}
 
-plot.updateIsotopeFeatures = function() {
-    plot.updateConcordia();
-};
-
-plot.exitIsotopeFeatures = function() {
-     plot.concordiaTicks.exit().remove();
-     plot.tickLabels.exit().remove();
-};
+// plot.concordiaGroup = plot.area.clipped.insert("g", ".dataGroup")
+//     .attr("class", ".concordiaGroup");
 
 plot.drawConcordia = function() {
 
+    plot.concordiaGroup = plot.area.clipped.insert("g", ".dataGroup")
+        .attr("class", "concordiaGroup");
+
     // initialize the concordia envelope
-    plot.area.clipped.append("path")
+    plot.concordiaGroup.append("path")
         .attr("class", "uncertaintyEnvelope")
         .attr("fill", "lightgray")
         .attr("stroke", "none")
         .attr("shape-rendering", "geometricPrecision");
 
     // initialize the concordia
-    plot.area.clipped.append("path")
+    plot.concordiaGroup.append("path")
         .attr("class", "concordia")
         .attr("fill", "none")
         .attr("stroke", "blue")
-        //.attr("stroke-width", "Uncertainty")
         .attr("stroke-width", 2)
         .attr("shape-rendering", "geometricPrecision");
+
+    plot.updateConcordia();
+
+    plot.concordiaIsShowing = true;
 };
 
 plot.updateConcordia = function() {
@@ -65,7 +65,7 @@ plot.updateConcordia = function() {
         newtonMethod(wetherill.y, y.domain()[1]));
 
     // build the concordia line
-    plot.area.clipped.select(".concordia")
+    plot.concordiaGroup.select(".concordia")
         .attr("d", function () {
             var approximateSegment = function (path, minT, maxT) {
                 var p1 = wetherill(minT).plus(
@@ -96,7 +96,7 @@ plot.updateConcordia = function() {
             return path.join("");
         });
 
-    plot.area.clipped.select(".uncertaintyEnvelope")
+    plot.concordiaGroup.select(".uncertaintyEnvelope")
         .attr("d", function () {
             var approximateUpperSegment = function (path, minT, maxT) {
                 var p1 = wetherill.upperEnvelope(minT).plus(
@@ -173,7 +173,7 @@ plot.updateConcordia = function() {
     plot.t.domain([minT, maxT]);
 
     var concordiaTicks;
-    (concordiaTicks = plot.concordiaTicks = plot.area.clipped.selectAll(".concordiaTicks")
+    (concordiaTicks = plot.concordiaTicks = plot.concordiaGroup.selectAll(".concordiaTicks")
         .data(plot.t.ticks()))
         .enter()
         .append("circle")
@@ -185,7 +185,7 @@ plot.updateConcordia = function() {
         .attr("cy", function (t) { return y(wetherill.y(t)); });
 
     var tickLabels;
-    (tickLabels = plot.tickLabels = plot.area.clipped.selectAll(".tickLabel")
+    (tickLabels = plot.tickLabels = plot.concordiaGroup.selectAll(".tickLabel")
         .data(plot.t.ticks()))
         .enter()
         .append("text")
@@ -197,15 +197,11 @@ plot.updateConcordia = function() {
         .attr("y", function (t) { return y(wetherill.y(t)) + 5; })
         .text(function (t) { return t / 1000000; });
 
+    plot.concordiaTicks.exit().remove();
+    plot.tickLabels.exit().remove();
 };
 
-plot.setConcordiaVisibility = function (isVisible) {
-    d3.selectAll(".concordiaTick")
-        .style("opacity", isVisible ? 1 : 0);
-    d3.selectAll(".tickLabel")
-        .style("opacity", isVisible ? 1 : 0);
-    d3.selectAll(".uncertaintyEnvelope")
-        .style("opacity", isVisible ? 1 : 0);
-    d3.selectAll(".concordia")
-        .style("opacity", isVisible ? 1 : 0);
+plot.removeConcordia = function() {
+    plot.concordiaGroup.remove();
+    plot.concordiaIsShowing = false;
 };
