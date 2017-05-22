@@ -79,16 +79,16 @@ plot.draw = function (data) {
     //find the extent of the points
     if (data.length > 0) {
         var dataXMin = d3.min(data, function (d) {
-            return d.x;
+            return d.x - (d.sigma_x * plot.getProperty("Uncertainty"));
         });
         var dataYMin = d3.min(data, function (d) {
-            return d.y;
+            return d.y - (d.sigma_y * plot.getProperty("Uncertainty"));
         });
         var dataXMax = d3.max(data, function (d) {
-            return d.x;
+            return d.x + (d.sigma_x * plot.getProperty("Uncertainty"));
         });
         var dataYMax = d3.max(data, function (d) {
-            return d.y;
+            return d.y + (d.sigma_y * plot.getProperty("Uncertainty"));
         });
 
         var xRange = dataXMax - dataXMin;
