@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.plot;
 
+import com.sun.org.apache.regexp.internal.RE;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Bounds;
@@ -162,9 +163,13 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
         ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(JavaScriptPlot.class);
 
-        final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/Concordia.js").toUri();
+        final URI POINTS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Points.js").toUri();
+        final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Ellipses.js").toUri();
+        final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Concordia.js").toUri();
 
         return String.format(HTML_TEMPLATE, sourcePath.toUri()).concat(
+                "<script src=\"" + POINTS_URI.toString() + "\"></script>\n" +
+                "<script src=\"" + ELLIPSES_URI.toString() + "\"></script>\n" +
                 "<script src=\"" + CONCORDIA_URI.toString() + "\"></script>\n"
         );
     }

@@ -47,7 +47,7 @@
             plot.properties[key] = properties.get(key);
         });
 
-        plot.draw(ts.data);
+        plot.update(ts.data);
     };
 
     /*
