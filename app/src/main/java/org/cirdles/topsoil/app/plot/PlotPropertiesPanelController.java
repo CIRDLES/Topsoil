@@ -424,8 +424,6 @@ public class PlotPropertiesPanelController {
         yAxisTextField.setText((String) PROPERTIES.get(Y_AXIS));
 
         pointsCheckBox.setSelected((Boolean) PROPERTIES.get(POINTS));
-        // TODO Enable point toggling
-        pointsCheckBox.setDisable(true);
         ellipsesCheckBox.setSelected((Boolean) PROPERTIES.get(ELLIPSES));
 //        crossesCheckBox.setSelected((Boolean) PROPERTIES.get(CROSSES));
         // TODO Implement Crosses

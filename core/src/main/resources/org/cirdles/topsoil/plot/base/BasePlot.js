@@ -44,7 +44,6 @@ if (plot.initialized == null) {
     beginning.
  */
 plot.initialize = function (data) {
-    topsoil.bridge.println("plot.initialize() called");
 
     //create title
     plot.area.append("text")
@@ -317,7 +316,6 @@ plot.manageEllipses = function (data) {
 
     // If ellipses should NOT be visible, but are...
     else if (plot.ellipsesVisible) {
-        topsoil.bridge.println("Removing Ellipses");
         plot.removeEllipses();
     }
 };

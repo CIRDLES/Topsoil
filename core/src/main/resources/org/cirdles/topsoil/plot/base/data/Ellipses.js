@@ -54,7 +54,6 @@ plot.drawEllipses = function(ellipseData) {
 
     // Removes ellipses before re-drawing them
     if (plot.ellipsesVisible) {
-        topsoil.bridge.println("HERE");
         plot.removeEllipses();
     }
 
@@ -89,13 +88,11 @@ plot.drawEllipses = function(ellipseData) {
 
 
     plot.ellipsesVisible = true;
-    topsoil.bridge.println("End of plot.updateEllipses");
     plot.updateEllipses();
 };
 
 plot.updateEllipses = function() {
     //don't redraw ellipses if they're not visible
-    topsoil.bridge.println("plot.ellipsesVisible: " + plot.ellipsesVisible);
     if (plot.ellipsesVisible) {
         var ellipses = plot.ellipses;
 
