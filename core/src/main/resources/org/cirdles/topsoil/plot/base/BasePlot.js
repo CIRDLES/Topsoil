@@ -345,6 +345,8 @@ plot.managePlotFeatures = function () {
         else if (plot.concordiaVisible) {
             plot.removeConcordia();
         }
+    } else if (plot.concordiaVisible) {
+        plot.removeConcordia();
     }
 };
 
@@ -355,17 +357,4 @@ plot.removePlotFeatures = function () {
 
     plot.removeConcordia();
 
-};
-
-plot.cubicBezier = function (path, p1, p2, p3) {
-    path.push(
-        "C", p1[0], ",", p1[1],
-        ",", p2[0], ",", p2[1],
-        ",", p3[0], ",", p3[1]);
-};
-
-//show and hide ellipses
-plot.setEllipseVisibility = function (data) {
-    d3.selectAll(".ellipse")
-        .style("opacity", plot.getProperty('Ellipses') ? 1 : 0);
 };
