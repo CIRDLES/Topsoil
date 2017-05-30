@@ -96,6 +96,11 @@ plot.updateEllipses = function() {
     if (plot.ellipsesVisible) {
         var ellipses = plot.ellipses;
 
+        // ellipses.enter().append("path")
+        //     .attr("class", "ellipse")
+        //     .attr("fill-opacity", 0.3)
+        //     .attr("stroke", "black");
+
         ellipses.attr("d", function (d) {
                 var ellipsePath = d3.svg.line()
                     .x(function (datum) {

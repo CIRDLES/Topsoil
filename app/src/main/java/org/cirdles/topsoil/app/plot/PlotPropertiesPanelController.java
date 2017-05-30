@@ -97,6 +97,12 @@ public class PlotPropertiesPanelController {
     @FXML private CheckBox concordiaCheckBox;
 
     /**
+     * An {@code HBox} containing the controls for the evolution matrix feature.
+     */
+    @FXML private HBox evolutionFeature;
+    @FXML private CheckBox evolutionCheckBox;
+
+    /**
      * A {@code Button} that, when pressed, generates a {@link Plot} with the current options for the current table.
      */
     @FXML private Button generatePlotButton;
@@ -161,16 +167,20 @@ public class PlotPropertiesPanelController {
 
                 switch (getIsotopeType()) {
                     case Generic:
-                        concordiaFeature.setVisible(false);
+                        concordiaCheckBox.setDisable(true);
+                        evolutionCheckBox.setDisable(true);
                         break;
                     case UPb:
-                        concordiaFeature.setVisible(true);
+                        concordiaCheckBox.setDisable(false);
+                        evolutionCheckBox.setDisable(true);
                         break;
                     case UTh:
-                        concordiaFeature.setVisible(false);
+                        concordiaCheckBox.setDisable(true);
+                        evolutionCheckBox.setDisable(false);
                         break;
                     default:
-                        concordiaFeature.setVisible(false);
+                        concordiaCheckBox.setDisable(true);
+                        evolutionCheckBox.setDisable(true);
                         break;
                 }
             });
@@ -388,6 +398,24 @@ public class PlotPropertiesPanelController {
         concordiaCheckBox.setSelected(b);
     }
 
+    /**
+     * A {@code BooleanProperty} tracking whether or not an evolution matrix should be drawn in the plot.
+     */
+    private BooleanProperty showEvolutionMatrix;
+    public final BooleanProperty showEvolutionMatrixProperty() {
+        if (showEvolutionMatrix == null) {
+            showEvolutionMatrix = new SimpleBooleanProperty(evolutionCheckBox.isSelected());
+            showEvolutionMatrix.bind(evolutionCheckBox.selectedProperty());
+        }
+        return showEvolutionMatrix;
+    }
+    public Boolean shouldShowEvolutionMatrix() {
+        return showEvolutionMatrixProperty().get();
+    }
+    public void setShowEvolutionMatrix(Boolean b) {
+        evolutionCheckBox.setSelected(b);
+    }
+
     //***********************
     // Methods
     //***********************
@@ -417,8 +445,6 @@ public class PlotPropertiesPanelController {
             }
         }
 
-//        uncertaintyChoiceBox.getSelectionModel().select(UNCERTAINTY_FORMAT_TO_STRING.get(PlotUncertaintyFormats.TWO_SIGMA_ABSOLUTE));
-
         titleTextField.setText((String) PROPERTIES.get(TITLE));
         xAxisTextField.setText((String) PROPERTIES.get(X_AXIS));
         yAxisTextField.setText((String) PROPERTIES.get(Y_AXIS));
@@ -437,13 +463,11 @@ public class PlotPropertiesPanelController {
 
         concordiaCheckBox.setSelected((Boolean) PROPERTIES.get(CONCORDIA_LINE));
 
+        evolutionCheckBox.setSelected((Boolean) PROPERTIES.get(EVOLUTION_MATRIX));
+
         // Automatically adjust PROPERTIES
         isotopeTypeObjectProperty().addListener(c -> {
             PROPERTIES.put(ISOTOPE_TYPE, isotopeTypeObjectProperty().get().getName());
-            // Ensures that Concordia is never shown outside of UPb, while preserving the user's value in the CheckBox
-//            if (isotopeTypeObjectProperty().get() != IsotopeType.UPb) {
-//                PROPERTIES.put(CONCORDIA_LINE, false);
-//            }
             updateProperties();
         });
         isotopeSystemChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
@@ -505,8 +529,10 @@ public class PlotPropertiesPanelController {
             PROPERTIES.put(CONCORDIA_LINE, shouldShowConcordia());
             updateProperties();
         });
-
-
+        showEvolutionMatrixProperty().addListener(c -> {
+            PROPERTIES.put(EVOLUTION_MATRIX, shouldShowEvolutionMatrix());
+            updateProperties();
+        });
     }
 
     /**
@@ -575,7 +601,8 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(ISOTOPE_TYPE)) setIsotopeType(STRING_TO_ISOTOPE_TYPE.get((String) plotProperties.get(ISOTOPE_TYPE)));
         if (plotProperties.containsKey(UNCERTAINTY)) setUncertainty(DOUBLE_TO_UNCERTAINTY_FORMAT.get(
                 (Double) plotProperties.get(UNCERTAINTY)));
-        if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) PROPERTIES.get(CONCORDIA_LINE));
+        if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) plotProperties.get(CONCORDIA_LINE));
+        if (plotProperties.containsKey(EVOLUTION_MATRIX)) setShowEvolutionMatrix((Boolean) plotProperties.get(EVOLUTION_MATRIX));
     }
 
     /**

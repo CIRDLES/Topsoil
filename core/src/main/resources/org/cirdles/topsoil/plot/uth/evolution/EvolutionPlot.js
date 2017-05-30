@@ -132,10 +132,10 @@
             var xRange = dataXMax - dataXMin;
             var yRange = dataYMax - dataYMin;
 
-            xMin = dataXMin - 0.05 * xRange;
-            yMin =  dataYMin - 0.05 * yRange;
-            xMax = dataXMax + 0.05 * xRange;
-            yMax = dataYMax + 0.05 * yRange;
+            xDataMin = dataXMin - 0.05 * xRange;
+            yDataMin =  dataYMin - 0.05 * yRange;
+            xDataMax = dataXMax + 0.05 * xRange;
+            yDataMax = dataYMax + 0.05 * yRange;
         }*/
 
         x.domain([xMin, xMax]);

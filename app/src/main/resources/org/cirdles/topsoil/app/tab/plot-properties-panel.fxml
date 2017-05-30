@@ -155,9 +155,14 @@
                               <Label alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="Features" textAlignment="CENTER" underline="true" />
                               <VBox fx:id="featureBox">
                                  <children>
-                                    <HBox fx:id="concordiaFeature" prefHeight="100.0" prefWidth="200.0">
+                                    <HBox fx:id="concordiaFeature" alignment="CENTER_LEFT">
                                        <children>
-                                          <CheckBox fx:id="concordiaCheckBox" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Wetherill Concordia Line" />
+                                          <CheckBox fx:id="concordiaCheckBox" minHeight="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Wetherill Concordia Line" />
+                                       </children>
+                                    </HBox>
+                                    <HBox fx:id="evolutionFeature" alignment="CENTER_LEFT">
+                                       <children>
+                                          <CheckBox fx:id="evolutionCheckBox" minHeight="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Evolution Matrix" />
                                        </children>
                                     </HBox>
                                  </children>

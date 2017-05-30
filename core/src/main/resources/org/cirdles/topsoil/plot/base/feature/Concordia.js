@@ -6,9 +6,6 @@ if (plot.concordiaVisible == null) {
     plot.concordiaVisible = false;
 }
 
-plot.concordiaGroup = plot.area.clipped.insert("g", ".dataGroup")
-    .attr("class", ".concordiaGroup");
-
 plot.drawConcordia = function() {
 
     // Removes the concordia before redrawing it
@@ -41,22 +38,9 @@ plot.drawConcordia = function() {
 plot.updateConcordia = function() {
     if (plot.concordiaVisible) {
         initializeWetherill({
-            LAMBDA_235: 9.8485e-10,
-            LAMBDA_238: 1.55125e-10
+            LAMBDA_235: topsoil.defaultLambda.U235,
+            LAMBDA_238: topsoil.defaultLambda.U238
         });
-
-        // utilities for generating path data elements
-        var moveTo = function (path, p) {
-            path.push("M", p[0], ",", p[1]);
-        };
-
-        var lineTo = function (path, p) {
-            path.push("L", p[0], ",", p[1]);
-        };
-
-        var close = function (path) {
-            path.push("Z");
-        };
 
         var minT = Math.max(
             newtonMethod(wetherill.x, plot.xAxisScale.domain()[0]),
@@ -219,11 +203,4 @@ plot.removeConcordia = function() {
         plot.concordiaGroup.remove();
         plot.concordiaVisible = false;
     }
-};
-
-plot.cubicBezier = function (path, p1, p2, p3) {
-    path.push(
-        "C", p1[0], ",", p1[1],
-        ",", p2[0], ",", p2[1],
-        ",", p3[0], ",", p3[1]);
 };

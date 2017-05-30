@@ -18,6 +18,8 @@ plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
 plot.propertiesKeys = [
     'Point Fill Color',
     'Ellipse Fill Color',
+    'Point Opacity',
+    'Ellipse Opacity',
     'Title',
     'Uncertainty',
     'X Axis',
@@ -25,8 +27,8 @@ plot.propertiesKeys = [
     'Points',
     'Ellipses',
     'Concordia',
+    'Evolution',
     'Isotope'];
-
 
 /*
     Creates an SVG group for data elements like points and ellipses. Inserting other groups below this one ensures that
@@ -75,11 +77,12 @@ plot.initialize = function (data) {
         .attr("dy", ".1em");
 
     // defaults if no data is provided
-    plot.xMin = 0;
-    plot.xMax = 1;
-    plot.yMin = 0;
-    plot.yMax = 1;
+    plot.xDataMin = 0;
+    plot.xDataMax = 1;
+    plot.yDataMin = 0;
+    plot.yDataMax = 1;
 
+    // Initialize axis scales
     plot.xAxisScale = d3.scale.linear();
     plot.yAxisScale = d3.scale.linear();
 
@@ -89,15 +92,18 @@ plot.initialize = function (data) {
     plot.xAxis = d3.svg.axis().orient("bottom");
     plot.yAxis = d3.svg.axis().orient("left");
 
+    // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
     plot.updatePlotExtent(data);
 
+    // Creates the scales for the x and y axes
     plot.xAxisScale
-        .domain([plot.xMin, plot.xMax])
+        .domain([plot.xDataMin, plot.xDataMax])
         .range([0, plot.width]);
     plot.yAxisScale
-        .domain([plot.yMin, plot.yMax])
+        .domain([plot.yDataMin, plot.yDataMax])
         .range([plot.height, 0]);
 
+    // Applies the scales to the x and y axes.
     plot.xAxis.scale(plot.xAxisScale);
     plot.yAxis.scale(plot.yAxisScale);
 
@@ -120,6 +126,22 @@ plot.draw = function (data) {
 
     if(plot.currentIsotope == null) {
         plot.currentIsotope = plot.getProperty('Isotope');
+
+        // Set minimum bounds for plot based on isotope type.
+        switch (plot.currentIsotope) {
+            case "Uranium Lead":
+                plot.minimumX = -1;
+                plot.minimumY = -1;
+                break;
+            // case "Uranium Thorium":
+            //     plot.minimumX = 0;
+            //     plot.minimumY = 0;
+            //     break;
+            default:
+                plot.minimumX = 0;
+                plot.minimumY = 0;
+                break;
+        }
     }
 
     //calculate constants used to draw ellipses
@@ -131,10 +153,10 @@ plot.draw = function (data) {
     plot.updatePlotExtent(data);
 
     plot.xAxisScale
-        .domain([plot.xMin, plot.xMax])
+        .domain([plot.xDataMin, plot.xDataMax])
         .range([0, plot.width]);
     plot.yAxisScale
-        .domain([plot.yMin, plot.yMax])
+        .domain([plot.yDataMin, plot.yDataMax])
         .range([plot.height, 0]);
 
     plot.xAxis.scale(plot.xAxisScale);
@@ -142,7 +164,7 @@ plot.draw = function (data) {
 
     plot.removePoints();
     plot.removeEllipses();
-    plot.removeConcordia();
+    plot.removePlotFeatures();
 
     // add pan/zoom
     var zoom = plot.zoom = d3.behavior.zoom()
@@ -158,8 +180,8 @@ plot.draw = function (data) {
     // function to recenter the plot to its original view
     topsoil.recenter = function() {
         d3.transition().duration(750).tween("zoom", function() {
-            var ix = d3.interpolate(plot.xAxisScale.domain(), [plot.xMin, plot.xMax]);
-            var iy = d3.interpolate(plot.yAxisScale.domain(), [plot.yMin, plot.yMax]);
+            var ix = d3.interpolate(plot.xAxisScale.domain(), [plot.xDataMin, plot.xDataMax]);
+            var iy = d3.interpolate(plot.yAxisScale.domain(), [plot.yDataMin, plot.yDataMax]);
             return function(t) {
                 zoom.x(plot.xAxisScale.domain(ix(t))).y(plot.yAxisScale.domain(iy(t)));
                 zoomed();
@@ -189,6 +211,22 @@ plot.update = function (data) {
     //if the isotope type has changed, alert Java
     if (plot.currentIsotope != plot.getProperty('Isotope')) {
         plot.currentIsotope = plot.getProperty('Isotope');
+
+        // Set minimum bounds for plot based on isotope type.
+        switch (plot.currentIsotope) {
+            case "Uranium Lead":
+                plot.minimumX = -1;
+                plot.minimumY = -1;
+                break;
+            // case "Uranium Thorium":
+            //     plot.minimumX = 0;
+            //     plot.minimumY = 0;
+            //     break;
+            default:
+                plot.minimumX = 0;
+                plot.minimumY = 0;
+                break;
+        }
     }
 
     // If the uncertainty has changed, the plot extent and ellipse data have to be re-calculated, and the ellipses
@@ -233,15 +271,32 @@ plot.update = function (data) {
  */
 plot.zoomed = function(data) {
 
+    var newXMin = plot.xAxisScale.domain()[0];
+    var newXMax = plot.xAxisScale.domain()[1];
+    var newYMin = plot.yAxisScale.domain()[0];
+    var newYMax = plot.yAxisScale.domain()[1];
+
+    // keep the user from panning past minimum bounds
+    // TODO Right now, the user can pan past minimum bounds, it just won't show. Fix that.
+    if (newXMin <= plot.minimumX) {
+        plot.xAxisScale.domain([plot.minimumX, (plot.minimumX + (newXMax - newXMin))]);
+    }
+    if (newYMin <= plot.minimumY) {
+        plot.yAxisScale.domain([plot.minimumY, (plot.minimumY + (newYMax - newYMin))]);
+    }
+
     // re-tick the axes
     plot.area.selectAll(".x.axis").call(plot.xAxis);
     plot.area.selectAll(".y.axis").call(plot.yAxis);
+
+    // evolution.ar08lim = [zoom.x().domain()[0], zoom.x().domain()[1]];
+    // evolution.ar48lim = [zoom.y().domain()[0], zoom.y().domain()[1]];
 
     plot.update(data);
 };
 
 /*
-    Updates the global variables plot.xMin, plot.yMin, plot.xMax, and plot.yMax based on the data provided. If
+    Updates the global variables plot.xDataMin, plot.yDataMin, plot.xDataMax, and plot.yDataMax based on the data provided. If
     plot.uncertainty is unspecified, the default value 2 is used.
  */
 plot.updatePlotExtent = function (data) {
@@ -263,10 +318,10 @@ plot.updatePlotExtent = function (data) {
         var xRange = dataXMax - dataXMin;
         var yRange = dataYMax - dataYMin;
 
-        plot.xMin = dataXMin - 0.05 * xRange;
-        plot.yMin =  dataYMin - 0.05 * yRange;
-        plot.xMax = dataXMax + 0.05 * xRange;
-        plot.yMax = dataYMax + 0.05 * yRange;
+        plot.xDataMin = dataXMin - 0.05 * xRange;
+        plot.yDataMin =  dataYMin - 0.05 * yRange;
+        plot.xDataMax = dataXMax + 0.05 * xRange;
+        plot.yDataMax = dataYMax + 0.05 * yRange;
     }
 };
 
@@ -325,7 +380,7 @@ plot.manageEllipses = function (data) {
  */
 plot.managePlotFeatures = function () {
 
-    // If the Isotope system is UPb...
+    // If the isotope system is UPb...
     if (plot.currentIsotope == "Uranium Lead") {
 
         // If the concordia line should be visible...
@@ -345,8 +400,39 @@ plot.managePlotFeatures = function () {
         else if (plot.concordiaVisible) {
             plot.removeConcordia();
         }
-    } else if (plot.concordiaVisible) {
+    }
+
+    // If the isotope system is not UPb, but the concordia line is visible...
+    else if (plot.concordiaVisible) {
         plot.removeConcordia();
+    }
+
+    // If the isotope system is UTh...
+    if (plot.currentIsotope == "Uranium Thorium" ) {
+
+        // If the evolution matrix should be visible...
+        if (plot.getProperty("Evolution")) {
+
+            // If the evolution matrix should be visible, but isn't...
+            if (!plot.evolutionMatrixVisible) {
+                plot.drawEvolutionMatrix();
+            }
+
+            // If the evolution matrix should be visible, and already is...
+            else {
+                plot.updateEvolutionMatrix();
+            }
+        }
+
+        // If the evolution matrix should NOT be visible, but is...
+        else if (plot.evolutionMatrixVisible) {
+            plot.removeEvolutionMatrix();
+        }
+    }
+
+    // If the isotope system is not UTh, but the evolution matrix is visible...
+    else if (plot.evolutionMatrixVisible) {
+        plot.removeEvolutionMatrix();
     }
 };
 
@@ -354,7 +440,6 @@ plot.managePlotFeatures = function () {
     Removes all plot features from the plot.
  */
 plot.removePlotFeatures = function () {
-
     plot.removeConcordia();
-
+    plot.removeEvolutionMatrix();
 };
