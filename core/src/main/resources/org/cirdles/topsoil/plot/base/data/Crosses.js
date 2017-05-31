@@ -42,6 +42,14 @@ plot.drawCrosses = function (data) {
 plot.updateCrosses = function () {
     if (plot.crossesVisible) {
 
+        var strokeWidth;
+
+        if (plot.getProperty("Cross Opacity") < 1.0) {
+            strokeWidth = 2;
+        } else {
+            strokeWidth = 1;
+        }
+
         plot.crosses.select(".HLine")
             .attr("y1", function (d) {
                 return plot.yAxisScale(d.y);
@@ -55,6 +63,8 @@ plot.updateCrosses = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + (plot.uncertainty * d.sigma_x));
             })
+            .attr("opacity", plot.getProperty("Cross Opacity"))
+            .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Cross Fill Color"));
 
         plot.crosses.select(".VLine")
@@ -70,6 +80,8 @@ plot.updateCrosses = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x);
             })
+            .attr("opacity", plot.getProperty("Cross Opacity"))
+            .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Cross Fill Color"));
 
         plot.crosses.select(".topCap")
@@ -85,6 +97,8 @@ plot.updateCrosses = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + 0.2*(plot.uncertainty * d.sigma_x));
             })
+            .attr("opacity", plot.getProperty("Cross Opacity"))
+            .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Cross Fill Color"));
 
         plot.crosses.select(".leftCap")
@@ -100,6 +114,8 @@ plot.updateCrosses = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x - (plot.uncertainty * d.sigma_x));
             })
+            .attr("opacity", plot.getProperty("Cross Opacity"))
+            .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Cross Fill Color"));
 
         plot.crosses.select(".bottomCap")
@@ -115,6 +131,8 @@ plot.updateCrosses = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + 0.2*(plot.uncertainty * d.sigma_x));
             })
+            .attr("opacity", plot.getProperty("Cross Opacity"))
+            .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Cross Fill Color"));
 
         plot.crosses.select(".rightCap")
@@ -130,6 +148,8 @@ plot.updateCrosses = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + (plot.uncertainty * d.sigma_x));
             })
+            .attr("opacity", plot.getProperty("Cross Opacity"))
+            .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Cross Fill Color"));
 
         plot.crosses.exit().remove();

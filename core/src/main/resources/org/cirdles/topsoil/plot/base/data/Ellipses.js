@@ -69,23 +69,7 @@ plot.drawEllipses = function(ellipseData) {
         .data(ellipseData);
 
     // TODO "fill-opacity" should be a property
-    ellipses.enter().append("path")
-        .attr("class", "ellipse")
-        .attr("fill-opacity", 0.3)
-        .attr("stroke", "black");
-
-    ellipses.attr("fill", function(d) {
-            var fill;
-
-            if (!d['Selected']) {
-                fill = 'gray';
-            } else {
-                fill = plot.getProperty('Ellipse Fill Color');
-            }
-
-            return fill;
-        });
-
+    ellipses.enter().append("path").attr("class", "ellipse");
 
     plot.ellipsesVisible = true;
     plot.updateEllipses();
@@ -124,7 +108,9 @@ plot.updateEllipses = function() {
                 }
 
                 return fill;
-        });
+            })
+            .attr("fill-opacity", plot.getProperty("Ellipse Opacity") * 0.3)
+            .attr("stroke", "black");
 
         ellipses.exit().remove();
     }

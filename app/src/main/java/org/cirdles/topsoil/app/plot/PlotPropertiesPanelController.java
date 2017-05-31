@@ -527,14 +527,17 @@ public class PlotPropertiesPanelController {
         });
         pointsColorProperty().addListener(c -> {
             PROPERTIES.put(POINT_FILL_COLOR, convertColor(pointsColorProperty().get()));
+            PROPERTIES.put(POINT_OPACITY, convertOpacity(pointsColorProperty().get()));
             updateProperties();
         });
         ellipsesColorProperty().addListener(c -> {
             PROPERTIES.put(ELLIPSE_FILL_COLOR, convertColor(ellipsesColorProperty().get()));
+            PROPERTIES.put(ELLIPSE_OPACITY, convertOpacity(ellipsesColorProperty().get()));
             updateProperties();
         });
         crossesColorProperty().addListener(c -> {
             PROPERTIES.put(CROSS_FILL_COLOR, convertColor(crossesColorProperty().get()));
+            PROPERTIES.put(CROSS_OPACITY, convertOpacity(crossesColorProperty().get()));
             updateProperties();
         });
         showConcordiaProperty().addListener(c -> {
@@ -584,6 +587,20 @@ public class PlotPropertiesPanelController {
     private String convertColor(Color c) {
         String s = c.toString();
         return s.substring(0, s.length() - 2).replaceAll("0x", "#");
+    }
+
+    /**
+     * Converts a Java {@code Color} into a {@code Double} format representing the alpha value of the color.
+     * <p>
+     * This is done by converting the last two chars (which represent opacity) into decimal, and dividing the result
+     * by 255. For example, 0x123456ff would be converted to 1.0.
+     *
+     * @param c a Java Color
+     * @return  a String color with format #000000
+     */
+    private Double convertOpacity(Color c) {
+        String s = c.toString();
+        return ((double) Integer.parseInt(s.substring(s.length() - 2).trim(), 16)) / 255;
     }
 
     /**

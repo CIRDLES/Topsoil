@@ -24,13 +24,6 @@ plot.drawPoints = function (data) {
     // initialize new points
     points.enter().append("circle")
         .attr("class", "point")
-        .attr("fill", plot.getProperty("Point Fill Color"))
-        .attr("cx", function (d) {
-            return plot.xAxisScale(d.x);
-        })
-        .attr("cy", function (d) {
-            return plot.yAxisScale(d.y);
-        })
         .attr("r", 3);
 
     plot.pointsVisible = true;
@@ -43,6 +36,7 @@ plot.updatePoints = function () {
 
         points
             .attr("fill", plot.getProperty("Point Fill Color"))
+            .attr("fill-opacity", plot.getProperty("Point Opacity"))
             .attr("cx", function (d) {
                 return plot.xAxisScale(d.x);
             })
