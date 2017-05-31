@@ -322,7 +322,7 @@ public class PlotPropertiesPanelController {
     public Boolean shouldShowCrosses() {
         return showCrossesProperty().get();
     }
-    public void setshowCrosses(Boolean b) {
+    public void setShowCrosses(Boolean b) {
         crossesCheckBox.setSelected(b);
     }
 
@@ -451,15 +451,27 @@ public class PlotPropertiesPanelController {
 
         pointsCheckBox.setSelected((Boolean) PROPERTIES.get(POINTS));
         ellipsesCheckBox.setSelected((Boolean) PROPERTIES.get(ELLIPSES));
-//        crossesCheckBox.setSelected((Boolean) PROPERTIES.get(CROSSES));
+        crossesCheckBox.setSelected((Boolean) PROPERTIES.get(CROSSES));
         // TODO Implement Crosses
-        crossesCheckBox.setVisible(false);
+//        crossesCheckBox.setVisible(false);
 
         pointsColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(POINT_FILL_COLOR)));
         ellipsesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(ELLIPSE_FILL_COLOR)));
-//        crossesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(CROSS_FILL_COLOR)));
+        crossesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(CROSS_FILL_COLOR)));
         // TODO Implement Crosses
-        crossesColorPicker.setVisible(false);
+//        crossesColorPicker.setVisible(false);
+
+        // Only one uncertainty option can be selected at a time.
+        ellipsesCheckBox.selectedProperty().addListener(c -> {
+            if (ellipsesCheckBox.isSelected()) {
+                crossesCheckBox.setSelected(false);
+            }
+        });
+        crossesCheckBox.selectedProperty().addListener(c -> {
+            if (crossesCheckBox.isSelected()) {
+                ellipsesCheckBox.setSelected(false);
+            }
+        });
 
         concordiaCheckBox.setSelected((Boolean) PROPERTIES.get(CONCORDIA_LINE));
 
@@ -509,10 +521,10 @@ public class PlotPropertiesPanelController {
             PROPERTIES.put(ELLIPSES, showEllipsesProperty().get());
             updateProperties();
         });
-//        showCrosses().addListener(c -> {
-//            PROPERTIES.put(CROSSES, showCrossesProperty().get());
-//            updateProperties();
-//        });
+        showCrossesProperty().addListener(c -> {
+            PROPERTIES.put(CROSSES, showCrossesProperty().get());
+            updateProperties();
+        });
         pointsColorProperty().addListener(c -> {
             PROPERTIES.put(POINT_FILL_COLOR, convertColor(pointsColorProperty().get()));
             updateProperties();
@@ -521,10 +533,10 @@ public class PlotPropertiesPanelController {
             PROPERTIES.put(ELLIPSE_FILL_COLOR, convertColor(ellipsesColorProperty().get()));
             updateProperties();
         });
-//        crossesColor().addListener(c -> {
-//            PROPERTIES.put(CROSS_FILL_COLOR, crossesColorProperty().get());
-//            updateProperties();
-//        });
+        crossesColorProperty().addListener(c -> {
+            PROPERTIES.put(CROSS_FILL_COLOR, convertColor(crossesColorProperty().get()));
+            updateProperties();
+        });
         showConcordiaProperty().addListener(c -> {
             PROPERTIES.put(CONCORDIA_LINE, shouldShowConcordia());
             updateProperties();
@@ -594,10 +606,10 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(Y_AXIS)) setyAxisTitle((String) plotProperties.get(Y_AXIS));
         if (plotProperties.containsKey(POINTS)) setShowPoints((Boolean) plotProperties.get(POINTS));
         if (plotProperties.containsKey(ELLIPSES)) setshowEllipses((Boolean) plotProperties.get(ELLIPSES));
-//        if (plotProperties.containsKey(CROSSES)) setShowCrosses((Boolean) plotProperties.get(CROSSES));
+        if (plotProperties.containsKey(CROSSES)) setShowCrosses((Boolean) plotProperties.get(CROSSES));
         if (plotProperties.containsKey(POINT_FILL_COLOR)) setPointsColor(Color.valueOf((String) plotProperties.get(POINT_FILL_COLOR)));
         if (plotProperties.containsKey(ELLIPSE_FILL_COLOR)) setEllipsesColor(Color.valueOf((String) plotProperties.get(ELLIPSE_FILL_COLOR)));
-//        if (plotProperties.containsKey(CROSS_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(CROSS_FILL_COLOR)));
+        if (plotProperties.containsKey(CROSS_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(CROSS_FILL_COLOR)));
         if (plotProperties.containsKey(ISOTOPE_TYPE)) setIsotopeType(STRING_TO_ISOTOPE_TYPE.get((String) plotProperties.get(ISOTOPE_TYPE)));
         if (plotProperties.containsKey(UNCERTAINTY)) setUncertainty(DOUBLE_TO_UNCERTAINTY_FORMAT.get(
                 (Double) plotProperties.get(UNCERTAINTY)));

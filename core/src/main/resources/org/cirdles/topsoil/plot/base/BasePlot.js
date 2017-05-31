@@ -18,14 +18,17 @@ plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
 plot.propertiesKeys = [
     'Point Fill Color',
     'Ellipse Fill Color',
+    'Cross Fill Color',
     'Point Opacity',
     'Ellipse Opacity',
+    'Cross Opacity',
     'Title',
     'Uncertainty',
     'X Axis',
     'Y Axis',
     'Points',
     'Ellipses',
+    'Crosses',
     'Concordia',
     'Evolution',
     'Isotope'];
@@ -95,7 +98,7 @@ plot.initialize = function (data) {
     // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
     plot.updatePlotExtent(data);
 
-    // Creates the scales for the x and y axes
+    // Updates the scales for the x and y axes
     plot.xAxisScale
         .domain([plot.xDataMin, plot.xDataMax])
         .range([0, plot.width]);
@@ -150,8 +153,10 @@ plot.draw = function (data) {
     }
     plot.ellipseData = plot.calcEllipses(data);
 
+    // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
     plot.updatePlotExtent(data);
 
+    // Updates the scales for the x and y axes
     plot.xAxisScale
         .domain([plot.xDataMin, plot.xDataMax])
         .range([0, plot.width]);
@@ -162,8 +167,8 @@ plot.draw = function (data) {
     plot.xAxis.scale(plot.xAxisScale);
     plot.yAxis.scale(plot.yAxisScale);
 
-    plot.removePoints();
-    plot.removeEllipses();
+    // Removes any existing elements so they can be redrawn with the new data.
+    plot.removeDataFeatures()
     plot.removePlotFeatures();
 
     // add pan/zoom
@@ -218,10 +223,6 @@ plot.update = function (data) {
                 plot.minimumX = -1;
                 plot.minimumY = -1;
                 break;
-            // case "Uranium Thorium":
-            //     plot.minimumX = 0;
-            //     plot.minimumY = 0;
-            //     break;
             default:
                 plot.minimumX = 0;
                 plot.minimumY = 0;
@@ -262,6 +263,7 @@ plot.update = function (data) {
     // Manage the plot elements
     plot.managePoints(data);
     plot.manageEllipses(plot.ellipseData);
+    plot.manageCrosses(data);
     plot.managePlotFeatures();
 };
 
@@ -358,21 +360,44 @@ plot.manageEllipses = function (data) {
     // If ellipses should be visible...
     if (plot.getProperty("Ellipses")) {
 
-            // If the ellipses simply need to be updated...
-            if (plot.ellipsesVisible) {
-                plot.updateEllipses();
-            }
+        // If the ellipses simply need to be updated...
+        if (plot.ellipsesVisible) {
+            plot.updateEllipses();
+        }
 
-            // If ellipses need to be drawn...
-            else {
-                plot.drawEllipses(plot.ellipseData);
-            }
+        // If ellipses need to be drawn...
+        else {
+            plot.drawEllipses(plot.ellipseData);
+        }
     }
 
     // If ellipses should NOT be visible, but are...
     else if (plot.ellipsesVisible) {
         plot.removeEllipses();
     }
+};
+
+plot.manageCrosses = function (data) {
+
+    // If crosses should be visible...
+    if (plot.getProperty("Crosses")) {
+
+        // If the crosses simply need to be updated...
+        if (plot.crossesVisible) {
+            plot.updateCrosses();
+        }
+
+        // If crosses need to be drawn...
+        else {
+            plot.drawCrosses(data);
+        }
+    }
+
+    // If crosses should NOT be visible, but are...
+    else if (plot.crossesVisible) {
+        plot.removeCrosses();
+    }
+
 };
 
 /*
@@ -434,6 +459,12 @@ plot.managePlotFeatures = function () {
     else if (plot.evolutionMatrixVisible) {
         plot.removeEvolutionMatrix();
     }
+};
+
+plot.removeDataFeatures = function () {
+    plot.removeCrosses();
+    plot.removeEllipses();
+    plot.removePoints();
 };
 
 /*

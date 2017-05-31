@@ -165,6 +165,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
         final URI POINTS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Points.js").toUri();
         final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Ellipses.js").toUri();
+        final URI CROSSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Crosses.js").toUri();
         final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Concordia.js").toUri();
         final URI EVOLUTION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Evolution.js").toUri();
         final URI LAMBDA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/DefaultLambda.js").toUri();
@@ -173,6 +174,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return String.format(HTML_TEMPLATE, sourcePath.toUri()).concat(
                 "<script src=\"" + POINTS_URI + "\"></script>\n" +
                 "<script src=\"" + ELLIPSES_URI + "\"></script>\n" +
+                "<script src=\"" + CROSSES_URI + "\"></script>\n" +
                 "<script src=\"" + CONCORDIA_URI + "\"></script>\n" +
                 "<script src=\"" + EVOLUTION_URI + "\"></script>\n" +
                 "<script src=\"" + LAMBDA_URI + "\"></script>\n" +
