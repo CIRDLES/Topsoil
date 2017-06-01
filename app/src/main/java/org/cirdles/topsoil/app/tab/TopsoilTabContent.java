@@ -98,6 +98,12 @@ public class TopsoilTabContent extends SplitPane {
         // Handle Keyboard Events
         tableView.setOnKeyPressed(keyEvent -> handleTableViewKeyEvent(keyEvent));
 
+        // Enables individual cell selection instead of rows.
+        tableView.getSelectionModel().setCellSelectionEnabled(true);
+
+        // Enables multiple cell selection.
+//        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         // Set initial state of remove button.
 
         tableView.itemsProperty().addListener(c -> {
