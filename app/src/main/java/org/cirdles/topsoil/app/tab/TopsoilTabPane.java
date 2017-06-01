@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.tab;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -91,6 +92,16 @@ public class TopsoilTabPane extends TabPane {
             // Set to the 1st and 2nd column names; in the table, they are X and Y.
             tabContent.getPlotPropertiesPanelController().setxAxisTitle(table.getColumnNames()[0]);
             tabContent.getPlotPropertiesPanelController().setyAxisTitle(table.getColumnNames()[1]);
+
+            for (StringProperty name : table.getColumnNameProperties()) {
+                name.addListener(c -> {
+                    if (table.getColumnNameProperties().indexOf(name) == 0) {
+                        tabContent.getPlotPropertiesPanelController().setxAxisTitle(name.get());
+                    } else if (table.getColumnNameProperties().indexOf(name) == 1) {
+                        tabContent.getPlotPropertiesPanelController().setyAxisTitle(name.get());
+                    }
+                });
+            }
 
             tab.setContent(tabContentView);
             this.getTabs().addAll(tab);
