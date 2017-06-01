@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import org.cirdles.topsoil.app.util.file.ExampleDataTable;
 
 /**
  * A class containing a set of methods for handling actions for {@code MenuItem}s in the {@link MainMenuBar}.
@@ -59,7 +60,7 @@ public class MenuItemEventHandler {
             Boolean hasHeaders;
 
             // TODO For now, the user must have headers in the file. In the future, they can specify.
-            hasHeaders = FileParser.containsHeaderDialog();
+            hasHeaders = FileParser.detectHeader(file);
 
             // hasHeaders would only be null if the user clicked "Cancel".
             if (hasHeaders != null) {
@@ -67,8 +68,9 @@ public class MenuItemEventHandler {
                     headers = FileParser.parseHeaders(file);
                 }
 
-                // select isotope flavor
-                IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+                // select isotope flavor -- For now, the user shouldn’t have to select an isotope system; instead assume Generic.
+                //IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+                IsotopeType isotopeType = IsotopeType.Generic;
 
                 // isotopeType would only be null if the user clicked "Cancel".
                 if (isotopeType != null) {
@@ -117,15 +119,16 @@ public class MenuItemEventHandler {
             Boolean hasHeaders;
 
             // TODO For now, the user must have headers in the file. In the future, they can specify.
-            hasHeaders = FileParser.containsHeaderDialog();
+            hasHeaders = FileParser.detectHeader(content);
 
             if (hasHeaders != null) {
                 if (hasHeaders) {
                     headers = FileParser.parseHeaders(content, delim);
                 }
 
-                // select isotope flavor
-                IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+                // select isotope flavor -- For now, the user shouldn’t have to select an isotope system; instead assume Generic.
+                //IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+                IsotopeType isotopeType = IsotopeType.Generic;
 
                 if (isotopeType != null) {
                     List<TopsoilDataEntry> entries = FileParser.parseClipboard(hasHeaders, delim);
@@ -163,20 +166,16 @@ public class MenuItemEventHandler {
 
         TopsoilDataTable table;
 
-        // select isotope flavor
-        IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+//        // select isotope flavor -- For now, the user shouldn’t have to select an isotope system; instead assume Generic.
+//        IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+        IsotopeType isotopeType = IsotopeType.Generic;
 
         // create empty table
-        if (isotopeType != null) {
+        TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
+        UncertaintyFormat selectedFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
 
-            TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
-            UncertaintyFormat selectedFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
-
-            if (selectedFormat != null) {
-                table = new TopsoilDataTable(null, isotopeType, selectedFormat, new TopsoilDataEntry[]{});
-            } else {
-                table = null;
-            }
+        if (selectedFormat != null) {
+            table = new TopsoilDataTable(null, isotopeType, selectedFormat, new TopsoilDataEntry[]{});
         } else {
             table = null;
         }
@@ -198,33 +197,22 @@ public class MenuItemEventHandler {
         format = UncertaintyFormat.TWO_SIGMA_PERCENT;
 
         if (isotopeType != null) {
-            File file = FileParser.openExampleTable(isotopeType);
-
-            if(file != null && FileParser.isSupportedTableFile(file)) {
                 
                 List<TopsoilDataEntry> entries = null;
                 String[] headers = null;
-                try {
-                    headers = FileParser.parseHeaders(file);
-                    entries = FileParser.parseFile(file, true);
-
-                } catch (IOException ex) { }
+                String exampleContent = new ExampleDataTable().getSampleData(isotopeType);
+                
+                headers = FileParser.parseHeaders(exampleContent,FileParser.getDelimiter(exampleContent));
+                entries = FileParser.parseTxt(FileParser.readLines(exampleContent),FileParser.getDelimiter(exampleContent),true);
 
                 if (entries == null) {
                         table = null;
                     } else {
                         ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
                         table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
-                        table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+                        table.setTitle(isotopeType.getName()+" Example Data");
                 }
                 
-            }
-            // If no sample data table is found, an empty table is returned.
-            else {
-                ErrorAlerter alerter = new ErrorAlerter();
-                alerter.alert("Example file invalid. Loading empty data table.");
-                table = new TopsoilDataTable(null, isotopeType, format, new TopsoilDataEntry[]{});
-            }
         }
         return table;
     }
