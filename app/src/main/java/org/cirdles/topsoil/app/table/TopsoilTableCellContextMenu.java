@@ -42,42 +42,41 @@ class TopsoilTableCellContextMenu extends ContextMenu {
     private MenuItem deleteRowItem;
 
 //    private MenuItem deleteColumnItem;
-    //TODO Enable Column renaming
 
     /**
      * When clicked, prompts the user to rename the cell's column.
      */
     private MenuItem renameColumnItem;
 
-    /**
-     * When clicked, copies the value in the cell to the system {@code Clipboard}.
-     */
-    private MenuItem copyCellItem;
-
-    /**
-     * When clicked, copies the values in the cell's row to the system {@code Clipboard}.
-     */
-    private MenuItem copyRowItem;
-
-    /**
-     * When clicked, copies the values in the cell's column to the system {@code Clipboard}.
-     */
-    private MenuItem copyColumnItem;
-
-    /**
-     * When clicked, sets the value in the cell to 0.0.
-     */
-    private MenuItem clearCellItem;
-
-    /**
-     * When clicked, sets the values of all cells in the cell's row to 0.0.
-     */
-    private MenuItem clearRowItem;
-
-    /**
-     * When clicked, sets the values of all cells in the cell's column to 0.0.
-     */
-    private MenuItem clearColumnItem;
+//    /**
+//     * When clicked, copies the value in the cell to the system {@code Clipboard}.
+//     */
+//    private MenuItem copyCellItem;
+//
+//    /**
+//     * When clicked, copies the values in the cell's row to the system {@code Clipboard}.
+//     */
+//    private MenuItem copyRowItem;
+//
+//    /**
+//     * When clicked, copies the values in the cell's column to the system {@code Clipboard}.
+//     */
+//    private MenuItem copyColumnItem;
+//
+//    /**
+//     * When clicked, sets the value in the cell to 0.0.
+//     */
+//    private MenuItem clearCellItem;
+//
+//    /**
+//     * When clicked, sets the values of all cells in the cell's row to 0.0.
+//     */
+//    private MenuItem clearRowItem;
+//
+//    /**
+//     * When clicked, sets the values of all cells in the cell's column to 0.0.
+//     */
+//    private MenuItem clearColumnItem;
 
     //***********************
     // Constructors
@@ -96,16 +95,16 @@ class TopsoilTableCellContextMenu extends ContextMenu {
         addRowAboveItem = new MenuItem("Add Row Above");
         addRowBelowItem = new MenuItem("Add Row Below");
         deleteRowItem = new MenuItem("Delete Row");
-        copyRowItem = new MenuItem("Copy Row");
-        clearRowItem = new MenuItem("Clear Row");
+//        copyRowItem = new MenuItem("Copy Row");
+//        clearRowItem = new MenuItem("Clear Row");
 
 //        deleteColumnItem = new MenuItem("Delete Column");
         renameColumnItem = new MenuItem("Rename Column");
-        copyColumnItem = new MenuItem("Copy Column");
-        clearColumnItem = new MenuItem("Clear Column");
+//        copyColumnItem = new MenuItem("Copy Column");
+//        clearColumnItem = new MenuItem("Clear Column");
 
-        copyCellItem = new MenuItem("Copy Cell");
-        clearCellItem = new MenuItem("Clear Cell");
+//        copyCellItem = new MenuItem("Copy Cell");
+//        clearCellItem = new MenuItem("Clear Cell");
 
         //********************//
         //    ROW ACTIONS     //
@@ -129,25 +128,25 @@ class TopsoilTableCellContextMenu extends ContextMenu {
             ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(deleteRowCommand);
         });
 
-        copyRowItem.setOnAction(action -> {
-            String copyValues = "";
-            TopsoilDataEntry row = this.cell.getDataEntry();
-            for (int i = 0; i < row.getProperties().size(); i++) {
-                copyValues += Double.toString(row.getProperties().get(i).get());
-                if (i < row.getProperties().size() - 1) {
-                    copyValues += "\t";
-                }
-            }
-            ClipboardContent content = new ClipboardContent();
-            content.putString(copyValues);
-            Clipboard.getSystemClipboard().setContent(content);
-        });
-
-        clearRowItem.setOnAction(action -> {
-            ClearRowCommand clearRowCommand = new ClearRowCommand(this.cell);
-            clearRowCommand.execute();
-            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearRowCommand);
-        });
+//        copyRowItem.setOnAction(action -> {
+//            String copyValues = "";
+//            TopsoilDataEntry row = this.cell.getDataEntry();
+//            for (int i = 0; i < row.getProperties().size(); i++) {
+//                copyValues += Double.toString(row.getProperties().get(i).get());
+//                if (i < row.getProperties().size() - 1) {
+//                    copyValues += "\t";
+//                }
+//            }
+//            ClipboardContent content = new ClipboardContent();
+//            content.putString(copyValues);
+//            Clipboard.getSystemClipboard().setContent(content);
+//        });
+//
+//        clearRowItem.setOnAction(action -> {
+//            ClearRowCommand clearRowCommand = new ClearRowCommand(this.cell);
+//            clearRowCommand.execute();
+//            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearRowCommand);
+//        });
 
         //***********************//
         //    COLUMN ACTIONS     //
@@ -186,58 +185,58 @@ class TopsoilTableCellContextMenu extends ContextMenu {
             });
         });
 
-        copyColumnItem.setOnAction(action -> {
-            String copyValues = "";
-            TableColumn<TopsoilDataEntry, Double> column = this.cell.getTableColumn();
-            for (int i = 0; i < this.cell.getTableView().getItems().size(); i++) {
-                copyValues += Double.toString(column.getCellData(i));
-                if (i < this.cell.getTableView().getItems().size() - 1) {
-                    copyValues += "\n";
-                }
-            }
-            ClipboardContent content = new ClipboardContent();
-            content.putString(copyValues);
-            Clipboard.getSystemClipboard().setContent(content);
-        });
-
-        clearColumnItem.setOnAction(action -> {
-            ClearColumnCommand clearColumnCommand = new ClearColumnCommand(this.cell);
-            clearColumnCommand.execute();
-            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearColumnCommand);
-        });
+//        copyColumnItem.setOnAction(action -> {
+//            String copyValues = "";
+//            TableColumn<TopsoilDataEntry, Double> column = this.cell.getTableColumn();
+//            for (int i = 0; i < this.cell.getTableView().getItems().size(); i++) {
+//                copyValues += Double.toString(column.getCellData(i));
+//                if (i < this.cell.getTableView().getItems().size() - 1) {
+//                    copyValues += "\n";
+//                }
+//            }
+//            ClipboardContent content = new ClipboardContent();
+//            content.putString(copyValues);
+//            Clipboard.getSystemClipboard().setContent(content);
+//        });
+//
+//        clearColumnItem.setOnAction(action -> {
+//            ClearColumnCommand clearColumnCommand = new ClearColumnCommand(this.cell);
+//            clearColumnCommand.execute();
+//            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearColumnCommand);
+//        });
 
         //*********************//
         //    CELL ACTIONS     //
         //*********************//
 
-        copyCellItem.setOnAction(action -> {
-            ClipboardContent content = new ClipboardContent();
-            content.putString(Double.toString(this.cell.getItem()));
-            Clipboard.getSystemClipboard().setContent(content);
-        });
-
-        clearCellItem.setOnAction(action -> {
-            ClearCellCommand clearCellCommand = new ClearCellCommand(this.cell);
-            clearCellCommand.execute();
-            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane"))
-                    .getSelectedTab().addUndo(clearCellCommand);
-        });
+//        copyCellItem.setOnAction(action -> {
+//            ClipboardContent content = new ClipboardContent();
+//            content.putString(Double.toString(this.cell.getItem()));
+//            Clipboard.getSystemClipboard().setContent(content);
+//        });
+//
+//        clearCellItem.setOnAction(action -> {
+//            ClearCellCommand clearCellCommand = new ClearCellCommand(this.cell);
+//            clearCellCommand.execute();
+//            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane"))
+//                    .getSelectedTab().addUndo(clearCellCommand);
+//        });
 
         // Add items to context menu
         this.getItems().addAll(
                 addRowAboveItem,
                 addRowBelowItem,
                 deleteRowItem,
-                copyRowItem,
-                clearRowItem,
+//                copyRowItem,
+//                clearRowItem,
                 new SeparatorMenuItem(),
 //                deleteColumnItem,
-                renameColumnItem,
-                copyColumnItem,
-                clearColumnItem,
-                new SeparatorMenuItem(),
-                copyCellItem,
-                clearCellItem
+                renameColumnItem
+//                copyColumnItem,
+//                clearColumnItem,
+//                new SeparatorMenuItem(),
+//                copyCellItem,
+//                clearCellItem
         );
     }
 }
