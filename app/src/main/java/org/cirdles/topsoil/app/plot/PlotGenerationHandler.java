@@ -36,13 +36,6 @@ public class PlotGenerationHandler {
         // Check for open plots.
         List<Stage> stages = StageHelper.getStages();
         if (stages.size() > 1) {
-            Alert plotOverwrite = new Alert(Alert.AlertType.CONFIRMATION,
-                                            "Creating a new plot will overwrite the existing plot. " +
-                                            "Are you sure you want to continue?",
-                                            ButtonType.CANCEL,
-                                            ButtonType.YES);
-            plotOverwrite.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.YES) {
                     for (TopsoilTab tab : tabs.getTopsoilTabs()) {
                         for (PlotInformation plotInfo : tab.getTableController().getTable().getOpenPlots()) {
                             tab.getTableController().getTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
@@ -50,8 +43,6 @@ public class PlotGenerationHandler {
                         }
                     }
                     generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
-                }
-            });
         } else {
             generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
         }

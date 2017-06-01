@@ -6,6 +6,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
+import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -103,6 +104,15 @@ public class TopsoilTab extends Tab {
 
         this.setGraphic(titleLabel);
         this.setContent(tableController.getTabContent().getTableView());
+
+        // On tab close, close any plots associated with the table.
+        this.setOnClosed(event -> {
+            if (!this.getTableController().getTable().getOpenPlots().isEmpty()) {
+                for (PlotInformation plotInfo : this.getTableController().getTable().getOpenPlots()) {
+                    plotInfo.getStage().close();
+                }
+            }
+        });
     }
 
     //***********************
