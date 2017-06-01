@@ -6,7 +6,7 @@ if (plot.ellipsesVisible == null) {
     plot.ellipsesVisible = false;
 }
 
-//Calculate constants used to draw ellipses
+// Calculate constants used to draw ellipses
 plot.calcEllipses = function(data) {
     var k = 4 / 3 * (Math.sqrt(2) - 1);
     var controlPointsBase = [
@@ -50,13 +50,14 @@ plot.calcEllipses = function(data) {
     return ellipseData;
 };
 
-plot.drawEllipses = function(ellipseData) {
+plot.drawEllipses = function() {
 
     // Removes ellipses before re-drawing them
     if (plot.ellipsesVisible) {
         plot.removeEllipses();
     }
 
+    // Creates a separate SVG group for ellipses.
     if (plot.pointGroup == null) {
         plot.ellipseGroup = plot.dataGroup.append("g")
             .attr("class", "ellipseGroup");
@@ -65,21 +66,24 @@ plot.drawEllipses = function(ellipseData) {
             .attr("class", "ellipseGroup");
     }
 
-    var ellipses = plot.ellipses = plot.ellipseGroup.selectAll(".ellipse")
-        .data(ellipseData);
-
-    // TODO "fill-opacity" should be a property
-    ellipses.enter().append("path").attr("class", "ellipse");
-
     plot.ellipsesVisible = true;
     plot.updateEllipses();
 };
 
 plot.updateEllipses = function() {
-    //don't redraw ellipses if they're not visible
     if (plot.ellipsesVisible) {
-        var ellipses = plot.ellipses;
 
+        // the data join (http://bost.ocks.org/mike/join/)
+        var ellipses = plot.ellipseGroup.selectAll(".ellipse").data(plot.ellipseData);
+
+        // If the dataset is smaller than before, this will remove any unnecessary ellipse elements.
+        ellipses.exit().remove();
+
+        // If the dataset is larger than before, this will create needed additional ellipse elements.
+        ellipses.enter().append("path")
+            .attr("class", "ellipse");
+
+        // The following applies variable data to all ellipse elements.
         ellipses.attr("d", function (d) {
                 var ellipsePath = d3.svg.line()
                     .x(function (datum) {
@@ -97,8 +101,8 @@ plot.updateEllipses = function() {
                     });
 
                 return ellipsePath(d);
-            });
-        ellipses.attr("fill", function(d) {
+            })
+            .attr("fill", function(d) {
                 var fill;
 
                 if (!d['Selected']) {
@@ -111,8 +115,6 @@ plot.updateEllipses = function() {
             })
             .attr("fill-opacity", plot.getProperty("Ellipse Opacity") * 0.3)
             .attr("stroke", "black");
-
-        ellipses.exit().remove();
     }
 };
 

@@ -14,26 +14,29 @@ plot.drawPoints = function (data) {
         plot.removePoints();
     }
 
+    // Creates a separate SVG group for points.
     plot.pointGroup = plot.dataGroup.append("g")
         .attr("class", "pointGroup");
 
-    // the data join (http://bost.ocks.org/mike/join/)
-    var points = plot.points = plot.pointGroup.selectAll(".point")
-        .data(data);
-
-    // initialize new points
-    points.enter().append("circle")
-        .attr("class", "point")
-        .attr("r", 3);
-
     plot.pointsVisible = true;
-    plot.updatePoints();
+    plot.updatePoints(data);
 };
 
-plot.updatePoints = function () {
+plot.updatePoints = function (data) {
     if (plot.pointsVisible) {
-        var points = plot.points;
 
+        // the data join (http://bost.ocks.org/mike/join/)
+        var points = plot.pointGroup.selectAll(".point").data(data);
+
+        // If the dataset is smaller than before, this will remove unnecessary point elements.
+        points.exit().remove();
+
+        // If the dataset is larger than before, this will add needed additional point elements.
+        points.enter().append("circle")
+            .attr("class", "point")
+            .attr("r", 2.5);
+
+        // This applies variable data to all point elements.
         points
             .attr("fill", plot.getProperty("Point Fill Color"))
             .attr("fill-opacity", plot.getProperty("Point Opacity"))
@@ -43,8 +46,6 @@ plot.updatePoints = function () {
             .attr("cy", function (d) {
                 return plot.yAxisScale(d.y);
             });
-
-        points.exit().remove();
     }
 };
 

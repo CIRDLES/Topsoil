@@ -95,8 +95,10 @@ plot.initialize = function (data) {
     plot.xAxis = d3.svg.axis().orient("bottom");
     plot.yAxis = d3.svg.axis().orient("left");
 
+    plot.data = data;
+
     // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
-    plot.updatePlotExtent(data);
+    plot.updateDataExtent();
 
     // Updates the scales for the x and y axes
     plot.xAxisScale
@@ -110,74 +112,16 @@ plot.initialize = function (data) {
     plot.xAxis.scale(plot.xAxisScale);
     plot.yAxis.scale(plot.yAxisScale);
 
-    plot.initialized = true;
-    plot.draw(data);
-
-};
-
-/*
-    Draws and sets plot elements, defines special behaviors like topsoil.recenter() and d3.behavior.zoom(). This function
-    handles operations that need to be re-performed whenever new data is entered.
- */
-plot.draw = function (data) {
-
-    // Makes sure that the plot has been initialized.
-    if (!plot.initialized) {
-        plot.initialize(data);
-        return;
-    }
-
-    if(plot.currentIsotope == null) {
-        plot.currentIsotope = plot.getProperty('Isotope');
-
-        // Set minimum bounds for plot based on isotope type.
-        switch (plot.currentIsotope) {
-            case "Uranium Lead":
-                plot.minimumX = -1;
-                plot.minimumY = -1;
-                break;
-            // case "Uranium Thorium":
-            //     plot.minimumX = 0;
-            //     plot.minimumY = 0;
-            //     break;
-            default:
-                plot.minimumX = 0;
-                plot.minimumY = 0;
-                break;
-        }
-    }
-
-    //calculate constants used to draw ellipses
-    if (plot.uncertainty == null) {
-        plot.uncertainty = plot.getProperty("Uncertainty");
-    }
-    plot.ellipseData = plot.calcEllipses(data);
-
-    // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
-    plot.updatePlotExtent(data);
-
-    // Updates the scales for the x and y axes
-    plot.xAxisScale
-        .domain([plot.xDataMin, plot.xDataMax])
-        .range([0, plot.width]);
-    plot.yAxisScale
-        .domain([plot.yDataMin, plot.yDataMax])
-        .range([plot.height, 0]);
-
-    plot.xAxis.scale(plot.xAxisScale);
-    plot.yAxis.scale(plot.yAxisScale);
-
-    // Removes any existing elements so they can be redrawn with the new data.
-    plot.removeDataFeatures()
-    plot.removePlotFeatures();
+    // call the axes
+    plot.area.selectAll(".x.axis").call(plot.xAxis);
+    plot.area.selectAll(".y.axis").call(plot.yAxis);
 
     // add pan/zoom
     var zoom = plot.zoom = d3.behavior.zoom()
         .x(plot.xAxisScale)
         .y(plot.yAxisScale);
-        // .scaleExtent([0.5, 2.5]);
     function zoomed() {
-        plot.zoomed(data);
+        plot.zoomed();
     }
     zoom.on("zoom", zoomed);
     plot.area.clipped.call(zoom);
@@ -194,11 +138,29 @@ plot.draw = function (data) {
         });
     };
 
-    // call the axes
-    plot.area.selectAll(".x.axis").call(plot.xAxis);
-    plot.area.selectAll(".y.axis").call(plot.yAxis);
+    plot.initialized = true;
+    plot.update(plot.data);
+};
 
-    plot.update(data);
+/*
+    Draws and sets plot elements, defines special behaviors like topsoil.recenter() and d3.behavior.zoom(). This function
+    handles operations that need to be re-performed whenever new data is entered.
+ */
+plot.setData = function (data) {
+
+    // Makes sure that the plot has been initialized.
+    if (!plot.initialized) {
+        plot.initialize(data);
+        return;
+    }
+
+    plot.data = data;
+    plot.ellipseData = plot.calcEllipses(plot.data);
+
+    // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
+    plot.updateDataExtent();
+
+    plot.update(plot.data);
 };
 
 /*
@@ -234,8 +196,8 @@ plot.update = function (data) {
     // redrawn. Removes ellipses to be later re-drawn by plot.manageEllipses().
     if (plot.uncertainty != plot.getProperty("Uncertainty")) {
         plot.uncertainty = plot.getProperty("Uncertainty");
-        plot.updatePlotExtent(data);
-        plot.ellipseData = plot.calcEllipses(data);
+        plot.updateDataExtent();
+        plot.ellipseData = plot.calcEllipses(plot.data);
         plot.removeEllipses();
     }
 
@@ -261,9 +223,9 @@ plot.update = function (data) {
         .attr("shape-rendering", "geometricPrecision"); // see SVG docs
 
     // Manage the plot elements
-    plot.managePoints(data);
-    plot.manageEllipses(plot.ellipseData);
-    plot.manageCrosses(data);
+    plot.managePoints();
+    plot.manageEllipses();
+    plot.manageCrosses();
     plot.managePlotFeatures();
 };
 
@@ -271,7 +233,7 @@ plot.update = function (data) {
     Custom zoom behavior function, required for d3.behavior.zoom(). Re-calls the axes for the new translation and scale,
     then updates all plot elements.
  */
-plot.zoomed = function(data) {
+plot.zoomed = function() {
 
     var newXMin = plot.xAxisScale.domain()[0];
     var newXMax = plot.xAxisScale.domain()[1];
@@ -291,29 +253,26 @@ plot.zoomed = function(data) {
     plot.area.selectAll(".x.axis").call(plot.xAxis);
     plot.area.selectAll(".y.axis").call(plot.yAxis);
 
-    // evolution.ar08lim = [zoom.x().domain()[0], zoom.x().domain()[1]];
-    // evolution.ar48lim = [zoom.y().domain()[0], zoom.y().domain()[1]];
-
-    plot.update(data);
+    plot.update(topsoil.data);
 };
 
 /*
     Updates the global variables plot.xDataMin, plot.yDataMin, plot.xDataMax, and plot.yDataMax based on the data provided. If
     plot.uncertainty is unspecified, the default value 2 is used.
  */
-plot.updatePlotExtent = function (data) {
+plot.updateDataExtent = function () {
     //find the extent of the points
-    if (data.length > 0) {
-        var dataXMin = d3.min(data, function (d) {
+    if (plot.data.length > 0) {
+        var dataXMin = d3.min(plot.data, function (d) {
             return d.x - (d.sigma_x * (plot.uncertainty != null ? plot.uncertainty : 2));
         });
-        var dataYMin = d3.min(data, function (d) {
+        var dataYMin = d3.min(plot.data, function (d) {
             return d.y - (d.sigma_y * (plot.uncertainty != null ? plot.uncertainty : 2));
         });
-        var dataXMax = d3.max(data, function (d) {
+        var dataXMax = d3.max(plot.data, function (d) {
             return d.x + (d.sigma_x * (plot.uncertainty != null ? plot.uncertainty : 2));
         });
-        var dataYMax = d3.max(data, function (d) {
+        var dataYMax = d3.max(plot.data, function (d) {
             return d.y + (d.sigma_y * (plot.uncertainty != null ? plot.uncertainty : 2));
         });
 
@@ -330,19 +289,19 @@ plot.updatePlotExtent = function (data) {
 /*
     Manages point elements in the plot based on whether or not they should be visible, and whether or not they are visible.
  */
-plot.managePoints = function (data) {
+plot.managePoints = function () {
 
     // If points should be visible...
     if (plot.getProperty("Points")) {
 
         // If points should be visible, but aren't...
         if (!plot.pointsVisible) {
-            plot.drawPoints(data);
+            plot.drawPoints(plot.data);
         }
 
         // If points should be visible, and already are...
         else {
-            plot.updatePoints();
+            plot.updatePoints(plot.data);
         }
     }
 
@@ -355,7 +314,7 @@ plot.managePoints = function (data) {
 /*
  Manages ellipse elements in the plot based on whether or not they should be visible, and whether or not they are visible.
  */
-plot.manageEllipses = function (data) {
+plot.manageEllipses = function () {
 
     // If ellipses should be visible...
     if (plot.getProperty("Ellipses")) {
@@ -377,19 +336,19 @@ plot.manageEllipses = function (data) {
     }
 };
 
-plot.manageCrosses = function (data) {
+plot.manageCrosses = function () {
 
     // If crosses should be visible...
     if (plot.getProperty("Crosses")) {
 
         // If the crosses simply need to be updated...
         if (plot.crossesVisible) {
-            plot.updateCrosses();
+            plot.updateCrosses(plot.data);
         }
 
         // If crosses need to be drawn...
         else {
-            plot.drawCrosses(data);
+            plot.drawCrosses(plot.data);
         }
     }
 

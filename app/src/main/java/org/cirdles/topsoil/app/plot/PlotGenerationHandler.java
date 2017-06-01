@@ -88,7 +88,7 @@ public class PlotGenerationHandler {
 
         // Create Plot Scene
         Parent plotWindow = new PlotWindow(plot);
-        Scene scene = new Scene(plotWindow, 800, 600);
+        Scene scene = new Scene(plotWindow, 750, 600);
 
         // Create Plot Stage
         Stage plotStage = new Stage();

@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.plot;
 
-import com.sun.org.apache.regexp.internal.RE;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Bounds;
@@ -227,12 +226,13 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
                             topsoil.setMember("bridge", bridge);
 
-                            if (getProperties() != null) {
-                                topsoil.call("setProperties", getProperties());
-                            }
 
                             if (getData() != null) {
                                 topsoil.call("setData", getData());
+                            }
+
+                            if (getProperties() != null) {
+                                topsoil.call("setProperties", getProperties());
                             }
 
                             loadFuture.complete(null);
