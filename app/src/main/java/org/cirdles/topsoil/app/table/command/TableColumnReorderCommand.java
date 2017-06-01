@@ -8,6 +8,7 @@ import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.table.TopsoilDataTable.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
+import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -86,6 +87,12 @@ public class TableColumnReorderCommand implements Command {
 
         tableController.getTable().resetVariableMapping();
         tableController.resetColumnIndices();
+
+        if (!tableController.getTable().getOpenPlots().isEmpty()) {
+            for (PlotInformation plotInfo : tableController.getTable().getOpenPlots()) {
+                plotInfo.getPlot().setData(tableController.getPlotData());
+            }
+        }
     }
 
     /**

@@ -132,10 +132,10 @@
             var xRange = dataXMax - dataXMin;
             var yRange = dataYMax - dataYMin;
 
-            xMin = dataXMin - 0.05 * xRange;
-            yMin =  dataYMin - 0.05 * yRange;
-            xMax = dataXMax + 0.05 * xRange;
-            yMax = dataYMax + 0.05 * yRange;
+            xDataMin = dataXMin - 0.05 * xRange;
+            yDataMin =  dataYMin - 0.05 * yRange;
+            xDataMax = dataXMax + 0.05 * xRange;
+            yDataMax = dataYMax + 0.05 * yRange;
         }*/
 
         x.domain([xMin, xMax]);
@@ -162,7 +162,7 @@
             [1, 0]
         ];
 
-        var cacheData = plot.cacheData = data.map(function (d) {
+        var cacheData = plot.ellipseData = data.map(function (d) {
             var r = [
                 [d.sigma_x, d.rho * d.sigma_y],
                 [0, d.sigma_y * Math.sqrt(1 - d.rho * d.rho)]
@@ -210,7 +210,7 @@
 
         var ellipses;
         (ellipses = plot.area.clipped.selectAll(".ellipse")
-                .data(plot.cacheData))
+                .data(plot.ellipseData))
                 .enter().append("path")
                 .attr("class", "ellipse")
                 .attr("fill-opacity", 0.3)

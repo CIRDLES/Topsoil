@@ -24,7 +24,7 @@
                      <children>
                         <HBox minHeight="-Infinity" prefHeight="35.0">
                            <children>
-                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" text="Isotope System:">
+                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="130.0" text="Isotope System:">
                                  <HBox.margin>
                                     <Insets left="10.0" right="5.0" />
                                  </HBox.margin>
@@ -41,7 +41,7 @@
                         </HBox>
                         <HBox minHeight="-Infinity" prefHeight="35.0">
                            <children>
-                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" text="Uncertainty:">
+                              <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="130.0" text="Uncertainty:">
                                  <HBox.margin>
                                     <Insets left="10.0" right="5.0" />
                                  </HBox.margin>
@@ -80,7 +80,7 @@
                                     <TextField fx:id="yAxisTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                  </children>
                                  <columnConstraints>
-                                    <ColumnConstraints hgrow="NEVER" minWidth="65.0" />
+                                    <ColumnConstraints hgrow="NEVER" minWidth="80.0" />
                                     <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
                                  </columnConstraints>
                                  <rowConstraints>
@@ -89,22 +89,22 @@
                                     <RowConstraints minHeight="40.0" vgrow="NEVER" />
                                  </rowConstraints>
                                  <HBox.margin>
-                                    <Insets />
+                                    <Insets right="20.0" />
                                  </HBox.margin>
                               </GridPane>
                               <GridPane minHeight="135.0" minWidth="265.0" HBox.hgrow="NEVER">
                                  <children>
-                                    <CheckBox fx:id="ellipsesCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Unct. Ellipses" GridPane.rowIndex="2">
+                                    <CheckBox fx:id="ellipsesCheckBox" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Unct. Ellipses" GridPane.rowIndex="2">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </CheckBox>
-                                    <CheckBox fx:id="pointsCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Points" GridPane.rowIndex="1">
+                                    <CheckBox fx:id="pointsCheckBox" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Points" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </CheckBox>
-                                    <CheckBox fx:id="crossesCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Unct. Crosses" GridPane.rowIndex="3">
+                                    <CheckBox fx:id="crossesCheckBox" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Unct. Crosses" GridPane.rowIndex="3">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
@@ -124,14 +124,14 @@
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </ColorPicker>
-                                    <Label minHeight="25.0" minWidth="100.0" text="Plot data using:">
+                                    <Label prefHeight="25.0" prefWidth="100.0" text="Plot data using:">
                                        <GridPane.margin>
                                           <Insets left="15.0" />
                                        </GridPane.margin>
                                     </Label>
                                  </children>
                                  <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="120.0" />
                                  </columnConstraints>
                                  <rowConstraints>
@@ -140,6 +140,9 @@
                                     <RowConstraints minHeight="30.0" />
                                     <RowConstraints minHeight="30.0" vgrow="NEVER" />
                                  </rowConstraints>
+                                 <HBox.margin>
+                                    <Insets right="20.0" />
+                                 </HBox.margin>
                               </GridPane>
                            </children>
                         </HBox>
@@ -147,14 +150,19 @@
                   </VBox>
                   <VBox alignment="TOP_RIGHT" HBox.hgrow="NEVER">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="250.0">
                            <children>
                               <Label alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" text="Features" textAlignment="CENTER" underline="true" />
                               <VBox fx:id="featureBox">
                                  <children>
-                                    <HBox fx:id="concordiaFeature" prefHeight="100.0" prefWidth="200.0">
+                                    <HBox fx:id="concordiaFeature" alignment="CENTER_LEFT">
                                        <children>
-                                          <CheckBox fx:id="concordiaCheckBox" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="175.0" text="Wetherill Concordia Line" />
+                                          <CheckBox fx:id="concordiaCheckBox" minHeight="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Wetherill Concordia Line" />
+                                       </children>
+                                    </HBox>
+                                    <HBox fx:id="evolutionFeature" alignment="CENTER_LEFT">
+                                       <children>
+                                          <CheckBox fx:id="evolutionCheckBox" minHeight="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Evolution Matrix" />
                                        </children>
                                     </HBox>
                                  </children>
@@ -168,6 +176,9 @@
                                  </VBox.margin>
                               </Button>
                            </children>
+                           <VBox.margin>
+                              <Insets right="10.0" />
+                           </VBox.margin>
                         </VBox>
                      </children>
                      <HBox.margin>

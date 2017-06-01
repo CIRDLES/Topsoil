@@ -97,6 +97,12 @@ public class PlotPropertiesPanelController {
     @FXML private CheckBox concordiaCheckBox;
 
     /**
+     * An {@code HBox} containing the controls for the evolution matrix feature.
+     */
+    @FXML private HBox evolutionFeature;
+    @FXML private CheckBox evolutionCheckBox;
+
+    /**
      * A {@code Button} that, when pressed, generates a {@link Plot} with the current options for the current table.
      */
     @FXML private Button generatePlotButton;
@@ -161,16 +167,20 @@ public class PlotPropertiesPanelController {
 
                 switch (getIsotopeType()) {
                     case Generic:
-                        concordiaFeature.setVisible(false);
+                        concordiaCheckBox.setDisable(true);
+                        evolutionCheckBox.setDisable(true);
                         break;
                     case UPb:
-                        concordiaFeature.setVisible(true);
+                        concordiaCheckBox.setDisable(false);
+                        evolutionCheckBox.setDisable(true);
                         break;
                     case UTh:
-                        concordiaFeature.setVisible(false);
+                        concordiaCheckBox.setDisable(true);
+                        evolutionCheckBox.setDisable(false);
                         break;
                     default:
-                        concordiaFeature.setVisible(false);
+                        concordiaCheckBox.setDisable(true);
+                        evolutionCheckBox.setDisable(true);
                         break;
                 }
             });
@@ -312,7 +322,7 @@ public class PlotPropertiesPanelController {
     public Boolean shouldShowCrosses() {
         return showCrossesProperty().get();
     }
-    public void setshowCrosses(Boolean b) {
+    public void setShowCrosses(Boolean b) {
         crossesCheckBox.setSelected(b);
     }
 
@@ -388,6 +398,24 @@ public class PlotPropertiesPanelController {
         concordiaCheckBox.setSelected(b);
     }
 
+    /**
+     * A {@code BooleanProperty} tracking whether or not an evolution matrix should be drawn in the plot.
+     */
+    private BooleanProperty showEvolutionMatrix;
+    public final BooleanProperty showEvolutionMatrixProperty() {
+        if (showEvolutionMatrix == null) {
+            showEvolutionMatrix = new SimpleBooleanProperty(evolutionCheckBox.isSelected());
+            showEvolutionMatrix.bind(evolutionCheckBox.selectedProperty());
+        }
+        return showEvolutionMatrix;
+    }
+    public Boolean shouldShowEvolutionMatrix() {
+        return showEvolutionMatrixProperty().get();
+    }
+    public void setShowEvolutionMatrix(Boolean b) {
+        evolutionCheckBox.setSelected(b);
+    }
+
     //***********************
     // Methods
     //***********************
@@ -417,35 +445,41 @@ public class PlotPropertiesPanelController {
             }
         }
 
-//        uncertaintyChoiceBox.getSelectionModel().select(UNCERTAINTY_FORMAT_TO_STRING.get(PlotUncertaintyFormats.TWO_SIGMA_ABSOLUTE));
-
         titleTextField.setText((String) PROPERTIES.get(TITLE));
         xAxisTextField.setText((String) PROPERTIES.get(X_AXIS));
         yAxisTextField.setText((String) PROPERTIES.get(Y_AXIS));
 
         pointsCheckBox.setSelected((Boolean) PROPERTIES.get(POINTS));
-        // TODO Enable point toggling
-        pointsCheckBox.setDisable(true);
         ellipsesCheckBox.setSelected((Boolean) PROPERTIES.get(ELLIPSES));
-//        crossesCheckBox.setSelected((Boolean) PROPERTIES.get(CROSSES));
+        crossesCheckBox.setSelected((Boolean) PROPERTIES.get(CROSSES));
         // TODO Implement Crosses
-        crossesCheckBox.setVisible(false);
+//        crossesCheckBox.setVisible(false);
 
         pointsColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(POINT_FILL_COLOR)));
         ellipsesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(ELLIPSE_FILL_COLOR)));
-//        crossesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(CROSS_FILL_COLOR)));
+        crossesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(CROSS_FILL_COLOR)));
         // TODO Implement Crosses
-        crossesColorPicker.setVisible(false);
+//        crossesColorPicker.setVisible(false);
+
+        // Only one uncertainty option can be selected at a time.
+        ellipsesCheckBox.selectedProperty().addListener(c -> {
+            if (ellipsesCheckBox.isSelected()) {
+                crossesCheckBox.setSelected(false);
+            }
+        });
+        crossesCheckBox.selectedProperty().addListener(c -> {
+            if (crossesCheckBox.isSelected()) {
+                ellipsesCheckBox.setSelected(false);
+            }
+        });
 
         concordiaCheckBox.setSelected((Boolean) PROPERTIES.get(CONCORDIA_LINE));
+
+        evolutionCheckBox.setSelected((Boolean) PROPERTIES.get(EVOLUTION_MATRIX));
 
         // Automatically adjust PROPERTIES
         isotopeTypeObjectProperty().addListener(c -> {
             PROPERTIES.put(ISOTOPE_TYPE, isotopeTypeObjectProperty().get().getName());
-            // Ensures that Concordia is never shown outside of UPb, while preserving the user's value in the CheckBox
-//            if (isotopeTypeObjectProperty().get() != IsotopeType.UPb) {
-//                PROPERTIES.put(CONCORDIA_LINE, false);
-//            }
             updateProperties();
         });
         isotopeSystemChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
@@ -487,28 +521,33 @@ public class PlotPropertiesPanelController {
             PROPERTIES.put(ELLIPSES, showEllipsesProperty().get());
             updateProperties();
         });
-//        showCrosses().addListener(c -> {
-//            PROPERTIES.put(CROSSES, showCrossesProperty().get());
-//            updateProperties();
-//        });
+        showCrossesProperty().addListener(c -> {
+            PROPERTIES.put(CROSSES, showCrossesProperty().get());
+            updateProperties();
+        });
         pointsColorProperty().addListener(c -> {
             PROPERTIES.put(POINT_FILL_COLOR, convertColor(pointsColorProperty().get()));
+            PROPERTIES.put(POINT_OPACITY, convertOpacity(pointsColorProperty().get()));
             updateProperties();
         });
         ellipsesColorProperty().addListener(c -> {
             PROPERTIES.put(ELLIPSE_FILL_COLOR, convertColor(ellipsesColorProperty().get()));
+            PROPERTIES.put(ELLIPSE_OPACITY, convertOpacity(ellipsesColorProperty().get()));
             updateProperties();
         });
-//        crossesColor().addListener(c -> {
-//            PROPERTIES.put(CROSS_FILL_COLOR, crossesColorProperty().get());
-//            updateProperties();
-//        });
+        crossesColorProperty().addListener(c -> {
+            PROPERTIES.put(CROSS_FILL_COLOR, convertColor(crossesColorProperty().get()));
+            PROPERTIES.put(CROSS_OPACITY, convertOpacity(crossesColorProperty().get()));
+            updateProperties();
+        });
         showConcordiaProperty().addListener(c -> {
             PROPERTIES.put(CONCORDIA_LINE, shouldShowConcordia());
             updateProperties();
         });
-
-
+        showEvolutionMatrixProperty().addListener(c -> {
+            PROPERTIES.put(EVOLUTION_MATRIX, shouldShowEvolutionMatrix());
+            updateProperties();
+        });
     }
 
     /**
@@ -551,6 +590,20 @@ public class PlotPropertiesPanelController {
     }
 
     /**
+     * Converts a Java {@code Color} into a {@code Double} format representing the alpha value of the color.
+     * <p>
+     * This is done by converting the last two chars (which represent opacity) into decimal, and dividing the result
+     * by 255. For example, 0x123456ff would be converted to 1.0.
+     *
+     * @param c a Java Color
+     * @return  a String color with format #000000
+     */
+    private Double convertOpacity(Color c) {
+        String s = c.toString();
+        return ((double) Integer.parseInt(s.substring(s.length() - 2).trim(), 16)) / 255;
+    }
+
+    /**
      * Returns {@link #PROPERTIES} as an {@code ObservableMap}.
      *
      * @return  an ObservableMap of properties
@@ -570,14 +623,15 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(Y_AXIS)) setyAxisTitle((String) plotProperties.get(Y_AXIS));
         if (plotProperties.containsKey(POINTS)) setShowPoints((Boolean) plotProperties.get(POINTS));
         if (plotProperties.containsKey(ELLIPSES)) setshowEllipses((Boolean) plotProperties.get(ELLIPSES));
-//        if (plotProperties.containsKey(CROSSES)) setShowCrosses((Boolean) plotProperties.get(CROSSES));
+        if (plotProperties.containsKey(CROSSES)) setShowCrosses((Boolean) plotProperties.get(CROSSES));
         if (plotProperties.containsKey(POINT_FILL_COLOR)) setPointsColor(Color.valueOf((String) plotProperties.get(POINT_FILL_COLOR)));
         if (plotProperties.containsKey(ELLIPSE_FILL_COLOR)) setEllipsesColor(Color.valueOf((String) plotProperties.get(ELLIPSE_FILL_COLOR)));
-//        if (plotProperties.containsKey(CROSS_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(CROSS_FILL_COLOR)));
+        if (plotProperties.containsKey(CROSS_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(CROSS_FILL_COLOR)));
         if (plotProperties.containsKey(ISOTOPE_TYPE)) setIsotopeType(STRING_TO_ISOTOPE_TYPE.get((String) plotProperties.get(ISOTOPE_TYPE)));
         if (plotProperties.containsKey(UNCERTAINTY)) setUncertainty(DOUBLE_TO_UNCERTAINTY_FORMAT.get(
                 (Double) plotProperties.get(UNCERTAINTY)));
-        if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) PROPERTIES.get(CONCORDIA_LINE));
+        if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) plotProperties.get(CONCORDIA_LINE));
+        if (plotProperties.containsKey(EVOLUTION_MATRIX)) setShowEvolutionMatrix((Boolean) plotProperties.get(EVOLUTION_MATRIX));
     }
 
     /**

@@ -11,6 +11,8 @@ import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An undoable {@link Command} instance that can be added to a TopsoilTab's {@link UndoManager} when a
@@ -28,19 +30,24 @@ public class ClearColumnCommand implements Command {
     //***********************
 
     /**
-     * The {@code TableColumn} that was cleared.
+     * The {@code TopsoilTableView} that the column is in.
      */
-    private TableColumn<TopsoilDataEntry, Double> column;
+    private TableView<TopsoilDataEntry> tableView;
 
     /**
      * The index of the {@code TableColumn} in {@code TableView.getColumns()}.
      */
-    private int index;
+    private int colIndex;
+
+    /**
+     * The number of values in the column.
+     */
+    private int numRows;
 
     /**
      * An {@code ArrayDeque} that stores the properties from the cleared {@code TableColumn}.
      */
-    private ArrayDeque<DoubleProperty> columnData;
+    private List<Double> columnData;
 
     //***********************
     // Constructors
@@ -53,9 +60,14 @@ public class ClearColumnCommand implements Command {
      */
     public ClearColumnCommand(TopsoilTableCell cell) {
 
-        this.column = cell.getTableColumn();
-        this.index = cell.getColumnIndex();
-        this.columnData = new ArrayDeque<>();
+        this.tableView = cell.getTableView();
+        this.colIndex = cell.getColumnIndex();
+        this.numRows = tableView.getItems().size();
+        this.columnData = new ArrayList<>(numRows);
+
+        for (int i = 0; i < numRows; i++) {
+            columnData.add(i, tableView.getItems().get(i).getProperties().get(colIndex).get());
+        }
     }
 
     //***********************
@@ -67,12 +79,13 @@ public class ClearColumnCommand implements Command {
      */
     public void execute() {
 
-        this.column.setCellValueFactory(param -> {
-            this.columnData.add(param.getValue().getProperties().get(index));
-            return (ObservableValue) new SimpleDoubleProperty(0.0);
-        });
-        this.column.setVisible(false);
-        this.column.setVisible(true);
+        for (TopsoilDataEntry row : tableView.getItems()) {
+            row.setValue(colIndex, 0.0);
+        }
+
+        // This is a workaround to force the TableView to update the visible Node
+        tableView.setVisible(false);
+        tableView.setVisible(true);
     }
 
     /**
@@ -80,11 +93,13 @@ public class ClearColumnCommand implements Command {
      */
     public void undo() {
 
-        this.column.setCellValueFactory(param -> (ObservableValue) this.columnData.poll());
+        for (int i = 0; i < tableView.getItems().size(); i++) {
+            tableView.getItems().get(i).setValue(colIndex, columnData.get(i));
+        }
 
         // This is a workaround to force the TableView to update the visible Node
-        this.column.setVisible(false);
-        this.column.setVisible(true);
+        tableView.setVisible(false);
+        tableView.setVisible(true);
     }
 
     /** {@inheritDoc}

@@ -59,23 +59,6 @@ public class TopsoilDataEntry implements GenericDataEntry {
     }
 
     /**
-     * Swaps the values at index1 and index2.
-     *
-     * @param index1    first index to swap
-     * @param index2    second index to swap
-     */
-    public void swap(int index1, int index2) {
-        DoubleProperty d1 = properties.get(index1);
-        DoubleProperty d2 = properties.get(index2);
-
-        properties.remove(index1);
-        properties.add(index1, d2);
-
-        properties.remove(index2);
-        properties.add(index2, d1);
-    }
-
-    /**
      * Gets the {@code ObservableList} of {@code DoubleProperty}s from the {@code TopsoilDataEntry}.
      *
      * @return  an ObservableList of DoubleProperties
