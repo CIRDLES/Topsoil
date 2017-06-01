@@ -67,7 +67,6 @@ public class ClearRowCommand implements Command {
     public void undo() {
         for (int i = 0; i < rowValues.length; i++) {
             row.setValue(i, rowValues[i]);
-            System.out.println(row.getProperties().get(i).get());
         }
     }
 

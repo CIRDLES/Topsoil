@@ -37,7 +37,7 @@
             topsoil.data.push(d);
         }
 
-        plot.draw(topsoil.data);
+        plot.setData(topsoil.data);
     };
 
     topsoil.setProperties = function (properties) {
@@ -47,14 +47,14 @@
             plot.properties[key] = properties.get(key);
         });
 
-        plot.draw(ts.data);
+        plot.update(ts.data);
     };
 
     /*
      * PLOT
      */
 
-    // an acknoledged (seemingly arbitrary) fudge factor for the window dimensions
+    // an acknowledged (seemingly arbitrary) fudge factor for the window dimensions
     // without this (which has been minimized!) scrollbars show (at least on OS X)
     var magicNumber = 3.0000375;
 

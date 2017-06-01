@@ -128,7 +128,7 @@
             [1, 0]
         ];
 
-        var cacheData = plot.cacheData = data.map(function (d) {
+        var cacheData = plot.ellipseData = data.map(function (d) {
             var r = [
                 [d.sigma_x, d.rho * d.sigma_y],
                 [0, d.sigma_y * Math.sqrt(1 - d.rho * d.rho)]
@@ -170,7 +170,7 @@
 
         var ellipses;
         (ellipses = plot.area.clipped.selectAll(".ellipse")
-            .data(plot.cacheData))
+            .data(plot.ellipseData))
             .enter().append("path")
             .attr("class", "ellipse")
             .attr("fill-opacity", 0.3)

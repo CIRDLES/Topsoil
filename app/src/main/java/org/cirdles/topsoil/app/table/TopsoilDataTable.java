@@ -327,7 +327,7 @@ public class TopsoilDataTable {
      */
     public void addRow(int index, TopsoilDataEntry row) {
         for (int i = 0; i < Math.min(row.getProperties().size(), dataColumns.size()); i++) {
-            dataColumns.get(i).add(index, new SimpleDoubleProperty(row.getProperties().get(0).get()));
+            dataColumns.get(i).add(index, new SimpleDoubleProperty(row.getProperties().get(i).get()));
         }
         numRows++;
     }

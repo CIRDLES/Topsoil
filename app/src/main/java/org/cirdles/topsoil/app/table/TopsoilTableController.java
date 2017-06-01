@@ -25,7 +25,9 @@ import org.cirdles.topsoil.app.table.TopsoilDataTable.TopsoilDataColumn;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilPlotEntry;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
+import org.cirdles.topsoil.plot.Plot;
 
 import java.util.*;
 
@@ -115,6 +117,12 @@ public class TopsoilTableController {
                     } else {
                         dataColumns.get(col).get(row).set(dataValue);
                     }
+
+                    if (!table.getOpenPlots().isEmpty()) {
+                        for (PlotInformation plotInfo : table.getOpenPlots()) {
+                            plotInfo.getPlot().setData(getPlotData());
+                        }
+                    }
                 });
             }
         }
@@ -124,31 +132,41 @@ public class TopsoilTableController {
             c.next();
 
             if (c.wasAdded()) {
+
                 int rowIndex = c.getFrom();
-                TopsoilDataEntry newEntry = dataEntries.get(rowIndex).cloneEntry();
-                for (int i = 0; i < dataEntries.get(rowIndex).getProperties().size(); i++) {
-                    final int colIndex = i;
-                    // Apply changes in table row to data columns
-                    dataEntries.get(rowIndex).getProperties().get(colIndex).addListener(change -> {
-                        // Account for uncertainty values
+                table.addRow(rowIndex, dataEntries.get(rowIndex).cloneEntry());
+
+                for (int colIndex = 0; colIndex < dataEntries.get(rowIndex).getProperties().size(); colIndex++) {
+                    final int col = colIndex;
+                    final int row = rowIndex;
+                    dataEntries.get(rowIndex).getProperties().get(colIndex).addListener(ch -> {
+                        Double dataValue = dataEntries.get(row).getProperties().get(col).get();
+
                         // TODO Detect the column's variable in a different way than its index.
-//                        if (Variables.UNCERTAINTY_VARIABLES.contains(dataColumns.get(colIndex).getVariable())) {
-                        if (colIndex == 2 || colIndex == 3) {
-                            dataColumns.get(colIndex).get(rowIndex).set(
-                                    dataEntries.get(rowIndex).getProperties().get(colIndex).get() /
-                                    table.getUncertaintyFormat().getValue());
+                        if (col == 2 || col == 3) {
+                            dataColumns.get(col).get(row).set(dataValue / uncertaintyFormatValue);
                         } else {
-                            dataColumns.get(colIndex).get(rowIndex).set(dataEntries.get(rowIndex).getProperties().get
-                                    (colIndex).get());
+                            dataColumns.get(col).get(row).set(dataValue);
+                        }
+
+                        if (!table.getOpenPlots().isEmpty()) {
+                            for (PlotInformation plotInfo : table.getOpenPlots()) {
+                                plotInfo.getPlot().setData(getPlotData());
+                            }
                         }
                     });
                 }
-                table.addRow(rowIndex, newEntry);
             }
 
             if (c.wasRemoved()) {
-                int index = c.getFrom();
-                table.removeRow(index);
+                int rowIndex = c.getFrom();
+                table.removeRow(rowIndex);
+            }
+
+            if (!table.getOpenPlots().isEmpty()) {
+                for (PlotInformation plotInfo : table.getOpenPlots()) {
+                    plotInfo.getPlot().setData(getPlotData());
+                }
             }
         });
 
@@ -345,6 +363,12 @@ public class TopsoilTableController {
             // Reorder column name properties in TopsoilDataTable
             StringProperty tempName = table.getColumnNameProperties().remove(fromIndex);
             table.getColumnNameProperties().add(toIndex, tempName);
+
+            if (!table.getOpenPlots().isEmpty()) {
+                for (PlotInformation plotInfo : table.getOpenPlots()) {
+                    plotInfo.getPlot().setData(getPlotData());
+                }
+            }
 
             TableColumnReorderCommand reorderCommand = new TableColumnReorderCommand(this, fromIndex, toIndex);
             ((TopsoilTabPane) tabContent.getTableView().getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo

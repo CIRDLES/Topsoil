@@ -209,6 +209,8 @@ public class MenuItemEventHandler {
                         table = null;
                     } else {
                         ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                        applyUncertaintyFormat(format, data);
+
                         table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
                         table.setTitle(isotopeType.getName()+" Example Data");
                 }

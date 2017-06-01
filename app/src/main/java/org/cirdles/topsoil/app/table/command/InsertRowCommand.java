@@ -23,6 +23,7 @@ public class InsertRowCommand implements Command {
     //***********************
 
     private TableView<TopsoilDataEntry> tableView;
+    private TopsoilDataEntry row;
     private int index;
 
     //***********************
@@ -38,6 +39,7 @@ public class InsertRowCommand implements Command {
      */
     public InsertRowCommand(TopsoilTableCell cell, int index) {
         this.tableView = cell.getTableView();
+        this.row = TopsoilDataEntry.newEmptyDataEntry(tableView);
         this.index = index;
     }
 
@@ -49,6 +51,7 @@ public class InsertRowCommand implements Command {
      */
     public InsertRowCommand(TableView<TopsoilDataEntry> tableView) {
         this.tableView = tableView;
+        this.row = TopsoilDataEntry.newEmptyDataEntry(tableView);
         this.index = this.tableView.getItems().size();
     }
 
@@ -60,7 +63,7 @@ public class InsertRowCommand implements Command {
      * Called to execute the row insertion.
      */
     public void execute() {
-        this.tableView.getItems().add(index, TopsoilDataEntry.newEmptyDataEntry(this.tableView));
+        this.tableView.getItems().add(index, row);
     }
 
     /**
