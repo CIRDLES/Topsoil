@@ -80,6 +80,7 @@ public class TopsoilTab extends Tab {
     public TopsoilTab(TopsoilTabContent tabContent, TopsoilTableController tableController) {
         this.tabContent = tabContent;
         this.tableController = tableController;
+//        this.getTabPane().getTabs().remove(0);
         this.undoManager = new UndoManager(50);
 
         this.isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";

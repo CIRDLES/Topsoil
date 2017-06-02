@@ -23,6 +23,7 @@ import java.io.IOException;
 import javafx.application.Platform;
 
 import static org.cirdles.topsoil.app.menu.MenuItemEventHandler.*;
+import org.cirdles.topsoil.app.menu.command.DeleteTableCommand;
 
 /**
  * A custom {@code MenuBar} for the Topsoil {@link MainWindow}.
@@ -89,7 +90,7 @@ public class MainMenuBar extends MenuBar {
      */
     private MenuItem redoItem;
 
-    // Table Menu
+    // Data Table Menu
     /**
      * When clicked, creates a new table.
      */
@@ -109,8 +110,13 @@ public class MainMenuBar extends MenuBar {
      * When clicked, clears the current {@code TableView}.
      */
     private MenuItem clearTableItem;
+    
+    /**
+     * When clicked, deletes the current {@code TableView}.
+     */
+    private MenuItem deleteTableItem;
 
-    // Table > Import Table >
+    // Data Table > Import Table >
     /**
      * When clicked, imports table data from a file.
      */
@@ -120,7 +126,7 @@ public class MainMenuBar extends MenuBar {
      */
     private MenuItem tableFromClipboardItem;
 
-    // Example Table >
+    // Data Table > Import Table >
     /**
      * When clicked, imports sample UPb data table 
      */
@@ -130,20 +136,6 @@ public class MainMenuBar extends MenuBar {
      */
     private MenuItem uThExampleTableItem;
 
-    
-    // Table > Isotope System >
-    /**
-     * When clicked, changes the table's {@code IsotopeType} to Generic.
-     */
-    private MenuItem genericSystemItem;
-    /**
-     * When clicked, changes the table's {@code IsotopeType} to Uranium Lead.
-     */
-    private MenuItem uraniumLeadSystemItem;
-    /**
-     * When clicked, changes the table's {@code IsotopeType} to Uranium Thorium.
-     */
-    private MenuItem uraniumThoriumSystemItem;
 
     // Help Menu
     /**
@@ -320,17 +312,18 @@ public class MainMenuBar extends MenuBar {
     }
 
     /**
-     * Creates and returns the 'Table' menu.
+     * Creates and returns the 'Data Table' menu.
      *
      * @param tabs  TopsoilTabPane for the window
-     * @return  'Table' Menu
+     * @return  'Data Table' Menu
      */
     private Menu getTableMenu(TopsoilTabPane tabs) {
-        Menu tableMenu = new Menu("Table");
+        Menu tableMenu = new Menu("Data Table");
         newTableItem = new MenuItem("New Data Table");
         saveTableItem = new MenuItem("Save Data Table");
         saveTableAsItem = new MenuItem("Save Data Table As");
         clearTableItem = new MenuItem("Clear Data Table");
+        deleteTableItem = new MenuItem("Delete Data Table");
 
         // New, empty table
         newTableItem.setOnAction(event -> {
@@ -355,6 +348,13 @@ public class MainMenuBar extends MenuBar {
                     new ClearTableCommand(tabs.getSelectedTab().getTabContent().getTableView());
             clearTableCommand.execute();
             tabs.getSelectedTab().addUndo(clearTableCommand);
+        });
+        
+        deleteTableItem.setOnAction(action -> {
+            DeleteTableCommand deleteTableCommand =
+                    new DeleteTableCommand(tabs.getSelectedTab());
+            deleteTableCommand.execute();
+            //tabs.addUndo(deleteTableCommand);
         });
 
         //Creates Submenu for Imports
@@ -427,28 +427,6 @@ public class MainMenuBar extends MenuBar {
             }
         });
 
-        //Creates Submenu for Isotype system selection
-        Menu isoSystem = new Menu("Set Isotope System");
-        uraniumLeadSystemItem = new MenuItem("UPb");
-        uraniumThoriumSystemItem = new MenuItem("UTh");
-        genericSystemItem = new MenuItem("Gen");
-        isoSystem.getItems().addAll(
-                uraniumLeadSystemItem,
-                uraniumThoriumSystemItem,
-                genericSystemItem);
-
-        isoSystem.setOnShown(event -> {
-            if (tabs.isEmpty()) {
-                uraniumLeadSystemItem.setDisable(true);
-                uraniumThoriumSystemItem.setDisable(true);
-                genericSystemItem.setDisable(true);
-            } else {
-                uraniumLeadSystemItem.setDisable(false);
-                uraniumThoriumSystemItem.setDisable(false);
-                genericSystemItem.setDisable(false);
-            }
-        });
-
         tableMenu.getItems()
                  .addAll(importTable,
                          exampleTable,
@@ -459,42 +437,19 @@ public class MainMenuBar extends MenuBar {
                          newTableItem,
                          clearTableItem,
                          new SeparatorMenuItem(),
-                         isoSystem);
+                         deleteTableItem);
 
         tableMenu.setOnShown(event -> {
             if (tabs.isEmpty()) {
                 clearTableItem.setDisable(true);
-                isoSystem.setDisable(true);
+                deleteTableItem.setDisable(true);
             } else {
                 if (!tabs.getSelectedTab().getTableController().getTable().isCleared()) {
                     clearTableItem.setDisable(false);
                 } else {
                     clearTableItem.setDisable(true);
                 }
-                isoSystem.setDisable(false);
-            }
-        });
-
-        isoSystem.setOnShown(event -> {
-
-        });
-
-        uraniumLeadSystemItem.setOnAction(event -> {
-            // if the table isn't already UPb
-            if (!(tabs.getSelectedTab().getTableController().getTable().getIsotopeType() == IsotopeType.UPb)) {
-                tabs.getSelectedTab().getTableController().getTable().setIsotopeType(IsotopeType.UPb);
-            }
-        });
-
-        genericSystemItem.setOnAction(event -> {
-            if (!tabs.getSelectedTab().getTableController().getTable().getIsotopeType().equals((IsotopeType.Generic))) {
-                tabs.getSelectedTab().getTableController().getTable().setIsotopeType(IsotopeType.Generic);
-            }
-        });
-
-        uraniumThoriumSystemItem.setOnAction(event -> {
-            if (!tabs.getSelectedTab().getTableController().getTable().getIsotopeType().equals(IsotopeType.UTh)) {
-                tabs.getSelectedTab().getTableController().getTable().setIsotopeType(IsotopeType.UTh);
+                deleteTableItem.setDisable(false);
             }
         });
 

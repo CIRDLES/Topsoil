@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
+import jdk.nashorn.internal.objects.NativeDebug;
+import org.apache.ibatis.io.Resources;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 
 /**
@@ -100,54 +102,6 @@ public class FileParser {
         return TopsoilFileChooser
                 .getTableFileChooser()
                 .showOpenDialog(stage);
-    }
-    
-    /**
-     * Opens a {@code File} containing example data for a given isotopeType.
-     *
-     * @param isotopeType the isotope system to get a relevant set of data
-     * @return  the ressource File located in project resources
-     */
-    public static File openExampleTable(IsotopeType isotopeType) {
-        File file = null;
-        Alerter alerter = new ErrorAlerter();
-
-        String UPB_DATA_FILE_PATH;
-        String UTH_DATA_FILE_PATH;
-        String GEN_DATA_FILE_PATH;
-
-        if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
-            UPB_DATA_FILE_PATH = "app/src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/UPb-Example-Data.csv";
-            UTH_DATA_FILE_PATH = "app/src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/UTh-Example-Data.csv";
-            GEN_DATA_FILE_PATH = "app/src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/Generic-Example-Data.csv";
-        } else {
-            UPB_DATA_FILE_PATH = "src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/UPb-Example-Data.csv";
-            UTH_DATA_FILE_PATH = "src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/UTh-Example-Data.csv";
-            GEN_DATA_FILE_PATH = "src/main/resources/org/cirdles/topsoil/app/util/file/sampledata/Generic-Example-Data.csv";
-
-        }
-
-        if(isotopeType.equals(IsotopeType.UPb)) {
-            file = new File(UPB_DATA_FILE_PATH);
-            if(file.exists()) {
-                return file;
-            } else {
-                alerter.alert("UPb sample data table not found. Please check the resource directory.");
-            }
-        } else if(isotopeType.equals(IsotopeType.UTh)) {
-            file = new File(UTH_DATA_FILE_PATH);
-            if(file.exists()) {
-                return file;
-            } else {
-                alerter.alert("UTh sample data table not found. Please check the resource directory.");
-            }
-        } else {
-            file = new File(GEN_DATA_FILE_PATH);
-            if (!(file.exists())) {
-                alerter.alert("No sample data table found. Please check the resource directory.");
-            }
-        }
-        return file;
     }
 
     /**
@@ -312,7 +266,7 @@ public class FileParser {
      * @param containsHeaders   true if headers are present
      * @return  data as a List of TopsoilDataEntries
      */
-    private static List<TopsoilDataEntry> parseTxt(String[] lines, String delimiter, boolean containsHeaders) {
+    public static List<TopsoilDataEntry> parseTxt(String[] lines, String delimiter, boolean containsHeaders) {
 
         Alerter alerter = new ErrorAlerter();
 
@@ -690,7 +644,7 @@ public class FileParser {
      * @param content   String to be read
      * @return String[] of lines
      */
-    private static String[] readLines(String content) {
+    public static String[] readLines(String content) {
         return content.split("[\\r\\n]+");
     }
 
