@@ -3,12 +3,9 @@ package org.cirdles.topsoil.app.menu.command;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.util.undo.Command;
-import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
  * A {@code Command} instance to delete a table. 
