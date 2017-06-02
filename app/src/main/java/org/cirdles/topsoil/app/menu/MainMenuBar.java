@@ -351,8 +351,6 @@ public class MainMenuBar extends MenuBar {
         });
         
         deleteTableItem.setOnAction(action -> {
-            // clear table and add an empty row
-            tabs.getTopsoilTabs().remove(tabs.getSelectedTab().getId());
             DeleteTableCommand deleteTableCommand =
                     new DeleteTableCommand(tabs.getSelectedTab());
             deleteTableCommand.execute();
