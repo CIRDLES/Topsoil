@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.table.command;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
+import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
@@ -73,14 +74,24 @@ public class DeleteRowCommand implements Command {
      * Called to execute the row deletion.
      */
     public void execute() {
-        this.tableView.getItems().remove(index);
+        if (index == 0 && tableView.getItems().size() <= 1) {
+            tableView.getItems().remove(index);
+            tableView.getItems().add(TopsoilDataEntry.newEmptyDataEntry(tableView));
+        } else {
+            tableView.getItems().remove(index);
+        }
     }
 
     /**
      * Called to undo the row deletion.
      */
     public void undo() {
-        this.tableView.getItems().add(index, dataEntry);
+        if (((TopsoilTabPane) tableView.getScene().lookup("#TopsoilTabPane")).getSelectedTab().getTableController()
+                .getTable().isCleared()) {
+            tableView.getItems().remove(0);
+        }
+        tableView.getItems().add(index, dataEntry);
+
     }
 
     /** {@inheritDoc}

@@ -106,6 +106,16 @@ class TopsoilTableCellContextMenu extends ContextMenu {
 //        copyCellItem = new MenuItem("Copy Cell");
 //        clearCellItem = new MenuItem("Clear Cell");
 
+        this.setOnShown(event -> {
+            if (((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab()
+                                                                                 .getTableController().getTable()
+                                                                                 .isCleared()) {
+                deleteRowItem.setDisable(true);
+            } else {
+                deleteRowItem.setDisable(false);
+            }
+        });
+
         //********************//
         //    ROW ACTIONS     //
         //********************//

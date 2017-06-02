@@ -58,16 +58,6 @@ public class TopsoilTabContent extends SplitPane {
     @FXML private TableView<TopsoilDataEntry> tableView;
 
     /**
-     * A {@code Button} that, when pressed, adds an empty row at the end of the {@code TableView}.
-     */
-    @FXML private Button addRowButton;
-
-    /**
-     * A {@code Button} that, when pressed, removes a row at the end of the {@code TableView}.
-     */
-    @FXML private Button removeRowButton;
-
-    /**
      * An {@code AnchorPane} that contains the {@link PlotPropertiesPanelController} for this tab.
      */
     @FXML private AnchorPane plotPropertiesAnchorPane;
@@ -103,20 +93,6 @@ public class TopsoilTabContent extends SplitPane {
 
         // Enables multiple cell selection.
 //        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-        // Set initial state of remove button.
-
-        tableView.itemsProperty().addListener(c -> {
-            if (tableView.getItems() != null) {
-                tableView.getItems().addListener((ListChangeListener<TopsoilDataEntry>) d -> {
-                    if (tableView.getItems().isEmpty()) {
-                        removeRowButton.setDisable(true);
-                    } else {
-                        removeRowButton.setDisable(false);
-                    }
-                });
-            }
-        });
 
         configureColumns();
         resetIds();
@@ -273,30 +249,6 @@ public class TopsoilTabContent extends SplitPane {
         for (TableColumn<TopsoilDataEntry, ?> column : this.tableView.getColumns()) {
             column.setId(Integer.toString(id));
             id++;
-        }
-    }
-
-    /**
-     * Appends an empty {@code TopsoilDataEntry} to the end of the {@code TableView}.
-     */
-    @FXML private void addRowButtonAction() {
-        if (tableView.getItems() != null) {
-            InsertRowCommand insertRowCommand = new InsertRowCommand(tableView);
-            insertRowCommand.execute();
-            ((TopsoilTabPane) this.tableView.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo
-                    (insertRowCommand);
-        }
-    }
-
-    /**
-     * Removes a {@code TopsoilDataEntry} from the end of the {@code TableView}.
-     */
-    @FXML private void removeRowButtonAction() {
-        if (tableView.getItems() != null && !tableView.getItems().isEmpty()) {
-            DeleteRowCommand deleteRowCommand = new DeleteRowCommand(tableView);
-            deleteRowCommand.execute();
-            ((TopsoilTabPane) this.tableView.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo
-                    (deleteRowCommand);
         }
     }
 
