@@ -193,9 +193,6 @@ public class MenuItemEventHandler {
         TopsoilDataTable table = null;
         UncertaintyFormat format;
 
-        //TODO Determine format of table.
-        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
-
         if (isotopeType != null) {
                 
                 List<TopsoilDataEntry> entries = null;
@@ -208,6 +205,21 @@ public class MenuItemEventHandler {
                 if (entries == null) {
                         table = null;
                     } else {
+                    
+                        switch (isotopeType) {
+                            case Generic:
+                                format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                                break;
+                            case UPb:
+                                format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                                break;
+                            case UTh:
+                                format = UncertaintyFormat.TWO_SIGMA_ABSOLUTE;
+                                break;
+                            default:
+                                format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                        }
+
                         ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
                         applyUncertaintyFormat(format, data);
 
