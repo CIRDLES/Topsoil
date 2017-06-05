@@ -114,7 +114,7 @@ public class TopsoilDataTable {
      */
     public TopsoilDataTable(String[] columnNames, IsotopeType isotopeType, UncertaintyFormat format,
                             TopsoilDataEntry... rows) {
-        this.numRows = rows.length;
+        this.numRows = rows.length == 0 ? 1 : rows.length;
         this.isotopeType = new SimpleObjectProperty<>(isotopeType);
         this.uncertaintyFormat = format;
         this.columnForVariable = new HashMap<>();
@@ -354,14 +354,26 @@ public class TopsoilDataTable {
 
         ObservableList<TopsoilDataColumn> dataColumns = FXCollections.observableArrayList();
 
-        // TODO Read in any number of columns.
-//        for (int colIndex = 0; colIndex < rows[0].getProperties().size(); colIndex++) {
-        for (int colIndex = 0; colIndex < 5; colIndex++) {
-            TopsoilDataColumn dataColumn = new TopsoilDataColumn();
-            for (TopsoilDataEntry row : rows) {
-                dataColumn.add(row.getProperties().get(colIndex));
+        if (rows.length <= 0) {
+            // TODO Read in any number of columns.
+            for (int colIndex = 0; colIndex < 5; colIndex++) {
+                TopsoilDataColumn dataColumn = new TopsoilDataColumn();
+                    dataColumn.add(new SimpleDoubleProperty(0.0));
+                dataColumns.add(dataColumn);
             }
-            dataColumns.add(dataColumn);
+        } else {
+            // TODO Read in any number of columns.
+            for (int colIndex = 0; colIndex < 5; colIndex++) {
+                TopsoilDataColumn dataColumn = new TopsoilDataColumn();
+                for (TopsoilDataEntry row : rows) {
+                    if (row.getProperties().size() <= colIndex) {
+                        dataColumn.add(new SimpleDoubleProperty(0.0));
+                    } else {
+                        dataColumn.add(row.getProperties().get(colIndex));
+                    }
+                }
+                dataColumns.add(dataColumn);
+            }
         }
 
         return dataColumns;
@@ -377,14 +389,26 @@ public class TopsoilDataTable {
 
         ObservableList<TopsoilDataColumn> dataColumns = FXCollections.observableArrayList();
 
-        // TODO Read in any number of columns.
-//        for (int colIndex = 0; colIndex < rows[0].length; colIndex++) {
-        for (int colIndex = 0; colIndex < 5; colIndex++) {
-            TopsoilDataColumn dataColumn = new TopsoilDataColumn();
-            for (Double[] row : rows) {
-                dataColumn.add(new SimpleDoubleProperty(row[colIndex]));
+        if (rows.length <= 0) {
+            // TODO Read in any number of columns.
+            for (int colIndex = 0; colIndex < 5; colIndex++) {
+                TopsoilDataColumn dataColumn = new TopsoilDataColumn();
+                dataColumn.add(new SimpleDoubleProperty(0.0));
+                dataColumns.add(dataColumn);
             }
-            dataColumns.add(dataColumn);
+        } else {
+            // TODO Read in any number of columns.
+            for (int colIndex = 0; colIndex < 5; colIndex++) {
+                TopsoilDataColumn dataColumn = new TopsoilDataColumn();
+                for (Double[] row : rows) {
+                    if (row.length <= colIndex) {
+                        dataColumn.add(new SimpleDoubleProperty(0.0));
+                    } else {
+                        dataColumn.add(new SimpleDoubleProperty(row[colIndex]));
+                    }
+                }
+                dataColumns.add(dataColumn);
+            }
         }
 
         return dataColumns;
@@ -407,7 +431,16 @@ public class TopsoilDataTable {
      * @return  true or false
      */
     public boolean isCleared() {
-        return columnForVariable.get(Variables.X).isEmpty();
+
+        if (numRows == 1) {
+            for (int i = 0; i < dataColumns.size(); i++) {
+                if (Double.compare(dataColumns.get(i).get(0).get(), 0.0) != 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
