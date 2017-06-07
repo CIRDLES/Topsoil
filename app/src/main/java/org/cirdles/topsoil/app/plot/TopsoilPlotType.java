@@ -4,9 +4,6 @@ import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlot;
-import org.cirdles.topsoil.plot.scatter.ScatterPlot;
-import org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlot;
-import org.cirdles.topsoil.plot.uth.evolution.EvolutionPlot;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,19 +21,7 @@ public enum TopsoilPlotType {
 
     BASE_PLOT("Base Plot",
             asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            BasePlot.class),
-
-    SCATTER_PLOT("Scatter Plot",
-            asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            ScatterPlot.class),
-
-    UNCERTAINTY_ELLIPSE_PLOT("Uncertainty Ellipse Plot",
-            asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            UncertaintyEllipsePlot.class),
-
-    EVOLUTION_PLOT("Evolution Plot",
-            asList(Variables.X, Variables.SIGMA_X, Variables.Y, Variables.SIGMA_Y, Variables.RHO),
-            EvolutionPlot.class);
+            BasePlot.class);
 
     /**
      * The name of the plot type.
@@ -56,10 +41,7 @@ public enum TopsoilPlotType {
     public static final List<TopsoilPlotType> TOPSOIL_PLOT_TYPES;
     static {
         TOPSOIL_PLOT_TYPES = Collections.unmodifiableList(Arrays.asList(
-                BASE_PLOT,
-                SCATTER_PLOT,
-                UNCERTAINTY_ELLIPSE_PLOT,
-                EVOLUTION_PLOT
+                BASE_PLOT
         ));
     }
 

@@ -17,11 +17,11 @@ public enum IsotopeType {
 
     UPb("UPb", "Uranium Lead",
             new String[]{"207Pb*/235U", "206Pb*/238U", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-            new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT, TopsoilPlotType.UNCERTAINTY_ELLIPSE_PLOT}),
+            new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT}),
 
     UTh("UTh", "Uranium Thorium",
             new String[]{"[234Pb/238U]t", "[230Th/238U]t", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-            new TopsoilPlotType[] {TopsoilPlotType.SCATTER_PLOT, TopsoilPlotType.EVOLUTION_PLOT});
+            new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT});
 
     /**
      * An abbreviation of the {@code IsotopeType}'s name.
