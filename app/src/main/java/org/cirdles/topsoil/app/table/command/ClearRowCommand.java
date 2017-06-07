@@ -1,8 +1,5 @@
 package org.cirdles.topsoil.app.table.command;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;

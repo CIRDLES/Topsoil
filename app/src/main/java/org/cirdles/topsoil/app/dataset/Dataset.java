@@ -19,7 +19,6 @@ import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * An interface implemented by classes that store {@link RawData}.

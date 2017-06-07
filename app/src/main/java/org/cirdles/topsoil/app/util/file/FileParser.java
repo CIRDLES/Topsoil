@@ -11,7 +11,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.util.dialog.Alerter;
 import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
@@ -28,9 +27,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import jdk.nashorn.internal.objects.NativeDebug;
-import org.apache.ibatis.io.Resources;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
 
 /**
  * A utility file used for parsing data from files into arrays of {@code String}s, which can then be put into a table.

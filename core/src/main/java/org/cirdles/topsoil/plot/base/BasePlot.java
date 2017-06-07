@@ -18,10 +18,6 @@ package org.cirdles.topsoil.plot.base;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.nio.file.Path;
-
 /**
  *
  * Created by Emily on 2/24/17.

@@ -4,7 +4,6 @@ import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Stores a {@link TopsoilRawData} of type {@code Number} with a name.
