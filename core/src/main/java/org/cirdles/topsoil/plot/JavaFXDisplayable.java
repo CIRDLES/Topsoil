@@ -28,11 +28,14 @@ import javax.swing.JComponent;
 import java.util.concurrent.ExecutionException;
 
 /**
+ * An interface for objects that are displayable in a couple of common formats, with a default method specified for
+ * displaying as a {@link JComponent}.
  *
  * @author John Zeringue
  */
 public interface JavaFXDisplayable extends Displayable {
 
+    /**{@inheritDoc}*/
     @Override
     default JComponent displayAsJComponent() {
         JFXPanel jfxPanel = new JFXPanel();

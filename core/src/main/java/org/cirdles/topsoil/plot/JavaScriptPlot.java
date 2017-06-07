@@ -53,7 +53,7 @@ import static javafx.concurrent.Worker.State.SUCCEEDED;
  *
  * @author John Zeringue
  */
-public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayable {
+public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDisplayable {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(JavaScriptPlot.class);
@@ -187,10 +187,20 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         );
     }
 
+    /**
+     * Returns the {@code WebEngine} for this {@code Plot}.
+     *
+     * @return  WebEngine
+     */
     public WebEngine getWebEngine() {
         return webView.getEngine();
     }
 
+    /**
+     * Gets a {@code BufferedImage} representing the space inside of the {@link WebView}.
+     *
+     * @return  contents of WebView as BufferedImage
+     */
     private BufferedImage screenCapture() {
         try {
             Bounds bounds = webView.getBoundsInLocal();
@@ -248,6 +258,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         });
     }
 
+    /**{@inheritDoc}*/
     @Override
     public Node displayAsNode() {
         if (webView == null) {
@@ -292,12 +303,15 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return svgDocument;
     }
 
+    /**{@inheritDoc}*/
+    @Override
     public void recenter() {
         if (topsoil != null) {
             runOnFxApplicationThread(() -> topsoil.call("recenter"));
         }
     }
 
+    /**{@inheritDoc}*/
     @Override
     public void setData(List<Map<String, Object>> data) {
         super.setData(data);
@@ -307,6 +321,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         }
     }
 
+    /**{@inheritDoc}*/
     @Override
     public void setProperties(Map<String, Object> properties) {
         super.setProperties(properties);

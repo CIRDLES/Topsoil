@@ -25,12 +25,37 @@ import java.util.Map;
  */
 public interface Plot extends Displayable {
 
+    /**
+     * Gets the data for the {@code Plot}.
+     *
+     * @return  a List of Maps of String field names to Object data values
+     */
     List<Map<String, Object>> getData();
 
+    /**
+     * Sets the data for the {@code Plot}.
+     *
+     * @param data  a List of Maps of String field names to Object data values
+     */
     void setData(List<Map<String, Object>> data);
 
+    /**
+     * Gets the properties for the {@code Plot}.
+     *
+     * @return  a Map of String keys to Object values
+     */
     Map<String, Object> getProperties();
 
+    /**
+     * Sets the properties for the {@code Plot}.
+     *
+     * @param properties    a Map of String keys to Object values
+     */
     void setProperties(Map<String, Object> properties);
+
+    /**
+     * Re-centers the plot to its default view.
+     */
+    void recenter();
 
 }
