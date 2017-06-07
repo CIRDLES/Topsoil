@@ -110,6 +110,7 @@ public class TopsoilDataTable {
      *
      * @param columnNames   a String[] of column names
      * @param isotopeType   IsotopeType
+     * @param format    the UncertaintyFormat of the uncertainty values in the data
      * @param rows  TopsoilDataEntries of data rows
      */
     public TopsoilDataTable(String[] columnNames, IsotopeType isotopeType, UncertaintyFormat format,
@@ -131,6 +132,7 @@ public class TopsoilDataTable {
      *
      * @param columnNames   a String[] of column names
      * @param isotopeType   IsotopeType
+     * @param format    the UncertaintyFormat of the uncertainty values in the data
      * @param rows  Double[]s of data rows
      */
     public TopsoilDataTable(String[] columnNames, IsotopeType isotopeType, UncertaintyFormat format,

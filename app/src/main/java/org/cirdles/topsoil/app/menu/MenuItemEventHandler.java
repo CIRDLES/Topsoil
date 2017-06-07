@@ -227,6 +227,7 @@ public class MenuItemEventHandler {
      *
      * @param tabs  the TopsoilTabPane to which to add tables
      * @param isotopeType the isotope type of the example table to be opened
+     * @return  the resulting TopsoilDataTable
      */
     public static TopsoilDataTable handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
         TopsoilDataTable table = null;
