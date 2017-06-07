@@ -232,7 +232,7 @@ public class MenuItemEventHandler {
     }
     
     /**
-     * Open default browser and create a new GitHub issue with user specifications already supplied
+     * Open default browser and create a new GitHub issue with user specifications already supplied.
      * */
     public static void handleReportIssue() {
         IssueCreator issueCreator = new StandardGitHubIssueCreator(
@@ -242,6 +242,16 @@ public class MenuItemEventHandler {
                 new StringBuilder()
         );
         issueCreator.create();
+    }
+    
+    /**
+     * Open default browser at the Topsoil Project Page on CIRLDES website.
+     * */
+    public static void handleOpenOnlineHelp() {
+        
+        String TOPSOIL_URL = "http://cirdles.org/projects/topsoil/";
+        new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter()).browse(TOPSOIL_URL);
+        
     }
 
     /**
