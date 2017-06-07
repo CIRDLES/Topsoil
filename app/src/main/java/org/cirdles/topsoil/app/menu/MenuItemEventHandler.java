@@ -10,13 +10,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.isotope.IsotopeSelectionDialog;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.util.dialog.TableUncertaintyChoiceDialog;
+import org.cirdles.topsoil.app.util.file.DataImportDialog;
+import org.cirdles.topsoil.app.util.file.DataImportDialog.DataImportKey;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import org.cirdles.topsoil.app.util.file.ExampleDataTable;
+
+import javax.xml.crypto.Data;
 
 /**
  * A class containing a set of methods for handling actions for {@code MenuItem}s in the {@link MainMenuBar}.
@@ -77,10 +80,14 @@ public class MenuItemEventHandler {
                     List<TopsoilDataEntry> entries = FileParser.parseFile(file, hasHeaders);
 
                     if (entries != null) {
-                        TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
-                        UncertaintyFormat selectedFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
+                        Map<DataImportKey, Object> selections = DataImportDialog.showImportDialog(headers, entries);
 
-                        if (selectedFormat != null) {
+                        if (selections != null) {
+                            headers = (String[]) selections.get(DataImportKey.HEADERS);
+                            entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
+                            UncertaintyFormat selectedFormat = (UncertaintyFormat) selections
+                                    .get(DataImportKey.UNCERTAINTY);
+
                             ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
                             applyUncertaintyFormat(selectedFormat, data);
 
@@ -135,10 +142,14 @@ public class MenuItemEventHandler {
 
                     if (entries != null) {
 
-                        TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
-                        UncertaintyFormat selectedFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
+                        Map<DataImportKey, Object> selections = DataImportDialog.showImportDialog(headers, entries);
 
-                        if (selectedFormat != null) {
+                        if (selections != null) {
+                            headers = (String[]) selections.get(DataImportKey.HEADERS);
+                            entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
+
+                            UncertaintyFormat selectedFormat = (UncertaintyFormat) selections.get(DataImportKey.UNCERTAINTY);
+
                             ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
                             applyUncertaintyFormat(selectedFormat, data);
 
@@ -146,6 +157,7 @@ public class MenuItemEventHandler {
                                                          isotopeType,
                                                          selectedFormat,
                                                          data.toArray(new TopsoilDataEntry[data.size()]));
+
                         }
                     } else {
                         ErrorAlerter alerter = new ErrorAlerter();
