@@ -176,11 +176,14 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     private String alignText(String cellValue) {
         if (cellValue.contains(".")) {
             String[] decimalPart = cellValue.split("\\.");
-            if(decimalPart[1].length() <= 9){
-                for(int i = decimalPart[1].length(); i < this.df.getMaximumFractionDigits(); i++){
-                    cellValue += " "; //padding with spaces to align decimals
+            if (decimalPart[1].length() <= 9){
+                StringBuilder builder = new StringBuilder();
+                builder.append(cellValue);
+                for (int i = decimalPart[1].length(); i < this.df.getMaximumFractionDigits(); i++){
+                    builder.append(" "); //padding with spaces to align decimals
                 }
-            }else{
+                cellValue = builder.toString();
+            } else {
                 cellValue = decimalPart[0] + "." + decimalPart[1].substring(0, 9);
             }
         }

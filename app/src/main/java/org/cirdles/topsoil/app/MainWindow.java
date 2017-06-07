@@ -117,7 +117,7 @@ public class MainWindow extends Application {
                 scene.getStylesheets().add(css);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                System.err.printf("Could not load CSS.\n");
+                System.err.printf("Could not load CSS.%n");
             }
 
             // If main window is closed, all other windows close.

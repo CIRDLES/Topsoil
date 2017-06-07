@@ -309,8 +309,6 @@ public class FileParser {
      */
     public static List<TopsoilDataEntry> parseTxt(String[] lines, String delimiter, boolean containsHeaders) {
 
-        Alerter alerter = new ErrorAlerter();
-
         // TODO Detect whether the copied data is viable.
 
         List<TopsoilDataEntry> content = new ArrayList<>();
@@ -346,9 +344,7 @@ public class FileParser {
                 }
                 content.add(entry);
             }
-
         }
-
         return content;
     }
 

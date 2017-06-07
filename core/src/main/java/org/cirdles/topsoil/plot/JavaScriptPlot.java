@@ -105,10 +105,10 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
     private WebView webView;
     private JSObject topsoil;
-    private final Bridge bridge = new Bridge();
+    private final JavaScriptBridge bridge = new JavaScriptBridge();
 
     /**
-     * Creates a new {@link JavaScriptPlot} using the specified source file.
+     * Creates a new {@link JavaScriptPlot} using the specified source file. No properties are set by default.
      *
      * @param sourcePath the path to a valid JavaScript file
      */
@@ -116,6 +116,12 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         this(sourcePath, new HashMap<>());
     }
 
+    /**
+     * Creates a new {@link JavaScriptPlot} using the specified source file and properties.
+     *
+     * @param sourcePath the path to a valid JavaScript file
+     * @param defaultProperties a Map containing properties for the plot
+     */
     public JavaScriptPlot(Path sourcePath, Map<String, Object> defaultProperties) {
         super(defaultProperties);
 
@@ -158,7 +164,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return loadFuture;
     }
 
-    String buildContent() {
+    private String buildContent() {
 
         ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(JavaScriptPlot.class);
 
@@ -211,9 +217,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
             webEngine.setJavaScriptEnabled(true);
 
             // useful for debugging
-            webEngine.setOnAlert(event -> {
-                LOGGER.info(event.getData());
-            });
+            webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
 
             webEngine.getLoadWorker().stateProperty().addListener(
                     (observable, oldValue, newValue) -> {
@@ -251,13 +255,6 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         }
 
         return webView;
-    }
-
-    //called when BasePlot changes isotope type
-    public class Bridge {
-        public void println(String s) {
-            System.out.println(s);
-        }
     }
 
     /**
@@ -315,9 +312,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         super.setProperties(properties);
 
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> {
-                topsoil.call("setProperties", properties);
-            });
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", properties));
         }
     }
 }

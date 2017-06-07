@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.app.plot.variable;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -68,17 +69,17 @@ public final class Variables {
         Y = new IndependentVariable<>("y");
         SIGMA_Y = new DependentVariable<>("sigma_y", Y);
         RHO = new IndependentVariable<>("rho");
-        VARIABLE_LIST = asList(
+        VARIABLE_LIST = Collections.unmodifiableList(asList(
                 X,
                 Y,
                 SIGMA_X,
                 SIGMA_Y,
                 RHO
-        );
-        UNCERTAINTY_VARIABLES = asList(
+        ));
+        UNCERTAINTY_VARIABLES = Collections.unmodifiableList(asList(
                 SIGMA_X,
                 SIGMA_Y
-        );
+        ));
     }
 
 }
