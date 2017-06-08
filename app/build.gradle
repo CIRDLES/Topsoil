@@ -15,7 +15,7 @@ import org.eclipse.jgit.internal.storage.file.FileRepository
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-ext.mainClass = 'org.cirdles.topsoil.app.MainWindow'
+def mainClass = 'org.cirdles.topsoil.app.MainWindow'
 
 def configJavaExec = { JavaExec task ->
     task.main = mainClass
@@ -53,7 +53,7 @@ task jarWithDependencies(type: Jar) {
         attributes 'Main-Class': mainClass
     }
 
-    baseName = 'topsoil-' + getVersionName()
+    baseName = 'topsoil-' + getVersionName().split('-')[0]
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
