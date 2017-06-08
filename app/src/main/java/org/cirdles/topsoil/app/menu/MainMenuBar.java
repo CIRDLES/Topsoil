@@ -318,6 +318,7 @@ public class MainMenuBar extends MenuBar {
         exportTableItem = new MenuItem("Export Table");
         clearTableItem = new MenuItem("Clear Table");
         newTableItem = new MenuItem("New Data Table");
+        newTableItem = new MenuItem("New Data Table");
         clearTableItem = new MenuItem("Clear Data Table");
         deleteTableItem = new MenuItem("Delete Data Table");
 
@@ -453,7 +454,7 @@ public class MainMenuBar extends MenuBar {
                 } else {
                     clearTableItem.setDisable(true);
                     exportTableItem.setDisable(true);
-                }
+                } 
                 deleteTableItem.setDisable(false);
             }
         });
