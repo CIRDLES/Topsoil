@@ -283,6 +283,11 @@ public class FileParser {
             lines = newlines;
         }
 
+        int maxRowSize = 0;
+        for (String line : lines) {
+            maxRowSize = Math.max(maxRowSize, line.split(delimiter).length);
+        }
+
         for (String line : lines) {
             String[] contentAsString = line.split(delimiter, -1);
 
@@ -290,13 +295,15 @@ public class FileParser {
             if (isDouble(contentAsString[0])) {
                 TopsoilDataEntry entry = new TopsoilDataEntry();
                 // TODO Allow more or less than five columns
-                for (int i = 0; i < contentAsString.length && i < 5; i++) {
-                    entry.getProperties().add(isDouble(contentAsString[i]) ? new SimpleDoubleProperty(Double.parseDouble(contentAsString[i])) : new SimpleDoubleProperty(Double.NaN));
+                for (int i = 0; i < maxRowSize; i++) {
+                    if (i >= contentAsString.length) {
+                        entry.getProperties().add(new SimpleDoubleProperty(0.0));
+                    } else {
+                        entry.getProperties().add(isDouble(contentAsString[i]) ?
+                                                          new SimpleDoubleProperty(Double.parseDouble(contentAsString[i])) : new SimpleDoubleProperty(Double.NaN));
+                    }
                 }
                 content.add(entry);
-                // TODO throw exception for invalid file
-//                throw new IOException("invalid file");
-//            }
             }
 
         }
@@ -593,6 +600,7 @@ public class FileParser {
 
         // If the number of occurrences of delim is not the same for each line, return false.
         for (int lineNumber = 1; lineNumber < counts.length; lineNumber++) {
+
             if (counts[lineNumber] == 0 || counts[lineNumber] != counts[lineNumber - 1]) {
                 result = false;
                 break;
@@ -620,16 +628,14 @@ public class FileParser {
             BufferedReader reader = new BufferedReader(inputStreamReader);
 
             // Parse file content to arrayList
-            String line = reader.readLine();
-            while (line != null) {
+            String line = reader.readLine().trim();
+            while (line != null && line.length() > 0) {
                 content.add(line);
                 line = reader.readLine();
             }
 
             reader.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
