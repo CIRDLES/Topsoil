@@ -20,13 +20,20 @@ import javafx.util.StringConverter;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 
 /**
+ * A utility class containing several standard {@code Fields}.
  *
  * @author parizotclement
  */
 public final class Fields {
 
+    /**
+     * A {@code BooleanField} with the name "Selected".
+     */
     public static final BooleanField SELECTED = new BooleanField("Selected");
 
+    /**
+     * A {@code Field} of type {@code TableRow<Entry>} with no name.
+     */
     public static final Field<TableRow<Entry>> ROW = new Field() {
 
         @Override

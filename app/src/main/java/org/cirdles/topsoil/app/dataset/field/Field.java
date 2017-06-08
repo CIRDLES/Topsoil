@@ -18,14 +18,25 @@ package org.cirdles.topsoil.app.dataset.field;
 import javafx.util.StringConverter;
 
 /**
+ * An interface implemented by classes that describe fields of data.
  *
  * @author John Zeringue
  * @param <T> the field type
  */
 public interface Field<T> {
 
+    /**
+     * Returns the name of the {@code Field}.
+     *
+     * @return  String name
+     */
     public String getName();
 
+    /**
+     * Returns the {@code StringConverted} for converting the type of the {@code Field} to a {@code String}.
+     *
+     * @return  StringConverter of type {@literal <T>}
+     */
     public StringConverter<T> getStringConverter();
 
 }

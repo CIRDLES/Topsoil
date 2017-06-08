@@ -29,24 +29,46 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 /**
+ * A {@code RawDataWriter} for writing delimited data, using a {@code CSVWriter} with a custom delimiter.
  *
  * @author John Zeringue
  */
 public class DsvRawDataWriter implements RawDataWriter {
 
+    /**
+     * The delimiter of the data.
+     */
     private final char delimiter;
 
+    /**
+     * A {@code CSVWriter} used for writing data.
+     */
     private CSVWriter dsvWriter;
 
+    /**
+     * Constructs a new {@code DsvRawDataWriter} using the specified delimiter.
+     *
+     * @param delimiter char delimiter
+     */
     public DsvRawDataWriter(char delimiter) {
         this.delimiter = delimiter;
     }
 
+    /**
+     * Returns the delimiter used by this {@code DsvRawDataWriter}.
+     *
+     * @return  char delimiter
+     */
     public char getDelimiter() {
         return delimiter;
     }
 
-    void writeFields(RawData rawData) {
+    /**
+     * Writes the {@code Field}s for a {@code RawData} object.
+     *
+     * @param rawData   RawData
+     */
+    private void writeFields(RawData rawData) {
         String[] line = rawData.getFields().stream()
                 .map(Field::getName)
                 .toArray(String[]::new);
@@ -54,7 +76,12 @@ public class DsvRawDataWriter implements RawDataWriter {
         dsvWriter.writeNext(line);
     }
 
-    void writeEntries(RawData rawData) {
+    /**
+     * Writes the {@code Entry}s for a {@code RawData} object.
+     *
+     * @param rawData   RawData
+     */
+    private void writeEntries(RawData rawData) {
         List<String[]> lines = rawData.getEntries().stream()
                 .map(entry -> {
                     return rawData.getFields().stream()
@@ -69,6 +96,8 @@ public class DsvRawDataWriter implements RawDataWriter {
         dsvWriter.writeAll(lines);
     }
 
+    /** {@inheritDoc}
+     */
     @Override
     public void write(RawData rawData, OutputStream destination)
             throws IOException {

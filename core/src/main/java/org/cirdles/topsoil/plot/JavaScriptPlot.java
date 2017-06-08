@@ -105,6 +105,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
     private WebView webView;
     private JSObject topsoil;
+    private final Bridge bridge = new Bridge();
 
     /**
      * Creates a new {@link JavaScriptPlot} using the specified source file.
@@ -158,7 +159,26 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
     }
 
     String buildContent() {
-        return String.format(HTML_TEMPLATE, sourcePath.toUri());
+
+        ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(JavaScriptPlot.class);
+
+        final URI POINTS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Points.js").toUri();
+        final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Ellipses.js").toUri();
+        final URI CROSSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Crosses.js").toUri();
+        final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Concordia.js").toUri();
+        final URI EVOLUTION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Evolution.js").toUri();
+        final URI LAMBDA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/DefaultLambda.js").toUri();
+        final URI UTILS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/Utils.js").toUri();
+
+        return String.format(HTML_TEMPLATE, sourcePath.toUri()).concat(
+                "<script src=\"" + POINTS_URI + "\"></script>\n" +
+                "<script src=\"" + ELLIPSES_URI + "\"></script>\n" +
+                "<script src=\"" + CROSSES_URI + "\"></script>\n" +
+                "<script src=\"" + CONCORDIA_URI + "\"></script>\n" +
+                "<script src=\"" + EVOLUTION_URI + "\"></script>\n" +
+                "<script src=\"" + LAMBDA_URI + "\"></script>\n" +
+                "<script src=\"" + UTILS_URI + "\"></script>\n"
+        );
     }
 
     public WebEngine getWebEngine() {
@@ -204,12 +224,15 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
-                            if (getProperties() != null) {
-                                topsoil.call("setProperties", getProperties());
-                            }
+                            topsoil.setMember("bridge", bridge);
+
 
                             if (getData() != null) {
                                 topsoil.call("setData", getData());
+                            }
+
+                            if (getProperties() != null) {
+                                topsoil.call("setProperties", getProperties());
                             }
 
                             loadFuture.complete(null);
@@ -228,6 +251,13 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         }
 
         return webView;
+    }
+
+    //called when BasePlot changes isotope type
+    public class Bridge {
+        public void println(String s) {
+            System.out.println(s);
+        }
     }
 
     /**
@@ -265,9 +295,9 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return svgDocument;
     }
 
-    public void reset() {
+    public void recenter() {
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("reset"));
+            runOnFxApplicationThread(() -> topsoil.call("recenter"));
         }
     }
 

@@ -16,8 +16,10 @@
 package org.cirdles.topsoil.app.browse;
 
 /**
+ * An interface implemented by classes which attempt to open pages in the system default browser.
  *
- * @author Emily
+ * @author Emily Coleman
+ * @see DesktopWebBrowser
  */
 public interface WebBrowser {
 

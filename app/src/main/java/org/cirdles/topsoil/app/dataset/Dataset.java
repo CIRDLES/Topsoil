@@ -18,18 +18,38 @@ package org.cirdles.topsoil.app.dataset;
 import org.cirdles.topsoil.app.dataset.entry.Entry;
 import org.cirdles.topsoil.app.dataset.field.Field;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
+ * An interface implemented by classes that store {@link RawData}.
  *
+ * @param <T> the type of Dataset
  * @author John Zeringue
+ * @see SimpleDataset
+ * @see NumberDataset
  */
-public interface Dataset {
+public interface Dataset<T> {
 
+    /**
+     * Returns the name of the {@code Dataset}.
+     *
+     * @return  String name
+     */
     public String getName();
 
-    public List<Field<?>> getFields();
+    /**
+     * Returns the {@code Field}s of the {@code Dataset} in a {@code Collection}.
+     *
+     * @return  List of Fields of type {@literal <T>}
+     */
+    public Collection<Field<T>> getFields();
 
-    public List<Entry> getEntries();
+    /**
+     * Returns the {@code Entry}s of the {@code Dataset} in a {@code Collection}.
+     *
+     * @return  List of Entries
+     */
+    public Collection<Entry> getEntries();
 
 }
