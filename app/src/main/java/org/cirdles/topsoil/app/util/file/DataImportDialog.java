@@ -255,6 +255,10 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
             }
         }
 
+        for (int i = 0; i < Math.min(columnChoiceBoxes.size(), 5); i++) {
+            columnChoiceBoxes.get(i).setValue(Variables.VARIABLE_LIST.get(i).getName());
+        }
+
         // The AnchorPane forces the GridPane to fill the ScrollPane
         AnchorPane anchor = new AnchorPane(grid);
         AnchorPane.setLeftAnchor(grid, 0.0);
