@@ -34,8 +34,8 @@ task debug(dependsOn: project.classes, type: JavaExec) {
 
 // BEGIN BETTER VERSIONING
 def getVersionName = { ->
-    def repo = new FileRepository("$rootDir/.git");
-    def git = new Git(repo);
+    def repo = new FileRepository("$rootDir/.git")
+    def git = new Git(repo)
 
     git.describe().call()
 }
@@ -50,7 +50,12 @@ processResources {
 
 task jarWithDependencies(type: Jar) {
     manifest {
-        attributes 'Main-Class': mainClass
+        attributes(
+                'Implementation-Title': 'Topsoil',
+                'Implementation-Version': getVersionName(),
+                'Built-JDK': System.getProperty('java.version'),
+                'Main-Class': mainClass
+        )
     }
 
     baseName = 'topsoil-' + getVersionName().split('-')[0]
