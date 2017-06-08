@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.tab;
 
+import com.sun.javafx.scene.control.skin.TableHeaderRow;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -98,6 +99,12 @@ public class TopsoilTabContent extends SplitPane {
         resetIds();
 
         initializePlotPropertiesPanel();
+
+        // A somewhat hacky method of disabling column dragging in the TableView.
+        tableView.widthProperty().addListener(c -> {
+            TableHeaderRow header = (TableHeaderRow) tableView.lookup("TableHeaderRow");
+            header.reorderingProperty().addListener(ch -> header.setReordering(false));
+        });
 
     }
 
