@@ -305,6 +305,25 @@ public class TopsoilDataTable {
         }
         return tableEntries;
     }
+    
+    public List<Double[]> getFormattedDataAsArrays() {
+        ArrayList<Double[]> tableEntries = new ArrayList<>();
+        Double[] arr;
+
+        for (int i = 0; i < numRows; i++) {
+            arr = new Double[dataColumns.size()];
+            for (int j = 0; j < dataColumns.size(); j++) {
+                if  (j == 2 || j== 3) {
+                    arr[j] = dataColumns.get(j).get(i).get() * uncertaintyFormat.getValue();
+                }
+                else {
+                    arr[j] = dataColumns.get(j).get(i).get();
+                }
+            }
+            tableEntries.add(arr);
+        }
+        return tableEntries;
+    }
 
     /**
      * Adds a row of DoubleProperties to the existing data.

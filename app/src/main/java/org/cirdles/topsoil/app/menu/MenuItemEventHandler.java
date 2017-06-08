@@ -28,6 +28,20 @@ import org.cirdles.topsoil.app.util.dialog.YesNoAlert;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.cirdles.topsoil.app.util.file.ExampleDataTable;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -277,6 +291,52 @@ public class MenuItemEventHandler {
         }
 
         return resultingTable;
+    }
+    
+    public static void handleExportTable(TopsoilDataTable table) {
+        TopsoilDataTable t = table;
+        String[] titles = t.getColumnNames();
+        List<Double[]> data = t.getFormattedDataAsArrays();
+        
+        File file = TopsoilFileChooser.getExportTableFileChooser().showSaveDialog(StageHelper.getStages().get(0));
+        String location = file.toString();
+        String type = location.substring(location.length() - 3);
+        String delim;
+        
+        switch (type) {
+            case "csv":
+                delim = ", ";
+                break;
+            case "tsv":
+                delim = "\t";
+                break;
+            default:
+                delim = "\t";
+                break;
+        }
+        
+        PrintWriter writer;
+        try {
+            writer = new PrintWriter(location);
+            for (int i = 0; i < titles.length; i++)
+                writer.print(titles[i] + delim);
+            
+            writer.print('\n');
+            
+            for (int i = 0; i < data.size(); i++)
+            {
+                for (int j = 0; j < data.get(i).length; j++) {
+                    writer.print(data.get(i)[j]);
+                    if (j < data.get(i).length - 1)
+                        writer.print(delim);
+                }
+                writer.print('\n');
+            }
+            writer.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     /**
