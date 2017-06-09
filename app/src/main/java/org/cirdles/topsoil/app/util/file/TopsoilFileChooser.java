@@ -71,10 +71,21 @@ public class TopsoilFileChooser {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Table File");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Table Files", "*.tsv", "*.csv", "*.txt"),
+                new FileChooser.ExtensionFilter("Data Table Files (.csv, .tsv, .txt)", "*.tsv", "*.csv", "*.txt"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
         return fileChooser;
     }
+    
+    public static FileChooser getExportTableFileChooser() {
+         FileChooser fileChooser = new FileChooser();
+         fileChooser.setTitle("Export Table File");
+         fileChooser.getExtensionFilters().addAll(
+                 new FileChooser.ExtensionFilter("csv File (.csv)", "*.csv"),
+                 new FileChooser.ExtensionFilter("tsv File (.tsv)", "*.tsv"),
+                 new FileChooser.ExtensionFilter("txt File (.txt)", "*.txt")
+         );
+         return fileChooser;
+ }
 
 }
