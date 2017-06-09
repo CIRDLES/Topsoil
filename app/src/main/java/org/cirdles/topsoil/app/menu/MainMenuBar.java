@@ -487,7 +487,7 @@ public class MainMenuBar extends MenuBar {
                 Parent about = FXMLLoader
                         .load(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL
                                 ());
-                Scene aboutScene = new Scene(about, 450, 600);
+                Scene aboutScene = new Scene(about, 550, 650);
                 Stage aboutWindow = new Stage(StageStyle.UNDECORATED);
                 aboutWindow.setResizable(false);
                 aboutWindow.setScene(aboutScene);

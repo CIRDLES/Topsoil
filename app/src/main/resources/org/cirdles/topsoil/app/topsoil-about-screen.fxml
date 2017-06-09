@@ -23,12 +23,17 @@
             <Image url="@topsoil-logo-text.png" />
          </image>
          <VBox.margin>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            <Insets bottom="5.0" left="20.0" right="20.0" top="20.0" />
          </VBox.margin>
       </ImageView>
-      <HBox alignment="CENTER" prefHeight="311.0" prefWidth="450.0">
+      <Label fx:id="versionLabel" text="Version X.Y.Z">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </Label>
+      <HBox alignment="CENTER" prefWidth="525.0">
          <children>
-            <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="315.0" prefWidth="450.0" HBox.hgrow="SOMETIMES">
+            <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
                <children>
                   <VBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
                      <children>
@@ -37,42 +42,39 @@
                               <Font name="Lucida Sans Demibold" size="22.0" />
                            </font>
                         </Label>
-                        <Label prefWidth="400.0" text="Topsoil is a desktop application and Java library that creates data visualizations for geochronologists and other earth scientists. ”Topsoil” is an anagram of “Isoplot”, the name of an enormously successful Microsoft Excel Add-In with similar capabilities that now works only in older versions of Excel." textAlignment="CENTER" wrapText="true">
+                        <Label fx:id="messageLabel" text="Topsoil is a desktop application and Java library that creates data visualizations for geochronologists and other earth scientists. ”Topsoil” is an anagram of “Isoplot”, the name of an enormously successful Microsoft Excel Add-In with similar capabilities developed by Kenneth Ludwig, which now works only in older versions of Excel." textAlignment="CENTER" wrapText="true">
                            <font>
-                              <Font name="Lucida Sans Regular" size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
-                  <VBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label text="Links">
-                           <font>
-                              <Font name="Lucida Sans Demibold" size="22.0" />
+                              <Font name="Lucida Sans Unicode" size="14.0" />
                            </font>
                            <VBox.margin>
-                              <Insets bottom="5.0" />
+                              <Insets left="15.0" right="15.0" />
                            </VBox.margin>
                         </Label>
-                        <VBox alignment="TOP_CENTER">
+                        <HBox alignment="CENTER">
                            <children>
-                              <Hyperlink fx:id="github" onAction="#openGitHub" text="GitHub">
+                              <Label text="For more information about Topsoil, visit our">
                                  <font>
-                                    <Font size="18.0" />
+                                    <Font name="Lucida Sans Unicode" size="14.0" />
                                  </font>
-                              </Hyperlink>
-                              <Hyperlink fx:id="cirdles" onAction="#openCIRDLES" text="CIRDLES.org">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <Hyperlink text="home page.">
                                  <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Hyperlink>
-                              <Hyperlink fx:id="releaseLog" onAction="#openReleaseLog" text="Release Log">
-                                 <font>
-                                    <Font size="18.0" />
+                                    <Font name="Lucida Sans Unicode" size="14.0" />
                                  </font>
                               </Hyperlink>
                            </children>
-                        </VBox>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <Hyperlink fx:id="license" onAction="#openLicensePage" text="Licensed under the Apache License, Version 2.0">
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </Hyperlink>
                      </children>
                   </VBox>
                </children>
@@ -85,6 +87,37 @@
             </VBox>
          </children>
       </HBox>
+      <VBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Links">
+               <font>
+                  <Font name="Lucida Sans Demibold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </Label>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <Hyperlink fx:id="github" onAction="#openGitHub" text="GitHub Repository">
+                     <font>
+                        <Font name="Lucida Sans Unicode" size="14.0" />
+                     </font>
+                  </Hyperlink>
+                  <Hyperlink fx:id="cirdles" onAction="#openCIRDLES" text="CIRDLES.org">
+                     <font>
+                        <Font name="Lucida Sans Unicode" size="14.0" />
+                     </font>
+                  </Hyperlink>
+                  <Hyperlink fx:id="releaseLog" onAction="#openReleaseLog" text="Release Log">
+                     <font>
+                        <Font name="Lucida Sans Unicode" size="14.0" />
+                     </font>
+                  </Hyperlink>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
       <HBox alignment="CENTER">
          <children>
             <ImageView fx:id="cirdlesLogo" fitHeight="28.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
