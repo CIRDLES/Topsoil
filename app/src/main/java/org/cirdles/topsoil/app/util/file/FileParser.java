@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import jdk.nashorn.internal.objects.NativeDebug;
 import org.apache.ibatis.io.Resources;
@@ -129,7 +131,16 @@ public class FileParser {
 
         String[] lines = readLines(content);
 
-        String[] firstLine = lines[0].split(getDelimiter(content));
+        String[] firstLine;
+        try {
+            firstLine = lines[0].split(getDelimiter(content));
+        } catch (IOException ex) { 
+            String noDelimiterMessage = "Topsoil can not read the imported content. Make sure it is"
+                    + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
+            Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
+            noDelimiterAlert.show();
+            return null;
+        }
 
         if(isDouble(firstLine[0])){
             containsHeaders = false;
@@ -143,7 +154,16 @@ public class FileParser {
 
         String[] lines = readLines(file);
 
-        String[] firstLine = lines[0].split(getDelimiter(lines));
+        String[] firstLine;
+        try {
+            firstLine = lines[0].split(getDelimiter(lines));
+        } catch (IOException ex) {
+            String noDelimiterMessage = "Topsoil can not read that file. Make sure the file contains"
+                    + " a complete delimited data table. The import has been canceled.";
+            Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
+            noDelimiterAlert.show();
+            return null;
+        }
 
         if(isDouble(firstLine[0])){
             containsHeaders = false;
@@ -204,6 +224,27 @@ public class FileParser {
                 fileName.lastIndexOf(".") + 1,
                 fileName.length());
     }
+    
+    /**
+     * Checks if a file is empty of any data.
+     * 
+     * @param file
+     * @return true if file is empty
+     */
+    public static Boolean isEmptyFile(File file) {
+    try {
+        // Create relevant file readers
+        InputStream inputStream = new FileInputStream(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(inputStreamReader);
+
+        return reader.readLine() == null;
+
+    } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+    }
+}
 
     /**
      * Parse data obtained as a {@code String} from the system {@code Clipboard}.
@@ -443,7 +484,7 @@ public class FileParser {
      * @param lines a String[] of delimited data lines
      * @return  the identified String delimiter
      */
-    private static String getDelimiter(String[] lines) {
+    private static String getDelimiter(String[] lines) throws IOException {
         final int NUM_LINES = 5;
         String rtnval = null;
 
@@ -459,7 +500,7 @@ public class FileParser {
                 }
             }
             
-            if (lines.length <= NUM_LINES) {
+            if (lines.length < NUM_LINES) {
                 rtnval = requestDelimiter();
             }
             
@@ -467,7 +508,7 @@ public class FileParser {
         
         // If delimiter can't be detected, consider file as invalid.
         if (rtnval == null) {
-            rtnval = null;
+            throw new IOException("Invalid table file.");
         }
 
         return rtnval;
@@ -480,7 +521,7 @@ public class FileParser {
      * @param content a String of delimited data
      * @return  the identified String delimiter
      */
-    public static String getDelimiter(String content) {
+    public static String getDelimiter(String content) throws IOException {
         return getDelimiter(readLines(content));
     }
 
@@ -492,8 +533,7 @@ public class FileParser {
     private static String requestDelimiter() {
         String otherDelimiterOption = "Other";
         String unknownDelimiterOption = "Unknown";
-        String noDelimiterMessage = "Topsoil is unable to read the data as-is. Make sure the data is complete, or try" +
-                                    " putting the data into a .csv or .tsv file.";
+        
 
         Dialog<String> delimiterRequestDialog = new Dialog<>();
         delimiterRequestDialog.setTitle("Delimiter Request");
@@ -554,8 +594,6 @@ public class FileParser {
                 if (delimiterChoiceBox.getSelectionModel().getSelectedItem().equals(otherDelimiterOption)) {
                     return otherTextField.getText().trim();
                 } else if (delimiterChoiceBox.getSelectionModel().getSelectedItem().equals(unknownDelimiterOption)) {
-                    Alert noDelimiterAlert = new Alert(Alert.AlertType.INFORMATION, noDelimiterMessage);
-                    noDelimiterAlert.show();
                     return null;
                 } else {
                     return COMMON_DELIMITERS.get(delimiterChoiceBox.getValue());

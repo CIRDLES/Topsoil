@@ -31,9 +31,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.cirdles.topsoil.app.util.file.ExampleDataTable;
 
 import javax.xml.crypto.Data;
+import org.cirdles.topsoil.app.util.dialog.Alerter;
 
 /**
  * A class containing a set of methods for handling actions for {@code MenuItem}s in the {@link MainMenuBar}.
@@ -57,7 +60,13 @@ public class MenuItemEventHandler {
         File file = FileParser.openTableDialog(StageHelper.getStages().get(0));
 
         if (file != null && FileParser.isSupportedTableFile(file)) {
-
+            
+            if (FileParser.isEmptyFile(file)) {
+                Alerter alerter = new ErrorAlerter();
+                alerter.alert("The file is empty. No data has been imported.");
+                throw new IOException("File is empty");
+            }
+            
             // select headers
             String[] headers = null;
             Boolean hasHeaders;
@@ -118,7 +127,16 @@ public class MenuItemEventHandler {
         TopsoilDataTable table = null;
         String content = Clipboard.getSystemClipboard().getString();
 
-        String delim = FileParser.getDelimiter(content);
+        String delim;
+        try {
+            delim = FileParser.getDelimiter(content);
+        } catch (IOException ex) {
+            String noDelimiterMessage = "Topsoil can not read the imported content. Make sure it is"
+                    + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
+            Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
+            noDelimiterAlert.show();
+            return null;
+        }
 
         if (delim != null) {
 
@@ -210,9 +228,10 @@ public class MenuItemEventHandler {
                 List<TopsoilDataEntry> entries = null;
                 String[] headers = null;
                 String exampleContent = new ExampleDataTable().getSampleData(isotopeType);
+                String exampleContentDelimiter = ",";
                 
-                headers = FileParser.parseHeaders(exampleContent,FileParser.getDelimiter(exampleContent));
-                entries = FileParser.parseTxt(FileParser.readLines(exampleContent),FileParser.getDelimiter(exampleContent),true);
+                headers = FileParser.parseHeaders(exampleContent,exampleContentDelimiter);
+                entries = FileParser.parseTxt(FileParser.readLines(exampleContent),exampleContentDelimiter,true);
 
                 if (entries == null) {
                         table = null;
