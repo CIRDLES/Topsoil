@@ -49,6 +49,19 @@ public class TopsoilDataEntry implements GenericDataEntry {
     }
 
     /**
+     * Appends a collection of {@code DoubleProperty} values to the {@code TopsoilDataEntry}.
+     *
+     * @param properties    a collection of DoubleProperties
+     */
+    public void add(DoubleProperty... properties) {
+        if (properties.length > 1) {
+            this.properties.addAll(properties);
+        } else if (properties.length == 1) {
+            this.properties.add(properties[0]);
+        }
+    }
+
+    /**
      * Changes the value of the {@code DoubleProperty} at index to the specified {@code Double} value.
      *
      * @param index the index of the DoubleProperty to set

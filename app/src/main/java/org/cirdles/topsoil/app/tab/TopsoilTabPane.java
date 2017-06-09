@@ -104,6 +104,10 @@ public class TopsoilTabPane extends TabPane {
             }
 
             tab.setContent(tabContentView);
+
+            // Disables 'x' button to close tab.
+            tab.setClosable(false);
+
             this.getTabs().addAll(tab);
             this.getSelectionModel().select(tab);
 
