@@ -149,11 +149,17 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     private void attemptToCommitEdit() {
         try {
             Double newVal = Double.valueOf(textField.getText());
-            if (Double.compare(this.getItem(), newVal) != 0) {
-                addUndo(this.getItem(), newVal);
-                commitEdit(newVal);
-            } else {
+            if (Double.compare(this.getItem(), newVal) == 0) {
                 cancelEdit();
+            } else {
+                // TODO Test if this is a rho column by getting the variable property of this.getTableColumn()
+                if (this.getColumnIndex() == 4 && (newVal > 1.0 || newVal < -1.0)) {
+                    alerter.alert("Rho values must be between -1.0 and 1.0.");
+                    cancelEdit();
+                } else {
+                    addUndo(this.getItem(), newVal);
+                    commitEdit(newVal);
+                }
             }
             selectNextCell();
         } catch (NumberFormatException e) {
