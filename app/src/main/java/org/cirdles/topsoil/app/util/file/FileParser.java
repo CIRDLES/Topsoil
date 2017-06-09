@@ -445,16 +445,22 @@ public class FileParser {
             if (lines.length > NUM_LINES) {
                 lines = Arrays.copyOfRange(lines, 0, NUM_LINES);
             }
-
+            
             for (String delim : COMMON_DELIMITERS.values()) {
                 if (isDelimiter(lines, delim)) {
-                    rtnval = delim;
+                rtnval = delim;
                 }
             }
+            
+            if (lines.length <= NUM_LINES) {
+                rtnval = requestDelimiter();
+            }
+            
         }
-
+        
+        // If delimiter can't be detected, consider file as invalid.
         if (rtnval == null) {
-            rtnval = requestDelimiter();
+            rtnval = null;
         }
 
         return rtnval;
