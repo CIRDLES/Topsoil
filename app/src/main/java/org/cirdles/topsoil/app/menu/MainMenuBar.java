@@ -439,7 +439,7 @@ public class MainMenuBar extends MenuBar {
                          saveTableAsItem,
                          new SeparatorMenuItem(),
                          newTableItem,
-                         clearTableItem,
+                         //clearTableItem,
                          new SeparatorMenuItem(),
                          deleteTableItem);
 
