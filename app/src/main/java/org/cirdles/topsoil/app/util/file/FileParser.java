@@ -135,7 +135,7 @@ public class FileParser {
                     + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
             Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
             noDelimiterAlert.show();
-            return null;
+            return false;
         }
 
         if(isDouble(firstLine[0])){
@@ -158,7 +158,7 @@ public class FileParser {
                     + " a complete delimited data table. The import has been canceled.";
             Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
             noDelimiterAlert.show();
-            return null;
+            return false;
         }
 
         if(isDouble(firstLine[0])){
@@ -224,23 +224,23 @@ public class FileParser {
     /**
      * Checks if a file is empty of any data.
      * 
-     * @param file
+     * @param file  File to check
      * @return true if file is empty
      */
     public static Boolean isEmptyFile(File file) {
-    try {
-        // Create relevant file readers
-        InputStream inputStream = new FileInputStream(file);
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        BufferedReader reader = new BufferedReader(inputStreamReader);
+        try {
+            // Create relevant file readers
+            InputStream inputStream = new FileInputStream(file);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
 
-        return reader.readLine() == null;
+            return reader.readLine() == null;
 
-    } catch (IOException e) {
-        e.printStackTrace();
-        return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return true;
+        }
     }
-}
 
     /**
      * Parse data obtained as a {@code String} from the system {@code Clipboard}.
@@ -512,6 +512,7 @@ public class FileParser {
      *
      * @param content a String of delimited data
      * @return  the identified String delimiter
+     * @throws IOException  if data is invalid
      */
     public static String getDelimiter(String content) throws IOException {
         return getDelimiter(readLines(content));

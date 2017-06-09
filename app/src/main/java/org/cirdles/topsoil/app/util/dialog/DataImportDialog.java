@@ -109,7 +109,7 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
                         selectedY ? headers[variableIndexMap.get(Variables.Y)] : "Y Column",
                         selectedSX ? headers[variableIndexMap.get(Variables.SIGMA_X)] : "σX Column",
                         selectedSY ? headers[variableIndexMap.get(Variables.SIGMA_Y)] : "σY Column",
-                        selectedR ? headers[variableIndexMap.get(Variables.RHO)] : "corr coef (ρ) Column"
+                        selectedR ? headers[variableIndexMap.get(Variables.RHO)] : "corr coef Column"
                 };
 
                 List<TopsoilDataEntry> selectedColumns = new ArrayList<>(data.size());
