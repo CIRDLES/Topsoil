@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.dataset.NumberDataset;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
@@ -85,6 +86,7 @@ public class PlotGenerationHandler {
         Stage plotStage = new Stage();
         plotStage.setScene(scene);
         plotStage.setResizable(false);
+        plotStage.getIcons().add(MainWindow.getWindowIcon());
 
         // Connect Plot with PropertiesPanel
         plotStage.setTitle(plotType.getName() + ": " + propertiesPanel.getTitle());

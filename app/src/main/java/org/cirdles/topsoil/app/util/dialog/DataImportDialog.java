@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.file;
+package org.cirdles.topsoil.app.util.dialog;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -7,17 +7,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
-import org.cirdles.topsoil.app.util.file.DataImportDialog.DataImportKey;
+import org.cirdles.topsoil.app.util.dialog.DataImportDialog.DataImportKey;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -48,8 +47,8 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
         }
     }
 
-    static final Map<String, Variable<Number>> STRING_VARIABLE_MAP;
-    static final Map<String, UncertaintyFormat> STRING_UNCERTAINTY_FORMAT_MAP;
+    private static final Map<String, Variable<Number>> STRING_VARIABLE_MAP;
+    private static final Map<String, UncertaintyFormat> STRING_UNCERTAINTY_FORMAT_MAP;
     static {
         STRING_VARIABLE_MAP = new LinkedHashMap<>();
         for (Variable<Number> v : Variables.VARIABLE_LIST) {
@@ -65,16 +64,14 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
     private ArrayList<ChoiceBox<String>> columnChoiceBoxes;
     private ChoiceBox<String> uncertaintyChoiceBox;
 
-    /**
-     * Constructs a new {@code DataImportDialog} for the supplied headers and data.
-     *
-     * @param headers   the headers for the data
-     * @param data  the imported data
-     */
     private DataImportDialog(String[] headers, List<TopsoilDataEntry> data) {
         super();
         this.columnChoiceBoxes = new ArrayList<>();
         this.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.FINISH);
+
+        Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
+        stage.initOwner(MainWindow.getPrimaryStage());
+        stage.getIcons().add(MainWindow.getWindowIcon());
 
         constructContent(headers, data);
 
@@ -161,6 +158,22 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
 
     }
 
+    /**
+     * Shows a {@code Dialog} where the user can preview how their data will be imported, and assign plotting
+     * variables to the columns that they wish to keep. This method returns several values as a {@code Map}, which
+     * can be retrieved by their {@code DataImportKey}s.
+     * <p>
+     * For reference:
+     *
+     * DataImportKey.HEADERS = the {@code String} headers of the selected columns
+     * DataImportKey.DATA = the {@code {@literal List<TopsoilDataEntry>}} containing rows with the values for the
+     * selected columns
+     * DataImportKey.UNCERTAINTY = the selected {@code UncertaintyFormat}
+     *
+     * @param headers   array of String column headers
+     * @param data  List of TopsoilDataEntry rows
+     * @return  a Map of values
+     */
     public static Map<DataImportKey, Object> showImportDialog(@Nullable String[] headers, List<TopsoilDataEntry> data) {
 
         if (headers == null) {
@@ -177,16 +190,7 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
         DataImportDialog dialog = new DataImportDialog(headers, data);
         dialog.setTitle("Data Import Helper");
 
-        ResourceExtractor resourceExtractor = new ResourceExtractor(DataImportDialog.class);
-
-        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image(resourceExtractor.extractResourceAsPath("../../topsoil-logo.png").toUri().toString()));
-
-        Optional<Map<DataImportKey, Object>> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return dialog.showAndWait().orElse(null);
     }
 
     /**
@@ -278,10 +282,13 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
         subContainer.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
         container.getChildren().add(subContainer);
 
-        Label instrLabel = new Label("Using the choice boxes, select which of your columns correspond to the\n" +
+        Label instrLabel = new Label("Using the drop-down lists, select which of your columns correspond to the\n" +
                                      "following five plotting variables: X values, Y values, X uncertainty values,\n" +
                                      "Y uncertatinty values, rho (correlation coefficient) values.");
         subContainer.getChildren().add(instrLabel);
+        Label noteLabel = new Label("**NOTE: Only the columns with associated variables will be imported.");
+        noteLabel.setStyle("-fx-text-fill: red");
+        subContainer.getChildren().add(noteLabel);
 
         // Creates a horizontal layout for the uncertainty option.
         HBox uncContainer = new HBox();

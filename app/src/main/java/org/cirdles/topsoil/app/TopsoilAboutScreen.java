@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -9,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
+import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
 
 import java.awt.*;
@@ -38,6 +40,21 @@ public class TopsoilAboutScreen extends Pane {
     @FXML private ImageView cirdlesLogo;
 
     /**
+     * The text for the current Topsoil version.
+     */
+    @FXML private Label versionLabel;
+
+    /**
+     * The text for the about message.
+     */
+    @FXML private Label messageLabel;
+
+    /**
+     * A {@code Hyperlink} that leads to the Apache License 2.0 page.
+     */
+    @FXML private Hyperlink license;
+
+    /**
      * A {@code Hyperlink} that leads to the Topsoil GitHub repository.
      */
     @FXML private Hyperlink github;
@@ -51,6 +68,8 @@ public class TopsoilAboutScreen extends Pane {
      * A {@code Hyperlink} that leads to the Topsoil GitHub release log.
      */
     @FXML private Hyperlink releaseLog;
+
+    private final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0";
 
     /**
      * The {@code String} URL for the Topsoil GitHub repository.
@@ -101,6 +120,8 @@ public class TopsoilAboutScreen extends Pane {
         topsoilLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
         cirdlesLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
 
+        versionLabel.setText("Version " + (new TopsoilMetadata()).getVersion().split("-")[0]);
+
         browser = new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter());
     }
 
@@ -123,6 +144,13 @@ public class TopsoilAboutScreen extends Pane {
      */
     @FXML private void openReleaseLog() {
         browser.browse(RELEASE_LOG_URL);
+    }
+
+    /**
+     * Opens the system default browser to the info page for Apache License 2.0.
+     */
+    @FXML private void openLicensePage() {
+        browser.browse(LICENSE_URL);
     }
 
     /**

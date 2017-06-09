@@ -11,6 +11,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
@@ -61,6 +62,14 @@ public class MainWindow extends Application {
      */
     private final String TOPSOIL_LOGO_FILE_PATH = "topsoil-logo.png";
 
+    private static Stage primaryStage;
+    private static Image windowIcon;
+    private static String OS;
+
+    private final static String WINDOWS = "Windows";
+    private final static String MAC = "Mac";
+    private final static String LINUX = "Linux";
+
     //***********************
     // Methods
     //***********************
@@ -69,6 +78,19 @@ public class MainWindow extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+
+        setPrimaryStage(primaryStage);
+
+        // Detect OS
+        String OSName = System.getProperty("os.name").toLowerCase();
+
+        if (OSName.contains("windows")) {
+            setOS(WINDOWS);
+        } else if (OSName.contains("mac") || OSName.contains("os x") || OSName.contains("macos")) {
+            setOS(MAC);
+        } else if (OSName.contains("nix") || OSName.contains("nux") || OSName.contains("aix")) {
+            setOS(LINUX);
+        }
 
         try {
             Parent mainWindow;
@@ -126,8 +148,11 @@ public class MainWindow extends Application {
             // Load logo for use in window and system task bar
             try {
                 // TODO ResourceExtractor
-                primaryStage.getIcons().add(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO_FILE_PATH)
-                                                                        .toUri().toString()));
+                Image icon = new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO_FILE_PATH)
+                                                         .toUri().toString());
+                primaryStage.getIcons().add(icon);
+                setWindowIcon(icon);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -154,7 +179,12 @@ public class MainWindow extends Application {
             try {
                 Parent splashScreen = FXMLLoader.load(
                         RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_PATH).toUri().toURL());
-                Scene splashScene = new Scene(splashScreen, 450, 600);
+                VBox screenNode = (VBox) splashScreen;
+                screenNode.applyCss();
+                screenNode.layout();
+                System.out.println(screenNode.getWidth());
+
+                Scene splashScene = new Scene(splashScreen, 550, 650);
                 Stage splashWindow = new Stage(StageStyle.UNDECORATED);
                 splashWindow.setResizable(false);
                 splashWindow.setScene(splashScene);
@@ -252,6 +282,30 @@ public class MainWindow extends Application {
             }
         });
         return reference.get();
+    }
+
+    public static String getOS() {
+        return OS;
+    }
+
+    public static void setOS(String OS) {
+        MainWindow.OS = OS;
+    }
+
+    public static Image getWindowIcon() {
+        return windowIcon;
+    }
+
+    private static void setWindowIcon(Image image) {
+        windowIcon = image;
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    private static void setPrimaryStage(Stage stage) {
+        primaryStage = stage;
     }
 
     /** {@inheritDoc}
