@@ -96,16 +96,8 @@ public class MainMenuBar extends MenuBar {
      */
     private MenuItem newTableItem;
 
-    /**
-     * When clicked, saves the current table.
-     */
-    private MenuItem saveTableItem;
-
-    /**
-     * When clicked, saves the current table to a specific path.
-     */
-    private MenuItem saveTableAsItem;
-
+    private MenuItem exportTableItem;
+    
     /**
      * When clicked, clears the current {@code TableView}.
      */
@@ -324,8 +316,7 @@ public class MainMenuBar extends MenuBar {
     private Menu getTableMenu(TopsoilTabPane tabs) {
         Menu tableMenu = new Menu("Data Table");
         newTableItem = new MenuItem("New Data Table");
-        saveTableItem = new MenuItem("Save Data Table");
-        saveTableAsItem = new MenuItem("Save Data Table As");
+        exportTableItem = new MenuItem("Export Table");
         clearTableItem = new MenuItem("Clear Data Table");
         deleteTableItem = new MenuItem("Delete Data Table");
 
@@ -340,11 +331,18 @@ public class MainMenuBar extends MenuBar {
                 tabs.add(table);
             }
         });
+        
+        exportTableItem = new MenuItem("Export Table");
+         
+         exportTableItem.setOnAction(event -> {
+             TopsoilDataTable table = tabs.getSelectedTab().getTableController().getTable();
+             if (table != null) {
+                 handleExportTable(table);
+             }
+             else
+                 System.out.println("PANIC");
+         });
 
-        //Saves the currently opened table
-        saveTableItem = new MenuItem("Save Data Table");
-        //Saves the currently opened table as a specified file
-        saveTableAsItem = new MenuItem("Save Data Table As");
 
         clearTableItem.setOnAction(action -> {
             // clear table and add an empty row
@@ -435,8 +433,7 @@ public class MainMenuBar extends MenuBar {
                  .addAll(importTable,
                          exampleTable,
                          new SeparatorMenuItem(),
-                         saveTableItem,
-                         saveTableAsItem,
+                         exportTableItem,
                          new SeparatorMenuItem(),
                          newTableItem,
                          //clearTableItem,
@@ -447,11 +444,14 @@ public class MainMenuBar extends MenuBar {
             if (tabs.isEmpty()) {
                 clearTableItem.setDisable(true);
                 deleteTableItem.setDisable(true);
+                exportTableItem.setDisable(true);
             } else {
                 if (!tabs.getSelectedTab().getTableController().getTable().isCleared()) {
                     clearTableItem.setDisable(false);
+                    exportTableItem.setDisable(false);
                 } else {
                     clearTableItem.setDisable(true);
+                    exportTableItem.setDisable(true);
                 }
                 deleteTableItem.setDisable(false);
             }
