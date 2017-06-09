@@ -18,13 +18,10 @@ package org.cirdles.topsoil.plot.base;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.nio.file.Path;
-
 /**
+ * A {@code Plot} which handles features for all isotope systems.
  *
- * Created by Emily on 2/24/17.
+ * @author Emily Coleman
  */
 public class BasePlot extends JavaScriptPlot {
 
@@ -33,6 +30,9 @@ public class BasePlot extends JavaScriptPlot {
 
     private static final String RESOURCE_NAME = "BasePlot.js";
 
+    /**
+     * Constructs a new {@code BasePlot}.
+     */
     public BasePlot() {
         super(
                 RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME),

@@ -1,13 +1,9 @@
 package org.cirdles.topsoil.app.table;
 
 import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
-import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.*;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 
 /**
  * A custom {@code ContextMenu} requested by {@link TopsoilTableCell}s. It contains options for manipulating cells,

@@ -1,7 +1,9 @@
 package org.cirdles.topsoil.plot.base;
 
 /**
- * Created by Emily on 2/24/17.
+ * A set of keys for defining {@code BasePlot} properties.
+ *
+ * @author Emily Coleman
  */
 public class BasePlotProperties {
     public static final String TITLE = "Title";

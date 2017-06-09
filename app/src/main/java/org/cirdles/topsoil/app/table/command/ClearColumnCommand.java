@@ -1,8 +1,5 @@
 package org.cirdles.topsoil.app.table.command;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
@@ -10,7 +7,6 @@ import org.cirdles.topsoil.app.table.TopsoilTableCell;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 

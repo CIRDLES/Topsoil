@@ -53,7 +53,7 @@ import static javafx.concurrent.Worker.State.SUCCEEDED;
  *
  * @author John Zeringue
  */
-public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayable {
+public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDisplayable {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(JavaScriptPlot.class);
@@ -105,10 +105,10 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
 
     private WebView webView;
     private JSObject topsoil;
-    private final Bridge bridge = new Bridge();
+    private final JavaScriptBridge bridge = new JavaScriptBridge();
 
     /**
-     * Creates a new {@link JavaScriptPlot} using the specified source file.
+     * Creates a new {@link JavaScriptPlot} using the specified source file. No properties are set by default.
      *
      * @param sourcePath the path to a valid JavaScript file
      */
@@ -116,6 +116,12 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         this(sourcePath, new HashMap<>());
     }
 
+    /**
+     * Creates a new {@link JavaScriptPlot} using the specified source file and properties.
+     *
+     * @param sourcePath the path to a valid JavaScript file
+     * @param defaultProperties a Map containing properties for the plot
+     */
     public JavaScriptPlot(Path sourcePath, Map<String, Object> defaultProperties) {
         super(defaultProperties);
 
@@ -158,7 +164,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return loadFuture;
     }
 
-    String buildContent() {
+    private String buildContent() {
 
         ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(JavaScriptPlot.class);
 
@@ -181,10 +187,20 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         );
     }
 
+    /**
+     * Returns the {@code WebEngine} for this {@code Plot}.
+     *
+     * @return  WebEngine
+     */
     public WebEngine getWebEngine() {
         return webView.getEngine();
     }
 
+    /**
+     * Gets a {@code BufferedImage} representing the space inside of the {@link WebView}.
+     *
+     * @return  contents of WebView as BufferedImage
+     */
     private BufferedImage screenCapture() {
         try {
             Bounds bounds = webView.getBoundsInLocal();
@@ -211,9 +227,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
             webEngine.setJavaScriptEnabled(true);
 
             // useful for debugging
-            webEngine.setOnAlert(event -> {
-                LOGGER.info(event.getData());
-            });
+            webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
 
             webEngine.getLoadWorker().stateProperty().addListener(
                     (observable, oldValue, newValue) -> {
@@ -244,6 +258,7 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         });
     }
 
+    /**{@inheritDoc}*/
     @Override
     public Node displayAsNode() {
         if (webView == null) {
@@ -251,13 +266,6 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         }
 
         return webView;
-    }
-
-    //called when BasePlot changes isotope type
-    public class Bridge {
-        public void println(String s) {
-            System.out.println(s);
-        }
     }
 
     /**
@@ -295,12 +303,15 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         return svgDocument;
     }
 
+    /**{@inheritDoc}*/
+    @Override
     public void recenter() {
         if (topsoil != null) {
             runOnFxApplicationThread(() -> topsoil.call("recenter"));
         }
     }
 
+    /**{@inheritDoc}*/
     @Override
     public void setData(List<Map<String, Object>> data) {
         super.setData(data);
@@ -310,14 +321,13 @@ public abstract class JavaScriptPlot extends BasePlot implements JavaFXDisplayab
         }
     }
 
+    /**{@inheritDoc}*/
     @Override
     public void setProperties(Map<String, Object> properties) {
         super.setProperties(properties);
 
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> {
-                topsoil.call("setProperties", properties);
-            });
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", properties));
         }
     }
 }

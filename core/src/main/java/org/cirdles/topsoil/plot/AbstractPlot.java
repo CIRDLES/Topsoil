@@ -26,40 +26,57 @@ import static java.util.Collections.emptyList;
  *
  * @author John Zeringue
  */
-public abstract class BasePlot implements Plot {
+public abstract class AbstractPlot implements Plot {
 
     private List<Map<String, Object>> data;
     private Map<String, Object> properties;
 
-    public BasePlot() {
+    /**
+     * Constructs a new {@code AbstractPlot}. No properties are set by default.
+     */
+    public AbstractPlot() {
         this(new HashMap<>());
     }
 
-    public BasePlot(Map<String, Object> defaultProperties) {
+    /**
+     * Constructs a new {@code AbstractPlot} with the specified properties.
+     *
+     * @param defaultProperties a Map of String keys to Object values
+     */
+    public AbstractPlot(Map<String, Object> defaultProperties) {
         data = emptyList();
         properties = defaultProperties;
     }
 
+    /**{@inheritDoc}*/
     @Override
     public List<Map<String, Object>> getData() {
         return data;
     }
 
+    /**{@inheritDoc}*/
     @Override
     public void setData(List<Map<String, Object>> data) {
         this.data = data;
     }
 
+    /**{@inheritDoc}*/
     @Override
     public Map<String, Object> getProperties() {
         return properties;
     }
 
+    /**{@inheritDoc}*/
     @Override
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 
+    /**
+     * Attempts to destroy the {@code Plot} object to avoid concurrency problems in the {@code WebEngine}.
+     *
+     * @throws Throwable    literally any problem
+     */
     public void killPlot() throws Throwable {
         super.finalize();
     }

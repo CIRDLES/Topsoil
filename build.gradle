@@ -18,7 +18,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'checkstyle'
-    //apply plugin: 'findbugs'
+//    apply plugin: 'findbugs'
     apply plugin: 'maven'
 
     sourceCompatibility = '1.8'
@@ -44,22 +44,22 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-//    task javadocJar(type: Jar, dependsOn: javadoc) {
-//        classifier = 'javadoc'
-//        from javadoc.destinationDir
-//    }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
 
     artifacts {
         archives sourcesJar
-//        archives javadocJar
+        archives javadocJar
     }
 
-//    tasks.withType(FindBugs) {
-//        reports {
-//            html.enabled = true
-//            xml.enabled = false
-//        }
-//    }
+    tasks.withType(FindBugs) {
+        reports {
+            html.enabled = true
+            xml.enabled = false
+        }
+    }
 
     dependencies {
         compile 'ch.qos.logback:logback-classic:1.1.3'

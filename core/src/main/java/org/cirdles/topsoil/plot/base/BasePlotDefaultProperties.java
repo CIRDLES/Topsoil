@@ -5,7 +5,9 @@ import java.util.HashMap;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.*;
 
 /**
- * Created by Emily on 2/24/17.
+ * A {@code HashMap} containing a set of default properties for a {@code BasePlot}.
+ *
+ * @author Emily Coleman
  */
 public class BasePlotDefaultProperties extends HashMap<String, Object> {
     public BasePlotDefaultProperties() {

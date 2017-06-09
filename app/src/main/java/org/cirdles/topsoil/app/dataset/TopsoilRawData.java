@@ -5,7 +5,6 @@ import org.cirdles.topsoil.app.dataset.field.Field;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * A class containing a {@code Collection} of {@link Field} objects, and one of {@link Entry} objects. Its purpose is to

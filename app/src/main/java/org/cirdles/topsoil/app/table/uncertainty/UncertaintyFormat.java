@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.table.uncertainty;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -27,29 +28,29 @@ public enum UncertaintyFormat {
      */
     private Double value;
 
-    public static final List<UncertaintyFormat> ALL = asList(
+    public static final List<UncertaintyFormat> ALL = Collections.unmodifiableList(asList(
             ONE_SIGMA_ABSOLUTE,
             TWO_SIGMA_ABSOLUTE,
             ONE_SIGMA_PERCENT,
             TWO_SIGMA_PERCENT,
             NINETY_FIVE_PERCENT_CONFIDENCE
-    );
+    ));
 
-    public static final List<UncertaintyFormat> PLOT_FORMATS = asList(
+    public static final List<UncertaintyFormat> PLOT_FORMATS = Collections.unmodifiableList(asList(
             ONE_SIGMA_ABSOLUTE,
             TWO_SIGMA_ABSOLUTE,
             NINETY_FIVE_PERCENT_CONFIDENCE
-    );
+    ));
 
-    public static final List<UncertaintyFormat> PERCENT_FORMATS = asList(
+    public static final List<UncertaintyFormat> PERCENT_FORMATS = Collections.unmodifiableList(asList(
             ONE_SIGMA_PERCENT,
             TWO_SIGMA_PERCENT
-    );
+    ));
 
-    public static final List<UncertaintyFormat> ABSOLUTE_FORMATS = asList(
+    public static final List<UncertaintyFormat> ABSOLUTE_FORMATS = Collections.unmodifiableList(asList(
             ONE_SIGMA_ABSOLUTE,
             TWO_SIGMA_ABSOLUTE
-    );
+    ));
 
     /**
      * Constructs a new {@code UncertaintyFormat} with the specified name and value.

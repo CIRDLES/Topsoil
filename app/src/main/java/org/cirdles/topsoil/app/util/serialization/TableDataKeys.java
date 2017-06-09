@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.util.serialization;
 
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
+import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.Plot;
 
 /**

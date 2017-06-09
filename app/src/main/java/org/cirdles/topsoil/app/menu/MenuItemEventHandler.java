@@ -96,9 +96,9 @@ public class MenuItemEventHandler {
                 IsotopeType isotopeType = IsotopeType.Generic;
 
                 // isotopeType would only be null if the user clicked "Cancel".
-                if (isotopeType != null) {
+//                if (isotopeType != null) {
                     List<TopsoilDataEntry> entries = FileParser.parseFile(file, hasHeaders);
-
+                
                     if (entries != null) {
                         Map<DataImportKey, Object> selections = DataImportDialog.showImportDialog(headers, entries);
 
@@ -111,17 +111,15 @@ public class MenuItemEventHandler {
                             ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
                             applyUncertaintyFormat(selectedFormat, data);
 
+
                             table = new TopsoilDataTable(headers,
                                                          isotopeType,
                                                          selectedFormat,
                                                          data.toArray(new TopsoilDataEntry[data.size()]));
                             table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
                         }
-                    } else {
-                        ErrorAlerter alerter = new ErrorAlerter();
-                        alerter.alert("File is empty!");
                     }
-                }
+//                }
             }
         }
 
@@ -229,6 +227,7 @@ public class MenuItemEventHandler {
      *
      * @param tabs  the TopsoilTabPane to which to add tables
      * @param isotopeType the isotope type of the example table to be opened
+     * @return  the resulting TopsoilDataTable
      */
     public static TopsoilDataTable handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
         TopsoilDataTable table = null;
@@ -236,39 +235,33 @@ public class MenuItemEventHandler {
 
         if (isotopeType != null) {
                 
-                List<TopsoilDataEntry> entries = null;
-                String[] headers = null;
+                List<TopsoilDataEntry> entries;
+                String[] headers;
                 String exampleContent = new ExampleDataTable().getSampleData(isotopeType);
                 String exampleContentDelimiter = ",";
                 
                 headers = FileParser.parseHeaders(exampleContent,exampleContentDelimiter);
                 entries = FileParser.parseTxt(FileParser.readLines(exampleContent),exampleContentDelimiter,true);
 
-                if (entries == null) {
-                        table = null;
-                    } else {
-                    
-                        switch (isotopeType) {
-                            case Generic:
-                                format = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                                break;
-                            case UPb:
-                                format = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                                break;
-                            case UTh:
-                                format = UncertaintyFormat.TWO_SIGMA_ABSOLUTE;
-                                break;
-                            default:
-                                format = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                        }
-
-                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                        applyUncertaintyFormat(format, data);
-
-                        table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
-                        table.setTitle(isotopeType.getName()+" Example Data");
+                switch (isotopeType) {
+                    case Generic:
+                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                        break;
+                    case UPb:
+                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                        break;
+                    case UTh:
+                        format = UncertaintyFormat.TWO_SIGMA_ABSOLUTE;
+                        break;
+                    default:
+                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
                 }
-                
+
+                ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                applyUncertaintyFormat(format, data);
+
+                table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
+                table.setTitle(isotopeType.getName()+" Example Data");
         }
         return table;
     }

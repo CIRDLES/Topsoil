@@ -11,7 +11,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.util.dialog.Alerter;
 import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
@@ -28,9 +27,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import jdk.nashorn.internal.objects.NativeDebug;
-import org.apache.ibatis.io.Resources;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
 
 /**
  * A utility file used for parsing data from files into arrays of {@code String}s, which can then be put into a table.
@@ -139,7 +135,7 @@ public class FileParser {
                     + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
             Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
             noDelimiterAlert.show();
-            return null;
+            return false;
         }
 
         if(isDouble(firstLine[0])){
@@ -162,7 +158,7 @@ public class FileParser {
                     + " a complete delimited data table. The import has been canceled.";
             Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
             noDelimiterAlert.show();
-            return null;
+            return false;
         }
 
         if(isDouble(firstLine[0])){
@@ -228,23 +224,23 @@ public class FileParser {
     /**
      * Checks if a file is empty of any data.
      * 
-     * @param file
+     * @param file  File to check
      * @return true if file is empty
      */
     public static Boolean isEmptyFile(File file) {
-    try {
-        // Create relevant file readers
-        InputStream inputStream = new FileInputStream(file);
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        BufferedReader reader = new BufferedReader(inputStreamReader);
+        try {
+            // Create relevant file readers
+            InputStream inputStream = new FileInputStream(file);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
 
-        return reader.readLine() == null;
+            return reader.readLine() == null;
 
-    } catch (IOException e) {
-        e.printStackTrace();
-        return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return true;
+        }
     }
-}
 
     /**
      * Parse data obtained as a {@code String} from the system {@code Clipboard}.
@@ -309,8 +305,6 @@ public class FileParser {
      */
     public static List<TopsoilDataEntry> parseTxt(String[] lines, String delimiter, boolean containsHeaders) {
 
-        Alerter alerter = new ErrorAlerter();
-
         // TODO Detect whether the copied data is viable.
 
         List<TopsoilDataEntry> content = new ArrayList<>();
@@ -346,9 +340,7 @@ public class FileParser {
                 }
                 content.add(entry);
             }
-
         }
-
         return content;
     }
 
@@ -520,6 +512,7 @@ public class FileParser {
      *
      * @param content a String of delimited data
      * @return  the identified String delimiter
+     * @throws IOException  if data is invalid
      */
     public static String getDelimiter(String content) throws IOException {
         return getDelimiter(readLines(content));

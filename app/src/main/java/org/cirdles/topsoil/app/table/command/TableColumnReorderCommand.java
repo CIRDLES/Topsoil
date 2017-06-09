@@ -5,14 +5,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
-import org.cirdles.topsoil.app.table.TopsoilDataTable.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.TopsoilDataTable;
+import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
-
-import java.util.List;
 
 /**
  * An undoable {@link Command} instance that can be added to a {@link TopsoilTab}'s {@link UndoManager} when a
