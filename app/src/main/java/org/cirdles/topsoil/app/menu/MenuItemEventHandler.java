@@ -318,8 +318,11 @@ public class MenuItemEventHandler {
         PrintWriter writer;
         try {
             writer = new PrintWriter(location);
-            for (int i = 0; i < titles.length; i++)
-                writer.print(titles[i] + delim);
+            for (int i = 0; i < titles.length; i++) {
+                writer.print(titles[i]);
+                if (i < titles.length -1)
+                    writer.print(delim);
+            }
             
             writer.print('\n');
             
