@@ -61,6 +61,14 @@ public class MainWindow extends Application {
      */
     private final String TOPSOIL_LOGO_FILE_PATH = "topsoil-logo.png";
 
+    private static Stage primaryStage;
+    private static Image windowIcon;
+    private static String OS;
+
+    private final static String WINDOWS = "Windows";
+    private final static String MAC = "Mac";
+    private final static String LINUX = "Linux";
+
     //***********************
     // Methods
     //***********************
@@ -69,6 +77,19 @@ public class MainWindow extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+
+        setPrimaryStage(primaryStage);
+
+        // Detect OS
+        String OSName = System.getProperty("os.name").toLowerCase();
+
+        if (OSName.contains("windows")) {
+            setOS(WINDOWS);
+        } else if (OSName.contains("mac") || OSName.contains("os x") || OSName.contains("macos")) {
+            setOS(MAC);
+        } else if (OSName.contains("nix") || OSName.contains("nux") || OSName.contains("aix")) {
+            setOS(LINUX);
+        }
 
         try {
             Parent mainWindow;
@@ -126,8 +147,11 @@ public class MainWindow extends Application {
             // Load logo for use in window and system task bar
             try {
                 // TODO ResourceExtractor
-                primaryStage.getIcons().add(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO_FILE_PATH)
-                                                                        .toUri().toString()));
+                Image icon = new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO_FILE_PATH)
+                                                         .toUri().toString());
+                primaryStage.getIcons().add(icon);
+                setWindowIcon(icon);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -252,6 +276,30 @@ public class MainWindow extends Application {
             }
         });
         return reference.get();
+    }
+
+    public static String getOS() {
+        return OS;
+    }
+
+    public static void setOS(String OS) {
+        MainWindow.OS = OS;
+    }
+
+    public static Image getWindowIcon() {
+        return windowIcon;
+    }
+
+    private static void setWindowIcon(Image image) {
+        windowIcon = image;
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    private static void setPrimaryStage(Stage stage) {
+        primaryStage = stage;
     }
 
     /** {@inheritDoc}
