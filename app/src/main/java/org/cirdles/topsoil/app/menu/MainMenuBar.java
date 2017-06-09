@@ -131,6 +131,10 @@ public class MainMenuBar extends MenuBar {
 
     // Help Menu
     /**
+     * When clicked, opens the browser at the Topsoil project page.
+     */
+    private MenuItem onlineHelpItem;
+    /**
      * When clicked, opens the browser so the user can submit a new issue.
      */
     private MenuItem reportIssueItem;
@@ -432,7 +436,7 @@ public class MainMenuBar extends MenuBar {
                          exportTableItem,
                          new SeparatorMenuItem(),
                          newTableItem,
-                         clearTableItem,
+                         //clearTableItem,
                          new SeparatorMenuItem(),
                          deleteTableItem);
 
@@ -464,9 +468,14 @@ public class MainMenuBar extends MenuBar {
      */
     private Menu getHelpMenu(TopsoilTabPane tabs) {
         Menu helpMenu = new Menu("Help");
+        onlineHelpItem = new MenuItem("Online Help");
         reportIssueItem = new MenuItem("Report Issue");
         aboutItem = new MenuItem("About");
 
+        onlineHelpItem.setOnAction(event -> {
+            handleOpenOnlineHelp();
+        });
+        
         // Report Issue
         reportIssueItem.setOnAction(event -> {
             handleReportIssue();
@@ -498,7 +507,12 @@ public class MainMenuBar extends MenuBar {
             }
         });
 
-        helpMenu.getItems().addAll(reportIssueItem, aboutItem);
+        helpMenu.getItems().addAll(
+                onlineHelpItem,
+                reportIssueItem,
+                new SeparatorMenuItem(),
+                aboutItem
+        );
 
         return helpMenu;
     }
