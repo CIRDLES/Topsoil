@@ -51,7 +51,7 @@ public class MainMenuBar extends MenuBar {
     /**
      * The {@code String} path to the {@code .fxml} file for the {@link TopsoilAboutScreen}
      */
-    private final String TOPSOIL_ABOUT_SCREEN_FXML_NAME = "../topsoil-about-screen.fxml";
+    private final String TOPSOIL_ABOUT_SCREEN_FXML_NAME = "topsoil-about-screen.fxml";
 
     // Project Menu
     /**
@@ -484,9 +484,7 @@ public class MainMenuBar extends MenuBar {
         // About
         aboutItem.setOnAction(event -> {
             try {
-                Parent about = FXMLLoader
-                        .load(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL
-                                ());
+                Parent about = FXMLLoader.load(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL());
                 Scene aboutScene = new Scene(about, 550, 650);
                 Stage aboutWindow = new Stage(StageStyle.UNDECORATED);
                 aboutWindow.setResizable(false);
