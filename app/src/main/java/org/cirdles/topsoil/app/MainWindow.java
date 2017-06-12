@@ -11,7 +11,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
@@ -177,13 +176,7 @@ public class MainWindow extends Application {
             // TODO Move to MainWindowController
             // Load splash screen
             try {
-                Parent splashScreen = FXMLLoader.load(
-                        RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_PATH).toUri().toURL());
-                VBox screenNode = (VBox) splashScreen;
-                screenNode.applyCss();
-                screenNode.layout();
-                System.out.println(screenNode.getWidth());
-
+                Parent splashScreen = FXMLLoader.load(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_PATH).toUri().toURL());
                 Scene splashScene = new Scene(splashScreen, 550, 650);
                 Stage splashWindow = new Stage(StageStyle.UNDECORATED);
                 splashWindow.setResizable(false);
