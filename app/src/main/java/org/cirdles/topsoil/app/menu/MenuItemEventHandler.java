@@ -3,7 +3,6 @@ package org.cirdles.topsoil.app.menu;
 import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.Clipboard;
 import javafx.stage.FileChooser;
@@ -15,14 +14,16 @@ import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
-import org.cirdles.topsoil.app.util.dialog.*;
+import org.cirdles.topsoil.app.util.dialog.DataImportDialog;
+import org.cirdles.topsoil.app.util.dialog.TableUncertaintyChoiceDialog;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification.NotificationType;
 import org.cirdles.topsoil.app.util.dialog.DataImportDialog.DataImportKey;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.issue.IssueCreator;
 import org.cirdles.topsoil.app.util.issue.StandardGitHubIssueCreator;
-import org.cirdles.topsoil.app.util.dialog.YesNoAlert;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,20 +32,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cirdles.topsoil.app.util.file.ExampleDataTable;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
@@ -52,11 +42,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import org.cirdles.topsoil.app.util.file.ExampleDataTable;
-
-import javax.xml.crypto.Data;
-import org.cirdles.topsoil.app.util.dialog.Alerter;
 
 /**
  * A class containing a set of methods for handling actions for {@code MenuItem}s in the {@link MainMenuBar}.
@@ -79,35 +64,47 @@ public class MenuItemEventHandler {
         // select file
         File file = FileParser.openTableDialog(StageHelper.getStages().get(0));
 
-        if (file != null && FileParser.isSupportedTableFile(file)) {
-            
-            if (FileParser.isEmptyFile(file)) {
-                Alerter alerter = new ErrorAlerter();
-                alerter.alert("The file is empty. No data has been imported.");
-                throw new IOException("File is empty");
-            }
-            
-            // select headers
-            String[] headers = null;
-            Boolean hasHeaders;
+        if (file != null) {
 
-            // TODO For now, the user must have headers in the file. In the future, they can specify.
-            hasHeaders = FileParser.detectHeader(file);
+            if (!FileParser.isSupportedTableFile(file)) {
+                TopsoilNotification.showNotification(
+                        NotificationType.ERROR,
+                        "Invalid File Type",
+                        "Table file must be .csv, .tsv, or .txt."
+                );
+            } else {
 
-            // hasHeaders would only be null if the user clicked "Cancel".
-            if (hasHeaders != null) {
-                if (hasHeaders) {
-                    headers = FileParser.parseHeaders(file);
+                if (FileParser.isEmptyFile(file)) {
+                    TopsoilNotification.showNotification(
+                            NotificationType.ERROR,
+                            "Empty File",
+                            "The file is empty. No data has been imported."
+                    );
+                    throw new IOException("File is empty");
                 }
 
-                // select isotope flavor -- For now, the user shouldn’t have to select an isotope system; instead assume Generic.
-                //IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
-                IsotopeType isotopeType = IsotopeType.Generic;
+                // select headers
+                String[] headers = null;
+                Boolean hasHeaders;
 
-                // isotopeType would only be null if the user clicked "Cancel".
+                // TODO For now, the user must have headers in the file. In the future, they can specify.
+                hasHeaders = FileParser.detectHeader(file);
+
+                // hasHeaders would only be null if the user clicked "Cancel".
+                if (hasHeaders != null) {
+                    if (hasHeaders) {
+                        headers = FileParser.parseHeaders(file);
+                    }
+
+                    // select isotope flavor -- For now, the user shouldn’t have to select an isotope system; instead assume Generic.
+
+                    //IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
+                    IsotopeType isotopeType = IsotopeType.Generic;
+
+                    // isotopeType would only be null if the user clicked "Cancel".
 //                if (isotopeType != null) {
                     List<TopsoilDataEntry> entries = FileParser.parseFile(file, hasHeaders);
-                
+
                     if (entries != null) {
                         Map<DataImportKey, Object> selections = DataImportDialog.showImportDialog(headers, entries);
 
@@ -129,6 +126,8 @@ public class MenuItemEventHandler {
                         }
                     }
 //                }
+
+                }
             }
         }
 
@@ -151,8 +150,12 @@ public class MenuItemEventHandler {
         } catch (IOException ex) {
             String noDelimiterMessage = "Topsoil can not read the imported content. Make sure it is"
                     + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
-            Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
-            noDelimiterAlert.show();
+            TopsoilNotification.showNotification(
+                    NotificationType.ERROR,
+                    "Could Not Read",
+                    noDelimiterMessage
+            );
+
             return null;
         }
 
@@ -196,8 +199,11 @@ public class MenuItemEventHandler {
 
                         }
                     } else {
-                        ErrorAlerter alerter = new ErrorAlerter();
-                        alerter.alert("Clipboard is empty!");
+                        TopsoilNotification.showNotification(
+                                NotificationType.ERROR,
+                                "Empty Clipboard",
+                                "Clipboard is empty!"
+                        );
                     }
                 }
             }
@@ -282,7 +288,7 @@ public class MenuItemEventHandler {
         IssueCreator issueCreator = new StandardGitHubIssueCreator(
                 new TopsoilMetadata(),
                 System.getProperties(),
-                new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter()),
+                new DesktopWebBrowser(Desktop.getDesktop()),
                 new StringBuilder()
         );
         issueCreator.create();
@@ -294,7 +300,7 @@ public class MenuItemEventHandler {
     public static void handleOpenOnlineHelp() {
         
         String TOPSOIL_URL = "http://cirdles.org/projects/topsoil/";
-        new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter()).browse(TOPSOIL_URL);
+        new DesktopWebBrowser(Desktop.getDesktop()).browse(TOPSOIL_URL);
         
     }
 
@@ -306,72 +312,73 @@ public class MenuItemEventHandler {
      */
     public static TopsoilDataTable handleClearTable(TopsoilDataTable table) {
 
-        // alert user for confirmation
-        Alert confirmAlert = new YesNoAlert("Are you sure you want to clear the table?");
-        Optional<ButtonType> response = confirmAlert.showAndWait();
-        TopsoilDataTable resultingTable = table;
+        AtomicReference<TopsoilDataTable> resultingTable = new AtomicReference<>(table);
 
-        // get user confirmation
-        if (response.isPresent()
-                && response.get() == ButtonType.YES) {
-            resultingTable = new TopsoilDataTable(table.getColumnNames(), table.getIsotopeType(), table
-                    .getUncertaintyFormat(), new TopsoilDataEntry[]{});
-        }
+        TopsoilNotification.showNotification(
+                NotificationType.VERIFICATION,
+                "Clear Table",
+                "Are you sure you want to clear the table?"
+        ).ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                resultingTable.set(new TopsoilDataTable(table.getColumnNames(), table.getIsotopeType(), table
+                        .getUncertaintyFormat(), new TopsoilDataEntry[]{}));
+            }
+        });
 
-        return resultingTable;
+        return resultingTable.get();
     }
-    
+
     public static void handleExportTable(TopsoilDataTable table) {
         PrintWriter writer = null;
-         try {
-             TopsoilDataTable t = table;
-             String[] titles = t.getColumnNames();
-             List<Double[]> data = t.getFormattedDataAsArrays();
-             File file = TopsoilFileChooser.getExportTableFileChooser().showSaveDialog(StageHelper.getStages().get(0));
-             String location = file.toString();
-             String type = location.substring(location.length() - 3);
-             String delim;
-             switch (type) {
-                 case "csv":
-                     delim = ", ";
-                     break;
-                 case "tsv":
-                     delim = "\t";
-                     break;
-                 case "txt":
-                     FileParser fileParser = new FileParser();
-                     delim = requestDelimiter();
-                     break;
-                 default:
-                     delim = "\t";
-                     break;
-             }
-             writer = new PrintWriter(location, "UTF-8");
-             for (int i = 0; i < titles.length; i++) {
-                 writer.print(titles[i]);
-                 if (i < titles.length -1)
-                     writer.print(delim);
-             }
-             writer.print('\n');
-             for (int i = 0; i < data.size(); i++)
-             {
-                 for (int j = 0; j < data.get(i).length; j++) {
-                     writer.print(data.get(i)[j]);
-                     if (j < data.get(i).length - 1)
-                         writer.print(delim);
-                 }
-                 writer.print('\n');
-             }
-             writer.close();
-         } catch (FileNotFoundException ex) {
-             Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
-         } catch (UnsupportedEncodingException ex) {
+        try {
+            TopsoilDataTable t = table;
+            String[] titles = t.getColumnNames();
+            List<Double[]> data = t.getFormattedDataAsArrays();
+            File file = TopsoilFileChooser.getExportTableFileChooser().showSaveDialog(StageHelper.getStages().get(0));
+            String location = file.toString();
+            String type = location.substring(location.length() - 3);
+            String delim;
+            switch (type) {
+                case "csv":
+                    delim = ", ";
+                    break;
+                case "tsv":
+                    delim = "\t";
+                    break;
+                case "txt":
+                    FileParser fileParser = new FileParser();
+                    delim = requestDelimiter();
+                    break;
+                default:
+                    delim = "\t";
+                    break;
+            }
+            writer = new PrintWriter(location, "UTF-8");
+            for (int i = 0; i < titles.length; i++) {
+                writer.print(titles[i]);
+                if (i < titles.length -1)
+                    writer.print(delim);
+            }
+            writer.print('\n');
+            for (int i = 0; i < data.size(); i++)
+            {
+                for (int j = 0; j < data.get(i).length; j++) {
+                    writer.print(data.get(i)[j]);
+                    if (j < data.get(i).length - 1)
+                        writer.print(delim);
+                }
+                writer.print('\n');
+            }
+            writer.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             writer.close();
         }
-         
-     }
+
+    }
 
     /**
      * Closes all open tabs in the {@code TopsoilTabPane}, as well as any open plots. Used when a project is loaded,
@@ -395,18 +402,16 @@ public class MenuItemEventHandler {
      */
     public static void handleOpenProjectFile(TopsoilTabPane tabs) {
         if (!tabs.isEmpty()) {
-            Alert verification = new Alert(
-                    Alert.AlertType.CONFIRMATION,
-                    "Opening a Topsoil project will replace your current tables. Continue?",
-                    ButtonType.CANCEL,
-                    ButtonType.YES
-            );
-            verification.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.YES) {
-                    File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
-                    openProjectFile(tabs, file);
-                }
-            });
+            TopsoilNotification.showNotification(
+                    NotificationType.VERIFICATION,
+                    "Open Project",
+                    "Opening a Topsoil project will replace your current tables. Continue?")
+                               .ifPresent( response -> {
+                                   if (response == ButtonType.OK) {
+                                       File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
+                                       openProjectFile(tabs, file);
+                                   }
+                               });
         } else {
             File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
             openProjectFile(tabs, file);
@@ -426,8 +431,10 @@ public class MenuItemEventHandler {
                     fileName.lastIndexOf(".") + 1,
                     fileName.length());
             if (!extension.equals("topsoil")) {
-                ErrorAlerter error = new ErrorAlerter();
-                error.alert("Project must be a .topsoil file.");
+                TopsoilNotification.showNotification(
+                        NotificationType.ERROR,
+                        "Invalid File Type",
+                        "Project must be a .topsoil file.");
             } else {
                 closeAllTabsAndPlots(tabs);
                 TopsoilSerializer.deserialize(file, tabs);
@@ -469,8 +476,10 @@ public class MenuItemEventHandler {
                     fileName.lastIndexOf(".") + 1,
                     fileName.length());
             if (!extension.equals("topsoil")) {
-                ErrorAlerter error = new ErrorAlerter();
-                error.alert("Project must be a .topsoil file.");
+                TopsoilNotification.showNotification(
+                        NotificationType.ERROR,
+                        "Invalid File Type",
+                        "Project must be a .topsoil file.");
             } else {
                 TopsoilSerializer.serialize(file, tabs);
                 return true;
@@ -504,21 +513,23 @@ public class MenuItemEventHandler {
      * @return  true if the file is successfully closed
      */
     public static boolean handleCloseProjectFile(TopsoilTabPane tabs) {
-        Alert saveAndCloseAlert = new Alert(Alert.AlertType.CONFIRMATION,
-                "Do you want to save your changes?",
-                ButtonType.CANCEL, ButtonType.NO, ButtonType.YES);
-        AtomicReference<Boolean> reference = new AtomicReference<>(false);
-        saveAndCloseAlert.showAndWait().ifPresent(response -> {
-            if (response != ButtonType.CANCEL) {
-                if (response == ButtonType.YES) {
-                    MenuItemEventHandler.handleSaveProjectFile(tabs);
-                }
-                closeAllTabsAndPlots(tabs);
-                TopsoilSerializer.closeProjectFile();
-                reference.set(true);
-            }
-        });
-        return reference.get();
+        AtomicReference<Boolean> didClose = new AtomicReference<>(false);
+        TopsoilNotification.showNotification(
+                NotificationType.YES_NO,
+                "Save Changes",
+                "Do you want to save your changes?")
+                           .ifPresent(response -> {
+                               if (response != ButtonType.CANCEL) {
+                                   if (response == ButtonType.YES) {
+                                       MenuItemEventHandler.handleSaveProjectFile(tabs);
+                                   }
+                                   closeAllTabsAndPlots(tabs);
+                                   TopsoilSerializer.closeProjectFile();
+                                   didClose.set(true);
+                               }
+                           });
+
+        return didClose.get();
     }
 
     /**

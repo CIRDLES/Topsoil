@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.app.browse;
 
-import org.cirdles.topsoil.app.util.dialog.Alerter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,14 +42,11 @@ public class DesktopWebBrowserTest {
     @Mock
     private Desktop desktop;
 
-    @Mock
-    private Alerter alerter;
-
     private WebBrowser browser;
 
     @Before
     public void setUp() {
-        browser = new DesktopWebBrowser(desktop, alerter);
+        browser = new DesktopWebBrowser(desktop);
     }
 
     @Test
@@ -70,8 +66,6 @@ public class DesktopWebBrowserTest {
         when(desktop.isSupported(Desktop.Action.BROWSE)).thenReturn(false);
 
         browser.browse("http://www.google.com");
-
-        verify(alerter).alert("Browsing not supported");
     }
 
     @Test
@@ -80,17 +74,12 @@ public class DesktopWebBrowserTest {
         doThrow(IOException.class).when(desktop).browse(any());
 
         browser.browse("http://www.google.com");
-
-        verify(alerter).alert("Browser could not be opened.");
     }
 
     @Test
     public void testBrowseWhenDesktopIsNotSupported() {
-        browser = new DesktopWebBrowser(null, alerter);
+        browser = new DesktopWebBrowser(null);
 
         browser.browse("http://www.google.com");
-
-        verify(alerter).alert("Desktop not supported");
     }
-
 }

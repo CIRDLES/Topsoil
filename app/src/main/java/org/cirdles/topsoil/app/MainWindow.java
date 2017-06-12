@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -16,8 +15,7 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
-import org.cirdles.topsoil.app.util.dialog.Alerter;
-import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
 import java.io.IOException;
@@ -227,8 +225,11 @@ public class MainWindow extends Application {
                 TopsoilDataTable table = MenuItemEventHandler.handleTableFromFile();
                 tabs.add(table);
             } catch (IOException e) {
-                Alerter alerter = new ErrorAlerter();
-                alerter.alert("File I/O Error.");
+                TopsoilNotification.showNotification(
+                        TopsoilNotification.NotificationType.ERROR,
+                        "Error",
+                        "File I/O Error."
+                );
                 e.printStackTrace();
             }
         }
@@ -262,18 +263,19 @@ public class MainWindow extends Application {
      */
     public static Boolean verifyFinalSave() {
         final AtomicReference<Boolean> reference = new AtomicReference<>(null);
-        Alert verification = new Alert(Alert.AlertType.CONFIRMATION,
-                "Would you like to save your work?",
-                ButtonType.CANCEL,
-                ButtonType.NO,
-                ButtonType.YES);
-        verification.showAndWait().ifPresent(response -> {
+
+        TopsoilNotification.showNotification(
+                TopsoilNotification.NotificationType.VERIFICATION,
+                "Save Changes",
+                "Would you like to save your work?"
+        ).ifPresent(response -> {
             if (response == ButtonType.YES) {
                 reference.set(true);
             } else if (response == ButtonType.NO) {
                 reference.set(false);
             }
         });
+
         return reference.get();
     }
 

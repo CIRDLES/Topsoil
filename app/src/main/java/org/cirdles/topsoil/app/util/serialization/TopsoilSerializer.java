@@ -2,9 +2,8 @@ package org.cirdles.topsoil.app.util.serialization;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,9 +53,11 @@ public class TopsoilSerializer {
             out.close();
             oos.close();
         } catch (IOException e) {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR,
-                    "Unable to save project to file.", ButtonType.OK);
-            errorAlert.showAndWait();
+            TopsoilNotification.showNotification(
+                    TopsoilNotification.NotificationType.ERROR,
+                    "Error",
+                    "Unable to save project to file."
+            );
             e.printStackTrace();
         }
     }
@@ -81,17 +82,25 @@ public class TopsoilSerializer {
             in.close();
             ois.close();
         } catch (InvalidClassException | ClassNotFoundException e) {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR,
-                    "Unable to load .topsoil file. This may be outdated.", ButtonType.OK);
-            errorAlert.showAndWait();
+            TopsoilNotification.showNotification(
+                    TopsoilNotification.NotificationType.ERROR,
+                    "Outdated File",
+                    "Unable to load .topsoil file. This may be outdated."
+            );
+            e.printStackTrace();
         } catch (FileNotFoundException e) {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR,
-                    "The specified file does not exist.", ButtonType.OK);
-            errorAlert.showAndWait();
+            TopsoilNotification.showNotification(
+                    TopsoilNotification.NotificationType.ERROR,
+                    "Invalid File",
+                    "The specified file does not exist."
+            );
+            e.printStackTrace();
         } catch (IOException e) {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR,
-                    "An unknown error has occurred.", ButtonType.OK);
-            errorAlert.showAndWait();
+            TopsoilNotification.showNotification(
+                    TopsoilNotification.NotificationType.ERROR,
+                    "Error",
+                    "An unknown error has occurred."
+            );
             e.printStackTrace();
         }
 

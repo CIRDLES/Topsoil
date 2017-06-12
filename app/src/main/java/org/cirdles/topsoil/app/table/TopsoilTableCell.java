@@ -8,8 +8,8 @@ import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.TableCellEditCommand;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
-import org.cirdles.topsoil.app.util.dialog.Alerter;
-import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification.NotificationType;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -35,11 +35,6 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     private TextField textField;
 
     /**
-     * An {@code Alerter} for displaying messages to the user, particularly those concerning invalid data input.
-     */
-    private Alerter alerter;
-
-    /**
      * A {@code NumberFormat} for standardizing the displayed value in the cell.
      */
     private NumberFormat df;
@@ -61,8 +56,6 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         this.df = DecimalFormat.getNumberInstance();
         //this.df.setMinimumFractionDigits(9);
         this.df.setMaximumFractionDigits(9);
-
-        this.alerter = new ErrorAlerter();
 
         //Handle key press events
         this.setOnKeyPressed(keyEvent -> {
@@ -154,7 +147,11 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
             } else {
                 // TODO Test if this is a rho column by getting the variable property of this.getTableColumn()
                 if (this.getColumnIndex() == 4 && (newVal > 1.0 || newVal < -1.0)) {
-                    alerter.alert("Rho values must be between -1.0 and 1.0.");
+                    TopsoilNotification.showNotification(
+                            NotificationType.ERROR,
+                            "Invalid Correlation Coefficient",
+                            "Rho values must be between -1.0 and 1.0."
+                    );
                     cancelEdit();
                 } else {
                     addUndo(this.getItem(), newVal);
@@ -163,7 +160,11 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
             }
             selectNextCell();
         } catch (NumberFormatException e) {
-            alerter.alert("Entry must be a number.");
+            TopsoilNotification.showNotification(
+                    NotificationType.ERROR,
+                    "Invalid Value",
+                    "Entry must be a number."
+            );
             cancelEdit();
         }
     }

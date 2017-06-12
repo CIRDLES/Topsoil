@@ -1,10 +1,10 @@
 package org.cirdles.topsoil.app.menu.command;
 
 import java.util.concurrent.atomic.AtomicReference;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.undo.Command;
 
 /**
@@ -54,18 +54,20 @@ public class DeleteTableCommand implements Command {
      */
     public static Boolean confirmDeletion() {
         final AtomicReference<Boolean> reference = new AtomicReference<>(null);
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+
+        TopsoilNotification.showNotification(
+                TopsoilNotification.NotificationType.VERIFICATION,
+                "Delete Table",
                 "Do you really want to delete this table?\n"
-                        + "This operation can not be undone.",
-                ButtonType.NO,
-                ButtonType.YES);
-        confirmation.showAndWait().ifPresent(response -> {
+                + "This operation can not be undone."
+        ).ifPresent(response -> {
             if (response == ButtonType.YES) {
                 reference.set(true);
             } else if (response == ButtonType.NO) {
                 reference.set(false);
             }
         });
+
         return reference.get();
     }
     

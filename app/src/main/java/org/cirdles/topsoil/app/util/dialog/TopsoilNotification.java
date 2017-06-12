@@ -20,7 +20,8 @@ import java.util.Optional;
 /**
  * A custom dialog class that essentially acts the same way that the Java {@link Alert} class does. Having this class
  * allows us to customize different types of notifications (that is, different {@code ButtonType} arrangements) without
- * having to do so wherever they are called. It also makes adding new types of notifications relatively simple.
+ * having to do so wherever they are called. It also makes adding new types of notifications relatively simple. All
+ * notifications have the Topsoil logo on the window.
  *
  * @author Jake Marotta
  */
@@ -83,15 +84,13 @@ public class TopsoilNotification extends Dialog<ButtonType> {
      * @param message   String message
      * @return  the ButtonType of the button the user pressed in response
      */
-    public static ButtonType showNotification(NotificationType type, String windowTitle, String message) {
+    public static Optional<ButtonType> showNotification(NotificationType type, String windowTitle, String message) {
         TopsoilNotification notification = new TopsoilNotification(windowTitle, message);
 
         notification.setImage(type.getImage());
         notification.getDialogPane().getButtonTypes().addAll(type.getButtonTypes());
 
-        Optional<ButtonType> result = notification.showAndWait();
-
-        return result.orElse(null);
+        return notification.showAndWait();
     }
 
     /**

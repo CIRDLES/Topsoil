@@ -12,11 +12,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
-import org.cirdles.topsoil.app.util.dialog.Alerter;
-import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
-import org.cirdles.topsoil.app.util.dialog.YesNoAlert;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification.NotificationType;
 
-import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileInputStream;
@@ -24,8 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 /**
@@ -103,23 +100,25 @@ public class FileParser {
     }
 
     /**
-     * Opens a {@link YesNoAlert} asking the user whether or not a table file contains a header row(s).
+     * Opens a {@link TopsoilNotification} asking the user whether or not a table file contains a header row(s).
      *
      * @return  true if user presses Yes, false if No
      */
     public static Boolean containsHeaderDialog() {
-        Boolean containsHeaders = null;
-        YesNoAlert alert = new YesNoAlert(
-                "Does the selection contain headers?");
-        Optional<ButtonType> response = alert.showAndWait();
-        if (response.isPresent()) {
-            if (response.get() == ButtonType.YES) {
-                containsHeaders = true;
-            } else if (response.get() == ButtonType.NO) {
-                containsHeaders = false;
+        AtomicReference<Boolean> containsHeaders = new AtomicReference<>(false);
+
+        TopsoilNotification.showNotification(
+                NotificationType.YES_NO,
+                "Contains Headers",
+                "Does the selection contain headers?"
+        ).ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                containsHeaders.set(true);
+            } else if (response == ButtonType.NO) {
+                containsHeaders.set(false);
             }
-        } // else containsHeaders is assumed false
-        return containsHeaders;
+        });
+        return containsHeaders.get();
     }
 
     public static Boolean detectHeader(String content) {
@@ -130,11 +129,14 @@ public class FileParser {
         String[] firstLine;
         try {
             firstLine = lines[0].split(getDelimiter(content));
-        } catch (IOException ex) { 
+        } catch (IOException ex) {
             String noDelimiterMessage = "Topsoil can not read the imported content. Make sure it is"
-                    + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
-            Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
-            noDelimiterAlert.show();
+                                        + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
+            TopsoilNotification.showNotification(
+                    NotificationType.ERROR,
+                    "Could Not Read",
+                    noDelimiterMessage
+            );
             return false;
         }
 
@@ -156,8 +158,11 @@ public class FileParser {
         } catch (IOException ex) {
             String noDelimiterMessage = "Topsoil can not read that file. Make sure the file contains"
                     + " a complete delimited data table. The import has been canceled.";
-            Alert noDelimiterAlert = new Alert(Alert.AlertType.ERROR, noDelimiterMessage);
-            noDelimiterAlert.show();
+            TopsoilNotification.showNotification(
+                    NotificationType.ERROR,
+                    "Could Not Read",
+                    noDelimiterMessage
+            );
             return false;
         }
 
@@ -448,8 +453,11 @@ public class FileParser {
         String[] rtnval = null;
 
         if (delim == null) {
-            Alerter alerter = new ErrorAlerter();
-            alerter.alert("Could not read input.");
+            TopsoilNotification.showNotification(
+                    NotificationType.ERROR,
+                    "Could Not Read",
+                    "Could not read input."
+            );
         } else {
 
             // Check if the second line of content also has headers, and return a concatenation of these if present
