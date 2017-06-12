@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
@@ -38,7 +39,8 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
     public enum DataImportKey {
         HEADERS("Headers"),
         DATA("Data"),
-        UNCERTAINTY("UNCERTAINTY");
+        UNCERTAINTY("Uncertainty"),
+        ISOTOPE_TYPE("Isotope Type");
 
         private String key;
 
@@ -47,8 +49,10 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
         }
     }
 
+    // A series of maps for getting values from ChoiceBoxes
     private static final Map<String, Variable<Number>> STRING_VARIABLE_MAP;
     private static final Map<String, UncertaintyFormat> STRING_UNCERTAINTY_FORMAT_MAP;
+    private static final Map<String, IsotopeType> STRING_ISOTOPE_TYPE_MAP;
     static {
         STRING_VARIABLE_MAP = new LinkedHashMap<>();
         for (Variable<Number> v : Variables.VARIABLE_LIST) {
@@ -59,10 +63,16 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
         for (UncertaintyFormat uf : UncertaintyFormat.ALL) {
             STRING_UNCERTAINTY_FORMAT_MAP.put(uf.getName(), uf);
         }
+
+        STRING_ISOTOPE_TYPE_MAP = new LinkedHashMap<>();
+        for (IsotopeType it : IsotopeType.values()) {
+            STRING_ISOTOPE_TYPE_MAP.put(it.getName(), it);
+        }
     }
 
     private ArrayList<ChoiceBox<String>> columnChoiceBoxes;
     private ChoiceBox<String> uncertaintyChoiceBox;
+    private ChoiceBox<String> isotopeChoiceBox;
 
     private DataImportDialog(String[] headers, List<TopsoilDataEntry> data) {
         super();
@@ -148,7 +158,12 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
                 Map<DataImportKey, Object> selections = new HashMap<>();
                 selections.put(DataImportKey.HEADERS, selectedHeaders);
                 selections.put(DataImportKey.DATA, selectedColumns);
-                selections.put(DataImportKey.UNCERTAINTY, STRING_UNCERTAINTY_FORMAT_MAP.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()));
+                selections.put(DataImportKey.UNCERTAINTY, STRING_UNCERTAINTY_FORMAT_MAP.get(uncertaintyChoiceBox
+                                                                                                    .getSelectionModel()
+                                                                                                    .getSelectedItem()));
+                selections.put(DataImportKey.ISOTOPE_TYPE, STRING_ISOTOPE_TYPE_MAP.get(isotopeChoiceBox
+                                                                                               .getSelectionModel()
+                                                                                               .getSelectedItem()));
 
                 return selections;
             } else {
@@ -304,6 +319,21 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
         this.uncertaintyChoiceBox = uncChoiceBox;
 
         subContainer.getChildren().add(uncContainer);
+
+        // Creates a horizontal layout for the isotope system option.
+        HBox isoContainer = new HBox();
+        isoContainer.setAlignment(Pos.CENTER_LEFT);
+
+        Label isoLabel = new Label("Which isotope system will you be working in?");
+        isoContainer.getChildren().add(isoLabel);
+
+        ChoiceBox<String> isoChoiceBox = new ChoiceBox<>();
+        isoChoiceBox.getItems().addAll(STRING_ISOTOPE_TYPE_MAP.keySet());
+        isoContainer.getChildren().add(isoChoiceBox);
+        HBox.setMargin(isoChoiceBox, new Insets(5.0, 5.0, 5.0, 5.0));
+        this.isotopeChoiceBox = isoChoiceBox;
+
+        subContainer.getChildren().add(isoContainer);
 
         this.getDialogPane().setContent(container);
     }

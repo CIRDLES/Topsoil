@@ -96,13 +96,6 @@ public class MenuItemEventHandler {
                         headers = FileParser.parseHeaders(file);
                     }
 
-                    // select isotope flavor -- For now, the user shouldn’t have to select an isotope system; instead assume Generic.
-
-                    //IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
-                    IsotopeType isotopeType = IsotopeType.Generic;
-
-                    // isotopeType would only be null if the user clicked "Cancel".
-//                if (isotopeType != null) {
                     List<TopsoilDataEntry> entries = FileParser.parseFile(file, hasHeaders);
 
                     if (entries != null) {
@@ -113,6 +106,14 @@ public class MenuItemEventHandler {
                             entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
                             UncertaintyFormat selectedFormat = (UncertaintyFormat) selections
                                     .get(DataImportKey.UNCERTAINTY);
+
+                            // Isotope system is Generic by default.
+                            IsotopeType isotopeType;
+                            if (selections.get(DataImportKey.ISOTOPE_TYPE) == null) {
+                                isotopeType = IsotopeType.Generic;
+                            } else {
+                                isotopeType = (IsotopeType) selections.get(DataImportKey.ISOTOPE_TYPE);
+                            }
 
                             ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
                             applyUncertaintyFormat(selectedFormat, data);
@@ -148,8 +149,8 @@ public class MenuItemEventHandler {
         try {
             delim = FileParser.getDelimiter(content);
         } catch (IOException ex) {
-            String noDelimiterMessage = "Topsoil can not read the imported content. Make sure it is"
-                    + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
+            String noDelimiterMessage = "Topsoil can not read the imported content. Make sure it is a complete data table\n" +
+                                        "or try saving it as a .csv or .tsv. The import has been canceled.";
             TopsoilNotification.showNotification(
                     NotificationType.ERROR,
                     "Could Not Read",
@@ -172,39 +173,40 @@ public class MenuItemEventHandler {
                     headers = FileParser.parseHeaders(content, delim);
                 }
 
-                // select isotope flavor -- For now, the user shouldn’t have to select an isotope system; instead assume Generic.
-                //IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
-                IsotopeType isotopeType = IsotopeType.Generic;
+                List<TopsoilDataEntry> entries = FileParser.parseClipboard(hasHeaders, delim);
 
-                if (isotopeType != null) {
-                    List<TopsoilDataEntry> entries = FileParser.parseClipboard(hasHeaders, delim);
+                if (entries != null) {
 
-                    if (entries != null) {
+                    Map<DataImportKey, Object> selections = DataImportDialog.showImportDialog(headers, entries);
 
-                        Map<DataImportKey, Object> selections = DataImportDialog.showImportDialog(headers, entries);
+                    if (selections != null) {
+                        headers = (String[]) selections.get(DataImportKey.HEADERS);
+                        entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
+                        UncertaintyFormat selectedFormat = (UncertaintyFormat) selections.get(DataImportKey.UNCERTAINTY);
 
-                        if (selections != null) {
-                            headers = (String[]) selections.get(DataImportKey.HEADERS);
-                            entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
-
-                            UncertaintyFormat selectedFormat = (UncertaintyFormat) selections.get(DataImportKey.UNCERTAINTY);
-
-                            ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                            applyUncertaintyFormat(selectedFormat, data);
-
-                            table = new TopsoilDataTable(headers,
-                                                         isotopeType,
-                                                         selectedFormat,
-                                                         data.toArray(new TopsoilDataEntry[data.size()]));
-
+                        // Isotope system is Generic by default.
+                        IsotopeType isotopeType;
+                        if (selections.get(DataImportKey.ISOTOPE_TYPE) == null) {
+                            isotopeType = IsotopeType.Generic;
+                        } else {
+                            isotopeType = (IsotopeType) selections.get(DataImportKey.ISOTOPE_TYPE);
                         }
-                    } else {
-                        TopsoilNotification.showNotification(
-                                NotificationType.ERROR,
-                                "Empty Clipboard",
-                                "Clipboard is empty!"
-                        );
+
+                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                        applyUncertaintyFormat(selectedFormat, data);
+
+                        table = new TopsoilDataTable(headers,
+                                                     isotopeType,
+                                                     selectedFormat,
+                                                     data.toArray(new TopsoilDataEntry[data.size()]));
+
                     }
+                } else {
+                    TopsoilNotification.showNotification(
+                            NotificationType.ERROR,
+                            "Empty Clipboard",
+                            "Clipboard is empty!"
+                    );
                 }
             }
         }
