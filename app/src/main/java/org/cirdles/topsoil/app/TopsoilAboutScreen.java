@@ -49,6 +49,8 @@ public class TopsoilAboutScreen extends Pane {
      */
     @FXML private Label messageLabel;
 
+    @FXML private Hyperlink homePage;
+
     /**
      * A {@code Hyperlink} that leads to the Apache License 2.0 page.
      */
@@ -68,6 +70,8 @@ public class TopsoilAboutScreen extends Pane {
      * A {@code Hyperlink} that leads to the Topsoil GitHub release log.
      */
     @FXML private Hyperlink releaseLog;
+
+    private final String HOME_URL = "http://cirdles.org/projects/topsoil/";
 
     private final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0";
 
@@ -124,6 +128,8 @@ public class TopsoilAboutScreen extends Pane {
 
         browser = new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter());
     }
+
+    @FXML private void openHome() { browser.browse(HOME_URL); }
 
     /**
      * Opens the system default browser to Topsoil's GitHub repository.
