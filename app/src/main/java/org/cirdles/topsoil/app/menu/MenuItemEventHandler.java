@@ -40,10 +40,19 @@ import java.util.logging.Logger;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Pos;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.cirdles.topsoil.app.util.file.ExampleDataTable;
 
 import javax.xml.crypto.Data;
@@ -313,38 +322,37 @@ public class MenuItemEventHandler {
     }
     
     public static void handleExportTable(TopsoilDataTable table) {
-         TopsoilDataTable t = table;
-         String[] titles = t.getColumnNames();
-         List<Double[]> data = t.getFormattedDataAsArrays();
-         
-         File file = TopsoilFileChooser.getExportTableFileChooser().showSaveDialog(StageHelper.getStages().get(0));
-         String location = file.toString();
-         String type = location.substring(location.length() - 3);
-         String delim;
-         
-         switch (type) {
-             case "csv":
-                 delim = ", ";
-                 break;
-             case "tsv":
-                 delim = "\t";
-                 break;
-             default:
-                 delim = "\t";
-                 break;
-         }
-         
-         PrintWriter writer;
+        PrintWriter writer = null;
          try {
-             writer = new PrintWriter(location);
+             TopsoilDataTable t = table;
+             String[] titles = t.getColumnNames();
+             List<Double[]> data = t.getFormattedDataAsArrays();
+             File file = TopsoilFileChooser.getExportTableFileChooser().showSaveDialog(StageHelper.getStages().get(0));
+             String location = file.toString();
+             String type = location.substring(location.length() - 3);
+             String delim;
+             switch (type) {
+                 case "csv":
+                     delim = ", ";
+                     break;
+                 case "tsv":
+                     delim = "\t";
+                     break;
+                 case "txt":
+                     FileParser fileParser = new FileParser();
+                     delim = requestDelimiter();
+                     break;
+                 default:
+                     delim = "\t";
+                     break;
+             }
+             writer = new PrintWriter(location, "UTF-8");
              for (int i = 0; i < titles.length; i++) {
                  writer.print(titles[i]);
                  if (i < titles.length -1)
                      writer.print(delim);
              }
-             
              writer.print('\n');
-             
              for (int i = 0; i < data.size(); i++)
              {
                  for (int j = 0; j < data.get(i).length; j++) {
@@ -357,7 +365,11 @@ public class MenuItemEventHandler {
              writer.close();
          } catch (FileNotFoundException ex) {
              Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
-         }
+         } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            writer.close();
+        }
          
      }
 
@@ -525,5 +537,91 @@ public class MenuItemEventHandler {
                 entry.getProperties().get(3).set(entry.getProperties().get(3).get() / formatValue);
             }
         }
+    }
+    private static final String COMMA = "Commas";
+    private static final String TAB = "Tabs";
+    private static final String COLON = "Colons";
+    private static final String SEMICOLON = "Semicolons";
+    
+    private static final HashMap<String, String> COMMON_DELIMITERS; // Checked against when guessing a delimiter
+    static {
+        COMMON_DELIMITERS = new LinkedHashMap<>();
+        COMMON_DELIMITERS.put(COMMA, ",");
+        COMMON_DELIMITERS.put(TAB, "\t");
+        COMMON_DELIMITERS.put(COLON, ":");
+        COMMON_DELIMITERS.put(SEMICOLON, ";");
+    }
+    
+    private static String requestDelimiter() {
+        String otherDelimiterOption = "Other";
+
+        Dialog<String> delimiterRequestDialog = new Dialog<>();
+        delimiterRequestDialog.setTitle("Delimiter Request");
+
+        /*
+            CONTENT NODES
+         */
+        VBox vBox = new VBox(10.0);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER_RIGHT);
+
+        Label requestLabel = new Label("How are the values in your data separated?");
+        ChoiceBox<String> delimiterChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(COMMON_DELIMITERS
+                                                                                                         .keySet()));
+        delimiterChoiceBox.getItems().addAll(otherDelimiterOption);
+
+        Label otherLabel = new Label("Other: ");
+        TextField otherTextField = new TextField();
+        otherTextField.setDisable(true);
+
+        delimiterChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals(otherDelimiterOption)) {
+                otherTextField.setDisable(false);
+            } else {
+                otherTextField.setDisable(true);
+            }
+        });
+
+        grid.add(requestLabel, 0, 0);
+        grid.add(delimiterChoiceBox, 1, 0);
+        grid.add(otherLabel, 0, 1);
+        grid.add(otherTextField, 1, 1);
+
+        Label adviceLabel = new Label("*(If copying from spreadsheet, select \"Tabs\".)");
+        adviceLabel.setTextFill(Color.DARKRED);
+
+        vBox.getChildren().addAll(grid, adviceLabel);
+
+        delimiterRequestDialog.getDialogPane().setContent(vBox);
+
+        /*
+            BUTTONS AND RETURN
+         */
+        delimiterRequestDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+
+        delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        delimiterChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
+            if (delimiterChoiceBox.getSelectionModel().getSelectedItem() == null) {
+                delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+            } else {
+                delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
+            }
+        });
+
+        delimiterRequestDialog.setResultConverter(value -> {
+            if (value == ButtonType.OK) {
+                if (delimiterChoiceBox.getSelectionModel().getSelectedItem().equals(otherDelimiterOption)) {
+                    return otherTextField.getText().trim();
+                } else {
+                    return COMMON_DELIMITERS.get(delimiterChoiceBox.getValue());
+                }
+            } else {
+                return null;
+            }
+        });
+
+        Optional<String> result = delimiterRequestDialog.showAndWait();
+        return result.orElse(null);
     }
 }
