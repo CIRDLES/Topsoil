@@ -566,7 +566,7 @@ public class MenuItemEventHandler {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER_RIGHT);
 
-        Label requestLabel = new Label("How are the values in your data separated?");
+        Label requestLabel = new Label("How do you want the values in the data separated?  ");
         ChoiceBox<String> delimiterChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(COMMON_DELIMITERS
                                                                                                          .keySet()));
         delimiterChoiceBox.getItems().addAll(otherDelimiterOption);
@@ -588,10 +588,7 @@ public class MenuItemEventHandler {
         grid.add(otherLabel, 0, 1);
         grid.add(otherTextField, 1, 1);
 
-        Label adviceLabel = new Label("*(If copying from spreadsheet, select \"Tabs\".)");
-        adviceLabel.setTextFill(Color.DARKRED);
-
-        vBox.getChildren().addAll(grid, adviceLabel);
+        vBox.getChildren().addAll(grid);
 
         delimiterRequestDialog.getDialogPane().setContent(vBox);
 
