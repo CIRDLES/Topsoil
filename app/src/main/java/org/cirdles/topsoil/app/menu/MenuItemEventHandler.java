@@ -15,10 +15,11 @@ import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.util.dialog.DataImportDialog;
+import org.cirdles.topsoil.app.util.dialog.NewProjectWindow;
 import org.cirdles.topsoil.app.util.dialog.TableUncertaintyChoiceDialog;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification.NotificationType;
-import org.cirdles.topsoil.app.util.dialog.DataImportDialog.DataImportKey;
+import org.cirdles.topsoil.app.util.dialog.DataImportKey;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
@@ -397,6 +398,15 @@ public class MenuItemEventHandler {
     }
 
     /**
+     * Walks the user through creating a new Topsoil project.
+     *
+     * @param tabs
+     */
+    public static void handleNewProject(TopsoilTabPane tabs) {
+        NewProjectWindow.newProject(tabs);
+    }
+
+    /**
      * Opens a .topsoil project {@code File}. If any tabs or plots are open, they are closed and replaced with the
      * project's information.
      *
@@ -540,7 +550,7 @@ public class MenuItemEventHandler {
      * @param format    UncertaintyFormat
      * @param data  data as a List of TopsoilDataEntries
      */
-    private static void applyUncertaintyFormat(UncertaintyFormat format, List<TopsoilDataEntry> data) {
+    public static void applyUncertaintyFormat(UncertaintyFormat format, List<TopsoilDataEntry> data) {
         // If uncertainty uncertaintyFormat is not one sigma absolute, convert uncertainty data to one sigma absolute.
         if (format != UncertaintyFormat.ONE_SIGMA_ABSOLUTE) {
             double formatValue = format.getValue();

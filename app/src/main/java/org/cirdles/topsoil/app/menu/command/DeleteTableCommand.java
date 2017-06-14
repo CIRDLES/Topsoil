@@ -53,7 +53,7 @@ public class DeleteTableCommand implements Command {
      * @return true if delete is confirmed, false if not
      */
     public static Boolean confirmDeletion() {
-        final AtomicReference<Boolean> reference = new AtomicReference<>(null);
+        final AtomicReference<Boolean> reference = new AtomicReference<>(false);
 
         TopsoilNotification.showNotification(
                 TopsoilNotification.NotificationType.VERIFICATION,
@@ -61,10 +61,8 @@ public class DeleteTableCommand implements Command {
                 "Do you really want to delete this table?\n"
                 + "This operation can not be undone."
         ).ifPresent(response -> {
-            if (response == ButtonType.YES) {
+            if (response == ButtonType.OK) {
                 reference.set(true);
-            } else if (response == ButtonType.NO) {
-                reference.set(false);
             }
         });
 
@@ -75,7 +73,7 @@ public class DeleteTableCommand implements Command {
      * Called to execute the table deleting.
      */
     public void execute() {
-        if(confirmDeletion()){
+        if(DeleteTableCommand.confirmDeletion()){
             
             TopsoilTabPane topsoilTabPane = (TopsoilTabPane) topsoilTab.getTabPane();
             topsoilTabPane.getTabs().remove(topsoilTabPane.getSelectedTab());

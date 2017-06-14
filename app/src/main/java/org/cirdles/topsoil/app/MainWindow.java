@@ -265,7 +265,7 @@ public class MainWindow extends Application {
         final AtomicReference<Boolean> reference = new AtomicReference<>(null);
 
         TopsoilNotification.showNotification(
-                TopsoilNotification.NotificationType.VERIFICATION,
+                TopsoilNotification.NotificationType.YES_NO,
                 "Save Changes",
                 "Would you like to save your work?"
         ).ifPresent(response -> {
