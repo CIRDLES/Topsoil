@@ -1,9 +1,6 @@
 package org.cirdles.topsoil.app.util.dialog.controller;
 
-import com.sun.javafx.scene.control.skin.TabPaneSkin;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -19,7 +16,9 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.dialog.DataImportKey;
+import org.cirdles.topsoil.app.util.dialog.controller.ProjectSourcesController.PathDelimiterPair;
 import org.cirdles.topsoil.app.util.file.FileParser;
 
 import java.io.File;
@@ -39,7 +38,7 @@ public class ProjectPreviewController {
 
         private DataPreviewController controller;
 
-        protected ControllerTab(Path filePath) {
+        protected ControllerTab(Path filePath, String delim) {
             super();
             try {
                 FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(DATA_PREVIEW_FXML).toUri().toURL());
@@ -73,15 +72,18 @@ public class ProjectPreviewController {
                     tabPane.getSelectionModel().select(this);
                 });
 
-                String[] headers;
-                Boolean containsHeaders = FileParser.detectHeader(file);
-                if (containsHeaders) {
-                    headers = FileParser.parseHeaders(file);
-                } else {
-                    headers = null;
-                }
+                String[] headers = null;
+                Boolean containsHeaders = FileParser.detectHeader(file, delim);
+                List<TopsoilDataEntry> data = null;
+                try {
+                    if (containsHeaders) {
+                        headers = FileParser.parseHeaders(file, delim);
+                    }
 
-                List<TopsoilDataEntry> data = FileParser.parseFile(file, containsHeaders);
+                    data = FileParser.parseFile(file, delim, containsHeaders);
+                } catch (TopsoilException e) {
+                    e.printStackTrace();
+                }
 
                 controller.setData(headers, data);
 
@@ -100,12 +102,12 @@ public class ProjectPreviewController {
     @FXML private Button cancelButton;
     @FXML private Button finishButton;
 
-    private ListProperty<Path> paths;
-    public ListProperty<Path> pathsProperty() {
-        if (paths == null) {
-            paths = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private ListProperty<PathDelimiterPair> pathDelimiterList;
+    public ListProperty<PathDelimiterPair> pathDelimiterListProperty() {
+        if (pathDelimiterList == null) {
+            pathDelimiterList = new SimpleListProperty<>(FXCollections.observableArrayList());
         }
-        return paths;
+        return pathDelimiterList;
     }
 
     private Boolean didFinish;
@@ -120,7 +122,7 @@ public class ProjectPreviewController {
 
     @FXML
     public void initialize() {
-        pathsProperty();
+        pathDelimiterListProperty();
         didFinish = false;
         finishButton.setDisable(true);
 
@@ -146,12 +148,14 @@ public class ProjectPreviewController {
             });
         }
 
-        pathsProperty().addListener((ListChangeListener<Path>) c -> {
+        pathDelimiterListProperty().addListener((ListChangeListener<PathDelimiterPair>) c -> {
             c.next();
 
             if (c.wasAdded()) {
+                PathDelimiterPair pair = pathDelimiterListProperty().get(c.getTo() - 1);
+
                 finishButton.setDisable(true);
-                ControllerTab controllerTab = new ControllerTab(paths.get(c.getTo() - 1));
+                ControllerTab controllerTab = new ControllerTab(pair.getPath(), pair.getDelimiter());
                 controllerTab.getController().uncertaintyFormatProperty().addListener(ch -> {
                     updateFinishButtonDisabledProperty();
                 });

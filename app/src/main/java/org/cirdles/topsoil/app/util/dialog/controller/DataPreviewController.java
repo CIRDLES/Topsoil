@@ -188,7 +188,11 @@ public class DataPreviewController extends Pane {
             GridPane.setConstraints(label, i, 1, 1, 1, HPos.CENTER, VPos.CENTER, Priority.ALWAYS, Priority.NEVER, new Insets(5.0, 5.0, 5.0, 5.0));
 
             for (int j = 0; j < sampleLines.size(); j++) {
-                label = new Label(sampleLines.get(j).getProperties().get(i).getValue().toString());
+                if (i >= sampleLines.get(j).getProperties().size()) {
+                    label = new Label("0.0");
+                } else {
+                    label = new Label(sampleLines.get(j).getProperties().get(i).getValue().toString());
+                }
                 label.setFont(Font.font("Monospaced"));
                 label.setMinSize(100.0, 17.0);
                 label.setMaxSize(100.0, 17.0);

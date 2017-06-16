@@ -3,13 +3,17 @@ package org.cirdles.topsoil.app.util.dialog.controller;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.util.TopsoilException;
+import org.cirdles.topsoil.app.util.dialog.DelimiterRequestDialog;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
@@ -45,12 +49,12 @@ public class ProjectSourcesController {
 
     private BiMap<Path, Label> pathLabelBiMap;
 
-    private ListProperty<Path> paths;
-    public ListProperty<Path> pathsProperty() {
-        if (paths == null) {
-            paths = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private ListProperty<PathDelimiterPair> pathDelimiterList;
+    public ListProperty<PathDelimiterPair> pathDelimiterListProperty() {
+        if (pathDelimiterList == null) {
+            pathDelimiterList = new SimpleListProperty<>(FXCollections.observableArrayList());
         }
-        return paths;
+        return pathDelimiterList;
     }
 
     @FXML
@@ -102,21 +106,37 @@ public class ProjectSourcesController {
         Iterator<File> iterator = selectedFiles.iterator();
         while (iterator.hasNext()) {
             File file = iterator.next();
-            if (!FileParser.isSupportedTableFile(file) || FileParser.isEmptyFile(file)) {
-                selectedFiles.remove(file);
+            String delim = FileParser.getDelimiter(file);
+
+            if (delim == null) {
+                delim = DelimiterRequestDialog.showDialog(
+                        "Delimiter Request",
+                        file.getName() + ": Please select the separator for this file.",
+                        false
+                );
+            }
+
+            if (!FileParser.isSupportedTableFile(file) || FileParser.isEmptyFile(file) || delim == null) {
+                iterator.remove();
                 rejectedFiles.add(file);
             } else {
-                if (pathLabelBiMap.containsKey(file.toPath())) {
+                try {
+                    if (FileParser.parseFile(file, delim, false).size() <= 0) {
+                        throw new TopsoilException("Invalid delimiter.");
+                    }
+                    if (pathLabelBiMap.containsKey(file.toPath())) {
+                        iterator.remove();
+                    } else {
+                        Label pathLabel = new Label(file.getName());
+                        sourceFileListView.getItems().add(pathLabel);
+                        pathLabelBiMap.put(file.toPath(), pathLabel);
+                        pathDelimiterListProperty().add(new PathDelimiterPair(file.toPath(), delim));
+                    }
+                } catch (TopsoilException e) {
                     iterator.remove();
+                    rejectedFiles.add(file);
                 }
             }
-        }
-
-        for (File file : selectedFiles) {
-                Label pathLabel = new Label(file.getName());
-                sourceFileListView.getItems().add(pathLabel);
-                pathLabelBiMap.put(file.toPath(), pathLabel);
-                pathsProperty().add(file.toPath());
         }
 
         if (rejectedFiles.size() > 0) {
@@ -136,7 +156,12 @@ public class ProjectSourcesController {
 
     @FXML private void removeFileButtonAction() {
         // Remove from paths
-        pathsProperty().remove(pathLabelBiMap.inverse().get(sourceFileListView.getSelectionModel().getSelectedItem()));
+        for (PathDelimiterPair pair : pathDelimiterList) {
+            if (pair.getPath().equals(pathLabelBiMap.inverse().get(sourceFileListView.getSelectionModel().getSelectedItem()))) {
+                pathDelimiterListProperty().remove(pair);
+                break;
+            }
+        }
 
         // Remove from map
         pathLabelBiMap.inverse().remove(sourceFileListView.getSelectionModel().getSelectedItem());
@@ -220,6 +245,23 @@ public class ProjectSourcesController {
         nextScene = scene;
     }
 
+    class PathDelimiterPair {
 
+        private Path path;
+        private String delim;
+
+        private PathDelimiterPair(Path path, String delim) {
+            this.path = path;
+            this.delim = delim;
+        }
+
+        public Path getPath() {
+            return path;
+        }
+
+        public String getDelimiter() {
+            return delim;
+        }
+    }
 
 }

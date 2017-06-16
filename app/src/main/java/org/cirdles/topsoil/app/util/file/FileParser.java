@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.util.file;
 
 import java.io.File;
 
+import com.google.common.io.Files;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
@@ -10,8 +11,8 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification.NotificationType;
 
@@ -86,20 +87,6 @@ public class FileParser {
     //***********************
 
     /**
-     * Opens a {@code FileChooser} for opening table files (e.g. .csv, .txt). A {@code Stage} must be provided
-     * to show ownership over the file chooser, so the user can't change focus to another window before
-     * specifying a file.
-     *
-     * @param stage the parent Stage
-     * @return  the selected File
-     */
-    public static File openTableDialog(Stage stage) {
-        return TopsoilFileChooser
-                .getTableFileChooser()
-                .showOpenDialog(stage);
-    }
-
-    /**
      * Opens a {@link TopsoilNotification} asking the user whether or not a table file contains a header row(s).
      *
      * @return  true if user presses Yes, false if No
@@ -121,50 +108,19 @@ public class FileParser {
         return containsHeaders.get();
     }
 
-    public static Boolean detectHeader(String content) {
-        Boolean containsHeaders = true;
-
-        String[] lines = readLines(content);
-
-        String[] firstLine;
-        try {
-            firstLine = lines[0].split(getDelimiter(content));
-        } catch (IOException ex) {
-            String noDelimiterMessage = "Topsoil can not read the imported content. Make sure it is"
-                                        + " a complete data table or try saving it as a .csv or .tsv. The import has been canceled.";
-            TopsoilNotification.showNotification(
-                    NotificationType.ERROR,
-                    "Could Not Read",
-                    noDelimiterMessage
-            );
-            return false;
-        }
-
-        if(isDouble(firstLine[0])){
-            containsHeaders = false;
-        }
-
-        return containsHeaders;
+    public static Boolean detectHeader(String content, String delim) {
+        return detectHeader(readLines(content), delim);
     }
 
-    public static Boolean detectHeader(File file) {
+    public static Boolean detectHeader(File file, String delim) {
+        return detectHeader(readLines(file), delim);
+    }
+
+    private static Boolean detectHeader(String[] lines, String delim) {
         Boolean containsHeaders = true;
 
-        String[] lines = readLines(file);
-
         String[] firstLine;
-        try {
-            firstLine = lines[0].split(getDelimiter(lines));
-        } catch (IOException ex) {
-            String noDelimiterMessage = "Topsoil can not read that file. Make sure the file contains"
-                    + " a complete delimited data table. The import has been canceled.";
-            TopsoilNotification.showNotification(
-                    NotificationType.ERROR,
-                    "Could Not Read",
-                    noDelimiterMessage
-            );
-            return false;
-        }
+        firstLine = lines[0].split(delim);
 
         if(isDouble(firstLine[0])){
             containsHeaders = false;
@@ -198,19 +154,11 @@ public class FileParser {
      * @param file  the File containing table data
      * @param containsHeaders   true if file contains headers
      * @return  List of TopsoilDataEntry
-     * @throws IOException  if File is of an incorrect format
      */
-    public static List<TopsoilDataEntry> parseFile(File file, boolean containsHeaders) throws IOException {
-        String extension = getExtension(file);
-        if (extension.equals("csv")) {
-            return parseCsv(file, containsHeaders);
-        } else if (extension.equals("tsv")) {
-            return parseTsv(file, containsHeaders);
-        } else if (extension.equals("txt")) {
-            return parseTxt(file, getDelimiter(readLines(file)), containsHeaders);
-        } else {
-            throw new IOException("Unsupported table file.");
-        }
+    public static List<TopsoilDataEntry> parseFile(File file, String delim, boolean containsHeaders) throws
+            TopsoilException {
+        String[] lines = readLines(file);
+        return parseTxt(lines, delim, containsHeaders);
     }
 
     /**
@@ -254,7 +202,7 @@ public class FileParser {
      * @param delim String delimiter
      * @return  data as a List of TopsoilDataEntries
      */
-    public static List<TopsoilDataEntry> parseClipboard(boolean containsHeaders, String delim) {
+    public static List<TopsoilDataEntry> parseClipboard(boolean containsHeaders, String delim) throws TopsoilException {
         String content = Clipboard.getSystemClipboard().getString();
 
         if (delim == null) {
@@ -264,41 +212,40 @@ public class FileParser {
         return parseTxt(readLines(content), delim, containsHeaders);
     }
 
-    /**
-     * Parses a .csv {@code File}.
-     *
-     * @param file  .csv File to read data from
-     * @param containsHeaders   true if the data has headers
-     * @return  String array of values
-     * @throws IOException  if file is invalid
-     */
-    private static List<TopsoilDataEntry> parseCsv(File file, boolean containsHeaders) throws IOException {
-        return parseTxt(file, ",", containsHeaders);
-    }
-
-    /**
-     * Parses a .tsv {@code File}.
-     * @param file  .tsv File to read data from
-     * @param containsHeaders   true if the data has headers
-     * @return  String array of values
-     * @throws IOException  if file is invalid
-     */
-    private static List<TopsoilDataEntry> parseTsv(File file, boolean containsHeaders) throws IOException {
-        return parseTxt(file, "\t", containsHeaders);
-    }
-
-    /**
-     * Parses a .txt {@code File} using the provided delimiter.
-     * @param file  .txt File to read
-     * @param delimiter data delimiter
-     * @param containsHeaders   true if the data has headers
-     * @return  String array of values
-     * @throws IOException  if file is invalid
-     */
-    private static List<TopsoilDataEntry> parseTxt(File file, String delimiter, boolean containsHeaders) throws IOException {
-        String[] lines = readLines(file);
-        return parseTxt(lines, delimiter, containsHeaders);
-    }
+//    /**
+//     * Parses a .csv {@code File}.
+//     *
+//     * @param file  .csv File to read data from
+//     * @param containsHeaders   true if the data has headers
+//     * @return  String array of values
+//     * @throws IOException  if file is invalid
+//     */
+//    private static List<TopsoilDataEntry> parseCsv(File file, boolean containsHeaders) {
+//        return parseTxt(file, ",", containsHeaders);
+//    }
+//
+//    /**
+//     * Parses a .tsv {@code File}.
+//     * @param file  .tsv File to read data from
+//     * @param containsHeaders   true if the data has headers
+//     * @return  String array of values
+//     * @throws IOException  if file is invalid
+//     */
+//    private static List<TopsoilDataEntry> parseTsv(File file, boolean containsHeaders) {
+//        return parseTxt(file, "\t", containsHeaders);
+//    }
+//
+//    /**
+//     * Parses a .txt {@code File} using the provided delimiter.
+//     * @param file  .txt File to read
+//     * @param delimiter data delimiter
+//     * @param containsHeaders   true if the data has headers
+//     * @return  String array of values
+//     */
+//    private static List<TopsoilDataEntry> parseTxt(File file, String delimiter, boolean containsHeaders) {
+//        String[] lines = readLines(file);
+//        return parseTxt(lines, delimiter, containsHeaders);
+//    }
 
     /**
      * Parses a {@code String[]} of lines given a delimiter
@@ -308,7 +255,8 @@ public class FileParser {
      * @param containsHeaders   true if headers are present
      * @return  data as a List of TopsoilDataEntries
      */
-    public static List<TopsoilDataEntry> parseTxt(String[] lines, String delimiter, boolean containsHeaders) {
+    public static List<TopsoilDataEntry> parseTxt(String[] lines, String delimiter, boolean containsHeaders) throws
+            TopsoilException {
 
         // TODO Detect whether the copied data is viable.
 
@@ -328,23 +276,29 @@ public class FileParser {
             maxRowSize = Math.max(maxRowSize, line.split(delimiter).length);
         }
 
-        for (String line : lines) {
-            String[] contentAsString = line.split(delimiter, -1);
+        try {
+            for (String line : lines) {
+                String[] contentAsString = line.split(delimiter, -1);
 
-            // ignore lines that contains anything else than double values
-            if (isDouble(contentAsString[0])) {
-                TopsoilDataEntry entry = new TopsoilDataEntry();
-                // TODO Allow more or less than five columns
-                for (int i = 0; i < maxRowSize; i++) {
-                    if (i >= contentAsString.length) {
-                        entry.getProperties().add(new SimpleDoubleProperty(0.0));
-                    } else {
-                        entry.getProperties().add(isDouble(contentAsString[i]) ?
-                                                          new SimpleDoubleProperty(Double.parseDouble(contentAsString[i])) : new SimpleDoubleProperty(Double.NaN));
+                // ignore lines that contains anything else than double values
+                if (isDouble(contentAsString[0])) {
+                    TopsoilDataEntry entry = new TopsoilDataEntry();
+                    // TODO Allow more or less than five columns
+                    for (int i = 0; i < maxRowSize; i++) {
+                        if (i >= contentAsString.length) {
+                            entry.getProperties().add(new SimpleDoubleProperty(0.0));
+                        } else {
+                            entry.getProperties().add(isDouble(contentAsString[i]) ?
+                                                              new SimpleDoubleProperty(Double.parseDouble(
+                                                                      contentAsString[i])) : new SimpleDoubleProperty(
+                                    Double.NaN));
+                        }
                     }
+                    content.add(entry);
                 }
-                content.add(entry);
             }
+        } catch (Exception e) {
+            throw new TopsoilException("Could not parse data.", e);
         }
         return content;
     }
@@ -404,41 +358,27 @@ public class FileParser {
      *
      * @param file  File to be read
      * @return  array of headers as Strings
+     * @throws  TopsoilException if unable to parse data
      */
-    public static String[] parseHeaders(File file) {
+    public static String[] parseHeaders(File file, String delim) throws TopsoilException {
         String[] content = readLines(file);
         String extension = getExtension(file);
-        if (extension.equals("csv")) {
 
-            // Check if the second line of file also has headers, and return a concatenation of these if present
-            String[] secondLine = content[1].split(",");
-            if(!(isDouble(secondLine[0]))) {
-                String[] firstLine = content[0].split(",");
-                for(int i = 0; i < firstLine.length ; i++) {
-                    firstLine[i] = firstLine[i].concat("\t"+secondLine[i]);
+        // Check if the second line of file also has headers, and return a concatenation of these if present
+        try {
+            String[] secondLine = content[1].split(delim);
+            if (!(isDouble(secondLine[0]))) {
+                String[] firstLine = content[0].split(delim);
+                for (int i = 0; i < firstLine.length; i++) {
+                    firstLine[i] = firstLine[i].concat("\t" + secondLine[i]);
                 }
                 return firstLine;
             }
-
-            return content[0].split(",");
-
-        } else if (extension.equals("txt") || extension.equals("tsv")) {
-
-            // Check if the second line of file also has headers, and return a concatenation of these if present
-            String[] secondLine = content[1].split("\t");
-            if(!(isDouble(secondLine[0]))) {
-                String[] firstLine = content[0].split("\t");
-                for(int i = 0; i < firstLine.length ; i++) {
-                    firstLine[i] = firstLine[i].concat("\t"+secondLine[i]);
-                }
-                return firstLine;
-            }
-
-            return  content[0].split("\t");
-
-        } else {
-            return null;
+        } catch (Exception e) {
+            throw new TopsoilException("Could not parse data.", e);
         }
+
+        return content[0].split(delim);
     }
 
     /**
@@ -447,8 +387,9 @@ public class FileParser {
      * @param content   String content
      * @param delim a String delimiter
      * @return  String[] of data headers
+     * @throws  TopsoilException    if unable to parse headers
      */
-    public static String[] parseHeaders(String content, String delim) {
+    public static String[] parseHeaders(String content, String delim) throws TopsoilException {
         String[] lines = readLines(content);
         String[] rtnval = null;
 
@@ -458,22 +399,48 @@ public class FileParser {
                     "Could Not Read",
                     "Could not read input."
             );
-        } else {
-
+        } else try {
             // Check if the second line of content also has headers, and return a concatenation of these if present
             String[] secondLine = lines[1].split(delim);
-            if(!(isDouble(secondLine[0]))) {
+            if (!(isDouble(secondLine[0]))) {
                 String[] firstLine = lines[0].split(delim);
-                for(int i = 0; i < firstLine.length ; i++) {
-                    firstLine[i] = firstLine[i].concat("\t"+secondLine[i]);
+                for (int i = 0; i < firstLine.length; i++) {
+                    firstLine[i] = firstLine[i].concat("\t" + secondLine[i]);
                 }
                 return firstLine;
             }
 
             rtnval = lines[0].split(delim);
+        } catch (Exception e) {
+            throw new TopsoilException("Could not parse data.", e);
         }
 
         return rtnval;
+
+    }
+
+    /**
+     * Tries to automatically guess the delimiter of a {@code String} of delimited data from a set of common delimiters
+     * (see {@link FileParser#COMMON_DELIMITERS}). Returns {@code null} if unable to determine a delimiter.
+     *
+     * @param content a String of delimited data
+     * @return  the identified String delimiter
+     */
+    public static String getDelimiter(String content) {
+        return getDelimiter(readLines(content));
+    }
+
+    public static String getDelimiter(File file) {
+        String extension = getExtension(file);
+        String delim;
+        if (extension.equals("csv")) {
+            delim = COMMON_DELIMITERS.get(COMMA);
+        } else if (extension.equals("tsv")) {
+            delim =  COMMON_DELIMITERS.get(TAB);
+        } else {
+            delim = getDelimiter(readLines(file));
+        }
+        return delim;
     }
 
     /**
@@ -484,7 +451,7 @@ public class FileParser {
      * @param lines a String[] of delimited data lines
      * @return  the identified String delimiter
      */
-    private static String getDelimiter(String[] lines) throws IOException {
+    private static String getDelimiter(String[] lines) {
         final int NUM_LINES = 5;
         String rtnval = null;
 
@@ -493,37 +460,15 @@ public class FileParser {
             if (lines.length > NUM_LINES) {
                 lines = Arrays.copyOfRange(lines, 0, NUM_LINES);
             }
-            
+
             for (String delim : COMMON_DELIMITERS.values()) {
                 if (isDelimiter(lines, delim)) {
-                rtnval = delim;
+                    rtnval = delim;
                 }
             }
-            
-            if (lines.length < NUM_LINES) {
-                rtnval = requestDelimiter();
-            }
-            
-        }
-        
-        // If delimiter can't be detected, consider file as invalid.
-        if (rtnval == null) {
-            throw new IOException("Invalid table file.");
         }
 
         return rtnval;
-    }
-
-    /**
-     * Tries to automatically guess the delimiter of a {@code String} of delimited data from a set of common delimiters
-     * (see {@link FileParser#COMMON_DELIMITERS}). Returns {@code null} if unable to determine a delimiter.
-     *
-     * @param content a String of delimited data
-     * @return  the identified String delimiter
-     * @throws IOException  if data is invalid
-     */
-    public static String getDelimiter(String content) throws IOException {
-        return getDelimiter(readLines(content));
     }
 
     /**
@@ -531,7 +476,7 @@ public class FileParser {
      *
      * @return  the user-specified delimiter
      */
-    private static String requestDelimiter() {
+    public static String requestDelimiter() {
         String otherDelimiterOption = "Other";
         String unknownDelimiterOption = "Unknown";
         
@@ -547,7 +492,7 @@ public class FileParser {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER_RIGHT);
 
-        Label requestLabel = new Label("How are the values in your data separated?");
+        Label requestLabel = new Label("How are the values in your data separated? ");
         ChoiceBox<String> delimiterChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(COMMON_DELIMITERS
                                                                                                          .keySet()));
         delimiterChoiceBox.getItems().addAll(otherDelimiterOption, unknownDelimiterOption);
@@ -662,25 +607,10 @@ public class FileParser {
      */
     private static String[] readLines(File file) {
 
-        String[] lines;
-        ArrayList<String> content = new ArrayList<>();
+        List<String> content = new ArrayList<>();
 
         try {
-
-            // Create relevant file readers
-            InputStream inputStream = new FileInputStream(file);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-
-            // Parse file content to arrayList
-            String line = reader.readLine().trim();
-            while (line != null && line.length() > 0) {
-                content.add(line);
-                line = reader.readLine();
-            }
-
-            reader.close();
-
+            content = Files.readLines(file, StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }

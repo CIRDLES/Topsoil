@@ -85,7 +85,7 @@ public class NewProjectWindow extends Stage {
             previewController.setPreviousScene(projectSourcesScene);
 
             // Bind list of Paths in preview screen to list of Paths in source selection screen
-            previewController.pathsProperty().bind(sourcesController.pathsProperty());
+            previewController.pathDelimiterListProperty().bind(sourcesController.pathDelimiterListProperty());
 
             // Set stage for project name controller
             this.setScene(projectTitleScene);
