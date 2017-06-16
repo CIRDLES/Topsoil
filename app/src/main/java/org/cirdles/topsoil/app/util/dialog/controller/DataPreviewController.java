@@ -9,6 +9,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -36,14 +37,14 @@ public class DataPreviewController extends Pane {
     @FXML private GridPane grid;
 
     @FXML private Label uncLabel;
-    @FXML private ChoiceBox<String> uncChoiceBox;
+    @FXML private ComboBox<String> uncComboBox;
     private ObjectProperty<UncertaintyFormat> uncertaintyFormat;
     public ObjectProperty<UncertaintyFormat> uncertaintyFormatProperty() {
         if (uncertaintyFormat == null) {
-            uncertaintyFormat = new SimpleObjectProperty<>(STRING_UNCERTAINTY_FORMAT_MAP.get(uncChoiceBox
+            uncertaintyFormat = new SimpleObjectProperty<>(STRING_UNCERTAINTY_FORMAT_MAP.get(uncComboBox
                                                                                                      .getSelectionModel().getSelectedItem()));
-            uncChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
-                uncertaintyFormat.set(STRING_UNCERTAINTY_FORMAT_MAP.get(uncChoiceBox.getSelectionModel().getSelectedItem()));
+            uncComboBox.getSelectionModel().selectedItemProperty().addListener(c -> {
+                uncertaintyFormat.set(STRING_UNCERTAINTY_FORMAT_MAP.get(uncComboBox.getSelectionModel().getSelectedItem()));
             });
         }
         return uncertaintyFormat;
@@ -129,8 +130,9 @@ public class DataPreviewController extends Pane {
             }
         });
 
-        uncChoiceBox.getItems().addAll(STRING_UNCERTAINTY_FORMAT_MAP.keySet());
+        uncComboBox.getItems().addAll(STRING_UNCERTAINTY_FORMAT_MAP.keySet());
         isoChoiceBox.getItems().addAll(STRING_ISOTOPE_TYPE_MAP.keySet());
+        isoChoiceBox.getSelectionModel().select(IsotopeType.Generic.getName());
     }
 
     public void setData(@Nullable String[] h, List<TopsoilDataEntry> d) {

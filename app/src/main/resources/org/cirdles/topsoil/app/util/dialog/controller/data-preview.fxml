@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -46,11 +47,11 @@
             <HBox alignment="CENTER_LEFT">
                <children>
                   <Label fx:id="uncLabel" text="Which format are your uncertainty values in?" />
-                  <ChoiceBox fx:id="uncChoiceBox" prefWidth="150.0">
+                  <ComboBox fx:id="uncComboBox" prefWidth="150.0" promptText="Select...">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
-                  </ChoiceBox>
+                  </ComboBox>
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT">
