@@ -48,6 +48,10 @@ public class ProjectTitleController {
     @FXML private Button cancelButton;
     @FXML private Button nextButton;
 
+    /**
+     * The next scene in the "New Project" sequence. As of typing, this is a Scene containing a
+     * {@link ProjectSourcesController}.
+     */
     private Scene nextScene;
     private final int MAX_FILE_NAME_LENGTH = 60;
 
@@ -63,6 +67,10 @@ public class ProjectTitleController {
         });
     }
 
+    /**
+     * When the user presses the "..." button, a {@code DirectoryChooser} is opened where they can specify the
+     * desired location for their new project file.
+     */
     @FXML private void choosePathButtonAction() {
         DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Choose Project Location");
@@ -82,10 +90,17 @@ public class ProjectTitleController {
         }
     }
 
+    /**
+     * Closes the {@code Stage} without doing anything when the user clicks "Cancel".
+     */
     @FXML private void cancelButtonAction() {
         ((Stage) cancelButton.getScene().getWindow()).close();
     }
 
+    /**
+     * Checks that all required information is valid, then sets the {@code Stage} to display the next {@code Scene}
+     * in the "New Project" sequence.
+     */
     @FXML private void nextButtonAction() {
         File file = new File(getProjectLocation().toString() + "\\" + getTitle() + ".topsoil");
         System.out.println(file.getPath());
@@ -112,6 +127,10 @@ public class ProjectTitleController {
         }
     }
 
+    /**
+     * Updates the {@link Button#disableProperty()} of {@link #nextButton} based on whether all required information
+     * is present.
+     */
     private void updateNextButtonDisabledProperty() {
         if (projectLocation == null) {
             nextButton.setDisable(true);

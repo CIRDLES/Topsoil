@@ -10,7 +10,6 @@ import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
-import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.dialog.controller.ProjectPreviewController;
@@ -20,6 +19,7 @@ import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,15 +49,15 @@ public class NewProjectWindow extends Stage {
     }
 
     /**
-     * Creates a new project and adds its source data to the TopsoilTabPane, if such data is specified.
+     * Creates a new project and returns a {@code List} of {@code TopsoilDataTable}s, if such data is specified.
      *
-     * @param tabs  the current TopsoilTabPane
+     * @return  List of TopsoilDataTables
      */
-    public static void newProject(TopsoilTabPane tabs) {
-        new NewProjectWindow().createNewProject(tabs);
+    public static List<TopsoilDataTable> newProject() {
+        return new NewProjectWindow().createNewProject();
     }
 
-    private void createNewProject(TopsoilTabPane tabs) {
+    private List<TopsoilDataTable> createNewProject() {
 
         try {
             // Extract FXML files
@@ -93,10 +93,14 @@ public class NewProjectWindow extends Stage {
             // Wait for the window to close
             this.showAndWait();
 
+            List<TopsoilDataTable> tables = null;
+
             // New project from existing sources.
             if (previewController.didFinish()) {
 
                 List<Map<DataImportKey, Object>> allSelections = previewController.getSelections();
+
+                tables = new ArrayList<>();
 
                 String[] headers;
                 IsotopeType isotopeType;
@@ -122,21 +126,21 @@ public class NewProjectWindow extends Stage {
                     );
 
                     table.setTitle((String) selections.get(DataImportKey.TITLE));
-                    tabs.add(table);
+                    tables.add(table);
                 }
 
                 File projectFile = new File(titleController.getProjectLocation().toString() + "\\" +
                                             titleController.getTitle() + ".topsoil");
 
-                // Saves and sets the current project
-                TopsoilSerializer.serialize(projectFile, tabs);
+                // Sets the current project
                 TopsoilSerializer.setCurrentProjectFile(projectFile);
 
             // New empty project
             } else if (sourcesController.didFinish()) {
 
                 // Adds an empty table to the project to show the user that something happened
-                tabs.add(new TopsoilDataTable(
+                tables = new ArrayList<>();
+                tables.add(new TopsoilDataTable(
                         IsotopeType.Generic.getHeaders(),
                         IsotopeType.Generic,
                         UncertaintyFormat.TWO_SIGMA_ABSOLUTE,
@@ -146,24 +150,16 @@ public class NewProjectWindow extends Stage {
                 File projectFile = new File(titleController.getProjectLocation().toString() + "\\" +
                                             titleController.getTitle() + ".topsoil");
 
-                // Saves and sets the current project
-                TopsoilSerializer.serialize(projectFile, tabs);
+                // Sets the current project
                 TopsoilSerializer.setCurrentProjectFile(projectFile);
 
-                // Notification to make sure that the user knows that the new table is not itself a "project".
-                TopsoilNotification.showNotification(
-                        TopsoilNotification.NotificationType.INFORMATION,
-                        "Empty Table Created",
-                        "An empty table was placed in your project."
-                );
             }
 
-            // If neither the sources or preview controllers finished the process, it is assumed that the user
-            // cancelled the new project creation.
+            return tables;
 
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
     }
-
 }

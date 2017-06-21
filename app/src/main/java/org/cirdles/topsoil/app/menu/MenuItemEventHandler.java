@@ -3,7 +3,7 @@ package org.cirdles.topsoil.app.menu;
 import com.sun.javafx.stage.StageHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -39,10 +39,6 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import javafx.geometry.Pos;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -387,7 +383,6 @@ public class MenuItemEventHandler {
                     delim = "\t";
                     break;
                 case "txt":
-                    FileParser fileParser = new FileParser();
                     delim = requestDelimiter();
                     break;
                 default:
@@ -441,7 +436,57 @@ public class MenuItemEventHandler {
      * @param tabs
      */
     public static void handleNewProject(TopsoilTabPane tabs) {
-        NewProjectWindow.newProject(tabs);
+        AtomicReference<List<TopsoilDataTable>> tablesReference = new AtomicReference<>();
+        if (TopsoilSerializer.isProjectOpen()) {
+            TopsoilNotification.showNotification(
+                    NotificationType.YES_NO,
+                    "Create New Project",
+                    "Creating a new project will close your current project. Do you want to save your work?"
+            ).ifPresent(response -> {
+                if (response == ButtonType.YES) {
+                    handleSaveProjectFile(tabs);
+                    tablesReference.set(NewProjectWindow.newProject());
+                } else if (response == ButtonType.NO) {
+                    tablesReference.set(NewProjectWindow.newProject());
+                }
+            });
+        } else if (!tabs.isEmpty()){
+            TopsoilNotification.showNotification(
+                    NotificationType.VERIFICATION,
+                    "Create New Project",
+                    "Creating a new project will close your current work."
+            ).ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    tablesReference.set(NewProjectWindow.newProject());
+                }
+            });
+        } else {
+            tablesReference.set(NewProjectWindow.newProject());
+        }
+
+        if (tablesReference.get() != null) {
+            tabs.getTabs().clear();
+
+            if (tablesReference.get().isEmpty()) {
+                tabs.add(new TopsoilDataTable(
+                        IsotopeType.Generic.getHeaders(),
+                        IsotopeType.Generic,
+                        UncertaintyFormat.TWO_SIGMA_ABSOLUTE,
+                        new TopsoilDataEntry[]{}
+                ));
+                TopsoilNotification.showNotification(
+                        NotificationType.INFORMATION,
+                        "New Table Created",
+                        "An empty table was placed in your project."
+                );
+            } else {
+                for (TopsoilDataTable table : tablesReference.get()) {
+                    tabs.add(table);
+                }
+            }
+
+            TopsoilSerializer.serialize(TopsoilSerializer.getCurrentProjectFile(), tabs);
+        }
     }
 
     /**

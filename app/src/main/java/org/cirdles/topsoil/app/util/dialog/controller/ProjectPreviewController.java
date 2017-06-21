@@ -34,11 +34,14 @@ import java.util.*;
  */
 public class ProjectPreviewController {
 
+    /**
+     * A custom {@code Tab} which contains a {@link DataPreviewController}.
+     */
     private class ControllerTab extends Tab {
 
         private DataPreviewController controller;
 
-        protected ControllerTab(Path filePath, String delim) {
+        ControllerTab(Path filePath, String delim) {
             super();
             try {
                 FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(DATA_PREVIEW_FXML).toUri().toURL());
@@ -102,6 +105,10 @@ public class ProjectPreviewController {
     @FXML private Button cancelButton;
     @FXML private Button finishButton;
 
+    /**
+     * A {@code ListProperty} containing a list of type {@code PathDelimiterPair}, which keeps track of the
+     * {@code Path}s of source files as well as the appropriate {@code String} delimiter for each of them.
+     */
     private ListProperty<PathDelimiterPair> pathDelimiterList;
     public ListProperty<PathDelimiterPair> pathDelimiterListProperty() {
         if (pathDelimiterList == null) {
@@ -118,6 +125,10 @@ public class ProjectPreviewController {
     private final ImageView WARNING_ICON = new ImageView(RESOURCE_EXTRACTOR.extractResourceAsPath(WARNING_ICON_PATH)
                                                                            .toUri().toString());
 
+    /**
+     * The previous scene in the "New Project" sequence. As of typing, this should be a Scene containing a
+     * {@link ProjectSourcesController}.
+     */
     private Scene previousScene;
 
     @FXML
@@ -168,10 +179,16 @@ public class ProjectPreviewController {
         });
     }
 
+    /**
+     * Upon pressing "Cancel", the {@code Stage} is closed without doing anything.
+     */
     @FXML private void cancelButtonAction() {
         ((Stage) cancelButton.getScene().getWindow()).close();
     }
 
+    /**
+     * Sets the {@code Stage} to display the previous {@code Scene} in the "New Project" sequence.
+     */
     @FXML private void previousButtonAction() {
         if (previousScene != null) {
             ((Stage) finishButton.getScene().getWindow()).setScene(previousScene);
@@ -180,6 +197,9 @@ public class ProjectPreviewController {
         }
     }
 
+    /**
+     * Finishes the "New Project" sequence.
+     */
     @FXML private void finishButtonAction() {
         didFinish = true;
         ((Stage) cancelButton.getScene().getWindow()).close();
@@ -189,6 +209,10 @@ public class ProjectPreviewController {
         return didFinish;
     }
 
+    /**
+     * Updates the {@link Button#disableProperty()} of {@link #finishButton} based on whether all required information
+     * is present.
+     */
     private void updateFinishButtonDisabledProperty() {
         boolean incomplete = false;
         for (Tab t : fileTabs.getTabs()) {
@@ -204,6 +228,12 @@ public class ProjectPreviewController {
         }
     }
 
+    /**
+     * Returns a {@code List} of {@code Map}s containing information from each of the {@link DataPreviewController}s
+     * from the specified source files.
+     *
+     * @return  List of Maps of DataImportKeys to Objects
+     */
     public List<Map<DataImportKey, Object>> getSelections() {
         List<Map<DataImportKey, Object>> allSelections = new ArrayList<>();
 
@@ -232,10 +262,6 @@ public class ProjectPreviewController {
      */
     public void setPreviousScene(Scene scene) {
         previousScene = scene;
-    }
-
-    public void setPaths(Collection<Path> paths) {
-
     }
 
 }

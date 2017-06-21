@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.app.util;
 
 /**
+ * A custom {@code Exception} for Topsoil.
+ *
  * @author Jake Marotta
  */
 public class TopsoilException extends Exception {

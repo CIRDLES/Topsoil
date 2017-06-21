@@ -33,6 +33,12 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
     private static final String DATA_PREVIEW_FXML = "controller/data-preview.fxml";
     private DataPreviewController controller;
 
+    /**
+     * Constructs a new {@code DataImportDialog} with the specified data and column names.
+     *
+     * @param headers   array of String names for data columns
+     * @param data  List of TopsoilDataEntries of data
+     */
     private DataImportDialog(String[] headers, List<TopsoilDataEntry> data) {
         super();
         this.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.FINISH);

@@ -135,6 +135,13 @@ public class DataPreviewController extends Pane {
         isoChoiceBox.getSelectionModel().select(IsotopeType.Generic.getName());
     }
 
+    /**
+     * Sets the data in the preview to the specified list of {@code TopsoilDataEntries}. If no array of {@code
+     * String} headers is provided, default headers are used.
+     *
+     * @param h array of String column headers
+     * @param d list of TopsoilDataEntries
+     */
     public void setData(@Nullable String[] h, List<TopsoilDataEntry> d) {
 
         this.headers = h;
@@ -209,6 +216,11 @@ public class DataPreviewController extends Pane {
         }
     }
 
+    /**
+     * Returns an array of {@code String} headers for the data columns.
+     *
+     * @return  array of Strings
+     */
     public String[] getHeaders() {
         String[] selectedHeaders = new String[]{
                 variableIndexMap.containsKey(Variables.X) ? headers[variableIndexMap.get(Variables.X)] : "X Column",
@@ -220,14 +232,12 @@ public class DataPreviewController extends Pane {
         return selectedHeaders;
     }
 
+    /**
+     * Returns a {@code List} of {@code TopsoilDataEntry}s containing the imported data values.
+     *
+     * @return  List of TopsoilDataEntry
+     */
     public List<TopsoilDataEntry> getData() {
-
-//        for (int i = 0; i < columnChoiceBoxes.size(); i++) {
-//            Variable<Number> variable = STRING_VARIABLE_MAP.get(columnChoiceBoxes.get(i).getValue());
-//            if (variable != null) {
-//                variableIndexMap.put(variable, i);
-//            }
-//        }
 
         List<TopsoilDataEntry> selectedColumns = new ArrayList<>(data.size());
 

@@ -108,10 +108,26 @@ public class FileParser {
         return containsHeaders.get();
     }
 
+    /**
+     * Detects whether one or more header rows are present in the provided {@code String} content using the specified
+     * delimiter.
+     *
+     * @param content   String content containing data
+     * @param delim String delimiter for data
+     * @return  true if headers are detected
+     */
     public static Boolean detectHeader(String content, String delim) {
         return detectHeader(readLines(content), delim);
     }
 
+    /**
+     * Detects whether one or more header rows are present in the provided {@code File} using the specified
+     * delimiter.
+     *
+     * @param file   File containing data
+     * @param delim String delimiter for data
+     * @return  true if headers are detected
+     */
     public static Boolean detectHeader(File file, String delim) {
         return detectHeader(readLines(file), delim);
     }
@@ -430,6 +446,13 @@ public class FileParser {
         return getDelimiter(readLines(content));
     }
 
+    /**
+     * Tries to automatically guess the delimiter of a {@code File} containing delimited data from a set of common
+     * delimiters (see {@link FileParser#COMMON_DELIMITERS}). Returns {@code null} if unable to determine a delimiter.
+     *
+     * @param file a File containing delimited data
+     * @return  the identified String delimiter
+     */
     public static String getDelimiter(File file) {
         String extension = getExtension(file);
         String delim;

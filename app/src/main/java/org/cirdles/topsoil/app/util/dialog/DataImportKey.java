@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.app.util.dialog;
 
 /**
+ * Keys for obtaining information from the result of a {@link DataImportDialog}.
+ *
  * @author Jake Marotta
  */
 public enum DataImportKey {

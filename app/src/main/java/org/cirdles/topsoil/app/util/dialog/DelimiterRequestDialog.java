@@ -9,7 +9,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
-import sun.applet.Main;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -140,6 +139,14 @@ public class DelimiterRequestDialog extends Dialog<String> {
         });
     }
 
+    /**
+     * Presents the user with a {@code Dialog} requesting them for the delimiter of some delimited data.
+     *
+     * @param windowTitle   String title of the Dialog
+     * @param message   String informational message or request
+     * @param isImport  Boolean value, true if importing data
+     * @return  String delimiter
+     */
     public static String showDialog(String windowTitle, String message, Boolean isImport) {
         return new DelimiterRequestDialog(windowTitle, message, isImport).showAndWait().orElse(null);
     }
