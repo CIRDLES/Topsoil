@@ -411,7 +411,9 @@ public class MenuItemEventHandler {
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            writer.close();
+            if (writer != null) {
+                writer.close();
+            }
         }
 
     }
@@ -433,7 +435,7 @@ public class MenuItemEventHandler {
     /**
      * Walks the user through creating a new Topsoil project.
      *
-     * @param tabs
+     * @param tabs  TopsoilTabPane
      */
     public static void handleNewProject(TopsoilTabPane tabs) {
         AtomicReference<List<TopsoilDataTable>> tablesReference = new AtomicReference<>();

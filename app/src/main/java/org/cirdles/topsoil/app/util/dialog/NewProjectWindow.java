@@ -129,7 +129,7 @@ public class NewProjectWindow extends Stage {
                     tables.add(table);
                 }
 
-                File projectFile = new File(titleController.getProjectLocation().toString() + "\\" +
+                File projectFile = new File(titleController.getProjectLocation().toString() + File.separator +
                                             titleController.getTitle() + ".topsoil");
 
                 // Sets the current project
@@ -138,16 +138,9 @@ public class NewProjectWindow extends Stage {
             // New empty project
             } else if (sourcesController.didFinish()) {
 
-                // Adds an empty table to the project to show the user that something happened
                 tables = new ArrayList<>();
-                tables.add(new TopsoilDataTable(
-                        IsotopeType.Generic.getHeaders(),
-                        IsotopeType.Generic,
-                        UncertaintyFormat.TWO_SIGMA_ABSOLUTE,
-                        new TopsoilDataEntry[]{}
-                ));
 
-                File projectFile = new File(titleController.getProjectLocation().toString() + "\\" +
+                File projectFile = new File(titleController.getProjectLocation().toString() + File.separator +
                                             titleController.getTitle() + ".topsoil");
 
                 // Sets the current project

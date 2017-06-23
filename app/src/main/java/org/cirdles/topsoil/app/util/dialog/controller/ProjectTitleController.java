@@ -53,18 +53,13 @@ public class ProjectTitleController {
      * {@link ProjectSourcesController}.
      */
     private Scene nextScene;
-    private final int MAX_FILE_NAME_LENGTH = 60;
+    private static final int MAX_FILE_NAME_LENGTH = 60;
 
     @FXML
     public void initialize() {
         nextButton.setDisable(true);
-        projectLocationProperty().addListener(c -> {
-            updateNextButtonDisabledProperty();
-        });
-
-        titleTextField.textProperty().addListener(c -> {
-            updateNextButtonDisabledProperty();
-        });
+        projectLocationProperty().addListener(c -> updateNextButtonDisabledProperty());
+        titleTextField.textProperty().addListener(c -> updateNextButtonDisabledProperty());
     }
 
     /**
@@ -102,8 +97,7 @@ public class ProjectTitleController {
      * in the "New Project" sequence.
      */
     @FXML private void nextButtonAction() {
-        File file = new File(getProjectLocation().toString() + "\\" + getTitle() + ".topsoil");
-        System.out.println(file.getPath());
+        File file = new File(getProjectLocation().toString() + File.pathSeparator + getTitle() + ".topsoil");
         if (file.exists()) {
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.YES_NO,
@@ -132,7 +126,7 @@ public class ProjectTitleController {
      * is present.
      */
     private void updateNextButtonDisabledProperty() {
-        if (projectLocation == null) {
+        if (projectLocation.get() == null) {
             nextButton.setDisable(true);
         } else if (titleTextField.getText().equals("")) {
             nextButton.setDisable(true);

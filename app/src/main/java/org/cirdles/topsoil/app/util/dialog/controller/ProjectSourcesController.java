@@ -296,7 +296,7 @@ public class ProjectSourcesController {
      * A class that keeps track of the {@code Path} of a source files as well as the appropriate {@code String}
      * delimiter for parsing it.
      */
-    class PathDelimiterPair {
+    static class PathDelimiterPair {
 
         private Path path;
         private String delim;

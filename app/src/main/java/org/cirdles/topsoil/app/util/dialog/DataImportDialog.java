@@ -49,7 +49,7 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
 
         try {
             // Load a DataPreviewController
-            FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath("controller/data-preview.fxml")
+            FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(DATA_PREVIEW_FXML)
                                                                  .toUri().toURL());
             this.getDialogPane().setContent(loader.load());
             controller = loader.getController();
@@ -69,8 +69,6 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
                 this.getDialogPane().lookupButton(ButtonType.FINISH).setDisable(true);
             }
         });
-
-        Map<Variable<Number>, Integer> variableIndexMap = new LinkedHashMap<>(Variables.VARIABLE_LIST.size());
 
         setResultConverter(value -> {
             if (value == ButtonType.FINISH) {

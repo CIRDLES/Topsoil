@@ -144,10 +144,9 @@ public class DataPreviewController extends Pane {
      */
     public void setData(@Nullable String[] h, List<TopsoilDataEntry> d) {
 
-        this.headers = h;
         this.data = d;
 
-        if (headers == null) {
+        if (h == null) {
             int maxRowSize = 0;
             for (TopsoilDataEntry row : data) {
                 maxRowSize = Math.max(maxRowSize, row.getProperties().size());
@@ -156,6 +155,9 @@ public class DataPreviewController extends Pane {
             for (int i = 1; i <= headers.length; i++) {
                 headers[i - 1] = "Column " + i;
             }
+        } else {
+            headers = new String[h.length];
+            System.arraycopy(h, 0, headers, 0, h.length);
         }
 
         grid.setMinSize(110.0 * headers.length, 202.0);

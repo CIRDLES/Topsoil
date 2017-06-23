@@ -77,20 +77,17 @@ public class ProjectPreviewController {
 
                 String[] headers = null;
                 Boolean containsHeaders = FileParser.detectHeader(file, delim);
-                List<TopsoilDataEntry> data = null;
-                try {
-                    if (containsHeaders) {
-                        headers = FileParser.parseHeaders(file, delim);
-                    }
+                List<TopsoilDataEntry> data;
 
-                    data = FileParser.parseFile(file, delim, containsHeaders);
-                } catch (TopsoilException e) {
-                    e.printStackTrace();
+                if (containsHeaders) {
+                    headers = FileParser.parseHeaders(file, delim);
                 }
+
+                data = FileParser.parseFile(file, delim, containsHeaders);
 
                 controller.setData(headers, data);
 
-            } catch (IOException e) {
+            } catch (IOException|TopsoilException e) {
                 e.printStackTrace();
             }
         }

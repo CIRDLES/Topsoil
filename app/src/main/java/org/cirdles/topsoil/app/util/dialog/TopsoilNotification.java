@@ -104,9 +104,9 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         VERIFICATION("question.png", ButtonType.CANCEL, ButtonType.OK),
         YES_NO("question.png", ButtonType.CANCEL, ButtonType.NO, ButtonType.YES);
 
-        private Image image;
-        private ButtonType[] buttonTypes;
-        private ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(NotificationType.class);
+        private final Image image;
+        private final ButtonType[] buttonTypes;
+        private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(NotificationType.class);
 
         NotificationType(String imageName, ButtonType... buttonTypes) {
             this.image = new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(imageName).toUri().toString());
@@ -128,7 +128,9 @@ public class TopsoilNotification extends Dialog<ButtonType> {
          * @return  array of ButtonTypes
          */
         public ButtonType[] getButtonTypes() {
-            return buttonTypes;
+            ButtonType[] copy = new ButtonType[buttonTypes.length];
+            System.arraycopy(buttonTypes, 0, copy, 0, buttonTypes.length);
+            return copy;
         }
     }
 

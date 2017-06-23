@@ -168,8 +168,10 @@ public class FileParser {
      * table.
      *
      * @param file  the File containing table data
+     * @param delim String delimiter for data
      * @param containsHeaders   true if file contains headers
      * @return  List of TopsoilDataEntry
+     * @throws  TopsoilException    if File is invalid
      */
     public static List<TopsoilDataEntry> parseFile(File file, String delim, boolean containsHeaders) throws
             TopsoilException {
@@ -202,8 +204,10 @@ public class FileParser {
             InputStream inputStream = new FileInputStream(file);
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(inputStreamReader);
+            String line = reader.readLine();
+            reader.close();
 
-            return reader.readLine() == null;
+            return line == null;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -217,6 +221,7 @@ public class FileParser {
      * @param containsHeaders   true if the data has headers
      * @param delim String delimiter
      * @return  data as a List of TopsoilDataEntries
+     * @throws TopsoilException if unable to parse data
      */
     public static List<TopsoilDataEntry> parseClipboard(boolean containsHeaders, String delim) throws TopsoilException {
         String content = Clipboard.getSystemClipboard().getString();
@@ -270,6 +275,7 @@ public class FileParser {
      * @param delimiter delimiter
      * @param containsHeaders   true if headers are present
      * @return  data as a List of TopsoilDataEntries
+     * @throws TopsoilException if unable to parse data
      */
     public static List<TopsoilDataEntry> parseTxt(String[] lines, String delimiter, boolean containsHeaders) throws
             TopsoilException {
@@ -373,12 +379,12 @@ public class FileParser {
      * Reads the header row(s) of a {@code File}.
      *
      * @param file  File to be read
+     * @param delim String delimiter
      * @return  array of headers as Strings
      * @throws  TopsoilException if unable to parse data
      */
     public static String[] parseHeaders(File file, String delim) throws TopsoilException {
         String[] content = readLines(file);
-        String extension = getExtension(file);
 
         // Check if the second line of file also has headers, and return a concatenation of these if present
         try {
