@@ -1,10 +1,10 @@
 package org.cirdles.topsoil.app.menu.command;
 
 import java.util.concurrent.atomic.AtomicReference;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.undo.Command;
 
 /**
@@ -53,19 +53,19 @@ public class DeleteTableCommand implements Command {
      * @return true if delete is confirmed, false if not
      */
     public static Boolean confirmDeletion() {
-        final AtomicReference<Boolean> reference = new AtomicReference<>(null);
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+        final AtomicReference<Boolean> reference = new AtomicReference<>(false);
+
+        TopsoilNotification.showNotification(
+                TopsoilNotification.NotificationType.VERIFICATION,
+                "Delete Table",
                 "Do you really want to delete this table?\n"
-                        + "This operation can not be undone.",
-                ButtonType.NO,
-                ButtonType.YES);
-        confirmation.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
+                + "This operation can not be undone."
+        ).ifPresent(response -> {
+            if (response == ButtonType.OK) {
                 reference.set(true);
-            } else if (response == ButtonType.NO) {
-                reference.set(false);
             }
         });
+
         return reference.get();
     }
     
@@ -73,7 +73,7 @@ public class DeleteTableCommand implements Command {
      * Called to execute the table deleting.
      */
     public void execute() {
-        if(confirmDeletion()){
+        if(DeleteTableCommand.confirmDeletion()){
             
             TopsoilTabPane topsoilTabPane = (TopsoilTabPane) topsoilTab.getTabPane();
             topsoilTabPane.getTabs().remove(topsoilTabPane.getSelectedTab());

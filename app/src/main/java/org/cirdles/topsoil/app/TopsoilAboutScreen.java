@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.util.dialog.ErrorAlerter;
 
 import java.awt.*;
 
@@ -126,7 +125,7 @@ public class TopsoilAboutScreen extends Pane {
 
         versionLabel.setText("Version " + (new TopsoilMetadata()).getVersion().split("-")[0]);
 
-        browser = new DesktopWebBrowser(Desktop.getDesktop(), new ErrorAlerter());
+        browser = new DesktopWebBrowser(Desktop.getDesktop());
     }
 
     @FXML private void openHome() { browser.browse(HOME_URL); }
