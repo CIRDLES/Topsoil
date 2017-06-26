@@ -21,7 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import org.cirdles.topsoil.app.util.dialog.Alerter;
+import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,19 +48,13 @@ public class DesktopWebBrowser implements WebBrowser {
      */
     private final Desktop desktop;
 
-    /**
-     * An {@code Alerter} for providing messages to the user.
-     */
-    private final Alerter alerter;
-
     //***********************
     // Constructors
     //***********************
 
     @Inject
-    public DesktopWebBrowser(@Nullable Desktop desktop, Alerter alerter) {
+    public DesktopWebBrowser(@Nullable Desktop desktop) {
         this.desktop = desktop;
-        this.alerter = alerter;
     }
 
     //***********************
@@ -90,10 +84,18 @@ public class DesktopWebBrowser implements WebBrowser {
             if (desktop.isSupported(Desktop.Action.BROWSE)) {
                 browse(uri);
             } else {
-                alerter.alert("Browsing not supported");
+                TopsoilNotification.showNotification(
+                        TopsoilNotification.NotificationType.ERROR,
+                        "Unsupported",
+                        "Browsing not supported."
+                );
             }
         } else {
-            alerter.alert("Desktop not supported");
+            TopsoilNotification.showNotification(
+                    TopsoilNotification.NotificationType.ERROR,
+                    "Unsupported",
+                    "Browsing not supported."
+            );
         }
     }
 
@@ -107,7 +109,11 @@ public class DesktopWebBrowser implements WebBrowser {
             desktop.browse(uri);
         } catch (IOException ex) {
             LOGGER.error(null, ex);
-            alerter.alert("Browser could not be opened.");
+            TopsoilNotification.showNotification(
+                    TopsoilNotification.NotificationType.ERROR,
+                    "Error",
+                    "Unable to open browser."
+            );
         }
     }
 

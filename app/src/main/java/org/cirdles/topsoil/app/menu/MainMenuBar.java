@@ -55,6 +55,11 @@ public class MainMenuBar extends MenuBar {
 
     // Project Menu
     /**
+     * When clicked, starts the process of creating a new project.
+     */
+    private MenuItem newProjectItem;
+
+    /**
      * When clicked, opens a new .topsoil project file.
      */
     private MenuItem openProjectItem;
@@ -193,11 +198,14 @@ public class MainMenuBar extends MenuBar {
      */
     private Menu getProjectMenu(TopsoilTabPane tabs) {
         Menu projectMenu = new Menu("Project");
+        newProjectItem = new MenuItem("New Project");
         saveProjectItem = new MenuItem("Save Project");
         saveProjectAsItem = new MenuItem("Save Project As");
         openProjectItem = new MenuItem("Open Project");
         closeProjectItem = new MenuItem("Close Project");
         exitItem = new MenuItem("Exit Topsoil");
+
+        newProjectItem.setOnAction(event -> MenuItemEventHandler.handleNewProject(tabs));
 
         openProjectItem.setOnAction(event -> MenuItemEventHandler
                 .handleOpenProjectFile(tabs));
@@ -233,6 +241,7 @@ public class MainMenuBar extends MenuBar {
         
         projectMenu.getItems()
                 .addAll(
+                        newProjectItem,
                         openProjectItem,
                         closeProjectItem,
                         new SeparatorMenuItem(),

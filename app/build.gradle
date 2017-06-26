@@ -58,7 +58,8 @@ task jarWithDependencies(type: Jar) {
         )
     }
 
-    baseName = 'topsoil-' + getVersionName().split('-')[0]
+//    baseName = 'topsoil-' + getVersionName().split('-')[0]
+    baseName = 'topsoil-v2.0.1'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
