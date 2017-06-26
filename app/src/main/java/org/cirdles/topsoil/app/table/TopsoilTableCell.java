@@ -55,7 +55,8 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     public TopsoilTableCell() {
         super();
 
-        this.setFont(Font.font("Monospaced"));
+        this.setFont(Font.font("Lucida Console"));
+        this.setStyle("-fx-font-size:15");
         this.setAlignment(Pos.TOP_RIGHT);
 
         this.df = DecimalFormat.getNumberInstance();
@@ -97,7 +98,8 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      */
     private void generateTextField() {
         this.textField = new TextField();
-        this.textField.setFont(Font.font("Monospaced"));
+        this.textField.setFont(Font.font("Lucida Console"));
+        this.textField.setStyle("-fx-font-size: 15");
         this.textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
     }
 
@@ -180,7 +182,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                 StringBuilder builder = new StringBuilder();
                 builder.append(cellValue);
                 for (int i = decimalPart[1].length(); i < this.df.getMaximumFractionDigits(); i++){
-                    builder.append(" "); //padding with spaces to align decimals
+                    builder.append("  "); //padding with spaces to align decimals
                 }
                 cellValue = builder.toString();
             } else {
