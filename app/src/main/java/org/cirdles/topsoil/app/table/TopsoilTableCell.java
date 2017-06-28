@@ -52,7 +52,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
 
         this.setFont(Font.font("Lucida Console"));
         this.setStyle("-fx-font-size:15");
-        this.setAlignment(Pos.TOP_RIGHT);
+        this.setAlignment(Pos.CENTER_RIGHT);
 
         this.df = DecimalFormat.getNumberInstance();
         //this.df.setMinimumFractionDigits(9);
