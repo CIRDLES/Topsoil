@@ -8,8 +8,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
@@ -17,6 +20,7 @@ import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.*;
 
 /**
@@ -634,12 +638,30 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(EVOLUTION_MATRIX)) setShowEvolutionMatrix((Boolean) plotProperties.get(EVOLUTION_MATRIX));
     }
 
+    @FXML private void assignVariablesButtonAction() {
+        ((TopsoilTabPane) MainWindow.getPrimaryStage().getScene().lookup("#TopsoilTabPane"))
+                .getSelectedTab().getTableController().showVariableChooserDialog(null);
+    }
+
     /**
      * Generates a {@link Plot} with the specified properties for the current tab.
      */
     @FXML private void generatePlotButtonAction() {
-        PlotGenerationHandler.handlePlotGenerationForSelectedTab((TopsoilTabPane) generatePlotButton.getScene().lookup
-                ("#TopsoilTabPane"));
+        TopsoilTableController tableController = ((TopsoilTabPane) MainWindow.getPrimaryStage().getScene().lookup
+                ("#TopsoilTabPane"))
+                .getSelectedTab().getTableController();
+
+        // If X and Y aren't specified.
+        if (!tableController.getTable().getVariableAssignments().containsKey(Variables.X)
+            || !tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
+            tableController.showVariableChooserDialog(asList(Variables.X, Variables.Y));
+        }
+
+        if (tableController.getTable().getVariableAssignments().containsKey(Variables.X)
+            && tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
+            PlotGenerationHandler.handlePlotGenerationForSelectedTab((TopsoilTabPane) generatePlotButton.getScene().lookup
+                    ("#TopsoilTabPane"));
+        }
     }
 
 }

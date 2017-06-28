@@ -39,15 +39,7 @@ public class TopsoilTabContent extends SplitPane {
     // Attributes
     //***********************
 
-    /**
-     * A {@code Label} denoting the uncertainty format of the 'σX' {@code TableView} column position.
-     */
-    @FXML private Label xUncertaintyFormatLabel;
-
-    /**
-     * A {@code Label} denoting the uncertainty format of the 'σY' {@code TableView} column position.
-     */
-    @FXML private Label yUncertaintyFormatLabel;
+    @FXML private Label messageLabel;
 
     /**
      * A {@code TableView} that displays the table data.
@@ -97,10 +89,10 @@ public class TopsoilTabContent extends SplitPane {
         initializePlotPropertiesPanel();
 
         // A somewhat hacky method of disabling column dragging in the TableView.
-        tableView.widthProperty().addListener(c -> {
-            TableHeaderRow header = (TableHeaderRow) tableView.lookup("TableHeaderRow");
-            header.reorderingProperty().addListener(ch -> header.setReordering(false));
-        });
+//        tableView.widthProperty().addListener(c -> {
+//            TableHeaderRow header = (TableHeaderRow) tableView.lookup("TableHeaderRow");
+//            header.reorderingProperty().addListener(ch -> header.setReordering(false));
+//        });
 
     }
 
@@ -255,21 +247,8 @@ public class TopsoilTabContent extends SplitPane {
         }
     }
 
-    /**
-     * Sets the text of the xUncertaintyFormatLabel to reflect the uncertainty format of the {@code TopsoilDataTable}.
-     *
-     * @param s String format name
-     */
-    void setXUncertaintyFormatLabel(String s) {
-        xUncertaintyFormatLabel.setText(s);
+    void setUncertaintyFormatLabel(String s) {
+        messageLabel.setText("Uncertainty values are in " + s + " format.");
     }
 
-    /**
-     * Sets the text of the yUncertaintyFormatLabel to reflect the uncertainty format of the {@code TopsoilDataTable}.
-     *
-     * @param s String format name
-     */
-    void setYUncertaintyFormatLabel(String s) {
-        yUncertaintyFormatLabel.setText(s);
-    }
 }

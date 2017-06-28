@@ -86,7 +86,7 @@ public class TopsoilTab extends Tab {
         this.isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";
 
         this.actualTitle = new SimpleStringProperty(tableController.getTable().getTitle());
-        this.actualTitle.bindBidirectional(tableController.getTable().titleProperty()); // bind to TopsoilDataTable titleProperty
+        this.actualTitle.bindBidirectional(tableController.getTable().titleProperty()); // bind to TopsoilDataTable nameProperty
 
         tableController.getTable().isotopeTypeObjectProperty().addListener(c -> {
             isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";

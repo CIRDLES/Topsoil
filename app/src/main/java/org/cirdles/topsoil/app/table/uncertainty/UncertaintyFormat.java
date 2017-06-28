@@ -16,7 +16,7 @@ public enum UncertaintyFormat {
     TWO_SIGMA_ABSOLUTE("2σ (abs)", 2.0),
     ONE_SIGMA_PERCENT("1σ (%)", 100.0),
     TWO_SIGMA_PERCENT("2σ (%)", 200.0),
-    NINETY_FIVE_PERCENT_CONFIDENCE("95% Confidence", 2.4477);
+    NINETY_FIVE_PERCENT_CONFIDENCE("95% Conf.", 2.4477);
 
     /**
      * The name of the uncertainty format.

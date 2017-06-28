@@ -18,7 +18,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'checkstyle'
-    apply plugin: 'findbugs'
+//    apply plugin: 'findbugs'
     apply plugin: 'maven'
 
     sourceCompatibility = '1.8'
@@ -29,15 +29,15 @@ subprojects {
         toolVersion = '6.11.2'
     }
 
-    findbugsTest {
-        excludeFilterConfig = resources.text.fromString '''
-            <FindBugsFilter>
-                <Match>
-                    <Bug code="UrF"/>
-                </Match>
-            </FindBugsFilter>
-        '''
-    }
+//    findbugsTest {
+//        excludeFilterConfig = resources.text.fromString '''
+//            <FindBugsFilter>
+//                <Match>
+//                    <Bug code="UrF"/>
+//                </Match>
+//            </FindBugsFilter>
+//        '''
+//    }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'

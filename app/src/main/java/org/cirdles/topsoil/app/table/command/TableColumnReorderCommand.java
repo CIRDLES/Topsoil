@@ -74,15 +74,10 @@ public class TableColumnReorderCommand implements Command {
         TableColumn<TopsoilDataEntry, ?> columnTemp = tableController.getTabContent().getTableView().getColumns().remove(fromIndex);
         tableController.getTabContent().getTableView().getColumns().add(toIndex, columnTemp);
 
-        // Order columnNameProperties in TopsoilDataTable
-        StringProperty nameTemp = tableController.getTable().getColumnNameProperties().remove(fromIndex);
-        tableController.getTable().getColumnNameProperties().add(toIndex, nameTemp);
-
         // Order data in TopsoilDataTable
         TopsoilDataColumn tempColumn = tableController.getTable().getDataColumns().remove(fromIndex);
         tableController.getTable().getDataColumns().add(toIndex, tempColumn);
 
-        tableController.getTable().resetVariableMapping();
         tableController.resetColumnIndices();
 
         if (!tableController.getTable().getOpenPlots().isEmpty()) {

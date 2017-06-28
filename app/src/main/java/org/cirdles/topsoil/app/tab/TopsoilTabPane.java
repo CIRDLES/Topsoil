@@ -2,7 +2,6 @@ package org.cirdles.topsoil.app.tab;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -11,6 +10,8 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.plot.variable.Variables;
+import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
 
@@ -81,24 +82,24 @@ public class TopsoilTabPane extends TabPane {
                     RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_TAB_FXML_PATH).toUri().toURL());
             SplitPane tabContentView = fxmlLoader.load();
             TopsoilTabContent tabContent = fxmlLoader.getController();
-            tabContent.setXUncertaintyFormatLabel(table.getUncertaintyFormat().getName());
-            tabContent.setYUncertaintyFormatLabel(table.getUncertaintyFormat().getName());
+            tabContent.setUncertaintyFormatLabel(table.getUncertaintyFormat().getName());
 
             // Create new TopsoilTab
             TopsoilTab tab = createTopsoilTab(tabContent, new TopsoilTableController(table, tabContent));
 
             // Set default plot name, x-axis name, and y-axis name.
             tabContent.getPlotPropertiesPanelController().setTitle(table.getTitle() + " - Plot");
-            // Set to the 1st and 2nd column names; in the table, they are X and Y.
-            tabContent.getPlotPropertiesPanelController().setxAxisTitle(table.getColumnNames()[0]);
-            tabContent.getPlotPropertiesPanelController().setyAxisTitle(table.getColumnNames()[1]);
+            TopsoilDataColumn xColumn = table.getVariableAssignments().get(Variables.X);
+            TopsoilDataColumn yColumn = table.getVariableAssignments().get(Variables.Y);
+            tabContent.getPlotPropertiesPanelController().setxAxisTitle(xColumn == null ? "X Axis Title" : xColumn.getName());
+            tabContent.getPlotPropertiesPanelController().setxAxisTitle(xColumn == null ? "Y Axis Title" : yColumn.getName());
 
-            for (StringProperty name : table.getColumnNameProperties()) {
-                name.addListener(c -> {
-                    if (table.getColumnNameProperties().indexOf(name) == 0) {
-                        tabContent.getPlotPropertiesPanelController().setxAxisTitle(name.get());
-                    } else if (table.getColumnNameProperties().indexOf(name) == 1) {
-                        tabContent.getPlotPropertiesPanelController().setyAxisTitle(name.get());
+            for (TopsoilDataColumn column : table.getDataColumns()) {
+                column.nameProperty().addListener(c -> {
+                    if (column.getVariable() == Variables.X) {
+                        tabContent.getPlotPropertiesPanelController().setxAxisTitle(column.getName());
+                    } else if (column.getVariable() == Variables.Y) {
+                        tabContent.getPlotPropertiesPanelController().setyAxisTitle(column.getName());
                     }
                 });
             }

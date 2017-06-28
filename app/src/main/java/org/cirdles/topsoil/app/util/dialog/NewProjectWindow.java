@@ -116,7 +116,6 @@ public class NewProjectWindow extends Stage {
                     entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
 
                     ObservableList<TopsoilDataEntry> data = FXCollections.observableArrayList(entries);
-                    MenuItemEventHandler.applyUncertaintyFormat(format, data);
 
                     TopsoilDataTable table = new TopsoilDataTable(
                             headers,

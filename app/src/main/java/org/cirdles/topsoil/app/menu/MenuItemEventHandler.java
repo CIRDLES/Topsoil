@@ -153,8 +153,6 @@ public class MenuItemEventHandler {
                                 }
 
                                 ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                                applyUncertaintyFormat(selectedFormat, data);
-
 
                                 table = new TopsoilDataTable(headers,
                                                              isotopeType,
@@ -230,7 +228,6 @@ public class MenuItemEventHandler {
                         }
 
                         ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                        applyUncertaintyFormat(selectedFormat, data);
 
                         table = new TopsoilDataTable(headers,
                                                      isotopeType,
@@ -307,7 +304,6 @@ public class MenuItemEventHandler {
                     }
 
                     ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-                    applyUncertaintyFormat(format, data);
 
                     table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
                     table.setTitle(isotopeType.getName()+" Example Data");
@@ -629,23 +625,23 @@ public class MenuItemEventHandler {
         return didClose.get();
     }
 
-    /**
-     * Normalizes the supplied data using the value of the specified {@code UncertaintyFormat}.
-     *
-     * @param format    UncertaintyFormat
-     * @param data  data as a List of TopsoilDataEntries
-     */
-    public static void applyUncertaintyFormat(UncertaintyFormat format, List<TopsoilDataEntry> data) {
-        // If uncertainty uncertaintyFormat is not one sigma absolute, convert uncertainty data to one sigma absolute.
-        if (format != UncertaintyFormat.ONE_SIGMA_ABSOLUTE) {
-            double formatValue = format.getValue();
-
-            for (TopsoilDataEntry entry : data) {
-                entry.getProperties().get(2).set(entry.getProperties().get(2).get() / formatValue);
-                entry.getProperties().get(3).set(entry.getProperties().get(3).get() / formatValue);
-            }
-        }
-    }
+//    /**
+//     * Normalizes the supplied data using the value of the specified {@code UncertaintyFormat}.
+//     *
+//     * @param format    UncertaintyFormat
+//     * @param data  data as a List of TopsoilDataEntries
+//     */
+//    public static void applyUncertaintyFormat(UncertaintyFormat format, List<TopsoilDataEntry> data) {
+//        // If uncertainty uncertaintyFormat is not one sigma absolute, convert uncertainty data to one sigma absolute.
+//        if (format != UncertaintyFormat.ONE_SIGMA_ABSOLUTE) {
+//            double formatValue = format.getValue();
+//
+//            for (TopsoilDataEntry entry : data) {
+//                entry.getProperties().get(2).set(entry.getProperties().get(2).get() / formatValue);
+//                entry.getProperties().get(3).set(entry.getProperties().get(3).get() / formatValue);
+//            }
+//        }
+//    }
     private static final String COMMA = "Commas";
     private static final String TAB = "Tabs";
     private static final String COLON = "Colons";
