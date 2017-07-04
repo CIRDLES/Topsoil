@@ -64,11 +64,11 @@ public final class Variables {
     public static final List<Variable<Number>> UNCERTAINTY_VARIABLES;
 
     static {
-        X = new IndependentVariable<>("x");
-        SIGMA_X = new DependentVariable<>("sigma_x", X);
-        Y = new IndependentVariable<>("y");
-        SIGMA_Y = new DependentVariable<>("sigma_y", Y);
-        RHO = new IndependentVariable<>("rho");
+        X = new IndependentVariable<>("X", "X");
+        SIGMA_X = new DependentVariable<>("Sigma-X", "σX", X);
+        Y = new IndependentVariable<>("Y", "Y");
+        SIGMA_Y = new DependentVariable<>("Sigma-Y", "σY", Y);
+        RHO = new IndependentVariable<>("Rho", "ρ");
         VARIABLE_LIST = Collections.unmodifiableList(asList(
                 X,
                 SIGMA_X,

@@ -37,4 +37,8 @@ public class IndependentVariable<T> extends BaseVariable<T> {
         super(name);
     }
 
+    public IndependentVariable(String name, String abbreviation) {
+        super(name, abbreviation);
+    }
+
 }

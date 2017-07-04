@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.table;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.*;
 
@@ -102,8 +103,8 @@ class TopsoilTableCellContextMenu extends ContextMenu {
 //        copyCellItem = new MenuItem("Copy Cell");
 //        clearCellItem = new MenuItem("Clear Cell");
 
-        this.setOnShown(event -> {
-            if (((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab()
+        setOnShown(event -> {
+            if (((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab()
                                                                                  .getTableController().getTable()
                                                                                  .isCleared()) {
                 deleteRowItem.setDisable(true);
@@ -117,26 +118,26 @@ class TopsoilTableCellContextMenu extends ContextMenu {
         //********************//
 
         addRowAboveItem.setOnAction(action -> {
-            InsertRowCommand insertRowCommand = new InsertRowCommand(this.cell, this.cell.getIndex());
+            InsertRowCommand insertRowCommand = new InsertRowCommand(cell, cell.getIndex());
             insertRowCommand.execute();
-            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(insertRowCommand);
+            ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(insertRowCommand);
         });
 
         addRowBelowItem.setOnAction(action -> {
-            InsertRowCommand insertRowCommand = new InsertRowCommand(this.cell, this.cell.getIndex() + 1);
+            InsertRowCommand insertRowCommand = new InsertRowCommand(cell, cell.getIndex() + 1);
             insertRowCommand.execute();
-            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(insertRowCommand);
+            ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(insertRowCommand);
         });
 
         deleteRowItem.setOnAction(action -> {
-            DeleteRowCommand deleteRowCommand = new DeleteRowCommand(this.cell);
+            DeleteRowCommand deleteRowCommand = new DeleteRowCommand(cell);
             deleteRowCommand.execute();
-            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(deleteRowCommand);
+            ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(deleteRowCommand);
         });
 
 //        copyRowItem.setOnAction(action -> {
 //            String copyValues = "";
-//            TopsoilDataEntry row = this.cell.getDataEntry();
+//            TopsoilDataEntry row = cell.getDataEntry();
 //            for (int i = 0; i < row.getProperties().size(); i++) {
 //                copyValues += Double.toString(row.getProperties().get(i).get());
 //                if (i < row.getProperties().size() - 1) {
@@ -149,9 +150,9 @@ class TopsoilTableCellContextMenu extends ContextMenu {
 //        });
 //
 //        clearRowItem.setOnAction(action -> {
-//            ClearRowCommand clearRowCommand = new ClearRowCommand(this.cell);
+//            ClearRowCommand clearRowCommand = new ClearRowCommand(cell);
 //            clearRowCommand.execute();
-//            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearRowCommand);
+//            ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearRowCommand);
 //        });
 
         //***********************//
@@ -159,17 +160,28 @@ class TopsoilTableCellContextMenu extends ContextMenu {
         //***********************//
 
 //        deleteColumnItem.setOnAction(action -> {
-//            DeleteColumnCommand deleteColumnCommand = new DeleteColumnCommand(this.cell);
+//            DeleteColumnCommand deleteColumnCommand = new DeleteColumnCommand(cell);
 //            deleteColumnCommand.execute();
-//            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(deleteColumnCommand);
+//            ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(deleteColumnCommand);
 //        });
 
         renameColumnItem.setOnAction(action -> {
             Dialog<String> columnRenameDialog = new Dialog<>();
+            TopsoilTableController tableController = ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane"))
+                    .getSelectedTab().getTableController();
+            TableColumn<TopsoilDataEntry, Double> tableColumn = cell.getTableColumn();
+            TopsoilDataColumn dataColumn = tableController.getTable().getDataColumns().get(cell.getColumnIndex());
 
             HBox hbox = new HBox(10.0);
             Label columnNameLabel = new Label("Column Name: ");
-            TextField columnNameTextField = new TextField(this.cell.getTableColumn().getText());
+
+            String columnName = tableColumn.getText();
+
+            if (dataColumn.hasVariable()) {
+                columnName = columnName.substring(columnName.indexOf(") ") + 2);
+            }
+
+            TextField columnNameTextField = new TextField(columnName);
             hbox.getChildren().addAll(columnNameLabel, columnNameTextField);
 
             columnRenameDialog.getDialogPane().setContent(hbox);
@@ -182,21 +194,29 @@ class TopsoilTableCellContextMenu extends ContextMenu {
                 return null;
             });
 
-            columnRenameDialog.showAndWait().ifPresent(result -> {
-                ColumnRenameCommand columnRenameCommand = new ColumnRenameCommand(cell.getTableColumn(), cell
-                        .getTableColumn().getText(), result);
+            String result = columnRenameDialog.showAndWait().orElse(null);
+
+            if (result != null) {
+
+                if (dataColumn.hasVariable()) {
+                    StringBuilder addVariableName = new StringBuilder(result);
+                    addVariableName.insert(0, "(" + dataColumn.getVariable().getAbbreviation() + ") ");
+                    result = addVariableName.toString();
+                }
+
+                ColumnRenameCommand columnRenameCommand = new ColumnRenameCommand(tableColumn, tableColumn.getText(), result);
                 columnRenameCommand.execute();
-                ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(columnRenameCommand);
-                this.cell.getTableColumn().setText(result);
-            });
+                ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(columnRenameCommand);
+                cell.getTableColumn().setText(result);
+            }
         });
 
 //        copyColumnItem.setOnAction(action -> {
 //            String copyValues = "";
-//            TableColumn<TopsoilDataEntry, Double> column = this.cell.getTableColumn();
-//            for (int i = 0; i < this.cell.getTableView().getItems().size(); i++) {
+//            TableColumn<TopsoilDataEntry, Double> column = cell.getTableColumn();
+//            for (int i = 0; i < cell.getTableView().getItems().size(); i++) {
 //                copyValues += Double.toString(column.getCellData(i));
-//                if (i < this.cell.getTableView().getItems().size() - 1) {
+//                if (i < cell.getTableView().getItems().size() - 1) {
 //                    copyValues += "\n";
 //                }
 //            }
@@ -206,9 +226,9 @@ class TopsoilTableCellContextMenu extends ContextMenu {
 //        });
 //
 //        clearColumnItem.setOnAction(action -> {
-//            ClearColumnCommand clearColumnCommand = new ClearColumnCommand(this.cell);
+//            ClearColumnCommand clearColumnCommand = new ClearColumnCommand(cell);
 //            clearColumnCommand.execute();
-//            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearColumnCommand);
+//            ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(clearColumnCommand);
 //        });
 
         //*********************//
@@ -217,19 +237,19 @@ class TopsoilTableCellContextMenu extends ContextMenu {
 
 //        copyCellItem.setOnAction(action -> {
 //            ClipboardContent content = new ClipboardContent();
-//            content.putString(Double.toString(this.cell.getItem()));
+//            content.putString(Double.toString(cell.getItem()));
 //            Clipboard.getSystemClipboard().setContent(content);
 //        });
 //
 //        clearCellItem.setOnAction(action -> {
-//            ClearCellCommand clearCellCommand = new ClearCellCommand(this.cell);
+//            ClearCellCommand clearCellCommand = new ClearCellCommand(cell);
 //            clearCellCommand.execute();
-//            ((TopsoilTabPane) this.cell.getScene().lookup("#TopsoilTabPane"))
+//            ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane"))
 //                    .getSelectedTab().addUndo(clearCellCommand);
 //        });
 
         // Add items to context menu
-        this.getItems().addAll(
+        getItems().addAll(
                 addRowAboveItem,
                 addRowBelowItem,
                 deleteRowItem,

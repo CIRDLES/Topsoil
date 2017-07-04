@@ -371,6 +371,12 @@ public class TopsoilTableController {
                         }
                     }
 
+                    if (entry.getValue().hasVariable()) {
+                        entry.getValue().setName(
+                                entry.getValue().getName().substring(entry.getValue().getName().indexOf(") ") + 2)
+                        );
+                    }
+                    entry.getValue().setName("(" + entry.getKey().getAbbreviation() + ") " + entry.getValue().getName());
                     entry.getValue().setVariable(entry.getKey());
                 }
             }
@@ -379,12 +385,15 @@ public class TopsoilTableController {
             for (TopsoilDataColumn column : columns) {
                 if (!selections.containsValue(column)) {
                     // If the column was an uncertainty variable, but isn't anymore
-                    if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {
-                        for (DoubleProperty property : column) {
-                            property.set(property.get() * uncertaintyFormatValue);
+                    if (column.hasVariable()) {
+                        if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {
+                            for (DoubleProperty property : column) {
+                                property.set(property.get() * uncertaintyFormatValue);
+                            }
                         }
+                        column.setName(column.getName().substring(column.getName().indexOf(") ") + 2));
+                        column.setVariable(null);
                     }
-                    column.setVariable(null);
                 }
             }
 

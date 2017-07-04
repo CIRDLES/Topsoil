@@ -19,7 +19,7 @@
                <children>
                   <VBox alignment="TOP_CENTER" GridPane.rowIndex="1">
                      <children>
-                        <TableView fx:id="tableView" editable="true" prefHeight="60.0" prefWidth="750.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="NEVER" VBox.vgrow="SOMETIMES">
+                        <TableView fx:id="tableView" editable="true" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="NEVER" VBox.vgrow="SOMETIMES">
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
@@ -39,7 +39,7 @@
                   <Label fx:id="messageLabel" text="Uncertainty values are in [UncertaintyFormat] format." GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                </children>
                <columnConstraints>
-                  <ColumnConstraints minWidth="630.0" prefWidth="750.0" />
+                  <ColumnConstraints hgrow="ALWAYS" minWidth="630.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="35.0" vgrow="NEVER" />

@@ -34,4 +34,6 @@ public interface Variable<T> {
      */
     public String getName();
 
+    public String getAbbreviation();
+
 }
