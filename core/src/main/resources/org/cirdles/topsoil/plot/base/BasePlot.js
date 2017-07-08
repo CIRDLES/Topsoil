@@ -18,17 +18,17 @@ plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
 plot.propertiesKeys = [
     'Point Fill Color',
     'Ellipse Fill Color',
-    'Cross Fill Color',
+    'Uncertainty Bar Fill Color',
     'Point Opacity',
     'Ellipse Opacity',
-    'Cross Opacity',
+    'Uncertainty Bar Opacity',
     'Title',
     'Uncertainty',
     'X Axis',
     'Y Axis',
     'Points',
     'Ellipses',
-    'Crosses',
+    'Uncertainty Bars',
     'Concordia',
     'Evolution',
     'Isotope'];
@@ -225,7 +225,7 @@ plot.update = function (data) {
     // Manage the plot elements
     plot.managePoints();
     plot.manageEllipses();
-    plot.manageCrosses();
+    plot.manageUncertaintyBars();
     plot.managePlotFeatures();
 };
 
@@ -336,25 +336,25 @@ plot.manageEllipses = function () {
     }
 };
 
-plot.manageCrosses = function () {
+plot.manageUncertaintyBars = function () {
 
-    // If crosses should be visible...
-    if (plot.getProperty("Crosses")) {
+    // If UncertaintyBars should be visible...
+    if (plot.getProperty("UncertaintyBars")) {
 
-        // If the crosses simply need to be updated...
-        if (plot.crossesVisible) {
-            plot.updateCrosses(plot.data);
+        // If the UncertaintyBars simply need to be updated...
+        if (plot.uncertaintyBarsVisible) {
+            plot.updateUncertaintyBars(plot.data);
         }
 
-        // If crosses need to be drawn...
+        // If Uncertainty Bars need to be drawn...
         else {
-            plot.drawCrosses(plot.data);
+            plot.drawUncertaintyBars(plot.data);
         }
     }
 
-    // If crosses should NOT be visible, but are...
-    else if (plot.crossesVisible) {
-        plot.removeCrosses();
+    // If Uncertainty Bars should NOT be visible, but are...
+    else if (plot.uncertaintyBarsVisible) {
+        plot.removeUncertaintyBars();
     }
 
 };

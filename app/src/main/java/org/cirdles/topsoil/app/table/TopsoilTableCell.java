@@ -51,7 +51,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         super();
 
         this.setFont(Font.font("Lucida Console"));
-        this.setStyle("-fx-font-size:15");
+        this.setStyle("-fx-font-size:12");
         this.setAlignment(Pos.CENTER_RIGHT);
 
         this.df = DecimalFormat.getNumberInstance();
@@ -92,7 +92,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     private void generateTextField() {
         this.textField = new TextField();
         this.textField.setFont(Font.font("Lucida Console"));
-        this.textField.setStyle("-fx-font-size: 15");
+        this.textField.setStyle("-fx-font-size: 12");
         this.textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
     }
 

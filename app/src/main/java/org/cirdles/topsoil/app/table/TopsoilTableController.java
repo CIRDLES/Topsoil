@@ -78,7 +78,7 @@ public class TopsoilTableController {
         // Get data from the TopsoilDataTable and put it into the TableView in TabContent.
         this.dataEntries = table.getDataEntries();
         tabContent.getTableView().setItems(dataEntries);
-        tabContent.getTableView().setFixedCellSize(35);
+        tabContent.getTableView().setFixedCellSize(27);
 
         // Bind values in Controller's dataEntries and TopsoilDataTable's data.
         ObservableList<TopsoilDataColumn> dataColumns = table.getDataColumns();
