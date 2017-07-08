@@ -1,10 +1,12 @@
 package org.cirdles.topsoil.app.table;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.*;
+import org.cirdles.topsoil.app.util.dialog.TopsoilTextInputDialog;
 
 /**
  * A custom {@code ContextMenu} requested by {@link TopsoilTableCell}s. It contains options for manipulating cells,
@@ -38,7 +40,15 @@ class TopsoilTableCellContextMenu extends ContextMenu {
      */
     private MenuItem deleteRowItem;
 
-//    private MenuItem deleteColumnItem;
+    /**
+     * When clicked, deletes the cell's column.
+     */
+    private MenuItem deleteColumnItem;
+
+    /**
+     * When clicked, inserts a column at the cell's index.
+     */
+    private MenuItem insertColumnItem;
 
     /**
      * When clicked, prompts the user to rename the cell's column.
@@ -95,7 +105,8 @@ class TopsoilTableCellContextMenu extends ContextMenu {
 //        copyRowItem = new MenuItem("Copy Row");
 //        clearRowItem = new MenuItem("Clear Row");
 
-//        deleteColumnItem = new MenuItem("Delete Column");
+        deleteColumnItem = new MenuItem("Delete Column");
+        insertColumnItem = new MenuItem("Insert Column");
         renameColumnItem = new MenuItem("Rename Column");
 //        copyColumnItem = new MenuItem("Copy Column");
 //        clearColumnItem = new MenuItem("Clear Column");
@@ -159,29 +170,41 @@ class TopsoilTableCellContextMenu extends ContextMenu {
         //    COLUMN ACTIONS     //
         //***********************//
 
-//        deleteColumnItem.setOnAction(action -> {
-//            DeleteColumnCommand deleteColumnCommand = new DeleteColumnCommand(cell);
-//            deleteColumnCommand.execute();
-//            ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(deleteColumnCommand);
-//        });
+        deleteColumnItem.setOnAction(action -> {
+            TopsoilTab tab = ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab();
+            DeleteColumnCommand deleteColumnCommand = new DeleteColumnCommand(tab.getTableController(), cell.getColumnIndex());
+            deleteColumnCommand.execute();
+            tab.addUndo(deleteColumnCommand);
+        });
+
+        insertColumnItem.setOnAction(action -> {
+            TopsoilTab tab = ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab();
+
+            String title = TopsoilTextInputDialog.showDialog("Insert New Column",
+                                                             "What is the name of the new column?");
+            if (title != null) {
+                TopsoilDataColumn column = new TopsoilDataColumn(title);
+
+                for (int i = 0; i < tab.getTableController().getTable().getDataEntries().size(); i++) {
+                    column.add(new SimpleDoubleProperty(0.0));
+                }
+
+                InsertColumnCommand insertColumnCommand = new InsertColumnCommand(tab.getTableController(), cell
+                        .getColumnIndex(), column);
+                insertColumnCommand.execute();
+                tab.addUndo(insertColumnCommand);
+            }
+        });
 
         renameColumnItem.setOnAction(action -> {
             Dialog<String> columnRenameDialog = new Dialog<>();
-            TopsoilTableController tableController = ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane"))
-                    .getSelectedTab().getTableController();
-            TableColumn<TopsoilDataEntry, Double> tableColumn = cell.getTableColumn();
-            TopsoilDataColumn dataColumn = tableController.getTable().getDataColumns().get(cell.getColumnIndex());
+            TopsoilTab tab = ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab();
+            TopsoilDataColumn dataColumn = tab.getTableController().getTable().getDataColumns().get(cell.getColumnIndex());
 
             HBox hbox = new HBox(10.0);
             Label columnNameLabel = new Label("Column Name: ");
 
-            String columnName = tableColumn.getText();
-
-            if (dataColumn.hasVariable()) {
-                columnName = columnName.substring(columnName.indexOf(") ") + 2);
-            }
-
-            TextField columnNameTextField = new TextField(columnName);
+            TextField columnNameTextField = new TextField(dataColumn.getName());
             hbox.getChildren().addAll(columnNameLabel, columnNameTextField);
 
             columnRenameDialog.getDialogPane().setContent(hbox);
@@ -197,17 +220,9 @@ class TopsoilTableCellContextMenu extends ContextMenu {
             String result = columnRenameDialog.showAndWait().orElse(null);
 
             if (result != null) {
-
-                if (dataColumn.hasVariable()) {
-                    StringBuilder addVariableName = new StringBuilder(result);
-                    addVariableName.insert(0, "(" + dataColumn.getVariable().getAbbreviation() + ") ");
-                    result = addVariableName.toString();
-                }
-
-                ColumnRenameCommand columnRenameCommand = new ColumnRenameCommand(tableColumn, tableColumn.getText(), result);
+                ColumnRenameCommand columnRenameCommand = new ColumnRenameCommand(dataColumn, dataColumn.getName(), result);
                 columnRenameCommand.execute();
-                ((TopsoilTabPane) cell.getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(columnRenameCommand);
-                cell.getTableColumn().setText(result);
+                tab.addUndo(columnRenameCommand);
             }
         });
 
@@ -256,8 +271,9 @@ class TopsoilTableCellContextMenu extends ContextMenu {
 //                copyRowItem,
 //                clearRowItem,
                 new SeparatorMenuItem(),
-//                deleteColumnItem,
-                renameColumnItem
+                renameColumnItem,
+                insertColumnItem,
+                deleteColumnItem
 //                copyColumnItem,
 //                clearColumnItem,
 //                new SeparatorMenuItem(),

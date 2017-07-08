@@ -11,6 +11,8 @@ import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
@@ -159,6 +161,20 @@ public class MenuItemEventHandler {
                                                              selectedFormat,
                                                              data.toArray(new TopsoilDataEntry[data.size()]));
                                 table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
+
+                                List<TopsoilDataColumn> columns = table.getDataColumns();
+                                Map<Variable<Number>, TopsoilDataColumn> variableAssignments = new HashMap<>();
+
+                                // Apply variable selections
+                                for (Map.Entry<Variable<Number>, Integer> entry :
+                                        ((Map<Variable<Number>, Integer>) selections.get(DataImportKey.VARIABLE_INDEX_MAP))
+                                                .entrySet()) {
+                                    TopsoilDataColumn column = columns.get(entry.getValue());
+                                    column.setVariable(entry.getKey());
+                                    variableAssignments.put(entry.getKey(), column);
+                                }
+
+                                table.setVariableAssignments(variableAssignments);
                             }
                         }
                     }
@@ -234,6 +250,19 @@ public class MenuItemEventHandler {
                                                      selectedFormat,
                                                      data.toArray(new TopsoilDataEntry[data.size()]));
 
+                        List<TopsoilDataColumn> columns = table.getDataColumns();
+                        Map<Variable<Number>, TopsoilDataColumn> variableAssignments = new HashMap<>();
+
+                        // Apply variable selections
+                        for (Map.Entry<Variable<Number>, Integer> entry :
+                                ((Map<Variable<Number>, Integer>) selections.get(DataImportKey.VARIABLE_INDEX_MAP))
+                                        .entrySet()) {
+                            TopsoilDataColumn column = columns.get(entry.getValue());
+                            column.setVariable(entry.getKey());
+                            variableAssignments.put(entry.getKey(), column);
+                        }
+
+                        table.setVariableAssignments(variableAssignments);
                     }
                 }
             }

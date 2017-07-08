@@ -93,7 +93,7 @@ public class TopsoilTableController {
 
         // Get data from the TopsoilDataTable and put it into the TableView in TabContent.
         this.dataEntries = table.getDataEntries();
-        tabContent.getTableView().setItems(dataEntries);
+        tabContent.setData(dataEntries);
         tabContent.getTableView().setFixedCellSize(27);
 
         // Create cell listeners for table cells
@@ -170,7 +170,7 @@ public class TopsoilTableController {
         columnsToIndices = new LinkedHashMap<>();
         List<TableColumn<TopsoilDataEntry, ?>> columns = tabContent.getTableView().getColumns();
         for (int i = 0; i < columns.size(); i++) {
-            columns.get(i).textProperty().bindBidirectional(dataColumns.get(i).nameProperty());
+            columns.get(i).textProperty().bindBidirectional(dataColumns.get(i).columnHeaderProperty());
             columnsToIndices.put(columns.get(i), i);
         }
 
@@ -187,59 +187,6 @@ public class TopsoilTableController {
         // Bind isotope type
         tabContent.getPlotPropertiesPanelController().setIsotopeType(table.getIsotopeType());
         tabContent.getPlotPropertiesPanelController().isotopeTypeObjectProperty().bindBidirectional(table.isotopeTypeObjectProperty());
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10.0);
-        grid.setAlignment(Pos.CENTER);
-        grid.setGridLinesVisible(true);
-
-        for (int i = 0; i < dataColumns.size(); i++) {
-            TopsoilDataColumn dataColumn = dataColumns.get(i);
-
-            Label nameLabel = new Label(dataColumn.getName());
-            nameLabel.setStyle("-fx-font-size: 16px");
-            nameLabel.setMinWidth(100.0);
-            Label variableLabel = new Label(dataColumn.hasVariable() ? dataColumn.getVariable().getName() : "N/A");
-            variableLabel.setStyle("-fx-font-size: 16px");
-
-            nameLabel.textProperty().bind(dataColumn.nameProperty());
-            dataColumn.variableProperty()
-                      .addListener(c -> variableLabel.setText(dataColumn.hasVariable() ? dataColumn.getVariable()
-                                                                                                   .getName() : "N/A"));
-
-            grid.add(nameLabel, i, 0);
-            grid.add(variableLabel, i, 1);
-
-            GridPane.setMargin(nameLabel, new Insets(5.0, 5.0, 5.0, 5.0));
-            GridPane.setMargin(variableLabel, new Insets(5.0, 5.0, 5.0, 5.0));
-        }
-
-        Button button = new Button("Print Data");
-        GridPane.setMargin(button, new Insets(5.0, 5.0, 5.0, 5.0));
-        button.setOnAction(event -> {
-            for (TopsoilDataColumn column : table.getDataColumns()) {
-                System.out.print(column.getName() + "\t");
-            }
-            System.out.println();
-
-            for (TopsoilDataEntry row : table.getDataEntries()) {
-                for (DoubleProperty property : row.getProperties()) {
-                    System.out.print(property.get() + "\t");
-                }
-                System.out.println();
-            }
-            System.out.println();
-        });
-
-
-        VBox vBox = new VBox(grid, button);
-        vBox.setAlignment(Pos.CENTER);
-
-        Scene scene = new Scene(vBox, 600.0, 150.0);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
     }
 
     //***********************
@@ -319,17 +266,23 @@ public class TopsoilTableController {
             // TODO Customize entry selection.
             entry.put("Selected", true);
 
-            for (Map.Entry<Variable<Number>, TopsoilDataColumn> variableColumn : variablesToColumns.entrySet()) {
-                Object value;
-                if (variableColumn.getKey().getClass() == DependentVariable.class
+            for (Variable<Number> variable : Variables.VARIABLE_LIST) {
+                Double value;
+                if (variablesToColumns.containsKey(variable)) {
+                    if (variable.getClass() == DependentVariable.class
                         && UncertaintyFormat.PERCENT_FORMATS.contains(table.getUncertaintyFormat())) {
-                    value = variableColumn.getValue().get(rowIndex).get() * table.getVariableAssignments().get
-                            (((DependentVariable<Number>) variableColumn.getKey()).getDependency()).get(rowIndex).get();
+                        value = variablesToColumns.get(variable).get(rowIndex).get() * table.getVariableAssignments().get(
+                                ((DependentVariable<Number>) variable).getDependency()).get(rowIndex).get();
+                    } else {
+                        value = variablesToColumns.get(variable).get(rowIndex).get();
+                    }
                 } else {
-                    value = variableColumn.getValue().get(rowIndex).get();
+                    // Variable is unassigned, use zero value
+                    value = 0.0;
                 }
-                entry.put(variableColumn.getKey().getName(), value);
+                entry.put(variable.getName(), value);
             }
+
             data.add(entry);
         }
         return data;
@@ -370,13 +323,6 @@ public class TopsoilTableController {
                             }
                         }
                     }
-
-                    if (entry.getValue().hasVariable()) {
-                        entry.getValue().setName(
-                                entry.getValue().getName().substring(entry.getValue().getName().indexOf(") ") + 2)
-                        );
-                    }
-                    entry.getValue().setName("(" + entry.getKey().getAbbreviation() + ") " + entry.getValue().getName());
                     entry.getValue().setVariable(entry.getKey());
                 }
             }
@@ -391,7 +337,6 @@ public class TopsoilTableController {
                                 property.set(property.get() * uncertaintyFormatValue);
                             }
                         }
-                        column.setName(column.getName().substring(column.getName().indexOf(") ") + 2));
                         column.setVariable(null);
                     }
                 }
@@ -403,6 +348,14 @@ public class TopsoilTableController {
             }
 
             updateColumnListeners();
+
+            // Re-name x and y axis titles
+            if (selections.containsKey(Variables.X)) {
+                tabContent.getPlotPropertiesPanelController().setxAxisTitle(selections.get(Variables.X).getName());
+            }
+            if (selections.containsKey(Variables.Y)) {
+                tabContent.getPlotPropertiesPanelController().setyAxisTitle(selections.get(Variables.Y).getName());
+            }
         }
     }
 
@@ -419,7 +372,7 @@ public class TopsoilTableController {
         } else {
             // Detach all ListenerHandles
             for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
-                for (int rowIndex = 0; rowIndex < columns.get(colIndex).size(); rowIndex++) {
+                for (int rowIndex = 0; rowIndex < cellListenerHandles.get(colIndex).size(); rowIndex++) {
                     handle = cellListenerHandles.get(colIndex).get(rowIndex);
                     handle.detach();
                 }
@@ -542,6 +495,38 @@ public class TopsoilTableController {
             ((TopsoilTabPane) tabContent.getTableView().getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo
                     (reorderCommand);
         }
+    }
+
+    public void addColumn(int index, TopsoilDataColumn column) {
+        table.addColumn(index, column);
+        dataEntries = table.getDataEntries();
+        tabContent.setData(dataEntries);
+
+        columnsToIndices.clear();
+        List<TableColumn<TopsoilDataEntry, ?>> columns = tabContent.getTableView().getColumns();
+        for (int i = 0; i < columns.size(); i++) {
+            table.getDataColumns().get(i).columnHeaderProperty().unbind();
+            columns.get(i).textProperty().bindBidirectional(table.getDataColumns().get(i).columnHeaderProperty());
+            columnsToIndices.put(columns.get(i), i);
+        }
+
+        cellListenerHandles.add(index, new ArrayList<>());
+        updateColumnListeners();
+
+        tabContent.getTableView().getColumns().get(index).textProperty().bindBidirectional(column.columnHeaderProperty());
+    }
+
+    public void removeColumn(int index) {
+        tabContent.removeColumn(index);
+        table.removeColumn(index);
+    }
+
+    public int getColumnIndex(TableColumn column) {
+        Integer index = columnsToIndices.get(column);
+        if (index == null) {
+            index = -1;
+        }
+        return index;
     }
 
     /**

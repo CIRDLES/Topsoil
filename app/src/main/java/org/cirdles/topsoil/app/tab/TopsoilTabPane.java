@@ -92,7 +92,7 @@ public class TopsoilTabPane extends TabPane {
             TopsoilDataColumn xColumn = table.getVariableAssignments().get(Variables.X);
             TopsoilDataColumn yColumn = table.getVariableAssignments().get(Variables.Y);
             tabContent.getPlotPropertiesPanelController().setxAxisTitle(xColumn == null ? "X Axis Title" : xColumn.getName());
-            tabContent.getPlotPropertiesPanelController().setxAxisTitle(xColumn == null ? "Y Axis Title" : yColumn.getName());
+            tabContent.getPlotPropertiesPanelController().setyAxisTitle(yColumn == null ? "Y Axis Title" : yColumn.getName());
 
             for (TopsoilDataColumn column : table.getDataColumns()) {
                 column.nameProperty().addListener(c -> {

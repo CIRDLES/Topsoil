@@ -89,10 +89,10 @@ public class TopsoilTabContent extends SplitPane {
         initializePlotPropertiesPanel();
 
         // A somewhat hacky method of disabling column dragging in the TableView.
-//        tableView.widthProperty().addListener(c -> {
-//            TableHeaderRow header = (TableHeaderRow) tableView.lookup("TableHeaderRow");
-//            header.reorderingProperty().addListener(ch -> header.setReordering(false));
-//        });
+        tableView.widthProperty().addListener(c -> {
+            TableHeaderRow header = (TableHeaderRow) tableView.lookup("TableHeaderRow");
+            header.reorderingProperty().addListener(ch -> header.setReordering(false));
+        });
 
     }
 
@@ -169,40 +169,53 @@ public class TopsoilTabContent extends SplitPane {
      * Configures the {@code TableColumn}s in the {@code TableView}.
      */
     private void configureColumns() {
+
+        int maxRowLength = 0;
+        for (TopsoilDataEntry row : tableView.getItems()) {
+            maxRowLength = Math.max(maxRowLength, row.getProperties().size());
+        }
+
+        for (int i = 0; i < maxRowLength; i++) {
+            addColumn(i);
+        }
+    }
+
+    public void addColumn(int index) {
         List<TableColumn<TopsoilDataEntry, ?>> columns = tableView.getColumns();
 
         TableColumn<TopsoilDataEntry, Double> newColumn;
 
-        for (int i = 0; i < columns.size(); i++) {
+        newColumn = new TableColumn<>("New Column");
 
-            final int columnIndex = i;
-            newColumn = new TableColumn<>(columns.get(i).getText());
-
-            // override cell value factory to accept the i'th index of a data entry for the i'th column
-            newColumn.setCellValueFactory(param -> {
-                if (param.getValue().getProperties().size() == 0) {
-                    return (ObservableValue) new SimpleDoubleProperty(0.0);
+        newColumn.setCellValueFactory(param -> {
+            if (param.getValue().getProperties().size() == 0) {
+                return (ObservableValue) new SimpleDoubleProperty(0.0);
+            } else {
+                if (param.getValue().getProperties().size() < index + 1) {
+                    SimpleDoubleProperty newProperty = new SimpleDoubleProperty(Double.NaN);
+                    param.getValue().getProperties().add(newProperty);
+                    return (ObservableValue) newProperty;
                 } else {
-                    // If data was incomplete i.e. length of line is too short for number of columns.
-                    if (param.getValue().getProperties().size() < columnIndex + 1) {
-                        SimpleDoubleProperty newProperty = new SimpleDoubleProperty(Double.NaN);
-                        param.getValue().getProperties().add(newProperty);
-                        return (ObservableValue) newProperty;
-                    } else {
-                        return (ObservableValue) param.getValue().getProperties().get(columnIndex);
-                    }
+                    return (ObservableValue) param.getValue().getProperties().get(index);
                 }
-            });
+            }
+        });
 
-            // override cell factory to custom editable cells
-            newColumn.setCellFactory(value -> new TopsoilTableCell());
+        // override cell factory to custom editable cells
+        newColumn.setCellFactory(value -> new TopsoilTableCell());
 
-            // disable column sorting
-            newColumn.setSortable(false);
+        // disable column sorting
+        newColumn.setSortable(false);
 
-            // add functional column to the array of columns
-            columns.set(i, newColumn);
-        }
+        // initial width
+        newColumn.setPrefWidth(160.0);
+
+        // add functional column to the array of columns
+        columns.add(index, newColumn);
+    }
+
+    public void removeColumn(int index) {
+        tableView.getColumns().remove(index);
     }
 
     /**
@@ -230,6 +243,8 @@ public class TopsoilTabContent extends SplitPane {
      */
     public void setData(ObservableList<TopsoilDataEntry> dataEntries) {
         tableView.setItems(dataEntries);
+        tableView.getColumns().clear();
+        configureColumns();
     }
 
     /**

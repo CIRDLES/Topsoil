@@ -219,7 +219,8 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      * @return  int column index
      */
     public int getColumnIndex() {
-        return Integer.parseInt(this.getTableColumn().getId());
+        return ((TopsoilTabPane) this.getScene().lookup("#TopsoilTabPane")).getSelectedTab().getTableController()
+                                                                           .getColumnIndex(this.getTableColumn());
     }
 
     /**

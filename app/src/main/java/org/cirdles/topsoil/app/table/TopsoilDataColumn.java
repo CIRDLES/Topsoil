@@ -20,6 +20,14 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
     public StringProperty nameProperty() {
         if (name == null) {
             name = new SimpleStringProperty(null);
+
+            name.addListener(c -> {
+                if (hasVariable()) {
+                    setColumnHeader("(" + getVariable().getAbbreviation() + ") " + getName());
+                } else {
+                    setColumnHeader(getName());
+                }
+            });
         }
         return name;
     }
@@ -28,6 +36,24 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
     }
     public void setName(String name) {
         nameProperty().set(name);
+    }
+
+    private StringProperty columnHeader;
+    public StringProperty columnHeaderProperty() {
+        if (columnHeader == null) {
+            if (hasVariable()) {
+                columnHeader = new SimpleStringProperty("(" + getVariable().getAbbreviation() + ") " + getName());
+            } else {
+                columnHeader = new SimpleStringProperty(getName());
+            }
+        }
+        return columnHeader;
+    }
+    public String getColumnHeader() {
+        return columnHeaderProperty().get();
+    }
+    private void setColumnHeader(String s) {
+        columnHeaderProperty().set(s);
     }
 
     /**
@@ -40,6 +66,7 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
             variable.addListener(c -> {
                 if (variable.get() == null) {
                     hasVariableProperty().set(false);
+
                 } else {
                     hasVariableProperty().set(true);
                 }
@@ -62,6 +89,13 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
     public BooleanProperty hasVariableProperty() {
         if (hasVariable == null) {
             hasVariable = new SimpleBooleanProperty(variableProperty().get() != null);
+            hasVariableProperty().addListener(c -> {
+                if (hasVariable()) {
+                    setColumnHeader("(" + getVariable().getAbbreviation() + ") " + getName());
+                } else {
+                    setColumnHeader(getName());
+                }
+            });
         }
         return hasVariable;
     }

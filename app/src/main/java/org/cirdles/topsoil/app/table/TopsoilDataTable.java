@@ -236,6 +236,7 @@ public class TopsoilDataTable {
 
     public void setVariableAssignments(Map<Variable<Number>, TopsoilDataColumn> assignments) {
         variableColumnMap = assignments;
+        // TODO Check if TopsoilDataColumns have had their variables set correctly.
     }
 
     /**
@@ -319,6 +320,14 @@ public class TopsoilDataTable {
             dataColumns.get(i).remove(index);
         }
         numRows--;
+    }
+
+    void addColumn(int index, TopsoilDataColumn column) {
+        dataColumns.add(index, column);
+    }
+
+    void removeColumn(int index) {
+        dataColumns.remove(index);
     }
 
     /**

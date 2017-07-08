@@ -104,7 +104,6 @@ public class TopsoilTab extends Tab {
         });
 
         this.setGraphic(titleLabel);
-        this.setContent(tableController.getTabContent().getTableView());
 
         // On tab close, close any plots associated with the table.
         this.setOnClosed(event -> {

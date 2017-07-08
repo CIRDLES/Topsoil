@@ -20,9 +20,6 @@
                   <VBox alignment="TOP_CENTER" GridPane.rowIndex="1">
                      <children>
                         <TableView fx:id="tableView" editable="true" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="NEVER" VBox.vgrow="SOMETIMES">
-                           <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
                            <columns>
                               <TableColumn prefWidth="75.0" sortable="false" text="X Column" />
                               <TableColumn prefWidth="75.0" sortable="false" text="Y Column" />

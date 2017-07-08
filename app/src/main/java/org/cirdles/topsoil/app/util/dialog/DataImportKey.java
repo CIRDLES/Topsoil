@@ -10,7 +10,8 @@ public enum DataImportKey {
     HEADERS("Headers"),
     DATA("Data"),
     UNCERTAINTY("Uncertainty"),
-    ISOTOPE_TYPE("Isotope Type");
+    ISOTOPE_TYPE("Isotope Type"),
+    VARIABLE_INDEX_MAP("Variable Selections");
 
     private String key;
 

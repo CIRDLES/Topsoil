@@ -10,6 +10,8 @@ import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
+import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.dialog.controller.ProjectPreviewController;
@@ -20,6 +22,7 @@ import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -125,6 +128,21 @@ public class NewProjectWindow extends Stage {
                     );
 
                     table.setTitle((String) selections.get(DataImportKey.TITLE));
+
+                    List<TopsoilDataColumn> columns = table.getDataColumns();
+                    Map<Variable<Number>, TopsoilDataColumn> variableAssignments = new HashMap<>();
+
+                    // Apply variable selections
+                    for (Map.Entry<Variable<Number>, Integer> entry :
+                            ((Map<Variable<Number>, Integer>) selections.get(DataImportKey.VARIABLE_INDEX_MAP))
+                                    .entrySet()) {
+                        TopsoilDataColumn column = columns.get(entry.getValue());
+                        column.setVariable(entry.getKey());
+                        variableAssignments.put(entry.getKey(), column);
+                    }
+
+                    table.setVariableAssignments(variableAssignments);
+
                     tables.add(table);
                 }
 
