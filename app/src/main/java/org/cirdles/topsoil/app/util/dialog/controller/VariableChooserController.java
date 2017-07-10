@@ -43,7 +43,7 @@ public class VariableChooserController {
         return selections.get();
     }
 
-    private final String UNASSIGNED = "   ";    // Three spaces
+    private static final String UNASSIGNED = "   ";    // Three spaces
     private static final BiMap<String, Variable<Number>> STRING_VARIABLE_BIMAP;
     static {
         STRING_VARIABLE_BIMAP = HashBiMap.create();
@@ -52,7 +52,7 @@ public class VariableChooserController {
         }
     }
 
-    private class ColumnOption extends HBox {
+    private static class ColumnOption extends HBox {
 
         private Label columnLabel;
         private ChoiceBox<String> choiceBox;

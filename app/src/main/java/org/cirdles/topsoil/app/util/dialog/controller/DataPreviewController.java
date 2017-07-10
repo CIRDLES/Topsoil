@@ -220,7 +220,9 @@ public class DataPreviewController extends Pane {
      * @return  array of Strings
      */
     public String[] getHeaders() {
-        return headers;
+        String[] headersCopy = new String[headers.length];
+        System.arraycopy(headers, 0, headersCopy, 0, headers.length);
+        return headersCopy;
     }
 
     /**

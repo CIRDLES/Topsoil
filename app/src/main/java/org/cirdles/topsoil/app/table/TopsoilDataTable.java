@@ -10,7 +10,6 @@ import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.plot.Plot;
@@ -50,11 +49,6 @@ public class TopsoilDataTable {
      * The number of rows of data.
      */
     private int numRows;
-
-    /**
-     * A {@code List} of {@code StringProperty}s for each of the column names.
-     */
-    private ObservableList<StringProperty> columnNameProperties;
 
     /**
      * The {@code StringProperty} for the title of the table.

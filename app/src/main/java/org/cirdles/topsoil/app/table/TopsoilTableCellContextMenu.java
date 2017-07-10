@@ -21,11 +21,6 @@ class TopsoilTableCellContextMenu extends ContextMenu {
     //***********************
 
     /**
-     * The {@code TopsoilTableCell} that requested the context menu.
-     */
-    private TopsoilTableCell cell;
-
-    /**
      * When clicked, adds a row above the cell's row.
      */
     private MenuItem addRowAboveItem;
@@ -96,7 +91,6 @@ class TopsoilTableCellContextMenu extends ContextMenu {
      */
     TopsoilTableCellContextMenu(TopsoilTableCell cell) {
         super();
-        this.cell = cell;
 
         // initialize menu items
         addRowAboveItem = new MenuItem("Add Row Above");
