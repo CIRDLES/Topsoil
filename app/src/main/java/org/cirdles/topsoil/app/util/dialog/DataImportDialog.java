@@ -77,6 +77,7 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
                 selections.put(DataImportKey.DATA, controller.getData());
                 selections.put(DataImportKey.UNCERTAINTY, controller.getUncertaintyFormat());
                 selections.put(DataImportKey.ISOTOPE_TYPE, controller.getIsotopeType());
+                selections.put(DataImportKey.VARIABLE_INDEX_MAP, controller.getVariableIndexMap());
 
                 return selections;
             } else {

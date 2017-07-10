@@ -232,6 +232,7 @@ public class ProjectPreviewController {
      * @return  List of Maps of DataImportKeys to Objects
      */
     public List<Map<DataImportKey, Object>> getSelections() {
+        // TODO
         List<Map<DataImportKey, Object>> allSelections = new ArrayList<>();
 
         DataPreviewController controller;
@@ -244,6 +245,7 @@ public class ProjectPreviewController {
             selections.put(DataImportKey.DATA, controller.getData());
             selections.put(DataImportKey.UNCERTAINTY, controller.getUncertaintyFormat());
             selections.put(DataImportKey.ISOTOPE_TYPE, controller.getIsotopeType());
+            selections.put(DataImportKey.VARIABLE_INDEX_MAP, controller.getVariableIndexMap());
 
             allSelections.add(selections);
         }

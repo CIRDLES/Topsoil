@@ -8,8 +8,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
@@ -17,6 +20,7 @@ import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.*;
 
 /**
@@ -451,13 +455,13 @@ public class PlotPropertiesPanelController {
 
         pointsCheckBox.setSelected((Boolean) PROPERTIES.get(POINTS));
         ellipsesCheckBox.setSelected((Boolean) PROPERTIES.get(ELLIPSES));
-        crossesCheckBox.setSelected((Boolean) PROPERTIES.get(CROSSES));
+        crossesCheckBox.setSelected((Boolean) PROPERTIES.get(BARS));
         // TODO Implement Crosses
 //        crossesCheckBox.setVisible(false);
 
         pointsColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(POINT_FILL_COLOR)));
         ellipsesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(ELLIPSE_FILL_COLOR)));
-        crossesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(CROSS_FILL_COLOR)));
+        crossesColorPicker.setValue(Color.valueOf((String) PROPERTIES.get(BAR_FILL_COLOR)));
         // TODO Implement Crosses
 //        crossesColorPicker.setVisible(false);
 
@@ -522,7 +526,7 @@ public class PlotPropertiesPanelController {
             updateProperties();
         });
         showCrossesProperty().addListener(c -> {
-            PROPERTIES.put(CROSSES, showCrossesProperty().get());
+            PROPERTIES.put(BARS, showCrossesProperty().get());
             updateProperties();
         });
         pointsColorProperty().addListener(c -> {
@@ -536,8 +540,8 @@ public class PlotPropertiesPanelController {
             updateProperties();
         });
         crossesColorProperty().addListener(c -> {
-            PROPERTIES.put(CROSS_FILL_COLOR, convertColor(crossesColorProperty().get()));
-            PROPERTIES.put(CROSS_OPACITY, convertOpacity(crossesColorProperty().get()));
+            PROPERTIES.put(BAR_FILL_COLOR, convertColor(crossesColorProperty().get()));
+            PROPERTIES.put(BAR_OPACITY, convertOpacity(crossesColorProperty().get()));
             updateProperties();
         });
         showConcordiaProperty().addListener(c -> {
@@ -623,10 +627,11 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(Y_AXIS)) setyAxisTitle((String) plotProperties.get(Y_AXIS));
         if (plotProperties.containsKey(POINTS)) setShowPoints((Boolean) plotProperties.get(POINTS));
         if (plotProperties.containsKey(ELLIPSES)) setshowEllipses((Boolean) plotProperties.get(ELLIPSES));
-        if (plotProperties.containsKey(CROSSES)) setShowCrosses((Boolean) plotProperties.get(CROSSES));
+        if (plotProperties.containsKey(BARS)) setShowCrosses((Boolean) plotProperties.get(BARS));
         if (plotProperties.containsKey(POINT_FILL_COLOR)) setPointsColor(Color.valueOf((String) plotProperties.get(POINT_FILL_COLOR)));
         if (plotProperties.containsKey(ELLIPSE_FILL_COLOR)) setEllipsesColor(Color.valueOf((String) plotProperties.get(ELLIPSE_FILL_COLOR)));
-        if (plotProperties.containsKey(CROSS_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(CROSS_FILL_COLOR)));
+        if (plotProperties.containsKey(BAR_FILL_COLOR)) setCrossesColor(Color.valueOf((String) plotProperties.get(
+                BAR_FILL_COLOR)));
         if (plotProperties.containsKey(ISOTOPE_TYPE)) setIsotopeType(STRING_TO_ISOTOPE_TYPE.get((String) plotProperties.get(ISOTOPE_TYPE)));
         if (plotProperties.containsKey(UNCERTAINTY)) setUncertainty(DOUBLE_TO_UNCERTAINTY_FORMAT.get(
                 (Double) plotProperties.get(UNCERTAINTY)));
@@ -634,12 +639,30 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(EVOLUTION_MATRIX)) setShowEvolutionMatrix((Boolean) plotProperties.get(EVOLUTION_MATRIX));
     }
 
+    @FXML private void assignVariablesButtonAction() {
+        ((TopsoilTabPane) MainWindow.getPrimaryStage().getScene().lookup("#TopsoilTabPane"))
+                .getSelectedTab().getTableController().showVariableChooserDialog(null);
+    }
+
     /**
      * Generates a {@link Plot} with the specified properties for the current tab.
      */
     @FXML private void generatePlotButtonAction() {
-        PlotGenerationHandler.handlePlotGenerationForSelectedTab((TopsoilTabPane) generatePlotButton.getScene().lookup
-                ("#TopsoilTabPane"));
+        TopsoilTableController tableController = ((TopsoilTabPane) MainWindow.getPrimaryStage().getScene().lookup
+                ("#TopsoilTabPane"))
+                .getSelectedTab().getTableController();
+
+        // If X and Y aren't specified.
+        if (!tableController.getTable().getVariableAssignments().containsKey(Variables.X)
+            || !tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
+            tableController.showVariableChooserDialog(asList(Variables.X, Variables.Y));
+        }
+
+        if (tableController.getTable().getVariableAssignments().containsKey(Variables.X)
+            && tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
+            PlotGenerationHandler.handlePlotGenerationForSelectedTab((TopsoilTabPane) generatePlotButton.getScene().lookup
+                    ("#TopsoilTabPane"));
+        }
     }
 
 }

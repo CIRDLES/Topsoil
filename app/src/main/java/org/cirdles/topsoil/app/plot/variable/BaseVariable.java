@@ -35,6 +35,8 @@ public class BaseVariable<T> implements Variable<T> {
      */
     private final String name;
 
+    private final String abbreviation;
+
     //***********************
     // Constructors
     //***********************
@@ -45,7 +47,12 @@ public class BaseVariable<T> implements Variable<T> {
      * @param name  String name
      */
     public BaseVariable(String name) {
+        this(name, "");
+    }
+
+    public BaseVariable(String name, String abbreviation) {
         this.name = name;
+        this.abbreviation = abbreviation;
     }
 
     //***********************
@@ -57,6 +64,11 @@ public class BaseVariable<T> implements Variable<T> {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
 }

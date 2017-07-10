@@ -65,7 +65,7 @@ public class DelimiterRequestDialog extends Dialog<String> {
         ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(
                 MainWindow.getWindowIcon());
         this.initOwner(MainWindow.getPrimaryStage());
-        System.out.println("asdasd");
+
         /*
             CONTENT NODES
          */

@@ -3,7 +3,9 @@ package org.cirdles.topsoil.app.table.command;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
+import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -23,14 +25,14 @@ public class DeleteColumnCommand implements Command {
     //***********************
 
     /**
-     * The {@code TableView} that the column was deleted from.
+     * The {@code TopsoilTableController} for the table.
      */
-    private TableView<TopsoilDataEntry> tableView;
+    private TopsoilTableController tableController;
 
     /**
-     * The {@code TableColumn} that was deleted.
+     * The {@code TopsoilDataColumn} that was deleted.
      */
-    private TableColumn<TopsoilDataEntry, Double> column;
+    private TopsoilDataColumn dataColumn;
 
     /**
      * The index in {@code TableView.getColumns()} that the column occupied.
@@ -40,16 +42,17 @@ public class DeleteColumnCommand implements Command {
     //***********************
     // Constructors
     //***********************
-    
+
     /**
-     * Constructs a new delete column command from the specified cell.
+     * Constructs a new delete column command from the specified table controller and index.
      *
-     * @param cell  the TopsoilTableCell that the command came from
+     * @param tableController  the TopsoilTableController that the command came from
+     * @param index the int index of the column
      */
-    public DeleteColumnCommand(TopsoilTableCell cell) {
-        this.tableView = cell.getTableView();
-        this.column = cell.getTableColumn();
-        this.index = cell.getColumnIndex();
+    public DeleteColumnCommand(TopsoilTableController tableController, int index) {
+        this.tableController = tableController;
+        this.dataColumn = tableController.getTable().getDataColumns().get(index);
+        this.index = index;
     }
 
     //***********************
@@ -60,16 +63,14 @@ public class DeleteColumnCommand implements Command {
      * Called to execute the column deletion.
      */
     public void execute() {
-
-        this.tableView.getColumns().remove(index);
+        tableController.removeColumn(index);
     }
 
     /**
      * Called to undo the column deletion.
      */
     public void undo() {
-
-        this.tableView.getColumns().add(index, this.column);
+        tableController.addColumn(index, dataColumn);
     }
 
     /** {@inheritDoc}

@@ -144,7 +144,6 @@ public class MainWindow extends Application {
 
             // Load logo for use in window and system task bar
             try {
-                // TODO ResourceExtractor
                 Image icon = new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO_FILE_PATH)
                                                          .toUri().toString());
                 primaryStage.getIcons().add(icon);
@@ -214,7 +213,7 @@ public class MainWindow extends Application {
     private static void initializeTableKeyboardShortcuts(KeyEvent keyEvent, TopsoilTabPane tabs) {
         // shortcut + T creates a new tab containing an empty table
         if (keyEvent.getCode() == KeyCode.T &&
-                keyEvent.isShortcutDown()) {
+            keyEvent.isShortcutDown()) {
             TopsoilDataTable table = MenuItemEventHandler.handleNewTable();
             tabs.add(table);
         }

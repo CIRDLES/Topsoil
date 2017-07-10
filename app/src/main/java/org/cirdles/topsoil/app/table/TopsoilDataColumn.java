@@ -16,6 +16,46 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
     // Properties
     //***********************
 
+    private StringProperty name;
+    public StringProperty nameProperty() {
+        if (name == null) {
+            name = new SimpleStringProperty(null);
+
+            name.addListener(c -> {
+                if (hasVariable()) {
+                    setColumnHeader("(" + getVariable().getAbbreviation() + ") " + getName());
+                } else {
+                    setColumnHeader(getName());
+                }
+            });
+        }
+        return name;
+    }
+    @Override public String getName() {
+        return nameProperty().get();
+    }
+    public void setName(String name) {
+        nameProperty().set(name);
+    }
+
+    private StringProperty columnHeader;
+    public StringProperty columnHeaderProperty() {
+        if (columnHeader == null) {
+            if (hasVariable()) {
+                columnHeader = new SimpleStringProperty("(" + getVariable().getAbbreviation() + ") " + getName());
+            } else {
+                columnHeader = new SimpleStringProperty(getName());
+            }
+        }
+        return columnHeader;
+    }
+    public String getColumnHeader() {
+        return columnHeaderProperty().get();
+    }
+    private void setColumnHeader(String s) {
+        columnHeaderProperty().set(s);
+    }
+
     /**
      * An {@code ObjectProperty} containing the {@code Variable} that is set to this column, if one exists.
      */
@@ -26,6 +66,7 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
             variable.addListener(c -> {
                 if (variable.get() == null) {
                     hasVariableProperty().set(false);
+
                 } else {
                     hasVariableProperty().set(true);
                 }
@@ -37,7 +78,7 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
     public Variable getVariable() {
         return variableProperty().get();
     }
-    private void setVariable(Variable v) {
+    public void setVariable(Variable v) {
         variableProperty().set(v);
     }
 
@@ -48,6 +89,13 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
     public BooleanProperty hasVariableProperty() {
         if (hasVariable == null) {
             hasVariable = new SimpleBooleanProperty(variableProperty().get() != null);
+            hasVariableProperty().addListener(c -> {
+                if (hasVariable()) {
+                    setColumnHeader("(" + getVariable().getAbbreviation() + ") " + getName());
+                } else {
+                    setColumnHeader(getName());
+                }
+            });
         }
         return hasVariable;
     }
@@ -63,7 +111,7 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
      * Constructs an empty {@code TopsoilDataColumn}.
      */
     public TopsoilDataColumn() {
-        super(FXCollections.observableArrayList());
+        this("Untitled Column");
     }
 
     /**
@@ -72,19 +120,12 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
      * @param properties    DoubleProperties
      */
     public TopsoilDataColumn(DoubleProperty... properties) {
-        this();
-        this.addAll(properties);
+        this("Untitled Column", properties);
     }
 
-    /**
-     * Constructs a new {@code TopsoilDataColumn}, adding a {@code DoubleProperty} for each supplied {@code Double}.
-     *
-     * @param values    Double values
-     */
-    public TopsoilDataColumn(Double... values) {
-        this();
-        for (Double value : values) {
-            this.add(new SimpleDoubleProperty(value));
-        }
+    public TopsoilDataColumn(String name, DoubleProperty... properties) {
+        super(FXCollections.observableArrayList());
+        setName(name);
+        this.addAll(properties);
     }
 }

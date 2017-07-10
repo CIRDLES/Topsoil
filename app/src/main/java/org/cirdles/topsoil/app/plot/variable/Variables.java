@@ -61,18 +61,18 @@ public final class Variables {
     /**
      * A {@code List} of variables that are dependent.
      */
-    public static final List<Variable> UNCERTAINTY_VARIABLES;
+    public static final List<Variable<Number>> UNCERTAINTY_VARIABLES;
 
     static {
-        X = new IndependentVariable<>("x");
-        SIGMA_X = new DependentVariable<>("sigma_x", X);
-        Y = new IndependentVariable<>("y");
-        SIGMA_Y = new DependentVariable<>("sigma_y", Y);
-        RHO = new IndependentVariable<>("rho");
+        X = new IndependentVariable<>("x", "X");
+        SIGMA_X = new DependentVariable<>("sigma_x", "σX", X);
+        Y = new IndependentVariable<>("y", "Y");
+        SIGMA_Y = new DependentVariable<>("sigma_y", "σY", Y);
+        RHO = new IndependentVariable<>("rho", "rho");
         VARIABLE_LIST = Collections.unmodifiableList(asList(
                 X,
-                Y,
                 SIGMA_X,
+                Y,
                 SIGMA_Y,
                 RHO
         ));

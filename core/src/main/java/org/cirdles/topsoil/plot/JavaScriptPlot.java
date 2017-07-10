@@ -235,11 +235,9 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                             if (new IsBlankImage().test(screenCapture())) {
                                 webEngine.loadContent(buildContent());
                             }
-
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
                             topsoil.setMember("bridge", bridge);
-
 
                             if (getData() != null) {
                                 topsoil.call("setData", getData());

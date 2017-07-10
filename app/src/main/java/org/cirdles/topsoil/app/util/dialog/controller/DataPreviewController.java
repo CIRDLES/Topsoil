@@ -212,10 +212,6 @@ public class DataPreviewController extends Pane {
                         .NEVER, new Insets(5.0, 5.0, 5.0, 5.0));
             }
         }
-
-        for (int i = 0; i < Math.min(columnChoiceBoxes.size(), 5); i++) {
-            columnChoiceBoxes.get(i).setValue(Variables.VARIABLE_LIST.get(i).getName());
-        }
     }
 
     /**
@@ -224,14 +220,9 @@ public class DataPreviewController extends Pane {
      * @return  array of Strings
      */
     public String[] getHeaders() {
-        String[] selectedHeaders = new String[]{
-                variableIndexMap.containsKey(Variables.X) ? headers[variableIndexMap.get(Variables.X)] : "X Column",
-                variableIndexMap.containsKey(Variables.Y) ? headers[variableIndexMap.get(Variables.Y)] : "Y Column",
-                variableIndexMap.containsKey(Variables.SIGMA_X) ? headers[variableIndexMap.get(Variables.SIGMA_X)] : "σX Column",
-                variableIndexMap.containsKey(Variables.SIGMA_Y) ? headers[variableIndexMap.get(Variables.SIGMA_Y)] : "σY Column",
-                variableIndexMap.containsKey(Variables.RHO) ? headers[variableIndexMap.get(Variables.RHO)] : "corr coef Column"
-        };
-        return selectedHeaders;
+        String[] headersCopy = new String[headers.length];
+        System.arraycopy(headers, 0, headersCopy, 0, headers.length);
+        return headersCopy;
     }
 
     /**
@@ -240,40 +231,45 @@ public class DataPreviewController extends Pane {
      * @return  List of TopsoilDataEntry
      */
     public List<TopsoilDataEntry> getData() {
+        // TODO
+        return data;
+//        List<TopsoilDataEntry> selectedColumns = new ArrayList<>(data.size());
+//
+//        // Construct new set of entries based on the selected columns.
+//        for (int i = 0; i < data.size(); i++) {
+//
+//            // Add a TopsoilDataEntry to selection if it doesn't have one at this index.
+//            if (selectedColumns.size() <= i) {
+//                while(selectedColumns.size() <= i) {
+//                    selectedColumns.add(new TopsoilDataEntry());
+//                }
+//            }
+//
+//            DoubleProperty xValue = variableIndexMap.containsKey(Variables.X) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.X))
+//                    : new SimpleDoubleProperty(0.0);
+//            selectedColumns.get(i).add(xValue);
+//
+//            DoubleProperty yValue = variableIndexMap.containsKey(Variables.Y) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.Y))
+//                    : new SimpleDoubleProperty(0.0);
+//            selectedColumns.get(i).add(yValue);
+//
+//            DoubleProperty sxValue = variableIndexMap.containsKey(Variables.SIGMA_X) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.SIGMA_X))
+//                    : new SimpleDoubleProperty(0.0);
+//            selectedColumns.get(i).add(sxValue);
+//
+//            DoubleProperty syValue = variableIndexMap.containsKey(Variables.SIGMA_Y) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.SIGMA_Y))
+//                    : new SimpleDoubleProperty(0.0);
+//            selectedColumns.get(i).add(syValue);
+//
+//            DoubleProperty rValue = variableIndexMap.containsKey(Variables.RHO) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.RHO))
+//                    : new SimpleDoubleProperty(0.0);
+//            selectedColumns.get(i).add(rValue);
+//        }
+//        return selectedColumns;
+    }
 
-        List<TopsoilDataEntry> selectedColumns = new ArrayList<>(data.size());
-
-        // Construct new set of entries based on the selected columns.
-        for (int i = 0; i < data.size(); i++) {
-
-            // Add a TopsoilDataEntry to selection if it doesn't have one at this index.
-            if (selectedColumns.size() <= i) {
-                while(selectedColumns.size() <= i) {
-                    selectedColumns.add(new TopsoilDataEntry());
-                }
-            }
-
-            DoubleProperty xValue = variableIndexMap.containsKey(Variables.X) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.X))
-                    : new SimpleDoubleProperty(0.0);
-            selectedColumns.get(i).add(xValue);
-
-            DoubleProperty yValue = variableIndexMap.containsKey(Variables.Y) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.Y))
-                    : new SimpleDoubleProperty(0.0);
-            selectedColumns.get(i).add(yValue);
-
-            DoubleProperty sxValue = variableIndexMap.containsKey(Variables.SIGMA_X) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.SIGMA_X))
-                    : new SimpleDoubleProperty(0.0);
-            selectedColumns.get(i).add(sxValue);
-
-            DoubleProperty syValue = variableIndexMap.containsKey(Variables.SIGMA_Y) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.SIGMA_Y))
-                    : new SimpleDoubleProperty(0.0);
-            selectedColumns.get(i).add(syValue);
-
-            DoubleProperty rValue = variableIndexMap.containsKey(Variables.RHO) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.RHO))
-                    : new SimpleDoubleProperty(0.0);
-            selectedColumns.get(i).add(rValue);
-        }
-        return selectedColumns;
+    public Map<Variable<Number>, Integer> getVariableIndexMap() {
+        return variableIndexMap;
     }
 
     /**

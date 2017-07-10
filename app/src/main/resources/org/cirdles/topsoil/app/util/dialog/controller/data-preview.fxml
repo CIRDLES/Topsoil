@@ -43,7 +43,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
          <children>
-            <Label text="Using the drop-down lists, select which of your columns correspond to the following five plotting variables: X, σX, Y, σY, and rho." wrapText="true" />
+            <Label text="Using the drop-down lists, you may select which of your columns correspond to the following five plotting variables: X, σX, Y, σY, and rho." wrapText="true" />
             <HBox alignment="CENTER_LEFT">
                <children>
                   <Label fx:id="uncLabel" text="Which format are your uncertainty values in?" />

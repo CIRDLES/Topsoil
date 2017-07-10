@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.table.command;
 import javafx.scene.control.TableColumn;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
+import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -23,7 +24,7 @@ public class ColumnRenameCommand implements Command {
     /**
      * The {@code TableColumn} that was renamed.
      */
-    private TableColumn<TopsoilDataEntry, Double> column;
+    private TopsoilDataColumn column;
 
     /**
      * The old name of the column.
@@ -42,11 +43,11 @@ public class ColumnRenameCommand implements Command {
     /**
      * Constructs a new {@code ColumnRenameCommand} for the specified column.
      *
-     * @param column    the TableColumn that was renamed
+     * @param column    the TopsoilDataColumn that was renamed
      * @param oldName   the old name of the column
      * @param newName   the new name of the column
      */
-    public ColumnRenameCommand(TableColumn<TopsoilDataEntry, Double> column, String oldName, String newName) {
+    public ColumnRenameCommand(TopsoilDataColumn column, String oldName, String newName) {
         this.column = column;
         this.oldName = oldName;
         this.newName = newName;
@@ -60,14 +61,14 @@ public class ColumnRenameCommand implements Command {
      * Called to execute the column rename.
      */
     public void execute() {
-        column.setText(newName);
+        column.setName(newName);
     }
 
     /**
      * Called to undo the column rename.
      */
     public void undo() {
-        column.setText(oldName);
+        column.setName(oldName);
     }
 
     /** {@inheritDoc}

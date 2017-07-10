@@ -10,7 +10,6 @@ import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.plot.Plot;
@@ -39,7 +38,7 @@ public class TopsoilDataTable {
     /**
      * Table columns which have been associated with a {@code Variable}.
      */
-    private Map<Variable<Number>, TopsoilDataColumn> columnForVariable;
+    private Map<Variable<Number>, TopsoilDataColumn> variableColumnMap;
 
     /**
      * The table data in the form of {@code TopsoilDataColumn}s.
@@ -50,11 +49,6 @@ public class TopsoilDataTable {
      * The number of rows of data.
      */
     private int numRows;
-
-    /**
-     * A {@code List} of {@code StringProperty}s for each of the column names.
-     */
-    private ObservableList<StringProperty> columnNameProperties;
 
     /**
      * The {@code StringProperty} for the title of the table.
@@ -118,12 +112,10 @@ public class TopsoilDataTable {
         this.numRows = rows.length == 0 ? 1 : rows.length;
         this.isotopeType = new SimpleObjectProperty<>(isotopeType);
         this.uncertaintyFormat = format;
-        this.columnForVariable = new HashMap<>();
+        this.variableColumnMap = new HashMap<>();
         this.dataColumns = convertRowData(rows);
-        this.columnNameProperties = FXCollections.observableArrayList(createColumnHeaderProperties(columnNames));
+        addNamesToColumns(columnNames);
         this.openPlots = new HashMap<>();
-
-        resetVariableMapping();
     }
 
     /**
@@ -140,12 +132,10 @@ public class TopsoilDataTable {
         this.numRows = rows.length;
         this.isotopeType = new SimpleObjectProperty<>(isotopeType);
         this.uncertaintyFormat = format;
-        this.columnForVariable = new HashMap<>();
+        this.variableColumnMap = new HashMap<>();
         this.dataColumns = convertRowData(rows);
-        this.columnNameProperties = FXCollections.observableArrayList(createColumnHeaderProperties(columnNames));
+        addNamesToColumns(columnNames);
         this.openPlots = new HashMap<>();
-
-        resetVariableMapping();
     }
 
     //***********************
@@ -176,50 +166,19 @@ public class TopsoilDataTable {
      * @param columnNames array of provided columnNameProperties
      * @return updated array of columnNameProperties
      */
-    private StringProperty[] createColumnHeaderProperties(String[] columnNames) {
+    private void addNamesToColumns(String[] columnNames) {
 
-        String[] defaultNames = new String[]{"Column1", "Column2", "Column3", "Column4", "Column5"};
-        String[] resultArr;
-        StringProperty[] result;
-
-        if (columnNames == null) {
-//            resultArr = isotopeType.getHeaders();
-            resultArr = defaultNames;
-
-            // if some column names are provided, populate
-        } else if (columnNames.length < defaultNames.length) {
-            int difference = defaultNames.length - columnNames.length;
-            resultArr = new String[defaultNames.length];
-            int numHeaders = defaultNames.length;
-
-            // Copy provided column names to resultArr.
-            System.arraycopy(columnNames, 0, resultArr, 0, numHeaders - difference);
-
-            // Fill in with default column names.
-            System.arraycopy(defaultNames, (numHeaders - difference),
-                             resultArr, (numHeaders - difference),
-                             (numHeaders - (numHeaders - difference)));
+        String title;
+        int i = 0;
+        while (i < dataColumns.size()) {
+            if (i >= columnNames.length) {
+                title = "Column" + i;
+            } else {
+                title = columnNames[i];
+            }
+            dataColumns.get(i).setName(title);
+            i++;
         }
-        else {
-            resultArr = columnNames.clone();
-        }
-
-        result = new SimpleStringProperty[resultArr.length];
-
-        for (int i = 0; i < resultArr.length; i++) {
-            result[i] = new SimpleStringProperty(resultArr[i]);
-        }
-
-        return result;
-    }
-
-    /**
-     * Returns the column names as their associated StringProperties.
-     *
-     * @return  an ObservableList of StringProperties
-     */
-    public ObservableList<StringProperty> getColumnNameProperties() {
-        return columnNameProperties;
     }
 
     /**
@@ -228,11 +187,11 @@ public class TopsoilDataTable {
      * @return  String[] of column names
      */
     public String[] getColumnNames() {
-        String[] result = new String[columnNameProperties.size()];
-        for (int i = 0; i < columnNameProperties.size(); i++) {
-            result[i] = columnNameProperties.get(i).get();
+        String[] names = new String[dataColumns.size()];
+        for (int i = 0; i < dataColumns.size(); i++) {
+            names[i] = dataColumns.get(i).getName();
         }
-        return result;
+        return names;
     }
 
     /**
@@ -265,8 +224,13 @@ public class TopsoilDataTable {
      *
      * @return  Map of Variables to column data
      */
-    public Map<Variable<Number>, TopsoilDataColumn> getColumnBindings() {
-        return columnForVariable;
+    public Map<Variable<Number>, TopsoilDataColumn> getVariableAssignments() {
+        return variableColumnMap;
+    }
+
+    public void setVariableAssignments(Map<Variable<Number>, TopsoilDataColumn> assignments) {
+        variableColumnMap = assignments;
+        // TODO Check if TopsoilDataColumns have had their variables set correctly.
     }
 
     /**
@@ -328,19 +292,6 @@ public class TopsoilDataTable {
      }
 
     /**
-     * Adds a row of DoubleProperties to the existing data.
-     *
-     * @param index the index where the row is being added
-     * @param row   a DoubleProperty array
-     */
-    public void addRow(int index, DoubleProperty[] row) {
-        for (int i = 0; i < Math.min(row.length, dataColumns.size()); i++) {
-            dataColumns.get(i).add(index, row[i]);
-        }
-        numRows++;
-    }
-
-    /**
      * Adds a row to the existing data.
      *
      * @param index the index where the row is being added
@@ -365,6 +316,21 @@ public class TopsoilDataTable {
         numRows--;
     }
 
+    void addColumn(int index, TopsoilDataColumn column) {
+        dataColumns.add(index, column);
+
+        if (column.hasVariable()) {
+            variableColumnMap.put(column.getVariable(), column);
+        }
+    }
+
+    void removeColumn(int index) {
+        if (variableColumnMap.containsValue(dataColumns.get(index))) {
+            variableColumnMap.remove(dataColumns.get(index).getVariable());
+        }
+        dataColumns.remove(index);
+    }
+
     /**
      * Converts the supplied row data ({@code TopsoilDataEntries}) into column data.
      *
@@ -375,16 +341,19 @@ public class TopsoilDataTable {
 
         ObservableList<TopsoilDataColumn> dataColumns = FXCollections.observableArrayList();
 
+        int maxRowLength = 0;
+        for (TopsoilDataEntry row : rows) {
+            maxRowLength = Math.max(maxRowLength, row.getProperties().size());
+        }
+
         if (rows.length <= 0) {
-            // TODO Read in any number of columns.
-            for (int colIndex = 0; colIndex < 5; colIndex++) {
+            for (int colIndex = 0; colIndex < maxRowLength; colIndex++) {
                 TopsoilDataColumn dataColumn = new TopsoilDataColumn();
                     dataColumn.add(new SimpleDoubleProperty(0.0));
                 dataColumns.add(dataColumn);
             }
         } else {
-            // TODO Read in any number of columns.
-            for (int colIndex = 0; colIndex < 5; colIndex++) {
+            for (int colIndex = 0; colIndex < maxRowLength; colIndex++) {
                 TopsoilDataColumn dataColumn = new TopsoilDataColumn();
                 for (TopsoilDataEntry row : rows) {
                     if (row.getProperties().size() <= colIndex) {
@@ -410,16 +379,19 @@ public class TopsoilDataTable {
 
         ObservableList<TopsoilDataColumn> dataColumns = FXCollections.observableArrayList();
 
+        int maxRowLength = 0;
+        for (Double[] row : rows) {
+            maxRowLength = Math.max(maxRowLength, row.length);
+        }
+
         if (rows.length <= 0) {
-            // TODO Read in any number of columns.
-            for (int colIndex = 0; colIndex < 5; colIndex++) {
+            for (int colIndex = 0; colIndex < maxRowLength; colIndex++) {
                 TopsoilDataColumn dataColumn = new TopsoilDataColumn();
                 dataColumn.add(new SimpleDoubleProperty(0.0));
                 dataColumns.add(dataColumn);
             }
         } else {
-            // TODO Read in any number of columns.
-            for (int colIndex = 0; colIndex < 5; colIndex++) {
+            for (int colIndex = 0; colIndex < maxRowLength; colIndex++) {
                 TopsoilDataColumn dataColumn = new TopsoilDataColumn();
                 for (Double[] row : rows) {
                     if (row.length <= colIndex) {
@@ -436,18 +408,7 @@ public class TopsoilDataTable {
     }
 
     /**
-     * Resets the mapping of plotting variables to the columns in their corresponding slots.
-     */
-    public void resetVariableMapping() {
-        columnForVariable.put(Variables.X, dataColumns.get(0));
-        columnForVariable.put(Variables.Y, dataColumns.get(1));
-        columnForVariable.put(Variables.SIGMA_X, dataColumns.get(2));
-        columnForVariable.put(Variables.SIGMA_Y, dataColumns.get(3));
-        columnForVariable.put(Variables.RHO, dataColumns.get(4));
-    }
-
-    /**
-     * Returns true if the columnForVariable are empty.
+     * Returns true if the variableColumnMap are empty.
      *
      * @return  true or false
      */
@@ -466,7 +427,7 @@ public class TopsoilDataTable {
 
     /**
      * Returns a Collection of {@code PlotInformation}, each containing information on an open plot associated with
-     * this columnForVariable tableView.
+     * this variableColumnMap tableView.
      *
      * @return  a Collection of PlotInformation objects
      */
@@ -475,7 +436,7 @@ public class TopsoilDataTable {
     }
 
     /**
-     * Adds information about an open plot to this columnForVariable tableView.
+     * Adds information about an open plot to this variableColumnMap tableView.
      *
      * @param plotInfo  a new PlotInformation
      */
@@ -484,7 +445,7 @@ public class TopsoilDataTable {
     }
 
     /**
-     * Removes information about an open plot to this columnForVariable tableView (typically once the tableView has been closed).
+     * Removes information about an open plot to this variableColumnMap tableView (typically once the tableView has been closed).
      *
      * @param plotType  the TopsoilPlotType of the plot to be removed
      */

@@ -48,6 +48,11 @@ public class DependentVariable<T> extends BaseVariable<T> {
         this.dependency = dependency;
     }
 
+    public DependentVariable(String name, String abbreviation, Variable<T> dependency) {
+        super(name, abbreviation);
+        this.dependency = dependency;
+    }
+
     //***********************
     // Methods
     //***********************
