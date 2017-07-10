@@ -30,7 +30,7 @@ plot.drawUncertaintyBars = function () {
 plot.updateUncertaintyBars = function () {
     if (plot.uncertaintyBarsVisible) {
 
-        var uncertaintyBars = plot.ncertaintyBarGroup.selectAll(".uncertaintyBar").data(plot.data);
+        var uncertaintyBars = plot.uncertaintyBarGroup.selectAll(".uncertaintyBar").data(plot.data);
 
         uncertaintyBars.exit().remove();
 
@@ -69,9 +69,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Uncertainty Bar Opacity"))
+            .attr("opacity", plot.getProperty("Bar Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Uncertainty Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Bar Fill Color"));
 
         uncertaintyBars.select(".VLine")
             .attr("y1", function (d) {
@@ -86,9 +86,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x);
             })
-            .attr("opacity", plot.getProperty("Uncertainty Bar Opacity"))
+            .attr("opacity", plot.getProperty("Bar Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Uncertainty Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Bar Fill Color"));
 
         uncertaintyBars.select(".topCap")
             .attr("y1", function (d) {
@@ -103,9 +103,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + 0.2*(plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Uncertainty Bar Opacity"))
+            .attr("opacity", plot.getProperty("Bar Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Uncertainty Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Bar Fill Color"));
 
         uncertaintyBars.select(".leftCap")
             .attr("y1", function (d) {
@@ -120,9 +120,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x - (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Uncertainty Bar Opacity"))
+            .attr("opacity", plot.getProperty("Bar Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Uncertainty Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Bar Fill Color"));
 
         uncertaintyBars.select(".bottomCap")
             .attr("y1", function (d) {
@@ -137,9 +137,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + 0.2*(plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Uncertainty Bar Opacity"))
+            .attr("opacity", plot.getProperty("Bar Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Uncertainty Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Bar Fill Color"));
 
         uncertaintyBars.select(".rightCap")
             .attr("y1", function (d) {
@@ -154,9 +154,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Uncertainty Bar Opacity"))
+            .attr("opacity", plot.getProperty("Bar Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Uncertainty Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Bar Fill Color"));
     }
 };
 

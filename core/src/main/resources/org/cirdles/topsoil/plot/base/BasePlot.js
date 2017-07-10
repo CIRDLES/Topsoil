@@ -18,17 +18,17 @@ plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
 plot.propertiesKeys = [
     'Point Fill Color',
     'Ellipse Fill Color',
-    'Uncertainty Bar Fill Color',
+    'Bar Fill Color',
     'Point Opacity',
     'Ellipse Opacity',
-    'Uncertainty Bar Opacity',
+    'Bar Opacity',
     'Title',
     'Uncertainty',
     'X Axis',
     'Y Axis',
     'Points',
     'Ellipses',
-    'Uncertainty Bars',
+    'Bars',
     'Concordia',
     'Evolution',
     'Isotope'];
@@ -339,7 +339,7 @@ plot.manageEllipses = function () {
 plot.manageUncertaintyBars = function () {
 
     // If UncertaintyBars should be visible...
-    if (plot.getProperty("UncertaintyBars")) {
+    if (plot.getProperty("Bars")) {
 
         // If the UncertaintyBars simply need to be updated...
         if (plot.uncertaintyBarsVisible) {
