@@ -514,11 +514,19 @@ public class TopsoilTableController {
         updateColumnListeners();
 
         tabContent.getTableView().getColumns().get(index).textProperty().bindBidirectional(column.columnHeaderProperty());
+
+        for (PlotInformation plotInfo : table.getOpenPlots()) {
+            plotInfo.getPlot().setData(getPlotData());
+        }
     }
 
     public void removeColumn(int index) {
         tabContent.removeColumn(index);
         table.removeColumn(index);
+
+        for (PlotInformation plotInfo : table.getOpenPlots()) {
+            plotInfo.getPlot().setData(getPlotData());
+        }
     }
 
     public int getColumnIndex(TableColumn column) {

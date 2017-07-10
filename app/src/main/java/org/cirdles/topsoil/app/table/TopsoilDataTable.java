@@ -324,9 +324,16 @@ public class TopsoilDataTable {
 
     void addColumn(int index, TopsoilDataColumn column) {
         dataColumns.add(index, column);
+
+        if (column.hasVariable()) {
+            variableColumnMap.put(column.getVariable(), column);
+        }
     }
 
     void removeColumn(int index) {
+        if (variableColumnMap.containsValue(dataColumns.get(index))) {
+            variableColumnMap.remove(dataColumns.get(index).getVariable());
+        }
         dataColumns.remove(index);
     }
 
