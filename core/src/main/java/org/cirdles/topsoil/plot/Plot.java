@@ -58,4 +58,6 @@ public interface Plot extends Displayable {
      */
     void recenter();
 
+    void setProperty(String key, Object value);
+
 }

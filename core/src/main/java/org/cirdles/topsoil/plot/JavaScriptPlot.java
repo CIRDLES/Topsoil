@@ -325,7 +325,17 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         super.setProperties(properties);
 
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("setProperties", properties));
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
+        }
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public void setProperty(String key, Object value) {
+        super.setProperty(key, value);
+
+        if (topsoil != null) {
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
         }
     }
 }
