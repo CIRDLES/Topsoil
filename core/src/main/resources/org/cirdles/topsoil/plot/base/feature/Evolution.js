@@ -4,18 +4,65 @@
 
 evolution = plot.evolution = {};
 
+/**
+ * The values of each of the displayed isochrons, in millions of years(?).
+ * TODO Ask whether value is millions or thousands.
+ *
+ * @type {Array}
+ */
 evolution.isochronValues = [];
+
+/**
+ * The values of each of the displayed "horizontal" contours.
+ *
+ * @type {Array}
+ */
 evolution.ar48iContourValues = [];
 
+/**
+ * Describes the domain of "ar08" as [min, max].
+ *
+ * @type {[*]}
+ */
 evolution.ar08lim = [2];
+
+/**
+ * Describes the domain of "ar48" as [min, max].
+ *
+ * @type {[*]}
+ */
 evolution.ar48lim = [2];
 
+/**
+ * A structure that holds (M)atrix e(X)(P)onential functions used in calculations.
+ *
+ * @type {{}}
+ */
 var mxp = {};
 
+/**
+ * A structure that holds the lambdas for calculation.
+ *
+ * @type {{}}
+ */
 var lambda = {};
 
+/**
+ * Infinity.
+ *
+ * @type {Number}
+ */
 var INF = Number.MAX_VALUE;
 
+/**
+ * Returns a 3x3 diagonal matrix (a matrix in which all entries outside the main diagonal are zero), where the main
+ * diagonal is composed of the provided three arguments.
+ *
+ * @param x entry (0,0)
+ * @param y entry (1,1)
+ * @param z entry (2,2)
+ * @returns {[*,*,*]}
+ */
 var diag = function (x, y, z) {
     return [
         [x, 0, 0],
@@ -24,6 +71,7 @@ var diag = function (x, y, z) {
     ];
 };
 
+// TODO ???
 var indicatorCompare = function (f) {
     return function (a, b) {
         var result = [];
@@ -36,20 +84,33 @@ var indicatorCompare = function (f) {
     };
 };
 
+/**
+ * Returns true if a is greater than or equal to b.
+ */
 var ge = indicatorCompare(function (a, b) {
     return a >= b
 });
+/**
+ * Returns true if a is greater than b.
+ */
 var gt = indicatorCompare(function (a, b) {
     return a > b
 });
+/**
+ * Returns true if a is less than or equal to b.
+ */
 var le = indicatorCompare(function (a, b) {
     return a <= b
 });
+/**
+ * Returns true if a is less than b.
+ */
 var lt = indicatorCompare(function (a, b) {
     return a < b
 });
 
 // see matlab documentation
+// TODO ???
 var max = function (a, b) {
     var result = [];
 
@@ -64,6 +125,12 @@ var max = function (a, b) {
     return result;
 };
 
+/**
+ * A matrix with two columns (they look like rows below) and a row for each plotted isochron. The first column contains
+ * slopes, and the second column contains y-intercepts, so that y = (abmat[n][0] * x) + abmat[n][1].
+ *
+ * @type {[*]}
+ */
 var abmat = [
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0]
@@ -72,6 +139,12 @@ var abmat = [
 var xminpoints = [0, 0, 0, 0, 0, 0, 0, 0];
 var yminpoints = [0, 0, 0, 0, 0, 0, 0, 0];
 
+/**
+ * Returns an array containing a one for each item in the array n.
+ *
+ * @param n
+ * @returns {Array}
+ */
 var ones = function (n) {
     var result = [];
 
@@ -113,6 +186,12 @@ var linspace = function (x1, x2, n) {
     return result;
 };
 
+/**
+ * Returns the average of all items in the array xs.
+ *
+ * @param xs
+ * @returns {number}
+ */
 var mean = function (xs) {
     var result = 0;
 
@@ -123,6 +202,13 @@ var mean = function (xs) {
     return result / xs.length;
 };
 
+/**
+ *
+ *
+ * @param f
+ * @param x0
+ * @returns {*}
+ */
 var fzero = function (f, x0) {
     var ε = 0.0001;
 
@@ -135,7 +221,7 @@ var fzero = function (f, x0) {
     for (var i = 0; i < 100; i++) {
         var decrement = f(x) / df(x);
 
-        if (decrement === Infinity || decrement === NaN) {  //decrement === INF?
+        if (decrement === Infinity || isNaN(decrement)) {  //decrement === INF?
             break;
         }
 
@@ -145,6 +231,12 @@ var fzero = function (f, x0) {
     return x;
 };
 
+/**
+ * Returns an array containing the non-zero values in the supplied array.
+ *
+ * @param xs
+ * @returns {Array}
+ */
 var find = function (xs) {
     var result = [];
 
@@ -157,6 +249,13 @@ var find = function (xs) {
     return result;
 };
 
+/**
+ * Returns an array containing the values at the specified indices in xs.
+ *
+ * @param indices
+ * @param xs
+ * @returns {Array}
+ */
 var select = function (indices, xs) {
     var result = [];
 
@@ -195,15 +294,19 @@ var zeros = function (args_) {
     return result;
 };
 
-
-
+/**
+ * True if the evolution matrix is toggled on.
+ */
 if (plot.evolutionMatrixVisible == null) {
     plot.evolutionMatrixVisible = false;
 }
 
+/**
+ * Calculates the necessary values for the SVG elements for each isochron and "contour".
+ */
 plot.calculateIsochrons = function () {
 
-    // TODO Allow support for custom isochrons?
+    // TODO Allow support for custom isochrons
     evolution.isochronValues = [
         25000,
         50000,
@@ -215,6 +318,7 @@ plot.calculateIsochrons = function () {
         INF
     ];
 
+    // TODO Allow support for custom contour lines
     evolution.ar48iContourValues = [
         0,
         0.25,
@@ -228,12 +332,23 @@ plot.calculateIsochrons = function () {
         2.25
     ];
 
-    lambda.U238 = topsoil.defaultLambda.U238;
-    // lambda.U238 = 1.55125e-10;
-    lambda.U234 = topsoil.defaultLambda.U234;
-    // lambda.U234 = 2.82206e-6;
-    lambda.Th230 = topsoil.defaultLambda.Th230;
-    // lambda.Th230 = 9.1705e-6;
+    if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) {
+        lambda.U238 = plot.getProperty('U238');
+    } else {
+        lambda.U238 = topsoil.defaultLambda.U238;
+    }
+
+    if (plot.getProperty('U234') != null && !isNaN(plot.getProperty('U234'))) {
+        lambda.U234 = plot.getProperty('U234');
+    } else {
+        lambda.U234 = topsoil.defaultLambda.U234;
+    }
+
+    if (plot.getProperty('Th230') != null && !isNaN(plot.getProperty('Th230'))) {
+        lambda.Th230 = plot.getProperty('Th230');
+    } else {
+        lambda.Th230 = topsoil.defaultLambda.Th230;
+    }
 
     mxp.A = [
         [-lambda.U238, 0, 0],
@@ -241,34 +356,44 @@ plot.calculateIsochrons = function () {
         [0, lambda.U234, -lambda.Th230]
     ];
 
+    // I don't know what Q is, but this is some kind of 3x3 matrix describing something to do with UTh.
     mxp.QUTh = [
         [((lambda.Th230 - lambda.U238) * (lambda.U234 - lambda.U238)) / (lambda.U234 * lambda.U238), 0, 0],
         [(lambda.Th230 - lambda.U238) / lambda.U234, (lambda.Th230 - lambda.U234) / lambda.U234, 0],
         [1, 1, 1]
     ];
 
+    // Returns a 3x3 diagonal matrix where (0,0) = e^((opposite of U238) * parameter),
+    //                                     (1,1) = e^((opposite of U234) * parameter), and
+    //                                     (2,2) = e^((opposite of Th230) * parameter)
+    //     ... where e is Euler's number.
     mxp.GUTh = function (t) {
         return diag(exp(-lambda.U238 * t), exp(-lambda.U234 * t), exp(-lambda.Th230 * t));
     };
 
+    // I assume this is the "Q" of the inverse of UTh
     mxp.QinvUTh = [
         [(lambda.U234 * lambda.U238) / ((lambda.Th230 - lambda.U238) * (lambda.U234 - lambda.U238)), 0, 0],
         [-(lambda.U234 * lambda.U238) / ((lambda.Th230 - lambda.U234) * (lambda.U234 - lambda.U238)), lambda.U234 / (lambda.Th230 - lambda.U234), 0],
         [(lambda.U234 * lambda.U238) / ((lambda.Th230 - lambda.U234) * (lambda.Th230 - lambda.U238)), -lambda.U234 / (lambda.Th230 - lambda.U234), 1]
     ];
 
+    // Returns the dot product of (the dot product of whatever QUTh is and mxp.GUTh) and mxp.QinvUTh
     mxp.UTh = function (t) {
         return dot(dot(mxp.QUTh, mxp.GUTh(t)), mxp.QinvUTh);
     };
 
+    // A second Uranium-Thorium function for the 230 concentration
     mxp.UTh_0 = function (t) {
         return dot(dot(mxp.QUTh[2], mxp.GUTh(t)), mxp.QinvUTh); // For the 230 concentration only (to solve for root)
     };
 
+    // A third Uranium-Thorium function for the 234 concentration
     mxp.UTh_4 = function (t) {
         return dot(dot(mxp.QUTh[1], mxp.GUTh(t)), mxp.QinvUTh); // For the 234 concentration only (to solve for root)
     };
 
+    // t =
     evolution.isochronValues.forEach(function (t, it) {
         if (t === INF) {
             abmat[1][it] = lambda.Th230 / lambda.U234 - 1; // note: works, but not sure how to evaluate this limit
@@ -291,6 +416,9 @@ plot.calculateIsochrons = function () {
 
 };
 
+/**
+ * Creates the SVG elements required to display the evolution matrix.
+ */
 plot.drawEvolutionMatrix = function () {
 
     if (plot.evolutionMatrixVisible) {
@@ -335,8 +463,7 @@ plot.updateEvolutionMatrix = function () {
         var r08lim = dot(evolution.ar08lim, lambda.U238 / lambda.Th230);
         var r48lim = dot(evolution.ar48lim, lambda.U238 / lambda.U234);
 
-
-        // now find where lines intesect bounding box (ar48lim, ar08lim)
+        // now find where lines intersect bounding box (ar48lim, ar08lim)
         var L = add(abmat[0], dot(abmat[1], r08lim[0])); // y-coord of intersections with left boundary of box
         var R = add(abmat[0], dot(abmat[1], r08lim[1])); // y-coord of intersections with right boundary of box
         var B = div(sub(r48lim[0], abmat[0]), abmat[1]); // x-coord of intersections with bottom boundary of box

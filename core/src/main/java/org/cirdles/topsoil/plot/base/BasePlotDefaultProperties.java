@@ -24,8 +24,8 @@ public class BasePlotDefaultProperties extends HashMap<String, Object> {
         put(POINT_OPACITY, 1.0);
         put(ELLIPSE_OPACITY, 1.0);
         put(BAR_OPACITY, 1.0);
-        put(LAMBDA_235, 9.8485e-10);
-        put(LAMBDA_238, 1.55125e-10);
+        put(LAMBDA_U235, 9.8485e-10);
+        put(LAMBDA_U238, 1.55125e-10);
         put(UNCERTAINTY, 2.0);
         put(POINTS, true);
         put(ELLIPSES, false);

@@ -16,6 +16,11 @@
 
 plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
 plot.propertiesKeys = [
+    'U234',
+    'U235',
+    'U238',
+    'Th230',
+
     'Point Fill Color',
     'Ellipse Fill Color',
     'Bar Fill Color',
