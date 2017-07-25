@@ -38,8 +38,10 @@ plot.drawConcordia = function() {
 plot.updateConcordia = function() {
     if (plot.concordiaVisible) {
         initializeWetherill({
-            LAMBDA_235: topsoil.defaultLambda.U235,
-            LAMBDA_238: topsoil.defaultLambda.U238
+            LAMBDA_235: (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235'))) ?
+                plot.getProperty('U235') : topsoil.defaultLambda.U235,
+            LAMBDA_238: (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) ?
+                plot.getProperty('U238') : topsoil.defaultLambda.U238
         });
 
         var minT = Math.max(

@@ -23,8 +23,10 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.plot.base.BasePlot;
 import org.cirdles.topsoil.plot.internal.BoundsToRectangle;
 import org.cirdles.topsoil.plot.internal.IsBlankImage;
+import org.cirdles.topsoil.plot.internal.SVGSaver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -301,6 +303,11 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         return svgDocument;
     }
 
+    @Override
+    public void saveAsSVGDocument() {
+        new SVGSaver().save(displayAsSVGDocument());
+    }
+
     /**{@inheritDoc}*/
     @Override
     public void recenter() {
@@ -325,7 +332,17 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         super.setProperties(properties);
 
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("setProperties", properties));
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
+        }
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public void setProperty(String key, Object value) {
+        super.setProperty(key, value);
+
+        if (topsoil != null) {
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
         }
     }
 }

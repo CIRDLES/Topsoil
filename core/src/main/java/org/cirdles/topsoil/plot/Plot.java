@@ -54,6 +54,14 @@ public interface Plot extends Displayable {
     void setProperties(Map<String, Object> properties);
 
     /**
+     * Sets a single property for the {@code Plot}.
+     *
+     * @param key   String property key
+     * @param value Object property value
+     */
+    void setProperty(String key, Object value);
+
+    /**
      * Re-centers the plot to its default view.
      */
     void recenter();

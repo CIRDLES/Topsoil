@@ -30,13 +30,3 @@ var sub = numeric.sub;
 var exp = Math.exp;
 var dot = numeric.dot;
 var neg = numeric.neg;
-
-var mean = function (xs) {
-    var result = 0;
-
-    for (var i = 0; i < xs.length; i++) {
-        result += xs[i];
-    }
-
-    return result / xs.length;
-};
