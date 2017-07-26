@@ -66,4 +66,6 @@ public interface Plot extends Displayable {
      */
     void recenter();
 
+    void cancelFXApplicationThread();
+
 }

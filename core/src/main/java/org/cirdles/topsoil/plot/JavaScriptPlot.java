@@ -15,6 +15,7 @@
  */
 package org.cirdles.topsoil.plot;
 
+import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Bounds;
@@ -344,5 +345,11 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         if (topsoil != null) {
             runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
         }
+    }
+
+    @Override
+    public void cancelFXApplicationThread() {
+        PlatformImpl.tkExit();
+        Platform.exit();
     }
 }
