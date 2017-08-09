@@ -110,7 +110,8 @@
                 .attr("width", plot.width)
                 .attr("height", plot.height);
 
-            plot.update(ts.data);
+            plot.removeAxes();
+            plot.initialize(ts.data);
         }
     };
 

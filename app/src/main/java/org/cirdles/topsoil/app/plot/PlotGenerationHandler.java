@@ -38,13 +38,13 @@ public class PlotGenerationHandler {
         // Check for open plots.
         List<Stage> stages = StageHelper.getStages();
         if (stages.size() > 1) {
-                    for (TopsoilTab tab : tabs.getTopsoilTabs()) {
-                        for (PlotInformation plotInfo : tab.getTableController().getTable().getOpenPlots()) {
-                            tab.getTableController().getTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
-                            plotInfo.getStage().close();
-                        }
-                    }
-                    generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
+            for (TopsoilTab tab : tabs.getTopsoilTabs()) {
+                for (PlotInformation plotInfo : tab.getTableController().getTable().getOpenPlots()) {
+                    tab.getTableController().getTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
+                    plotInfo.getStage().close();
+                }
+            }
+            generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
         } else {
             generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
         }
@@ -86,7 +86,7 @@ public class PlotGenerationHandler {
         // Create Plot Stage
         Stage plotStage = new Stage();
         plotStage.setScene(scene);
-        plotStage.setResizable(false);
+//        plotStage.setResizable(false);
         plotStage.getIcons().add(MainWindow.getWindowIcon());
 
         // Connect Plot with PropertiesPanel

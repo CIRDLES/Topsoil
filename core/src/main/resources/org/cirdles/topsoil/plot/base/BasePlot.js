@@ -174,6 +174,8 @@ plot.setData = function (data) {
  */
 plot.update = function (data) {
 
+    topsoil.bridge.println("WINDOW: " + window.innerWidth + ", BODY: " + d3.select("body").width);
+
     // Makes sure that the plot has been initialized.
     if (!plot.initialized) {
         plot.initialize(data);
@@ -483,4 +485,13 @@ plot.removeDataFeatures = function () {
 plot.removePlotFeatures = function () {
     plot.removeConcordia();
     plot.removeEvolutionMatrix();
+};
+
+
+/*
+ Since initialize() is called on each resize, removes old axes on plot.resize().
+ */
+plot.removeAxes = function () {
+    plot.area.selectAll(".x.axis").remove();
+    plot.area.selectAll(".y.axis").remove();
 };

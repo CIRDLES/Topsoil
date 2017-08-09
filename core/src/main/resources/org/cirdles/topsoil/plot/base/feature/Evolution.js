@@ -504,6 +504,7 @@ plot.updateEvolutionMatrix = function () {
         xendpoints = mul(xendpoints, plot.lambda.Th230 / plot.lambda.U238);
         yendpoints = mul(yendpoints, plot.lambda.U234 / plot.lambda.U238);
 
+
         // ACTUAL UPDATING PART
 
         plot.isochrons
