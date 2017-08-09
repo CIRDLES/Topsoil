@@ -174,6 +174,8 @@ plot.setData = function (data) {
  */
 plot.update = function (data) {
 
+    topsoil.bridge.println("WINDOW: " + window.innerWidth + ", BODY: " + d3.select("body").width);
+
     // Makes sure that the plot has been initialized.
     if (!plot.initialized) {
         plot.initialize(data);

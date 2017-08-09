@@ -19,9 +19,13 @@ import com.johnzeringue.extendsfx.layout.CustomVBox;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
@@ -79,13 +83,22 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
     }
 
     private void initializePlotAndConfig() {
-        plotAndConfig.getChildren().setAll(plot.displayAsNode());
+        Node node = plot.displayAsNode();
+        AnchorPane anchor = new AnchorPane(node);
+        plotAndConfig.getChildren().setAll(anchor);
+        AnchorPane.setLeftAnchor(node, 0.0);
+        AnchorPane.setRightAnchor(node, 0.0);
+        AnchorPane.setTopAnchor(node, 0.0);
+        AnchorPane.setBottomAnchor(node, 0.0);
+
+        HBox.setHgrow(anchor, Priority.ALWAYS);
     }
 
     @FXML
     private void initialize() {
         initializeToolbar();
         initializePlotAndConfig();
+        VBox.setVgrow(plotAndConfig, Priority.ALWAYS);
     }
 
 }

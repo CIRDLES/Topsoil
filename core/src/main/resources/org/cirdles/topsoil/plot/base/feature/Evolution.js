@@ -12,26 +12,14 @@ evolution = plot.evolution = {};
  */
 evolution.isochronValues = [];
 
+evolution.isochrons = {};
+
 /**
  * The values of each of the displayed "horizontal" contours.
  *
  * @type {Array}
  */
 evolution.ar48iContourValues = [];
-
-/**
- * Describes the domain of "ar08" as [min, max].
- *
- * @type {[*]}
- */
-evolution.ar08lim = [2];
-
-/**
- * Describes the domain of "ar48" as [min, max].
- *
- * @type {[*]}
- */
-evolution.ar48lim = [2];
 
 /**
  * A structure that holds (M)atrix e(X)(P)onential functions used in calculations.
@@ -124,17 +112,6 @@ var max = function (a, b) {
 
     return result;
 };
-
-/**
- * A matrix with two columns (they look like rows below) and a row for each plotted isochron. The first column contains
- * slopes, and the second column contains y-intercepts, so that y = (abmat[n][0] * x) + abmat[n][1].
- *
- * @type {[*]}
- */
-var abmat = [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0]
-];
 
 var xminpoints = [0, 0, 0, 0, 0, 0, 0, 0];
 var yminpoints = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -324,6 +301,14 @@ plot.calculateIsochrons = function () {
         INF
     ];
 
+    evolution.isochrons = [];
+
+    evolution.isochronValues.forEach( function(t) {
+        var isochron = {};
+        isochron.value = t;
+        evolution.isochrons.push(isochron);
+    });
+
     // TODO Allow support for custom contour lines
     evolution.ar48iContourValues = [
         0,
@@ -351,10 +336,11 @@ plot.calculateIsochrons = function () {
         [1, 1, 1]
     ];
 
-    // Returns a 3x3 diagonal matrix where (0,0) = e^((opposite of U238) * parameter),
-    //                                     (1,1) = e^((opposite of U234) * parameter), and
-    //                                     (2,2) = e^((opposite of Th230) * parameter)
-    //     ... where e is Euler's number.
+    // Returns a 3x3 diagonal matrix: [ e^((-U238) * t) ,        0        ,        0         ]
+    //                                [        0        , e^((-U234) * t) ,        0         ]
+    //                                [        0        ,        0        , e^((-Th230) * t) ]
+    //
+    //                                                   e = Euler's number.
     mxp.GUTh = function (t) {
         return diag(exp(-plot.lambda.U238 * t), exp(-plot.lambda.U234 * t), exp(-plot.lambda.Th230 * t));
     };
@@ -381,24 +367,24 @@ plot.calculateIsochrons = function () {
         return dot(dot(mxp.QUTh[1], mxp.GUTh(t)), mxp.QinvUTh); // For the 234 concentration only (to solve for root)
     };
 
-    // t =
-    evolution.isochronValues.forEach(function (t, it) {
-        if (t === INF) {
-            abmat[1][it] = plot.lambda.Th230 / plot.lambda.U234 - 1; // note: works, but not sure how to evaluate this limit
-            abmat[0][it] = plot.lambda.U238 / (plot.lambda.Th230 - plot.lambda.U238); // y-int with above slope through transient eqbm
-            xminpoints[it] = mxp.QUTh[2][0] / mxp.QUTh[0][0]; // limit is transient eqbm.  Lower starts all end up here after ~5 Myr
-            yminpoints[it] = mxp.QUTh[1][0] / mxp.QUTh[0][0];
-        } else {
-            var mxpNegAt = mxp.UTh(-t);
-            abmat[1][it] = -mxpNegAt[2][2] / mxpNegAt[2][1]; // slope
+    evolution.isochrons.forEach( function (isochron, i) {
+        if (isochron.value === INF) {
+            isochron.slope = lambda.Th230 / lambda.U234 - 1;
+            isochron.yIntercept = lambda.U238 / (lambda.Th230 - lambda.U238);
 
-            var mxpAt = mxp.UTh(t);
+            xminpoints[i] = mxp.QUTh[2][0] / mxp.QUTh[0][0];
+            yminpoints[i] = mxp.QUTh[1][0] / mxp.QUTh[0][0];
+        } else {
+            var mxpNegAt = mxp.UTh(-isochron.value);
+            isochron.slope = -mxpNegAt[2][2] / mxpNegAt[2][1]; // slope
+
+            var mxpAt = mxp.UTh(isochron.value);
             var x = -mxpAt[2][0] / mxpAt[2][1];
-            abmat[0][it] = dot(mxp.UTh_4(t), [1, x, 0]);   // y-int
+            isochron.yIntercept = dot(mxp.UTh_4(isochron.value), [1, x, 0]);   // y-int
 
             var mxpAtmin = dot(mxpAt, [1, 0, 0]);
-            xminpoints[it] = mxpAtmin[2] / mxpAtmin[0];
-            yminpoints[it] = mxpAtmin[1] / mxpAtmin[0];
+            xminpoints[i] = mxpAtmin[2] / mxpAtmin[0];
+            yminpoints[i] = mxpAtmin[1] / mxpAtmin[0];
         }
     });
 
@@ -443,7 +429,7 @@ plot.drawEvolutionMatrix = function () {
         plot.removeEvolutionMatrix();
     }
 
-    if (evolution.isochronValues.length <= 0 || evolution.ar48iContourValues <= 0) {
+    if (evolution.isochrons.length <= 0 || evolution.ar48iContourValues <= 0) {
         plot.calculateIsochrons();
     }
 
@@ -475,38 +461,26 @@ plot.updateEvolutionMatrix = function () {
 
     if (plot.evolutionMatrixVisible) {
 
-        evolution.ar08lim = plot.xAxisScale.domain();
-        evolution.ar48lim = plot.yAxisScale.domain();
+        var contourXLimits = dot(plot.xAxisScale.domain(), lambda.U238 / lambda.Th230);
+        var contourYLimits = dot(plot.yAxisScale.domain(), lambda.U238 / lambda.U234);
 
-        var r08lim = dot(evolution.ar08lim, plot.lambda.U238 / plot.lambda.Th230);
-        var r48lim = dot(evolution.ar48lim, plot.lambda.U238 / plot.lambda.U234);
+        var slopes = pluck(evolution.isochrons, 'slope');
+        var yIntercepts = pluck(evolution.isochrons, 'yIntercept');
 
-        // now find where lines intersect bounding box (ar48lim, ar08lim)
-        var L = add(abmat[0], dot(abmat[1], r08lim[0])); // y-coord of intersections with left boundary of box
-        var R = add(abmat[0], dot(abmat[1], r08lim[1])); // y-coord of intersections with right boundary of box
-        var B = div(sub(r48lim[0], abmat[0]), abmat[1]); // x-coord of intersections with bottom boundary of box
-        var T = div(sub(r48lim[1], abmat[0]), abmat[1]); // x-coord of intersections with top boundary of box
+        // now find where lines intersect bounding box (at the countour limits)
+        var L = add(yIntercepts, dot(slopes, contourXLimits[0])); // y-coord of intersections with left boundary of box
+        var R = add(yIntercepts, dot(slopes, contourXLimits[1])); // y-coord of intersections with right boundary of box
+        var B = div(sub(contourYLimits[0], yIntercepts), slopes); // x-coord of intersections with bottom boundary of box
+        var T = div(sub(contourYLimits[1], yIntercepts), slopes); // x-coord of intersections with top boundary of box
 
         var xendpoints = [
-            add(mul(dot(r08lim[0], ones(evolution.isochronValues.length)), gt(L, r48lim[0])), mul(B, le(L, r48lim[0]))),
-            add(mul(dot(r08lim[1], ones(evolution.isochronValues.length)), lt(R, r48lim[1])), mul(T, ge(R, r48lim[1])))
+            add(mul(dot(contourXLimits[0], ones(evolution.isochrons.length)), gt(L, contourYLimits[0])), mul(B, le(L, contourYLimits[0]))),
+            add(mul(dot(contourXLimits[1], ones(evolution.isochrons.length)), lt(R, contourYLimits[1])), mul(T, ge(R, contourYLimits[1])))
         ];
-        //
-        // var xendpoints = [
-        //     add(mul(dot(r08lim[0], ones(evolution.isochronValues.length)), r48lim[0]), mul(B, r48lim[0])),
-        //     add(mul(dot(r08lim[1], ones(evolution.isochronValues.length)), r48lim[1]), mul(T, r48lim[1]))
-        // ];
-        //
         var yendpoints = [
-            add(mul(L, gt(L, r48lim[0])), mul(dot(r48lim[0], ones(evolution.isochronValues.length)), le(L, r48lim[0]))),
-            add(mul(R, lt(R, r48lim[1])), mul(dot(r48lim[1], ones(evolution.isochronValues.length)), ge(R, r48lim[1])))
+            add(mul(L, gt(L, contourYLimits[0])), mul(dot(contourYLimits[0], ones(evolution.isochrons.length)), le(L, contourYLimits[0]))),
+            add(mul(R, lt(R, contourYLimits[1])), mul(dot(contourYLimits[1], ones(evolution.isochrons.length)), ge(R, contourYLimits[1])))
         ];
-        //
-        // var yendpoints = [
-        //     add(mul(L, gt(L, r48lim[0])), mul(dot(r48lim[0], ones(evolution.isochronValues.length)), le(L, r48lim[0]))),
-        //     add(mul(R, lt(R, r48lim[1])), mul(dot(r48lim[1], ones(evolution.isochronValues.length)), ge(R, r48lim[1])))
-        // ];
-
 
         // if endpoints extend beyond min possible (n0 = [1 0 0]), truncate them further
         xendpoints[0] = max(xendpoints[0], xminpoints); // since isochrons have positive slope, use maximum
@@ -515,71 +489,6 @@ plot.updateEvolutionMatrix = function () {
         // transform into activity ratios, svg plot box coordinates
         xendpoints = mul(xendpoints, plot.lambda.Th230 / plot.lambda.U238);
         yendpoints = mul(yendpoints, plot.lambda.U234 / plot.lambda.U238);
-
-        // var nts = 10;
-        //
-        // var nar48is = evolution.ar48iContourValues.length;
-        // var tv = repmat(linspace(0, 1e6, nts - 1).concat([2e6]), nar48is, 1);
-
-        // if any ar48i contours start above
-        // if (any(gt(evolution.ar48iContourValues, evolution.ar48lim[1]))) {
-        //     var iover = find(gt(evolution.ar48iContourValues, evolution.ar48lim[1]));
-        //     var ar48overs = select(iover, evolution.ar48iContourValues);
-        //
-        //     // solve for when ar48i = ar48imax
-        //     ar48overs.forEach(function (ar48over, iar48over) {
-        //         var root = function (t) {
-        //             return sub(dot(mxp.UTh_4(t), [1, ar48over * lambda.U238 / lambda.U234, 0]),
-        //                 div(mul(evolution.ar48lim[1], lambda.U238), lambda.U234));
-        //         };
-        //         var tstart = fzero(root, 50e3);
-        //
-        //         tv[iover[iar48over]] = linspace(tstart, 1e6, nts - 1).concat([5e6]);
-        //     });
-        // }
-        //
-        // // if any contours start below
-        // if (any(lt(evolution.ar48iContourValues, evolution.ar48lim[0]))) {
-        //     var iunder = find(lt(evolution.ar48iContourValues, evolution.ar48lim[0]));
-        //     var ar48unders = select(iunder, evolution.ar48iContourValues);
-        //
-        //     // solve for when ar48i = ar48imax
-        //     ar48unders.forEach(function (ar48under, iar48under) {
-        //         var root = function (t) {
-        //             return sub(dot(mxp.UTh_4(t), [1, ar48under * lambda.U238 / lambda.U234, 0]),
-        //                 div(mul(evolution.ar48lim[0], lambda.U238), lambda.U234));
-        //         };
-        //         var tstart = fzero(root, 50e3);
-        //
-        //         tv[iunder[iar48under]] = linspace(tstart, 1e6, nts - 1).concat([5e6]);
-        //     });
-        // }
-
-        // var xy = zeros(nar48is, 2, nts);
-        // var dardt = zeros(nar48is, 2, nts);
-
-        // evolution.ar48iContourValues.forEach(function (ar48i, iar48i) {
-        //     tv[iar48i].forEach(function (t, it) {
-        //         var n0 = [1, ar48i * lambda.U238 / lambda.U234, 0];
-        //         var nt = dot(mxp.UTh(t), n0);
-        //
-        //         xy[iar48i][0][it] = nt[2] / nt[0] * lambda.Th230 / lambda.U238;
-        //         xy[iar48i][1][it] = nt[1] / nt[0] * lambda.U234 / lambda.U238;
-        //
-        //         var dar48dnt1 = -nt[1] / nt[0] / nt[0] * lambda.U234 / lambda.U238;
-        //         var dar48dnt2 = 1 / nt[0] * lambda.U234 / lambda.U238;
-        //         var dar48dnt3 = 0;
-        //         var dar08dnt1 = -nt[2] / nt[0] / nt[0] * lambda.Th230 / lambda.U238;
-        //         var dar08dnt2 = 0;
-        //         var dar08dnt3 = 1 / nt[0] * lambda.Th230 / lambda.U238;
-        //
-        //         var dardnt = [[dar08dnt1, dar08dnt2, dar08dnt3], [dar48dnt1, dar48dnt2, dar48dnt3]];
-        //         var dntdt = dot(dot(mxp.A, mxp.UTh(t)), n0);
-        //
-        //         dardt[iar48i][0][it] = dot(dardnt, dntdt)[0];
-        //         dardt[iar48i][1][it] = dot(dardnt, dntdt)[1];
-        //     })
-        // });
 
         // ACTUAL UPDATING PART
 
@@ -597,26 +506,26 @@ plot.updateEvolutionMatrix = function () {
                 return plot.yAxisScale(yendpoints[1][index]);
             });
 
-        plot.ar48iContours.attr('d', function (ar48i, iar48i) {
+        plot.ar48iContours.attr('d', function (ar48i, i) {
             var path = [];
-            moveTo(path, [plot.xAxisScale(evolution.xy[iar48i][0][0]), plot.yAxisScale(evolution.xy[iar48i][1][0])]);
+            moveTo(path, [plot.xAxisScale(evolution.xy[i][0][0]), plot.yAxisScale(evolution.xy[i][1][0])]);
 
-            for (var i = 1; i < evolution.nts; i++) {
-                var deltaTOver3 = (evolution.tv[iar48i][i] - evolution.tv[iar48i][i - 1]) / 3;
+            for (var j = 1; j < evolution.nts; j++) {
+                var deltaTOver3 = (evolution.tv[i][j] - evolution.tv[i][j - 1]) / 3;
 
                 var p1 = [
-                    plot.xAxisScale(evolution.xy[iar48i][0][i - 1] + deltaTOver3 * evolution.dardt[iar48i][0][i - 1]),
-                    plot.yAxisScale(evolution.xy[iar48i][1][i - 1] + deltaTOver3 * evolution.dardt[iar48i][1][i - 1])
+                    plot.xAxisScale(evolution.xy[i][0][j - 1] + deltaTOver3 * evolution.dardt[i][0][j - 1]),
+                    plot.yAxisScale(evolution.xy[i][1][j - 1] + deltaTOver3 * evolution.dardt[i][1][j - 1])
                 ];
 
                 var p2 = [
-                    plot.xAxisScale(evolution.xy[iar48i][0][i] - deltaTOver3 * evolution.dardt[iar48i][0][i]),
-                    plot.yAxisScale(evolution.xy[iar48i][1][i] - deltaTOver3 * evolution.dardt[iar48i][1][i])
+                    plot.xAxisScale(evolution.xy[i][0][j] - deltaTOver3 * evolution.dardt[i][0][j]),
+                    plot.yAxisScale(evolution.xy[i][1][j] - deltaTOver3 * evolution.dardt[i][1][j])
                 ];
 
                 var p3 = [
-                    plot.xAxisScale(evolution.xy[iar48i][0][i]),
-                    plot.yAxisScale(evolution.xy[iar48i][1][i])
+                    plot.xAxisScale(evolution.xy[i][0][j]),
+                    plot.yAxisScale(evolution.xy[i][1][j])
                 ];
 
                 plot.cubicBezier(path, p1, p2, p3);
