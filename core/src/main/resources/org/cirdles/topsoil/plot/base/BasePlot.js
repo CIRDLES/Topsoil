@@ -206,6 +206,52 @@ plot.update = function (data) {
         plot.removeEllipses();
     }
 
+    var redrawEvolution = false;
+    var redrawConcordia = false;
+
+    if (plot.getProperty('U234') != null && !isNaN(plot.getProperty('U234'))) {
+        if (plot.lambda.U234 != plot.getProperty("U234")) {
+            plot.lambda.U234 = plot.getProperty("U234");
+            redrawConcordia = true;
+            redrawEvolution = true
+        }
+    } else if (plot.lambda.U234 == null) {
+        plot.lambda.U234 = topsoil.defaultLambda.U234;
+    }
+    if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235'))) {
+        if (plot.lambda.U235 != plot.getProperty("U235")) {
+            plot.lambda.U235 = plot.getProperty("U235");
+            redrawConcordia = true;
+        }
+    } else if (plot.lambda.U235 == null) {
+        plot.lambda.U235 = topsoil.defaultLambda.U235;
+    }
+    if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) {
+        if (plot.lambda.U238 != plot.getProperty("U238")) {
+            plot.lambda.U238 = plot.getProperty("U238");
+            redrawEvolution = true
+        }
+    } else if (plot.lambda.U238 == null) {
+        plot.lambda.U238 = topsoil.defaultLambda.U238;
+    }
+    if (plot.getProperty('Th230') != null && !isNaN(plot.getProperty('Th230'))) {
+        if (plot.lambda.Th230 != plot.getProperty("Th230")) {
+            plot.lambda.Th230 = plot.getProperty("Th230");
+            redrawEvolution = true
+        }
+    } else if (plot.lambda.Th230 == null) {
+        plot.lambda.Th230 = topsoil.defaultLambda.Th230;
+    }
+
+    if (redrawEvolution) {
+        plot.removeEvolutionMatrix();
+        plot.calculateIsochrons();
+    }
+
+    if (redrawConcordia) {
+        plot.removeConcordia();
+    }
+
     //draw title and axis labels
     d3.select(".titleText")
         .text(plot.getProperty("Title"))

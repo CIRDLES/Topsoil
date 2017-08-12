@@ -45,7 +45,7 @@ var mxp = {};
  *
  * @type {{}}
  */
-var lambda = {};
+plot.lambda = {};
 
 /**
  * Infinity.
@@ -338,34 +338,16 @@ plot.calculateIsochrons = function () {
         2.25
     ];
 
-    if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) {
-        lambda.U238 = plot.getProperty('U238');
-    } else {
-        lambda.U238 = topsoil.defaultLambda.U238;
-    }
-
-    if (plot.getProperty('U234') != null && !isNaN(plot.getProperty('U234'))) {
-        lambda.U234 = plot.getProperty('U234');
-    } else {
-        lambda.U234 = topsoil.defaultLambda.U234;
-    }
-
-    if (plot.getProperty('Th230') != null && !isNaN(plot.getProperty('Th230'))) {
-        lambda.Th230 = plot.getProperty('Th230');
-    } else {
-        lambda.Th230 = topsoil.defaultLambda.Th230;
-    }
-
     mxp.A = [
-        [-lambda.U238, 0, 0],
-        [lambda.U238, -lambda.U234, 0],
-        [0, lambda.U234, -lambda.Th230]
+        [-plot.lambda.U238, 0, 0],
+        [plot.lambda.U238, -plot.lambda.U234, 0],
+        [0, plot.lambda.U234, -plot.lambda.Th230]
     ];
 
     // I don't know what Q is, but this is some kind of 3x3 matrix describing something to do with UTh.
     mxp.QUTh = [
-        [((lambda.Th230 - lambda.U238) * (lambda.U234 - lambda.U238)) / (lambda.U234 * lambda.U238), 0, 0],
-        [(lambda.Th230 - lambda.U238) / lambda.U234, (lambda.Th230 - lambda.U234) / lambda.U234, 0],
+        [((plot.lambda.Th230 - plot.lambda.U238) * (plot.lambda.U234 - plot.lambda.U238)) / (plot.lambda.U234 * plot.lambda.U238), 0, 0],
+        [(plot.lambda.Th230 - plot.lambda.U238) / plot.lambda.U234, (plot.lambda.Th230 - plot.lambda.U234) / plot.lambda.U234, 0],
         [1, 1, 1]
     ];
 
@@ -374,14 +356,14 @@ plot.calculateIsochrons = function () {
     //                                     (2,2) = e^((opposite of Th230) * parameter)
     //     ... where e is Euler's number.
     mxp.GUTh = function (t) {
-        return diag(exp(-lambda.U238 * t), exp(-lambda.U234 * t), exp(-lambda.Th230 * t));
+        return diag(exp(-plot.lambda.U238 * t), exp(-plot.lambda.U234 * t), exp(-plot.lambda.Th230 * t));
     };
 
     // I assume this is the "Q" of the inverse of UTh
     mxp.QinvUTh = [
-        [(lambda.U234 * lambda.U238) / ((lambda.Th230 - lambda.U238) * (lambda.U234 - lambda.U238)), 0, 0],
-        [-(lambda.U234 * lambda.U238) / ((lambda.Th230 - lambda.U234) * (lambda.U234 - lambda.U238)), lambda.U234 / (lambda.Th230 - lambda.U234), 0],
-        [(lambda.U234 * lambda.U238) / ((lambda.Th230 - lambda.U234) * (lambda.Th230 - lambda.U238)), -lambda.U234 / (lambda.Th230 - lambda.U234), 1]
+        [(plot.lambda.U234 * plot.lambda.U238) / ((plot.lambda.Th230 - plot.lambda.U238) * (plot.lambda.U234 - plot.lambda.U238)), 0, 0],
+        [-(plot.lambda.U234 * plot.lambda.U238) / ((plot.lambda.Th230 - plot.lambda.U234) * (plot.lambda.U234 - plot.lambda.U238)), plot.lambda.U234 / (plot.lambda.Th230 - plot.lambda.U234), 0],
+        [(plot.lambda.U234 * plot.lambda.U238) / ((plot.lambda.Th230 - plot.lambda.U234) * (plot.lambda.Th230 - plot.lambda.U238)), -plot.lambda.U234 / (plot.lambda.Th230 - plot.lambda.U234), 1]
     ];
 
     // Returns the dot product of (the dot product of whatever QUTh is and mxp.GUTh) and mxp.QinvUTh
@@ -402,8 +384,8 @@ plot.calculateIsochrons = function () {
     // t =
     evolution.isochronValues.forEach(function (t, it) {
         if (t === INF) {
-            abmat[1][it] = lambda.Th230 / lambda.U234 - 1; // note: works, but not sure how to evaluate this limit
-            abmat[0][it] = lambda.U238 / (lambda.Th230 - lambda.U238); // y-int with above slope through transient eqbm
+            abmat[1][it] = plot.lambda.Th230 / plot.lambda.U234 - 1; // note: works, but not sure how to evaluate this limit
+            abmat[0][it] = plot.lambda.U238 / (plot.lambda.Th230 - plot.lambda.U238); // y-int with above slope through transient eqbm
             xminpoints[it] = mxp.QUTh[2][0] / mxp.QUTh[0][0]; // limit is transient eqbm.  Lower starts all end up here after ~5 Myr
             yminpoints[it] = mxp.QUTh[1][0] / mxp.QUTh[0][0];
         } else {
@@ -429,18 +411,18 @@ plot.calculateIsochrons = function () {
 
     evolution.ar48iContourValues.forEach(function (ar48i, iar48i) {
         evolution.tv[iar48i].forEach(function (t, it) {
-            var n0 = [1, ar48i * lambda.U238 / lambda.U234, 0];
+            var n0 = [1, ar48i * plot.lambda.U238 / plot.lambda.U234, 0];
             var nt = dot(mxp.UTh(t), n0);
 
-            evolution.xy[iar48i][0][it] = nt[2] / nt[0] * lambda.Th230 / lambda.U238;
-            evolution.xy[iar48i][1][it] = nt[1] / nt[0] * lambda.U234 / lambda.U238;
+            evolution.xy[iar48i][0][it] = nt[2] / nt[0] * plot.lambda.Th230 / plot.lambda.U238;
+            evolution.xy[iar48i][1][it] = nt[1] / nt[0] * plot.lambda.U234 / plot.lambda.U238;
 
-            var dar48dnt1 = -nt[1] / nt[0] / nt[0] * lambda.U234 / lambda.U238;
-            var dar48dnt2 = 1 / nt[0] * lambda.U234 / lambda.U238;
+            var dar48dnt1 = -nt[1] / nt[0] / nt[0] * plot.lambda.U234 / plot.lambda.U238;
+            var dar48dnt2 = 1 / nt[0] * plot.lambda.U234 / plot.lambda.U238;
             var dar48dnt3 = 0;
-            var dar08dnt1 = -nt[2] / nt[0] / nt[0] * lambda.Th230 / lambda.U238;
+            var dar08dnt1 = -nt[2] / nt[0] / nt[0] * plot.lambda.Th230 / plot.lambda.U238;
             var dar08dnt2 = 0;
-            var dar08dnt3 = 1 / nt[0] * lambda.Th230 / lambda.U238;
+            var dar08dnt3 = 1 / nt[0] * plot.lambda.Th230 / plot.lambda.U238;
 
             var dardnt = [[dar08dnt1, dar08dnt2, dar08dnt3], [dar48dnt1, dar48dnt2, dar48dnt3]];
             var dntdt = dot(dot(mxp.A, mxp.UTh(t)), n0);
@@ -496,8 +478,8 @@ plot.updateEvolutionMatrix = function () {
         evolution.ar08lim = plot.xAxisScale.domain();
         evolution.ar48lim = plot.yAxisScale.domain();
 
-        var r08lim = dot(evolution.ar08lim, lambda.U238 / lambda.Th230);
-        var r48lim = dot(evolution.ar48lim, lambda.U238 / lambda.U234);
+        var r08lim = dot(evolution.ar08lim, plot.lambda.U238 / plot.lambda.Th230);
+        var r48lim = dot(evolution.ar48lim, plot.lambda.U238 / plot.lambda.U234);
 
         // now find where lines intersect bounding box (ar48lim, ar08lim)
         var L = add(abmat[0], dot(abmat[1], r08lim[0])); // y-coord of intersections with left boundary of box
@@ -531,8 +513,8 @@ plot.updateEvolutionMatrix = function () {
         yendpoints[0] = max(yendpoints[0], yminpoints);
 
         // transform into activity ratios, svg plot box coordinates
-        xendpoints = mul(xendpoints, lambda.Th230 / lambda.U238);
-        yendpoints = mul(yendpoints, lambda.U234 / lambda.U238);
+        xendpoints = mul(xendpoints, plot.lambda.Th230 / plot.lambda.U238);
+        yendpoints = mul(yendpoints, plot.lambda.U234 / plot.lambda.U238);
 
         // var nts = 10;
         //
