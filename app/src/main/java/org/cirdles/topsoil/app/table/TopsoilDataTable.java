@@ -10,6 +10,7 @@ import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.plot.Plot;
@@ -271,15 +272,15 @@ public class TopsoilDataTable {
         }
         return tableEntries;
     }
-    
+
     public List<Double[]> getFormattedDataAsArrays() {
          ArrayList<Double[]> tableEntries = new ArrayList<>();
          Double[] arr;
- 
+
          for (int i = 0; i < numRows; i++) {
              arr = new Double[dataColumns.size()];
              for (int j = 0; j < dataColumns.size(); j++) {
-                 if  (j == 2 || j== 3) {
+                 if  (Variables.UNCERTAINTY_VARIABLES.contains(dataColumns.get(j).getVariable())) {
                      arr[j] = dataColumns.get(j).get(i).get() * uncertaintyFormat.getValue();
                  }
                  else {
