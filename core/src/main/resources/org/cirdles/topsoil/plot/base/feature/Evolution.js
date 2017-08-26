@@ -22,6 +22,20 @@ evolution.isochrons = {};
 evolution.ar48iContourValues = [];
 
 /**
+ * Describes the domain of "ar08" as [min, max].
+ *
+ * @type {[*]}
+ */
+evolution.ar08lim = [2];
+
+/**
+ * Describes the domain of "ar48" as [min, max].
+ *
+ * @type {[*]}
+ */
+evolution.ar48lim = [2];
+
+/**
  * A structure that holds (M)atrix e(X)(P)onential functions used in calculations.
  *
  * @type {{}}
@@ -369,8 +383,8 @@ plot.calculateIsochrons = function () {
 
     evolution.isochrons.forEach( function (isochron, i) {
         if (isochron.value === INF) {
-            isochron.slope = lambda.Th230 / lambda.U234 - 1;
-            isochron.yIntercept = lambda.U238 / (lambda.Th230 - lambda.U238);
+            isochron.slope = plot.lambda.Th230 / plot.lambda.U234 - 1;
+            isochron.yIntercept = plot.lambda.U238 / (plot.lambda.Th230 - plot.lambda.U238);
 
             xminpoints[i] = mxp.QUTh[2][0] / mxp.QUTh[0][0];
             yminpoints[i] = mxp.QUTh[1][0] / mxp.QUTh[0][0];
@@ -461,8 +475,8 @@ plot.updateEvolutionMatrix = function () {
 
     if (plot.evolutionMatrixVisible) {
 
-        var contourXLimits = dot(plot.xAxisScale.domain(), lambda.U238 / lambda.Th230);
-        var contourYLimits = dot(plot.yAxisScale.domain(), lambda.U238 / lambda.U234);
+        var contourXLimits = dot(plot.xAxisScale.domain(), plot.lambda.U238 / plot.lambda.Th230);
+        var contourYLimits = dot(plot.yAxisScale.domain(), plot.lambda.U238 / plot.lambda.U234);
 
         var slopes = pluck(evolution.isochrons, 'slope');
         var yIntercepts = pluck(evolution.isochrons, 'yIntercept');
@@ -508,6 +522,7 @@ plot.updateEvolutionMatrix = function () {
 
         plot.ar48iContours.attr('d', function (ar48i, i) {
             var path = [];
+
             moveTo(path, [plot.xAxisScale(evolution.xy[i][0][0]), plot.yAxisScale(evolution.xy[i][1][0])]);
 
             for (var j = 1; j < evolution.nts; j++) {
