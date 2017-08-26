@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.util.file;
+package org.cirdles.topsoil.plot.internal;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import static org.junit.Assert.assertTrue;
 
-import org.cirdles.topsoil.app.util.file.SVGSaver;
+import org.cirdles.topsoil.plot.internal.SVGSaver;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;

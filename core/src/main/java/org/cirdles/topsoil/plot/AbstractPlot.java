@@ -72,6 +72,12 @@ public abstract class AbstractPlot implements Plot {
         this.properties = properties;
     }
 
+    /**{@inheritDoc}*/
+    @Override
+    public void setProperty(String key, Object value) {
+        this.properties.put(key, value);
+    }
+
     /**
      * Attempts to destroy the {@code Plot} object to avoid concurrency problems in the {@code WebEngine}.
      *

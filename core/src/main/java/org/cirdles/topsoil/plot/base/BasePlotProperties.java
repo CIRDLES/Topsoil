@@ -19,8 +19,10 @@ public class BasePlotProperties {
     public static final String ELLIPSE_OPACITY = "Ellipse Opacity";
     public static final String BAR_OPACITY = "Bar Opacity";
     public static final String UNCERTAINTY = "Uncertainty";
-    public static final String LAMBDA_235 = "LAMBDA_235";
-    public static final String LAMBDA_238 = "LAMBDA_238";
+    public static final String LAMBDA_U234 = "U234";
+    public static final String LAMBDA_U235 = "U235";
+    public static final String LAMBDA_U238 = "U238";
+    public static final String LAMBDA_Th230 = "Th230";
     public static final String ISOTOPE_TYPE = "Isotope";
     public static final String CONCORDIA_LINE = "Concordia";
     public static final String EVOLUTION_MATRIX = "Evolution";

@@ -23,7 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import org.cirdles.topsoil.app.util.file.SVGSaver;
+import org.cirdles.topsoil.plot.internal.SVGSaver;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 

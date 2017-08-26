@@ -37,9 +37,34 @@ plot.drawConcordia = function() {
 
 plot.updateConcordia = function() {
     if (plot.concordiaVisible) {
+
+        if (plot.lambda.U235 == null) {
+            if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235'))) {
+                plot.lambda.U235 = plot.getProperty('U235');
+            } else {
+                plot.lambda.U235 = topsoil.defaultLambda.U235;
+            }
+        } else if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235')) ||
+            plot.lambda.U235 != plot.getProperty("U235")) {
+
+            plot.lambda.U235 = plot.getProperty("U235");
+        }
+
+        if (plot.lambda.U238 == null) {
+            if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) {
+                plot.lambda.U238 = plot.getProperty('U238');
+            } else {
+                plot.lambda.U238 = topsoil.defaultLambda.U238;
+            }
+        } else if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238')) ||
+            plot.lambda.U238 != plot.getProperty("U238")) {
+
+            plot.lambda.U238 = plot.getProperty("U238");
+        }
+
         initializeWetherill({
-            LAMBDA_235: topsoil.defaultLambda.U235,
-            LAMBDA_238: topsoil.defaultLambda.U238
+            LAMBDA_235: plot.lambda.U235,
+            LAMBDA_238: plot.lambda.U238
         });
 
         var minT = Math.max(

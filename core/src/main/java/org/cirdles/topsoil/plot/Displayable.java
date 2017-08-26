@@ -46,11 +46,18 @@ public interface Displayable {
     Node displayAsNode();
 
     /**
-     * Returns a {@link Document} representing this {@code Displayable}.
+     * Returns a {@code Document} representing this {@code Displayable}.
      *
      * @return a {@code Document} that may or may not be unique
      */
     default Document displayAsSVGDocument() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Saves a {@code Document} representing this {@code Displayable}.
+     */
+    default void saveAsSVGDocument() {
         throw new UnsupportedOperationException();
     }
 
