@@ -306,6 +306,11 @@ public class TopsoilTableController {
         }
     }
 
+    /**
+     * Updates the listeners on each of the data values.
+     * <p>This has to be done if the data columns' variable assignments are changed to or from an uncertainty
+     * variable.
+     */
     private void updateColumnListeners() {
         List<TopsoilDataColumn> columns = table.getDataColumns();
 
@@ -333,15 +338,6 @@ public class TopsoilTableController {
 
             for (int rowIndex = 0; rowIndex < dataEntries.size(); rowIndex++) {
                 final int row = rowIndex;
-
-                dataEntries.get(rowIndex).setValue(colIndex, columns.get(colIndex).get().get(rowIndex).get());
-
-                if (Variables.UNCERTAINTY_VARIABLES.contains(columns.get(colIndex).getVariable())) {
-                    if (Double.compare(dataEntries.get(rowIndex).getProperties().get(colIndex).get(), columns.get
-                            (colIndex).get(rowIndex).get()) == 0) {
-                        dataEntries.get(rowIndex).setValue(colIndex, columns.get(colIndex).get().get(rowIndex).get() * uncertaintyFormatValue);
-                    }
-                }
 
                 ChangeListener<Number> cellChangedListener = (observable, oldValue, newValue) -> {
 
