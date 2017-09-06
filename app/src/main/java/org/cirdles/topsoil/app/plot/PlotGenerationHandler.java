@@ -86,7 +86,7 @@ public class PlotGenerationHandler {
         // Create Plot Stage
         Stage plotStage = new Stage();
         plotStage.setScene(scene);
-//        plotStage.setResizable(false);
+        plotStage.setResizable(false);
         plotStage.getIcons().add(MainWindow.getWindowIcon());
 
         // Connect Plot with PropertiesPanel

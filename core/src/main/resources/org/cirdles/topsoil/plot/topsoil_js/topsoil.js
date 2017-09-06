@@ -104,7 +104,7 @@
 
             plot.area
                 .attr("width", plot.width + plot.margin.left + plot.margin.right)
-                .attr("height", plot.height + plot.margin.top + plot.margin.bottom)
+                .attr("height", plot.height + plot.margin.top + plot.margin.bottom);
 
             plot.plotArea
                 .attr("width", plot.width)

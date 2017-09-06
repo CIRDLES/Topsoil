@@ -235,16 +235,17 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
             WebEngine webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
 
-            webView.widthProperty().addListener(c -> {
-                if (topsoil != null) {
-                    topsoil.call("resize");
-                }
-            });
-            webView.heightProperty().addListener(c -> {
-                if (topsoil != null) {
-                    topsoil.call("resize");
-                }
-            });
+            // TODO Calls topsoil.js resize function
+//            webView.widthProperty().addListener(c -> {
+//                if (topsoil != null) {
+//                    topsoil.call("resize");
+//                }
+//            });
+//            webView.heightProperty().addListener(c -> {
+//                if (topsoil != null) {
+//                    topsoil.call("resize");
+//                }
+//            });
 
             // useful for debugging
             webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
