@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
@@ -77,6 +78,20 @@ public class SVGSaver {
                 LOGGER.error(null, ex);
             }
         });
+    }
+
+    /**
+     * Saves the vector image in Topsoil with the .svg file extension, to the provided file.
+     * <p>
+     * Note: Use this method if the project is in Swing, because it doesn't require the use of the JavaFX FileChooser.
+     */
+    public void save(Document svgDocument, File file) {
+        try {
+            writeSVGToOutputStream(svgDocument, new FileOutputStream(file));
+        } catch (IOException e) {
+            LOGGER.error(null, e);
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -45,6 +45,7 @@ import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -321,9 +322,9 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         return svgDocument;
     }
 
-    @Override
-    public void saveAsSVGDocument() {
-        new SVGSaver().save(displayAsSVGDocument());
+    /**{@inheritDoc}*/
+    public void saveAsSVGDocument(File file) {
+        new SVGSaver().save(displayAsSVGDocument(), file);
     }
 
     /**{@inheritDoc}*/
