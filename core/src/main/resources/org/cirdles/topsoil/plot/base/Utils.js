@@ -22,6 +22,14 @@ var close = function (path) {
     path.push("Z");
 };
 
+var pluck = function (maps, key) {
+    var values = [maps.length];
+    maps.forEach( function (m, i) {
+        values[i] = m[key];
+    });
+    return values
+};
+
 // math functions
 var add = numeric.add;
 var div = numeric.div;

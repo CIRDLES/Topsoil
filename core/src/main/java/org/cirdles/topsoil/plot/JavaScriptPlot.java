@@ -18,10 +18,16 @@ package org.cirdles.topsoil.plot;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebErrorEvent;
+import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.base.BasePlot;
@@ -228,6 +234,18 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
             WebEngine webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
+
+            // TODO Calls topsoil.js resize function
+//            webView.widthProperty().addListener(c -> {
+//                if (topsoil != null) {
+//                    topsoil.call("resize");
+//                }
+//            });
+//            webView.heightProperty().addListener(c -> {
+//                if (topsoil != null) {
+//                    topsoil.call("resize");
+//                }
+//            });
 
             // useful for debugging
             webEngine.setOnAlert(event -> LOGGER.info(event.getData()));

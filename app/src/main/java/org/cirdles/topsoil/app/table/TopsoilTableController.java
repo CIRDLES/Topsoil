@@ -4,21 +4,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.cirdles.topsoil.app.dataset.entry.Entry;
-import org.cirdles.topsoil.app.dataset.field.Field;
-import org.cirdles.topsoil.app.dataset.field.NumberField;
-import org.cirdles.topsoil.app.dataset.TopsoilRawData;
-import org.cirdles.topsoil.app.dataset.NumberDataset;
 import org.cirdles.topsoil.app.plot.variable.DependentVariable;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
@@ -26,7 +13,6 @@ import org.cirdles.topsoil.app.tab.TopsoilTabContent;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.command.TableColumnReorderCommand;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilPlotEntry;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.dialog.VariableChooserDialog;
 import org.cirdles.topsoil.app.util.listener.ListenerHandle;
@@ -212,36 +198,6 @@ public class TopsoilTableController {
     }
 
     /**
-     * Gets raw data from the {@link TopsoilDataTable} as a {@code TopsoilRawData}.
-     *
-     * @return  a TopsoilRawData of type Number
-     */
-    private TopsoilRawData<Number> getRawData() {
-        // Initialize fields
-        List<Field<Number>> fields = new ArrayList<>();
-
-        for (String header : table.getColumnNames()) {
-            Field<Number> field = new NumberField(header);
-            fields.add(field);
-        }
-
-        // Initialize entries
-        List<Entry> entries = new ArrayList<>();
-
-        // put relevant entries into entry list
-        List<TopsoilDataEntry> tableEntries = table.getDataEntries();
-        // TODO Take data from TopsoilDataTable.data
-        for (int i = 0; i < tableEntries.size(); i ++) {
-            TopsoilPlotEntry entry = new TopsoilPlotEntry();
-            for (int j = 0; j < table.getColumnNames().length; j++) {
-                entry.set(fields.get(j), tableEntries.get(i).getProperties().get(j).getValue());
-            }
-            entries.add(entry);
-        }
-        return new TopsoilRawData<>(fields, entries);
-    }
-
-    /**
      * Returns a {@code Collection} of the {@code Variable}s that have been assigned to columns.
      *
      * @return  Collection of Variables
@@ -286,15 +242,6 @@ public class TopsoilTableController {
             data.add(entry);
         }
         return data;
-    }
-
-    /**
-     * Gets the data in the {@link TopsoilDataTable} as a {@code NumberDataset}.
-     *
-     * @return  a NumberDataset
-     */
-    public NumberDataset getDataset() {
-        return new NumberDataset(table.getTitle(), getRawData());
     }
 
     public void showVariableChooserDialog(@Nullable List<Variable<Number>> required) {
@@ -359,6 +306,11 @@ public class TopsoilTableController {
         }
     }
 
+    /**
+     * Updates the listeners on each of the data values.
+     * <p>This has to be done if the data columns' variable assignments are changed to or from an uncertainty
+     * variable.
+     */
     private void updateColumnListeners() {
         List<TopsoilDataColumn> columns = table.getDataColumns();
 
@@ -386,15 +338,6 @@ public class TopsoilTableController {
 
             for (int rowIndex = 0; rowIndex < dataEntries.size(); rowIndex++) {
                 final int row = rowIndex;
-
-                dataEntries.get(rowIndex).setValue(colIndex, columns.get(colIndex).get().get(rowIndex).get());
-
-                if (Variables.UNCERTAINTY_VARIABLES.contains(columns.get(colIndex).getVariable())) {
-                    if (Double.compare(dataEntries.get(rowIndex).getProperties().get(colIndex).get(), columns.get
-                            (colIndex).get(rowIndex).get()) == 0) {
-                        dataEntries.get(rowIndex).setValue(colIndex, columns.get(colIndex).get().get(rowIndex).get() * uncertaintyFormatValue);
-                    }
-                }
 
                 ChangeListener<Number> cellChangedListener = (observable, oldValue, newValue) -> {
 
