@@ -100,6 +100,7 @@ public class PlotGenerationHandler {
         });
 
         plotStage.setOnCloseRequest(closeEvent -> {
+            plot.stop();
             tableController.getTable().removeOpenPlot(plotType);
             propertiesPanel.removePlot();
         });

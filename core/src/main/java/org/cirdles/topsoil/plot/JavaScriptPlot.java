@@ -70,6 +70,11 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
     private static final String HTML_TEMPLATE;
 
+    // When loaded into the WebEngine, it seems to significantly decrease the time it takes for the WebEngine to stop
+    // running JavaScript. The message itself is inconsequential.
+    private static final String HALT_MESSAGE = "This message will be loaded into the WebEngine to attempt to stop it " +
+                                               "from running JavaScript.";
+
     static {
         final ResourceExtractor RESOURCE_EXTRACTOR
                 = new ResourceExtractor(JavaScriptPlot.class);
@@ -252,7 +257,13 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
             webEngine.getLoadWorker().stateProperty().addListener(
                     (observable, oldValue, newValue) -> {
-                        if (newValue == SUCCEEDED) {
+
+                        if (webEngine.getDocument() != null &&
+                            webEngine.getDocument().getDoctype() != null &&
+                            newValue == SUCCEEDED) {
+
+                            System.out.println("LOADING TOPSOIL");
+
                             if (new IsBlankImage().test(screenCapture())) {
                                 webEngine.loadContent(buildContent());
                             }
@@ -269,6 +280,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                             }
 
                             loadFuture.complete(null);
+
                         }
                     });
 
@@ -366,8 +378,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     }
 
     @Override
-    public void cancelFXApplicationThread() {
-        PlatformImpl.tkExit();
-        Platform.exit();
+    public void stop() {
+        getWebEngine().loadContent(HALT_MESSAGE);
     }
 }
