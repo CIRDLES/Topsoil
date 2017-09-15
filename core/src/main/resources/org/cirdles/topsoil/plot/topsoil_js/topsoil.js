@@ -72,13 +72,13 @@
             .attr("width", plot.width + plot.margin.left + plot.margin.right)
             .attr("height", plot.height + plot.margin.top + plot.margin.bottom)
             // create a new coordinate space that accounts for the margins
-            .append("g");
+            .append("g")
+            .attr("transform", "translate(" + plot.margin.left + "," + plot.margin.top + ")");
 
     // create a clip path and backing for the plot area
     // this is a big performance booster
     // use this!
     plot.area.clipped = plot.area.append("g")
-            .attr("transform", "translate(" + plot.margin.left + "," + plot.margin.top + ")")
             .attr("clip-path", "url(#clipBox)");
 
     // the visible (white) backing is necessary for mouse events
@@ -110,7 +110,8 @@
                 .attr("width", plot.width)
                 .attr("height", plot.height);
 
-            plot.update(ts.data);
+            plot.removeAxes();
+            plot.initialize(ts.data);
         }
     };
 

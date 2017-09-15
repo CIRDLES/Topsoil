@@ -484,3 +484,12 @@ plot.removePlotFeatures = function () {
     plot.removeConcordia();
     plot.removeEvolutionMatrix();
 };
+
+
+/*
+ Since initialize() is called on each resize, removes old axes on plot.resize().
+ */
+plot.removeAxes = function () {
+    plot.area.selectAll(".x.axis").remove();
+    plot.area.selectAll(".y.axis").remove();
+};
