@@ -45,6 +45,7 @@ import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -68,6 +69,11 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
             = LoggerFactory.getLogger(JavaScriptPlot.class);
 
     private static final String HTML_TEMPLATE;
+
+    // When loaded into the WebEngine, it seems to significantly decrease the time it takes for the WebEngine to stop
+    // running JavaScript. The message itself is inconsequential.
+    private static final String HALT_MESSAGE = "This message will be loaded into the WebEngine to attempt to stop it " +
+                                               "from running JavaScript.";
 
     static {
         final ResourceExtractor RESOURCE_EXTRACTOR
@@ -251,7 +257,13 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
             webEngine.getLoadWorker().stateProperty().addListener(
                     (observable, oldValue, newValue) -> {
-                        if (newValue == SUCCEEDED) {
+
+                        if (webEngine.getDocument() != null &&
+                            webEngine.getDocument().getDoctype() != null &&
+                            newValue == SUCCEEDED) {
+
+                            System.out.println("LOADING TOPSOIL");
+
                             if (new IsBlankImage().test(screenCapture())) {
                                 webEngine.loadContent(buildContent());
                             }
@@ -268,6 +280,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                             }
 
                             loadFuture.complete(null);
+
                         }
                     });
 
@@ -321,9 +334,9 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         return svgDocument;
     }
 
-    @Override
-    public void saveAsSVGDocument() {
-        new SVGSaver().save(displayAsSVGDocument());
+    /**{@inheritDoc}*/
+    public void saveAsSVGDocument(File file) {
+        new SVGSaver().save(displayAsSVGDocument(), file);
     }
 
     /**{@inheritDoc}*/
@@ -365,8 +378,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     }
 
     @Override
-    public void cancelFXApplicationThread() {
-        PlatformImpl.tkExit();
-        Platform.exit();
+    public void stop() {
+        getWebEngine().loadContent(HALT_MESSAGE);
     }
 }

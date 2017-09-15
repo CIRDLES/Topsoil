@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import org.w3c.dom.Document;
 
 import javax.swing.JComponent;
+import java.io.File;
 
 /**
  * An interface for objects that are displayable in a couple of common formats.
@@ -55,9 +56,9 @@ public interface Displayable {
     }
 
     /**
-     * Saves a {@code Document} representing this {@code Displayable}.
+     * Saves a {@code Document} representing this {@code Displayable} to the specified {@code File}.
      */
-    default void saveAsSVGDocument() {
+    default void saveAsSVGDocument(File file) {
         throw new UnsupportedOperationException();
     }
 

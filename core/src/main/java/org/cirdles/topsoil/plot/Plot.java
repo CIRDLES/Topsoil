@@ -17,6 +17,7 @@ package org.cirdles.topsoil.plot;
 
 import java.util.List;
 import java.util.Map;
+import javafx.scene.web.WebEngine;
 
 /**
  * A generalized plot that can express itself as a {@link javafx.scene.Node}.
@@ -66,6 +67,9 @@ public interface Plot extends Displayable {
      */
     void recenter();
 
-    void cancelFXApplicationThread();
+    /**
+     * Attempts to stop the {@code Plot}'s {@link WebEngine} running JavaScript content.
+     */
+    void stop();
 
 }
