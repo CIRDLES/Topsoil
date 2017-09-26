@@ -58,7 +58,7 @@
     // without this (which has been minimized!) scrollbars show (at least on OS X)
     var magicNumber = 3.0000375;
 
-    plot.margin = {top: 75, right: 75, bottom: 75, left: 75};
+    plot.margin = {top: 110, right: 75, bottom: 75, left: 75};
     plot.width = window.innerWidth - magicNumber - plot.margin.left - plot.margin.right;
     plot.height = window.innerHeight - magicNumber - plot.margin.top - plot.margin.bottom;
 
