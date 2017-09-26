@@ -574,9 +574,15 @@ plot.updateEvolutionMatrix = function () {
             .text(function (d) {
                 return (d.value == INF ? "INF" : d.value / 1000);
             })
+            // .text(function (d) {
+            //     return (d.value == INF ? "∞" : d.value / 1000);
+            // })
             .attr("text-anchor", "start")
             .attr("font-family", "sans-serif")
             .attr("font-size", "14px");
+            // .attr("font-size", function (d) {
+            //     return (d.value == INF ? "30px" : "14px");
+            // });
             // .attr("fill", "red");
 
         labels
@@ -593,11 +599,19 @@ plot.updateEvolutionMatrix = function () {
                     xOffset = 5 / slope;
                     x = plot.margin.left + plot.xAxisScale(T[i] * (plot.lambda.Th230 / plot.lambda.U238)) + xOffset;
                     y = plot.margin.top - 5;
+                    // if (d.value == INF) {
+                    //     // TODO '15' is a stand-in for [I don't even know anymore, 1/6?] of the font size in px.
+                    //     y = y + 5;
+                    // }
                 } else if (R[i] < contourYLimits[1]) {
                     // isochron intersects plot boundary at right
                     yOffset = 10 * slope;
                     x = window.innerWidth - plot.margin.right + 10;
                     y = plot.margin.top + plot.yAxisScale(R[i] * (plot.lambda.U234 / plot.lambda.U238)) - yOffset;
+                    // if (d.value == INF) {
+                    //     // TODO '15' is a stand-in for half of the font size in px.
+                    //     y = y + 15;
+                    // }
                 } else {
                     x = window.innerWidth - plot.margin.right + 10;
                     y = plot.margin.top - 5;
@@ -605,7 +619,14 @@ plot.updateEvolutionMatrix = function () {
 
                 var angle = -(Math.atan(slope) * (180 / Math.PI));  // Must convert from radians to degrees
                 return "translate (" + x + "," + y + ") rotate(" + angle + ")";
-                });
+                })
+            .attr("fill-opacity", function (d, i) {
+                if ((T[i] < xminpoints[i]) || (R[i] < yminpoints[i])) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            });
 
         labels.exit().remove();
 
