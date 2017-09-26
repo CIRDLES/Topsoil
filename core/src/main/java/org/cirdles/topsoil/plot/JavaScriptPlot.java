@@ -349,6 +349,14 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
     /**{@inheritDoc}*/
     @Override
+    public void setAxes() {
+        if (topsoil != null) {
+            runOnFxApplicationThread(() -> topsoil.call("setAxes"));
+        }
+    }
+
+    /**{@inheritDoc}*/
+    @Override
     public void setData(List<Map<String, Object>> data) {
         super.setData(data);
 

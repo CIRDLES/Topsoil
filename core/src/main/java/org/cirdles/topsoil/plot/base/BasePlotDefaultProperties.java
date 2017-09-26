@@ -18,6 +18,10 @@ public class BasePlotDefaultProperties extends HashMap<String, Object> {
         put(TITLE, "New Plot");
         put(X_AXIS, "X-axis");
         put(Y_AXIS, "Y-axis");
+        put(X_MIN, "");
+        put(X_MAX, "");
+        put(Y_MIN, "");
+        put(Y_MAX, "");
         put(POINT_FILL_COLOR, "steelblue");
         put(ELLIPSE_FILL_COLOR, "red");
         put(BAR_FILL_COLOR, "black");
