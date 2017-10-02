@@ -262,8 +262,6 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                             webEngine.getDocument().getDoctype() != null &&
                             newValue == SUCCEEDED) {
 
-                            System.out.println("LOADING TOPSOIL");
-
                             if (new IsBlankImage().test(screenCapture())) {
                                 webEngine.loadContent(buildContent());
                             }

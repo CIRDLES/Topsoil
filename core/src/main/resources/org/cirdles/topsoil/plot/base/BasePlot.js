@@ -65,7 +65,7 @@ plot.initialize = function (data) {
         .attr("font-family", "sans-serif")
         .attr("font-size", "20px")
         .attr("x", plot.width / 2)
-        .attr("y", -25);
+        .attr("y", -60);
 
     //create x axis label
     plot.area.append("g")
@@ -75,7 +75,7 @@ plot.initialize = function (data) {
         .attr("class", "label")
         .style("font-size", "16px")
         .attr("x", plot.width / 2)
-        .attr("y", 35);
+        .attr("y", 45);
 
     //create y axis label
     plot.area.append("g")
@@ -124,6 +124,14 @@ plot.initialize = function (data) {
     // call the axes
     plot.area.selectAll(".x.axis").call(plot.xAxis);
     plot.area.selectAll(".y.axis").call(plot.yAxis);
+
+    plot.area.selectAll(".axis text")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "12px");
+    plot.area.selectAll(".axis path, .axis line")
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("shape-rendering", "geometricPrecision");
 
     // add pan/zoom
     var zoom = plot.zoom = d3.behavior.zoom()

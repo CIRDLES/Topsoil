@@ -467,6 +467,21 @@ plot.drawEvolutionMatrix = function () {
         .attr('fill', 'none')
         .attr('stroke', 'blue');
 
+    var plotSVG = d3.select("#plot");
+
+    plotSVG.append("clipPath")
+        .attr("id", "edge-clip")
+        .append("rect")
+        .attr("x", plot.margin.left)
+        .attr("y", 0)
+        .attr("width", plot.width + plot.margin.right)
+        .attr("height", plot.height + plot.margin.top);
+
+    plot.area.aroundEdge = plotSVG.append("g")
+        .attr("clip-path", "url(#edge-clip)")
+        .attr("width", window.innerWidth - plot.margin.left)
+        .attr("height", window.innerHeight - plot.margin.bottom);
+
     plot.evolutionMatrixVisible = true;
     plot.updateEvolutionMatrix();
 };
@@ -550,14 +565,81 @@ plot.updateEvolutionMatrix = function () {
             return path.join('');
         });
 
+        var labels = plot.area.aroundEdge.selectAll(".isochron-label")
+            .data(evolution.isochrons);
+
+        labels.enter()
+            .append("text")
+            .attr("class", "isochron-label")
+            .text(function (d) {
+                return (d.value == INF ? "INF" : d.value / 1000);
+            })
+            // .text(function (d) {
+            //     return (d.value == INF ? "∞" : d.value / 1000);
+            // })
+            .attr("text-anchor", "start")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "14px");
+            // .attr("font-size", function (d) {
+            //     return (d.value == INF ? "30px" : "14px");
+            // });
+            // .attr("fill", "red");
+
+        labels
+            .attr("transform", function (d, i) {
+
+                var x;
+                var y;
+                var slope = d.slope * ((plot.lambda.U234 / plot.lambda.U238) / (plot.lambda.Th230 / plot.lambda.U238));
+                var xOffset;
+                var yOffset;
+
+                if (R[i] > contourYLimits[1]) {
+                    // isochron intersects plot boundary at top
+                    xOffset = 5 / slope;
+                    x = plot.margin.left + plot.xAxisScale(T[i] * (plot.lambda.Th230 / plot.lambda.U238)) + xOffset;
+                    y = plot.margin.top - 5;
+                    // if (d.value == INF) {
+                    //     // TODO '15' is a stand-in for [I don't even know anymore, 1/6?] of the font size in px.
+                    //     y = y + 5;
+                    // }
+                } else if (R[i] < contourYLimits[1]) {
+                    // isochron intersects plot boundary at right
+                    yOffset = 10 * slope;
+                    x = window.innerWidth - plot.margin.right + 10;
+                    y = plot.margin.top + plot.yAxisScale(R[i] * (plot.lambda.U234 / plot.lambda.U238)) - yOffset;
+                    // if (d.value == INF) {
+                    //     // TODO '15' is a stand-in for half of the font size in px.
+                    //     y = y + 15;
+                    // }
+                } else {
+                    x = window.innerWidth - plot.margin.right + 10;
+                    y = plot.margin.top - 5;
+                }
+
+                var angle = -(Math.atan(slope) * (180 / Math.PI));  // Must convert from radians to degrees
+                return "translate (" + x + "," + y + ") rotate(" + angle + ")";
+                })
+            .attr("fill-opacity", function (d, i) {
+                if ((T[i] < xminpoints[i]) || (R[i] < yminpoints[i])) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            });
+
+        labels.exit().remove();
+
         plot.ar48iContours.exit().remove();
         plot.isochrons.exit().remove();
+
     }
 };
 
 plot.removeEvolutionMatrix = function () {
     if (plot.evolutionMatrixVisible) {
         plot.evolutionGroup.remove();
+        plot.area.aroundEdge.remove();
         plot.evolutionMatrixVisible = false;
     }
 };
