@@ -60,6 +60,26 @@ public class PlotPropertiesPanelController {
     @FXML private TextField yAxisTextField;
 
     /**
+     * A {@code TextField} for changing the X-axis's minimum point.
+     */
+    @FXML private TextField xAxisMinTextField;
+
+    /**
+     * A {@code TextField} for changing the X-axis's maximum point.
+     */
+    @FXML private TextField xAxisMaxTextField;
+
+    /**
+     * A {@code TextField} for changing the Y-axis's minimum point.
+     */
+    @FXML private TextField yAxisMinTextField;
+
+    /**
+     * A {@code TextField} for changing the Y-axis's maximum point.
+     */
+    @FXML private TextField yAxisMaxTextField;
+
+    /**
      * A {@code CheckBox} for toggling the visibility of the data points in the plot.
      */
     @FXML private CheckBox pointsCheckBox;
@@ -277,6 +297,78 @@ public class PlotPropertiesPanelController {
     }
 
     /**
+     * A {@code StringProperty} containing the X axis's minimum value.
+     */
+    private StringProperty xAxisMin;
+    public final StringProperty xAxisMinProperty() {
+        if (xAxisMin == null) {
+            xAxisMin = new SimpleStringProperty(xAxisMinTextField.getText());
+            xAxisMin.bind(xAxisMinTextField.textProperty());
+        }
+        return xAxisMin;
+    }
+    public String getXAxisMin() {
+        return xAxisMinProperty().get();
+    }
+    public void setXAxisMin(String s) {
+        xAxisMinTextField.setText(s);
+    }
+
+    /**
+     * A {@code StringProperty} containing the X axis's maximum value.
+     */
+    private StringProperty xAxisMax;
+    public final StringProperty xAxisMaxProperty() {
+        if (xAxisMax == null) {
+            xAxisMax = new SimpleStringProperty(xAxisMaxTextField.getText());
+            xAxisMax.bind(xAxisMaxTextField.textProperty());
+        }
+        return xAxisMax;
+    }
+    public String getXAxisMax() {
+        return xAxisMaxProperty().get();
+    }
+    public void setXAxisMax(String s) {
+        xAxisMaxTextField.setText(s);
+    }
+
+    /**
+     * A {@code StringProperty} containing the Y axis's minimum value.
+     */
+    private StringProperty yAxisMin;
+    public final StringProperty yAxisMinProperty() {
+        if (yAxisMin == null) {
+            yAxisMin = new SimpleStringProperty(yAxisMinTextField.getText());
+            yAxisMin.bind(yAxisMinTextField.textProperty());
+        }
+        return yAxisMin;
+    }
+    public String getYAxisMin() {
+        return yAxisMinProperty().get();
+    }
+    public void setYAxisMin(String s) {
+        yAxisMinTextField.setText(s);
+    }
+
+    /**
+     * A {@code StringProperty} containing the Y axis's maximum value.
+     */
+    private StringProperty yAxisMax;
+    public final StringProperty yAxisMaxProperty() {
+        if (yAxisMax == null) {
+            yAxisMax = new SimpleStringProperty(yAxisMaxTextField.getText());
+            yAxisMax.bind(yAxisMaxTextField.textProperty());
+        }
+        return yAxisMax;
+    }
+    public String getYAxisMax() {
+        return yAxisMaxProperty().get();
+    }
+    public void setYAxisMax(String s) {
+        yAxisMaxTextField.setText(s);
+    }
+
+    /**
      * A {@code BooleanProperty} tracking whether or not data points should be shown in the plot.
      */
     private BooleanProperty showPoints;
@@ -453,6 +545,11 @@ public class PlotPropertiesPanelController {
         xAxisTextField.setText((String) PROPERTIES.get(X_AXIS));
         yAxisTextField.setText((String) PROPERTIES.get(Y_AXIS));
 
+        xAxisMinTextField.setText(String.valueOf(PROPERTIES.get(X_MIN)));
+        xAxisMaxTextField.setText(String.valueOf(PROPERTIES.get(X_MAX)));
+        yAxisMinTextField.setText(String.valueOf(PROPERTIES.get(Y_MIN)));
+        yAxisMaxTextField.setText(String.valueOf(PROPERTIES.get(Y_MAX)));
+
         pointsCheckBox.setSelected((Boolean) PROPERTIES.get(POINTS));
         ellipsesCheckBox.setSelected((Boolean) PROPERTIES.get(ELLIPSES));
         crossesCheckBox.setSelected((Boolean) PROPERTIES.get(BARS));
@@ -517,6 +614,23 @@ public class PlotPropertiesPanelController {
             updateProperties();
         });
 
+        xAxisMinProperty().addListener(c -> {
+            PROPERTIES.put(X_MIN, xAxisMinProperty().get());
+            updateProperties();
+        });
+        xAxisMaxProperty().addListener(c -> {
+            PROPERTIES.put(X_MAX, xAxisMaxProperty().get());
+            updateProperties();
+        });
+        yAxisMinProperty().addListener(c -> {
+            PROPERTIES.put(Y_MIN, yAxisMinProperty().get());
+            updateProperties();
+        });
+        yAxisMaxProperty().addListener(c -> {
+            PROPERTIES.put(Y_MAX, yAxisMaxProperty().get());
+            updateProperties();
+        });
+
         showPointsProperty().addListener(c -> {
             PROPERTIES.put(POINTS, showPointsProperty().get());
             updateProperties();
@@ -576,6 +690,15 @@ public class PlotPropertiesPanelController {
     private void updateProperties() {
         if (plot != null) {
             plot.setProperties(PROPERTIES);
+        }
+    }
+
+    /**
+     * Manually sets the X and Y axis extents.
+     */
+    public void setAxes() {
+        if (plot != null) {
+            plot.setAxes();
         }
     }
 

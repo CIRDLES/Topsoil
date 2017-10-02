@@ -68,6 +68,11 @@ public interface Plot extends Displayable {
     void recenter();
 
     /**
+     * Allows the user to set the X and Y axis extents.
+     */
+    void setAxes();
+
+    /**
      * Attempts to stop the {@code Plot}'s {@link WebEngine} running JavaScript content.
      */
     void stop();

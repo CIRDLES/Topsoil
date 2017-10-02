@@ -21,6 +21,10 @@ plot.propertiesKeys = [
     'U238',
     'Th230',
 
+    'X Min',
+    'X Max',
+    'Y Min',
+    'Y Max',
     'Point Fill Color',
     'Ellipse Fill Color',
     'Bar Fill Color',
@@ -133,9 +137,51 @@ plot.initialize = function (data) {
 
     // function to recenter the plot to its original view
     topsoil.recenter = function() {
+        changeAxes(plot.xDataMin, plot.xDataMax, plot.yDataMin, plot.yDataMax);
+    };
+
+    // function to manually the x and y axes' extents
+    topsoil.setAxes = function() {
+
+        alert("ymin: " + plot.getProperty("Y Min"));
+        alert("ymax: " + plot.getProperty("Y Max"));
+
+        // if the user hasn't set a new extent for a field, leave it as-is
+        if(plot.getProperty("X Min").length == 0) {
+            var xMin = plot.xAxisScale.domain()[0];
+        } else {
+            var xMin = plot.getProperty("X Min");
+        }
+        if(plot.getProperty("X Max").length == 0) {
+            var xMax = plot.xAxisScale.domain()[1];
+        } else {
+            var xMax = plot.getProperty("X Max");
+        }
+        if(plot.getProperty("Y Min").length == 0) {
+            var yMin = plot.yAxisScale.domain()[0];
+        } else {
+            var yMin = plot.getProperty("Y Min");
+        }
+        if(plot.getProperty("Y Max").length == 0) {
+            var yMax = plot.yAxisScale.domain()[1];
+        } else {
+            var yMax = plot.getProperty("Y Max");
+        }
+
+        // if the user input a min greater than the max, arbitrarily set the max to a larger value
+        if(xMin >= xMax) { xMax = parseFloat(xMin) + 10; }
+        if(yMin >= yMax) { yMax = parseFloat(yMin) + 1; }
+
+        alert("ymin: " + yMin);
+        alert("ymax: " + yMax);
+        changeAxes(xMin, xMax, yMin, yMax);
+    };
+
+    // function to change the X and Y extents of the plot
+    var changeAxes = function(xMin, xMax, yMin, yMax) {
         d3.transition().duration(750).tween("zoom", function() {
-            var ix = d3.interpolate(plot.xAxisScale.domain(), [plot.xDataMin, plot.xDataMax]);
-            var iy = d3.interpolate(plot.yAxisScale.domain(), [plot.yDataMin, plot.yDataMax]);
+            var ix = d3.interpolate(plot.xAxisScale.domain(), [xMin, xMax]);
+            var iy = d3.interpolate(plot.yAxisScale.domain(), [yMin, yMax]);
             return function(t) {
                 zoom.x(plot.xAxisScale.domain(ix(t))).y(plot.yAxisScale.domain(iy(t)));
                 zoomed();

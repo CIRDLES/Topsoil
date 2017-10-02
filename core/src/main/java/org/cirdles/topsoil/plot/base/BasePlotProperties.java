@@ -9,6 +9,10 @@ public class BasePlotProperties {
     public static final String TITLE = "Title";
     public static final String X_AXIS = "X Axis";
     public static final String Y_AXIS = "Y Axis";
+    public static final String X_MIN = "X Min";
+    public static final String X_MAX = "X Max";
+    public static final String Y_MIN = "Y Min";
+    public static final String Y_MAX = "Y Max";
     public static final String POINTS = "Points";
     public static final String ELLIPSES = "Ellipses";
     public static final String BARS = "Bars";
