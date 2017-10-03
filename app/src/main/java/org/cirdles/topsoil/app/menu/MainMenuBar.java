@@ -498,6 +498,9 @@ public class MainMenuBar extends MenuBar {
                 Stage aboutWindow = new Stage(StageStyle.UNDECORATED);
                 aboutWindow.setResizable(false);
                 aboutWindow.setScene(aboutScene);
+                
+                aboutWindow.setX(menuBar.getTranslateX());
+                aboutWindow.setY(menuBar.getTranslateY());
 
                 aboutWindow.requestFocus();
                 aboutWindow.initOwner(tabs.getScene().getWindow());

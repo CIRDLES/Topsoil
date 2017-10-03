@@ -178,6 +178,9 @@ public class MainWindow extends Application {
                 Stage splashWindow = new Stage(StageStyle.UNDECORATED);
                 splashWindow.setResizable(false);
                 splashWindow.setScene(splashScene);
+                
+                //splashWindow.setX(primaryStage.getX());
+                //splashWindow.setY(primaryStage.getY());
 
                 splashWindow.requestFocus();
                 splashWindow.initOwner(primaryStage);
