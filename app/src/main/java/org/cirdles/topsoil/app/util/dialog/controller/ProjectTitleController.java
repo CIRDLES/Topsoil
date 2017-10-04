@@ -75,7 +75,6 @@ public class ProjectTitleController {
         if (file != null) {
             String fileName = file.getPath();
 
-
             if (fileName.length() > MAX_FILE_NAME_LENGTH) {
                 fileName = "..." + fileName.substring(fileName.length() - MAX_FILE_NAME_LENGTH);
             }
@@ -104,14 +103,14 @@ public class ProjectTitleController {
                     "Existing Project",
                     "There is already a project in that location with that name. Would you like to replace it?"
             )
-                .filter(response -> response == ButtonType.YES)
-                .ifPresent(response -> {
-                    if (nextScene != null) {
-                        ((Stage) nextButton.getScene().getWindow()).setScene(nextScene);
-                    } else {
-                        ((Stage) nextButton.getScene().getWindow()).close();
-                    }
-                });
+                               .filter(response -> response == ButtonType.YES)
+                               .ifPresent(response -> {
+                                   if (nextScene != null) {
+                                       ((Stage) nextButton.getScene().getWindow()).setScene(nextScene);
+                                   } else {
+                                       ((Stage) nextButton.getScene().getWindow()).close();
+                                   }
+                               });
         } else {
             if (nextScene != null) {
                 ((Stage) nextButton.getScene().getWindow()).setScene(nextScene);

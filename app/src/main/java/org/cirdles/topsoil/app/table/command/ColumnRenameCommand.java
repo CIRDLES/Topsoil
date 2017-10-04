@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.table.command;
 
 import javafx.scene.control.TableColumn;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.util.undo.Command;

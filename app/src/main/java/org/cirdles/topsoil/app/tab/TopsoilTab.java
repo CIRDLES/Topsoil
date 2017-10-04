@@ -93,7 +93,6 @@ public class TopsoilTab extends Tab {
             setTitle(this.actualTitle.get());
         });
 
-
         this.titleLabel = new Label(isotopePrefix + actualTitle.get());
         this.titleLabel.setId("Title");
         this.titleLabel.setOnMouseClicked(event -> {

@@ -7,7 +7,11 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.util.TopsoilException;
@@ -18,7 +22,9 @@ import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Controller for a window that allows the user to specify whether they want to import existing files into Topsoil,
@@ -250,7 +256,6 @@ public class ProjectSourcesController {
     public Boolean didFinish() {
         return didFinish;
     }
-
 
     /**
      * Enables controls that allow the user to select source files.

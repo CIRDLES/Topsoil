@@ -3,7 +3,6 @@ package org.cirdles.topsoil.app.util.listener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-
 /**
  * @author Jake Marotta
  */

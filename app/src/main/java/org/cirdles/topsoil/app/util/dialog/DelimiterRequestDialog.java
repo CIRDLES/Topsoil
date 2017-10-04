@@ -3,7 +3,11 @@ package org.cirdles.topsoil.app.util.dialog;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -78,7 +82,6 @@ public class DelimiterRequestDialog extends Dialog<String> {
         ChoiceBox<String> delimiterChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(COMMON_DELIMITERS
                                                                                                          .keySet()));
         delimiterChoiceBox.getItems().addAll(otherDelimiterOption, unknownDelimiterOption);
-
 
         Label otherLabel = new Label("Other: ");
         TextField otherTextField = new TextField();

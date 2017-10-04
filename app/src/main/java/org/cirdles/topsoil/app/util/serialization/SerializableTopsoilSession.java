@@ -2,7 +2,8 @@ package org.cirdles.topsoil.app.util.serialization;
 
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 
-import org.cirdles.topsoil.app.plot.*;
+import org.cirdles.topsoil.app.plot.PlotGenerationHandler;
+import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
 
@@ -18,9 +19,14 @@ import org.cirdles.topsoil.plot.Plot;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.cirdles.topsoil.app.util.serialization.TableDataKeys.*;
 import static org.cirdles.topsoil.app.util.serialization.PlotDataKeys.*;

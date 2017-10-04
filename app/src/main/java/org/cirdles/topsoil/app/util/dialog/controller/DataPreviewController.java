@@ -1,8 +1,6 @@
 package org.cirdles.topsoil.app.util.dialog.controller;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -24,7 +22,10 @@ import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for a screen that allows the user to preview their imported data, as well as choose an {@link
@@ -121,7 +122,9 @@ public class DataPreviewController extends Pane {
         warningIcon.setPreserveRatio(true);
         warningIcon.setFitHeight(25.0);
 
-        if (getUncertaintyFormat() == null) uncLabel.setGraphic(warningIcon);
+        if (getUncertaintyFormat() == null) {
+            uncLabel.setGraphic(warningIcon);
+        }
         uncertaintyFormatProperty().addListener(c -> {
             if (getUncertaintyFormat() == null) {
                 uncLabel.setGraphic(warningIcon);

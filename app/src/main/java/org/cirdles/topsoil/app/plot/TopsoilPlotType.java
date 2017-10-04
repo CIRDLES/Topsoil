@@ -5,6 +5,7 @@ import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.base.BasePlot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -85,11 +86,7 @@ public enum TopsoilPlotType {
     public Plot getPlot() {
         try {
             return plot.newInstance();
-        } catch (InstantiationException e) {
-            System.err.println("Error in plot instantiation: Class must have nullary constructor.");
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            System.err.println("Error in plot instantiation: Class and nullary constructor must be accessible.");
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;

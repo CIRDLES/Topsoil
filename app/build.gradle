@@ -33,11 +33,20 @@ task debug(dependsOn: project.classes, type: JavaExec) {
 }
 
 // BEGIN BETTER VERSIONING
-def getVersionName = { ->
-    def repo = new FileRepository("$rootDir/.git")
-    def git = new Git(repo)
+//def getVersionName = { ->
+//    def repo = new FileRepository("$rootDir/.git")
+//    def git = new Git(repo)
+//
+//    git.describe().call()
+//}
 
-    git.describe().call()
+def getVersionName = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }
 
 processResources {
@@ -58,8 +67,7 @@ task jarWithDependencies(type: Jar) {
         )
     }
 
-//    baseName = 'topsoil-' + getVersionName().split('-')[0]
-    baseName = 'topsoil-v2.0.2'
+    baseName = 'topsoil-' + getVersionName().split('-')[0]
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }

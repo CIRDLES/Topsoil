@@ -179,10 +179,10 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     private String alignText(String cellValue) {
         if (cellValue.contains(".")) {
             String[] decimalPart = cellValue.split("\\.");
-            if (decimalPart[1].length() <= 9){
+            if (decimalPart[1].length() <= 9) {
                 StringBuilder builder = new StringBuilder();
                 builder.append(cellValue);
-                for (int i = decimalPart[1].length(); i < this.df.getMaximumFractionDigits(); i++){
+                for (int i = decimalPart[1].length(); i < this.df.getMaximumFractionDigits(); i++) {
                     builder.append("  "); //padding with spaces to align decimals
                 }
                 cellValue = builder.toString();
@@ -229,9 +229,10 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      */
     private void selectNextCell() {
         if (this.getColumnIndex() == this.getTableView().getColumns().size() - 1) {
-            if (this.getIndex() != this.getTableView().getItems().size() - 1)
+            if (this.getIndex() != this.getTableView().getItems().size() - 1) {
                 this.getTableView().getSelectionModel().select(this.getIndex() + 1,
                                                                this.getTableView().getColumns().get(0));
+            }
         } else {
             this.getTableView().getSelectionModel().select(this.getIndex(), this.getTableView().getColumns()
                                                                                 .get(this.getColumnIndex() + 1));

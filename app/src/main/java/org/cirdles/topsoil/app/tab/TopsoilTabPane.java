@@ -43,7 +43,7 @@ public class TopsoilTabPane extends TabPane {
     /**
      * A {@code String} path to the {@code .fxml} file for {@code TopsoilTabContent}.
      */
-    private final String TOPSOIL_TAB_FXML_PATH = "topsoil-tab-content.fxml";
+    private static final String TOPSOIL_TAB_FXML_PATH = "topsoil-tab-content.fxml";
 
     /**
      * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
@@ -60,9 +60,7 @@ public class TopsoilTabPane extends TabPane {
     public TopsoilTabPane() {
         super();
         this.untitledCount = 0;
-        this.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
-            isEmptyProperty().set(this.getTabs().isEmpty());
-        });
+        this.getTabs().addListener((ListChangeListener<? super Tab>) c -> isEmptyProperty().set(this.getTabs().isEmpty()));
     }
 
     //***********************

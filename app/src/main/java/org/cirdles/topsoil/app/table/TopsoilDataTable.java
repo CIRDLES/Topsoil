@@ -15,7 +15,12 @@ import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.plot.Plot;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * {@code TopsoilDataTable} is the core data model for Topsoil. It contains table data as an {@code ObservableList}
@@ -274,23 +279,22 @@ public class TopsoilDataTable {
     }
 
     public List<Double[]> getFormattedDataAsArrays() {
-         ArrayList<Double[]> tableEntries = new ArrayList<>();
-         Double[] arr;
+        ArrayList<Double[]> tableEntries = new ArrayList<>();
+        Double[] arr;
 
-         for (int i = 0; i < numRows; i++) {
-             arr = new Double[dataColumns.size()];
-             for (int j = 0; j < dataColumns.size(); j++) {
-                 if  (Variables.UNCERTAINTY_VARIABLES.contains(dataColumns.get(j).getVariable())) {
-                     arr[j] = dataColumns.get(j).get(i).get() * uncertaintyFormat.getValue();
-                 }
-                 else {
-                     arr[j] = dataColumns.get(j).get(i).get();
-                 }
-             }
-             tableEntries.add(arr);
-         }
-         return tableEntries;
-     }
+        for (int i = 0; i < numRows; i++) {
+            arr = new Double[dataColumns.size()];
+            for (int j = 0; j < dataColumns.size(); j++) {
+                if  (Variables.UNCERTAINTY_VARIABLES.contains(dataColumns.get(j).getVariable())) {
+                    arr[j] = dataColumns.get(j).get(i).get() * uncertaintyFormat.getValue();
+                } else {
+                    arr[j] = dataColumns.get(j).get(i).get();
+                }
+            }
+            tableEntries.add(arr);
+        }
+        return tableEntries;
+    }
 
     /**
      * Adds a row to the existing data.
@@ -350,7 +354,7 @@ public class TopsoilDataTable {
         if (rows.length <= 0) {
             for (int colIndex = 0; colIndex < maxRowLength; colIndex++) {
                 TopsoilDataColumn dataColumn = new TopsoilDataColumn();
-                    dataColumn.add(new SimpleDoubleProperty(0.0));
+                dataColumn.add(new SimpleDoubleProperty(0.0));
                 dataColumns.add(dataColumn);
             }
         } else {
