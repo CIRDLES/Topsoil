@@ -235,9 +235,6 @@ public class MainMenuBar extends MenuBar {
                 } else {
                     Platform.exit();
                 }
-            } // If nothing is open.
-            else {
-                Platform.exit();
             }
         });
         

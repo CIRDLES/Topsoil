@@ -21,7 +21,12 @@ import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class which oversees connections between the {@link TopsoilDataTable} and the {@link TopsoilTabContent} for a
@@ -225,8 +230,7 @@ public class TopsoilTableController {
             for (Variable<Number> variable : Variables.VARIABLE_LIST) {
                 Double value;
                 if (variablesToColumns.containsKey(variable)) {
-                    if (variable.getClass() == DependentVariable.class
-                        && UncertaintyFormat.PERCENT_FORMATS.contains(table.getUncertaintyFormat())) {
+                    if (variable.getClass() == DependentVariable.class && UncertaintyFormat.PERCENT_FORMATS.contains(table.getUncertaintyFormat())) {
                         value = variablesToColumns.get(variable).get(rowIndex).get() * table.getVariableAssignments().get(
                                 ((DependentVariable<Number>) variable).getDependency()).get(rowIndex).get();
                     } else {
@@ -435,8 +439,7 @@ public class TopsoilTableController {
             updateColumnListeners();
 
             TableColumnReorderCommand reorderCommand = new TableColumnReorderCommand(this, fromIndex, toIndex);
-            ((TopsoilTabPane) tabContent.getTableView().getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo
-                    (reorderCommand);
+            ((TopsoilTabPane) tabContent.getTableView().getScene().lookup("#TopsoilTabPane")).getSelectedTab().addUndo(reorderCommand);
         }
     }
 

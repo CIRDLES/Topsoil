@@ -57,6 +57,8 @@ public interface Displayable {
 
     /**
      * Saves a {@code Document} representing this {@code Displayable} to the specified {@code File}.
+     *
+     * @param file  the File destination
      */
     default void saveAsSVGDocument(File file) {
         throw new UnsupportedOperationException();

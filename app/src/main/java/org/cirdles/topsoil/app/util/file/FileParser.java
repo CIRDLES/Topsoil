@@ -6,7 +6,11 @@ import com.google.common.io.Files;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -22,7 +26,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -138,7 +147,7 @@ public class FileParser {
         String[] firstLine;
         firstLine = lines[0].split(delim);
 
-        if(isDouble(firstLine[0])){
+        if (isDouble(firstLine[0])) {
             containsHeaders = false;
         }
 
@@ -191,10 +200,10 @@ public class FileParser {
                 fileName.lastIndexOf(".") + 1,
                 fileName.length());
     }
-    
+
     /**
      * Checks if a file is empty of any data.
-     * 
+     *
      * @param file  File to check
      * @return true if file is empty
      */
@@ -355,10 +364,10 @@ public class FileParser {
                  // The Java Language Specification.
 
                  // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
-                 "((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+
+                 "(((" + Digits + "(\\.)?(" + Digits + "?)(" + Exp + ")?)|"+
 
                  // . Digits ExponentPart_opt FloatTypeSuffix_opt
-                 "(\\.("+Digits+")("+Exp+")?)|"+
+                 "(\\.(" + Digits + ")(" + Exp + ")?)|" +
 
                  // Hexadecimal strings
                  "((" +
@@ -508,7 +517,6 @@ public class FileParser {
     public static String requestDelimiter() {
         String otherDelimiterOption = "Other";
         String unknownDelimiterOption = "Unknown";
-        
 
         Dialog<String> delimiterRequestDialog = new Dialog<>();
         delimiterRequestDialog.setTitle("Delimiter Request");

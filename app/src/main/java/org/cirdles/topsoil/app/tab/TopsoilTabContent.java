@@ -7,8 +7,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
@@ -21,7 +24,7 @@ import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.plot.PlotPropertiesPanelController;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 /**
  * This is the primary view for a {@link TopsoilDataTable}. It contains the {@link TableView} that the data is loaded
@@ -59,23 +62,23 @@ public class TopsoilTabContent extends SplitPane {
     /**
      * The {@code String} path to the {@code .fxml} file for the {@link PlotPropertiesPanelController}.
      */
-    private final String PROPERTIES_PANEL_FXML_PATH = "plot-properties-panel.fxml";
+    private static final String PROPERTIES_PANEL_FXML_PATH = "plot-properties-panel.fxml";
 
     /**
      * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
      */
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabContent.class);
+    private static final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabContent.class);
 
     //***********************
     // Methods
     //***********************
-    
+
     /** {@inheritDoc}
      */
     @FXML public void initialize() {
 
         // Handle Keyboard Events
-        tableView.setOnKeyPressed(keyEvent -> handleTableViewKeyEvent(keyEvent));
+        tableView.setOnKeyPressed(this::handleTableViewKeyEvent);
 
         // Enables individual cell selection instead of rows.
         tableView.getSelectionModel().setCellSelectionEnabled(true);
@@ -129,7 +132,7 @@ public class TopsoilTabContent extends SplitPane {
         if (keyEvent.getCode().equals(KeyCode.TAB)) {
             if (keyEvent.isShiftDown()) {
                 if (selectionModel.getSelectedCells().get(0).getColumn() == 0 &&
-                    selectionModel.getSelectedIndex() != 0) {
+                        selectionModel.getSelectedIndex() != 0) {
                     selectionModel.select(selectionModel.getSelectedIndex() - 1, this.tableView.getColumns().get
                             (columns.size() - 1));
                 } else {
@@ -137,7 +140,7 @@ public class TopsoilTabContent extends SplitPane {
                 }
             } else {
                 if (selectionModel.getSelectedCells().get(0).getColumn() ==
-                    columns.size() - 1 && selectionModel.getSelectedIndex() != tableView.getItems().size() - 1) {
+                        columns.size() - 1 && selectionModel.getSelectedIndex() != tableView.getItems().size() - 1) {
                     selectionModel.select(selectionModel.getSelectedIndex() + 1, this.tableView.getColumns().get(0));
                 } else {
                     selectionModel.selectRightCell();
@@ -254,7 +257,7 @@ public class TopsoilTabContent extends SplitPane {
      * dragging.
      * </p>
      */
-    public void resetIds() {
+    private void resetIds() {
         int id = 0;
         for (TableColumn<TopsoilDataEntry, ?> column : this.tableView.getColumns()) {
             column.setId(Integer.toString(id));

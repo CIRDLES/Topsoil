@@ -1,19 +1,20 @@
 package org.cirdles.topsoil.app.util.dialog;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
-import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.util.dialog.controller.DataPreviewController;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is a custom {@code Dialog} that allows a user to preview their data before it is fully loaded into a table.
@@ -111,5 +112,3 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
         return dialog.showAndWait().orElse(null);
     }
 }
-
-

@@ -19,7 +19,10 @@ import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jake Marotta
@@ -51,43 +54,7 @@ public class VariableChooserController {
             STRING_VARIABLE_BIMAP.put(v.getName(), v);
         }
     }
-
-    private static class ColumnOption extends HBox {
-
-        private Label columnLabel;
-        private ChoiceBox<String> choiceBox;
-        private TopsoilDataColumn column;
-
-        private ColumnOption(TopsoilDataColumn column) {
-            super();
-            this.setAlignment(Pos.CENTER_RIGHT);
-            this.setPadding(new Insets(5.0, 10.0, 5.0, 5.0));
-            this.setSpacing(5.0);
-
-            this.columnLabel = new Label(column.getName());
-
-            this.column = column;
-
-            this.choiceBox = new ChoiceBox<>();
-            choiceBox.getItems().add(UNASSIGNED);
-
-            for (Variable v : Variables.VARIABLE_LIST) {
-                choiceBox.getItems().add(v.getName());
-            }
-            choiceBox.getSelectionModel().select(UNASSIGNED);
-            
-            this.getChildren().addAll(columnLabel, choiceBox);
-        }
-
-        private ChoiceBox<String> getChoiceBox() {
-            return choiceBox;
-        }
-
-        private TopsoilDataColumn getDataColumn() {
-            return column;
-        }
-    }
-
+    
     @FXML
     public void initialize() {
         required = new ArrayList<>();
@@ -195,4 +162,41 @@ public class VariableChooserController {
             }
         }
     }
+
+    private static class ColumnOption extends HBox {
+
+        private Label columnLabel;
+        private ChoiceBox<String> choiceBox;
+        private TopsoilDataColumn column;
+
+        private ColumnOption(TopsoilDataColumn column) {
+            super();
+            this.setAlignment(Pos.CENTER_RIGHT);
+            this.setPadding(new Insets(5.0, 10.0, 5.0, 5.0));
+            this.setSpacing(5.0);
+
+            this.columnLabel = new Label(column.getName());
+
+            this.column = column;
+
+            this.choiceBox = new ChoiceBox<>();
+            choiceBox.getItems().add(UNASSIGNED);
+
+            for (Variable v : Variables.VARIABLE_LIST) {
+                choiceBox.getItems().add(v.getName());
+            }
+            choiceBox.getSelectionModel().select(UNASSIGNED);
+
+            this.getChildren().addAll(columnLabel, choiceBox);
+        }
+
+        private ChoiceBox<String> getChoiceBox() {
+            return choiceBox;
+        }
+
+        private TopsoilDataColumn getDataColumn() {
+            return column;
+        }
+    }
+
 }

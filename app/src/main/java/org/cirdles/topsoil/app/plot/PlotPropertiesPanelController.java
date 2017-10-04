@@ -777,12 +777,12 @@ public class PlotPropertiesPanelController {
 
         // If X and Y aren't specified.
         if (!tableController.getTable().getVariableAssignments().containsKey(Variables.X)
-            || !tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
+                || !tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
             tableController.showVariableChooserDialog(asList(Variables.X, Variables.Y));
         }
 
         if (tableController.getTable().getVariableAssignments().containsKey(Variables.X)
-            && tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
+                && tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
             PlotGenerationHandler.handlePlotGenerationForSelectedTab((TopsoilTabPane) generatePlotButton.getScene().lookup
                     ("#TopsoilTabPane"));
         }

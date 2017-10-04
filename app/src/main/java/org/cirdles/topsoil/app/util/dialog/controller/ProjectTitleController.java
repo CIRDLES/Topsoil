@@ -75,7 +75,6 @@ public class ProjectTitleController {
         if (file != null) {
             String fileName = file.getPath();
 
-
             if (fileName.length() > MAX_FILE_NAME_LENGTH) {
                 fileName = "..." + fileName.substring(fileName.length() - MAX_FILE_NAME_LENGTH);
             }
@@ -97,21 +96,24 @@ public class ProjectTitleController {
      * in the "New Project" sequence.
      */
     @FXML private void nextButtonAction() {
-        File file = new File(getProjectLocation().toString() + File.pathSeparator + getTitle() + ".topsoil");
+        File file = new File(getProjectLocation().toString() + File.separator + getTitle() + ".topsoil");
+        System.out.println("Target: C:\\Users\\Jake\\Desktop\\test.topsoil");
+        System.out.println("Actual: " + file.getAbsolutePath());
+
         if (file.exists()) {
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.YES_NO,
                     "Existing Project",
                     "There is already a project in that location with that name. Would you like to replace it?"
             )
-                .filter(response -> response == ButtonType.YES)
-                .ifPresent(response -> {
-                    if (nextScene != null) {
-                        ((Stage) nextButton.getScene().getWindow()).setScene(nextScene);
-                    } else {
-                        ((Stage) nextButton.getScene().getWindow()).close();
-                    }
-                });
+                               .filter(response -> response == ButtonType.YES)
+                               .ifPresent(response -> {
+                                   if (nextScene != null) {
+                                       ((Stage) nextButton.getScene().getWindow()).setScene(nextScene);
+                                   } else {
+                                       ((Stage) nextButton.getScene().getWindow()).close();
+                                   }
+                               });
         } else {
             if (nextScene != null) {
                 ((Stage) nextButton.getScene().getWindow()).setScene(nextScene);

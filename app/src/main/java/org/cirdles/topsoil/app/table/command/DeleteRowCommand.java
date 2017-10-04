@@ -43,7 +43,7 @@ public class DeleteRowCommand implements Command {
     //***********************
 
     /**
-     * Constructs a new {@code DeleteRowCommand} for the specified cell. In this case, the row containing the cell 
+     * Constructs a new {@code DeleteRowCommand} for the specified cell. In this case, the row containing the cell
      * is the row that was deleted.
      *
      * @param cell the TopsoilTableCell that the command came from
@@ -55,9 +55,9 @@ public class DeleteRowCommand implements Command {
     }
 
     /**
-     * Constructs a new {@code DeleteRowCommand} for the specified {@code TableView}. In this case, the last row in 
+     * Constructs a new {@code DeleteRowCommand} for the specified {@code TableView}. In this case, the last row in
      * the table view was removed.
-     * 
+     *
      * @param tableView the TableView that the row was deleted from
      */
     public DeleteRowCommand(TableView<TopsoilDataEntry> tableView) {

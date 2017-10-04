@@ -2,9 +2,7 @@ package org.cirdles.topsoil.app.table.command;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.TopsoilTableCell;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
@@ -58,7 +56,7 @@ public class DeleteColumnCommand implements Command {
     //***********************
     // Methods
     //***********************
-    
+
     /**
      * Called to execute the column deletion.
      */

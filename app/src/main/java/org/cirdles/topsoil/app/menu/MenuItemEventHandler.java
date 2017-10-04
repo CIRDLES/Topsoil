@@ -52,7 +52,7 @@ import javafx.scene.layout.VBox;
  */
 public class MenuItemEventHandler {
 
-    /**
+/**
      * Handles importing tables from CSV / TSV files
      *
      * @return Topsoil Table file
@@ -308,41 +308,41 @@ public class MenuItemEventHandler {
         UncertaintyFormat format;
 
         if (isotopeType != null) {
-                
-                List<TopsoilDataEntry> entries = null;
-                String[] headers = null;
-                String exampleContent = new ExampleDataTable().getSampleData(isotopeType);
-                String exampleContentDelimiter = ",";
 
-                try {
-                    headers = FileParser.parseHeaders(exampleContent, exampleContentDelimiter);
-                    entries = FileParser.parseTxt(FileParser.readLines(exampleContent), exampleContentDelimiter, true);
+            List<TopsoilDataEntry> entries = null;
+            String[] headers = null;
+            String exampleContent = new ExampleDataTable().getSampleData(isotopeType);
+            String exampleContentDelimiter = ",";
 
-                    switch (isotopeType) {
-                        case Generic:
-                            format = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                            break;
-                        case UPb:
-                            format = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                            break;
-                        case UTh:
-                            format = UncertaintyFormat.TWO_SIGMA_ABSOLUTE;
-                            break;
-                        default:
-                            format = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                    }
+            try {
+                headers = FileParser.parseHeaders(exampleContent, exampleContentDelimiter);
+                entries = FileParser.parseTxt(FileParser.readLines(exampleContent), exampleContentDelimiter, true);
 
-                    ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-
-                    table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
-                    table.setTitle(isotopeType.getName()+" Example Data");
-                } catch (TopsoilException e) {
-                    e.printStackTrace();
+                switch (isotopeType) {
+                    case Generic:
+                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                        break;
+                    case UPb:
+                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                        break;
+                    case UTh:
+                        format = UncertaintyFormat.TWO_SIGMA_ABSOLUTE;
+                        break;
+                    default:
+                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
                 }
+
+                ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+
+                table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
+                table.setTitle(isotopeType.getName() + " Example Data");
+            } catch (TopsoilException e) {
+                e.printStackTrace();
+            }
         }
         return table;
     }
-    
+
     /**
      * Open default browser and create a new GitHub issue with user specifications already supplied.
      * */
@@ -355,15 +355,15 @@ public class MenuItemEventHandler {
         );
         issueCreator.create();
     }
-    
+
     /**
      * Open default browser at the Topsoil Project Page on CIRLDES website.
      * */
     public static void handleOpenOnlineHelp() {
-        
+
         String TOPSOIL_URL = "http://cirdles.org/projects/topsoil/";
         new DesktopWebBrowser(Desktop.getDesktop()).browse(TOPSOIL_URL);
-        
+
     }
 
     /**
@@ -418,22 +418,24 @@ public class MenuItemEventHandler {
                 writer = new PrintWriter(location, "UTF-8");
                 for (int i = 0; i < titles.length; i++) {
                     writer.print(titles[i]);
-                    if (i < titles.length - 1)
+                    if (i < titles.length - 1) {
                         writer.print(delim);
+                    }
                 }
                 writer.print('\n');
                 for (int i = 0; i < data.size(); i++) {
                     for (int j = 0; j < data.get(i).length; j++) {
                         writer.print(data.get(i)[j]);
-                        if (j < data.get(i).length - 1)
+                        if (j < data.get(i).length - 1) {
                             writer.print(delim);
+                        }
                     }
                     writer.print('\n');
                 }
                 writer.close();
             }
 
-        } catch (FileNotFoundException|UnsupportedEncodingException ex) {
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (writer != null) {
@@ -463,7 +465,7 @@ public class MenuItemEventHandler {
      * @param tabs  TopsoilTabPane
      */
     public static void handleNewProject(TopsoilTabPane tabs) {
-        AtomicReference<List<TopsoilDataTable>> tablesReference = new AtomicReference<>();
+        AtomicReference<List<TopsoilDataTable>> tablesReference = new AtomicReference<>(null);
         if (TopsoilSerializer.isProjectOpen()) {
             TopsoilNotification.showNotification(
                     NotificationType.YES_NO,
@@ -477,7 +479,7 @@ public class MenuItemEventHandler {
                     tablesReference.set(NewProjectWindow.newProject());
                 }
             });
-        } else if (!tabs.isEmpty()){
+        } else if (!tabs.isEmpty()) {
             TopsoilNotification.showNotification(
                     NotificationType.VERIFICATION,
                     "Create New Project",
@@ -528,7 +530,7 @@ public class MenuItemEventHandler {
                     NotificationType.VERIFICATION,
                     "Open Project",
                     "Opening a Topsoil project will replace your current tables. Continue?")
-                               .ifPresent( response -> {
+                               .ifPresent(response -> {
                                    if (response == ButtonType.OK) {
                                        File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
                                        openProjectFile(tabs, file);
@@ -654,7 +656,7 @@ public class MenuItemEventHandler {
         return didClose.get();
     }
 
-//    /**
+    //    /**
 //     * Normalizes the supplied data using the value of the specified {@code UncertaintyFormat}.
 //     *
 //     * @param format    UncertaintyFormat
@@ -675,7 +677,7 @@ public class MenuItemEventHandler {
     private static final String TAB = "Tabs";
     private static final String COLON = "Colons";
     private static final String SEMICOLON = "Semicolons";
-    
+
     private static final HashMap<String, String> COMMON_DELIMITERS; // Checked against when guessing a delimiter
     static {
         COMMON_DELIMITERS = new LinkedHashMap<>();
@@ -684,7 +686,7 @@ public class MenuItemEventHandler {
         COMMON_DELIMITERS.put(COLON, ":");
         COMMON_DELIMITERS.put(SEMICOLON, ";");
     }
-    
+
     private static String requestDelimiter() {
         String otherDelimiterOption = "Other";
 

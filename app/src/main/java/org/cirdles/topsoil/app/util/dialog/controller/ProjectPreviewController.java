@@ -24,7 +24,10 @@ import org.cirdles.topsoil.app.util.file.FileParser;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for a screen that allows the user to preview their imported source files, as well as choose an {@link
@@ -33,69 +36,6 @@ import java.util.*;
  * @author Jake Marotta
  */
 public class ProjectPreviewController {
-
-    /**
-     * A custom {@code Tab} which contains a {@link DataPreviewController}.
-     */
-    private class ControllerTab extends Tab {
-
-        private DataPreviewController controller;
-
-        ControllerTab(Path filePath, String delim) {
-            super();
-            try {
-                FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(DATA_PREVIEW_FXML).toUri().toURL());
-
-                this.setContent(loader.load());
-                this.controller = loader.getController();
-
-                File file = filePath.toFile();
-
-                this.setText(file.getName());
-
-                ImageView warningIconCopy = new ImageView(WARNING_ICON.getImage());
-                warningIconCopy.setPreserveRatio(true);
-                warningIconCopy.setFitHeight(20.0);
-                this.setGraphic(warningIconCopy);
-                controller.uncertaintyFormatProperty().addListener(c -> {
-                    if (controller.getUncertaintyFormat() == null) {
-                        this.setGraphic(warningIconCopy);
-                    } else {
-                        this.setGraphic(null);
-                    }
-                    /*
-                        The TabPane overflow menu doesn't automatically update the tab's graphic when it's changed,
-                        so the only way to get it to do so is to remove the tab, then add it again. The animations
-                        have been disabled to make this a smoother process.
-                     */
-                    TabPane tabPane = this.getTabPane();
-                    int index = tabPane.getTabs().indexOf(this);
-                    tabPane.getTabs().remove(this);
-                    tabPane.getTabs().add(index, this);
-                    tabPane.getSelectionModel().select(this);
-                });
-
-                String[] headers = null;
-                Boolean containsHeaders = FileParser.detectHeader(file, delim);
-                List<TopsoilDataEntry> data;
-
-                if (containsHeaders) {
-                    headers = FileParser.parseHeaders(file, delim);
-                }
-
-                data = FileParser.parseFile(file, delim, containsHeaders);
-
-                controller.setData(headers, data);
-
-            } catch (IOException|TopsoilException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private DataPreviewController getController() {
-            return controller;
-        }
-    }
 
     @FXML private TabPane fileTabs;
 
@@ -263,4 +203,66 @@ public class ProjectPreviewController {
         previousScene = scene;
     }
 
+    /**
+     * A custom {@code Tab} which contains a {@link DataPreviewController}.
+     */
+    private class ControllerTab extends Tab {
+
+        private DataPreviewController controller;
+
+        ControllerTab(Path filePath, String delim) {
+            super();
+            try {
+                FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(DATA_PREVIEW_FXML).toUri().toURL());
+
+                this.setContent(loader.load());
+                this.controller = loader.getController();
+
+                File file = filePath.toFile();
+
+                this.setText(file.getName());
+
+                ImageView warningIconCopy = new ImageView(WARNING_ICON.getImage());
+                warningIconCopy.setPreserveRatio(true);
+                warningIconCopy.setFitHeight(20.0);
+                this.setGraphic(warningIconCopy);
+                controller.uncertaintyFormatProperty().addListener(c -> {
+                    if (controller.getUncertaintyFormat() == null) {
+                        this.setGraphic(warningIconCopy);
+                    } else {
+                        this.setGraphic(null);
+                    }
+                    /*
+                        The TabPane overflow menu doesn't automatically update the tab's graphic when it's changed,
+                        so the only way to get it to do so is to remove the tab, then add it again. The animations
+                        have been disabled to make this a smoother process.
+                     */
+                    TabPane tabPane = this.getTabPane();
+                    int index = tabPane.getTabs().indexOf(this);
+                    tabPane.getTabs().remove(this);
+                    tabPane.getTabs().add(index, this);
+                    tabPane.getSelectionModel().select(this);
+                });
+
+                String[] headers = null;
+                Boolean containsHeaders = FileParser.detectHeader(file, delim);
+                List<TopsoilDataEntry> data;
+
+                if (containsHeaders) {
+                    headers = FileParser.parseHeaders(file, delim);
+                }
+
+                data = FileParser.parseFile(file, delim, containsHeaders);
+
+                controller.setData(headers, data);
+
+            } catch (IOException | TopsoilException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private DataPreviewController getController() {
+            return controller;
+        }
+    }
 }

@@ -1,11 +1,22 @@
 package org.cirdles.topsoil.app.table;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.table.command.*;
+import org.cirdles.topsoil.app.table.command.ColumnRenameCommand;
+import org.cirdles.topsoil.app.table.command.DeleteColumnCommand;
+import org.cirdles.topsoil.app.table.command.DeleteRowCommand;
+import org.cirdles.topsoil.app.table.command.InsertColumnCommand;
+import org.cirdles.topsoil.app.table.command.InsertRowCommand;
 import org.cirdles.topsoil.app.util.dialog.TopsoilTextInputDialog;
 
 /**

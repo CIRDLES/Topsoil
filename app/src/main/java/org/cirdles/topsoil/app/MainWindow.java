@@ -10,7 +10,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
@@ -63,9 +65,9 @@ public class MainWindow extends Application {
     private static Image windowIcon;
     private static String OS;
 
-    private final static String WINDOWS = "Windows";
-    private final static String MAC = "Mac";
-    private final static String LINUX = "Linux";
+    private static final String WINDOWS = "Windows";
+    private static final String MAC = "Mac";
+    private static final String LINUX = "Linux";
 
     //***********************
     // Methods
@@ -99,7 +101,7 @@ public class MainWindow extends Application {
                         RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_MAIN_WINDOW_FXML_PATH).toUri().toURL());
                 mainWindow = mainFXMLLoader.load();
                 mainWindowController = mainFXMLLoader.getController();
-            } catch (IOException|NullPointerException e) {
+            } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
                 throw new LoadException("Could not load " + TOPSOIL_MAIN_WINDOW_FXML_PATH);
             }
@@ -114,7 +116,6 @@ public class MainWindow extends Application {
                 scene.getStylesheets().add(css);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                System.err.printf("Could not load CSS.%n");
             }
 
             // If main window is closed, all other windows close.
