@@ -465,7 +465,7 @@ public class MenuItemEventHandler {
      * @param tabs  TopsoilTabPane
      */
     public static void handleNewProject(TopsoilTabPane tabs) {
-        AtomicReference<List<TopsoilDataTable>> tablesReference = new AtomicReference<>();
+        AtomicReference<List<TopsoilDataTable>> tablesReference = new AtomicReference<>(null);
         if (TopsoilSerializer.isProjectOpen()) {
             TopsoilNotification.showNotification(
                     NotificationType.YES_NO,

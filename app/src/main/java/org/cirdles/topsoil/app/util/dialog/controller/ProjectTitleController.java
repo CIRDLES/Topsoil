@@ -96,7 +96,10 @@ public class ProjectTitleController {
      * in the "New Project" sequence.
      */
     @FXML private void nextButtonAction() {
-        File file = new File(getProjectLocation().toString() + File.pathSeparator + getTitle() + ".topsoil");
+        File file = new File(getProjectLocation().toString() + File.separator + getTitle() + ".topsoil");
+        System.out.println("Target: C:\\Users\\Jake\\Desktop\\test.topsoil");
+        System.out.println("Actual: " + file.getAbsolutePath());
+
         if (file.exists()) {
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.YES_NO,

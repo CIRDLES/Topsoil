@@ -33,20 +33,11 @@ task debug(dependsOn: project.classes, type: JavaExec) {
 }
 
 // BEGIN BETTER VERSIONING
-//def getVersionName = { ->
-//    def repo = new FileRepository("$rootDir/.git")
-//    def git = new Git(repo)
-//
-//    git.describe().call()
-//}
-
 def getVersionName = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+    def repo = new FileRepository("$rootDir/.git")
+    def git = new Git(repo)
+
+    git.describe().call()
 }
 
 processResources {
