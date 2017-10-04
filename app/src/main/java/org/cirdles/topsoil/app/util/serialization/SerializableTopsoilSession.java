@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
+import javafx.collections.ObservableList;
+import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 
 import static org.cirdles.topsoil.app.util.serialization.TableDataKeys.*;
 import static org.cirdles.topsoil.app.util.serialization.PlotDataKeys.*;
@@ -146,6 +148,18 @@ class SerializableTopsoilSession implements Serializable {
 
         // Data stored in TopsoilDataTable
         tableData.put(TABLE_DATA, new ArrayList<>(tableController.getTable().getDataAsArrays()));
+        
+        // Stores Variable Assignements
+        ObservableList<TopsoilDataColumn> columns = tableController.getTable().getDataColumns();
+        HashMap<String, Integer> variableMap = new HashMap<>(); // String is the name of the variable, Integer is the index of the column
+        for(int i = 0; i < columns.size(); i++)
+        {
+            if (columns.get(i).hasVariable())
+            {
+                variableMap.put(columns.get(i).getVariable().getName(), i);
+            }
+        }
+        tableData.put(TABLE_VARIABLE_ASSIGNMENTS, variableMap);
 
         // Plots which visualize data in this table
         ArrayList<Map<String, Serializable>> plots = new ArrayList<>();
@@ -211,6 +225,8 @@ class SerializableTopsoilSession implements Serializable {
 
             table.setTitle((String) tableData.get(TABLE_TITLE));
             tabs.add(table);
+            
+            //TODO: deserialize
 
             TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
 
@@ -219,6 +235,20 @@ class SerializableTopsoilSession implements Serializable {
             for (HashMap<String, Serializable> plot : (ArrayList<HashMap<String, Serializable>>) tableData.get(TABLE_PLOTS)) {
                 this.loadPlot(tableController, plot);
             }
+            
+            // Deserializes Variable assignments
+//            String varData = tableData.get(TABLE_VARIABLE_ASSIGNMENTS).
+            HashMap<String, Integer> varData = (HashMap<String, Integer>) tableData.get(TABLE_VARIABLE_ASSIGNMENTS);
+            HashMap<Variable<Number>, TopsoilDataColumn> newVariableColumnMap = new HashMap<>();
+            for (Map.Entry<String, Integer> entry : varData.entrySet()) {
+                Variable<Number> variable = VARIABLES.get(entry.getKey());
+                TopsoilDataColumn column = tableController.getTable().getDataColumns().get(entry.getValue());
+                column.setVariable(variable);
+                newVariableColumnMap.put(variable, column);
+            }
+            tableController.getTable().setVariableAssignments(newVariableColumnMap);
+            
+            
         }
     }
 }

@@ -75,7 +75,7 @@ public class VariableChooserController {
                 choiceBox.getItems().add(v.getName());
             }
             choiceBox.getSelectionModel().select(UNASSIGNED);
-
+            
             this.getChildren().addAll(columnLabel, choiceBox);
         }
 

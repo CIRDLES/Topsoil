@@ -1,11 +1,13 @@
 package org.cirdles.topsoil.app.menu;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
@@ -494,10 +496,22 @@ public class MainMenuBar extends MenuBar {
         aboutItem.setOnAction(event -> {
             try {
                 Parent about = FXMLLoader.load(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL());
-                Scene aboutScene = new Scene(about, 550, 650);
+
+                final double ABOUT_WIDTH = 550;
+                final double ABOUT_HEIGHT = 650;
+
+                Scene aboutScene = new Scene(about, ABOUT_WIDTH, ABOUT_HEIGHT);
                 Stage aboutWindow = new Stage(StageStyle.UNDECORATED);
                 aboutWindow.setResizable(false);
                 aboutWindow.setScene(aboutScene);
+
+                double newX = MainWindow.getPrimaryStage().getX() + (MainWindow.getPrimaryStage().getWidth() / 2) -
+                             (ABOUT_WIDTH / 2);
+                double newY = MainWindow.getPrimaryStage().getY() + (MainWindow.getPrimaryStage().getHeight() / 2) -
+                              (ABOUT_HEIGHT / 2);
+
+                aboutWindow.setX(newX);
+                aboutWindow.setY(newY);
 
                 aboutWindow.requestFocus();
                 aboutWindow.initOwner(tabs.getScene().getWindow());

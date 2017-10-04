@@ -37,6 +37,8 @@ public class TableDataKeys {
      * A key for the data from a {@code TopsoilDataTable}.
      */
     public static final String TABLE_DATA = "Data";
+    
+    public static final String TABLE_VARIABLE_ASSIGNMENTS = "Variable Assignments";
 
     /**
      * A key for the open {@link Plot}s of a {@code TopsoilDataTable}.
