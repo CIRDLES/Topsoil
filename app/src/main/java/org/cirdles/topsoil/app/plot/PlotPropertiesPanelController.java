@@ -127,6 +127,12 @@ public class PlotPropertiesPanelController {
     @FXML private CheckBox evolutionCheckBox;
 
     /**
+     * An {@code HBox} containing the controls for the regression line feature.
+     */
+    @FXML private HBox regressionFeature;
+    @FXML private CheckBox regressionCheckBox;
+
+    /**
      * A {@code Button} that, when pressed, generates a {@link Plot} with the current options for the current table.
      */
     @FXML private Button generatePlotButton;
@@ -177,7 +183,7 @@ public class PlotPropertiesPanelController {
     public final ObjectProperty<IsotopeType> isotopeTypeObjectProperty() {
         if (isotopeType == null) {
             isotopeType = new SimpleObjectProperty<>(STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox
-                                                                                        .getSelectionModel().getSelectedItem()));
+                    .getSelectionModel().getSelectedItem()));
 
             isotopeType.addListener(c -> {
                 if (STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel().getSelectedItem()) != isotopeType.get()) {
@@ -193,18 +199,22 @@ public class PlotPropertiesPanelController {
                     case Generic:
                         concordiaCheckBox.setDisable(true);
                         evolutionCheckBox.setDisable(true);
+                        regressionCheckBox.setDisable(false);
                         break;
                     case UPb:
                         concordiaCheckBox.setDisable(false);
                         evolutionCheckBox.setDisable(true);
+                        regressionCheckBox.setDisable(false);
                         break;
                     case UTh:
                         concordiaCheckBox.setDisable(true);
                         evolutionCheckBox.setDisable(false);
+                        regressionCheckBox.setDisable(true);
                         break;
                     default:
                         concordiaCheckBox.setDisable(true);
                         evolutionCheckBox.setDisable(true);
+                        regressionCheckBox.setDisable(false);
                         break;
                 }
             });
@@ -225,7 +235,7 @@ public class PlotPropertiesPanelController {
     public final ObjectProperty<UncertaintyFormat> uncertaintyProperty() {
         if (uncertainty == null) {
             uncertainty = new SimpleObjectProperty<>(STRING_TO_UNCERTAINTY_FORMAT.get(uncertaintyChoiceBox
-                                                                                         .getSelectionModel().getSelectedItem()));
+                    .getSelectionModel().getSelectedItem()));
 
             uncertainty.addListener(c-> {
                 if (STRING_TO_UNCERTAINTY_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()) != uncertainty.get()) {
@@ -512,6 +522,24 @@ public class PlotPropertiesPanelController {
         evolutionCheckBox.setSelected(b);
     }
 
+    /**
+     * A {@code BooleanProperty} tracking whether or not a regression line should be drawn in the plot.
+     */
+    private BooleanProperty showRegressionLine;
+    public final BooleanProperty showRegressionLineProperty() {
+        if (showRegressionLine == null) {
+            showRegressionLine = new SimpleBooleanProperty(regressionCheckBox.isSelected());
+            showRegressionLine.bind(regressionCheckBox.selectedProperty());
+        }
+        return showRegressionLine;
+    }
+    public Boolean shouldShowRegressionLine() {
+        return showRegressionLineProperty().get();
+    }
+    public void setShowRegressionLine(Boolean b) {
+        regressionCheckBox.setSelected(b);
+    }
+
     //***********************
     // Methods
     //***********************
@@ -578,6 +606,8 @@ public class PlotPropertiesPanelController {
 
         evolutionCheckBox.setSelected((Boolean) PROPERTIES.get(EVOLUTION_MATRIX));
 
+        regressionCheckBox.setSelected((Boolean) PROPERTIES.get(REGRESSION_LINE));
+
         // Automatically adjust PROPERTIES
         isotopeTypeObjectProperty().addListener(c -> {
             PROPERTIES.put(ISOTOPE_TYPE, isotopeTypeObjectProperty().get().getName());
@@ -585,9 +615,9 @@ public class PlotPropertiesPanelController {
         });
         isotopeSystemChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
             if (getIsotopeType() != STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel()
-                                                                                     .getSelectedItem())) {
+                    .getSelectedItem())) {
                 isotopeTypeObjectProperty().set(STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel()
-                                                                                            .getSelectedItem()));
+                        .getSelectedItem()));
             }
         });
 
@@ -664,6 +694,10 @@ public class PlotPropertiesPanelController {
         });
         showEvolutionMatrixProperty().addListener(c -> {
             PROPERTIES.put(EVOLUTION_MATRIX, shouldShowEvolutionMatrix());
+            updateProperties();
+        });
+        showRegressionLineProperty().addListener(x -> {
+            PROPERTIES.put(REGRESSION_LINE, shouldShowRegressionLine());
             updateProperties();
         });
     }
@@ -760,6 +794,7 @@ public class PlotPropertiesPanelController {
                 (Double) plotProperties.get(UNCERTAINTY)));
         if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) plotProperties.get(CONCORDIA_LINE));
         if (plotProperties.containsKey(EVOLUTION_MATRIX)) setShowEvolutionMatrix((Boolean) plotProperties.get(EVOLUTION_MATRIX));
+        if (plotProperties.containsKey(REGRESSION_LINE)) setShowRegressionLine((Boolean) plotProperties.get(REGRESSION_LINE));
     }
 
     @FXML private void assignVariablesButtonAction() {

@@ -121,6 +121,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     private WebView webView;
     private JSObject topsoil;
     private final JavaScriptBridge bridge = new JavaScriptBridge();
+    private final Regression regression = new Regression();
 
     /**
      * Creates a new {@link JavaScriptPlot} using the specified source file. No properties are set by default.
@@ -187,6 +188,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Ellipses.js").toUri();
         final URI CROSSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/UncertaintyBars.js").toUri();
         final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Concordia.js").toUri();
+        final URI REGRESSION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Regression.js").toUri();
         final URI EVOLUTION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Evolution.js").toUri();
         final URI LAMBDA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/DefaultLambda.js").toUri();
         final URI UTILS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/Utils.js").toUri();
@@ -196,6 +198,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                 "<script src=\"" + ELLIPSES_URI + "\"></script>\n" +
                 "<script src=\"" + CROSSES_URI + "\"></script>\n" +
                 "<script src=\"" + CONCORDIA_URI + "\"></script>\n" +
+                "<script src=\"" + REGRESSION_URI + "\"></script>\n" +
                 "<script src=\"" + EVOLUTION_URI + "\"></script>\n" +
                 "<script src=\"" + LAMBDA_URI + "\"></script>\n" +
                 "<script src=\"" + UTILS_URI + "\"></script>\n"
@@ -268,6 +271,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
                             topsoil.setMember("bridge", bridge);
+                            topsoil.setMember("regression", regression);
 
                             if (getData() != null) {
                                 topsoil.call("setData", getData());
