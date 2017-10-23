@@ -22,7 +22,7 @@ public class Regression {
 
         for(int i = 0; i < xDouble.length; i++) {
             xy[i][0] = xDouble[i];
-            xy[i][0] = yDouble[i];
+            xy[i][1] = yDouble[i];
         }
 
         try {

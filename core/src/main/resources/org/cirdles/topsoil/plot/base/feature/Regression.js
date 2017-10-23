@@ -60,6 +60,11 @@ plot.drawRegressionLine = function() {
     plot.regressionGroup = plot.area.clipped.insert("g", ".dataGroup")
         .attr("class", "regressionGroup");
 
+    plot.regressionGroup.append("line")
+        .attr("class", "regression")
+        .attr("stroke", "black")
+        .attr("stroke-width", 1);
+
     plot.regressionVisible = true;
     plot.updateRegressionLine();
 };
@@ -69,20 +74,16 @@ plot.updateRegressionLine = function() {
     if (plot.regressionVisible) {
 
         // Draw a line from point x1, y1 to point x2, y2.
-        x1 = 0;
-        y1 = plot.regressionYIntercept;
-        x2 = plot.xAxisScale.domain()[0];
-        y2 = (plot.regressionSlope * x2) + plot.regressionYIntercept; //y = mx + b
+        var x1 = 0;
+        var y1 = plot.regressionYIntercept;
+        var x2 = plot.xAxisScale.domain()[1];
+        var y2 = (plot.regressionSlope * x2) + plot.regressionYIntercept; //y = mx + b
 
-        line = plot.regressionGroup.selectAll(".regression")
-            .append("line")
-            .attr("class", "regression")
-            .attr("x1", x1)
-            .attr("y1", y1)
-            .attr("x2", x2)
-            .attr("y2", y2)
-            .attr("stroke", "black")
-            .attr("stroke-width", 1);
+        plot.regressionGroup.selectAll(".regression")
+            .attr("x1", plot.xAxisScale(x1))
+            .attr("y1", plot.yAxisScale(y1))
+            .attr("x2", plot.xAxisScale(x2))
+            .attr("y2", plot.yAxisScale(y2));
     }
 };
 

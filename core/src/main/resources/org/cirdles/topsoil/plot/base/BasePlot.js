@@ -211,6 +211,9 @@ plot.setData = function (data) {
 
     plot.data = data;
     plot.ellipseData = plot.calcEllipses(plot.data);
+    if (plot.regressionVisible == true) {
+        plot.drawRegressionLine();
+    }
 
     // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
     plot.updateDataExtent();
@@ -325,7 +328,6 @@ plot.update = function (data) {
     // Manage the plot elements
     plot.managePoints();
     plot.manageEllipses();
-    plot.manageRegressionLine();
     plot.manageRegressionLine();
     plot.manageUncertaintyBars();
     plot.managePlotFeatures();
