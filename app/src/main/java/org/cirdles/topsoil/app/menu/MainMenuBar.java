@@ -383,16 +383,9 @@ public class MainMenuBar extends MenuBar {
                 uPbExampleTableItem,
                 uThExampleTableItem);
         
-        uPbExampleTableItem.setOnAction(event -> {
-            TopsoilDataTable table = MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UPb);
-            tabs.add(table);
-        });
+        uPbExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UPb) );
         
-        uThExampleTableItem.setOnAction(event -> {
-            TopsoilDataTable table = MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UTh);
-            tabs.add(table);
-        });
-
+        uThExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UTh) );
         
         // Import Table from File
         tableFromFileItem.setOnAction(event -> {

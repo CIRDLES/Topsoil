@@ -12,7 +12,9 @@ import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
@@ -301,16 +303,15 @@ public class MenuItemEventHandler {
      *
      * @param tabs  the TopsoilTabPane to which to add tables
      * @param isotopeType the isotope type of the example table to be opened
-     * @return  the resulting TopsoilDataTable
      */
-    public static TopsoilDataTable handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
-        TopsoilDataTable table = null;
+    public static void handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
+        TopsoilDataTable table;
         UncertaintyFormat format;
 
         if (isotopeType != null) {
 
-            List<TopsoilDataEntry> entries = null;
-            String[] headers = null;
+            List<TopsoilDataEntry> entries;
+            String[] headers;
             String exampleContent = new ExampleDataTable().getSampleData(isotopeType);
             String exampleContentDelimiter = ",";
 
@@ -335,12 +336,26 @@ public class MenuItemEventHandler {
                 ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
 
                 table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
-                table.setTitle(isotopeType.getName() + " Example Data");
+                table.setTitle(isotopeType.getAbbreviation() + " Example Data");
+
+                // Set default variable associations.
+                List<TopsoilDataColumn> columns = table.getDataColumns();
+                Map<Variable<Number>, TopsoilDataColumn> assignments = new HashMap<>();
+
+                assignments.put(Variables.X, columns.get(0));
+                assignments.put(Variables.SIGMA_X, columns.get(1));
+                assignments.put(Variables.Y, columns.get(2));
+                assignments.put(Variables.SIGMA_Y, columns.get(3));
+                assignments.put(Variables.RHO, columns.get(4));
+
+                tabs.add(table);
+                TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
+                tableController.setVariableAssignments(assignments);
+
             } catch (TopsoilException e) {
                 e.printStackTrace();
             }
         }
-        return table;
     }
 
     /**
