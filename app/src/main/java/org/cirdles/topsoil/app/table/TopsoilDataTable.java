@@ -236,7 +236,6 @@ public class TopsoilDataTable {
 
     public void setVariableAssignments(Map<Variable<Number>, TopsoilDataColumn> assignments) {
         variableColumnMap = assignments;
-        // TODO Check if TopsoilDataColumns have had their variables set correctly.
     }
 
     /**
