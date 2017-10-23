@@ -212,6 +212,15 @@
                                              </children>
                                           </HBox>
                                        </children>
+                                       <HBox fx:id="regressionFeature" alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="30.0">
+                                          <children>
+                                             <CheckBox fx:id="regressionCheckBox" mnemonicParsing="false" text="Regression Line">
+                                                <HBox.margin>
+                                                   <Insets left="10.0" right="10.0" />
+                                                </HBox.margin>
+                                             </CheckBox>
+                                          </children>
+                                       </HBox>
                                     </VBox>
                                  </children>
                                  <VBox.margin>
