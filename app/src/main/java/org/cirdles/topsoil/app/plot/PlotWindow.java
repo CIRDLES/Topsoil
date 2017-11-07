@@ -63,8 +63,8 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                 new SVGSaver().save(javaScriptPlot.displayAsSVGDocument());
             });
 
-            Button reset = new Button("Re-center");
-            reset.setOnAction(mouseEvent -> {
+            Button recenter = new Button("Re-center");
+            recenter.setOnAction(mouseEvent -> {
                 javaScriptPlot.recenter();
             });
 
@@ -78,7 +78,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                     Platform::runLater
             );
 
-            plotToolBar.getItems().addAll(saveToSVG, reset, loadingIndicator);
+            plotToolBar.getItems().addAll(saveToSVG, recenter, loadingIndicator);
         }
     }
 
