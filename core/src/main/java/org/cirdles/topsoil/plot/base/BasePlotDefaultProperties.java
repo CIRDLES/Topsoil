@@ -39,6 +39,7 @@ public class BasePlotDefaultProperties extends HashMap<String, Object> {
         put(ISOTOPE_TYPE, "Generic");
         put(CONCORDIA_LINE, false);
         put(REGRESSION_LINE, false);
+        put(REGRESSION_ENVELOPE, false);
         put(EVOLUTION_MATRIX, false);
     }
 

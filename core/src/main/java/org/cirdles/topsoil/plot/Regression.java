@@ -38,18 +38,30 @@ public class Regression {
         return mcLeanRegressionLine;
     }
 
-    public double getIntercept() {
-        //getA()[0][0] is always 0.0
-        //getA()[1][0] is the y-intercept
-        return mcLeanRegressionLine.getA()[1][0];
-    }
+    public double getAX() { return mcLeanRegressionLine.getA()[0][0]; }
+    public double getIntercept() { return mcLeanRegressionLine.getA()[1][0]; }
 
+    public double getVectorX() { return mcLeanRegressionLine.getV()[0][0]; }
     public double getSlope() {
         return mcLeanRegressionLine.getV()[1][0];
     }
 
     public String getV() {
         return mcLeanRegressionLine.getV()[1].toString();
+    }
+
+    public String getSav() {
+        StringBuilder savString = new StringBuilder();
+        double[][] sav = mcLeanRegressionLine.getSav();
+        for (double[] dubList : sav) {
+            for (double dub : dubList) {
+                savString.append(dub);
+                savString.append(",");
+            }
+            savString.append(";");
+        }
+
+        return savString.toString();
     }
 
     //Convert the strings from the BasePlot.js into double[]

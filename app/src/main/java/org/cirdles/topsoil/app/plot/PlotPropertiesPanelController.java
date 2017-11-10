@@ -133,6 +133,12 @@ public class PlotPropertiesPanelController {
     @FXML private CheckBox regressionCheckBox;
 
     /**
+     * An {@code HBox} containing the controls for the regression line feature.
+     */
+    @FXML private HBox regressionUncertaintyFeature;
+    @FXML private CheckBox regressionUncertaintyCheckBox;
+
+    /**
      * A {@code Button} that, when pressed, generates a {@link Plot} with the current options for the current table.
      */
     @FXML private Button generatePlotButton;
@@ -199,22 +205,18 @@ public class PlotPropertiesPanelController {
                     case Generic:
                         concordiaCheckBox.setDisable(true);
                         evolutionCheckBox.setDisable(true);
-                        regressionCheckBox.setDisable(false);
                         break;
                     case UPb:
                         concordiaCheckBox.setDisable(false);
                         evolutionCheckBox.setDisable(true);
-                        regressionCheckBox.setDisable(false);
                         break;
                     case UTh:
                         concordiaCheckBox.setDisable(true);
                         evolutionCheckBox.setDisable(false);
-                        regressionCheckBox.setDisable(true);
                         break;
                     default:
                         concordiaCheckBox.setDisable(true);
                         evolutionCheckBox.setDisable(true);
-                        regressionCheckBox.setDisable(false);
                         break;
                 }
             });
@@ -540,6 +542,24 @@ public class PlotPropertiesPanelController {
         regressionCheckBox.setSelected(b);
     }
 
+    /**
+     * A {@code BooleanProperty} tracking whether or not a regression line should be drawn in the plot.
+     */
+    private BooleanProperty showRegressionUncertaintyEnvelope;
+    public final BooleanProperty showRegressionUncertaintyEnvelopeProperty() {
+        if (showRegressionUncertaintyEnvelope == null) {
+            showRegressionUncertaintyEnvelope = new SimpleBooleanProperty(regressionCheckBox.isSelected());
+            showRegressionUncertaintyEnvelope.bind(regressionUncertaintyCheckBox.selectedProperty());
+        }
+        return showRegressionUncertaintyEnvelope;
+    }
+    public Boolean shouldShowRegressionUncertaintyEnvelope() {
+        return showRegressionUncertaintyEnvelopeProperty().get();
+    }
+    public void setShowRegressionUncertaintyEnvelope(Boolean b) {
+        regressionUncertaintyCheckBox.setSelected(b);
+    }
+
     //***********************
     // Methods
     //***********************
@@ -603,10 +623,19 @@ public class PlotPropertiesPanelController {
         });
 
         concordiaCheckBox.setSelected((Boolean) PROPERTIES.get(CONCORDIA_LINE));
-
         evolutionCheckBox.setSelected((Boolean) PROPERTIES.get(EVOLUTION_MATRIX));
 
         regressionCheckBox.setSelected((Boolean) PROPERTIES.get(REGRESSION_LINE));
+        regressionUncertaintyCheckBox.setSelected((Boolean) PROPERTIES.get(REGRESSION_ENVELOPE));
+
+        //The regression uncertainty envelope should be turned on and off with the regression line
+        regressionCheckBox.selectedProperty().addListener(c -> {
+            if (regressionCheckBox.isSelected()) {
+                regressionUncertaintyCheckBox.setSelected(true);
+            } else {
+                regressionUncertaintyCheckBox.setSelected(false);
+            }
+        });
 
         // Automatically adjust PROPERTIES
         isotopeTypeObjectProperty().addListener(c -> {
@@ -698,6 +727,10 @@ public class PlotPropertiesPanelController {
         });
         showRegressionLineProperty().addListener(x -> {
             PROPERTIES.put(REGRESSION_LINE, shouldShowRegressionLine());
+            updateProperties();
+        });
+        showRegressionUncertaintyEnvelopeProperty().addListener(x -> {
+            PROPERTIES.put(REGRESSION_ENVELOPE, shouldShowRegressionUncertaintyEnvelope());
             updateProperties();
         });
     }
@@ -795,6 +828,7 @@ public class PlotPropertiesPanelController {
         if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) plotProperties.get(CONCORDIA_LINE));
         if (plotProperties.containsKey(EVOLUTION_MATRIX)) setShowEvolutionMatrix((Boolean) plotProperties.get(EVOLUTION_MATRIX));
         if (plotProperties.containsKey(REGRESSION_LINE)) setShowRegressionLine((Boolean) plotProperties.get(REGRESSION_LINE));
+        if (plotProperties.containsKey(REGRESSION_ENVELOPE)) setShowRegressionUncertaintyEnvelope((Boolean) plotProperties.get(REGRESSION_ENVELOPE));
     }
 
     @FXML private void assignVariablesButtonAction() {

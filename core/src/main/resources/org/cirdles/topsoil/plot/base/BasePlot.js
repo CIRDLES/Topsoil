@@ -41,7 +41,8 @@ plot.propertiesKeys = [
     'Concordia',
     'Evolution',
     'Isotope',
-    'Regression'];
+    'Regression',
+    'Regression Envelope'];
 
 /*
     Creates an SVG group for data elements like points and ellipses. Inserting other groups below this one ensures that
@@ -311,7 +312,6 @@ plot.update = function (data) {
     d3.select(".x.axis .label")
         .text(plot.getProperty("X Axis"))
         .attr("x", (plot.width) - (d3.select(".x.axis .label").node().getBBox().width));
-
     d3.select(".y.axis .label")
         .text(plot.getProperty("Y Axis"))
         .attr("x",  -(d3.select(".y.axis .label").node().getBBox().width));
@@ -452,6 +452,7 @@ plot.manageRegressionLine = function() {
         // If the RegressionLine needs to be updated
         if (plot.regressionVisible) {
             plot.updateRegressionLine();
+            plot.updateRegressionEnvelope();
         }
 
         //If RegressionLine needs to be drawn
