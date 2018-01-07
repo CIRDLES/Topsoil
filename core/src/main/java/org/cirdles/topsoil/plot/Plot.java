@@ -71,6 +71,11 @@ public interface Plot extends Displayable {
      * Allows the user to set the X and Y axis extents.
      */
     void setAxes();
+    
+    /**
+     * Zooms plot so Concordia displays from corner to corner of plot.
+     */
+    void snapToCorners();
 
     /**
      * Attempts to stop the {@code Plot}'s {@link WebEngine} running JavaScript content.

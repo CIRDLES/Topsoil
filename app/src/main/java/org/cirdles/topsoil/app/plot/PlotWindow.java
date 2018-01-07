@@ -67,6 +67,11 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
             recenter.setOnAction(mouseEvent -> {
                 javaScriptPlot.recenter();
             });
+            
+            Button snapToCorners = new Button("Snap to Corners");
+            snapToCorners.setOnAction(mouseEvent -> {
+                javaScriptPlot.snapToCorners();
+            });
 
             Text loadingIndicator = new Text("Loading...");
 

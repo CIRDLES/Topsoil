@@ -193,7 +193,37 @@ plot.initialize = function (data) {
             };
         });
     };
-
+    
+    // function to bring concordia to corners of plot 
+    topsoil.snapToCorners = function () {
+        
+        // get x axis min and find coordinate on y axis 
+        var xAxisMin = plot.xDataMin;
+        var length = 0; 
+        var coordinates = concordia.getPointAtLength(length);
+        if ( coordinates.x == aAxisMin ) { 
+            concordiaYMin = coordinates.y;
+        }
+        else {
+            length += .1;
+        }
+    
+        // get x axis max and find coordinate on y axis 
+        var xAxisMax = plot.xDataMax;
+        var length = concordia.getTotalLength(); 
+        var coordinates = concordia.getPointAtLength(length);
+        if ( coordinates.x == aAxisMax ) { 
+            concordiaYMax = coordinates.y;
+        }
+        else {
+            length -= .1;
+        }
+    
+        //could also possibly call change axes function 
+        // or some form of zoom, dont think this is really what im looking for 
+        plot.zoom();
+    };
+  
     plot.initialized = true;
     plot.update(plot.data);
 };
