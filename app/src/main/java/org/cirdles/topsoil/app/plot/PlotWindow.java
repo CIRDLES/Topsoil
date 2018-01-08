@@ -83,7 +83,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                     Platform::runLater
             );
 
-            plotToolBar.getItems().addAll(saveToSVG, recenter, loadingIndicator);
+            plotToolBar.getItems().addAll(saveToSVG, recenter, snapToCorners, loadingIndicator);
         }
     }
 

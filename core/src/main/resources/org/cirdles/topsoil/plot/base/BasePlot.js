@@ -200,7 +200,7 @@ plot.initialize = function (data) {
         // get x axis min and find coordinate on y axis 
         var xAxisMin = plot.xDataMin;
         var length = 0; 
-        var coordinates = concordia.getPointAtLength(length);
+        var coordinates = plot.drawConcordia.getPointAtLength(length);
         if ( coordinates.x == aAxisMin ) { 
             concordiaYMin = coordinates.y;
         }
@@ -210,7 +210,7 @@ plot.initialize = function (data) {
     
         // get x axis max and find coordinate on y axis 
         var xAxisMax = plot.xDataMax;
-        var length = concordia.getTotalLength(); 
+        var length = plot.concordia.getTotalLength(); 
         var coordinates = concordia.getPointAtLength(length);
         if ( coordinates.x == aAxisMax ) { 
             concordiaYMax = coordinates.y;
@@ -221,7 +221,8 @@ plot.initialize = function (data) {
     
         //could also possibly call change axes function 
         // or some form of zoom, dont think this is really what im looking for 
-        plot.zoom();
+        plot.changeAxes( concordiaYMin, concordiaYMin, concordiaYMax, concordiaYMax );
+        
     };
   
     plot.initialized = true;
