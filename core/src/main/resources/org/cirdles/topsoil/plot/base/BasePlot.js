@@ -201,9 +201,11 @@ plot.initialize = function (data) {
         var xAxisMin = plot.xDataMin;
         var length = 0; 
         var concordiaYMin = 0;
+        var concordiaXMin = 0;
         var coordinates = plot.concordia.node().getPointAtLength(length);
         if ( coordinates.x == xAxisMin ) { 
             concordiaYMin = coordinates.y;
+            concordiaXMin = coordinates.x;
         }
         else {
             length += .1;
@@ -213,17 +215,18 @@ plot.initialize = function (data) {
         var xAxisMax = plot.xDataMax;
         var length = plot.concordia.node().getTotalLength(); 
         var concordiaYMax = 0;
+        var concordiaXMax = 0;
         var coordinates = plot.concordia.node().getPointAtLength(length);
         if ( coordinates.x == xAxisMax ) { 
             concordiaYMax = coordinates.y;
+            concordiaXMax = coordinates.x;
         }
         else {
             length -= .1;
         }
-    
-        //could also possibly call change axes function 
-        // or some form of zoom, dont think this is really what im looking for 
-        changeAxes( concordiaYMin, concordiaYMin, concordiaYMax, concordiaYMax );
+        
+        //change axes to snap the concordia to corners 
+        changeAxes( concordiaXMin, concordiaXMax, concordiaYMin, concordiaYMax );
         
     };
   
