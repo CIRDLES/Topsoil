@@ -198,32 +198,31 @@ plot.initialize = function (data) {
     topsoil.snapToCorners = function () {
         
         // get x axis min and find coordinate on y axis 
-        var xAxisMin = plot.xDataMin;
-        var length = 0; 
+        
+        //this should be the currrent axis extent 
+        var xAxisMin = plot.xAxisScale.domain()[0];
+        var lamda235 = 0.00000000098485000000;
+        var lamda238 = 0.00000000015512500000;
+        var age207_235 = 0;
+        var age206_238 = 0;
+        
+        var concordiaXMin = xAxisMin;
         var concordiaYMin = 0;
-        var concordiaXMin = 0;
-        var coordinates = plot.concordia.node().getPointAtLength(length);
-        if ( coordinates.x == xAxisMin ) { 
-            concordiaYMin = coordinates.y;
-            concordiaXMin = coordinates.x;
-        }
-        else {
-            length += .1;
-        }
-    
+        
+        //calculate y value passing through x axis 
+        age207_235 = ( 1 / lamda235 ) * Math.log( xAxisMin + 1);
+        age206_238 = age207_235;
+        concordiaYMin = exp ( age206_238 * lamda238 ) - 1;
+        
         // get x axis max and find coordinate on y axis 
-        var xAxisMax = plot.xDataMax;
-        var length = plot.concordia.node().getTotalLength(); 
+        var xAxisMax = plot.xAxisScale.domain()[1];
+        
+        var concordiaXMax = xAxisMax;
         var concordiaYMax = 0;
-        var concordiaXMax = 0;
-        var coordinates = plot.concordia.node().getPointAtLength(length);
-        if ( coordinates.x == xAxisMax ) { 
-            concordiaYMax = coordinates.y;
-            concordiaXMax = coordinates.x;
-        }
-        else {
-            length -= .1;
-        }
+        
+        age207_235 = ( 1 / lamda235 ) * Math.log( xAxisMax + 1 ); 
+        age206_238 = age207_235;
+        concordiaYMax = exp ( age206_238 * lamda238 ) - 1;
         
         //change axes to snap the concordia to corners 
         changeAxes( concordiaXMin, concordiaXMax, concordiaYMin, concordiaYMax );
