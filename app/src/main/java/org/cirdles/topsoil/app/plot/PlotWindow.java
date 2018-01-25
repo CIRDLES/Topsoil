@@ -67,6 +67,11 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
             recenter.setOnAction(mouseEvent -> {
                 javaScriptPlot.recenter();
             });
+            
+            Button snapToCorners = new Button("Snap to Corners");
+            snapToCorners.setOnAction(mouseEvent -> {
+                javaScriptPlot.snapToCorners();
+            });
 
             Text loadingIndicator = new Text("Loading...");
 
@@ -78,7 +83,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                     Platform::runLater
             );
 
-            plotToolBar.getItems().addAll(saveToSVG, recenter, loadingIndicator);
+            plotToolBar.getItems().addAll(saveToSVG, recenter, snapToCorners, loadingIndicator);
         }
     }
 
