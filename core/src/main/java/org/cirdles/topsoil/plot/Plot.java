@@ -17,6 +17,7 @@ package org.cirdles.topsoil.plot;
 
 import java.util.List;
 import java.util.Map;
+
 import javafx.scene.web.WebEngine;
 
 /**
@@ -61,6 +62,24 @@ public interface Plot extends Displayable {
      * @param value Object property value
      */
     void setProperty(String key, Object value);
+
+    /**
+     *
+     * Syncs Java and Javascript's properties
+     */
+    void updateProperties();
+
+    /**
+     *
+     * @return  a boolean when properties have been updated in Javascript but not Java
+     */
+    boolean getIfUpdated();
+
+    /**
+     *
+     * @param update    a flag that marks if properties have been updated in Javascript but not Java
+     */
+    void setIfUpdated(boolean update);
 
     /**
      * Re-centers the plot to its default view.
