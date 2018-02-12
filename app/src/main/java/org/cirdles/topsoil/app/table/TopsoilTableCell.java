@@ -32,13 +32,14 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     /**
      * A {@code TextField} used for editing the value of the cell.
      */
-    private TextField textField;
+    public TextField textField;
 
     /**
      * A {@code NumberFormat} for standardizing the displayed value in the cell.
      */
     private NumberFormat df;
-
+    private int count;
+   
     //***********************
     // Constructors
     //***********************
@@ -49,12 +50,14 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
      */
     public TopsoilTableCell() {
         super();
+        count = 0;
 
         this.setFont(Font.font("Lucida Console"));
         this.setStyle("-fx-font-size:12");
         this.setAlignment(Pos.CENTER_RIGHT);
 
-        this.df = DecimalFormat.getNumberInstance();
+        //this.df = DecimalFormat.getNumberInstance();
+        this.df = new DecimalFormat("0.00E00");
         //this.df.setMinimumFractionDigits(9);
         this.df.setMaximumFractionDigits(9);
 
@@ -190,6 +193,15 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                 cellValue = decimalPart[0] + "." + decimalPart[1].substring(0, 9);
             }
         }
+        
+        
+        if (isScientificNotation() == true){
+            Double cellValueDouble = Double.parseDouble(cellValue);
+            this.df.setMaximumFractionDigits(2);
+            cellValue = df.format(cellValueDouble);
+            cellValue = cellValue.toLowerCase();
+        }
+        
         return cellValue;
     }
 
@@ -238,5 +250,18 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
                                                                                 .get(this.getColumnIndex() + 1));
         }
     }
+    
+    private boolean isScientificNotation() {
+        Boolean sn;
+        //if (((TopsoilTabPane) this.getScene().lookup("#TopsoilTabPane")).getSelectedTab() == null)
+        if (count == 0)
+            sn = false;
+        else
+            sn = ((TopsoilTabPane) this.getScene().lookup("#TopsoilTabPane")).getSelectedTab().getTableController().useScientificNotationProperty().get();
+        
+        count++;
+        return sn;
+    }
+
 
 }

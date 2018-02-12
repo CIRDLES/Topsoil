@@ -22,10 +22,12 @@ import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
 import java.io.IOException;
+import java.util.List;
 import javafx.application.Platform;
 
 import static org.cirdles.topsoil.app.menu.MenuItemEventHandler.*;
 import org.cirdles.topsoil.app.menu.command.DeleteTableCommand;
+import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 
 /**
  * A custom {@code MenuBar} for the Topsoil {@link MainWindow}.
@@ -134,6 +136,13 @@ public class MainMenuBar extends MenuBar {
      * When clicked, imports sample UTh data table 
      */
     private MenuItem uThExampleTableItem;
+    
+    // Data Table > Scientific Notation 
+    /**
+     * When clicked, toggles scientific notation
+     */
+    private MenuItem scientificNotation;
+    
 
 
     // Help Menu
@@ -209,8 +218,7 @@ public class MainMenuBar extends MenuBar {
 
         newProjectItem.setOnAction(event -> MenuItemEventHandler.handleNewProject(tabs));
 
-        openProjectItem.setOnAction(event -> MenuItemEventHandler
-                .handleOpenProjectFile(tabs));
+        openProjectItem.setOnAction(event -> MenuItemEventHandler.handleOpenProjectFile(tabs));
 
         saveProjectItem.setOnAction(event -> MenuItemEventHandler.handleSaveProjectFile(tabs));
 
@@ -436,6 +444,18 @@ public class MainMenuBar extends MenuBar {
                 tableFromClipboardItem.setDisable(true);
             }
         });
+        
+        scientificNotation = new MenuItem("Toggle Scientific Notation");
+        
+        scientificNotation.setOnAction(action -> {
+            Boolean sn = tabs.getSelectedTab().getTableController().getUseScientificNotation();
+            if (sn)
+                tabs.getSelectedTab().getTableController().setUseScientificNotation(false);
+            else
+                tabs.getSelectedTab().getTableController().setUseScientificNotation(true);
+            
+            
+        });
 
         tableMenu.getItems()
                  .addAll(importTable,
@@ -446,7 +466,9 @@ public class MainMenuBar extends MenuBar {
                          newTableItem,
                          //clearTableItem,
                          new SeparatorMenuItem(),
-                         deleteTableItem);
+                         deleteTableItem,
+                         new SeparatorMenuItem(),
+                         scientificNotation);
 
         tableMenu.setOnShown(event -> {
             if (tabs.isEmpty()) {

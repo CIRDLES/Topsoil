@@ -202,6 +202,21 @@ public class TopsoilTabContent extends SplitPane {
                     return (ObservableValue) param.getValue().getProperties().get(index);
                 }
             }
+            
+            //param.getValue().getProperties().get(index);       // ObservableValue
+            //param.getValue().getProperties().get(index).get(); // current value
+            
+            // Take current value
+                // if in scientific notation
+                    // convert to basic decimal
+                    // ObservableValue.set(new value in basic decimal)
+                    // return ObservableValue
+                // else
+                    // convert to scientific notation
+                    // ObservableValue.set(new value in scientific notation
+                    // return ObservableValue
+            
+            
         });
 
         // override cell factory to custom editable cells
