@@ -106,12 +106,22 @@ public class TopsoilTab extends Tab {
 
         // On tab close, close any plots associated with the table.
         this.setOnClosed(event -> {
-            if (!this.getTableController().getTable().getOpenPlots().isEmpty()) {
-                for (PlotInformation plotInfo : this.getTableController().getTable().getOpenPlots()) {
-                    plotInfo.getStage().close();
-                }
-            }
+            closeTabPlots();
         });
+    }
+
+    public void closeTabPlots() {
+        if (!this.getTableController().getTable().getOpenPlots().isEmpty()) {
+            //Simulates an external close request so that actions defined under plotStage.setOnCloseRequest will fire
+            for (PlotInformation plotInfo : this.getTableController().getTable().getOpenPlots()) {
+                plotInfo.getStage().fireEvent(
+                        new javafx.stage.WindowEvent(
+                                plotInfo.getStage(),
+                                javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
+                        )
+                );
+            }
+        }
     }
 
     //***********************
