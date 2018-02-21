@@ -10,11 +10,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
+import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
@@ -120,6 +119,7 @@ public class MainWindow extends Application {
 
             // If main window is closed, all other windows close.
             primaryStage.setOnCloseRequest(event -> {
+
                 event.consume();
                 // If something is open
                 if (!mainWindowController.getTabPane().isEmpty()) {
@@ -129,10 +129,17 @@ public class MainWindow extends Application {
                         if (save) {
                             // If file was successfully saved
                             if (MenuItemEventHandler.handleSaveAsProjectFile(mainWindowController.getTabPane())) {
+                                //Close all open plots
+                                for(TopsoilTab tab : mainWindowController.getTabPane().getTopsoilTabs()) {
+                                    tab.closeTabPlots();
+                                }
                                 Platform.exit();
                             }
                         // If user doesn't want to save
                         } else {
+                            for(TopsoilTab tab : mainWindowController.getTabPane().getTopsoilTabs()) {
+                                tab.closeTabPlots();
+                            }
                             Platform.exit();
                         }
                     }

@@ -176,8 +176,8 @@ plot.initialize = function (data) {
         }
 
         // if the user input a min greater than the max, arbitrarily set the max to a larger value
-        if(xMin >= xMax) { xMax = parseFloat(xMin) + 10; }
-        if(yMin >= yMax) { yMax = parseFloat(yMin) + 1; }
+        if(xMin >= xMax) { xMax = parseFloat(xMin) + .1; }
+        if(yMin >= yMax) { yMax = parseFloat(yMin) + .1; }
 
         changeAxes(xMin, xMax, yMin, yMax);
     };
@@ -228,8 +228,9 @@ plot.initialize = function (data) {
         changeAxes( concordiaXMin, concordiaXMax, concordiaYMin, concordiaYMax );
         
     };
-  
+
     plot.initialized = true;
+    plot.manageAxisExtents();
     plot.update(plot.data);
 };
 
@@ -397,6 +398,7 @@ plot.zoomed = function() {
         plot.updateRegressionLine();
     }
 
+    plot.manageAxisExtents();
     plot.update(topsoil.data);
 };
 
@@ -428,6 +430,16 @@ plot.updateDataExtent = function () {
         plot.xDataMax = dataXMax + 0.05 * xRange;
         plot.yDataMax = dataYMax + 0.05 * yRange;
     }
+};
+
+plot.manageAxisExtents = function() {
+    //Keep properties up-to-date with plot view
+    topsoil.updateProperty("X Min", plot.xAxisScale.domain()[0]);
+    topsoil.updateProperty("X Max", plot.xAxisScale.domain()[1]);
+    topsoil.updateProperty("Y Min", plot.yAxisScale.domain()[0]);
+    topsoil.updateProperty("Y Max", plot.yAxisScale.domain()[1]);
+    topsoil.propertiesBridge.setAxesExtents(plot.xAxisScale.domain()[0], plot.xAxisScale.domain()[1], plot.yAxisScale.domain()[0], plot.yAxisScale.domain()[1]);
+    topsoil.propertiesBridge.setIfUpdated(true);
 };
 
 /*

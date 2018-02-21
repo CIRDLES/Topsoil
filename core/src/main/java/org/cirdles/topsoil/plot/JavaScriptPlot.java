@@ -15,22 +15,17 @@
  */
 package org.cirdles.topsoil.plot;
 
-import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebErrorEvent;
-import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.plot.base.BasePlot;
+import org.cirdles.topsoil.plot.bridges.JavaScriptBridge;
+import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
+import org.cirdles.topsoil.plot.bridges.Regression;
 import org.cirdles.topsoil.plot.internal.BoundsToRectangle;
 import org.cirdles.topsoil.plot.internal.IsBlankImage;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
@@ -121,6 +116,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     private WebView webView;
     private JSObject topsoil;
     private final JavaScriptBridge bridge = new JavaScriptBridge();
+    private final PropertiesBridge propertiesBridge = new PropertiesBridge();
     private final Regression regression = new Regression();
 
     /**
@@ -271,6 +267,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
                             topsoil.setMember("bridge", bridge);
+                            topsoil.setMember("propertiesBridge", propertiesBridge);
                             topsoil.setMember("regression", regression);
 
                             if (getData() != null) {
@@ -392,6 +389,29 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
         if (topsoil != null) {
             runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
+        }
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public boolean getIfUpdated() {
+        return propertiesBridge.getIfUpdated();
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public void setIfUpdated(boolean update) {
+        propertiesBridge.setIfUpdated(update);
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public void updateProperties() {
+
+        Map<String, Object> properties = propertiesBridge.getProperties();
+
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            super.setProperty(entry.getKey(), entry.getValue());
         }
     }
 
