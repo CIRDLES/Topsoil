@@ -189,35 +189,21 @@ public class TopsoilTableController {
         tabContent.getPlotPropertiesPanelController().isotopeTypeObjectProperty().bindBidirectional(table.isotopeTypeObjectProperty());
     
         useScientificNotationProperty().addListener((obervable, oldValue, newValue) -> {
-            if (newValue) {
+            if (!newValue) {
                 // convert to Scientific Notation
-                System.out.println("*****SN IS ON*****");
-                df = new DecimalFormat("0.00E00");
+                df = new DecimalFormat("0.00000E00");
                 df.setMaximumFractionDigits(2);
                 for (int i = 0; i < tabContent.getTableView().getColumns().size(); i++) {
                     int index = i;
-//                    tabContent.getTableView().getColumns().get(i).setCellValueFactory(param -> {
-//                        if (param.getValue().getProperties().size() == 0) {
-//                            return (ObservableValue) (new SimpleStringProperty(df.format(0.0).toLowerCase()));
-//                        } else {
-//                            if (param.getValue().getProperties().size() < index + 1) {
-//                                SimpleDoubleProperty newProperty = new SimpleDoubleProperty(Double.NaN);
-//                                param.getValue().getProperties().add(newProperty);
-//                                return (ObservableValue) newProperty;
-//                            
-//                            } else {
-//                                System.out.println(param.getValue().getProperties().get(index).get());
-//                                return (ObservableValue)  (new SimpleStringProperty(df.format(param.getValue().getProperties().get(index).get()).toLowerCase()));
-//                            }
-//                        }
-//                    });
+
                 ObservableList<TableColumn<TopsoilDataEntry, Double>> observableColumns = (ObservableList) tabContent.getTableView().getColumns();
-                observableColumns.get(i).setCellFactory(new DecimalColumnFactory<TopsoilDataEntry, Double>(new DecimalFormat("0.00E00")));
+                observableColumns.get(i).setCellFactory(new DecimalColumnFactory<TopsoilDataEntry, Double>(new DecimalFormat("0.00000E00")));
+                observableColumns.get(i).setVisible(false);
+                observableColumns.get(i).setVisible(true);
                 }
                 
             } else {
                 // convert to basic decimal
-                System.out.println("*****SN IS OFF*****");
                 for (int i = 0; i < tabContent.getTableView().getColumns().size(); i++) {
                     int index = i;
                     tabContent.getTableView().getColumns().get(i).setCellValueFactory(param -> {
@@ -234,7 +220,10 @@ public class TopsoilTableController {
                             }
                         }
                     });
+                tabContent.getTableView().getColumns().get(i).setVisible(false);
+                tabContent.getTableView().getColumns().get(i).setVisible(true);
                 }
+                
             }
         });
     
@@ -574,8 +563,7 @@ public class TopsoilTableController {
     
     public void setUseScientificNotation(Boolean scientificNotation) {
         useScientificNotation.set(scientificNotation);
-    }
-    
+    }   
     
     public class DecimalColumnFactory<TopsoilDataEntry, Double> implements Callback<TableColumn<TopsoilDataEntry, Double>, TableCell<TopsoilDataEntry, Double>> {
 
@@ -587,32 +575,13 @@ public class TopsoilTableController {
         }
 
         @Override
-        public TopsoilTableCell call(TableColumn<TopsoilDataEntry, Double> param) {
-            return new TopsoilTableCell() {
-
-                //@Override
-                public void updateItem(Double item, boolean isEmpty) {
-                    super.updateItem(item, isEmpty);
-
-                    if (isEmpty) {
-                        setText(null);
-                        setGraphic(null);
-                    } else if (isEditing()) {
-                        if (textField != null) {
-                            textField.setText(this.getItem().toString());
-                        }
-                        setText(null);
-                        setGraphic(this.textField);
-                    } else {
-                        setText(alignText(getItem().toString()));
-                        setGraphic(null);
-                    }
-                }
-            };
+        public TableCell call(TableColumn<TopsoilDataEntry, Double> param) {
+            TopsoilTableCell cell = new TopsoilTableCell();
+            
+            return (TableCell) cell;
         }
         
-        private DecimalFormat df = new DecimalFormat("0.00E00");
-        //df.setMaximumFractionDigits(2);
+        private final DecimalFormat df = new DecimalFormat("0.00000E00");
         
         private String alignText(String cellValue) {
         if (cellValue.contains(".")) {
@@ -628,14 +597,14 @@ public class TopsoilTableController {
                 cellValue = decimalPart[0] + "." + decimalPart[1].substring(0, 9);
             }
         }
-        Double cellValueDouble = Double.parseDouble(cellValue);
-        this.df.setMaximumFractionDigits(2);
+        double cellValueDouble = java.lang.Double.parseDouble(cellValue);
+        this.df.setMaximumFractionDigits(5);
         cellValue = df.format(cellValueDouble);
         cellValue = cellValue.toLowerCase();
         
         return cellValue;
     }
-
+            
         
     }
     

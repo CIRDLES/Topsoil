@@ -475,6 +475,7 @@ public class MainMenuBar extends MenuBar {
                 clearTableItem.setDisable(true);
                 deleteTableItem.setDisable(true);
                 exportTableItem.setDisable(true);
+                scientificNotation.setDisable(true);
             } else {
                 if (!tabs.getSelectedTab().getTableController().getTable().isCleared()) {
                     clearTableItem.setDisable(false);
@@ -484,6 +485,7 @@ public class MainMenuBar extends MenuBar {
                     exportTableItem.setDisable(true);
                 }
                 deleteTableItem.setDisable(false);
+                scientificNotation.setDisable(false);
             }
         });
 

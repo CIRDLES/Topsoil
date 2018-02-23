@@ -57,7 +57,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         this.setAlignment(Pos.CENTER_RIGHT);
 
         //this.df = DecimalFormat.getNumberInstance();
-        this.df = new DecimalFormat("0.00E00");
+        this.df = new DecimalFormat("0.00000E00");
         //this.df.setMinimumFractionDigits(9);
         this.df.setMaximumFractionDigits(9);
 
@@ -197,7 +197,7 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
         
         if (isScientificNotation() == true){
             Double cellValueDouble = Double.parseDouble(cellValue);
-            this.df.setMaximumFractionDigits(2);
+            this.df.setMaximumFractionDigits(5);
             cellValue = df.format(cellValueDouble);
             cellValue = cellValue.toLowerCase();
         }
@@ -252,13 +252,16 @@ public class TopsoilTableCell extends TableCell<TopsoilDataEntry, Double> {
     }
     
     private boolean isScientificNotation() {
-        Boolean sn;
+        Boolean sn = false;
         //if (((TopsoilTabPane) this.getScene().lookup("#TopsoilTabPane")).getSelectedTab() == null)
-        if (count == 0)
+        if (count == 0){
             sn = false;
-        else
+        }
+        else {
+            //sn = false;
             sn = ((TopsoilTabPane) this.getScene().lookup("#TopsoilTabPane")).getSelectedTab().getTableController().useScientificNotationProperty().get();
-        
+            
+        }
         count++;
         return sn;
     }
