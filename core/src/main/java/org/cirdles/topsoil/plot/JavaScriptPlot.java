@@ -15,22 +15,17 @@
  */
 package org.cirdles.topsoil.plot;
 
-import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebErrorEvent;
-import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.plot.base.BasePlot;
+import org.cirdles.topsoil.plot.bridges.JavaScriptBridge;
+import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
+import org.cirdles.topsoil.plot.bridges.Regression;
 import org.cirdles.topsoil.plot.internal.BoundsToRectangle;
 import org.cirdles.topsoil.plot.internal.IsBlankImage;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
@@ -121,6 +116,8 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     private WebView webView;
     private JSObject topsoil;
     private final JavaScriptBridge bridge = new JavaScriptBridge();
+    private final PropertiesBridge propertiesBridge = new PropertiesBridge();
+    private final Regression regression = new Regression();
 
     /**
      * Creates a new {@link JavaScriptPlot} using the specified source file. No properties are set by default.
@@ -187,6 +184,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Ellipses.js").toUri();
         final URI CROSSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/UncertaintyBars.js").toUri();
         final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Concordia.js").toUri();
+        final URI REGRESSION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Regression.js").toUri();
         final URI EVOLUTION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Evolution.js").toUri();
         final URI LAMBDA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/DefaultLambda.js").toUri();
         final URI UTILS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/Utils.js").toUri();
@@ -196,6 +194,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                 "<script src=\"" + ELLIPSES_URI + "\"></script>\n" +
                 "<script src=\"" + CROSSES_URI + "\"></script>\n" +
                 "<script src=\"" + CONCORDIA_URI + "\"></script>\n" +
+                "<script src=\"" + REGRESSION_URI + "\"></script>\n" +
                 "<script src=\"" + EVOLUTION_URI + "\"></script>\n" +
                 "<script src=\"" + LAMBDA_URI + "\"></script>\n" +
                 "<script src=\"" + UTILS_URI + "\"></script>\n"
@@ -268,6 +267,8 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                             topsoil = (JSObject) webEngine.executeScript("topsoil");
 
                             topsoil.setMember("bridge", bridge);
+                            topsoil.setMember("propertiesBridge", propertiesBridge);
+                            topsoil.setMember("regression", regression);
 
                             if (getData() != null) {
                                 topsoil.call("setData", getData());
@@ -352,6 +353,14 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
             runOnFxApplicationThread(() -> topsoil.call("setAxes"));
         }
     }
+    
+    /**{@inheritDoc}*/
+    @Override
+    public void snapToCorners() {
+        if (topsoil != null) {
+            runOnFxApplicationThread(() -> topsoil.call("snapToCorners"));
+        }
+    }
 
     /**{@inheritDoc}*/
     @Override
@@ -380,6 +389,29 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
         if (topsoil != null) {
             runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
+        }
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public boolean getIfUpdated() {
+        return propertiesBridge.getIfUpdated();
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public void setIfUpdated(boolean update) {
+        propertiesBridge.setIfUpdated(update);
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public void updateProperties() {
+
+        Map<String, Object> properties = propertiesBridge.getProperties();
+
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            super.setProperty(entry.getKey(), entry.getValue());
         }
     }
 

@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -30,7 +31,7 @@
          <content>
             <VBox>
                <children>
-                  <HBox alignment="TOP_CENTER" minHeight="300.0">
+                  <HBox alignment="TOP_CENTER" minHeight="325.0">
                      <children>
                         <VBox HBox.hgrow="NEVER">
                            <children>
@@ -80,22 +81,22 @@
                                                 <Insets left="10.0" right="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="X min:" GridPane.rowIndex="3">
+                                          <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="X min:" GridPane.rowIndex="4">
                                              <GridPane.margin>
                                                 <Insets left="10.0" right="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="X max:" GridPane.rowIndex="4">
+                                          <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="X max:" GridPane.rowIndex="5">
                                              <GridPane.margin>
                                                 <Insets left="10.0" right="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Y min:" GridPane.rowIndex="5">
+                                          <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Y min:" GridPane.rowIndex="6">
                                              <GridPane.margin>
                                                 <Insets left="10.0" right="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Y max:" GridPane.rowIndex="6">
+                                          <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" text="Y max:" GridPane.rowIndex="7">
                                              <GridPane.margin>
                                                 <Insets left="10.0" right="5.0" />
                                              </GridPane.margin>
@@ -103,11 +104,12 @@
                                           <TextField fx:id="titleTextField" minHeight="25.0" minWidth="120.0" GridPane.columnIndex="1" />
                                           <TextField fx:id="xAxisTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           <TextField fx:id="yAxisTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <TextField fx:id="xAxisMinTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                          <TextField fx:id="xAxisMaxTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                          <TextField fx:id="yAxisMinTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                          <TextField fx:id="yAxisMaxTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                          <Button fx:id="setAxesButton" text="Set Axes" onAction="#setAxes" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="125.0" GridPane.rowIndex="7">
+                                          <ToggleButton fx:id="axisLiveUpdate" prefHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="3" selected="true" text="Live update" />
+                                          <TextField fx:id="xAxisMinTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <TextField fx:id="xAxisMaxTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <TextField fx:id="yAxisMinTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                          <TextField fx:id="yAxisMaxTextField" minHeight="25.0" minWidth="125.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                          <Button fx:id="setAxesButton" prefHeight="25.0" prefWidth="125.0" GridPane.rowIndex="8" onAction="#setAxes" text="Set Axes" >
                                              <GridPane.margin>
                                                 <Insets left="10.0" right="10.0" />
                                              </GridPane.margin>
@@ -212,6 +214,24 @@
                                              </children>
                                           </HBox>
                                        </children>
+                                       <HBox fx:id="regressionFeature" alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="30.0">
+                                          <children>
+                                             <CheckBox fx:id="regressionCheckBox" mnemonicParsing="false" text="Regression Line">
+                                                <HBox.margin>
+                                                   <Insets left="10.0" right="10.0" />
+                                                </HBox.margin>
+                                             </CheckBox>
+                                          </children>
+                                       </HBox>
+                                       <HBox fx:id="regressionUncertaintyFeature" alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="30.0">
+                                          <children>
+                                             <CheckBox fx:id="regressionUncertaintyCheckBox" mnemonicParsing="false" text="Regression Uncertainty Envelope">
+                                                <HBox.margin>
+                                                   <Insets left="10.0" right="10.0" />
+                                                </HBox.margin>
+                                             </CheckBox>
+                                          </children>
+                                       </HBox>
                                     </VBox>
                                  </children>
                                  <VBox.margin>

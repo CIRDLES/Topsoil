@@ -76,7 +76,7 @@ plot.updateConcordia = function() {
             newtonMethod(wetherill.y, plot.yAxisScale.domain()[1]));
 
         // build the concordia line
-        plot.concordiaGroup.select(".concordia")
+        plot.concordia = plot.concordiaGroup.select(".concordia")
             .attr("d", function () {
                 var approximateSegment = function (path, minT, maxT) {
                     var p1 = wetherill(minT).plus(

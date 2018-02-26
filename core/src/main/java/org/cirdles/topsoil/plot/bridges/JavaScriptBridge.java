@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.plot;
+package org.cirdles.topsoil.plot.bridges;
 
 /**
  * Intended to be added as a member to a JavaScriptPlot, so that the JavaScript may make upcalls to JavaFX.

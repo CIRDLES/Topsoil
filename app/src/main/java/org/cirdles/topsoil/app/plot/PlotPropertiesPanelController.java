@@ -50,6 +50,11 @@ public class PlotPropertiesPanelController {
     @FXML private TextField titleTextField;
 
     /**
+     * A {@code ToggleButton} for enabling or disabling live updates of the properties panel's axis extents.
+     */
+    @FXML private ToggleButton axisLiveUpdate;
+
+    /**
      * A {@code TextField} for editing the title of the plot's X axis.
      */
     @FXML private TextField xAxisTextField;
@@ -127,6 +132,18 @@ public class PlotPropertiesPanelController {
     @FXML private CheckBox evolutionCheckBox;
 
     /**
+     * An {@code HBox} containing the controls for the regression line feature.
+     */
+    @FXML private HBox regressionFeature;
+    @FXML private CheckBox regressionCheckBox;
+
+    /**
+     * An {@code HBox} containing the controls for the regression line feature.
+     */
+    @FXML private HBox regressionUncertaintyFeature;
+    @FXML private CheckBox regressionUncertaintyCheckBox;
+
+    /**
      * A {@code Button} that, when pressed, generates a {@link Plot} with the current options for the current table.
      */
     @FXML private Button generatePlotButton;
@@ -177,7 +194,7 @@ public class PlotPropertiesPanelController {
     public final ObjectProperty<IsotopeType> isotopeTypeObjectProperty() {
         if (isotopeType == null) {
             isotopeType = new SimpleObjectProperty<>(STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox
-                                                                                        .getSelectionModel().getSelectedItem()));
+                    .getSelectionModel().getSelectedItem()));
 
             isotopeType.addListener(c -> {
                 if (STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel().getSelectedItem()) != isotopeType.get()) {
@@ -225,7 +242,7 @@ public class PlotPropertiesPanelController {
     public final ObjectProperty<UncertaintyFormat> uncertaintyProperty() {
         if (uncertainty == null) {
             uncertainty = new SimpleObjectProperty<>(STRING_TO_UNCERTAINTY_FORMAT.get(uncertaintyChoiceBox
-                                                                                         .getSelectionModel().getSelectedItem()));
+                    .getSelectionModel().getSelectedItem()));
 
             uncertainty.addListener(c-> {
                 if (STRING_TO_UNCERTAINTY_FORMAT.get(uncertaintyChoiceBox.getSelectionModel().getSelectedItem()) != uncertainty.get()) {
@@ -248,8 +265,8 @@ public class PlotPropertiesPanelController {
     private StringProperty title;
     public final StringProperty titleProperty() {
         if (title == null) {
-            title = new SimpleStringProperty(titleTextField.getText());
-            title.bind(titleTextField.textProperty());
+            title = new SimpleStringProperty();
+            title.bindBidirectional(titleTextField.textProperty());
         }
         return title;
     }
@@ -257,7 +274,15 @@ public class PlotPropertiesPanelController {
         return titleProperty().get();
     }
     public void setTitle(String s) {
-        titleTextField.setText(s);
+        titleProperty().set(s);
+    }
+
+    /**
+     *
+     * @return a boolean dictating whether or not to update axis extent text boxes
+     */
+    public boolean liveAxisUpdate() {
+        return axisLiveUpdate.isSelected();
     }
 
     /**
@@ -266,8 +291,8 @@ public class PlotPropertiesPanelController {
     private StringProperty xAxisTitle;
     public final StringProperty xAxisTitleProperty() {
         if (xAxisTitle == null) {
-            xAxisTitle = new SimpleStringProperty(xAxisTextField.getText());
-            xAxisTitle.bind(xAxisTextField.textProperty());
+            xAxisTitle = new SimpleStringProperty();
+            xAxisTitle.bindBidirectional(xAxisTextField.textProperty());
         }
         return xAxisTitle;
     }
@@ -284,8 +309,8 @@ public class PlotPropertiesPanelController {
     private StringProperty yAxisTitle;
     public final StringProperty yAxisTitleProperty() {
         if (yAxisTitle == null) {
-            yAxisTitle = new SimpleStringProperty(yAxisTextField.getText());
-            yAxisTitle.bind(yAxisTextField.textProperty());
+            yAxisTitle = new SimpleStringProperty();
+            yAxisTitle.bindBidirectional(yAxisTextField.textProperty());
         }
         return yAxisTitle;
     }
@@ -302,8 +327,7 @@ public class PlotPropertiesPanelController {
     private StringProperty xAxisMin;
     public final StringProperty xAxisMinProperty() {
         if (xAxisMin == null) {
-            xAxisMin = new SimpleStringProperty(xAxisMinTextField.getText());
-            xAxisMin.bind(xAxisMinTextField.textProperty());
+            xAxisMin = new SimpleStringProperty();
         }
         return xAxisMin;
     }
@@ -311,7 +335,14 @@ public class PlotPropertiesPanelController {
         return xAxisMinProperty().get();
     }
     public void setXAxisMin(String s) {
+        setXAxisMinTextField(s);
+        xAxisMin.set(s);
+    }
+    public void setXAxisMinTextField(String s) {
         xAxisMinTextField.setText(s);
+    }
+    public String getXAxisMinTextField(String s) {
+        return xAxisMinTextField.getText();
     }
 
     /**
@@ -320,8 +351,7 @@ public class PlotPropertiesPanelController {
     private StringProperty xAxisMax;
     public final StringProperty xAxisMaxProperty() {
         if (xAxisMax == null) {
-            xAxisMax = new SimpleStringProperty(xAxisMaxTextField.getText());
-            xAxisMax.bind(xAxisMaxTextField.textProperty());
+            xAxisMax = new SimpleStringProperty();
         }
         return xAxisMax;
     }
@@ -329,7 +359,14 @@ public class PlotPropertiesPanelController {
         return xAxisMaxProperty().get();
     }
     public void setXAxisMax(String s) {
+        setXAxisMaxTextField(s);
+        xAxisMax.set(s);
+    }
+    public void setXAxisMaxTextField(String s) {
         xAxisMaxTextField.setText(s);
+    }
+    public String getXAxisMaxTextField(String s) {
+        return xAxisMaxTextField.getText();
     }
 
     /**
@@ -338,8 +375,7 @@ public class PlotPropertiesPanelController {
     private StringProperty yAxisMin;
     public final StringProperty yAxisMinProperty() {
         if (yAxisMin == null) {
-            yAxisMin = new SimpleStringProperty(yAxisMinTextField.getText());
-            yAxisMin.bind(yAxisMinTextField.textProperty());
+            yAxisMin = new SimpleStringProperty();
         }
         return yAxisMin;
     }
@@ -347,8 +383,16 @@ public class PlotPropertiesPanelController {
         return yAxisMinProperty().get();
     }
     public void setYAxisMin(String s) {
+        setYAxisMinTextField(s);
+        yAxisMin.set(s);
+    }
+    public void setYAxisMinTextField(String s) {
         yAxisMinTextField.setText(s);
     }
+    public String getYAxisMinTextField(String s) {
+        return yAxisMinTextField.getText();
+    }
+
 
     /**
      * A {@code StringProperty} containing the Y axis's maximum value.
@@ -356,8 +400,7 @@ public class PlotPropertiesPanelController {
     private StringProperty yAxisMax;
     public final StringProperty yAxisMaxProperty() {
         if (yAxisMax == null) {
-            yAxisMax = new SimpleStringProperty(yAxisMaxTextField.getText());
-            yAxisMax.bind(yAxisMaxTextField.textProperty());
+            yAxisMax = new SimpleStringProperty();
         }
         return yAxisMax;
     }
@@ -365,7 +408,14 @@ public class PlotPropertiesPanelController {
         return yAxisMaxProperty().get();
     }
     public void setYAxisMax(String s) {
+        setYAxisMaxTextField(s);
+        yAxisMax.set(s);
+    }
+    public void setYAxisMaxTextField(String s) {
         yAxisMaxTextField.setText(s);
+    }
+    public String getYAxisMaxTextField(String s) {
+        return yAxisMaxTextField.getText();
     }
 
     /**
@@ -374,8 +424,8 @@ public class PlotPropertiesPanelController {
     private BooleanProperty showPoints;
     public final BooleanProperty showPointsProperty() {
         if (showPoints == null) {
-            showPoints = new SimpleBooleanProperty(pointsCheckBox.isSelected());
-            showPoints.bind(pointsCheckBox.selectedProperty());
+            showPoints = new SimpleBooleanProperty();
+            showPoints.bindBidirectional(pointsCheckBox.selectedProperty());
         }
         return showPoints;
     }
@@ -392,8 +442,8 @@ public class PlotPropertiesPanelController {
     private BooleanProperty showEllipses;
     public final BooleanProperty showEllipsesProperty() {
         if (showEllipses == null) {
-            showEllipses = new SimpleBooleanProperty(ellipsesCheckBox.isSelected());
-            showEllipses.bind(ellipsesCheckBox.selectedProperty());
+            showEllipses = new SimpleBooleanProperty();
+            showEllipses.bindBidirectional(ellipsesCheckBox.selectedProperty());
         }
         return showEllipses;
     }
@@ -410,8 +460,8 @@ public class PlotPropertiesPanelController {
     private BooleanProperty showCrosses;
     public final BooleanProperty showCrossesProperty() {
         if (showCrosses == null) {
-            showCrosses = new SimpleBooleanProperty(crossesCheckBox.isSelected());
-            showCrosses.bind(crossesCheckBox.selectedProperty());
+            showCrosses = new SimpleBooleanProperty();
+            showCrosses.bindBidirectional(crossesCheckBox.selectedProperty());
         }
         return showCrosses;
     }
@@ -428,8 +478,8 @@ public class PlotPropertiesPanelController {
     private ObjectProperty<Color> pointsColor;
     public final ObjectProperty<Color> pointsColorProperty() {
         if (pointsColor == null) {
-            pointsColor = new SimpleObjectProperty<>(pointsColorPicker.getValue());
-            pointsColor.bind(pointsColorPicker.valueProperty());
+            pointsColor = new SimpleObjectProperty<>();
+            pointsColor.bindBidirectional(pointsColorPicker.valueProperty());
         }
         return pointsColor;
     }
@@ -446,8 +496,8 @@ public class PlotPropertiesPanelController {
     private ObjectProperty<Color> ellipsesColor;
     public final ObjectProperty<Color> ellipsesColorProperty() {
         if (ellipsesColor == null) {
-            ellipsesColor = new SimpleObjectProperty<>(ellipsesColorPicker.getValue());
-            ellipsesColor.bind(ellipsesColorPicker.valueProperty());
+            ellipsesColor = new SimpleObjectProperty<>();
+            ellipsesColor.bindBidirectional(ellipsesColorPicker.valueProperty());
         }
         return ellipsesColor;
     }
@@ -464,8 +514,8 @@ public class PlotPropertiesPanelController {
     private ObjectProperty<Color> crossesColor;
     public final ObjectProperty<Color> crossesColorProperty() {
         if (crossesColor == null) {
-            crossesColor = new SimpleObjectProperty<>(crossesColorPicker.getValue());
-            crossesColor.bind(crossesColorPicker.valueProperty());
+            crossesColor = new SimpleObjectProperty<>();
+            crossesColor.bindBidirectional(crossesColorPicker.valueProperty());
         }
         return crossesColor;
     }
@@ -482,8 +532,8 @@ public class PlotPropertiesPanelController {
     private BooleanProperty showConcordia;
     public final BooleanProperty showConcordiaProperty() {
         if (showConcordia == null) {
-            showConcordia = new SimpleBooleanProperty(concordiaCheckBox.isSelected());
-            showConcordia.bind(concordiaCheckBox.selectedProperty());
+            showConcordia = new SimpleBooleanProperty();
+            showConcordia.bindBidirectional(concordiaCheckBox.selectedProperty());
         }
         return showConcordia;
     }
@@ -500,8 +550,8 @@ public class PlotPropertiesPanelController {
     private BooleanProperty showEvolutionMatrix;
     public final BooleanProperty showEvolutionMatrixProperty() {
         if (showEvolutionMatrix == null) {
-            showEvolutionMatrix = new SimpleBooleanProperty(evolutionCheckBox.isSelected());
-            showEvolutionMatrix.bind(evolutionCheckBox.selectedProperty());
+            showEvolutionMatrix = new SimpleBooleanProperty();
+            showEvolutionMatrix.bindBidirectional(evolutionCheckBox.selectedProperty());
         }
         return showEvolutionMatrix;
     }
@@ -510,6 +560,42 @@ public class PlotPropertiesPanelController {
     }
     public void setShowEvolutionMatrix(Boolean b) {
         evolutionCheckBox.setSelected(b);
+    }
+
+    /**
+     * A {@code BooleanProperty} tracking whether or not a regression line should be drawn in the plot.
+     */
+    private BooleanProperty showRegressionLine;
+    public final BooleanProperty showRegressionLineProperty() {
+        if (showRegressionLine == null) {
+            showRegressionLine = new SimpleBooleanProperty();
+            showRegressionLine.bindBidirectional(regressionCheckBox.selectedProperty());
+        }
+        return showRegressionLine;
+    }
+    public Boolean shouldShowRegressionLine() {
+        return showRegressionLineProperty().get();
+    }
+    public void setShowRegressionLine(Boolean b) {
+        regressionCheckBox.setSelected(b);
+    }
+
+    /**
+     * A {@code BooleanProperty} tracking whether or not a regression line should be drawn in the plot.
+     */
+    private BooleanProperty showRegressionUncertaintyEnvelope;
+    public final BooleanProperty showRegressionUncertaintyEnvelopeProperty() {
+        if (showRegressionUncertaintyEnvelope == null) {
+            showRegressionUncertaintyEnvelope = new SimpleBooleanProperty();
+            showRegressionUncertaintyEnvelope.bindBidirectional(regressionUncertaintyCheckBox.selectedProperty());
+        }
+        return showRegressionUncertaintyEnvelope;
+    }
+    public Boolean shouldShowRegressionUncertaintyEnvelope() {
+        return showRegressionUncertaintyEnvelopeProperty().get();
+    }
+    public void setShowRegressionUncertaintyEnvelope(Boolean b) {
+        regressionUncertaintyCheckBox.setSelected(b);
     }
 
     //***********************
@@ -575,8 +661,19 @@ public class PlotPropertiesPanelController {
         });
 
         concordiaCheckBox.setSelected((Boolean) PROPERTIES.get(CONCORDIA_LINE));
-
         evolutionCheckBox.setSelected((Boolean) PROPERTIES.get(EVOLUTION_MATRIX));
+
+        regressionCheckBox.setSelected((Boolean) PROPERTIES.get(REGRESSION_LINE));
+        regressionUncertaintyCheckBox.setSelected((Boolean) PROPERTIES.get(REGRESSION_ENVELOPE));
+
+        //The regression uncertainty envelope should be turned on and off with the regression line
+        regressionCheckBox.selectedProperty().addListener(c -> {
+            if (regressionCheckBox.isSelected()) {
+                regressionUncertaintyCheckBox.setSelected(true);
+            } else {
+                regressionUncertaintyCheckBox.setSelected(false);
+            }
+        });
 
         // Automatically adjust PROPERTIES
         isotopeTypeObjectProperty().addListener(c -> {
@@ -585,9 +682,9 @@ public class PlotPropertiesPanelController {
         });
         isotopeSystemChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
             if (getIsotopeType() != STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel()
-                                                                                     .getSelectedItem())) {
+                    .getSelectedItem())) {
                 isotopeTypeObjectProperty().set(STRING_TO_ISOTOPE_TYPE.get(isotopeSystemChoiceBox.getSelectionModel()
-                                                                                            .getSelectedItem()));
+                        .getSelectedItem()));
             }
         });
 
@@ -666,6 +763,14 @@ public class PlotPropertiesPanelController {
             PROPERTIES.put(EVOLUTION_MATRIX, shouldShowEvolutionMatrix());
             updateProperties();
         });
+        showRegressionLineProperty().addListener(x -> {
+            PROPERTIES.put(REGRESSION_LINE, shouldShowRegressionLine());
+            updateProperties();
+        });
+        showRegressionUncertaintyEnvelopeProperty().addListener(x -> {
+            PROPERTIES.put(REGRESSION_ENVELOPE, shouldShowRegressionUncertaintyEnvelope());
+            updateProperties();
+        });
     }
 
     /**
@@ -697,6 +802,12 @@ public class PlotPropertiesPanelController {
      * Manually sets the X and Y axis extents.
      */
     public void setAxes() {
+        //Update properties here because axis extents are unbound from text box values
+        setXAxisMin(xAxisMinTextField.getText());
+        setXAxisMax(xAxisMaxTextField.getText());
+        setYAxisMin(yAxisMinTextField.getText());
+        setYAxisMax(yAxisMaxTextField.getText());
+
         if (plot != null) {
             plot.setAxes();
         }
@@ -744,10 +855,14 @@ public class PlotPropertiesPanelController {
      *
      * @param plotProperties    a Map containing new property values
      */
-    public void setProperties(Map<String, Object> plotProperties) {
+    public void setPanelProperties(Map<String, Object> plotProperties) {
         if (plotProperties.containsKey(TITLE)) setTitle((String) plotProperties.get(TITLE));
         if (plotProperties.containsKey(X_AXIS)) setxAxisTitle((String) plotProperties.get(X_AXIS));
         if (plotProperties.containsKey(Y_AXIS)) setyAxisTitle((String) plotProperties.get(Y_AXIS));
+        if (plotProperties.containsKey(X_MIN)) setXAxisMin((String) plotProperties.get(X_MIN));
+        if (plotProperties.containsKey(X_MAX)) setXAxisMax((String) plotProperties.get(X_MAX));
+        if (plotProperties.containsKey(Y_MIN)) setYAxisMin((String) plotProperties.get(Y_MIN));
+        if (plotProperties.containsKey(Y_MAX)) setYAxisMax((String) plotProperties.get(Y_MAX));
         if (plotProperties.containsKey(POINTS)) setShowPoints((Boolean) plotProperties.get(POINTS));
         if (plotProperties.containsKey(ELLIPSES)) setshowEllipses((Boolean) plotProperties.get(ELLIPSES));
         if (plotProperties.containsKey(BARS)) setShowCrosses((Boolean) plotProperties.get(BARS));
@@ -760,6 +875,8 @@ public class PlotPropertiesPanelController {
                 (Double) plotProperties.get(UNCERTAINTY)));
         if (plotProperties.containsKey(CONCORDIA_LINE)) setShowConcordia((Boolean) plotProperties.get(CONCORDIA_LINE));
         if (plotProperties.containsKey(EVOLUTION_MATRIX)) setShowEvolutionMatrix((Boolean) plotProperties.get(EVOLUTION_MATRIX));
+        if (plotProperties.containsKey(REGRESSION_LINE)) setShowRegressionLine((Boolean) plotProperties.get(REGRESSION_LINE));
+        if (plotProperties.containsKey(REGRESSION_ENVELOPE)) setShowRegressionUncertaintyEnvelope((Boolean) plotProperties.get(REGRESSION_ENVELOPE));
     }
 
     @FXML private void assignVariablesButtonAction() {

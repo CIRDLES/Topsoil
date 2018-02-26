@@ -29,6 +29,8 @@ public class BasePlotProperties {
     public static final String LAMBDA_Th230 = "Th230";
     public static final String ISOTOPE_TYPE = "Isotope";
     public static final String CONCORDIA_LINE = "Concordia";
+    public static final String REGRESSION_LINE = "Regression";
+    public static final String REGRESSION_ENVELOPE = "Regression Envelope";
     public static final String EVOLUTION_MATRIX = "Evolution";
 
     private BasePlotProperties() {

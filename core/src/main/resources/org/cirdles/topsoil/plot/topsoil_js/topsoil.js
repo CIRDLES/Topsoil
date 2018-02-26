@@ -50,6 +50,10 @@
         plot.update(ts.data);
     };
 
+    topsoil.updateProperty = function(key, value) {
+        plot.properties[key] = value;
+    };
+
     /*
      * PLOT
      */

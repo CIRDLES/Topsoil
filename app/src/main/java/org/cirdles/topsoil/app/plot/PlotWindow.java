@@ -27,9 +27,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import java.util.concurrent.Executors;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
+
 
 /**
  *
@@ -63,9 +68,14 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                 new SVGSaver().save(javaScriptPlot.displayAsSVGDocument());
             });
 
-            Button reset = new Button("Re-center");
-            reset.setOnAction(mouseEvent -> {
+            Button recenter = new Button("Re-center");
+            recenter.setOnAction(mouseEvent -> {
                 javaScriptPlot.recenter();
+            });
+            
+            Button snapToCorners = new Button("Snap to Corners");
+            snapToCorners.setOnAction(mouseEvent -> {
+                javaScriptPlot.snapToCorners();
             });
 
             Text loadingIndicator = new Text("Loading...");
@@ -78,7 +88,7 @@ public class PlotWindow extends CustomVBox<PlotWindow> {
                     Platform::runLater
             );
 
-            plotToolBar.getItems().addAll(saveToSVG, reset, loadingIndicator);
+            plotToolBar.getItems().addAll(saveToSVG, recenter, snapToCorners, loadingIndicator);
         }
     }
 

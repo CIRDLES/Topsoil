@@ -13,6 +13,7 @@ import org.cirdles.topsoil.plot.Plot;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * A class containing a set of methods for handling plot generation.
@@ -93,7 +94,12 @@ public class PlotGenerationHandler {
             }
         });
 
+        // Update properties panel with changes in the plot
+        PlotObservationThread observationThread = new PlotObservationThread();
+        ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, propertiesPanel);
+
         plotStage.setOnCloseRequest(closeEvent -> {
+            observer.shutdown();
             plot.stop();
             tableController.getTable().removeOpenPlot(plotType);
             propertiesPanel.removePlot();

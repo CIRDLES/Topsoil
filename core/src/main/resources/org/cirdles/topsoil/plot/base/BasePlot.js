@@ -40,7 +40,9 @@ plot.propertiesKeys = [
     'Bars',
     'Concordia',
     'Evolution',
-    'Isotope'];
+    'Isotope',
+    'Regression',
+    'Regression Envelope'];
 
 /*
     Creates an SVG group for data elements like points and ellipses. Inserting other groups below this one ensures that
@@ -151,9 +153,6 @@ plot.initialize = function (data) {
     // function to manually the x and y axes' extents
     topsoil.setAxes = function() {
 
-        alert("ymin: " + plot.getProperty("Y Min"));
-        alert("ymax: " + plot.getProperty("Y Max"));
-
         // if the user hasn't set a new extent for a field, leave it as-is
         if(plot.getProperty("X Min").length == 0) {
             var xMin = plot.xAxisScale.domain()[0];
@@ -177,11 +176,9 @@ plot.initialize = function (data) {
         }
 
         // if the user input a min greater than the max, arbitrarily set the max to a larger value
-        if(xMin >= xMax) { xMax = parseFloat(xMin) + 10; }
-        if(yMin >= yMax) { yMax = parseFloat(yMin) + 1; }
+        if(xMin >= xMax) { xMax = parseFloat(xMin) + .1; }
+        if(yMin >= yMax) { yMax = parseFloat(yMin) + .1; }
 
-        alert("ymin: " + yMin);
-        alert("ymax: " + yMax);
         changeAxes(xMin, xMax, yMin, yMax);
     };
 
@@ -196,8 +193,44 @@ plot.initialize = function (data) {
             };
         });
     };
+    
+    // function to bring concordia to corners of plot 
+    topsoil.snapToCorners = function () {
+        
+        // get x axis min and find coordinate on y axis 
+        
+        //this should be the currrent axis extent 
+        var xAxisMin = plot.xAxisScale.domain()[0];
+        var lamda235 = 0.00000000098485000000;
+        var lamda238 = 0.00000000015512500000;
+        var age207_235 = 0;
+        var age206_238 = 0;
+        
+        var concordiaXMin = xAxisMin;
+        var concordiaYMin = 0;
+        
+        //calculate y value passing through x axis 
+        age207_235 = ( 1 / lamda235 ) * Math.log( xAxisMin + 1);
+        age206_238 = age207_235;
+        concordiaYMin = exp ( age206_238 * lamda238 ) - 1;
+        
+        // get x axis max and find coordinate on y axis 
+        var xAxisMax = plot.xAxisScale.domain()[1];
+        
+        var concordiaXMax = xAxisMax;
+        var concordiaYMax = 0;
+        
+        age207_235 = ( 1 / lamda235 ) * Math.log( xAxisMax + 1 ); 
+        age206_238 = age207_235;
+        concordiaYMax = exp ( age206_238 * lamda238 ) - 1;
+        
+        //change axes to snap the concordia to corners 
+        changeAxes( concordiaXMin, concordiaXMax, concordiaYMin, concordiaYMax );
+        
+    };
 
     plot.initialized = true;
+    plot.manageAxisExtents();
     plot.update(plot.data);
 };
 
@@ -215,6 +248,9 @@ plot.setData = function (data) {
 
     plot.data = data;
     plot.ellipseData = plot.calcEllipses(plot.data);
+    if (plot.regressionVisible == true) {
+        plot.drawRegressionLine();
+    }
 
     // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
     plot.updateDataExtent();
@@ -227,7 +263,6 @@ plot.setData = function (data) {
     to the plot.
  */
 plot.update = function (data) {
-
     // Makes sure that the plot has been initialized.
     if (!plot.initialized) {
         plot.initialize(data);
@@ -313,7 +348,6 @@ plot.update = function (data) {
     d3.select(".x.axis .label")
         .text(plot.getProperty("X Axis"))
         .attr("x", (plot.width) - (d3.select(".x.axis .label").node().getBBox().width));
-
     d3.select(".y.axis .label")
         .text(plot.getProperty("Y Axis"))
         .attr("x",  -(d3.select(".y.axis .label").node().getBBox().width));
@@ -330,6 +364,7 @@ plot.update = function (data) {
     // Manage the plot elements
     plot.managePoints();
     plot.manageEllipses();
+    plot.manageRegressionLine();
     plot.manageUncertaintyBars();
     plot.managePlotFeatures();
 };
@@ -358,6 +393,12 @@ plot.zoomed = function() {
     plot.area.selectAll(".x.axis").call(plot.xAxis);
     plot.area.selectAll(".y.axis").call(plot.yAxis);
 
+    //If necessary, update the regression line
+    if(plot.regressionVisible) {
+        plot.updateRegressionLine();
+    }
+
+    plot.manageAxisExtents();
     plot.update(topsoil.data);
 };
 
@@ -389,6 +430,16 @@ plot.updateDataExtent = function () {
         plot.xDataMax = dataXMax + 0.05 * xRange;
         plot.yDataMax = dataYMax + 0.05 * yRange;
     }
+};
+
+plot.manageAxisExtents = function() {
+    //Keep properties up-to-date with plot view
+    topsoil.updateProperty("X Min", plot.xAxisScale.domain()[0]);
+    topsoil.updateProperty("X Max", plot.xAxisScale.domain()[1]);
+    topsoil.updateProperty("Y Min", plot.yAxisScale.domain()[0]);
+    topsoil.updateProperty("Y Max", plot.yAxisScale.domain()[1]);
+    topsoil.propertiesBridge.setAxesExtents(plot.xAxisScale.domain()[0], plot.xAxisScale.domain()[1], plot.yAxisScale.domain()[0], plot.yAxisScale.domain()[1]);
+    topsoil.propertiesBridge.setIfUpdated(true);
 };
 
 /*
@@ -438,6 +489,28 @@ plot.manageEllipses = function () {
     // If ellipses should NOT be visible, but are...
     else if (plot.ellipsesVisible) {
         plot.removeEllipses();
+    }
+};
+
+plot.manageRegressionLine = function() {
+    // If RegressionLine shouldn't be visible
+    if(plot.getProperty("Regression")) {
+
+        // If the RegressionLine needs to be updated
+        if (plot.regressionVisible) {
+            plot.updateRegressionLine();
+            plot.updateRegressionEnvelope();
+        }
+
+        //If RegressionLine needs to be drawn
+        else {
+            plot.drawRegressionLine();
+        }
+    }
+
+    //If RegressionLine should not be visible, but is
+    else if (plot.regressionVisible) {
+        plot.removeRegressionLine();
     }
 };
 
@@ -535,6 +608,7 @@ plot.removeDataFeatures = function () {
     Removes all plot features from the plot.
  */
 plot.removePlotFeatures = function () {
+    plot.removeRegressionLine();
     plot.removeConcordia();
     plot.removeEvolutionMatrix();
 };

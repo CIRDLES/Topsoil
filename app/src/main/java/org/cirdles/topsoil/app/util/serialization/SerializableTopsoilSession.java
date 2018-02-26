@@ -236,7 +236,7 @@ class SerializableTopsoilSession implements Serializable {
 
             TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
 
-            tableController.getTabContent().getPlotPropertiesPanelController().setProperties((HashMap<String, Object>) tableData.get(TABLE_PLOT_PROPERTIES));
+            tableController.getTabContent().getPlotPropertiesPanelController().setPanelProperties((HashMap<String, Object>) tableData.get(TABLE_PLOT_PROPERTIES));
 
             for (HashMap<String, Serializable> plot : (ArrayList<HashMap<String, Serializable>>) tableData.get(TABLE_PLOTS)) {
                 this.loadPlot(tableController, plot);

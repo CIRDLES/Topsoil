@@ -301,12 +301,16 @@ public class TopsoilTableController {
 
     public void showVariableChooserDialog(@Nullable List<Variable<Number>> required) {
         Map<Variable<Number>, TopsoilDataColumn> selections = VariableChooserDialog.showDialog(this, required);
+        setVariableAssignments(selections);
+    }
+
+    public void setVariableAssignments(Map<Variable<Number>, TopsoilDataColumn> assignments) {
         List<TopsoilDataColumn> columns = table.getDataColumns();
         Double uncertaintyFormatValue = table.getUncertaintyFormat().getValue();
-        if (selections != null) {
+        if (assignments != null) {
 
             // Apply selections to columns
-            for (Map.Entry<Variable<Number>, TopsoilDataColumn> entry : selections.entrySet()) {
+            for (Map.Entry<Variable<Number>, TopsoilDataColumn> entry : assignments.entrySet()) {
                 if (entry.getValue().getVariable() != entry.getKey()) {
                     if (Variables.UNCERTAINTY_VARIABLES.contains(entry.getKey())) {
 
@@ -331,7 +335,7 @@ public class TopsoilTableController {
 
             // Set other columns' variable properties to null
             for (TopsoilDataColumn column : columns) {
-                if (!selections.containsValue(column)) {
+                if (!assignments.containsValue(column)) {
                     // If the column was an uncertainty variable, but isn't anymore
                     if (column.hasVariable()) {
                         if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {
@@ -344,7 +348,7 @@ public class TopsoilTableController {
                 }
             }
 
-            table.setVariableAssignments(selections);
+            table.setVariableAssignments(assignments);
             for (PlotInformation plotInfo : table.getOpenPlots()) {
                 plotInfo.getPlot().setData(getPlotData());
             }
@@ -352,11 +356,11 @@ public class TopsoilTableController {
             updateColumnListeners();
 
             // Re-name x and y axis titles
-            if (selections.containsKey(Variables.X)) {
-                tabContent.getPlotPropertiesPanelController().setxAxisTitle(selections.get(Variables.X).getName());
+            if (assignments.containsKey(Variables.X)) {
+                tabContent.getPlotPropertiesPanelController().setxAxisTitle(assignments.get(Variables.X).getName());
             }
-            if (selections.containsKey(Variables.Y)) {
-                tabContent.getPlotPropertiesPanelController().setyAxisTitle(selections.get(Variables.Y).getName());
+            if (assignments.containsKey(Variables.Y)) {
+                tabContent.getPlotPropertiesPanelController().setyAxisTitle(assignments.get(Variables.Y).getName());
             }
         }
     }
