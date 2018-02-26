@@ -36,11 +36,13 @@ plot.calculateRegressionLine = function () {
     var rho_list = [];
 
     var fillLists = data.map(function (d) {
-        x_list.push(d.x);
-        y_list.push(d.y);
-        sigma_x_list.push(d.sigma_x);
-        sigma_y_list.push(d.sigma_y);
-        rho_list.push(d.rho);
+        if(d['Selected']) {
+            x_list.push(d.x);
+            y_list.push(d.y);
+            sigma_x_list.push(d.sigma_x);
+            sigma_y_list.push(d.sigma_y);
+            rho_list.push(d.rho);
+        }
     });
 
     topsoil.regression.fitLineToDataFor2D(x_list.toString(), y_list.toString(), sigma_x_list.toString(), sigma_y_list.toString(), rho_list.toString());
