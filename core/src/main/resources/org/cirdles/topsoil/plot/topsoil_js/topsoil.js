@@ -90,15 +90,21 @@
             .attr("id", "plotArea")
             .attr("width", plot.width)
             .attr("height", plot.height)
-            .attr("fill", "white")
-            .attr("stroke", "black")
-            .attr("stroke-width", "2px");
+            .attr("fill", "white");
 
     plot.area.append("defs")
             .append("clipPath")
             .attr("id", "clipBox")
             .append("use")
             .attr("xlink:href", "#" + plot.plotArea.attr("id"));
+
+    plot.plotBorder = plot.area.append("rect")
+        .attr("id", "plotBorder")
+        .attr("width", plot.width)
+        .attr("height", plot.height)
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("stroke-width", "2px");
 
     topsoil.resize = function () {
         if (plot.initialized) {
@@ -111,6 +117,10 @@
                 .attr("height", plot.height + plot.margin.top + plot.margin.bottom);
 
             plot.plotArea
+                .attr("width", plot.width)
+                .attr("height", plot.height);
+
+            plot.plotBorder
                 .attr("width", plot.width)
                 .attr("height", plot.height);
 
