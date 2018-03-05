@@ -434,11 +434,18 @@ plot.updateDataExtent = function () {
 
 plot.manageAxisExtents = function() {
     //Keep properties up-to-date with plot view
-    topsoil.updateProperty("X Min", plot.xAxisScale.domain()[0]);
-    topsoil.updateProperty("X Max", plot.xAxisScale.domain()[1]);
-    topsoil.updateProperty("Y Min", plot.yAxisScale.domain()[0]);
-    topsoil.updateProperty("Y Max", plot.yAxisScale.domain()[1]);
-    topsoil.propertiesBridge.setAxesExtents(plot.xAxisScale.domain()[0], plot.xAxisScale.domain()[1], plot.yAxisScale.domain()[0], plot.yAxisScale.domain()[1]);
+    //toFixed truncates the extents to 8 decimal places
+    var xmin = plot.xAxisScale.domain()[0].toFixed(8),
+        xmax = plot.xAxisScale.domain()[1].toFixed(8),
+        ymin = plot.yAxisScale.domain()[0].toFixed(8),
+        ymax = plot.yAxisScale.domain()[1].toFixed(8);
+
+    topsoil.updateProperty("X Min", xmin);
+    topsoil.updateProperty("X Max", xmax);
+    topsoil.updateProperty("Y Min", ymin);
+    topsoil.updateProperty("Y Max", ymax);
+    topsoil.propertiesBridge.setAxesExtents(xmin, xmax, ymin, ymax);
+
     topsoil.propertiesBridge.setIfUpdated(true);
 };
 
