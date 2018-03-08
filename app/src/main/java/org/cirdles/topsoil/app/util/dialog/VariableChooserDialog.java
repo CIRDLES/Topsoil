@@ -45,18 +45,9 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
         container.setAlignment(Pos.TOP_CENTER);
 
         // Disable OK button if not all required variables are assigned.
-        this.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        this.getDialogPane().lookupButton(ButtonType.OK).setDisable(isOkDisabled(required, chooser));
         chooser.selectionsProperty().addListener((MapChangeListener<? super Variable<Number>, ? super TopsoilDataColumn>) c -> {
-            Boolean shouldDisableOK = false;
-            if (!(required == null)) {
-                for (Variable<Number> v : required) {
-                    if (!chooser.selectionsProperty().containsKey(v)) {
-                        shouldDisableOK = true;
-                        break;
-                    }
-                }
-            }
-            this.getDialogPane().lookupButton(ButtonType.OK).setDisable(shouldDisableOK);
+            this.getDialogPane().lookupButton(ButtonType.OK).setDisable(isOkDisabled(required, chooser));
         });
         this.getDialogPane().setContent(container);
 
@@ -90,5 +81,21 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
         Map<Variable<Number>, TopsoilDataColumn> currentSelections = tableController.getTable().getVariableAssignments();
 
         return new VariableChooserDialog(columns, variables, currentSelections, requiredVariables).showAndWait().orElse(null);
+    }
+
+    //Set disabled = true when required variables are not assigned
+    private boolean isOkDisabled(List<Variable<Number>> required, VariableColumnChooser chooser) {
+        boolean areAssigned = false;
+
+        if (!(required == null)) {
+            for (Variable<Number> v : required) {
+                if (!chooser.selectionsProperty().containsKey(v)) {
+                    areAssigned = true;
+                    break;
+                }
+            }
+        }
+
+        return areAssigned;
     }
 }
