@@ -103,6 +103,7 @@ public class ProjectSourcesController {
             }
             updateNextButtonDisabledProperty();
         });
+        toggle.selectToggle(emptyProjectButton);
 
         sourceFileListView.getSelectionModel().selectedItemProperty().addListener(c -> {
             if (sourceFileListView.getSelectionModel().getSelectedItem() == null) {
