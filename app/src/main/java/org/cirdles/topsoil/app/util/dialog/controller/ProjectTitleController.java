@@ -60,6 +60,8 @@ public class ProjectTitleController {
         nextButton.setDisable(true);
         projectLocationProperty().addListener(c -> updateNextButtonDisabledProperty());
         titleTextField.textProperty().addListener(c -> updateNextButtonDisabledProperty());
+        //Make home directory the default file location
+        setProjectFile(new File(System.getProperty("user.home")));
     }
 
     /**
@@ -71,7 +73,10 @@ public class ProjectTitleController {
         dirChooser.setTitle("Choose Project Location");
 
         File file = dirChooser.showDialog(MainWindow.getPrimaryStage());
+        setProjectFile(file);
+    }
 
+    private void setProjectFile(File file) {
         if (file != null) {
             String fileName = file.getPath();
 
