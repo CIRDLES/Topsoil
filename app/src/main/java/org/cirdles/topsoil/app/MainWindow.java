@@ -13,6 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
+import org.cirdles.topsoil.app.shefschanges.PlotPropertiesPanelController;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
