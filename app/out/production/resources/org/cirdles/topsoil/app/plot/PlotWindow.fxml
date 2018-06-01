@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root xmlns:fx="http://javafx.com/fxml/1"
+         type="org.cirdles.topsoil.app.plot.PlotWindow">
+
+    <ToolBar fx:id="plotToolBar" />
+    <HBox fx:id="plotAndConfig" />
+
+</fx:root>

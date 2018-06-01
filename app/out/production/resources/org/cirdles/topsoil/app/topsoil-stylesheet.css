@@ -1,0 +1,12 @@
+.root {
+    -fx-font-family: "Lucida Sans";
+    -fx-font-smoothing-type: lcd;
+
+    -fx-background-color: f4f4f4;
+}
+
+.hyperlink {
+    -fx-font-family: "Lucida Sans";
+    -fx-font-size: 14;
+    -fx-font-smoothing-type: lcd;
+}

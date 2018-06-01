@@ -68,10 +68,8 @@ public class PlotGenerationHandler {
      * Generates a {@code Plot}.
      *
      * @param tableController   the TopsoilTableController for the table
-     * @param plotType  the TopsoilPlotType of the plot
      */
     private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType, Map<PlotProperty, Object> properties) {
-
         List<Map<String, Object>> data = tableController.getPlotData();
 
         Plot plot = plotType.getPlot();
@@ -114,7 +112,6 @@ public class PlotGenerationHandler {
             plot.stop();
             tableController.getTable().removeOpenPlot(plotType);
         });
-//        plotStage.setOnShown((event) -> panel.refreshPlot() );
 
         // Show Plot
         plotStage.show();
@@ -122,5 +119,6 @@ public class PlotGenerationHandler {
         // Store plot information in TopsoilDataTable
         PlotInformation plotInfo = new PlotInformation(plot, plotType, FXCollections.observableMap(panel.getPlotProperties()), plotStage);
         tableController.getTable().addOpenPlot(plotInfo);
+        
     }
 }
