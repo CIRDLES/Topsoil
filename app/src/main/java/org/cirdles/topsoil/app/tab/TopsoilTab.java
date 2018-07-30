@@ -62,7 +62,7 @@ public class TopsoilTab extends Tab {
 
     /**
      * The {@code TopsoilTabContent} containing all of the nodes within this tab, including the {@code TableView} and
-     * the {@code PlotPropertiesPanelController}.
+     * the {@code PlotPropertiesPanel}.
      */
     private TopsoilTabContent tabContent;
 

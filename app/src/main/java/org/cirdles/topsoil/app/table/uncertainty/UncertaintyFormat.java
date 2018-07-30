@@ -8,7 +8,7 @@ import static java.util.Arrays.asList;
 /**
  * Provides a format for plot uncertainty, including a name and a {@code Double} value.
  *
- * @author Jake Marotta
+ * @author marottajb
  */
 public enum UncertaintyFormat {
 
@@ -27,14 +27,6 @@ public enum UncertaintyFormat {
      * The {@code Double} value of the uncertainty format.
      */
     private Double value;
-
-    public static final List<UncertaintyFormat> ALL = Collections.unmodifiableList(asList(
-            ONE_SIGMA_ABSOLUTE,
-            TWO_SIGMA_ABSOLUTE,
-            ONE_SIGMA_PERCENT,
-            TWO_SIGMA_PERCENT,
-            NINETY_FIVE_PERCENT_CONFIDENCE
-    ));
 
     public static final List<UncertaintyFormat> PLOT_FORMATS = Collections.unmodifiableList(asList(
             ONE_SIGMA_ABSOLUTE,
@@ -63,6 +55,15 @@ public enum UncertaintyFormat {
         this.value = value;
     }
 
+    public static UncertaintyFormat fromValue(double val) {
+        for (UncertaintyFormat format : values()) {
+            if (Double.compare(val, format.getValue()) == 0) {
+                return format;
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns the name of the {@code UncertaintyFormat}.
      *
@@ -79,5 +80,10 @@ public enum UncertaintyFormat {
      */
     public Double getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

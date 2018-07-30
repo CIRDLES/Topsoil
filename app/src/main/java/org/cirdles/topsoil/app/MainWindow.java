@@ -106,7 +106,7 @@ public class MainWindow extends Application {
             }
 
             // Create main Scene
-            Scene scene = new Scene(mainWindow, 850, 900);
+            Scene scene = new Scene(mainWindow, 1100, 800);
 
             // Load CSS
             try {

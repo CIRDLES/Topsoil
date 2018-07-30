@@ -44,24 +44,24 @@ public interface Plot extends Displayable {
     /**
      * Gets the properties for the {@code Plot}.
      *
-     * @return  a Map of String keys to Object values
+     * @return  a Map of PlotProperty keys to Object values
      */
-    Map<String, Object> getProperties();
+    Map<PlotProperty, Object> getProperties();
 
     /**
      * Sets the properties for the {@code Plot}.
      *
-     * @param properties    a Map of String keys to Object values
+     * @param properties    a Map of PlotProperty keys to Object values
      */
-    void setProperties(Map<String, Object> properties);
+    void setProperties(Map<PlotProperty, Object> properties);
 
     /**
      * Sets a single property for the {@code Plot}.
      *
-     * @param key   String property key
+     * @param key   PlotProperty key
      * @param value Object property value
      */
-    void setProperty(String key, Object value);
+    void setProperty(PlotProperty key, Object value);
 
     /**
      *
@@ -89,7 +89,7 @@ public interface Plot extends Displayable {
     /**
      * Allows the user to set the X and Y axis extents.
      */
-    void setAxes();
+    void setAxes(String xMin, String xMax, String yMin, String yMax);
     
     /**
      * Zooms plot so Concordia displays from corner to corner of plot.

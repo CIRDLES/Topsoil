@@ -174,10 +174,6 @@ public class TopsoilTableController {
             }
             resetColumnIndices();
         });
-
-        // Bind isotope type
-        tabContent.getPlotPropertiesPanelController().setIsotopeType(table.getIsotopeType());
-        tabContent.getPlotPropertiesPanelController().isotopeTypeObjectProperty().bindBidirectional(table.isotopeTypeObjectProperty());
     }
 
     //***********************
@@ -303,14 +299,6 @@ public class TopsoilTableController {
             }
 
             updateColumnListeners();
-
-            // Re-name x and y axis titles
-            if (assignments.containsKey(Variables.X)) {
-                tabContent.getPlotPropertiesPanelController().setxAxisTitle(assignments.get(Variables.X).getName());
-            }
-            if (assignments.containsKey(Variables.Y)) {
-                tabContent.getPlotPropertiesPanelController().setyAxisTitle(assignments.get(Variables.Y).getName());
-            }
         }
     }
 
