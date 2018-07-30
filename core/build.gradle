@@ -1,8 +1,10 @@
-// BEGIN JAVASCRIPT SUPPORT
+
 plugins {
     id "com.eriwen.gradle.js" version "2.14.1"
     id 'com.github.rundis.buster' version '0.2.4.2'
 }
+
+apply plugin: 'java-library'
 
 javascript.source {
     topsoil {
@@ -20,7 +22,12 @@ combineJs {
 
 processResources.dependsOn combineJs
 
+dependencies {
+    api "org.apache.commons:commons-math3:3.6.1"
+    api 'com.github.cirdles.McLeanRegression:api:-SNAPSHOT'
+}
+
 buster {
     configFile = file('config/buster.js')
 }
-// END JAVASCRIPT SUPPORT
+

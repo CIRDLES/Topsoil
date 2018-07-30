@@ -8,6 +8,7 @@ nbactions.xml
 
 # Intellij
 .idea/
+out/
 *.iml
 
 # TestFX

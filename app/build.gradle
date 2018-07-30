@@ -1,38 +1,10 @@
-buildscript {
-    repositories {
-        mavenCentral();
-    }
-
-    dependencies {
-        //classpath 'org.eclipse.jgit:org.eclipse.jgit:4.1.1.201511131810-r'
-    }
-}
 
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.internal.storage.file.FileRepository
 
-sourceCompatibility = '1.8'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
 def mainClass = 'org.cirdles.topsoil.app.MainWindow'
 
-def configJavaExec = { JavaExec task ->
-    task.main = mainClass
-    task.classpath = sourceSets.main.runtimeClasspath
-    task.standardInput = System.in
-}
-
-task run(dependsOn: project.classes, type: JavaExec) {
-    configJavaExec(it)
-}
-
-task debug(dependsOn: project.classes, type: JavaExec) {
-    configJavaExec(it)
-    debug = true
-}
-
-// BEGIN BETTER VERSIONING
 def getVersionName = { ->
     def repo = new FileRepository("$rootDir/.git")
     def git = new Git(repo)
@@ -46,33 +18,38 @@ processResources {
         filter(ReplaceTokens, tokens: [version: getVersionName()])
     }
 }
-// END BETTER VERSIONING
+
+def configJavaExec = { JavaExec task ->
+    task.main = mainClass
+    task.classpath = sourceSets.main.runtimeClasspath
+    task.standardInput = System.in
+}
+
+task run(dependsOn: jar, type: JavaExec) {
+    configJavaExec(it)
+}
+
+task debug(dependsOn: jar, type: JavaExec) {
+    configJavaExec(it)
+    debug = true
+}
 
 task jarWithDependencies(type: Jar) {
-    manifest {
-        attributes(
-                'Implementation-Title': 'Topsoil',
-                'Implementation-Version': getVersionName(),
-                'Built-JDK': System.getProperty('java.version'),
-                'Main-Class': mainClass
-        )
-    }
-
+    manifest.attributes(
+            'Implementation-Title': 'Topsoil',
+            'Implementation-Version': getVersionName(),
+            'Built-JDK': System.getProperty('java.version')
+    )
     baseName = 'topsoil-' + getVersionName().split('-')[0]
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    } with jar
 }
 
 dependencies {
     compile project(':core')
 
-    compile 'com.google.code.findbugs:jsr305:3.0.0'
-    compile 'com.google.inject:guice:4.0'
-    compile 'com.google.inject.extensions:guice-multibindings:4.0'
-    compile 'net.sf.opencsv:opencsv:2.3'
-    compile 'org.flywaydb:flyway-core:3.2.1';
-    compile 'org.mybatis:mybatis:3.3.0'
-    compile 'org.mybatis:mybatis-guice:3.7'
-    compile 'org.springframework:spring-jdbc:4.2.0.RELEASE'
-    compile 'org.xerial:sqlite-jdbc:3.8.11.1'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
+    implementation 'org.controlsfx:controlsfx:8.20.9'
+    implementation 'com.google.inject:guice:4.0'
 }
