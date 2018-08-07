@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.app.plot;
 
+import org.cirdles.topsoil.app.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.PlotProperty;
 
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -13,9 +15,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class PlotObservationThread {
     private Plot plot;
-    private PlotPropertiesPanelController propertiesPanel;
+    private PlotPropertiesPanel propertiesPanel;
 
-    public ScheduledExecutorService initializePlotObservation(Plot plot, PlotPropertiesPanelController propertiesPanel) {
+    public ScheduledExecutorService initializePlotObservation(Plot plot, PlotPropertiesPanel propertiesPanel ) {
         this.plot = plot;
         this.propertiesPanel = propertiesPanel;
 
@@ -39,11 +41,11 @@ public class PlotObservationThread {
 
     private void updateAxes() {
         if(propertiesPanel.liveAxisUpdate()) {
-            Map<String, Object> properties = plot.getProperties();
-            propertiesPanel.setXAxisMinTextField(properties.get("X Min").toString());
-            propertiesPanel.setXAxisMaxTextField(properties.get("X Max").toString());
-            propertiesPanel.setYAxisMinTextField(properties.get("Y Min").toString());
-            propertiesPanel.setYAxisMaxTextField(properties.get("Y Max").toString());
+            Map<PlotProperty, Object> properties = plot.getProperties();
+            propertiesPanel.updateXMin(properties.get(PlotProperty.X_MIN).toString());
+            propertiesPanel.updateXMax(properties.get(PlotProperty.X_MAX).toString());
+            propertiesPanel.updateYMin(properties.get(PlotProperty.Y_MIN).toString());
+            propertiesPanel.updateYMax(properties.get(PlotProperty.Y_MAX).toString());
         }
     }
 

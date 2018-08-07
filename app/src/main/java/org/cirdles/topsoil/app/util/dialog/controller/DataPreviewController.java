@@ -100,7 +100,7 @@ public class DataPreviewController extends Pane {
         }
 
         STRING_UNCERTAINTY_FORMAT_MAP = new LinkedHashMap<>();
-        for (UncertaintyFormat uf : UncertaintyFormat.ALL) {
+        for (UncertaintyFormat uf : UncertaintyFormat.values()) {
             STRING_UNCERTAINTY_FORMAT_MAP.put(uf.getName(), uf);
         }
 

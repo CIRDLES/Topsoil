@@ -38,8 +38,8 @@ plot.updatePoints = function (data) {
 
         // This applies variable data to all point elements.
         points
-            .attr("fill", plot.getProperty("Point Fill Color"))
-            .attr("fill-opacity", plot.getProperty("Point Opacity"))
+            .attr("fill", plot.getProperty("Points Fill"))
+            .attr("fill-opacity", plot.getProperty("Points Opacity"))
             .attr("cx", function (d) {
                 return plot.xAxisScale(d.x);
             })

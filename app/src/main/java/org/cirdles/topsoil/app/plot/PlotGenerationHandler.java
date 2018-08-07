@@ -1,19 +1,26 @@
 package org.cirdles.topsoil.app.plot;
 
 import com.sun.javafx.stage.StageHelper;
-import javafx.scene.Parent;
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.plot.panel.PlotPropertiesPanel;
+import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.PlotProperty;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+
+import static org.cirdles.topsoil.plot.PlotProperty.*;
 
 /**
  * A class containing a set of methods for handling plot generation.
@@ -39,9 +46,9 @@ public class PlotGenerationHandler {
                     plotInfo.getStage().close();
                 }
             }
-            generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
+            generatePlot(tableController, TopsoilPlotType.BASE_PLOT, null);
         } else {
-            generatePlot(tableController, TopsoilPlotType.BASE_PLOT);
+            generatePlot(tableController, TopsoilPlotType.BASE_PLOT, null);
         }
     }
 
@@ -51,8 +58,9 @@ public class PlotGenerationHandler {
      * @param tableController   the TopsoilTableController for the table
      * @param plotType  the TopsoilPlotType of the plot
      */
-    public static void handlePlotGenerationFromFile(TopsoilTableController tableController, TopsoilPlotType plotType) {
-        generatePlot(tableController, plotType);
+    public static void handlePlotGenerationFromFile(TopsoilTableController tableController, TopsoilPlotType plotType,
+                                                    Map<PlotProperty, Object> properties) {
+        generatePlot(tableController, plotType, properties);
     }
 
     /**
@@ -61,55 +69,54 @@ public class PlotGenerationHandler {
      * @param tableController   the TopsoilTableController for the table
      * @param plotType  the TopsoilPlotType of the plot
      */
-    private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType) {
+    private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType, Map<PlotProperty, Object> properties) {
 
         List<Map<String, Object>> data = tableController.getPlotData();
 
-        PlotPropertiesPanelController propertiesPanel = tableController.getTabContent().getPlotPropertiesPanelController();
-        Map<String, Object> plotProperties = propertiesPanel.getProperties();
-
         Plot plot = plotType.getPlot();
+	    plot.setData(data);
 
-        plot.setData(data);
-        plot.setProperties(plotProperties);
-        propertiesPanel.setPlot(plot);
+	    if (properties == null) {
+		    properties = new HashMap<>();
+	    }
+	    properties.put(TITLE, tableController.getTable().getTitle());
+	    if (tableController.getAssignedVariables().contains(Variables.X)) {
+	    	properties.put(X_AXIS, tableController.getTable().getVariableAssignments().get(Variables.X).getName());
+	    }
+	    if (tableController.getAssignedVariables().contains(Variables.X)) {
+		    properties.put(Y_AXIS, tableController.getTable().getVariableAssignments().get(Variables.Y).getName());
+	    }
+	    properties.put(UNCERTAINTY, tableController.getTable().getUncertaintyFormat().getValue());
+	    TopsoilPlotView plotView = new TopsoilPlotView(plot, properties);
 
-        // Create Plot Scene
-        Parent plotWindow = new PlotWindow(plot);
-        Scene scene = new Scene(plotWindow, 900, 700);
-
-        // Create Plot Stage
-        Stage plotStage = new Stage();
-        plotStage.setScene(scene);
-//        plotStage.setResizable(false);
-        plotStage.getIcons().add(MainWindow.getWindowIcon());
-
-        // Connect Plot with PropertiesPanel
-        plotStage.setTitle(plotType.getName() + ": " + propertiesPanel.getTitle());
-        propertiesPanel.titleProperty().addListener(c -> {
-            if (propertiesPanel.getTitle().length() > 0) {
-                plotStage.setTitle(plotType.getName() + ": " + propertiesPanel.getTitle());
-            } else {
-                plotStage.setTitle(plotType.getName());
-            }
-        });
+	    // Connect Plot with PropertiesPanel
+	    PlotPropertiesPanel panel = plotView.getPropertiesPanel();
+	    panel.isotopeSystemProperty().bindBidirectional(tableController.getTable().isotopeTypeObjectProperty());
 
         // Update properties panel with changes in the plot
         PlotObservationThread observationThread = new PlotObservationThread();
-        ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, propertiesPanel);
+        ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, panel);
 
+	    // Create Plot Scene
+	    Scene scene = new Scene(plotView, 1000, 600);
+
+	    // Create Plot Stage
+	    Stage plotStage = new Stage();
+	    plotStage.setScene(scene);
+	    plotStage.getIcons().add(MainWindow.getWindowIcon());
+	    plotStage.titleProperty().bind(Bindings.createStringBinding(
+			    () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
         plotStage.setOnCloseRequest(closeEvent -> {
             observer.shutdown();
             plot.stop();
             tableController.getTable().removeOpenPlot(plotType);
-            propertiesPanel.removePlot();
         });
 
         // Show Plot
         plotStage.show();
 
         // Store plot information in TopsoilDataTable
-        PlotInformation plotInfo = new PlotInformation(plot, plotType, propertiesPanel.getProperties(), plotStage);
+        PlotInformation plotInfo = new PlotInformation(plot, plotType, FXCollections.observableMap(panel.getPlotProperties()), plotStage);
         tableController.getTable().addOpenPlot(plotInfo);
     }
 }

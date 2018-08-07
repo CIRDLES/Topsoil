@@ -132,10 +132,10 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
      * Creates a new {@link JavaScriptPlot} using the specified source file and properties.
      *
      * @param sourcePath the path to a valid JavaScript file
-     * @param defaultProperties a Map containing properties for the plot
+     * @param properties a Map containing properties for the plot
      */
-    public JavaScriptPlot(Path sourcePath, Map<String, Object> defaultProperties) {
-        super(defaultProperties);
+    public JavaScriptPlot(Path sourcePath, Map<PlotProperty, Object> properties) {
+        super(properties);
 
         if (Files.isDirectory(sourcePath)) {
             throw new IllegalArgumentException("sourcePath must be a file");
@@ -348,9 +348,9 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
     /**{@inheritDoc}*/
     @Override
-    public void setAxes() {
+    public void setAxes(String xMin, String xMax, String yMin, String yMax) {
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("setAxes"));
+            runOnFxApplicationThread(() -> topsoil.call("setAxes", xMin, xMax, yMin, yMax));
         }
     }
     
@@ -374,21 +374,21 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(Map<PlotProperty, Object> properties) {
         super.setProperties(properties);
 
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", convertProperties(getProperties())));
         }
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperty(String key, Object value) {
+    public void setProperty(PlotProperty key, Object value) {
         super.setProperty(key, value);
 
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("setProperties", getProperties()));
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", convertProperties(getProperties())));
         }
     }
 
@@ -408,9 +408,9 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     @Override
     public void updateProperties() {
 
-        Map<String, Object> properties = propertiesBridge.getProperties();
+        Map<PlotProperty, Object> properties = propertiesBridge.getProperties();
 
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+        for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
             super.setProperty(entry.getKey(), entry.getValue());
         }
     }
@@ -418,5 +418,13 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     @Override
     public void stop() {
         getWebEngine().loadContent(HALT_MESSAGE);
+    }
+
+    private Map<String, Object> convertProperties(Map<PlotProperty, Object> properties) {
+        Map<String, Object> newProperties = new HashMap<>(properties.size());
+        for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
+            newProperties.put(entry.getKey().toString(), entry.getValue());
+        }
+        return newProperties;
     }
 }

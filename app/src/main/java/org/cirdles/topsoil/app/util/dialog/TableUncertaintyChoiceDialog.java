@@ -26,14 +26,15 @@ public class TableUncertaintyChoiceDialog extends ChoiceDialog<String> {
 
         this.setContentText("What format are your uncertainty values in?");
 
+        UncertaintyFormat[] formats = UncertaintyFormat.values();
         List<String> formatNames = new ArrayList<>();
-        for (UncertaintyFormat format : UncertaintyFormat.ALL) {
+        for (UncertaintyFormat format : formats) {
             formatNames.add(format.getName());
         }
         this.getItems().addAll(formatNames);
 
         // Set default selected item
-        this.setSelectedItem(UncertaintyFormat.ALL.get(0).getName());
+        this.setSelectedItem(formats[0].getName());
 
     }
 
@@ -52,7 +53,7 @@ public class TableUncertaintyChoiceDialog extends ChoiceDialog<String> {
         UncertaintyFormat selection = null;
         Optional<String> result = this.showAndWait();
         if (result.isPresent()) {
-            for (UncertaintyFormat format : UncertaintyFormat.ALL) {
+            for (UncertaintyFormat format : UncertaintyFormat.values()) {
                 if (format.getName().equals(result.get())) {
                     selection = format;
                     break;

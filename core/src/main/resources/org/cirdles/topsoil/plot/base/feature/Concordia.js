@@ -19,7 +19,6 @@ plot.drawConcordia = function() {
     // initialize the concordia envelope
     plot.concordiaGroup.append("path")
         .attr("class", "uncertaintyEnvelope")
-        .attr("fill", "lightgray")
         .attr("stroke", "none")
         .attr("shape-rendering", "geometricPrecision");
 
@@ -27,8 +26,6 @@ plot.drawConcordia = function() {
     plot.concordiaGroup.append("path")
         .attr("class", "concordia")
         .attr("fill", "none")
-        .attr("stroke", "blue")
-        .attr("stroke-width", 2)
         .attr("shape-rendering", "geometricPrecision");
 
     plot.concordiaVisible = true;
@@ -105,7 +102,9 @@ plot.updateConcordia = function() {
                 }
 
                 return path.join("");
-            });
+            })
+            .attr("stroke", plot.getProperty('Wetherill Line Fill'))
+            .attr("stroke-width", 2);
 
         plot.concordiaGroup.select(".uncertaintyEnvelope")
             .attr("d", function () {
@@ -179,7 +178,8 @@ plot.updateConcordia = function() {
                 close(path);
 
                 return path.join("");
-            });
+            })
+            .attr("fill", plot.getProperty('Wetherill Envelope Fill'));
 
         plot.t.domain([minT, maxT]);
 

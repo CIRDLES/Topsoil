@@ -1,5 +1,5 @@
 /**
- * @author Jake Marotta
+ * @author marottajb
  */
 
 if (plot.uncertaintyBarsVisible == null) {
@@ -50,7 +50,7 @@ plot.updateUncertaintyBars = function () {
         // of 1px. This doesn't completely solve the problem, and there is a slight jump in line appearance between 100%
         // opacity and 99% opacity, but overall, zooming looks much, much smoother.
         var strokeWidth;
-        if (plot.getProperty("Uncertainty Bar Opacity") < 1.0) {
+        if (plot.getProperty("Unct Bars Opacity") < 1.0) {
             strokeWidth = 2;
         } else {
             strokeWidth = 1;
@@ -69,9 +69,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Bar Opacity"))
+            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
         uncertaintyBars.select(".VLine")
             .attr("y1", function (d) {
@@ -86,9 +86,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x);
             })
-            .attr("opacity", plot.getProperty("Bar Opacity"))
+            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
         uncertaintyBars.select(".topCap")
             .attr("y1", function (d) {
@@ -103,9 +103,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + 0.2*(plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Bar Opacity"))
+            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
         uncertaintyBars.select(".leftCap")
             .attr("y1", function (d) {
@@ -120,9 +120,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x - (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Bar Opacity"))
+            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
         uncertaintyBars.select(".bottomCap")
             .attr("y1", function (d) {
@@ -137,9 +137,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + 0.2*(plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Bar Opacity"))
+            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
         uncertaintyBars.select(".rightCap")
             .attr("y1", function (d) {
@@ -154,9 +154,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Bar Opacity"))
+            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", plot.getProperty("Bar Fill Color"));
+            .attr("stroke", plot.getProperty("Unct Bars Fill"));
     }
 };
 
