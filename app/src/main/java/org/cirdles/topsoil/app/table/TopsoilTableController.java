@@ -227,8 +227,11 @@ public class TopsoilTableController {
                 Double value;
                 if (variablesToColumns.containsKey(variable)) {
                     if (variable.getClass() == DependentVariable.class && UncertaintyFormat.PERCENT_FORMATS.contains(table.getUncertaintyFormat())) {
-                        value = variablesToColumns.get(variable).get(rowIndex).get() * table.getVariableAssignments().get(
-                                ((DependentVariable<Number>) variable).getDependency()).get(rowIndex).get();
+                    	double dependencyValue = variablesToColumns.get(
+                    			((DependentVariable<Number>) variable).getDependency()
+	                                                                   ).get(rowIndex).get();
+                        value = (variablesToColumns.get(variable).get(rowIndex).get() * dependencyValue) / (table
+		                        .getUncertaintyFormat().getValue());
                     } else {
                         value = variablesToColumns.get(variable).get(rowIndex).get();
                     }
@@ -339,6 +342,8 @@ public class TopsoilTableController {
 
                     if (Variables.UNCERTAINTY_VARIABLES.contains(columns.get(col).getVariable())) {
                         columns.get(col).get(row).set(newValue.doubleValue() / uncertaintyFormatValue);
+	                    System.out.println("Displayed: " + newValue.toString());
+	                    System.out.println("Actual: " + columns.get(col).get(row).get());
                     } else {
                         columns.get(col).get(row).set(newValue.doubleValue());
                     }

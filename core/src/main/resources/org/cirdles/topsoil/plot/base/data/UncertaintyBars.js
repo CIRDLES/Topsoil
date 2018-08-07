@@ -1,5 +1,5 @@
 /**
- * @author Jake Marotta
+ * @author marottajb
  */
 
 if (plot.uncertaintyBarsVisible == null) {
