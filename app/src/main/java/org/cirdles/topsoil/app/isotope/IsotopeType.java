@@ -43,18 +43,6 @@ public enum IsotopeType {
      */
     private final TopsoilPlotType[] plots;
 
-    /**
-     * A {@code List} of all {@code IsotopeType}s.
-     */
-    public static final List<IsotopeType> ISOTOPE_TYPES;
-    static {
-        ISOTOPE_TYPES = Collections.unmodifiableList(Arrays.asList(
-                Generic,
-                UPb,
-                UTh
-        ));
-    }
-
     //***********************
     // Constructors
     //***********************
@@ -69,6 +57,36 @@ public enum IsotopeType {
     //***********************
     // Methods
     //***********************
+
+    /**
+     * Returns the appropriate {@code IsotopeType} for the given name, if one exists.
+     *
+     * @param name  String name
+     * @return      associated IsotopeType
+     */
+    public static IsotopeType fromName(String name) {
+        for (IsotopeType i : values()) {
+            if (name.equals(i.getName())) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the appropriate {@code IsotopeType} for the given abbreviation, if one exists.
+     *
+     * @param abbr  String abbreviation
+     * @return      associated IsotopeType
+     */
+    public static IsotopeType fromAbbreviation(String abbr) {
+        for (IsotopeType i : values()) {
+            if (abbr.equals(i.getAbbreviation())) {
+                return i;
+            }
+        }
+        return null;
+    }
 
     /**
      * Returns the abbreviated name of the {@code IsotopeType}.

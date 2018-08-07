@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.PlotProperty;
 
 /**
  * Stores information about an open {@link Plot}.
@@ -33,7 +34,7 @@ public class PlotInformation {
     /**
      * An {@code ObservableMap} containing plot property values.
      */
-    private ObservableMap<String, Object> plotProperties;
+    private ObservableMap<PlotProperty, Object> plotProperties;
 
     /**
      * The {@code Stage} that is displaying the {@code Plot}.
@@ -53,7 +54,8 @@ public class PlotInformation {
      * @param plotType  the TopsoilPlotType of the plot
      * @param stage the Stage displaying the Plot
      */
-    public PlotInformation(Plot plot, TopsoilPlotType plotType, ObservableMap<String, Object> plotProperties, Stage stage) {
+    public PlotInformation(Plot plot, TopsoilPlotType plotType, ObservableMap<PlotProperty, Object> plotProperties,
+                           Stage stage) {
         this.plot = plot;
         this.plotType = plotType;
         this.plotProperties = plotProperties;
@@ -70,7 +72,7 @@ public class PlotInformation {
      * @return  the Plot
      */
     public Plot getPlot() {
-        return this.plot;
+        return plot;
     }
 
     /**
@@ -79,7 +81,7 @@ public class PlotInformation {
      * @return  the plot's TopsoilPlotType
      */
     public TopsoilPlotType getTopsoilPlotType() {
-        return this.plotType;
+        return plotType;
     }
 
     /**
@@ -87,8 +89,8 @@ public class PlotInformation {
      *
      * @return  the HashMap of plot properties
      */
-    public ObservableMap<String, Object> getPlotProperties() {
-        return this.plotProperties;
+    public ObservableMap<PlotProperty, Object> getPlotProperties() {
+        return plotProperties;
     }
 
     /**
@@ -97,7 +99,7 @@ public class PlotInformation {
      * @return  the Stage displaying the plot
      */
     public Stage getStage() {
-        return this.stage;
+        return stage;
     }
 
     /**
@@ -105,7 +107,7 @@ public class PlotInformation {
      */
     public void killPlot() {
         try {
-            ((JavaScriptPlot) this.plot).killPlot();
+            ((JavaScriptPlot) plot).killPlot();
         } catch (Throwable t) {
             t.printStackTrace();
         }

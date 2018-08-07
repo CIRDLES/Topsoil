@@ -16,6 +16,7 @@
 package org.cirdles.topsoil.plot.base;
 
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.plot.DefaultProperties;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 
 /**
@@ -36,7 +37,7 @@ public class BasePlot extends JavaScriptPlot {
     public BasePlot() {
         super(
                 RESOURCE_EXTRACTOR.extractResourceAsPath(RESOURCE_NAME),
-                new BasePlotDefaultProperties());
+                new DefaultProperties());
     }
 
 }

@@ -40,16 +40,6 @@ public class TopsoilTabPane extends TabPane {
      */
     private BooleanProperty isEmpty = new SimpleBooleanProperty(true);
 
-    /**
-     * A {@code String} path to the {@code .fxml} file for {@code TopsoilTabContent}.
-     */
-    private static final String TOPSOIL_TAB_FXML_PATH = "topsoil-tab-content.fxml";
-
-    /**
-     * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
-     */
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabPane.class);
-
     //***********************
     // Constructors
     //***********************
@@ -74,45 +64,18 @@ public class TopsoilTabPane extends TabPane {
      * @param table the TopsoilDataTable to be added
      */
     public void add(TopsoilDataTable table) {
-        try {
-            // Load tab content
-            FXMLLoader fxmlLoader = new FXMLLoader(
-                    RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_TAB_FXML_PATH).toUri().toURL());
-            SplitPane tabContentView = fxmlLoader.load();
-            TopsoilTabContent tabContent = fxmlLoader.getController();
-            tabContent.setUncertaintyFormatLabel(table.getUncertaintyFormat().getName());
+        TopsoilTabContent tabContent = new TopsoilTabContent(table);
 
-            // Create new TopsoilTab
-            TopsoilTab tab = createTopsoilTab(tabContent, new TopsoilTableController(table, tabContent));
+        // Create new TopsoilTab
+        TopsoilTab tab = createTopsoilTab(tabContent, new TopsoilTableController(table, tabContent));
 
-            // Set default plot name, x-axis name, and y-axis name.
-            tabContent.getPlotPropertiesPanelController().setTitle(table.getTitle() + " - Plot");
-            TopsoilDataColumn xColumn = table.getVariableAssignments().get(Variables.X);
-            TopsoilDataColumn yColumn = table.getVariableAssignments().get(Variables.Y);
-            tabContent.getPlotPropertiesPanelController().setxAxisTitle(xColumn == null ? "X Axis Title" : xColumn.getName());
-            tabContent.getPlotPropertiesPanelController().setyAxisTitle(yColumn == null ? "Y Axis Title" : yColumn.getName());
+        tab.setContent(tabContent);
 
-            for (TopsoilDataColumn column : table.getDataColumns()) {
-                column.nameProperty().addListener(c -> {
-                    if (column.getVariable() == Variables.X) {
-                        tabContent.getPlotPropertiesPanelController().setxAxisTitle(column.getName());
-                    } else if (column.getVariable() == Variables.Y) {
-                        tabContent.getPlotPropertiesPanelController().setyAxisTitle(column.getName());
-                    }
-                });
-            }
+        // Disables 'x' button to close tab.
+        tab.setClosable(false);
 
-            tab.setContent(tabContentView);
-
-            // Disables 'x' button to close tab.
-            tab.setClosable(false);
-
-            this.getTabs().addAll(tab);
-            this.getSelectionModel().select(tab);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.getTabs().addAll(tab);
+        this.getSelectionModel().select(tab);
     }
 
     /**

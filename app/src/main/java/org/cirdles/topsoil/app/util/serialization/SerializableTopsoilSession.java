@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
+import org.cirdles.topsoil.plot.PlotProperty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,14 +34,11 @@ import static org.cirdles.topsoil.app.util.serialization.PlotDataKeys.*;
 
 /**
  * A serializable class which stores information about all open tables and plots for serialization to a .topsoil
- * file. Data is read from a {@link TopsoilTabPane}, the {@link TopsoilTab}s of which each contain a
- * {@link TopsoilDataTable} filled with information about a specific table, including information about plots associated
- * with that table. This information is extracted, placed into a serializable format, then stored in {@link HashMap}s.
+ * file. Data is read from a {@link TopsoilTabPane} and placed into a serializable format.
  *
  * @author Jake Marotta
  * @see TopsoilSerializer
  * @see TopsoilTab
- * @see TopsoilDataTable
  * @see TopsoilTabPane
  */
 class SerializableTopsoilSession implements Serializable {
@@ -53,54 +51,15 @@ class SerializableTopsoilSession implements Serializable {
 
     private static final long serialVersionUID = 5793097708181607507L;
 
-    /**
-     * A {@code List} of {@code Map}s that contain all of the data for the Topsoil session.
-     */
-    private List<Map<String, Serializable>> data;
-
-    // Static maps for re-creating non-serializable information.
-    /**
-     * A {@code Map} of {@code String}s to {@code IsotopeType}s, so that we can store the abbreviation of each
-     * {@code IsotopeType} as a {@code String}, which is serializable.
-     */
-    private static Map<String, IsotopeType> ISOTOPE_TYPES;
-
-    /**
-     * A {@code Map} of {@code String}s to {@code TopsoilPlotType}s, so that we can store the name of each
-     * {@code TopsoilPlotType} as a {@code String}, which is serializable.
-     */
-    private static Map<String, TopsoilPlotType> TOPSOIL_PLOT_TYPES;
-
-    /**
-     * A {@code Map} of {@code String}s to {@code UncertaintyFormat}s, so that we can store the name of each {@code
-     * UncertaintyFormat} as a {@code String}, which is serializable.
-     */
-    private static Map<String, UncertaintyFormat> UNCERTAINTY_FORMATS;
-
-    /**
-     * A {@code Map} of {@code String}s to {@code Variable}s, so that we can store the name of each
-     * {@code Variable} as a {@code String}, which is serializable.
-     */
     private static Map<String, Variable<Number>> VARIABLES;
-
     static {
-        ISOTOPE_TYPES = new HashMap<>();
-        for (IsotopeType type : IsotopeType.ISOTOPE_TYPES) {
-            ISOTOPE_TYPES.put(type.getAbbreviation(), type);
-        }
-        TOPSOIL_PLOT_TYPES = new HashMap<>();
-        for (TopsoilPlotType type : TopsoilPlotType.TOPSOIL_PLOT_TYPES) {
-            TOPSOIL_PLOT_TYPES.put(type.getName(), type);
-        }
-        UNCERTAINTY_FORMATS = new HashMap<>();
-        for (UncertaintyFormat format : UncertaintyFormat.ALL) {
-            UNCERTAINTY_FORMATS.put(format.getName(), format);
-        }
         VARIABLES = new HashMap<>();
         for (Variable v : Variables.VARIABLE_LIST) {
             VARIABLES.put(v.getName(), v);
         }
     }
+
+	private List<Map<String, Serializable>> data;
 
     //***********************
     // Constructors
@@ -147,10 +106,10 @@ class SerializableTopsoilSession implements Serializable {
         tableData.put(TABLE_HEADERS, tableController.getTable().getColumnNames());
 
         // IsotopeType of TopsoilDataTable
-        tableData.put(TABLE_ISOTOPE_TYPE, tableController.getTable().getIsotopeType().getAbbreviation());
+        tableData.put(TABLE_ISOTOPE_TYPE, tableController.getTable().getIsotopeType().name());
 
         // UncertaintyFormat of TopsoilDataTable
-        tableData.put(TABLE_UNCERTAINTY_FORMAT, tableController.getTable().getUncertaintyFormat().getName());
+        tableData.put(TABLE_UNCERTAINTY_FORMAT, tableController.getTable().getUncertaintyFormat().name());
 
         // Data stored in TopsoilDataTable
         tableData.put(TABLE_DATA, new ArrayList<>(tableController.getTable().getDataAsArrays()));
@@ -174,9 +133,6 @@ class SerializableTopsoilSession implements Serializable {
         }
         tableData.put(TABLE_PLOTS, plots);
 
-        tableData.put(TABLE_PLOT_PROPERTIES, new HashMap<>(tableController.getTabContent().getPlotPropertiesPanelController()
-                                                                      .getProperties()));
-
         this.data.add(tableData);
     }
 
@@ -190,6 +146,7 @@ class SerializableTopsoilSession implements Serializable {
         HashMap<String, Serializable> plotOptions = new HashMap<>();
 
         plotOptions.put(PLOT_TYPE, plotInfo.getTopsoilPlotType().getName());
+        plotOptions.put(PLOT_PROPERTIES, new HashMap<>(plotInfo.getPlotProperties()));
 
         return plotOptions;
     }
@@ -202,7 +159,11 @@ class SerializableTopsoilSession implements Serializable {
      * @param plot  a HashMap of information about the plot to re-create
      */
     private void loadPlot(TopsoilTableController tableController, HashMap<String, Serializable> plot) {
-        PlotGenerationHandler.handlePlotGenerationFromFile(tableController, TOPSOIL_PLOT_TYPES.get(plot.get(PLOT_TYPE)));
+        PlotGenerationHandler.handlePlotGenerationFromFile(
+        		tableController,
+		        TopsoilPlotType.valueOf(String.valueOf(plot.get(PLOT_TYPE))),
+		        (HashMap<PlotProperty, Object>) plot.get(PLOT_PROPERTIES)
+                                                          );
     }
 
     /**
@@ -224,19 +185,15 @@ class SerializableTopsoilSession implements Serializable {
 
             table = new TopsoilDataTable(
                     headers,
-                    ISOTOPE_TYPES.get((String) tableData.get(TABLE_ISOTOPE_TYPE)),
-                    UNCERTAINTY_FORMATS.get((String) tableData.get(TABLE_UNCERTAINTY_FORMAT)),
+                    IsotopeType.valueOf((String) tableData.get(TABLE_ISOTOPE_TYPE)),
+                    UncertaintyFormat.valueOf((String) tableData.get(TABLE_UNCERTAINTY_FORMAT)),
                     dataEntries
             );
 
             table.setTitle((String) tableData.get(TABLE_TITLE));
             tabs.add(table);
-            
-            //TODO: deserialize
 
             TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
-
-            tableController.getTabContent().getPlotPropertiesPanelController().setPanelProperties((HashMap<String, Object>) tableData.get(TABLE_PLOT_PROPERTIES));
 
             for (HashMap<String, Serializable> plot : (ArrayList<HashMap<String, Serializable>>) tableData.get(TABLE_PLOTS)) {
                 this.loadPlot(tableController, plot);

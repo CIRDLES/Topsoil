@@ -1,81 +1,124 @@
 package org.cirdles.topsoil.app.tab;
 
 import com.sun.javafx.scene.control.skin.TableHeaderRow;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 
+import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.app.plot.PlotGenerationHandler;
+import org.cirdles.topsoil.app.plot.variable.Variables;
 import org.cirdles.topsoil.app.table.TopsoilDataTable;
 import org.cirdles.topsoil.app.table.TopsoilTableCell;
+import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.table.command.InsertRowCommand;
 import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
-import org.cirdles.topsoil.app.plot.PlotPropertiesPanelController;
+import org.cirdles.topsoil.app.plot.panel.PlotPropertiesPanel;
+import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * This is the primary view for a {@link TopsoilDataTable}. It contains the {@link TableView} that the data is loaded
- * into, the {@link PlotPropertiesPanelController} that controls the attributes of any plots for the data, and any
+ * into, the {@link PlotPropertiesPanel} that controls the attributes of any plots for the data, and any
  * other visual controls in the {@link TopsoilTab}
  *
  * @author Jake Marotta
- * @see PlotPropertiesPanelController
+ * @see PlotPropertiesPanel
  * @see Tab
  * @see TopsoilTabPane
  */
-public class TopsoilTabContent extends SplitPane {
+public class TopsoilTabContent extends AnchorPane {
 
-    //***********************
-    // Attributes
-    //***********************
+	private static final String CONTROLLER_FXML = "topsoil-tab-content.fxml";
 
-    @FXML private Label messageLabel;
+	private TopsoilDataTable table;
 
-    /**
-     * A {@code TableView} that displays the table data.
-     */
+	//**********************************************//
+	//                   CONTROLS                   //
+	//**********************************************//
+
+    @FXML private ComboBox<IsotopeType> isotopeSystemComboBox;
+    @FXML private ComboBox<UncertaintyFormat> uncertaintyFormatComboBox;
+
+    @FXML private Button assignVariablesButton;
+    @FXML private Button generatePlotButton;
+
     @FXML private TableView<TopsoilDataEntry> tableView;
 
-    /**
-     * An {@code AnchorPane} that contains the {@link PlotPropertiesPanelController} for this tab.
-     */
-    @FXML private AnchorPane plotPropertiesAnchorPane;
+	//**********************************************//
+	//                  PROPERTIES                  //
+	//**********************************************//
 
-    /**
-     * The {@code PlotPropertiesPanelController} for this tab.
-     */
-    private PlotPropertiesPanelController plotPropertiesPanelController;
+    private ObjectProperty<IsotopeType> isotopeSystem;
+    public ObjectProperty<IsotopeType> isotopeSystemProperty() {
+    	if (isotopeSystem == null) {
+    		isotopeSystem = new SimpleObjectProperty<>();
+    		isotopeSystem.bindBidirectional(isotopeSystemComboBox.valueProperty());
+	    }
+	    return isotopeSystem;
+    }
+    public final IsotopeType getIsotopeSystem() {
+    	return isotopeSystemProperty().get();
+    }
+    public final void setIsotopeSystem(IsotopeType i) {
+    	isotopeSystemProperty().set(i);
+    }
 
-    /**
-     * The {@code String} path to the {@code .fxml} file for the {@link PlotPropertiesPanelController}.
-     */
-    private static final String PROPERTIES_PANEL_FXML_PATH = "plot-properties-panel.fxml";
+    private ObjectProperty<UncertaintyFormat> uncertaintyFormat;
+    public ObjectProperty<UncertaintyFormat> uncertaintyFormatProperty() {
+    	if (uncertaintyFormat == null) {
+    		uncertaintyFormat = new SimpleObjectProperty<>();
+    		uncertaintyFormat.bindBidirectional(uncertaintyFormatComboBox.valueProperty());
+	    }
+	    return uncertaintyFormat;
+    }
+    public final UncertaintyFormat getUncertaintyFormat() {
+    	return uncertaintyFormatProperty().get();
+    }
+    public final void setUncertaintyFormat(UncertaintyFormat format) {
+    	uncertaintyFormatProperty().set(format);
+    }
 
-    /**
-     * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
-     */
-    private static final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilTabContent.class);
+	//**********************************************//
+	//                 CONSTRUCTORS                 //
+	//**********************************************//
 
-    //***********************
-    // Methods
-    //***********************
+	public TopsoilTabContent(TopsoilDataTable table) {
+    	this.table = table;
+    	try {
+    		FXMLLoader loader = new FXMLLoader(new ResourceExtractor(TopsoilTabContent.class).extractResourceAsPath
+				    (CONTROLLER_FXML).toUri().toURL());
+    		loader.setRoot(this);
+    		loader.setController(this);
+    		loader.load();
+	    } catch (IOException e) {
+    		e.printStackTrace();
+	    }
+	}
 
-    /** {@inheritDoc}
-     */
-    @FXML public void initialize() {
+    @FXML protected void initialize() {
+
+    	isotopeSystemComboBox.getItems().addAll(IsotopeType.values());
+    	uncertaintyFormatComboBox.getItems().addAll(UncertaintyFormat.values());
+
+	    isotopeSystemProperty().bindBidirectional(table.isotopeTypeObjectProperty());
+	    setUncertaintyFormat(table.getUncertaintyFormat());
+	    uncertaintyFormatComboBox.setDisable(true);
 
         // Handle Keyboard Events
         tableView.setOnKeyPressed(this::handleTableViewKeyEvent);
@@ -89,33 +132,78 @@ public class TopsoilTabContent extends SplitPane {
         configureColumns();
         resetIds();
 
-        initializePlotPropertiesPanel();
-
         // A somewhat hacky method of disabling column dragging in the TableView.
         tableView.widthProperty().addListener(c -> {
             TableHeaderRow header = (TableHeaderRow) tableView.lookup("TableHeaderRow");
             header.reorderingProperty().addListener(ch -> header.setReordering(false));
         });
-
     }
 
-    /**
-     * Loads and initializes the {@code PlotPropertiesPanelController} from FXML.
-     */
-    private void initializePlotPropertiesPanel() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(PROPERTIES_PANEL_FXML_PATH).toUri().toURL());
-            Node panel = fxmlLoader.load();
-            plotPropertiesPanelController = fxmlLoader.getController();
-            AnchorPane.setTopAnchor(panel, 0.0);
-            AnchorPane.setRightAnchor(panel, 0.0);
-            AnchorPane.setBottomAnchor(panel, 0.0);
-            AnchorPane.setLeftAnchor(panel, 0.0);
-            plotPropertiesAnchorPane.getChildren().add(panel);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	//**********************************************//
+	//                PUBLIC METHODS                //
+	//**********************************************//
+
+	public void addColumn(int index) {
+		List<TableColumn<TopsoilDataEntry, ?>> columns = tableView.getColumns();
+
+		TableColumn<TopsoilDataEntry, Double> newColumn;
+
+		newColumn = new TableColumn<>("New Column");
+
+		newColumn.setCellValueFactory(param -> {
+			if (param.getValue().getProperties().size() == 0) {
+				return (ObservableValue) new SimpleDoubleProperty(0.0);
+			} else {
+				if (param.getValue().getProperties().size() < index + 1) {
+					SimpleDoubleProperty newProperty = new SimpleDoubleProperty(Double.NaN);
+					param.getValue().getProperties().add(newProperty);
+					return (ObservableValue) newProperty;
+				} else {
+					return (ObservableValue) param.getValue().getProperties().get(index);
+				}
+			}
+		});
+
+		// override cell factory to custom editable cells
+		newColumn.setCellFactory(value -> new TopsoilTableCell());
+
+		// disable column sorting
+		newColumn.setSortable(false);
+
+		// initial width
+		newColumn.setPrefWidth(160.0);
+
+		// add functional column to the array of columns
+		columns.add(index, newColumn);
+	}
+
+	public void removeColumn(int index) {
+		tableView.getColumns().remove(index);
+	}
+
+	/**
+	 * Returns the {@code TableView} from this {@code TopsoilTabContent}.
+	 *
+	 * @return TableView
+	 */
+	public TableView<TopsoilDataEntry> getTableView() {
+		return tableView;
+	}
+
+	/**
+	 * Sets the data to be displayed.
+	 *
+	 * @param dataEntries   an ObservableList of TopsoilDataEntries
+	 */
+	public void setData(ObservableList<TopsoilDataEntry> dataEntries) {
+		tableView.setItems(dataEntries);
+		tableView.getColumns().clear();
+		configureColumns();
+	}
+
+	//**********************************************//
+	//                PRIVATE METHODS               //
+	//**********************************************//
 
     /**
      * Handles keyboard events in the {@code TableView}.
@@ -183,73 +271,6 @@ public class TopsoilTabContent extends SplitPane {
         }
     }
 
-    public void addColumn(int index) {
-        List<TableColumn<TopsoilDataEntry, ?>> columns = tableView.getColumns();
-
-        TableColumn<TopsoilDataEntry, Double> newColumn;
-
-        newColumn = new TableColumn<>("New Column");
-
-        newColumn.setCellValueFactory(param -> {
-            if (param.getValue().getProperties().size() == 0) {
-                return (ObservableValue) new SimpleDoubleProperty(0.0);
-            } else {
-                if (param.getValue().getProperties().size() < index + 1) {
-                    SimpleDoubleProperty newProperty = new SimpleDoubleProperty(Double.NaN);
-                    param.getValue().getProperties().add(newProperty);
-                    return (ObservableValue) newProperty;
-                } else {
-                    return (ObservableValue) param.getValue().getProperties().get(index);
-                }
-            }
-        });
-
-        // override cell factory to custom editable cells
-        newColumn.setCellFactory(value -> new TopsoilTableCell());
-
-        // disable column sorting
-        newColumn.setSortable(false);
-
-        // initial width
-        newColumn.setPrefWidth(160.0);
-
-        // add functional column to the array of columns
-        columns.add(index, newColumn);
-    }
-
-    public void removeColumn(int index) {
-        tableView.getColumns().remove(index);
-    }
-
-    /**
-     * Returns the {@code TableView} from this {@code TopsoilTabContent}.
-     *
-     * @return TableView
-     */
-    public TableView<TopsoilDataEntry> getTableView() {
-        return tableView;
-    }
-
-    /**
-     * Returns the {@code PlotPropertiesPanelController} from this {@code TopsoilTabContent}.
-     *
-     * @return  PlotPropertiesPanelController
-     */
-    public PlotPropertiesPanelController getPlotPropertiesPanelController() {
-        return plotPropertiesPanelController;
-    }
-
-    /**
-     * Sets the data to be displayed.
-     *
-     * @param dataEntries   an ObservableList of TopsoilDataEntries
-     */
-    public void setData(ObservableList<TopsoilDataEntry> dataEntries) {
-        tableView.setItems(dataEntries);
-        tableView.getColumns().clear();
-        configureColumns();
-    }
-
     /**
      * Resets the {@code String} ids associated with each {@code TableColumn} in the {@code TableView}.
      * <p>Each {@code TableColumn} has an associated String id assigned to it, increasing numerically from 1, left to
@@ -265,8 +286,27 @@ public class TopsoilTabContent extends SplitPane {
         }
     }
 
-    void setUncertaintyFormatLabel(String s) {
-        messageLabel.setText("Uncertainty values are in " + s + " format.");
+    @FXML private void assignVariablesButtonAction() {
+        ((TopsoilTabPane) MainWindow.getPrimaryStage().getScene().lookup("#TopsoilTabPane"))
+                .getSelectedTab().getTableController().showVariableChooserDialog(null);
+    }
+
+    @FXML private void generatePlotButtonAction() {
+        TopsoilTableController tableController = ((TopsoilTabPane) MainWindow.getPrimaryStage().getScene().lookup
+                ("#TopsoilTabPane"))
+                .getSelectedTab().getTableController();
+
+        // If X and Y aren't specified.
+        if (!tableController.getTable().getVariableAssignments().containsKey(Variables.X)
+            || !tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
+            tableController.showVariableChooserDialog(Arrays.asList(Variables.X, Variables.Y));
+        }
+
+        if (tableController.getTable().getVariableAssignments().containsKey(Variables.X)
+            && tableController.getTable().getVariableAssignments().containsKey(Variables.Y)) {
+            PlotGenerationHandler.handlePlotGenerationForSelectedTab((TopsoilTabPane) generatePlotButton.getScene().lookup
+                    ("#TopsoilTabPane"));
+        }
     }
 
 }

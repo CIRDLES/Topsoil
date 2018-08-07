@@ -16,33 +16,42 @@
 
 plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
 plot.propertiesKeys = [
+    'Title',
+
+    'X Axis',
+    'X Min',
+    'X Max',
+
+    'Y Axis',
+    'Y Min',
+    'Y Max',
+
+    'Points',
+    'Points Fill',
+    'Points Opacity',
+
+    'Ellipses',
+    'Ellipses Fill',
+    'Ellipses Opacity',
+
+    'Unct Bars',
+    'Unct Bars Fill',
+    'Unct Bars Opacity',
+
+    'Wetherill Line',
+    'Wetherill Line Fill',
+    'Wetherill Envelope Fill',
+    'Evolution Matrix',
+    'McLean Regression',
+    'McLean Regression Envelope',
+
+    'Isotope System',
+    'Uncertainty',
     'U234',
     'U235',
     'U238',
-    'Th230',
-
-    'X Min',
-    'X Max',
-    'Y Min',
-    'Y Max',
-    'Point Fill Color',
-    'Ellipse Fill Color',
-    'Bar Fill Color',
-    'Point Opacity',
-    'Ellipse Opacity',
-    'Bar Opacity',
-    'Title',
-    'Uncertainty',
-    'X Axis',
-    'Y Axis',
-    'Points',
-    'Ellipses',
-    'Bars',
-    'Concordia',
-    'Evolution',
-    'Isotope',
-    'Regression',
-    'Regression Envelope'];
+    'Th230'
+];
 
 /*
     Creates an SVG group for data elements like points and ellipses. Inserting other groups below this one ensures that
@@ -151,29 +160,13 @@ plot.initialize = function (data) {
     };
 
     // function to manually the x and y axes' extents
-    topsoil.setAxes = function() {
+    topsoil.setAxes = function(xMin, xMax, yMin, yMax) {
 
         // if the user hasn't set a new extent for a field, leave it as-is
-        if(plot.getProperty("X Min").length == 0) {
-            var xMin = plot.xAxisScale.domain()[0];
-        } else {
-            var xMin = plot.getProperty("X Min");
-        }
-        if(plot.getProperty("X Max").length == 0) {
-            var xMax = plot.xAxisScale.domain()[1];
-        } else {
-            var xMax = plot.getProperty("X Max");
-        }
-        if(plot.getProperty("Y Min").length == 0) {
-            var yMin = plot.yAxisScale.domain()[0];
-        } else {
-            var yMin = plot.getProperty("Y Min");
-        }
-        if(plot.getProperty("Y Max").length == 0) {
-            var yMax = plot.yAxisScale.domain()[1];
-        } else {
-            var yMax = plot.getProperty("Y Max");
-        }
+        if (xMin.length === 0) xMin = plot.xAxisScale.domain()[0];
+        if (xMax.length === 0) xMax = plot.xAxisScale.domain()[1];
+        if (yMin.length === 0) yMin = plot.yAxisScale.domain()[0];
+        if (yMax.length === 0) yMax = plot.yAxisScale.domain()[1];
 
         // if the user input a min greater than the max, arbitrarily set the max to a larger value
         if(xMin >= xMax) { xMax = parseFloat(xMin) + .1; }
@@ -270,20 +263,8 @@ plot.update = function (data) {
     }
 
     //if the isotope type has changed, alert Java
-    if (plot.currentIsotope != plot.getProperty('Isotope')) {
-        plot.currentIsotope = plot.getProperty('Isotope');
-
-        // Set minimum bounds for plot based on isotope type.
-        switch (plot.currentIsotope) {
-            case "Uranium Lead":
-                plot.minimumX = -1;
-                plot.minimumY = -1;
-                break;
-            default:
-                plot.minimumX = 0;
-                plot.minimumY = 0;
-                break;
-        }
+    if (plot.currentIsotope != plot.getProperty('Isotope System')) {
+        plot.currentIsotope = plot.getProperty('Isotope System');
     }
 
     // If the uncertainty has changed, the plot extent and ellipse data have to be re-calculated, and the ellipses
@@ -304,7 +285,7 @@ plot.update = function (data) {
             redrawConcordia = true;
             redrawEvolution = true
         }
-    } else if (plot.lambda.U234 == null) {
+    } else if (plot.lambda.U234 === null) {
         plot.lambda.U234 = topsoil.defaultLambda.U234;
     }
     if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235'))) {
@@ -312,7 +293,7 @@ plot.update = function (data) {
             plot.lambda.U235 = plot.getProperty("U235");
             redrawConcordia = true;
         }
-    } else if (plot.lambda.U235 == null) {
+    } else if (plot.lambda.U235 === null) {
         plot.lambda.U235 = topsoil.defaultLambda.U235;
     }
     if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) {
@@ -320,7 +301,7 @@ plot.update = function (data) {
             plot.lambda.U238 = plot.getProperty("U238");
             redrawEvolution = true
         }
-    } else if (plot.lambda.U238 == null) {
+    } else if (plot.lambda.U238 === null) {
         plot.lambda.U238 = topsoil.defaultLambda.U238;
     }
     if (plot.getProperty('Th230') != null && !isNaN(plot.getProperty('Th230'))) {
@@ -328,7 +309,7 @@ plot.update = function (data) {
             plot.lambda.Th230 = plot.getProperty("Th230");
             redrawEvolution = true
         }
-    } else if (plot.lambda.Th230 == null) {
+    } else if (plot.lambda.Th230 === null) {
         plot.lambda.Th230 = topsoil.defaultLambda.Th230;
     }
 
@@ -374,20 +355,6 @@ plot.update = function (data) {
     then updates all plot elements.
  */
 plot.zoomed = function() {
-
-    var newXMin = plot.xAxisScale.domain()[0];
-    var newXMax = plot.xAxisScale.domain()[1];
-    var newYMin = plot.yAxisScale.domain()[0];
-    var newYMax = plot.yAxisScale.domain()[1];
-
-    // keep the user from panning past minimum bounds
-    // TODO Right now, the user can pan past minimum bounds, it just won't show. Fix that.
-    if (newXMin <= plot.minimumX) {
-        plot.xAxisScale.domain([plot.minimumX, (plot.minimumX + (newXMax - newXMin))]);
-    }
-    if (newYMin <= plot.minimumY) {
-        plot.yAxisScale.domain([plot.minimumY, (plot.minimumY + (newYMax - newYMin))]);
-    }
 
     // re-tick the axes
     plot.area.selectAll(".x.axis").call(plot.xAxis);
@@ -501,7 +468,7 @@ plot.manageEllipses = function () {
 
 plot.manageRegressionLine = function() {
     // If RegressionLine shouldn't be visible
-    if(plot.getProperty("Regression")) {
+    if(plot.getProperty("McLean Regression")) {
 
         // If the RegressionLine needs to be updated
         if (plot.regressionVisible) {
@@ -524,7 +491,7 @@ plot.manageRegressionLine = function() {
 plot.manageUncertaintyBars = function () {
 
     // If UncertaintyBars should be visible...
-    if (plot.getProperty("Bars")) {
+    if (plot.getProperty("Unct Bars")) {
 
         // If the UncertaintyBars simply need to be updated...
         if (plot.uncertaintyBarsVisible) {
@@ -553,7 +520,7 @@ plot.managePlotFeatures = function () {
     if (plot.currentIsotope == "Uranium Lead") {
 
         // If the concordia line should be visible...
-        if (plot.getProperty("Concordia")) {
+        if (plot.getProperty("Wetherill Line")) {
 
             // If the concordia line should be visible, but isn't...
             if (!plot.concordiaVisible) {
@@ -577,10 +544,10 @@ plot.managePlotFeatures = function () {
     }
 
     // If the isotope system is UTh...
-    if (plot.currentIsotope == "Uranium Thorium" ) {
+    if (plot.currentIsotope = "Uranium Thorium" ) {
 
         // If the evolution matrix should be visible...
-        if (plot.getProperty("Evolution")) {
+        if (plot.getProperty("Evolution Matrix")) {
 
             // If the evolution matrix should be visible, but isn't...
             if (!plot.evolutionMatrixVisible) {
@@ -606,7 +573,7 @@ plot.managePlotFeatures = function () {
 };
 
 plot.removeDataFeatures = function () {
-    plot.removeCrosses();
+    plot.removeUncertaintyBars();
     plot.removeEllipses();
     plot.removePoints();
 };

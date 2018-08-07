@@ -108,12 +108,12 @@ plot.updateEllipses = function() {
                 if (!d['Selected']) {
                     fill = 'gray';
                 } else {
-                    fill = plot.getProperty('Ellipse Fill Color');
+                    fill = plot.getProperty('Ellipses Fill');
                 }
 
                 return fill;
             })
-            .attr("fill-opacity", plot.getProperty("Ellipse Opacity") * 0.3)
+            .attr("fill-opacity", plot.getProperty("Ellipses Opacity") * 0.3)
             .attr("stroke", "black");
     }
 };

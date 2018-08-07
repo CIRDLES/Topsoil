@@ -29,7 +29,7 @@ import static java.util.Collections.emptyList;
 public abstract class AbstractPlot implements Plot {
 
     private List<Map<String, Object>> data;
-    private Map<String, Object> properties;
+    private Map<PlotProperty, Object> properties;
 
     /**
      * Constructs a new {@code AbstractPlot}. No properties are set by default.
@@ -41,11 +41,11 @@ public abstract class AbstractPlot implements Plot {
     /**
      * Constructs a new {@code AbstractPlot} with the specified properties.
      *
-     * @param defaultProperties a Map of String keys to Object values
+     * @param properties a Map of PlotProperty keys to Object values
      */
-    public AbstractPlot(Map<String, Object> defaultProperties) {
+    public AbstractPlot(Map<PlotProperty, Object> properties) {
         data = emptyList();
-        properties = defaultProperties;
+        this.properties = properties;
     }
 
     /**{@inheritDoc}*/
@@ -62,19 +62,19 @@ public abstract class AbstractPlot implements Plot {
 
     /**{@inheritDoc}*/
     @Override
-    public Map<String, Object> getProperties() {
+    public Map<PlotProperty, Object> getProperties() {
         return properties;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(Map<PlotProperty, Object> properties) {
         this.properties = properties;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperty(String key, Object value) {
+    public void setProperty(PlotProperty key, Object value) {
         this.properties.put(key, value);
     }
 
