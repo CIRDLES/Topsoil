@@ -47,9 +47,10 @@ task jarWithDependencies(type: Jar) {
 }
 
 dependencies {
-    compile project(':core')
+    implementation project(':core')
 
-    compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
     implementation 'org.controlsfx:controlsfx:8.20.9'
     implementation 'com.google.inject:guice:4.0'
+
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
 }
