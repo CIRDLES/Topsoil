@@ -52,6 +52,8 @@
 
     topsoil.updateProperty = function(key, value) {
         plot.properties[key] = value;
+
+        plot.update(ts.data)
     };
 
     /*

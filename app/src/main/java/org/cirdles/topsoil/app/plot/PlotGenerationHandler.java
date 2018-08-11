@@ -12,6 +12,7 @@ import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.serialization.PlotInformation;
+import org.cirdles.topsoil.plot.DefaultProperties;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
 
@@ -77,17 +78,19 @@ public class PlotGenerationHandler {
 	    plot.setData(data);
 
 	    if (properties == null) {
-		    properties = new HashMap<>();
+		    properties = new DefaultProperties();
 	    }
 	    properties.put(TITLE, tableController.getTable().getTitle());
 	    if (tableController.getAssignedVariables().contains(Variables.X)) {
-	    	properties.put(X_AXIS, tableController.getTable().getVariableAssignments().get(Variables.X).getName());
+		    properties.put(X_AXIS, tableController.getTable().getVariableAssignments().get(Variables.Y).getName());
 	    }
-	    if (tableController.getAssignedVariables().contains(Variables.X)) {
-		    properties.put(Y_AXIS, tableController.getTable().getVariableAssignments().get(Variables.Y).getName());
+	    if (tableController.getAssignedVariables().contains(Variables.Y)) {
+	    	properties.put(Y_AXIS, tableController.getTable().getVariableAssignments().get(Variables.Y).getName());
 	    }
 	    properties.put(UNCERTAINTY, tableController.getTable().getUncertaintyFormat().getValue());
-	    TopsoilPlotView plotView = new TopsoilPlotView(plot, properties);
+	    plot.setProperties(properties);
+
+	    TopsoilPlotView plotView = new TopsoilPlotView(plot);
 
 	    // Connect Plot with PropertiesPanel
 	    PlotPropertiesPanel panel = plotView.getPropertiesPanel();
@@ -111,6 +114,7 @@ public class PlotGenerationHandler {
             plot.stop();
             tableController.getTable().removeOpenPlot(plotType);
         });
+//        plotStage.setOnShown((event) -> panel.refreshPlot() );
 
         // Show Plot
         plotStage.show();
