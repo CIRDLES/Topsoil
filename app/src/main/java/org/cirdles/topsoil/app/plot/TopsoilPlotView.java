@@ -46,9 +46,13 @@ public class TopsoilPlotView extends VBox {
 	//**********************************************//
 
 	public TopsoilPlotView(Plot plot) {
+		this(plot, new DefaultProperties());
+	}
+
+	public TopsoilPlotView(Plot plot, Map<PlotProperty, Object> properties) {
 		super();
 		this.plot = plot;
-		this.propertiesPanel = new PlotPropertiesPanel(plot);
+		this.propertiesPanel = new PlotPropertiesPanel(plot, properties);
 		try {
 			FXMLLoader loader = new FXMLLoader(new ResourceExtractor(TopsoilPlotView.class).extractResourceAsPath(CONTROLLER_FXML)
 					                                   .toUri().toURL());

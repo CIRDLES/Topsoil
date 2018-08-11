@@ -275,7 +275,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                             }
 
                             if (getProperties() != null) {
-                                topsoil.call("setProperties", convertProperties(getProperties()));
+                                topsoil.call("setProperties", getProperties());
                             }
 
                             loadFuture.complete(null);
@@ -377,10 +377,8 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     public void setProperties(Map<PlotProperty, Object> properties) {
         super.setProperties(properties);
 
-        Map<String, Object> stringKeyProperties = convertProperties(properties);
-
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("setProperties", stringKeyProperties));
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", convertProperties(getProperties())));
         }
     }
 
@@ -389,10 +387,8 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     public void setProperty(PlotProperty key, Object value) {
         super.setProperty(key, value);
 
-	    Map<String, Object> stringKeyProperties = convertProperties(this.getProperties());
-
         if (topsoil != null) {
-            runOnFxApplicationThread(() -> topsoil.call("setProperties", stringKeyProperties));
+            runOnFxApplicationThread(() -> topsoil.call("setProperties", convertProperties(getProperties())));
         }
     }
 
