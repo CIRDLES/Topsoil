@@ -24,8 +24,7 @@ public class PlotPropertiesPanel extends Accordion {
     private static final String CONTROLLER_FXML = "plot-properties-panel.fxml";
 
 	private Plot plot;
-	private final HashMap<PlotProperty, Object> properties = new DefaultProperties();
-	private Map<PlotProperty, Object> temp;
+	private Map<PlotProperty, Object> properties;
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -373,14 +372,12 @@ public class PlotPropertiesPanel extends Accordion {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-	public PlotPropertiesPanel(Plot plot) {
-    	this(plot, null);
-	}
-
-    public PlotPropertiesPanel(Plot plot, Map<PlotProperty, Object> properties) {
+    public PlotPropertiesPanel(Plot plot) {
         this.plot = plot;
-        this.temp = properties;
-        try {
+        if (plot.getProperties() == null) {
+        	plot.setProperties(new DefaultProperties());
+        }
+	    try {
             FXMLLoader loader = new FXMLLoader(
                     new ResourceExtractor(PlotPropertiesPanel.class).extractResourceAsPath(CONTROLLER_FXML).toUri().toURL()
             );
@@ -395,11 +392,10 @@ public class PlotPropertiesPanel extends Accordion {
     @FXML protected void initialize() {
     	axisStyling.setPropertiesPanel(this);
 
+	    this.properties = plot.getProperties();
     	setPlotProperties(properties);
 	    configureListeners();
-    	if (temp != null) {
-		    setPlotProperties(temp);
-	    }
+
 	    plotFeatures.isotopeSystemProperty().bind(this.isotopeSystemProperty());
     }
 
