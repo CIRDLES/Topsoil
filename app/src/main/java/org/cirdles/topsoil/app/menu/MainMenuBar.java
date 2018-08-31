@@ -1,31 +1,29 @@
 package org.cirdles.topsoil.app.menu;
 
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
 import static org.cirdles.topsoil.app.MainWindow.verifyFinalSave;
+
 import org.cirdles.topsoil.app.TopsoilAboutScreen;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.menu.command.ClearTableCommand;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.table.TopsoilDataTable;
 
+import org.cirdles.topsoil.app.table.CellFormatDialog;
+import org.cirdles.topsoil.app.table.ObservableTableData;
+import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
-import java.io.IOException;
 import javafx.application.Platform;
 
 import static org.cirdles.topsoil.app.menu.MenuItemEventHandler.*;
 import org.cirdles.topsoil.app.menu.command.DeleteTableCommand;
+
+import java.util.Map;
+
+import static org.cirdles.topsoil.app.table.CellFormatDialog.CellFormatOption;
 
 /**
  * A custom {@code MenuBar} for the Topsoil {@link MainWindow}.
@@ -36,169 +34,79 @@ import org.cirdles.topsoil.app.menu.command.DeleteTableCommand;
  */
 public class MainMenuBar extends MenuBar {
 
-    //***********************
-    // Attributes
-    //***********************
-
-    /**
-     * An instance of this menu bar as a {@code MenuBar}.
-     */
-    private MenuBar menuBar = new MenuBar();
-
-    /**
-     * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
-     */
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(MainMenuBar.class);
-
-    /**
-     * The {@code String} path to the {@code .fxml} file for the {@link TopsoilAboutScreen}
-     */
-    private final String TOPSOIL_ABOUT_SCREEN_FXML_NAME = "topsoil-about-screen.fxml";
-
     // Project Menu
-    /**
-     * When clicked, starts the process of creating a new project.
-     */
-    private MenuItem newProjectItem;
-
-    /**
-     * When clicked, opens a new .topsoil project file.
-     */
-    private MenuItem openProjectItem;
-
-    /**
-     * When clicked, saves the current open project file.
-     */
-    private MenuItem saveProjectItem;
-
-    /**
-     * When clicked, saves the current open project file to a specific path.
-     */
-    private MenuItem saveProjectAsItem;
-
-    /**
-     * When clicked, closes the current open project file.
-     */
-    private MenuItem closeProjectItem;
-    
-    /**
-     * When clicked, exits Topsoil.
-     */
-    private MenuItem exitItem;
+    private MenuItem newProjectItem, openProjectItem, saveProjectItem, saveProjectAsItem, closeProjectItem, exitItem;
 
     // Edit Menu
-    /**
-     * When clicked, undoes the last {@code Command} on the table.
-     */
-    private MenuItem undoItem;
-
-    /**
-     * When clicked, redoes the last {@code Command} on the table.
-     */
-    private MenuItem redoItem;
+    private MenuItem undoItem, redoItem;
 
     // Data Table Menu
-    /**
-     * When clicked, creates a new table.
-     */
-    private MenuItem newTableItem;
-
-    private MenuItem exportTableItem;
-    
-    /**
-     * When clicked, clears the current {@code TableView}.
-     */
-    private MenuItem clearTableItem;
-    
-    /**
-     * When clicked, deletes the current {@code TableView}.
-     */
-    private MenuItem deleteTableItem;
+    private MenuItem newTableItem, exportTableItem, deleteTableItem, setCellFormatItem;
 
     // Data Table > Import Table >
-    /**
-     * When clicked, imports table data from a file.
-     */
-    private MenuItem tableFromFileItem;
-    /**
-     * When clicked, imports table data from the clipboard
-     */
-    private MenuItem tableFromClipboardItem;
+    private MenuItem tableFromFileItem, tableFromClipboardItem;
 
-    // Data Table > Import Table >
-    /**
-     * When clicked, imports sample UPb data table 
-     */
-    private MenuItem uPbExampleTableItem;
-    /**
-     * When clicked, imports sample UTh data table 
-     */
-    private MenuItem uThExampleTableItem;
-
+    // Data Table > Example Table >
+    private MenuItem uPbExampleTableItem, uThExampleTableItem;
 
     // Help Menu
-    /**
-     * When clicked, opens the browser at the Topsoil project page.
-     */
-    private MenuItem onlineHelpItem;
-    /**
-     * When clicked, opens the browser so the user can submit a new issue.
-     */
-    private MenuItem reportIssueItem;
-    /**
-     * When clicked, re-opens the {@link TopsoilAboutScreen}.
-     */
-    private MenuItem aboutItem;
+    private MenuItem onlineHelpItem, reportIssueItem, aboutItem;
 
-    //***********************
-    // Constructors
-    //***********************
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     /**
      * Creates a new {@code MainMenuBar} for the specified {@code TopsoilTabPane}.
      *
-     * @param tabs  TopsoilTabPane for the window
+     * @param   tabs
+     *          TopsoilTabPane for the window
      */
     public MainMenuBar(TopsoilTabPane tabs) {
         super();
         this.initialize(tabs);
     }
 
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
-    /** {@inheritDoc}
-     */
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
+
     private void initialize(TopsoilTabPane tabs) {
 
         // Project Menu
-        Menu projectMenu = getProjectMenu(tabs);
+        Menu projectMenu = projectMenu(tabs);
 
         // Edit Menu
-        Menu editMenu = getEditMenu(tabs);
+        Menu editMenu = editMenu(tabs);
 
         // Table Menu
-        Menu tableMenu = getTableMenu(tabs);
+        Menu tableMenu = tableMenu(tabs);
 
         // Help Menu
-        Menu helpMenu = getHelpMenu(tabs);
+        Menu helpMenu = helpMenu(tabs);
 
         // Add menus to menuBar
-        menuBar.getMenus()
-                .addAll(projectMenu,
-                        editMenu,
-                        tableMenu,
-                        helpMenu);
+        this.getMenus().addAll(
+                projectMenu,
+                editMenu,
+                tableMenu,
+                helpMenu
+        );
     }
 
     /**
      * Creates and returns the 'Project' menu.
      *
-     * @param tabs  TopsoilTabPane for the window
+     * @param   tabs
+     *          TopsoilTabPane for the window
+     *
      * @return  'Project' Menu
      */
-    private Menu getProjectMenu(TopsoilTabPane tabs) {
+    private Menu projectMenu(TopsoilTabPane tabs) {
         Menu projectMenu = new Menu("Project");
         newProjectItem = new MenuItem("New Project");
         saveProjectItem = new MenuItem("Save Project");
@@ -262,10 +170,12 @@ public class MainMenuBar extends MenuBar {
     /**
      * Creates and returns the 'Edit' menu.
      *
-     * @param tabs  TopsoilTabPane for the window
+     * @param   tabs
+     *          TopsoilTabPane for the window
+     *
      * @return  'Edit' Menu
      */
-    private Menu getEditMenu(TopsoilTabPane tabs) {
+    private Menu editMenu(TopsoilTabPane tabs) {
         Menu editMenu = new Menu("Edit");
         undoItem = new MenuItem("Undo \"\"");
         redoItem = new MenuItem("Redo \"\"");
@@ -318,21 +228,23 @@ public class MainMenuBar extends MenuBar {
     /**
      * Creates and returns the 'Data Table' menu.
      *
-     * @param tabs  TopsoilTabPane for the window
+     * @param   tabs
+     *          TopsoilTabPane for the window
+     *
      * @return  'Data Table' Menu
      */
-    private Menu getTableMenu(TopsoilTabPane tabs) {
+    private Menu tableMenu(TopsoilTabPane tabs) {
         Menu tableMenu = new Menu("Data Table");
         newTableItem = new MenuItem("New Data Table");
         exportTableItem = new MenuItem("Export Table");
-        clearTableItem = new MenuItem("Clear Data Table");
         deleteTableItem = new MenuItem("Delete Data Table");
+	    setCellFormatItem = new MenuItem("Set Cell Format");
 
         // New, empty table
         newTableItem.setOnAction(event -> {
 
             // get new table
-            TopsoilDataTable table = handleNewTable();
+            ObservableTableData table = handleNewTable();
 
             // display new table
             if (table != null) {
@@ -343,28 +255,28 @@ public class MainMenuBar extends MenuBar {
         exportTableItem = new MenuItem("Export Table");
          
          exportTableItem.setOnAction(event -> {
-             TopsoilDataTable table = tabs.getSelectedTab().getTableController().getTable();
+             ObservableTableData table = tabs.getSelectedTab().getDataView().getData();
              if (table != null) {
                  handleExportTable(table);
              }
              else
                  System.out.println("PANIC");
          });
-
-
-        clearTableItem.setOnAction(action -> {
-            // clear table and add an empty row
-            ClearTableCommand clearTableCommand =
-                    new ClearTableCommand(tabs.getSelectedTab().getTabContent().getTableView());
-            clearTableCommand.execute();
-            tabs.getSelectedTab().addUndo(clearTableCommand);
-        });
         
-        deleteTableItem.setOnAction(action -> {
+        deleteTableItem.setOnAction(event -> {
             DeleteTableCommand deleteTableCommand =
                     new DeleteTableCommand(tabs.getSelectedTab());
             deleteTableCommand.execute();
             //tabs.addUndo(deleteTableCommand);
+        });
+
+        setCellFormatItem.setOnAction(event -> {
+        	try {
+		        String pattern = CellFormatDialog.open(null);
+		        tabs.getSelectedTab().getDataView().getSpreadsheetView().setFormat(pattern);
+	        } catch (TopsoilException e) {
+		        e.printStackTrace();
+	        }
         });
 
         //Creates Submenu for Imports
@@ -383,43 +295,28 @@ public class MainMenuBar extends MenuBar {
                 uPbExampleTableItem,
                 uThExampleTableItem);
         
-        uPbExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UPb) );
+        uPbExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UPB) );
         
-        uThExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UTh) );
+        uThExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UTH) );
         
         // Import Table from File
         tableFromFileItem.setOnAction(event -> {
 
-            TopsoilDataTable table = null;
+            ObservableTableData table = importDataFromFile();
 
-            // get table from selections
-            try {
-                table = handleTableFromFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // display table
             if (table != null) {
                 tabs.add(table);
             }
         });
 
         //Import Table from Clipboard
-        tableFromClipboardItem.setOnAction(action -> {
+        tableFromClipboardItem.setOnAction(event -> {
 
-            TopsoilDataTable table = null;
-
-            try {
-                table = handleTableFromClipboard();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            ObservableTableData table = importDataFromClipboard();
 
             if (table != null) {
                 tabs.add(table);
             }
-
         });
 
         importTable.setOnShown(event -> {
@@ -437,24 +334,18 @@ public class MainMenuBar extends MenuBar {
                          exportTableItem,
                          new SeparatorMenuItem(),
                          newTableItem,
-                         //clearTableItem,
                          new SeparatorMenuItem(),
-                         deleteTableItem);
+                         deleteTableItem,
+                         new SeparatorMenuItem(),
+                         setCellFormatItem);
 
         tableMenu.setOnShown(event -> {
             if (tabs.isEmpty()) {
-                clearTableItem.setDisable(true);
                 deleteTableItem.setDisable(true);
                 exportTableItem.setDisable(true);
             } else {
-                if (!tabs.getSelectedTab().getTableController().getTable().isCleared()) {
-                    clearTableItem.setDisable(false);
-                    exportTableItem.setDisable(false);
-                } else {
-                    clearTableItem.setDisable(true);
-                    exportTableItem.setDisable(true);
-                }
                 deleteTableItem.setDisable(false);
+                exportTableItem.setDisable(false);
             }
         });
 
@@ -464,58 +355,36 @@ public class MainMenuBar extends MenuBar {
     /**
      * Creates and returns the 'Help' menu.
      *
-     * @param tabs  TopsoilTabPane for the window
+     * @param   tabs
+     *          TopsoilTabPane for the window
+     *
      * @return  'Help' Menu
      */
-    private Menu getHelpMenu(TopsoilTabPane tabs) {
+    private Menu helpMenu(TopsoilTabPane tabs) {
         Menu helpMenu = new Menu("Help");
         onlineHelpItem = new MenuItem("Online Help");
         reportIssueItem = new MenuItem("Report Issue");
         aboutItem = new MenuItem("About");
 
-        onlineHelpItem.setOnAction(event -> {
-            handleOpenOnlineHelp();
-        });
+        onlineHelpItem.setOnAction(event -> handleOpenOnlineHelp() );
         
         // Report Issue
-        reportIssueItem.setOnAction(event -> {
-            handleReportIssue();
-        });
+        reportIssueItem.setOnAction(event -> handleReportIssue() );
 
         // About
         aboutItem.setOnAction(event -> {
-            try {
-                Parent about = FXMLLoader.load(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_NAME).toUri().toURL());
+            Stage aboutWindow = TopsoilAboutScreen.getFloatingStage();
 
-                final double ABOUT_WIDTH = 550;
-                final double ABOUT_HEIGHT = 650;
-
-                Scene aboutScene = new Scene(about, ABOUT_WIDTH, ABOUT_HEIGHT);
-                Stage aboutWindow = new Stage(StageStyle.UNDECORATED);
-                aboutWindow.setResizable(false);
-                aboutWindow.setScene(aboutScene);
-
-                double newX = MainWindow.getPrimaryStage().getX() + (MainWindow.getPrimaryStage().getWidth() / 2) -
-                             (ABOUT_WIDTH / 2);
-                double newY = MainWindow.getPrimaryStage().getY() + (MainWindow.getPrimaryStage().getHeight() / 2) -
-                              (ABOUT_HEIGHT / 2);
-
-                aboutWindow.setX(newX);
-                aboutWindow.setY(newY);
-
-                aboutWindow.requestFocus();
-                aboutWindow.initOwner(tabs.getScene().getWindow());
-                aboutWindow.initModality(Modality.NONE);
-                // Close window if main window gains focus.
-                tabs.getScene().getWindow().focusedProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue) {
-                        aboutWindow.close();
-                    }
-                });
-                aboutWindow.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            aboutWindow.requestFocus();
+            aboutWindow.initOwner(tabs.getScene().getWindow());
+            aboutWindow.initModality(Modality.NONE);
+            // Close window if main window gains focus.
+            tabs.getScene().getWindow().focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    aboutWindow.close();
+                }
+            });
+            aboutWindow.show();
         });
 
         helpMenu.getItems().addAll(
@@ -526,14 +395,5 @@ public class MainMenuBar extends MenuBar {
         );
 
         return helpMenu;
-    }
-
-    /**
-     * Returns an instance of this menu bar as a {@code MenuBar}.
-     *
-     * @return  MenuBar
-     */
-    public MenuBar getMenuBar() {
-        return menuBar;
     }
 }

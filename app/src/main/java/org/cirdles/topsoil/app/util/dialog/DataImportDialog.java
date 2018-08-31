@@ -1,19 +1,13 @@
 package org.cirdles.topsoil.app.util.dialog;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.util.dialog.controller.DataPreviewController;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,19 +22,13 @@ import java.util.Map;
  *
  * @author Jake Marotta
  */
-public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
+public class DataImportDialog extends Dialog<Map<ImportDataType, Object>> {
 
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(DataImportDialog.class);
-    private static final String DATA_PREVIEW_FXML = "controller/data-preview.fxml";
-    private DataPreviewController controller;
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
-    /**
-     * Constructs a new {@code DataImportDialog} with the specified data and column names.
-     *
-     * @param headers   array of String names for data columns
-     * @param data  List of TopsoilDataEntries of data
-     */
-    private DataImportDialog(String[] headers, List<TopsoilDataEntry> data) {
+    private DataImportDialog(String[] headers, Double[][] data) {
         super();
         this.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.FINISH);
 
@@ -48,16 +36,8 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
         stage.initOwner(MainWindow.getPrimaryStage());
         stage.getIcons().add(MainWindow.getWindowIcon());
 
-        try {
-            // Load a DataPreviewController
-            FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(DATA_PREVIEW_FXML)
-                                                                 .toUri().toURL());
-            this.getDialogPane().setContent(loader.load());
-            controller = loader.getController();
-            controller.setData(headers, data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        DataPreviewController controller = new DataPreviewController(headers, data);
+        this.getDialogPane().setContent(controller);
 
         // User can't click "Finish" until they select an uncertainty format.
         this.getDialogPane().lookupButton(ButtonType.FINISH).setDisable(true);
@@ -73,12 +53,12 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
 
         setResultConverter(value -> {
             if (value == ButtonType.FINISH) {
-                Map<DataImportKey, Object> selections = new HashMap<>();
-                selections.put(DataImportKey.HEADERS, controller.getHeaders());
-                selections.put(DataImportKey.DATA, controller.getData());
-                selections.put(DataImportKey.UNCERTAINTY, controller.getUncertaintyFormat());
-                selections.put(DataImportKey.ISOTOPE_TYPE, controller.getIsotopeType());
-                selections.put(DataImportKey.VARIABLE_INDEX_MAP, controller.getVariableIndexMap());
+                Map<ImportDataType, Object> selections = new HashMap<>();
+                selections.put(ImportDataType.HEADERS, controller.getHeaders());
+                selections.put(ImportDataType.DATA, controller.getData());
+                selections.put(ImportDataType.UNCERTAINTY, controller.getUncertaintyFormat());
+                selections.put(ImportDataType.ISOTOPE_TYPE, controller.getIsotopeType());
+                selections.put(ImportDataType.VARIABLE_INDEX_MAP, controller.getVariableIndexMap());
 
                 return selections;
             } else {
@@ -91,20 +71,24 @@ public class DataImportDialog extends Dialog<Map<DataImportKey, Object>> {
     /**
      * Shows a {@code Dialog} where the user can preview how their data will be imported, and assign plotting
      * variables to the columns that they wish to keep. This method returns several values as a {@code Map}, which
-     * can be retrieved by their {@code DataImportKey}s.
+     * can be retrieved by their {@code ImportDataType}s.
      * <p>
      * For reference:
      *
-     * DataImportKey.HEADERS = the {@code String} headers of the selected columns
-     * DataImportKey.DATA = the {@code {@literal List<TopsoilDataEntry>}} containing rows with the values for the
+     * ImportDataType.HEADERS = the {@code String} headers of the selected columns
+     * ImportDataType.DATA = the {@code {@literal List<TopsoilDataEntry>}} containing rows with the values for the
      * selected columns
-     * DataImportKey.UNCERTAINTY = the selected {@code UncertaintyFormat}
+     * ImportDataType.UNCERTAINTY = the selected {@code UncertaintyFormat}
      *
-     * @param headers   array of String column headers
-     * @param data  List of TopsoilDataEntry rows
-     * @return  a Map of values
+     * @param   headers
+     *          array of String headers
+     * @param   data
+     *          2D array of Double data
+     *
+     * @return  a Map of edited values
      */
-    public static Map<DataImportKey, Object> showImportDialog(@Nullable String[] headers, List<TopsoilDataEntry> data) {
+    public static Map<ImportDataType, Object> showImportDialog(String[] headers,
+                                                               Double[][] data) {
 
         DataImportDialog dialog = new DataImportDialog(headers, data);
         dialog.setTitle("Data Import Helper");

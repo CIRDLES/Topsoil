@@ -11,17 +11,17 @@ import java.util.List;
 public enum IsotopeType {
 
     //Isotope abbreviation, isotope name, array of default headers as strings
-    Generic("Gen", "Generic",
+    GENERIC("Gen", "Generic",
             new String[]{"x", "y", "xσ", "yσ", "Corr Coef"},
             new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT}),
 
-    UPb("UPb", "Uranium Lead",
-            new String[]{"207Pb*/235U", "206Pb*/238U", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-            new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT}),
+    UPB("UPb", "Uranium Lead",
+        new String[]{"207Pb*/235U", "206Pb*/238U", "±2σ (%)", "±2σ (%)", "Corr Coef"},
+        new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT}),
 
-    UTh("UTh", "Uranium Thorium",
-            new String[]{"[234Pb/238U]t", "[230Th/238U]t", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-            new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT});
+    UTH("UTh", "Uranium Thorium",
+        new String[]{"[234Pb/238U]t", "[230Th/238U]t", "±2σ (%)", "±2σ (%)", "Corr Coef"},
+        new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT});
 
     /**
      * An abbreviation of the {@code IsotopeType}'s name.
@@ -42,6 +42,18 @@ public enum IsotopeType {
      * The available {@code TopsoilPlotType}s for the {@code IsotopeType}.
      */
     private final TopsoilPlotType[] plots;
+
+    /**
+     * A {@code List} of all {@code IsotopeType}s.
+     */
+    public static final List<IsotopeType> ISOTOPE_TYPES;
+    static {
+        ISOTOPE_TYPES = Collections.unmodifiableList(Arrays.asList(
+                GENERIC,
+                UPB,
+                UTH
+        ));
+    }
 
     //***********************
     // Constructors
@@ -94,7 +106,7 @@ public enum IsotopeType {
      * @return abbreviated String name
      */
     public String getAbbreviation() {
-        return this.abbreviation;
+        return abbreviation;
     }
 
     /**
@@ -103,7 +115,7 @@ public enum IsotopeType {
      * @return String name
      */
     public String getName() {
-        return this.name;
+        return name;
     }
 
     /**
@@ -112,8 +124,7 @@ public enum IsotopeType {
      * @return array of String headers
      */
     public String[] getHeaders() {
-        String[] result = this.headers.clone();
-        return result;
+        return headers.clone();
     }
 
     /**
@@ -123,5 +134,10 @@ public enum IsotopeType {
      */
     public TopsoilPlotType[] getPlots() {
         return plots.clone();
+    }
+
+    @Override
+    public String toString() {
+        return abbreviation;
     }
 }

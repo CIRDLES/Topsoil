@@ -49,8 +49,9 @@ task jarWithDependencies(type: Jar) {
 dependencies {
     implementation project(':core')
 
-    implementation 'org.controlsfx:controlsfx:8.20.9'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
+    implementation 'org.controlsfx:controlsfx:8.40.14'
     implementation 'com.google.inject:guice:4.0'
 
-    compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
+    compile 'org.springframework:spring-jdbc:4.2.0.RELEASE'
 }

@@ -105,7 +105,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
                 + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
                 + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
                 + "<script src=\"%s\"></script>\n" // JS file for plot
-                // </body>
+                + "</body>"
                 // </html>
                 + "").replaceAll("%20", "%%20");
     }

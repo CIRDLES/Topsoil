@@ -11,17 +11,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
-import org.cirdles.topsoil.app.util.TopsoilException;
-import org.cirdles.topsoil.app.util.dialog.DataImportKey;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.util.dialog.ImportDataType;
 import org.cirdles.topsoil.app.util.dialog.controller.ProjectSourcesController.PathDelimiterPair;
 import org.cirdles.topsoil.app.util.file.FileParser;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,17 +28,35 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controller for a screen that allows the user to preview their imported source files, as well as choose an {@link
- * UncertaintyFormat} and {@link IsotopeType} for each table.
+ * Controller that allows the user to preview their imported source files, as well as choose an
+ * {@link UncertaintyFormat} and {@link IsotopeType} for each data table.
  *
- * @author Jake Marotta
+ * @author marottajb
  */
-public class ProjectPreviewController {
+public class ProjectPreviewController extends AnchorPane {
+
+    private static final String PROJECT_PREVIEW_FXML = "project-preview.fxml";
+    private static final String WARNING_ICON_PATH = "warning.png";
+
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(ProjectPreviewController.class);
+    private final ImageView WARNING_ICON = new ImageView(RESOURCE_EXTRACTOR.extractResourceAsPath(WARNING_ICON_PATH)
+                                                                           .toUri().toString());
 
     @FXML private TabPane fileTabs;
-
     @FXML private Button cancelButton;
     @FXML private Button finishButton;
+
+    private Boolean didFinish;
+
+    /**
+     * The previous scene in the "New Project" sequence. As of typing, this should be a Scene containing a
+     * {@link ProjectSourcesController}.
+     */
+    private Scene previousScene;
+
+    //**********************************************//
+    //                  PROPERTIES                  //
+    //**********************************************//
 
     /**
      * A {@code ListProperty} containing a list of type {@code PathDelimiterPair}, which keeps track of the
@@ -54,22 +70,25 @@ public class ProjectPreviewController {
         return pathDelimiterList;
     }
 
-    private Boolean didFinish;
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(ProjectPreviewController.class);
-    private static final String DATA_PREVIEW_FXML = "data-preview.fxml";
-    private static final String WARNING_ICON_PATH = "warning.png";
-    private final ImageView WARNING_ICON = new ImageView(RESOURCE_EXTRACTOR.extractResourceAsPath(WARNING_ICON_PATH)
-                                                                           .toUri().toString());
+    public ProjectPreviewController() {
+        super();
 
-    /**
-     * The previous scene in the "New Project" sequence. As of typing, this should be a Scene containing a
-     * {@link ProjectSourcesController}.
-     */
-    private Scene previousScene;
+        try {
+            FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(PROJECT_PREVIEW_FXML).toUri().toURL());
+            loader.setRoot(this);
+            loader.setController(this);
+            loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load " + PROJECT_PREVIEW_FXML, e);
+        }
+    }
 
     @FXML
-    public void initialize() {
+    protected void initialize() {
         pathDelimiterListProperty();
         didFinish = false;
         finishButton.setDisable(true);
@@ -80,10 +99,10 @@ public class ProjectPreviewController {
         WARNING_ICON.setFitHeight(20.0);
 
         for (Tab tab : fileTabs.getTabs()) {
-            ((ControllerTab) tab).getController().uncertaintyFormatProperty().addListener(c -> {
+            ((DataPreviewControllerTab) tab).getController().uncertaintyFormatProperty().addListener(c -> {
                 boolean incomplete = false;
                 for (Tab t : fileTabs.getTabs()) {
-                    if (((ControllerTab) t).getController().getUncertaintyFormat() == null) {
+                    if (((DataPreviewControllerTab) t).getController().getUncertaintyFormat() == null) {
                         incomplete = true;
                         break;
                     }
@@ -103,7 +122,7 @@ public class ProjectPreviewController {
                 PathDelimiterPair pair = pathDelimiterListProperty().get(c.getTo() - 1);
 
                 finishButton.setDisable(true);
-                ControllerTab controllerTab = new ControllerTab(pair.getPath(), pair.getDelimiter());
+                DataPreviewControllerTab controllerTab = new DataPreviewControllerTab(pair.getPath(), pair.getDelimiter());
                 controllerTab.getController().uncertaintyFormatProperty().addListener(ch -> {
                     updateFinishButtonDisabledProperty();
                 });
@@ -115,6 +134,61 @@ public class ProjectPreviewController {
 
         });
     }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    /**
+     * Returns true if the {@code Stage} was closed on this {@code Scene}.
+     *
+     * @return  true if Stage was closed here
+     */
+    public Boolean didFinish() {
+        return didFinish;
+    }
+
+    /**
+     * Returns a {@code List} of {@code Map}s containing information from each of the {@link DataPreviewController}s
+     * from the specified source files.
+     *
+     * @return  List of Maps of DataImportKeys to Objects
+     */
+    public List<Map<ImportDataType, Object>> getSelections() {
+        // TODO
+        List<Map<ImportDataType, Object>> allSelections = new ArrayList<>();
+
+        DataPreviewController controller;
+        for (Tab tab : fileTabs.getTabs()) {
+            controller = ((DataPreviewControllerTab) tab).getController();
+            Map<ImportDataType, Object> selections = new HashMap<>();
+
+            selections.put(ImportDataType.TITLE, tab.getText());
+            selections.put(ImportDataType.HEADERS, controller.getHeaders());
+            selections.put(ImportDataType.DATA, controller.getData());
+            selections.put(ImportDataType.UNCERTAINTY, controller.getUncertaintyFormat());
+            selections.put(ImportDataType.ISOTOPE_TYPE, controller.getIsotopeType());
+            selections.put(ImportDataType.VARIABLE_INDEX_MAP, controller.getVariableIndexMap());
+
+            allSelections.add(selections);
+        }
+
+        return allSelections;
+    }
+
+    /**
+     * Sets the previous {@code Scene} in the "New Project" sequence. This scene will replace the current one when the
+     * user clicks the "Previous" button.
+     *
+     * @param scene previous Scene
+     */
+    public void setPreviousScene(Scene scene) {
+        previousScene = scene;
+    }
+
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
 
     /**
      * Upon pressing "Cancel", the {@code Stage} is closed without doing anything.
@@ -142,10 +216,6 @@ public class ProjectPreviewController {
         ((Stage) cancelButton.getScene().getWindow()).close();
     }
 
-    public Boolean didFinish() {
-        return didFinish;
-    }
-
     /**
      * Updates the {@link Button#disableProperty()} of {@link #finishButton} based on whether all required information
      * is present.
@@ -153,7 +223,7 @@ public class ProjectPreviewController {
     private void updateFinishButtonDisabledProperty() {
         boolean incomplete = false;
         for (Tab t : fileTabs.getTabs()) {
-            if (((ControllerTab) t).getController().getUncertaintyFormat() == null) {
+            if (((DataPreviewControllerTab) t).getController().getUncertaintyFormat() == null) {
                 incomplete = true;
                 break;
             }
@@ -165,67 +235,32 @@ public class ProjectPreviewController {
         }
     }
 
-    /**
-     * Returns a {@code List} of {@code Map}s containing information from each of the {@link DataPreviewController}s
-     * from the specified source files.
-     *
-     * @return  List of Maps of DataImportKeys to Objects
-     */
-    public List<Map<DataImportKey, Object>> getSelections() {
-        // TODO
-        List<Map<DataImportKey, Object>> allSelections = new ArrayList<>();
-
-        DataPreviewController controller;
-        for (Tab tab : fileTabs.getTabs()) {
-            controller = ((ControllerTab) tab).getController();
-            Map<DataImportKey, Object> selections = new HashMap<>();
-
-            selections.put(DataImportKey.TITLE, tab.getText());
-            selections.put(DataImportKey.HEADERS, controller.getHeaders());
-            selections.put(DataImportKey.DATA, controller.getData());
-            selections.put(DataImportKey.UNCERTAINTY, controller.getUncertaintyFormat());
-            selections.put(DataImportKey.ISOTOPE_TYPE, controller.getIsotopeType());
-            selections.put(DataImportKey.VARIABLE_INDEX_MAP, controller.getVariableIndexMap());
-
-            allSelections.add(selections);
-        }
-
-        return allSelections;
-    }
-
-    /**
-     * Sets the previous {@code Scene} in the "New Project" sequence. This scene will replace the current one when the
-     * user clicks the "Previous" button.
-     *
-     * @param scene previous Scene
-     */
-    public void setPreviousScene(Scene scene) {
-        previousScene = scene;
-    }
+    //**********************************************//
+    //                INNER CLASSES                 //
+    //**********************************************//
 
     /**
      * A custom {@code Tab} which contains a {@link DataPreviewController}.
      */
-    private class ControllerTab extends Tab {
+    private class DataPreviewControllerTab extends Tab {
 
         private DataPreviewController controller;
 
-        ControllerTab(Path filePath, String delim) {
+        DataPreviewControllerTab(Path path, String delim) {
             super();
             try {
-                FXMLLoader loader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath(DATA_PREVIEW_FXML).toUri().toURL());
+                String[] headers = FileParser.parseHeaders(path, delim);
+                Double[][] data = FileParser.parseData(path, delim);
 
-                this.setContent(loader.load());
-                this.controller = loader.getController();
-
-                File file = filePath.toFile();
-
-                this.setText(file.getName());
+                controller = new DataPreviewController(headers, data);
+                this.setContent(controller);
+                this.setText(path.getFileName().toString());
 
                 ImageView warningIconCopy = new ImageView(WARNING_ICON.getImage());
                 warningIconCopy.setPreserveRatio(true);
                 warningIconCopy.setFitHeight(20.0);
                 this.setGraphic(warningIconCopy);
+
                 controller.uncertaintyFormatProperty().addListener(c -> {
                     if (controller.getUncertaintyFormat() == null) {
                         this.setGraphic(warningIconCopy);
@@ -243,20 +278,7 @@ public class ProjectPreviewController {
                     tabPane.getTabs().add(index, this);
                     tabPane.getSelectionModel().select(this);
                 });
-
-                String[] headers = null;
-                Boolean containsHeaders = FileParser.detectHeader(file, delim);
-                List<TopsoilDataEntry> data;
-
-                if (containsHeaders) {
-                    headers = FileParser.parseHeaders(file, delim);
-                }
-
-                data = FileParser.parseFile(file, delim, containsHeaders);
-
-                controller.setData(headers, data);
-
-            } catch (IOException | TopsoilException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

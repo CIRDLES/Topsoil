@@ -3,24 +3,45 @@ package org.cirdles.topsoil.app.util.dialog.controller;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Controller for a window that allows the user to specify the title and location of their new project.
+ * Controller that allows the user to specify the title and location of their new project.
  *
- * @author Jake Marotta
+ * @author marottajb
  */
-public class ProjectTitleController {
+public class ProjectTitleController extends AnchorPane {
+
+    private static final String PROJECT_TITLE_FXML = "project-title.fxml";
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(ProjectTitleController.class);
+
+    @FXML private TextField titleTextField, pathTextField;
+    @FXML private Button cancelButton, nextButton;
+
+    /**
+     * The next scene in the "New Project" sequence. As of typing, this is a Scene containing a
+     * {@link ProjectSourcesController}.
+     */
+    private Scene nextScene;
+    private static final int MAX_FILE_NAME_LENGTH = 60;
+
+    //**********************************************//
+    //                  PROPERTIES                  //
+    //**********************************************//
 
     private ObjectProperty<Path> projectLocation;
     private ObjectProperty<Path> projectLocationProperty() {
@@ -29,7 +50,6 @@ public class ProjectTitleController {
         }
         return projectLocation;
     }
-
     /**
      * Returns the selected project file location.
      *
@@ -42,27 +62,59 @@ public class ProjectTitleController {
         projectLocationProperty().set(file.toPath());
     }
 
-    @FXML private TextField titleTextField;
-    @FXML private TextField pathTextField;
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
-    @FXML private Button cancelButton;
-    @FXML private Button nextButton;
+    public ProjectTitleController() {
+        super();
 
-    /**
-     * The next scene in the "New Project" sequence. As of typing, this is a Scene containing a
-     * {@link ProjectSourcesController}.
-     */
-    private Scene nextScene;
-    private static final int MAX_FILE_NAME_LENGTH = 60;
+        try {
+            FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(PROJECT_TITLE_FXML).toUri().toURL());
+            loader.setRoot(this);
+            loader.setController(this);
+            loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load " + PROJECT_TITLE_FXML, e);
+        }
+    }
 
     @FXML
-    public void initialize() {
+    protected void initialize() {
         nextButton.setDisable(true);
         projectLocationProperty().addListener(c -> updateNextButtonDisabledProperty());
         titleTextField.textProperty().addListener(c -> updateNextButtonDisabledProperty());
         //Make home directory the default file location
         setProjectFile(new File(System.getProperty("user.home")));
     }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    /**
+     * Returns the specified title of the new project.
+     *
+     * @return  String title
+     */
+    public String getTitle() {
+        return titleTextField.getText();
+    }
+
+    /**
+     * Sets the next {@code Scene} in the "New Project" sequence. This scene will replace the current one when the
+     * user clicks the "Next" button.
+     *
+     * @param   scene
+     *          next Scene
+     */
+    public void setNextScene(Scene scene) {
+        nextScene = scene;
+    }
+
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
 
     /**
      * When the user presses the "..." button, a {@code DirectoryChooser} is opened where they can specify the
@@ -141,24 +193,4 @@ public class ProjectTitleController {
             nextButton.setDisable(false);
         }
     }
-
-    /**
-     * Sets the next {@code Scene} in the "New Project" sequence. This scene will replace the current one when the
-     * user clicks the "Next" button.
-     *
-     * @param scene next Scene
-     */
-    public void setNextScene(Scene scene) {
-        nextScene = scene;
-    }
-
-    /**
-     * Returns the specified title of the new project.
-     *
-     * @return  String title
-     */
-    public String getTitle() {
-        return titleTextField.getText();
-    }
-
 }

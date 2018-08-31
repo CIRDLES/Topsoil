@@ -6,13 +6,16 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.dialog.DelimiterRequestDialog;
@@ -21,7 +24,9 @@ import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,26 +37,22 @@ import java.util.List;
  *
  * @author Jake Marotta
  */
-public class ProjectSourcesController {
+public class ProjectSourcesController extends AnchorPane {
+
+    private static final String PROJECT_SOURCES_FXML = "project-sources.fxml";
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(ProjectSourcesController.class);
 
     private ToggleGroup toggle;
-    @FXML private RadioButton emptyProjectButton;
-    @FXML private RadioButton fromFilesButton;
-
-    @FXML private Button addFilesButton;
-    @FXML private Button removeFileButton;
-
+    @FXML private RadioButton emptyProjectButton, fromFilesButton;
+    @FXML private Button addFilesButton, removeFileButton;
     @FXML private ListView<Label> sourceFileListView;
-
-    @FXML private Button cancelButton;
-    @FXML private Button nextButton;
+    @FXML private Button cancelButton, nextButton;
 
     /**
      * The previous scene in the "New Project" sequence. As of typing, this should be a Scene containing a
      * {@link ProjectSourcesController}.
      */
     private Scene previousScene;
-
     /**
      * The next scene in the "New Project" sequence. As of typing, this should be a Scene containing a
      * {@link ProjectPreviewController}.
@@ -61,6 +62,10 @@ public class ProjectSourcesController {
     private Boolean didFinish;
 
     private BiMap<Path, Label> pathLabelBiMap;
+
+    //**********************************************//
+    //                  PROPERTIES                  //
+    //**********************************************//
 
     /**
      * A {@code ListProperty} containing a list of type {@code PathDelimiterPair}, which keeps track of the
@@ -74,8 +79,25 @@ public class ProjectSourcesController {
         return pathDelimiterList;
     }
 
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
+
+    public ProjectSourcesController() {
+        super();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(PROJECT_SOURCES_FXML).toUri().toURL());
+            loader.setRoot(this);
+            loader.setController(this);
+            loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load " + PROJECT_SOURCES_FXML, e);
+        }
+    }
+
     @FXML
-    public void initialize() {
+    protected void initialize() {
         didFinish = false;
         pathLabelBiMap = HashBiMap.create();
 
@@ -115,12 +137,45 @@ public class ProjectSourcesController {
 
     }
 
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    /**
+     * Returns true if the {@code Stage} was closed on this {@code Scene}.
+     *
+     * @return  true if Stage was closed here
+     */
+    public Boolean didFinish() {
+        return didFinish;
+    }
+
+    /**
+     * Sets the previous {@code Scene} in the "New Project" sequence. This scene will replace the current one when the
+     * user clicks the "Previous" button.
+     *
+     * @param scene previous Scene
+     */
+    public void setPreviousScene(Scene scene) {
+        previousScene = scene;
+    }
+
+    /**
+     * Sets the next {@code Scene} in the "New Project" sequence. This scene will replace the current one when the
+     * user clicks the "Next" button.
+     *
+     * @param scene next Scene
+     */
+    public void setNextScene(Scene scene) {
+        nextScene = scene;
+    }
+
     /**
      * Upon pressing "Add Files...", the user is presented with a {@code FileChooser} where they can select multiple
      * table files to import into their new project.
      */
     @FXML private void addFilesButtonAction() {
-        List<File> files = TopsoilFileChooser.getTableFileChooser().showOpenMultipleDialog(MainWindow.getPrimaryStage());
+        List<File> files = TopsoilFileChooser.openTableFile().showOpenMultipleDialog(MainWindow.getPrimaryStage());
 
         if (files != null) {
 
@@ -131,9 +186,17 @@ public class ProjectSourcesController {
 
                 // Check all of the files for compatibility.
                 Iterator<File> iterator = selectedFiles.iterator();
+                Path path;
                 while (iterator.hasNext()) {
                     File file = iterator.next();
-                    String delim = FileParser.getDelimiter(file);
+                    path = Paths.get(file.toURI());
+                    String delim;
+
+                    try {
+                        delim = FileParser.getDelimiter(path);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     if (delim == null) {
                         delim = DelimiterRequestDialog.showDialog(
@@ -143,12 +206,19 @@ public class ProjectSourcesController {
                         );
                     }
 
-                    if (!FileParser.isSupportedTableFile(file) || FileParser.isEmptyFile(file) || delim == null) {
+                    boolean valid;
+                    try {
+                        valid = FileParser.isFileSupported(path) && ! FileParser.isFileEmpty(path);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    if ( !valid || delim == null) {
                         iterator.remove();
                         rejectedFiles.add(file);
                     } else {
                         try {
-                            if (FileParser.parseFile(file, delim, false).size() <= 0) {
+                            if ( FileParser.parseData(path, delim).length <= 0) {
                                 throw new TopsoilException("Invalid delimiter.");
                             }
                             if (pathLabelBiMap.containsKey(file.toPath())) {
@@ -162,6 +232,8 @@ public class ProjectSourcesController {
                         } catch (TopsoilException e) {
                             iterator.remove();
                             rejectedFiles.add(file);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }
@@ -250,15 +322,6 @@ public class ProjectSourcesController {
     }
 
     /**
-     * Returns true if the {@code Stage} was closed on this {@code Scene}.
-     *
-     * @return  true if Stage was closed here
-     */
-    public Boolean didFinish() {
-        return didFinish;
-    }
-
-    /**
      * Enables controls that allow the user to select source files.
      */
     private void enableFileSelection() {
@@ -279,27 +342,7 @@ public class ProjectSourcesController {
     }
 
     /**
-     * Sets the previous {@code Scene} in the "New Project" sequence. This scene will replace the current one when the
-     * user clicks the "Previous" button.
-     *
-     * @param scene previous Scene
-     */
-    public void setPreviousScene(Scene scene) {
-        previousScene = scene;
-    }
-
-    /**
-     * Sets the next {@code Scene} in the "New Project" sequence. This scene will replace the current one when the
-     * user clicks the "Next" button.
-     *
-     * @param scene next Scene
-     */
-    public void setNextScene(Scene scene) {
-        nextScene = scene;
-    }
-
-    /**
-     * A class that keeps track of the {@code Path} of a source files as well as the appropriate {@code String}
+     * Keeps track of the {@code Path} of a source files as well as the appropriate {@code String}
      * delimiter for parsing it.
      */
     static class PathDelimiterPair {
@@ -330,5 +373,4 @@ public class ProjectSourcesController {
             return delim;
         }
     }
-
 }

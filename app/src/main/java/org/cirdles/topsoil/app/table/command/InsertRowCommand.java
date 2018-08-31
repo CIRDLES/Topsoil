@@ -1,80 +1,66 @@
 package org.cirdles.topsoil.app.table.command;
 
-import javafx.scene.control.TableView;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
-import org.cirdles.topsoil.app.table.TopsoilTableCell;
+import org.cirdles.topsoil.app.table.ObservableTableData;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
+import java.util.List;
+
 /**
  * An undoable {@link Command} instance that can be added to a {@link TopsoilTab}'s {@link UndoManager} when a row is
- * inserted into the {@link TableView}. This command creates an empty {@link TopsoilDataEntry} and inserts is at
- * the specified index.
+ * inserted into the data. This command creates an empty row and inserts is at the specified index.
  *
- * @author Jake Marotta
+ * @author marottajb
+ *
  * @see Command
  * @see UndoManager
  */
 public class InsertRowCommand implements Command {
 
-    //***********************
-    // Attributes
-    //***********************
-
-    private TableView<TopsoilDataEntry> tableView;
-    private TopsoilDataEntry row;
+    private ObservableTableData data;
     private int index;
+    private List<Double> row;
 
-    //***********************
-    // Constructors
-    //***********************
-
-    /**
-     * Constructs a new {@code InsertRowCommand} for the selected cell. In this case, the row was inserted before or
-     * after a specific row.
-     *
-     * @param cell  the cell from which the command was called
-     * @param index the int index where the new row was added
-     */
-    public InsertRowCommand(TopsoilTableCell cell, int index) {
-        this.tableView = cell.getTableView();
-        this.row = TopsoilDataEntry.newEmptyDataEntry(tableView);
-        this.index = index;
-    }
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     /**
-     * Constructs a new {@code InsertRowCommand} for the specified {@code TableView}. In this case, a row was
-     * inserted at the end of the table view.
+     * Constructs a new {@code InsertRowCommand} for an inserted row at the specified index.
      *
-     * @param tableView the TableView that the row was inserted into
+     * @param   data
+     *          the ObservableTableData to which the row was inserted
+     * @param   rowIndex
+     *          the inserted row's index
+     * @param   row
+     *          the row that was inserted
      */
-    public InsertRowCommand(TableView<TopsoilDataEntry> tableView) {
-        this.tableView = tableView;
-        this.row = TopsoilDataEntry.newEmptyDataEntry(tableView);
-        this.index = this.tableView.getItems().size();
+    public InsertRowCommand(ObservableTableData data, int rowIndex, List<Double> row) {
+        this.data = data;
+        this.index = rowIndex;
+        this.row = row;
     }
 
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     /**
      * Called to execute the row insertion.
      */
     public void execute() {
-        this.tableView.getItems().add(index, row);
+        data.addRow(index, row);
     }
 
     /**
      * Called to undo the row insertion.
      */
     public void undo() {
-        this.tableView.getItems().remove(index);
+        data.removeRow(index);
     }
 
-    /** {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getActionName() {
         return "Insert row";
     }

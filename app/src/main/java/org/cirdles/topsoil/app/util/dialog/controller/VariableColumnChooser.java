@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.util.dialog.controller;
 
-import javafx.application.Platform;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleMapProperty;
@@ -8,40 +7,39 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.geometry.*;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.controlsfx.control.spreadsheet.Grid;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+// @TODO Create FXML for controller
+
 public class VariableColumnChooser extends AnchorPane {
+
+    private static final int ROW_HEIGHT = 30;
 
     private GridPane buttonGrid;
 
     private VBox variableLabels;  // Holds all of the {@code Label}s for each variable.
-
     private HBox columnLabels;    // Holds all of the {@code Label}s for each column.
 
     private ScrollPane columnLabelScroller;   // Controls scrolling for {@link #columnLabels}.
-
     private ScrollPane variableLabelScroller; // Controls scrolling for {@link #variableLabels}.
-
     private ScrollPane gridScroller;  // Controls scrolling for {@link #buttonGrid}.
 
     private List<ToggleGroup> toggleRows;
     private List<FakeToggleGroup> toggleColumns;    // RadioButtons can only belong to one ToggleGroup, this works around that
 
-    private static int ROW_HEIGHT = 30;
+    //**********************************************//
+    //                  PROPERTIES                  //
+    //**********************************************//
 
     private MapProperty<Variable<Number>, TopsoilDataColumn> selectionsProperty;
     public MapProperty<Variable<Number>, TopsoilDataColumn> selectionsProperty() {
@@ -54,10 +52,15 @@ public class VariableColumnChooser extends AnchorPane {
         return selectionsProperty.get();
     }
 
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
+
     public VariableColumnChooser(List<TopsoilDataColumn> columns,
                                  List<Variable<Number>> variables,
                                  Map<Variable<Number>, TopsoilDataColumn> currentSelections,
                                  List<Variable<Number>> requiredVariables) {
+        super();
 
         initializeControls();
 
@@ -166,6 +169,10 @@ public class VariableColumnChooser extends AnchorPane {
         }
     }
 
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
     /**
      * This method needs to be run after the Scene has been displayed so that the scrolling label boxes will
      * appropriately adjust whenever the selector's {@link ScrollBar}s appear. As-is, it will not work if called
@@ -215,6 +222,10 @@ b     */
             }
         }));
     }
+
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
 
     /**
      * Retrieves a {@code Node} from the specified {@code GridPane} by its row and column indices, if it exists.

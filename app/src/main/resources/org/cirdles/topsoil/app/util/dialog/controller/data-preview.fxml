@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -12,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.util.dialog.controller.DataPreviewController">
+<fx:root type="VBox" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
@@ -44,27 +43,29 @@
          </padding>
          <children>
             <Label text="Using the drop-down lists, you may select which of your columns correspond to the following five plotting variables: X, σX, Y, σY, and rho." wrapText="true" />
-            <HBox alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
                <children>
                   <Label fx:id="uncLabel" text="Which format are your uncertainty values in?" />
-                  <ComboBox fx:id="uncComboBox" prefWidth="150.0" promptText="Select...">
+                  <ComboBox fx:id="unctComboBox" prefWidth="150.0" promptText="Select...">
                      <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets />
                      </HBox.margin>
                   </ComboBox>
                </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
                <children>
-                  <Label text="Which isotope sytem will this table be in?" />
-                  <ChoiceBox fx:id="isoChoiceBox" prefWidth="150.0">
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </ChoiceBox>
+                  <Label text="Which isotope sytem will this data be in?" />
+                  <ComboBox fx:id="isoComboBox" prefWidth="150.0" promptText="Select..." />
                </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
             </HBox>
          </children>
       </VBox>
    </children>
-</VBox>
+</fx:root>

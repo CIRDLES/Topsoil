@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.menu;
 
 import com.sun.javafx.stage.StageHelper;
-import javafx.collections.FXCollections;
+import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
@@ -13,284 +13,209 @@ import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
-import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.TopsoilTableController;
-import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
-import org.cirdles.topsoil.app.table.TopsoilDataTable;
-import org.cirdles.topsoil.app.util.TopsoilException;
-import org.cirdles.topsoil.app.util.dialog.DataImportDialog;
-import org.cirdles.topsoil.app.util.dialog.NewProjectWindow;
-import org.cirdles.topsoil.app.util.dialog.TableUncertaintyChoiceDialog;
-import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.table.ObservableTableData;
+import org.cirdles.topsoil.app.util.dialog.*;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification.NotificationType;
-import org.cirdles.topsoil.app.util.dialog.DataImportKey;
+import org.cirdles.topsoil.app.util.file.Delimiter;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 import org.cirdles.topsoil.app.util.issue.IssueCreator;
 import org.cirdles.topsoil.app.util.issue.StandardGitHubIssueCreator;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cirdles.topsoil.app.util.file.ExampleDataTable;
 import java.awt.Desktop;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import javafx.geometry.Pos;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 
 /**
  * A class containing a set of methods for handling actions for {@code MenuItem}s in the {@link MainMenuBar}.
  *
  * @author Benjamin Muldrow
+ *
  * @see MainMenuBar
  */
 public class MenuItemEventHandler {
 
-/**
-     * Handles importing tables from CSV / TSV files
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    /**
+     * Handles the selection and importing of a table data file into an instance of {@code ObservableTableData}.
      *
-     * @return Topsoil Table file
-     * @throws IOException for invalid file selection
+     * @return  ObservableTableData
      */
-    public static TopsoilDataTable handleTableFromFile() throws IOException {
+    public static ObservableTableData importDataFromFile() {
 
-        TopsoilDataTable table = null;
-
-        // select file
-        File file = TopsoilFileChooser.getTableFileChooser().showOpenDialog(MainWindow.getPrimaryStage());
+    	File file = TopsoilFileChooser.openTableFile().showOpenDialog(MainWindow.getPrimaryStage());
+        ObservableTableData table = null;
 
         if (file != null) {
-
-            if (!FileParser.isSupportedTableFile(file)) {
+	        Path path = Paths.get(file.toURI());
+            if ( ! FileParser.isFileSupported(path) ) {
                 TopsoilNotification.showNotification(
                         NotificationType.ERROR,
                         "Invalid File Type",
-                        "Table file must be .csv, .tsv, or .txt."
-                );
+                        "Table file must be .csv, .tsv, or .txt.");
             } else {
 
-                if (FileParser.isEmptyFile(file)) {
-                    TopsoilNotification.showNotification(
-                            NotificationType.ERROR,
-                            "Empty File",
-                            "The file is empty. No data has been imported."
-                    );
-                    throw new IOException("File is empty");
-                }
+                try {
 
-                String delim = FileParser.getDelimiter(file);
-
-                if (delim == null) {
-                    delim = FileParser.requestDelimiter();
-                }
-
-                if (delim != null) {
-
-                    // select headers
-                    String[] headers = null;
-                    Boolean hasHeaders = null;
-                    hasHeaders = FileParser.detectHeader(file, delim);
-
-                    try {
-                        FileParser.parseHeaders(file, delim);
-                    } catch (TopsoilException e) {
-                        String errorMessage = "Topsoil cannot read this file. Make sure the file contains"
-                                              + " a complete delimited data table. The import has been canceled.";
+                    if (FileParser.isFileEmpty(path)) {
                         TopsoilNotification.showNotification(
                                 NotificationType.ERROR,
-                                "Could Not Read",
-                                errorMessage
-                        );
-                        e.printStackTrace();
+                                "Empty File",
+                                "The file is empty. No data has been imported.");
+                        throw new IOException("File is empty");
                     }
 
-                    // hasHeaders would only be null if the user clicked "Cancel".
-                    if (hasHeaders != null) {
+                    String delim = FileParser.getDelimiter(path);
+                    if (delim == null) {
+                        delim = DelimiterRequestDialog.showDialog("Data Separator",
+                                                                  "How are the values in your data file separated? ",
+                                                                  true);
+                    }
 
-                        List<TopsoilDataEntry> entries = null;
+                    if (delim != null) {
+                        String[] headers = FileParser.parseHeaders(path, delim);
+                        Double[][] data = FileParser.parseData(path, delim);
 
-                        try {
-                            if (hasHeaders) {
-                                headers = FileParser.parseHeaders(file, delim);
-                            }
-                            entries = FileParser.parseFile(file, delim, hasHeaders);
-
-                            if (entries.size() <= 0) {
-                                entries = null;
-                                throw new TopsoilException("Invalid delimiter.");
-                            }
-                        } catch (TopsoilException e) {
-                            String errorMessage = "Topsoil can not read the imported content. Make sure it is"
-                                                  + " a complete data table or try saving it as a .csv or .tsv. The import has " +
-                                                  "been canceled.";
-                            e.printStackTrace();
-                            TopsoilNotification.showNotification(
-                                    NotificationType.ERROR,
-                                    "Could Not Read",
-                                    errorMessage
-                            );
-                        }
-
-                        if (entries != null) {
-                            Map<DataImportKey, Object> selections = DataImportDialog.showImportDialog(headers, entries);
+                        if (data != null) {
+                            Map<ImportDataType, Object> selections = DataImportDialog
+                                    .showImportDialog(headers, data);
 
                             if (selections != null) {
-                                headers = (String[]) selections.get(DataImportKey.HEADERS);
-                                entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
-                                UncertaintyFormat selectedFormat = (UncertaintyFormat) selections
-                                        .get(DataImportKey.UNCERTAINTY);
+                                headers = (String[]) selections.get(ImportDataType.HEADERS);
+                                data = (Double[][]) selections.get(ImportDataType.DATA);
+                                UncertaintyFormat unctFormat = (UncertaintyFormat) selections
+                                        .get(ImportDataType.UNCERTAINTY);
 
                                 // Isotope system is Generic by default.
                                 IsotopeType isotopeType;
-                                if (selections.get(DataImportKey.ISOTOPE_TYPE) == null) {
-                                    isotopeType = IsotopeType.Generic;
+                                if (selections.get(ImportDataType.ISOTOPE_TYPE) == null) {
+                                    isotopeType = IsotopeType.GENERIC;
                                 } else {
-                                    isotopeType = (IsotopeType) selections.get(DataImportKey.ISOTOPE_TYPE);
+                                    isotopeType = (IsotopeType) selections.get(ImportDataType.ISOTOPE_TYPE);
                                 }
 
-                                ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
+                                table = new ObservableTableData(data, true, headers,
+                                                                isotopeType, unctFormat);
+                                table.setTitle(path.getFileName().toString()
+                                                   .substring(0, path.getFileName().toString().indexOf(".")));
 
-                                table = new TopsoilDataTable(headers,
-                                                             isotopeType,
-                                                             selectedFormat,
-                                                             data.toArray(new TopsoilDataEntry[data.size()]));
-                                table.setTitle(file.getName().substring(0, file.getName().indexOf(".")));
-
-                                List<TopsoilDataColumn> columns = table.getDataColumns();
-                                Map<Variable<Number>, TopsoilDataColumn> variableAssignments = new HashMap<>();
-
-                                // Apply variable selections
-                                for (Map.Entry<Variable<Number>, Integer> entry :
-                                        ((Map<Variable<Number>, Integer>) selections.get(DataImportKey.VARIABLE_INDEX_MAP))
-                                                .entrySet()) {
-                                    TopsoilDataColumn column = columns.get(entry.getValue());
-                                    column.setVariable(entry.getKey());
-                                    variableAssignments.put(entry.getKey(), column);
+                                Map<Variable<Number>, Integer> varIndexMap = (Map<Variable<Number>, Integer>) selections
+                                        .get(ImportDataType.VARIABLE_INDEX_MAP);
+                                for (Map.Entry<Variable<Number>, Integer> entry : varIndexMap.entrySet()) {
+                                    table.setVariableForColumn(entry.getValue(), entry.getKey());
                                 }
-
-                                table.setVariableAssignments(variableAssignments);
                             }
                         }
                     }
+                } catch (IOException e) {
+                    String errorMessage = "Topsoil cannot read this file. Make sure the file contains"
+                                          + " a complete data table. The import has been canceled.";
+                    TopsoilNotification.showNotification(
+                            NotificationType.ERROR,
+                            "Unable to Import",
+                            errorMessage
+                    );
+                    e.printStackTrace();
                 }
             }
         }
-
         return table;
     }
 
     /**
-     * Pareses table data from the system {@code Clipboard} into a new {@code TopsoilDataTable}.
+     * Handles the importing of table data from the system clipboard into an instance of {@code ObservableTableData}.
      *
-     * @return  a new TopsoilDataTable
+     * @return  ObservableTableData
      */
-    public static TopsoilDataTable handleTableFromClipboard() {
-
-        TopsoilDataTable table = null;
+    public static ObservableTableData importDataFromClipboard() {
         String content = Clipboard.getSystemClipboard().getString();
+        ObservableTableData table = null;
 
-        String delim = FileParser.getDelimiter(content);
+        try {
+            String delim = FileParser.getDelimiter(content);
 
-        if (delim == null) {
-            delim = FileParser.requestDelimiter();
-        }
+            if (delim == null) {
+                delim = DelimiterRequestDialog.showDialog("Data Separator",
+                                                          "What are the data values separated with?",
+                                                          true);
+            }
 
-        if (delim != null) {
+            if (delim != null) {
+                String[] headers = FileParser.parseHeaders(content, delim);
+                Double[][] data = FileParser.parseData(
+                        Clipboard.getSystemClipboard().getString(), delim);
 
-            String[] headers = null;
-            Boolean hasHeaders = FileParser.detectHeader(content, delim);
-            List<TopsoilDataEntry> entries = null;
-
-            if (hasHeaders != null) {
-                try {
-                    if (hasHeaders) {
-                        headers = FileParser.parseHeaders(content, delim);
-                    }
-
-                    entries = FileParser.parseClipboard(hasHeaders, delim);
-                } catch (TopsoilException e) {
-                    String errorMessage = "Topsoil can not read the imported content. Make sure it is"
-                                          + " a complete data table or try saving it as a .csv or .tsv. The import has " +
-                                          "been canceled.";
-                    e.printStackTrace();
-                    TopsoilNotification.showNotification(
-                            NotificationType.ERROR,
-                            "Could Not Read",
-                            errorMessage
-                    );
-                }
-
-                if (entries != null) {
-
-                    Map<DataImportKey, Object> selections = DataImportDialog.showImportDialog(headers, entries);
+                if (data != null) {
+                    Map<ImportDataType, Object> selections = DataImportDialog.showImportDialog(headers, data);
 
                     if (selections != null) {
-                        headers = (String[]) selections.get(DataImportKey.HEADERS);
-                        entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
-                        UncertaintyFormat selectedFormat = (UncertaintyFormat) selections.get(DataImportKey.UNCERTAINTY);
+                        headers = (String[]) selections.get(ImportDataType.HEADERS);
+                        data = (Double[][]) selections.get(ImportDataType.DATA);
+                        UncertaintyFormat unctFormat = (UncertaintyFormat) selections.get(ImportDataType.UNCERTAINTY);
 
                         // Isotope system is Generic by default.
                         IsotopeType isotopeType;
-                        if (selections.get(DataImportKey.ISOTOPE_TYPE) == null) {
-                            isotopeType = IsotopeType.Generic;
+                        if (selections.get(ImportDataType.ISOTOPE_TYPE) == null) {
+                            isotopeType = IsotopeType.GENERIC;
                         } else {
-                            isotopeType = (IsotopeType) selections.get(DataImportKey.ISOTOPE_TYPE);
+                            isotopeType = (IsotopeType) selections.get(ImportDataType.ISOTOPE_TYPE);
                         }
 
-                        ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-
-                        table = new TopsoilDataTable(headers,
-                                                     isotopeType,
-                                                     selectedFormat,
-                                                     data.toArray(new TopsoilDataEntry[data.size()]));
-
-                        List<TopsoilDataColumn> columns = table.getDataColumns();
-                        Map<Variable<Number>, TopsoilDataColumn> variableAssignments = new HashMap<>();
+                        table = new ObservableTableData(data, true, headers, isotopeType, unctFormat);
 
                         // Apply variable selections
-                        for (Map.Entry<Variable<Number>, Integer> entry :
-                                ((Map<Variable<Number>, Integer>) selections.get(DataImportKey.VARIABLE_INDEX_MAP))
-                                        .entrySet()) {
-                            TopsoilDataColumn column = columns.get(entry.getValue());
-                            column.setVariable(entry.getKey());
-                            variableAssignments.put(entry.getKey(), column);
+                        Map<Variable<Number>, Integer> varIndexMap = (Map<Variable<Number>, Integer>) selections
+                                .get(ImportDataType.VARIABLE_INDEX_MAP);
+                        for (Map.Entry<Variable<Number>, Integer> entry : varIndexMap.entrySet()) {
+                            table.setVariableForColumn(entry.getValue(), entry.getKey());
                         }
-
-                        table.setVariableAssignments(variableAssignments);
                     }
                 }
             }
+        } catch (IOException e) {
+            String errorMessage = "Topsoil cannot read the clipboard content. The import has been canceled.";
+            TopsoilNotification.showNotification(
+                    NotificationType.ERROR,
+                    "Unable to Import",
+                    errorMessage
+            );
+            e.printStackTrace();
         }
         return table;
     }
 
     /**
-     * Handle new {@code TopsoilDataTable} creation.
+     * Handles the creation of a new {@code ObservableTableData}.
      *
-     * @return new TopsoilDataTable
+     * @return  new ObservableTableData
      */
-    public static TopsoilDataTable handleNewTable() {
+    public static ObservableTableData handleNewTable() {
 
-        TopsoilDataTable table;
+        ObservableTableData table;
 
-//        // select isotope flavor -- For now, the user shouldn’t have to select an isotope system; instead assume Generic.
-//        IsotopeType isotopeType = IsotopeSelectionDialog.selectIsotope(new IsotopeSelectionDialog());
-        IsotopeType isotopeType = IsotopeType.Generic;
+        // For now, the user shouldn’t have to select an isotope system; instead assume Generic.
+        IsotopeType isotopeType = IsotopeType.GENERIC;
 
         // create empty table
         TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
-        UncertaintyFormat selectedFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
+        UncertaintyFormat unctFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
 
-        if (selectedFormat != null) {
-            table = new TopsoilDataTable(null, isotopeType, selectedFormat, new TopsoilDataEntry[]{});
+        if (unctFormat != null) {
+            table = new ObservableTableData(null, true, null, isotopeType, unctFormat);
         } else {
             table = null;
         }
@@ -299,60 +224,51 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Handles the opening of sample data table for a given isotope type.
+     * Handles the opening of sample data table for a given {@code IsotopeType}.
      *
-     * @param tabs  the TopsoilTabPane to which to add tables
-     * @param isotopeType the isotope type of the example table to be opened
+     * @param   tabs
+     *          the TopsoilTabPane to which to add tables
+     * @param   isotopeType
+     *          the IsotopeType of the example table to be opened
      */
     public static void handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
-        TopsoilDataTable table;
-        UncertaintyFormat format;
+
+        ObservableTableData table;
+        UncertaintyFormat unctFormat;
 
         if (isotopeType != null) {
-
-            List<TopsoilDataEntry> entries;
-            String[] headers;
             String exampleContent = new ExampleDataTable().getSampleData(isotopeType);
             String exampleContentDelimiter = ",";
 
             try {
-                headers = FileParser.parseHeaders(exampleContent, exampleContentDelimiter);
-                entries = FileParser.parseTxt(FileParser.readLines(exampleContent), exampleContentDelimiter, true);
+                String[] headerRows = FileParser.parseHeaders(exampleContent, exampleContentDelimiter);
+                Double[][] dataRows = FileParser.parseData(exampleContent, exampleContentDelimiter);
 
                 switch (isotopeType) {
-                    case Generic:
-                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                    case GENERIC:
+                        unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
                         break;
-                    case UPb:
-                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                    case UPB:
+                        unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
                         break;
-                    case UTh:
-                        format = UncertaintyFormat.TWO_SIGMA_ABSOLUTE;
+                    case UTH:
+                        unctFormat = UncertaintyFormat.TWO_SIGMA_ABSOLUTE;
                         break;
                     default:
-                        format = UncertaintyFormat.TWO_SIGMA_PERCENT;
+                        unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
                 }
 
-                ObservableList<TopsoilDataEntry> data = FXCollections.observableList(entries);
-
-                table = new TopsoilDataTable(headers, isotopeType, format, data.toArray(new TopsoilDataEntry[data.size()]));
-                table.setTitle(isotopeType.getAbbreviation() + " Example Data");
+                table = new ObservableTableData(dataRows, true, headerRows, isotopeType, unctFormat);
 
                 // Set default variable associations.
-                List<TopsoilDataColumn> columns = table.getDataColumns();
-                Map<Variable<Number>, TopsoilDataColumn> assignments = new HashMap<>();
-
-                assignments.put(Variables.X, columns.get(0));
-                assignments.put(Variables.SIGMA_X, columns.get(1));
-                assignments.put(Variables.Y, columns.get(2));
-                assignments.put(Variables.SIGMA_Y, columns.get(3));
-                assignments.put(Variables.RHO, columns.get(4));
+                table.setVariableForColumn(0, Variables.X);
+                table.setVariableForColumn(1, Variables.SIGMA_X);
+                table.setVariableForColumn(2, Variables.Y);
+                table.setVariableForColumn(3, Variables.SIGMA_Y);
+                table.setVariableForColumn(4, Variables.RHO);
 
                 tabs.add(table);
-                TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
-                tableController.setVariableAssignments(assignments);
-
-            } catch (TopsoilException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -382,95 +298,54 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Clear a table of all data.
+     * Handles exporting a data table to a delimited data file.
      *
-     * @param table TopsoilDataTable to clear
-     * @return resulting TopsoilDataTable
+     * @param   table
+     *          ObservableTableData
      */
-    public static TopsoilDataTable handleClearTable(TopsoilDataTable table) {
-
-        AtomicReference<TopsoilDataTable> resultingTable = new AtomicReference<>(table);
-
-        TopsoilNotification.showNotification(
-                NotificationType.VERIFICATION,
-                "Clear Table",
-                "Are you sure you want to clear the table?"
-        ).ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                resultingTable.set(new TopsoilDataTable(table.getColumnNames(), table.getIsotopeType(), table
-                        .getUncertaintyFormat(), new TopsoilDataEntry[]{}));
-            }
-        });
-
-        return resultingTable.get();
-    }
-
-    public static void handleExportTable(TopsoilDataTable table) {
-        PrintWriter writer = null;
+    public static void handleExportTable(ObservableTableData table) {
         try {
-            String[] titles = table.getColumnNames();
-            List<Double[]> data = table.getFormattedDataAsArrays();
-            File file = TopsoilFileChooser.getExportTableFileChooser().showSaveDialog(StageHelper.getStages().get(0));
+            String[] headers = table.getColumnHeaders();
+            Double[][] data = new Double[table.rowCount()][table.colCount()];
+            ObservableList<ObservableList<DoubleProperty>> observableRows = table.getObservableRows();
 
-            if (file != null) {
-                String location = file.toString();
-                String type = location.substring(location.length() - 3);
-                String delim;
-                switch (type) {
-                    case "csv":
-                        delim = ", ";
-                        break;
-                    case "tsv":
-                        delim = "\t";
-                        break;
-                    case "txt":
-                        delim = requestDelimiter();
-                        break;
-                    default:
-                        delim = "\t";
-                        break;
+            for (int i = 0; i < observableRows.size(); i++) {
+                for (int j = 0; j < observableRows.get(i).size(); j++) {
+                    data[i][j] = observableRows.get(i).get(j).get();
                 }
-                writer = new PrintWriter(location, "UTF-8");
-                for (int i = 0; i < titles.length; i++) {
-                    writer.print(titles[i]);
-                    if (i < titles.length - 1) {
-                        writer.print(delim);
-                    }
-                }
-                writer.print('\n');
-                for (int i = 0; i < data.size(); i++) {
-                    for (int j = 0; j < data.get(i).length; j++) {
-                        writer.print(data.get(i)[j]);
-                        if (j < data.get(i).length - 1) {
-                            writer.print(delim);
-                        }
-                    }
-                    writer.print('\n');
-                }
-                writer.close();
             }
 
-        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+            Path path = Paths.get(TopsoilFileChooser.exportTableFile().showSaveDialog(StageHelper.getStages().get(0))
+                                                    .toURI());
+
+            if (path != null) {
+                String location = path.toString();
+                String extension = location.substring(location.lastIndexOf('.'));
+
+                String delim = Delimiter.valueOf(extension.toUpperCase()).toString();
+
+                StringJoiner tableJoiner = new StringJoiner("\t");
+                StringJoiner rowJoiner = new StringJoiner(delim);
+
+                for (int i = 0; i < headers.length; i++) {
+                    rowJoiner.add(headers[i]);
+                }
+                tableJoiner.add(rowJoiner.toString());
+
+                for (int i = 0; i < data.length; i++) {
+                    rowJoiner = new StringJoiner(delim);
+
+                    for (int j = 0; j < data[i].length; j++) {
+                        rowJoiner.add(data[i][j].toString());
+                    }
+                    tableJoiner.add(rowJoiner.toString());
+                }
+                BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
+                writer.write(tableJoiner.toString());
+                writer.close();
+            }
+        } catch (IOException ex) {
             Logger.getLogger(MenuItemEventHandler.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-        }
-
-    }
-
-    /**
-     * Closes all open tabs in the {@code TopsoilTabPane}, as well as any open plots. Used when a project is loaded,
-     * or when one is closed.
-     *
-     * @param tabs  the active TopsoilTabPane
-     */
-    private static void closeAllTabsAndPlots(TopsoilTabPane tabs) {
-        tabs.getTabs().clear();
-        List<Stage> stages = StageHelper.getStages();
-        for (int index = stages.size() - 1; index > 0; index--) {
-            stages.get(index).close();
         }
     }
 
@@ -480,7 +355,8 @@ public class MenuItemEventHandler {
      * @param tabs  TopsoilTabPane
      */
     public static void handleNewProject(TopsoilTabPane tabs) {
-        AtomicReference<List<TopsoilDataTable>> tablesReference = new AtomicReference<>(null);
+        AtomicReference<List<ObservableTableData>> tablesReference = new AtomicReference<>(null);
+
         if (TopsoilSerializer.isProjectOpen()) {
             TopsoilNotification.showNotification(
                     NotificationType.YES_NO,
@@ -512,19 +388,19 @@ public class MenuItemEventHandler {
             tabs.getTabs().clear();
 
             if (tablesReference.get().isEmpty()) {
-                tabs.add(new TopsoilDataTable(
-                        IsotopeType.Generic.getHeaders(),
-                        IsotopeType.Generic,
-                        UncertaintyFormat.TWO_SIGMA_ABSOLUTE,
-                        new TopsoilDataEntry[]{}
-                ));
+                tabs.add(new ObservableTableData(
+                        new Double[][]{ new Double[]{ 0.0, 0.0, 0.0, 0.0, 0.0 }},
+                        true,
+                        null,
+                        IsotopeType.GENERIC,
+                        UncertaintyFormat.TWO_SIGMA_ABSOLUTE));
                 TopsoilNotification.showNotification(
                         NotificationType.INFORMATION,
                         "New Table Created",
                         "An empty table was placed in your project."
                 );
             } else {
-                for (TopsoilDataTable table : tablesReference.get()) {
+                for (ObservableTableData table : tablesReference.get()) {
                     tabs.add(table);
                 }
             }
@@ -547,12 +423,12 @@ public class MenuItemEventHandler {
                     "Opening a Topsoil project will replace your current tables. Continue?")
                                .ifPresent(response -> {
                                    if (response == ButtonType.OK) {
-                                       File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
+                                       File file = TopsoilFileChooser.openTopsoilFile().showOpenDialog(StageHelper.getStages().get(0));
                                        openProjectFile(tabs, file);
                                    }
                                });
         } else {
-            File file = TopsoilFileChooser.getTopsoilOpenFileChooser().showOpenDialog(StageHelper.getStages().get(0));
+            File file = TopsoilFileChooser.openTopsoilFile().showOpenDialog(StageHelper.getStages().get(0));
             openProjectFile(tabs, file);
         }
     }
@@ -602,39 +478,13 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Saves an open .topsoil project.
-     *
-     * @param file  the open .topsoil project File
-     * @param tabs  the active TopsoilTabPane
-     * @return  true if file is successfully saved
-     */
-    private static boolean saveProjectFile(File file, TopsoilTabPane tabs) {
-        if (file != null) {
-            String fileName = file.getName();
-            String extension = fileName.substring(
-                    fileName.lastIndexOf(".") + 1,
-                    fileName.length());
-            if (!extension.equals("topsoil")) {
-                TopsoilNotification.showNotification(
-                        NotificationType.ERROR,
-                        "Invalid File Type",
-                        "Project must be a .topsoil file.");
-            } else {
-                TopsoilSerializer.serialize(file, tabs);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Creates a new .topsoil file for the current tabs and plots.
      *
      * @param tabs  the TopsoilTabPane from which to save tables
      * @return  true if the file was successfully saved
      */
     public static boolean handleSaveAsProjectFile(TopsoilTabPane tabs) {
-        FileChooser fileChooser =  TopsoilFileChooser.getTopsoilSaveFileChooser();
+        FileChooser fileChooser =  TopsoilFileChooser.saveTopsoilFile();
         File file = fileChooser.showSaveDialog(StageHelper.getStages().get(0));
 
         if (file != null) {
@@ -671,104 +521,69 @@ public class MenuItemEventHandler {
         return didClose.get();
     }
 
-    //    /**
-//     * Normalizes the supplied data using the value of the specified {@code UncertaintyFormat}.
-//     *
-//     * @param format    UncertaintyFormat
-//     * @param data  data as a List of TopsoilDataEntries
-//     */
-//    public static void applyUncertaintyFormat(UncertaintyFormat format, List<TopsoilDataEntry> data) {
-//        // If uncertainty uncertaintyFormat is not one sigma absolute, convert uncertainty data to one sigma absolute.
-//        if (format != UncertaintyFormat.ONE_SIGMA_ABSOLUTE) {
-//            double formatValue = format.getValue();
-//
-//            for (TopsoilDataEntry entry : data) {
-//                entry.getProperties().get(2).set(entry.getProperties().get(2).get() / formatValue);
-//                entry.getProperties().get(3).set(entry.getProperties().get(3).get() / formatValue);
-//            }
-//        }
-//    }
-    private static final String COMMA = "Commas";
-    private static final String TAB = "Tabs";
-    private static final String COLON = "Colons";
-    private static final String SEMICOLON = "Semicolons";
+    /**
+     * Asks the user if they really want to delete the open data table.
+     *
+     * @return true if delete is confirmed, false if not
+     */
+    public static Boolean confirmTableDeletion() {
+        final AtomicReference<Boolean> reference = new AtomicReference<>(false);
 
-    private static final HashMap<String, String> COMMON_DELIMITERS; // Checked against when guessing a delimiter
-    static {
-        COMMON_DELIMITERS = new LinkedHashMap<>();
-        COMMON_DELIMITERS.put(COMMA, ",");
-        COMMON_DELIMITERS.put(TAB, "\t");
-        COMMON_DELIMITERS.put(COLON, ":");
-        COMMON_DELIMITERS.put(SEMICOLON, ";");
+        TopsoilNotification.showNotification(
+                TopsoilNotification.NotificationType.VERIFICATION,
+                "Delete Table",
+                "Do you really want to delete this table?\n"
+                + "This operation can not be undone."
+        ).ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                reference.set(true);
+            }
+        });
+
+        return reference.get();
     }
 
-    private static String requestDelimiter() {
-        String otherDelimiterOption = "Other";
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
 
-        Dialog<String> delimiterRequestDialog = new Dialog<>();
-        delimiterRequestDialog.setTitle("Delimiter Request");
+    /**
+     * Closes all open tabs in the {@code TopsoilTabPane}, as well as any open plots. Used when a project is loaded,
+     * or when one is closed.
+     *
+     * @param tabs  the active TopsoilTabPane
+     */
+    private static void closeAllTabsAndPlots(TopsoilTabPane tabs) {
+        tabs.getTabs().clear();
+        List<Stage> stages = StageHelper.getStages();
+        for (int index = stages.size() - 1; index > 0; index--) {
+            stages.get(index).close();
+        }
+    }
 
-        /*
-            CONTENT NODES
-         */
-        VBox vBox = new VBox(10.0);
-
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER_RIGHT);
-
-        Label requestLabel = new Label("How do you want the values in the data separated?  ");
-        ChoiceBox<String> delimiterChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(COMMON_DELIMITERS
-                                                                                                         .keySet()));
-        delimiterChoiceBox.getItems().addAll(otherDelimiterOption);
-
-        Label otherLabel = new Label("Other: ");
-        TextField otherTextField = new TextField();
-        otherTextField.setDisable(true);
-
-        delimiterChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.equals(otherDelimiterOption)) {
-                otherTextField.setDisable(false);
+    /**
+     * Saves an open .topsoil project.
+     *
+     * @param file  the open .topsoil project File
+     * @param tabs  the active TopsoilTabPane
+     * @return  true if file is successfully saved
+     */
+    private static boolean saveProjectFile(File file, TopsoilTabPane tabs) {
+        if (file != null) {
+            String fileName = file.getName();
+            String extension = fileName.substring(
+                    fileName.lastIndexOf(".") + 1,
+                    fileName.length());
+            if (!extension.equals("topsoil")) {
+                TopsoilNotification.showNotification(
+                        NotificationType.ERROR,
+                        "Invalid File Type",
+                        "Project must be a .topsoil file.");
             } else {
-                otherTextField.setDisable(true);
+                TopsoilSerializer.serialize(file, tabs);
+                return true;
             }
-        });
-
-        grid.add(requestLabel, 0, 0);
-        grid.add(delimiterChoiceBox, 1, 0);
-        grid.add(otherLabel, 0, 1);
-        grid.add(otherTextField, 1, 1);
-
-        vBox.getChildren().addAll(grid);
-
-        delimiterRequestDialog.getDialogPane().setContent(vBox);
-
-        /*
-            BUTTONS AND RETURN
-         */
-        delimiterRequestDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
-
-        delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-        delimiterChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
-            if (delimiterChoiceBox.getSelectionModel().getSelectedItem() == null) {
-                delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-            } else {
-                delimiterRequestDialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
-            }
-        });
-
-        delimiterRequestDialog.setResultConverter(value -> {
-            if (value == ButtonType.OK) {
-                if (delimiterChoiceBox.getSelectionModel().getSelectedItem().equals(otherDelimiterOption)) {
-                    return otherTextField.getText().trim();
-                } else {
-                    return COMMON_DELIMITERS.get(delimiterChoiceBox.getValue());
-                }
-            } else {
-                return null;
-            }
-        });
-
-        Optional<String> result = delimiterRequestDialog.showAndWait();
-        return result.orElse(null);
+        }
+        return false;
     }
 }

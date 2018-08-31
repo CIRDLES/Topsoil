@@ -8,7 +8,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
 import org.cirdles.topsoil.plot.DefaultProperties;
@@ -65,10 +65,10 @@ public class PlotPropertiesPanel extends Accordion {
 		}
 		return xAxisTitle;
 	}
-	public final String getXTitle() {
+	public final String getXAxisTitle() {
 		return xAxisTitleProperty().get();
 	}
-	public final void setXTitle(String s) {
+	public final void setXAxisTitle( String s ) {
 		xAxisTitleProperty().set(s);
 	}
 
@@ -409,7 +409,7 @@ public class PlotPropertiesPanel extends Accordion {
 
     public void setPlotProperties(Map<PlotProperty, Object> properties) {
 	    if (properties.containsKey(TITLE)) setPlotTitle(String.valueOf(properties.get(TITLE)));
-	    if (properties.containsKey(X_AXIS)) setXTitle(String.valueOf(properties.get(X_AXIS)));
+	    if (properties.containsKey(X_AXIS)) setXAxisTitle(String.valueOf(properties.get(X_AXIS)));
 	    if (properties.containsKey(Y_AXIS)) setYAxisTitle(String.valueOf(properties.get(Y_AXIS)));
 
 	    if (properties.containsKey(POINTS)) setPoints((Boolean) properties.get(POINTS));
@@ -503,7 +503,7 @@ public class PlotPropertiesPanel extends Accordion {
     		refreshPlot();
 	    });
     	xAxisTitleProperty().addListener(c -> {
-    		properties.put(X_AXIS, getXTitle());
+    		properties.put(X_AXIS, getXAxisTitle());
     		refreshPlot();
 	    });
     	yAxisTitleProperty().addListener(c -> {

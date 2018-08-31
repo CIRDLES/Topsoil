@@ -4,43 +4,34 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import org.cirdles.topsoil.app.table.TopsoilDataTable;
-import org.cirdles.topsoil.app.table.TopsoilTableController;
-import org.cirdles.topsoil.app.util.serialization.PlotInformation;
+import org.cirdles.topsoil.app.plot.TopsoilPlotType;
+import org.cirdles.topsoil.app.table.ObservableTableData;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
- * A custom {@code Tab} which displays data from a {@link TopsoilDataTable} in a {@link TopsoilTabContent}. The
- * TopsoilDataTable is accessed via a {@link TopsoilTableController}. The {@code TopsoilTabContent} is loaded from
- * FXML by the {@link TopsoilTabPane}.
  *
  * @author sbunce
  * @see Tab
- * @see TopsoilTabContent
+ * @see TopsoilDataView
  * @see TopsoilTabPane
- * @see TopsoilTableController
  */
 public class TopsoilTab extends Tab {
 
-    //***********************
-    // Attributes
-    //***********************
+    private static int UNDO_HISTORY_MAX_SIZE = 50;
 
     /**
-     * The {@code TopsoilTableController} that handles this tab's content.
+     * The {@code TopsoilDataView} containing the content for this tab.
      */
-    private TopsoilTableController tableController;
-
+    private TopsoilDataView dataView;
     /**
-     * An {@code UndoManager} that handles changes to the table view in this tab's content.
+     * An {@code UndoManager} that handles changes to the table in this tab's content.
      */
     private UndoManager undoManager;
 
     /**
-     * A {@code String} consisting of the abbreviation of the {@code IsotopeType} of this tab's corresponding {@code
-     * TopsoilDataTable} and a hyphen. It serves as a prefix to the actual title of the tab, to quickly identify the
-     * {@code IsotopeType} of the tab's data.
+     * A {@code String} consisting of the abbreviation of the {@code IsotopeType} of this tab's table and a hyphen. It
+     * serves as a prefix to the actual title of the tab, to quickly identify the {@code IsotopeType} of the tab's data.
      */
     private String isotopePrefix;
 
@@ -48,7 +39,7 @@ public class TopsoilTab extends Tab {
      * A {@code StringProperty} containing the real title of the tab, which is also the title of the corresponding
      * {@code TopsoilDataTable}.
      */
-    private SimpleStringProperty actualTitle;
+    private SimpleStringProperty title;
 
     /**
      * The {@code Label} that conveys the tab's title.
@@ -60,40 +51,29 @@ public class TopsoilTab extends Tab {
      */
     private TextField textField;
 
-    /**
-     * The {@code TopsoilTabContent} containing all of the nodes within this tab, including the {@code TableView} and
-     * the {@code PlotPropertiesPanel}.
-     */
-    private TopsoilTabContent tabContent;
-
     //***********************
     // Constructors
     //***********************
 
-    /**
-     * Constructs a {@code TopsoilTab} using the specified {@code TopsoilTabContent}, with data from a {@code
-     * TopsoilTableController}.
-     *
-     * @param tabContent the TopsoilTabContent for visualizing the data
-     * @param tableController   the TopsoilTableController that manages tabContent and the data
-     */
-    public TopsoilTab(TopsoilTabContent tabContent, TopsoilTableController tableController) {
-        this.tabContent = tabContent;
-        this.tableController = tableController;
-//        this.getTabPane().getTabs().remove(0);
-        this.undoManager = new UndoManager(50);
+    public TopsoilTab(TopsoilDataView view) {
+        this.dataView = view;
+        ObservableTableData data = view.getData();
 
-        this.isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";
+        setContent(view);
 
-        this.actualTitle = new SimpleStringProperty(tableController.getTable().getTitle());
-        this.actualTitle.bindBidirectional(tableController.getTable().titleProperty()); // bind to TopsoilDataTable nameProperty
+        this.undoManager = new UndoManager(UNDO_HISTORY_MAX_SIZE);
 
-        tableController.getTable().isotopeTypeObjectProperty().addListener(c -> {
-            isotopePrefix = tableController.getTable().getIsotopeType().getAbbreviation() + " - ";
-            setTitle(this.actualTitle.get());
+        this.isotopePrefix = data.getIsotopeType().getAbbreviation() + " - ";
+
+        this.title = new SimpleStringProperty(data.getTitle());
+        this.title.bindBidirectional(data.titleProperty()); // bind to TopsoilDataTable nameProperty
+
+        data.isotopeTypeProperty().addListener(c -> {
+            isotopePrefix = data.getIsotopeType().getAbbreviation() + " - ";
+            setTitle(this.title.get());
         });
 
-        this.titleLabel = new Label(isotopePrefix + actualTitle.get());
+        this.titleLabel = new Label(isotopePrefix + title.get());
         this.titleLabel.setId("Title");
         this.titleLabel.setOnMouseClicked(event -> {
             if (event.getClickCount() >= 2) {
@@ -105,21 +85,13 @@ public class TopsoilTab extends Tab {
         this.setGraphic(titleLabel);
 
         // On tab close, close any plots associated with the table.
-        this.setOnClosed(event -> {
-            closeTabPlots();
-        });
+        this.setOnClosed(event -> closeTabPlots() );
     }
 
     public void closeTabPlots() {
-        if (!this.getTableController().getTable().getOpenPlots().isEmpty()) {
-            //Simulates an external close request so that actions defined under plotStage.setOnCloseRequest will fire
-            for (PlotInformation plotInfo : this.getTableController().getTable().getOpenPlots()) {
-                plotInfo.getStage().fireEvent(
-                        new javafx.stage.WindowEvent(
-                                plotInfo.getStage(),
-                                javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
-                        )
-                );
+        if (! dataView.getData().getOpenPlots().isEmpty()) {
+            for (TopsoilPlotType type : dataView.getData().getOpenPlots().keySet()) {
+                dataView.getData().removePlot(type);
             }
         }
     }
@@ -134,7 +106,7 @@ public class TopsoilTab extends Tab {
      */
     private void startEditingTitle() {
         this.textField = generateTitleTextField();
-        this.textField.setText(this.actualTitle.get());
+        this.textField.setText(this.title.get());
         this.textField.selectAll();
 
         this.titleLabel.setGraphic(this.textField);
@@ -160,7 +132,7 @@ public class TopsoilTab extends Tab {
      */
     public void setTitle(String title) {
         this.titleLabel.setText(this.isotopePrefix + title);
-        this.actualTitle.set(title);
+        this.title.set(title);
     }
 
     /**
@@ -181,21 +153,12 @@ public class TopsoilTab extends Tab {
     }
 
     /**
-     * Returns the {@code TopsoilTableController} that manages both the data and this tab's content.
-     *
-     * @return  TopsoilTableController
-     */
-    public TopsoilTableController getTableController() {
-        return tableController;
-    }
-
-    /**
      * Returns the content of this tab.
      *
-     * @return  TopsoilTabContent
+     * @return  TopsoilDataView
      */
-    public TopsoilTabContent getTabContent() {
-        return tabContent;
+    public TopsoilDataView getDataView() {
+        return dataView;
     }
 
     /**

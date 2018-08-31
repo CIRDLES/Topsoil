@@ -3,54 +3,62 @@ package org.cirdles.topsoil.app.util.dialog.controller;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
-import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Controller for a screen that allows the user to preview their imported data, as well as choose an {@link
  * UncertaintyFormat} and {@link IsotopeType} for each table.
  *
- * @author Jake Marotta
+ * @author marottajb
  */
-public class DataPreviewController extends Pane {
+public class DataPreviewController extends VBox {
+
+    private static final String DATA_PREVIEW_FXML = "data-preview.fxml";
+    private static final String WARNING_ICON_PATH = "warning.png";
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(DataPreviewController.class);
 
     @FXML private GridPane grid;
-
     @FXML private Label uncLabel;
-    @FXML private ComboBox<String> uncComboBox;
+    @FXML private ComboBox<UncertaintyFormat> unctComboBox;
+    @FXML private ComboBox<IsotopeType> isoComboBox;
+
+    private List<ComboBox<Variable<Number>>> columnComboBoxes;
+
+    private Map<Variable<Number>, Integer> variableIndexMap;
+
+    private String[] headers;
+    private Double[][] data;
+
+    //**********************************************//
+    //                  PROPERTIES                  //
+    //**********************************************//
+
     private ObjectProperty<UncertaintyFormat> uncertaintyFormat;
     public ObjectProperty<UncertaintyFormat> uncertaintyFormatProperty() {
         if (uncertaintyFormat == null) {
-            uncertaintyFormat = new SimpleObjectProperty<>(STRING_UNCERTAINTY_FORMAT_MAP.get(uncComboBox
-                                                                                                     .getSelectionModel().getSelectedItem()));
-            uncComboBox.getSelectionModel().selectedItemProperty().addListener(c -> {
-                uncertaintyFormat.set(STRING_UNCERTAINTY_FORMAT_MAP.get(uncComboBox.getSelectionModel().getSelectedItem()));
-            });
+            uncertaintyFormat = new SimpleObjectProperty<>();
+            uncertaintyFormat.bind(unctComboBox.getSelectionModel().selectedItemProperty());
         }
         return uncertaintyFormat;
     }
-
     /**
      * Returns the selected {@code UncertaintyFormat}, as indicated by the uncertainty format {@code ChoiceBox}.
      *
@@ -60,15 +68,11 @@ public class DataPreviewController extends Pane {
         return uncertaintyFormatProperty().get();
     }
 
-    @FXML private ChoiceBox<String> isoChoiceBox;
     private ObjectProperty<IsotopeType> isotopeType;
     public ObjectProperty<IsotopeType> isotopeTypeProperty() {
         if (isotopeType == null) {
-            isotopeType = new SimpleObjectProperty<>(STRING_ISOTOPE_TYPE_MAP.get(isoChoiceBox.getSelectionModel()
-                                                                                             .getSelectedItem()));
-            isoChoiceBox.getSelectionModel().selectedItemProperty().addListener(c -> {
-                isotopeType.set(STRING_ISOTOPE_TYPE_MAP.get(isoChoiceBox.getSelectionModel().getSelectedItem()));
-            });
+            isotopeType = new SimpleObjectProperty<>();
+            isotopeType.bind(isoComboBox.getSelectionModel().selectedItemProperty());
         }
         return isotopeType;
     }
@@ -78,47 +82,48 @@ public class DataPreviewController extends Pane {
      * @return  selected IsotopeType
      */
     public IsotopeType getIsotopeType() {
-        return isotopeTypeProperty().get() == null ? IsotopeType.Generic : isotopeTypeProperty().get();
+        return isotopeTypeProperty().get() == null ? IsotopeType.GENERIC : isotopeTypeProperty().get();
     }
 
-    private List<ChoiceBox<String>> columnChoiceBoxes;
-    private static final String EMPTY_VALUE = "  ";
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
-    private Map<Variable<Number>, Integer> variableIndexMap;
+    public DataPreviewController(String[] hs, Double[][] d) {
+        super();
 
-    private String[] headers;
-    private List<TopsoilDataEntry> data;
+        this.data = d;
 
-    // A series of maps for getting values from ChoiceBoxes
-    private static final Map<String, Variable<Number>> STRING_VARIABLE_MAP;
-    private static final Map<String, UncertaintyFormat> STRING_UNCERTAINTY_FORMAT_MAP;
-    private static final Map<String, IsotopeType> STRING_ISOTOPE_TYPE_MAP;
-    static {
-        STRING_VARIABLE_MAP = new LinkedHashMap<>();
-        for (Variable<Number> v : Variables.VARIABLE_LIST) {
-            STRING_VARIABLE_MAP.put(v.getName(), v);
+        if (hs == null) {
+            int maxRowSize = 0;
+            for (Double[] row : data) {
+                maxRowSize = Math.max(maxRowSize, row.length);
+            }
+
+            this.headers = new String[maxRowSize];
+            for (int i = 1; i <= headers.length; i++) {
+                headers[i - 1] = "[Column " + i + "]";
+            }
+        } else {
+            this.headers = new String[hs.length];
+	        System.arraycopy(hs, 0, headers, 0, hs.length);
         }
 
-        STRING_UNCERTAINTY_FORMAT_MAP = new LinkedHashMap<>();
-        for (UncertaintyFormat uf : UncertaintyFormat.values()) {
-            STRING_UNCERTAINTY_FORMAT_MAP.put(uf.getName(), uf);
-        }
-
-        STRING_ISOTOPE_TYPE_MAP = new LinkedHashMap<>();
-        for (IsotopeType it : IsotopeType.values()) {
-            STRING_ISOTOPE_TYPE_MAP.put(it.getName(), it);
+        try {
+            FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(DATA_PREVIEW_FXML).toUri().toURL());
+            loader.setRoot(this);
+            loader.setController(this);
+            loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load " + DATA_PREVIEW_FXML, e);
         }
     }
-
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(DataPreviewController.class);
-    private static final String WARNING_ICON_PATH = "warning.png";
-
     @FXML
-    public void initialize() {
-        columnChoiceBoxes = new ArrayList<>();
+    protected void initialize() {
+        columnComboBoxes = new ArrayList<>();
         variableIndexMap = new LinkedHashMap<>(Variables.VARIABLE_LIST.size());
 
-        ImageView warningIcon = new ImageView(RESOURCE_EXTRACTOR.extractResourceAsPath(WARNING_ICON_PATH).toUri().toString());
+        ImageView warningIcon = new ImageView(resourceExtractor.extractResourceAsPath(WARNING_ICON_PATH).toUri().toString());
         warningIcon.setPreserveRatio(true);
         warningIcon.setFitHeight(25.0);
 
@@ -133,164 +138,122 @@ public class DataPreviewController extends Pane {
             }
         });
 
-        uncComboBox.getItems().addAll(STRING_UNCERTAINTY_FORMAT_MAP.keySet());
-        isoChoiceBox.getItems().addAll(STRING_ISOTOPE_TYPE_MAP.keySet());
-        isoChoiceBox.getSelectionModel().select(IsotopeType.Generic.getName());
+        unctComboBox.getItems().addAll(UncertaintyFormat.values());
+        isoComboBox.getItems().addAll(IsotopeType.values());
+        isoComboBox.getSelectionModel().select(IsotopeType.GENERIC);
+
+        makeGrid();
     }
 
-    /**
-     * Sets the data in the preview to the specified list of {@code TopsoilDataEntries}. If no array of {@code
-     * String} headers is provided, default headers are used.
-     *
-     * @param h array of String column headers
-     * @param d list of TopsoilDataEntries
-     */
-    public void setData(@Nullable String[] h, List<TopsoilDataEntry> d) {
-
-        this.data = d;
-
-        if (h == null) {
-            int maxRowSize = 0;
-            for (TopsoilDataEntry row : data) {
-                maxRowSize = Math.max(maxRowSize, row.getProperties().size());
-            }
-            headers = new String[maxRowSize];
-            for (int i = 1; i <= headers.length; i++) {
-                headers[i - 1] = "Column " + i;
-            }
-        } else {
-            headers = new String[h.length];
-            System.arraycopy(h, 0, headers, 0, h.length);
-        }
-
-        grid.setMinSize(110.0 * headers.length, 202.0);
-        grid.setMaxSize(125.0 * headers.length, 202.0);
-
-        // Sample is <= 5
-        List<TopsoilDataEntry> sampleLines = data.subList(0, Math.min(data.size() - 1, 5));
-
-        // Create each column of the data preview.
-        Label label;
-        for (int i = 0; i < headers.length; i++) {
-
-            // ChoiceBox for the user to select which variable the column represents.
-            ChoiceBox<String> choiceBox = new ChoiceBox<>();
-            choiceBox.getItems().add(EMPTY_VALUE);
-            choiceBox.getItems().addAll(STRING_VARIABLE_MAP.keySet());
-            choiceBox.getSelectionModel().select(EMPTY_VALUE);
-            choiceBox.setMinSize(100.0, 30.0);
-            choiceBox.setMaxSize(100.0, 30.0);
-            choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-
-                if (!newValue.equals(EMPTY_VALUE)) {
-                    checkOtherChoiceBoxes(choiceBox, STRING_VARIABLE_MAP.get(newValue));
-                    variableIndexMap.put(STRING_VARIABLE_MAP.get(newValue), columnChoiceBoxes.indexOf(choiceBox));
-                } else {
-                    variableIndexMap.remove(STRING_VARIABLE_MAP.get(oldValue));
-                }
-            });
-            grid.add(choiceBox, i, 0);
-            GridPane.setConstraints(choiceBox, i, 0, 1, 1, HPos.CENTER, VPos.CENTER, Priority.ALWAYS, Priority
-                    .NEVER, new Insets(5.0, 5.0, 5.0, 5.0));
-            this.columnChoiceBoxes.add(choiceBox);
-
-            label = new Label(headers[i]);
-            label.setStyle("-fx-font-weight: bold");
-            label.setMinSize(100.0, 17.0);
-            label.setMaxSize(100.0, 17.0);
-            grid.add(label, i, 1);
-            GridPane.setConstraints(label, i, 1, 1, 1, HPos.CENTER, VPos.CENTER, Priority.ALWAYS, Priority.NEVER, new Insets(5.0, 5.0, 5.0, 5.0));
-
-            for (int j = 0; j < sampleLines.size(); j++) {
-                if (i >= sampleLines.get(j).getProperties().size()) {
-                    label = new Label("0.0");
-                } else {
-                    label = new Label(sampleLines.get(j).getProperties().get(i).getValue().toString());
-                }
-                label.setFont(Font.font("Monospaced"));
-                label.setMinSize(100.0, 17.0);
-                label.setMaxSize(100.0, 17.0);
-                grid.add(label, i, j + 2);
-                GridPane.setConstraints(label, i, j + 2, 1, 1, HPos.RIGHT, VPos.CENTER, Priority.ALWAYS, Priority
-                        .NEVER, new Insets(5.0, 5.0, 5.0, 5.0));
-            }
-        }
-    }
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     /**
-     * Returns an array of {@code String} headers for the data columns.
+     * Returns the header rows for the table.
      *
-     * @return  array of Strings
+     * @return  List of String header rows
      */
     public String[] getHeaders() {
-        String[] headersCopy = new String[headers.length];
-        System.arraycopy(headers, 0, headersCopy, 0, headers.length);
-        return headersCopy;
+        return headers;
     }
 
     /**
-     * Returns a {@code List} of {@code TopsoilDataEntry}s containing the imported data values.
+     * Returns the data rows for the table.
      *
-     * @return  List of TopsoilDataEntry
+     * @return  List of Double data rows
      */
-    public List<TopsoilDataEntry> getData() {
-        // TODO
+    public Double[][] getData() {
         return data;
-//        List<TopsoilDataEntry> selectedColumns = new ArrayList<>(data.size());
-//
-//        // Construct new set of entries based on the selected columns.
-//        for (int i = 0; i < data.size(); i++) {
-//
-//            // Add a TopsoilDataEntry to selection if it doesn't have one at this index.
-//            if (selectedColumns.size() <= i) {
-//                while(selectedColumns.size() <= i) {
-//                    selectedColumns.add(new TopsoilDataEntry());
-//                }
-//            }
-//
-//            DoubleProperty xValue = variableIndexMap.containsKey(Variables.X) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.X))
-//                    : new SimpleDoubleProperty(0.0);
-//            selectedColumns.get(i).add(xValue);
-//
-//            DoubleProperty yValue = variableIndexMap.containsKey(Variables.Y) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.Y))
-//                    : new SimpleDoubleProperty(0.0);
-//            selectedColumns.get(i).add(yValue);
-//
-//            DoubleProperty sxValue = variableIndexMap.containsKey(Variables.SIGMA_X) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.SIGMA_X))
-//                    : new SimpleDoubleProperty(0.0);
-//            selectedColumns.get(i).add(sxValue);
-//
-//            DoubleProperty syValue = variableIndexMap.containsKey(Variables.SIGMA_Y) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.SIGMA_Y))
-//                    : new SimpleDoubleProperty(0.0);
-//            selectedColumns.get(i).add(syValue);
-//
-//            DoubleProperty rValue = variableIndexMap.containsKey(Variables.RHO) ? data.get(i).getProperties().get(variableIndexMap.get(Variables.RHO))
-//                    : new SimpleDoubleProperty(0.0);
-//            selectedColumns.get(i).add(rValue);
-//        }
-//        return selectedColumns;
     }
 
     public Map<Variable<Number>, Integer> getVariableIndexMap() {
         return variableIndexMap;
     }
 
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
+
     /**
-     * Checks all {@code ChoiceBox}es other than the one that triggered this method to see if they contain the value
-     * that the recently changed {@code ChoiceBox} now contains. If another {@code ChoiceBox} with the same value is
-     * found, that {@code ChoiceBox}'s value is set to the empty option.
+     * Checks all {@code ComboBox}es other than the one that triggered this method to see if they contain the value
+     * that the recently changed {@code ComboBox} now contains. If another {@code ComboBox} with the same value is
+     * found, that {@code ComboBox}'s value is set to the empty option.
      *
-     * @param changed   the ChoiceBox that was changed
-     * @param value the Variable value of the ChoiceBox's new selection
+     * @param   changed
+     *          the ComboBox that was changed
+     * @param   value
+     *          the Variable value of the ComboBox's new selection
      */
-    private void checkOtherChoiceBoxes(ChoiceBox changed, Variable<Number> value) {
-        for (ChoiceBox<String> cb : columnChoiceBoxes) {
+    private void checkOtherComboBoxes(ComboBox<Variable<Number>> changed, Variable<Number> value) {
+        for (ComboBox<Variable<Number>> cb : columnComboBoxes) {
             if (cb != changed) {
-                if (STRING_VARIABLE_MAP.get(cb.getValue()) == value) {
-                    cb.getSelectionModel().select(EMPTY_VALUE);
+                if (cb.getValue() != null && cb.getValue().equals(value)) {
+                    cb.getSelectionModel().select(null);
                 }
             }
         }
     }
 
+    private void makeGrid() {
+        final int SAMPLE_SIZE = 5;
+
+        grid.setMinSize(110.0 * headers.length, 202.0);
+        grid.setMaxSize(125.0 * headers.length, 202.0);
+
+        Double[][] sampleLines = Arrays.copyOfRange(data, 0, Math.min(data.length, SAMPLE_SIZE));
+
+        // Create each column of the data preview.
+        // ChoiceBox for the user to select which variable the column represents.
+        for (int i = 0; i < headers.length; i++) {
+            ComboBox<Variable<Number>> comboBox = new ComboBox<>();
+            comboBox.getItems().addAll(Variables.VARIABLE_LIST);
+            comboBox.setMinSize(100.0, 30.0);
+            comboBox.setMaxSize(100.0, 30.0);
+            comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    checkOtherComboBoxes(comboBox, newValue);
+                    variableIndexMap.put(newValue, columnComboBoxes.indexOf(comboBox));
+                } else {
+                    variableIndexMap.remove(oldValue);
+                }
+            });
+
+            grid.add(comboBox, i, 0);
+            GridPane.setConstraints(comboBox, i, 0, 1, 1, HPos.CENTER, VPos.CENTER, Priority.ALWAYS, Priority
+                    .NEVER, new Insets(5.0, 5.0, 5.0, 5.0));
+            columnComboBoxes.add(comboBox);
+        }
+
+        Label label;
+        // Set header row
+        for (int i = 0; i < headers.length; i++) {
+            label = new Label(headers[i]);
+            label.setStyle("-fx-font-weight: bold");
+            label.setMinSize(100.0, 17.0);
+            label.setMaxSize(100.0, 17.0);
+            grid.add(label, i, 1);
+            GridPane.setConstraints(label, i, 1, 1, 1, HPos.CENTER, VPos.CENTER, Priority.ALWAYS, Priority.NEVER,
+                                    new Insets(5.0, 5.0, 5.0, 5.0));
+        }
+
+        // Set data rows
+        int rowIndex;
+        for (int i = 0; i < sampleLines.length; i++) {
+        	rowIndex = i + 2;
+            for (int j = 0; j < headers.length; j++) {
+                if (i >= sampleLines[i].length) {
+                    label = new Label("0.0");
+                } else {
+                    label = new Label(sampleLines[i][j].toString());
+                }
+                label.setFont(Font.font("Monospaced"));
+                label.setMinSize(100.0, 17.0);
+                label.setMaxSize(100.0, 17.0);
+                grid.add(label, j, rowIndex);
+                GridPane.setConstraints(label, j, rowIndex, 1, 1, HPos.RIGHT, VPos.CENTER, Priority.ALWAYS,
+                                        Priority.NEVER, new Insets(5.0, 5.0, 5.0, 5.0));
+            }
+        }
+    }
 }

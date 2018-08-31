@@ -42,14 +42,14 @@ public class PlotFeaturesController extends AnchorPane {
     private ObjectProperty<IsotopeType> isotopeSystem;
     public ObjectProperty<IsotopeType> isotopeSystemProperty() {
         if (isotopeSystem == null) {
-            isotopeSystem = new SimpleObjectProperty<>(IsotopeType.Generic);
+            isotopeSystem = new SimpleObjectProperty<>(IsotopeType.GENERIC);
             isotopeSystem.addListener(c -> {
             	if (isotopeSystem.get() != null) {
 		            switch ( isotopeSystem.get() ) {
-			            case UPb:
+			            case UPB:
 				            container.getChildren().setAll(mcLeanRegressionControls, wetherillControls);
 				            break;
-			            case UTh:
+			            case UTH:
 				            container.getChildren().setAll(mcLeanRegressionControls, evolutionControls);
 				            break;
 			            default:

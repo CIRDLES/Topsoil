@@ -12,8 +12,8 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.plot.variable.Variable;
 import org.cirdles.topsoil.app.plot.variable.Variables;
+import org.cirdles.topsoil.app.tab.TopsoilDataView;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.dialog.controller.VariableColumnChooser;
 
 import java.util.List;
@@ -73,12 +73,12 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
         });
     }
 
-    public static Map<Variable<Number>, TopsoilDataColumn> showDialog(TopsoilTableController tableController,
+    public static Map<Variable<Number>, TopsoilDataColumn> showDialog(TopsoilDataView dataView,
                                                                       List<Variable<Number>> requiredVariables) {
 
-        List<TopsoilDataColumn> columns = tableController.getTable().getDataColumns();
+        List<TopsoilDataColumn> columns = dataView.getData().getDataColumns();
         List<Variable<Number>> variables = Variables.VARIABLE_LIST;
-        Map<Variable<Number>, TopsoilDataColumn> currentSelections = tableController.getTable().getVariableAssignments();
+        Map<Variable<Number>, TopsoilDataColumn> currentSelections = dataView.getData().variableToColumnMap();
 
         return new VariableChooserDialog(columns, variables, currentSelections, requiredVariables).showAndWait().orElse(null);
     }

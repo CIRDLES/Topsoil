@@ -1,50 +1,71 @@
 package org.cirdles.topsoil.app.table.command;
 
-import javafx.scene.control.TableColumn;
+import javafx.beans.property.SimpleDoubleProperty;
+import org.cirdles.topsoil.app.table.ObservableTableData;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
+import java.util.List;
+
 /**
- * An undoable {@link Command} instance that can be added to a TopsoilTab's {@link UndoManager} when a
- * {@link TableColumn} in the {@code TableView} is inserted.
+ * An undoable {@link Command} instance that can be added to a TopsoilTab's {@link UndoManager} when a column is
+ * inserted into the data.
  *
- * @author Jake Marotta
+ * @author marottajb
+ *
  * @see Command
  * @see UndoManager
  */
 public class InsertColumnCommand implements Command {
 
-    private TopsoilTableController tableController;
-    private TopsoilDataColumn dataColumn;
+    private ObservableTableData data;
     private int index;
+    private TopsoilDataColumn column;
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     /**
-     * Constructs a new insert column command from the specified table controller, column, and index.
+     * Constructs a new insert column command from the specified data controller, column, and index.
      *
-     * @param tableController  the TopsoilTableController that the command came from
-     * @param index the int index of the column
-     * @param dataColumn    the TopsoilDataColumn to be inserted
+     * @param   data
+     *          the ObservableTableData that the command came from
+     * @param   colIndex
+     *          the int index of the column
+     * @param   column
+     *          the TopsoilDataColumn to be inserted
      */
-    public InsertColumnCommand(TopsoilTableController tableController, int index, TopsoilDataColumn dataColumn) {
-        this.tableController = tableController;
-        this.dataColumn = dataColumn;
-        this.index = index;
+    public InsertColumnCommand( ObservableTableData data, int colIndex, TopsoilDataColumn column ) {
+        this.data = data;
+        this.index = colIndex;
+        this.column = column;
     }
+
+    public InsertColumnCommand( ObservableTableData data, int colIndex, List<Double> column ) {
+        this.data = data;
+        this.index = colIndex;
+        this.column = new TopsoilDataColumn("Untitled");
+        column.forEach((value) -> this.column.add(new SimpleDoubleProperty(value)));
+    }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     /**
      * Called to execute the column insertion.
      */
     public void execute() {
-        tableController.addColumn(index, dataColumn);
+        data.addColumn(index, column);
     }
 
     /**
      * Called to undo the column insertion.
      */
     public void undo() {
-        tableController.removeColumn(index);
+        data.removeColumn(index);
     }
 
     /** {@inheritDoc}

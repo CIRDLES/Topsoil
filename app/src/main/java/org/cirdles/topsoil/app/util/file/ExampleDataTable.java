@@ -15,9 +15,6 @@ import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
  */
 public class ExampleDataTable {
 
-    //***********************
-    // Attributes
-    //***********************
     /**
      * Sample data for the Uranium Lead isotope system.
      */
@@ -95,9 +92,9 @@ public class ExampleDataTable {
      */
     public String getSampleData(IsotopeType isotopeType) {
         switch (isotopeType) {
-            case UPb:
+            case UPB:
                 return UPbSampleData;
-            case UTh:
+            case UTH:
                 return UThSampleData;
             default:
                 return GenericSampleData;

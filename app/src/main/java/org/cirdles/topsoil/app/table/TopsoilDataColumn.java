@@ -135,4 +135,12 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
         setName(name);
         this.addAll(properties);
     }
+
+    public Double[] getData() {
+        Double[] data = new Double[size()];
+        for (int i = 0; i < size(); i++) {
+            data[i] = this.get(i).get();
+        }
+        return data;
+    }
 }

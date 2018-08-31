@@ -8,7 +8,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 
 import java.io.IOException;
 
@@ -53,7 +53,8 @@ public class DataOptionsController extends AnchorPane {
 
     @FXML protected void initialize() {
     	isotopeSystemComboBox.getItems().addAll(IsotopeType.values());
-    	uncertaintyFormatComboBox.getItems().addAll(UncertaintyFormat.values());
+    	uncertaintyFormatComboBox.getItems().addAll(UncertaintyFormat.ONE_SIGMA_ABSOLUTE, UncertaintyFormat
+			    .TWO_SIGMA_ABSOLUTE, UncertaintyFormat.NINETY_FIVE_PERCENT_CONFIDENCE);
 
     	RadioButtonSelectionHandler ellipsesSelectionHandler = new RadioButtonSelectionHandler(ellipsesRadioButton);
         ellipsesRadioButton.setToggleGroup(uncertaintyToggleGroup);

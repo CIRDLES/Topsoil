@@ -1,29 +1,19 @@
 package org.cirdles.topsoil.app.util.dialog;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
-import org.cirdles.topsoil.app.dataset.entry.TopsoilDataEntry;
 import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.TopsoilDataTable;
-import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.table.ObservableTableData;
 import org.cirdles.topsoil.app.util.dialog.controller.ProjectPreviewController;
 import org.cirdles.topsoil.app.util.dialog.controller.ProjectSourcesController;
 import org.cirdles.topsoil.app.util.dialog.controller.ProjectTitleController;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A custom {@code Stage} that handles the creation of a new project file.
@@ -32,14 +22,8 @@ import java.util.Map;
  */
 public class NewProjectWindow extends Stage {
 
-    private static final String PROJECT_TITLE_CONTROLLER_FXML = "controller/project-title.fxml";
-    private static final String PROJECT_SOURCES_CONTROLLER_FXML = "controller/project-sources.fxml";
-    private static final String PROJECT_PREVIEW_CONTROLLER_FXML = "controller/project-preview.fxml";
-
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(NewProjectWindow.class);
-
-    private final double width = 600.0;
-    private final double height = 550.0;
+    private final double WIDTH = 600.0;
+    private final double HEIGHT = 550.0;
 
     private NewProjectWindow() {
         super();
@@ -53,122 +37,90 @@ public class NewProjectWindow extends Stage {
     /**
      * Creates a new project and returns a {@code List} of {@code TopsoilDataTable}s, if such data is specified.
      *
-     * @return  List of TopsoilDataTables
+     * @return  List of ObservableTableData
      */
-    public static List<TopsoilDataTable> newProject() {
+    public static List<ObservableTableData> newProject() {
         return new NewProjectWindow().createNewProject();
     }
 
-    private List<TopsoilDataTable> createNewProject() {
+    private List<ObservableTableData> createNewProject() {
 
-        try {
-            // Extract FXML files
-            FXMLLoader titleControllerLoader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath
-                    (PROJECT_TITLE_CONTROLLER_FXML).toUri().toURL());
-            Scene projectTitleScene = new Scene(titleControllerLoader.load(), width, height);
-            ProjectTitleController titleController = titleControllerLoader.getController();
+        ProjectTitleController titleController = new ProjectTitleController();
+        Scene titleScene = new Scene(titleController, WIDTH, HEIGHT);
 
-            FXMLLoader sourcesControllerLoader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath
-                    (PROJECT_SOURCES_CONTROLLER_FXML).toUri().toURL());
-            Scene projectSourcesScene = new Scene(sourcesControllerLoader.load(), width, height);
-            ProjectSourcesController sourcesController = sourcesControllerLoader.getController();
+        ProjectSourcesController sourcesController = new ProjectSourcesController();
+        Scene sourcesScene = new Scene(sourcesController, WIDTH, HEIGHT);
 
-            FXMLLoader previewControllerLoader = new FXMLLoader(RESOURCE_EXTRACTOR.extractResourceAsPath
-                    (PROJECT_PREVIEW_CONTROLLER_FXML).toUri().toURL());
-            Scene projectPreviewScene = new Scene(previewControllerLoader.load(), width, height);
-            ProjectPreviewController previewController = previewControllerLoader.getController();
+        ProjectPreviewController previewController = new ProjectPreviewController();
+        Scene previewScene = new Scene(previewController, WIDTH, HEIGHT);
 
-            // Set order of scenes
-            titleController.setNextScene(projectSourcesScene);
+        // Set order of scenes
+        titleController.setNextScene(sourcesScene);
 
-            sourcesController.setPreviousScene(projectTitleScene);
-            sourcesController.setNextScene(projectPreviewScene);
+        sourcesController.setPreviousScene(titleScene);
+        sourcesController.setNextScene(previewScene);
 
-            previewController.setPreviousScene(projectSourcesScene);
+        previewController.setPreviousScene(sourcesScene);
 
-            // Bind list of Paths in preview screen to list of Paths in source selection screen
-            previewController.pathDelimiterListProperty().bind(sourcesController.pathDelimiterListProperty());
+        // Bind list of Paths in preview screen to list of Paths in source selection screen
+        previewController.pathDelimiterListProperty().bind(sourcesController.pathDelimiterListProperty());
 
-            // Set stage for project name controller
-            this.setScene(projectTitleScene);
+        // Set stage for project name controller
+        this.setScene(titleScene);
 
-            // Wait for the window to close
-            this.showAndWait();
+        // Wait for the window to close
+        this.showAndWait();
 
-            List<TopsoilDataTable> tables = null;
+        List<ObservableTableData> tables = null;
 
-            // New project from existing sources.
-            if (previewController.didFinish()) {
+        // New project from existing sources.
+        if (previewController.didFinish()) {
 
-                List<Map<DataImportKey, Object>> allSelections = previewController.getSelections();
+            List<Map<ImportDataType, Object>> allSelections = previewController.getSelections();
 
-                tables = new ArrayList<>();
+            tables = new ArrayList<>();
 
-                String[] headers;
-                IsotopeType isotopeType;
-                UncertaintyFormat format;
-                List<TopsoilDataEntry> entries;
+            String[] headerRows;
+            IsotopeType isotopeType;
+            UncertaintyFormat format;
+            Double[][] dataRows;
 
-                // Creates a new TopsoilDataTable for each file.
-                for (Map<DataImportKey, Object> selections : allSelections) {
+            // Creates a new TopsoilDataTable for each file.
+            for (Map<ImportDataType, Object> selections : allSelections) {
 
-                    headers = (String[]) selections.get(DataImportKey.HEADERS);
-                    isotopeType = (IsotopeType) selections.get(DataImportKey.ISOTOPE_TYPE);
-                    format = (UncertaintyFormat) selections.get(DataImportKey.UNCERTAINTY);
-                    entries = (List<TopsoilDataEntry>) selections.get(DataImportKey.DATA);
+                headerRows = (String[]) selections.get(ImportDataType.HEADERS);
+                isotopeType = (IsotopeType) selections.get(ImportDataType.ISOTOPE_TYPE);
+                format = (UncertaintyFormat) selections.get(ImportDataType.UNCERTAINTY);
+                dataRows = (Double[][]) selections.get(ImportDataType.DATA);
 
-                    ObservableList<TopsoilDataEntry> data = FXCollections.observableArrayList(entries);
+                ObservableTableData data = new ObservableTableData(dataRows, true, headerRows, isotopeType, format);
+                data.setTitle(String.valueOf(selections.get(ImportDataType.TITLE)));
 
-                    TopsoilDataTable table = new TopsoilDataTable(
-                            headers,
-                            isotopeType,
-                            format,
-                            data.toArray(new TopsoilDataEntry[data.size()])
-                    );
+                Map<Variable<Number>, Integer> varIndexMap = (Map<Variable<Number>, Integer>) selections.get(
+                        ImportDataType.VARIABLE_INDEX_MAP);
+                varIndexMap.entrySet().forEach((entry) -> {
+                    data.setVariableForColumn(entry.getValue(), entry.getKey());
+                });
 
-                    table.setTitle((String) selections.get(DataImportKey.TITLE));
-
-                    List<TopsoilDataColumn> columns = table.getDataColumns();
-                    Map<Variable<Number>, TopsoilDataColumn> variableAssignments = new HashMap<>();
-
-                    // Apply variable selections
-                    for (Map.Entry<Variable<Number>, Integer> entry :
-                            ((Map<Variable<Number>, Integer>) selections.get(DataImportKey.VARIABLE_INDEX_MAP))
-                                    .entrySet()) {
-                        TopsoilDataColumn column = columns.get(entry.getValue());
-                        column.setVariable(entry.getKey());
-                        variableAssignments.put(entry.getKey(), column);
-                    }
-
-                    table.setVariableAssignments(variableAssignments);
-
-                    tables.add(table);
-                }
-
-                File projectFile = new File(titleController.getProjectLocation().toString() + File.separator +
-                                            titleController.getTitle() + ".topsoil");
-
-                // Sets the current project
-                TopsoilSerializer.setCurrentProjectFile(projectFile);
-
-            // New empty project
-            } else if (sourcesController.didFinish()) {
-
-                tables = new ArrayList<>();
-
-                File projectFile = new File(titleController.getProjectLocation().toString() + File.separator +
-                                            titleController.getTitle() + ".topsoil");
-
-                // Sets the current project
-                TopsoilSerializer.setCurrentProjectFile(projectFile);
-
+                tables.add(data);
             }
 
-            return tables;
+            File projectFile = new File(titleController.getProjectLocation().toString() + File.separator +
+                                        titleController.getTitle() + ".topsoil");
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            // Sets the current project
+            TopsoilSerializer.setCurrentProjectFile(projectFile);
+
+        // New empty project
+        } else if (sourcesController.didFinish()) {
+
+            tables = new ArrayList<>();
+            File projectFile = new File(titleController.getProjectLocation().toString() + File.separator +
+                                        titleController.getTitle() + ".topsoil");
+
+            // Sets the current project
+            TopsoilSerializer.setCurrentProjectFile(projectFile);
         }
+        return tables;
     }
 }

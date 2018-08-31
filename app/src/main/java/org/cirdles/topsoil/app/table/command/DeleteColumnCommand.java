@@ -1,74 +1,58 @@
 package org.cirdles.topsoil.app.table.command;
 
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import org.cirdles.topsoil.app.table.ObservableTableData;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.TopsoilTableController;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
 /**
- * An undoable {@link Command} instance that can be added to a TopsoilTab's {@link UndoManager} when a
- * {@link TableColumn} in the {@code TableView} is deleted. This command stores a copy of the deleted column, and its
- * index in {@link TableView#getColumns()}.
+ * An undoable {@link Command} instance that can be added to a TopsoilTab's {@link UndoManager} when a column in the
+ * data is deleted.
  *
- * @author Jake Marotta
+ * @author marottajb
+ *
  * @see Command
  * @see UndoManager
  */
 public class DeleteColumnCommand implements Command {
 
-    //***********************
-    // Attributes
-    //***********************
-
-    /**
-     * The {@code TopsoilTableController} for the table.
-     */
-    private TopsoilTableController tableController;
-
-    /**
-     * The {@code TopsoilDataColumn} that was deleted.
-     */
-    private TopsoilDataColumn dataColumn;
-
-    /**
-     * The index in {@code TableView.getColumns()} that the column occupied.
-     */
+    private ObservableTableData data;
     private int index;
+    private TopsoilDataColumn column;
 
-    //***********************
-    // Constructors
-    //***********************
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     /**
-     * Constructs a new delete column command from the specified table controller and index.
+     * Constructs a new delete column command from the specified data controller and index.
      *
-     * @param tableController  the TopsoilTableController that the command came from
-     * @param index the int index of the column
+     * @param   data
+     *          ObservableTableData containing the column
+     * @param   colIndex
+     *          the int index of the column
      */
-    public DeleteColumnCommand(TopsoilTableController tableController, int index) {
-        this.tableController = tableController;
-        this.dataColumn = tableController.getTable().getDataColumns().get(index);
-        this.index = index;
+    public DeleteColumnCommand( ObservableTableData data, int colIndex ) {
+        this.data = data;
+        this.index = colIndex;
     }
 
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     /**
      * Called to execute the column deletion.
      */
     public void execute() {
-        tableController.removeColumn(index);
+        column = data.removeColumn(index);
     }
 
     /**
      * Called to undo the column deletion.
      */
     public void undo() {
-        tableController.addColumn(index, dataColumn);
+        data.addColumn(index, column);
     }
 
     /** {@inheritDoc}

@@ -1,11 +1,14 @@
 package org.cirdles.topsoil.app;
 
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.menu.MainMenuBar;
+import org.cirdles.topsoil.app.tab.TabPaneHandler;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 
 /**
@@ -48,15 +51,16 @@ public class MainWindowController {
 
         tabs = new TopsoilTabPane();
         VBox.setVgrow(tabs, Priority.ALWAYS);
-        tabs.setId("TopsoilTabPane");
+        TabPaneHandler.setTabPane((TopsoilTabPane) tabs);
 
-        menuBar = new MainMenuBar((TopsoilTabPane) tabs).getMenuBar();
-        menuBar.setId("MenuBar");
+        menuBar = new MainMenuBar((TopsoilTabPane) tabs);
+        VBox.setVgrow(menuBar, Priority.NEVER);
 
         container.getChildren().setAll(menuBar, tabs);
         container.setStyle("-fx-background-color: lightgrey");
-        ((TopsoilTabPane) tabs).isEmptyProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+
+        tabs.getTabs().addListener((ListChangeListener<Tab>) c -> {
+            if (c.getList().size() <= 0) {
                 container.setStyle("-fx-background-color: lightgrey");
             } else {
                 container.setStyle("-fx-background-color: whitesmoke");
