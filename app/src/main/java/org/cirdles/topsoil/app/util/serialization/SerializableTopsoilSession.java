@@ -1,12 +1,12 @@
 package org.cirdles.topsoil.app.util.serialization;
 
-import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.plot.PlotGenerationHandler;
-import org.cirdles.topsoil.app.plot.TopsoilPlotType;
+import org.cirdles.topsoil.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.plot.TopsoilPlotView;
-import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.variable.Variable;
 
-import org.cirdles.topsoil.app.plot.variable.Variables;
+import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.tab.TopsoilDataView;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
@@ -75,7 +75,7 @@ class SerializableTopsoilSession implements Serializable {
         ObservableTableData table;
         Double[][] data;
         String[] headers;
-        IsotopeType isotopeType;
+        IsotopeSystem isotopeType;
         UncertaintyFormat unctFormat;
 
         TopsoilDataView dataView;
@@ -83,7 +83,7 @@ class SerializableTopsoilSession implements Serializable {
         for (Map<TableDataType, Serializable> tableData : this.data) {
             data = (Double[][]) tableData.get(TableDataType.DATA);
             headers = (String[]) tableData.get(TableDataType.HEADERS);
-            isotopeType = IsotopeType.valueOf(String.valueOf(tableData.get(TableDataType.ISOTOPE_TYPE)));
+            isotopeType = IsotopeSystem.valueOf(String.valueOf(tableData.get(TableDataType.ISOTOPE_TYPE)));
             unctFormat = UncertaintyFormat.valueOf(String.valueOf(tableData.get(TableDataType.UNCERTANTY_FORMAT)));
 
             table = new ObservableTableData(data, true, headers, isotopeType, unctFormat);

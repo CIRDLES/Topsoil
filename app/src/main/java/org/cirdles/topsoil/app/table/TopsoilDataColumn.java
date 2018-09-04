@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import org.cirdles.topsoil.app.plot.variable.Variable;
+import org.cirdles.topsoil.variable.Variable;
 
 /**
  * A custom {@code ArrayList} for storing data columns. The main purpose is to provide the ability to associate a data

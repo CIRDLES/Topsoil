@@ -2,18 +2,9 @@ package org.cirdles.topsoil.app.tab;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.cirdles.topsoil.app.plot.variable.Variables;
-import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.ObservableTableData;
-
-import java.util.Arrays;
 
 /**
  * A custom {@code TabPane} for managing {@link TopsoilTab}s.

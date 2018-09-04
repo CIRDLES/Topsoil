@@ -1,6 +1,6 @@
-package org.cirdles.topsoil.app.isotope;
+package org.cirdles.topsoil.isotope;
 
-import org.cirdles.topsoil.app.plot.TopsoilPlotType;
+import org.cirdles.topsoil.plot.TopsoilPlotType;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by sbunce on 6/27/2016.
  */
-public enum IsotopeType {
+public enum IsotopeSystem {
 
     //Isotope abbreviation, isotope name, array of default headers as strings
     GENERIC("Gen", "Generic",
@@ -24,42 +24,42 @@ public enum IsotopeType {
         new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT});
 
     /**
-     * An abbreviation of the {@code IsotopeType}'s name.
+     * An abbreviation of the {@code IsotopeSystem}'s name.
      */
     private final String abbreviation;
 
     /**
-     * The name of the {@code IsotopeType}.
+     * The name of the {@code IsotopeSystem}.
      */
     private final String name;
 
     /**
-     * Default headers for data of an {@code IsotopeType}.
+     * Default headers for data of an {@code IsotopeSystem}.
      */
     private final String[] headers;
 
     /**
-     * The available {@code TopsoilPlotType}s for the {@code IsotopeType}.
+     * The available {@code TopsoilPlotType}s for the {@code IsotopeSystem}.
      */
     private final TopsoilPlotType[] plots;
 
     /**
-     * A {@code List} of all {@code IsotopeType}s.
+     * A {@code List} of all {@code IsotopeSystem}s.
      */
-    public static final List<IsotopeType> ISOTOPE_TYPES;
+    public static final List<IsotopeSystem> ISOTOPE_SYSTEMS;
     static {
-        ISOTOPE_TYPES = Collections.unmodifiableList(Arrays.asList(
+	    ISOTOPE_SYSTEMS = Collections.unmodifiableList(Arrays.asList(
                 GENERIC,
                 UPB,
                 UTH
-        ));
+	                                                                ));
     }
 
     //***********************
     // Constructors
     //***********************
 
-    IsotopeType(String abbr, String name, String [] headers, TopsoilPlotType [] plots) {
+    IsotopeSystem( String abbr, String name, String [] headers, TopsoilPlotType [] plots ) {
         this.abbreviation = abbr;
         this.name = name;
         this.headers = headers;
@@ -71,13 +71,13 @@ public enum IsotopeType {
     //***********************
 
     /**
-     * Returns the appropriate {@code IsotopeType} for the given name, if one exists.
+     * Returns the appropriate {@code IsotopeSystem} for the given name, if one exists.
      *
      * @param name  String name
-     * @return      associated IsotopeType
+     * @return      associated IsotopeSystem
      */
-    public static IsotopeType fromName(String name) {
-        for (IsotopeType i : values()) {
+    public static IsotopeSystem fromName( String name ) {
+        for (IsotopeSystem i : values()) {
             if (name.equals(i.getName())) {
                 return i;
             }
@@ -86,13 +86,13 @@ public enum IsotopeType {
     }
 
     /**
-     * Returns the appropriate {@code IsotopeType} for the given abbreviation, if one exists.
+     * Returns the appropriate {@code IsotopeSystem} for the given abbreviation, if one exists.
      *
      * @param abbr  String abbreviation
-     * @return      associated IsotopeType
+     * @return      associated IsotopeSystem
      */
-    public static IsotopeType fromAbbreviation(String abbr) {
-        for (IsotopeType i : values()) {
+    public static IsotopeSystem fromAbbreviation( String abbr ) {
+        for (IsotopeSystem i : values()) {
             if (abbr.equals(i.getAbbreviation())) {
                 return i;
             }
@@ -101,7 +101,7 @@ public enum IsotopeType {
     }
 
     /**
-     * Returns the abbreviated name of the {@code IsotopeType}.
+     * Returns the abbreviated name of the {@code IsotopeSystem}.
      *
      * @return abbreviated String name
      */
@@ -110,7 +110,7 @@ public enum IsotopeType {
     }
 
     /**
-     * Returns the name of the {@code IsotopeType}.
+     * Returns the name of the {@code IsotopeSystem}.
      *
      * @return String name
      */
@@ -119,7 +119,7 @@ public enum IsotopeType {
     }
 
     /**
-     * Returns the default headers for data of {@code IsotopeType}.
+     * Returns the default headers for data of {@code IsotopeSystem}.
      *
      * @return array of String headers
      */
@@ -128,7 +128,7 @@ public enum IsotopeType {
     }
 
     /**
-     * Returns the available {@code TopsoilPlotType}s for the {@code IsotopeType}.
+     * Returns the available {@code TopsoilPlotType}s for the {@code IsotopeSystem}.
      *
      * @return array of TopsoilPlotTypes
      */

@@ -6,21 +6,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.SplitPane;
 
 import javafx.scene.layout.AnchorPane;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.plot.PlotGenerationHandler;
 import org.cirdles.topsoil.app.plot.TopsoilPlotView;
-import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.Variables;
+import org.cirdles.topsoil.variable.Variable;
+import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.app.table.ObservableTableData;
 import org.cirdles.topsoil.app.table.TopsoilSpreadsheetView;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.dialog.VariableChooserDialog;
-import org.cirdles.topsoil.plot.Plot;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,7 +44,7 @@ public class TopsoilDataView extends AnchorPane {
 	//                   CONTROLS                   //
 	//**********************************************//
 
-	@FXML private ComboBox<IsotopeType> isotopeSystemComboBox;
+	@FXML private ComboBox<IsotopeSystem> isotopeSystemComboBox;
 	@FXML private ComboBox<UncertaintyFormat> uncertaintyFormatComboBox;
 
 	@FXML private Button assignVariablesButton;
@@ -58,18 +56,18 @@ public class TopsoilDataView extends AnchorPane {
 	//                  PROPERTIES                  //
 	//**********************************************//
 
-	private ObjectProperty<IsotopeType> isotopeSystem;
-	public ObjectProperty<IsotopeType> isotopeSystemProperty() {
+	private ObjectProperty<IsotopeSystem> isotopeSystem;
+	public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
 		if (isotopeSystem == null) {
 			isotopeSystem = new SimpleObjectProperty<>();
 			isotopeSystem.bindBidirectional(isotopeSystemComboBox.valueProperty());
 		}
 		return isotopeSystem;
 	}
-	public final IsotopeType getIsotopeSystem() {
+	public final IsotopeSystem getIsotopeSystem() {
 		return isotopeSystemProperty().get();
 	}
-	public final void setIsotopeSystem(IsotopeType i) {
+	public final void setIsotopeSystem(IsotopeSystem i ) {
 		isotopeSystemProperty().set(i);
 	}
 
@@ -123,7 +121,7 @@ public class TopsoilDataView extends AnchorPane {
         AnchorPane.setTopAnchor(spreadsheetView, 0.0);
         AnchorPane.setLeftAnchor(spreadsheetView, 0.0);
 
-	    isotopeSystemComboBox.getItems().addAll(IsotopeType.values());
+	    isotopeSystemComboBox.getItems().addAll(IsotopeSystem.values());
 	    uncertaintyFormatComboBox.getItems().addAll(UncertaintyFormat.values());
 
 	    isotopeSystemProperty().bindBidirectional(data.isotopeTypeProperty());

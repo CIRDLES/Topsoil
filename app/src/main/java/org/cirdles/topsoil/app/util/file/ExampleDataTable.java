@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
 
 /**
@@ -85,12 +85,12 @@ public class ExampleDataTable {
 
     /**
      * Returns the correct Example Data table for the specified
-     * {@code IsotopeType}.
+     * {@code IsotopeSystem}.
      *
      * @param isotopeType the isotope type desired for the sample data table
      * @return a Sample Data table
      */
-    public String getSampleData(IsotopeType isotopeType) {
+    public String getSampleData(IsotopeSystem isotopeType ) {
         switch (isotopeType) {
             case UPB:
                 return UPbSampleData;

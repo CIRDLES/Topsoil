@@ -1,11 +1,9 @@
-package org.cirdles.topsoil.app.plot;
+package org.cirdles.topsoil.plot;
 
-import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.Variables;
-import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.variable.Variable;
+import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.plot.base.BasePlot;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

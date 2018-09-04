@@ -1,8 +1,5 @@
 package org.cirdles.topsoil.app.util.serialization;
 
-import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
-
 /**
  * A collection of keys used for storing table information in a {@link SerializableTopsoilSession}.
  *

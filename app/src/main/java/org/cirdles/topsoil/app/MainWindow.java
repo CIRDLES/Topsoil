@@ -4,25 +4,18 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.table.ObservableTableData;
-import org.cirdles.topsoil.app.table.SpreadsheetConstants;
-import org.cirdles.topsoil.app.table.TopsoilSpreadsheetView;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
@@ -272,4 +265,5 @@ public class MainWindow extends Application {
 		    }
 	    }
     }
+
 }

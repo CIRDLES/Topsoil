@@ -8,7 +8,7 @@ import org.cirdles.topsoil.app.MainWindow;
 import static org.cirdles.topsoil.app.MainWindow.verifyFinalSave;
 
 import org.cirdles.topsoil.app.TopsoilAboutScreen;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 
 import org.cirdles.topsoil.app.table.CellFormatDialog;
@@ -20,10 +20,6 @@ import javafx.application.Platform;
 
 import static org.cirdles.topsoil.app.menu.MenuItemEventHandler.*;
 import org.cirdles.topsoil.app.menu.command.DeleteTableCommand;
-
-import java.util.Map;
-
-import static org.cirdles.topsoil.app.table.CellFormatDialog.CellFormatOption;
 
 /**
  * A custom {@code MenuBar} for the Topsoil {@link MainWindow}.
@@ -295,9 +291,9 @@ public class MainMenuBar extends MenuBar {
                 uPbExampleTableItem,
                 uThExampleTableItem);
         
-        uPbExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UPB) );
+        uPbExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeSystem.UPB));
         
-        uThExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeType.UTH) );
+        uThExampleTableItem.setOnAction(event -> MenuItemEventHandler.handleOpenExampleTable(tabs, IsotopeSystem.UTH));
         
         // Import Table from File
         tableFromFileItem.setOnAction(event -> {

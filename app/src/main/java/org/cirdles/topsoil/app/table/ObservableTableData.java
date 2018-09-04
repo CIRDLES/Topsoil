@@ -4,12 +4,12 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.plot.TopsoilPlotType;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.plot.TopsoilPlotView;
-import org.cirdles.topsoil.app.plot.variable.DependentVariable;
-import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.Variables;
+import org.cirdles.topsoil.variable.DependentVariable;
+import org.cirdles.topsoil.variable.Variable;
+import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 
 import java.util.*;
@@ -43,14 +43,14 @@ public class ObservableTableData extends Observable {
         title.set(str);
     }
 
-    private final ObjectProperty<IsotopeType> isotopeType = new SimpleObjectProperty<>(IsotopeType.GENERIC);
-    public final ObjectProperty<IsotopeType> isotopeTypeProperty() {
+    private final ObjectProperty<IsotopeSystem> isotopeType = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
+    public final ObjectProperty<IsotopeSystem> isotopeTypeProperty() {
         return isotopeType;
     }
-    public IsotopeType getIsotopeType() {
+    public IsotopeSystem getIsotopeType() {
         return isotopeType.get();
     }
-    public void setIsotopeType(IsotopeType type) {
+    public void setIsotopeType(IsotopeSystem type ) {
         isotopeType.set(type);
     }
 
@@ -87,7 +87,7 @@ public class ObservableTableData extends Observable {
      *          true if data in rows, false if in columns
      */
     public ObservableTableData(Double[][] data, boolean rowFormat) {
-        this(data, rowFormat, null, IsotopeType.GENERIC, UncertaintyFormat.TWO_SIGMA_ABSOLUTE);
+        this(data, rowFormat, null, IsotopeSystem.GENERIC, UncertaintyFormat.TWO_SIGMA_ABSOLUTE);
     }
 
     /**
@@ -106,8 +106,8 @@ public class ObservableTableData extends Observable {
      * @param   unctFormat
      *          true if data in rows, false if in columns
      */
-    public ObservableTableData(Double[][] data, boolean rowFormat, String[] headers,
-                               IsotopeType isotopeType, UncertaintyFormat unctFormat) {
+    public ObservableTableData( Double[][] data, boolean rowFormat, String[] headers,
+                                IsotopeSystem isotopeType, UncertaintyFormat unctFormat ) {
         this.columns = makeDataColumns(data, headers, rowFormat);
         this.varMap = new HashMap<>();
         setIsotopeType(isotopeType);

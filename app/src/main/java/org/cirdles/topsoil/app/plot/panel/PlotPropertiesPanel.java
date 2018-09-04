@@ -7,14 +7,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
 import org.cirdles.topsoil.plot.DefaultProperties;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.cirdles.topsoil.plot.PlotProperty.*;
@@ -91,18 +90,18 @@ public class PlotPropertiesPanel extends Accordion {
         Start Data Options properties...
      */
 
-    private ObjectProperty<IsotopeType> isotopeSystem;
-    public ObjectProperty<IsotopeType> isotopeSystemProperty() {
+    private ObjectProperty<IsotopeSystem> isotopeSystem;
+    public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
     	if (isotopeSystem == null) {
     		isotopeSystem = new SimpleObjectProperty<>();
     		isotopeSystem.bindBidirectional(dataOptions.isotopeSystemComboBox.valueProperty());
 	    }
 	    return isotopeSystem;
     }
-    public final IsotopeType getIsotopeSystem() {
+    public final IsotopeSystem getIsotopeSystem() {
     	return isotopeSystemProperty().get();
     }
-    public final void setIsotopeSystem(IsotopeType system) {
+    public final void setIsotopeSystem(IsotopeSystem system ) {
     	isotopeSystemProperty().set(system);
     }
 
@@ -422,7 +421,7 @@ public class PlotPropertiesPanel extends Accordion {
 	    if (properties.containsKey(UNCTBARS_FILL)) setUncertaintyBarsFill(Color.valueOf(
 	    		String.valueOf(properties.get(UNCTBARS_FILL))));
 
-	    if (properties.containsKey(ISOTOPE_SYSTEM)) setIsotopeSystem(IsotopeType.fromName(
+	    if (properties.containsKey(ISOTOPE_SYSTEM)) setIsotopeSystem(IsotopeSystem.fromName(
 	    		String.valueOf(properties.get(ISOTOPE_SYSTEM))));
 	    if (properties.containsKey(UNCERTAINTY)) setUncertaintyFormat(UncertaintyFormat.fromValue(
 			    (Double) properties.get(UNCERTAINTY)));

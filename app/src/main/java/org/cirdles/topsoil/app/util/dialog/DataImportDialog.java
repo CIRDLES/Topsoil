@@ -5,10 +5,8 @@ import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
 import org.cirdles.topsoil.app.MainWindow;
-import org.cirdles.topsoil.app.util.dialog.controller.DataPreviewController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This is a custom {@code Dialog} that allows a user to preview their data before it is fully loaded into a table.
@@ -36,7 +34,7 @@ public class DataImportDialog extends Dialog<Map<ImportDataType, Object>> {
         stage.initOwner(MainWindow.getPrimaryStage());
         stage.getIcons().add(MainWindow.getWindowIcon());
 
-        DataPreviewController controller = new DataPreviewController(headers, data);
+        DataImportOptionsView controller = new DataImportOptionsView(headers, data);
         this.getDialogPane().setContent(controller);
 
         // User can't click "Finish" until they select an uncertainty format.
@@ -95,4 +93,5 @@ public class DataImportDialog extends Dialog<Map<ImportDataType, Object>> {
 
         return dialog.showAndWait().orElse(null);
     }
+
 }

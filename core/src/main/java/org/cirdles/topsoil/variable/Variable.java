@@ -13,32 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.cirdles.topsoil.app.plot.variable;
+package org.cirdles.topsoil.variable;
 
 /**
- * A {@code BaseVariable} that is independent, i.e. it is not dependent on some other {@code Variable} that would
- * affect its normalization of a value.
+ * An interface implemented by classes that act as a variable for plotting.
  *
  * @author John Zeringue
+ * @param <T> the variable type
  * @see BaseVariable
+ * @see DependentVariable
+ * @see IndependentVariable
+ * @see Variables
  */
-public class IndependentVariable<T> extends BaseVariable<T> {
-
-    //***********************
-    // Constructors
-    //***********************
+public interface Variable<T> {
 
     /**
-     * Constructs a new {@code IndependentVariable} with the specified name.
+     * Returns the name of the variable.
      *
-     * @param name  String name
+     * @return  String name
      */
-    public IndependentVariable(String name) {
-        super(name);
-    }
+    public String getName();
 
-    public IndependentVariable(String name, String abbreviation) {
-        super(name, abbreviation);
-    }
+    public String getAbbreviation();
 
 }

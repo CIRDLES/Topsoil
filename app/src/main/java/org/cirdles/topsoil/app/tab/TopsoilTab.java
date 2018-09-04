@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import org.cirdles.topsoil.app.plot.TopsoilPlotType;
+import org.cirdles.topsoil.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.table.ObservableTableData;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
@@ -30,8 +30,8 @@ public class TopsoilTab extends Tab {
     private UndoManager undoManager;
 
     /**
-     * A {@code String} consisting of the abbreviation of the {@code IsotopeType} of this tab's table and a hyphen. It
-     * serves as a prefix to the actual title of the tab, to quickly identify the {@code IsotopeType} of the tab's data.
+     * A {@code String} consisting of the abbreviation of the {@code IsotopeSystem} of this tab's table and a hyphen. It
+     * serves as a prefix to the actual title of the tab, to quickly identify the {@code IsotopeSystem} of the tab's data.
      */
     private String isotopePrefix;
 

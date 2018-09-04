@@ -9,10 +9,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.plot.variable.Variable;
-import org.cirdles.topsoil.app.plot.variable.Variables;
+import org.cirdles.topsoil.variable.Variable;
+import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.table.ObservableTableData;
@@ -101,11 +101,11 @@ public class MenuItemEventHandler {
                                         .get(ImportDataType.UNCERTAINTY);
 
                                 // Isotope system is Generic by default.
-                                IsotopeType isotopeType;
+                                IsotopeSystem isotopeType;
                                 if (selections.get(ImportDataType.ISOTOPE_TYPE) == null) {
-                                    isotopeType = IsotopeType.GENERIC;
+                                    isotopeType = IsotopeSystem.GENERIC;
                                 } else {
-                                    isotopeType = (IsotopeType) selections.get(ImportDataType.ISOTOPE_TYPE);
+                                    isotopeType = (IsotopeSystem) selections.get(ImportDataType.ISOTOPE_TYPE);
                                 }
 
                                 table = new ObservableTableData(data, true, headers,
@@ -168,11 +168,11 @@ public class MenuItemEventHandler {
                         UncertaintyFormat unctFormat = (UncertaintyFormat) selections.get(ImportDataType.UNCERTAINTY);
 
                         // Isotope system is Generic by default.
-                        IsotopeType isotopeType;
+                        IsotopeSystem isotopeType;
                         if (selections.get(ImportDataType.ISOTOPE_TYPE) == null) {
-                            isotopeType = IsotopeType.GENERIC;
+                            isotopeType = IsotopeSystem.GENERIC;
                         } else {
-                            isotopeType = (IsotopeType) selections.get(ImportDataType.ISOTOPE_TYPE);
+                            isotopeType = (IsotopeSystem) selections.get(ImportDataType.ISOTOPE_TYPE);
                         }
 
                         table = new ObservableTableData(data, true, headers, isotopeType, unctFormat);
@@ -208,7 +208,7 @@ public class MenuItemEventHandler {
         ObservableTableData table;
 
         // For now, the user shouldn’t have to select an isotope system; instead assume Generic.
-        IsotopeType isotopeType = IsotopeType.GENERIC;
+        IsotopeSystem isotopeType = IsotopeSystem.GENERIC;
 
         // create empty table
         TableUncertaintyChoiceDialog uncertaintyChoiceDialog = new TableUncertaintyChoiceDialog();
@@ -224,14 +224,14 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Handles the opening of sample data table for a given {@code IsotopeType}.
+     * Handles the opening of sample data table for a given {@code IsotopeSystem}.
      *
      * @param   tabs
      *          the TopsoilTabPane to which to add tables
      * @param   isotopeType
-     *          the IsotopeType of the example table to be opened
+     *          the IsotopeSystem of the example table to be opened
      */
-    public static void handleOpenExampleTable(TopsoilTabPane tabs, IsotopeType isotopeType) {
+    public static void handleOpenExampleTable(TopsoilTabPane tabs, IsotopeSystem isotopeType ) {
 
         ObservableTableData table;
         UncertaintyFormat unctFormat;
@@ -389,11 +389,11 @@ public class MenuItemEventHandler {
 
             if (tablesReference.get().isEmpty()) {
                 tabs.add(new ObservableTableData(
-                        new Double[][]{ new Double[]{ 0.0, 0.0, 0.0, 0.0, 0.0 }},
-                        true,
-                        null,
-                        IsotopeType.GENERIC,
-                        UncertaintyFormat.TWO_SIGMA_ABSOLUTE));
+		                new Double[][]{ new Double[]{ 0.0, 0.0, 0.0, 0.0, 0.0 }},
+		                true,
+		                null,
+		                IsotopeSystem.GENERIC,
+		                UncertaintyFormat.TWO_SIGMA_ABSOLUTE));
                 TopsoilNotification.showNotification(
                         NotificationType.INFORMATION,
                         "New Table Created",

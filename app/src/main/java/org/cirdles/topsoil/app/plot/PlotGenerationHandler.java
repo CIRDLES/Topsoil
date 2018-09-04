@@ -15,6 +15,7 @@ import org.cirdles.topsoil.app.table.TopsoilDataColumn;
 import org.cirdles.topsoil.plot.DefaultProperties;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
+import org.cirdles.topsoil.plot.TopsoilPlotType;
 
 import java.util.List;
 import java.util.Map;
