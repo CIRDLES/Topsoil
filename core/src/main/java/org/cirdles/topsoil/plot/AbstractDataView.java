@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import org.cirdles.topsoil.plot.base.BasePlotDefaultProperties;
 
 /**
  *
@@ -81,7 +80,7 @@ public abstract class AbstractDataView extends Canvas {
     /**
      * Some plot properties
      */
-    private final ObservableMap<String, Object> plotProperties = FXCollections.observableMap(new BasePlotDefaultProperties());
+//    private final ObservableMap<String, Object> plotProperties = FXCollections.observableMap(new DefaultProperties());
 
     protected String TITLE = "Default Graph";
     protected String X_AXIS_LABEL = "X Default";
