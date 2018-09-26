@@ -1,8 +1,8 @@
-package org.cirdles.topsoil.app.table.command;
+package org.cirdles.topsoil.app.spreadsheet.command;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import org.cirdles.topsoil.app.table.ObservableTableData;
-import org.cirdles.topsoil.app.table.TopsoilDataColumn;
+import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
+import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 

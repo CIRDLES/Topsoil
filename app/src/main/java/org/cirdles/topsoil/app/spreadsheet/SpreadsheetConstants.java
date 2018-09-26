@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.table;
+package org.cirdles.topsoil.app.spreadsheet;
 
 /**
  * @author marottajb

@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.table;
+package org.cirdles.topsoil.app.spreadsheet;
 
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -21,7 +21,12 @@ import java.util.*;
  */
 public class ObservableTableData extends Observable {
 
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
     private ObservableList<TopsoilDataColumn> columns;
+    private ObservableList<BooleanProperty> rowSelection;
     private int rowCount;
     private int colCount;
 
@@ -109,6 +114,10 @@ public class ObservableTableData extends Observable {
     public ObservableTableData( Double[][] data, boolean rowFormat, String[] headers,
                                 IsotopeSystem isotopeType, UncertaintyFormat unctFormat ) {
         this.columns = makeDataColumns(data, headers, rowFormat);
+        this.rowSelection = FXCollections.observableArrayList();
+        for (int i = 0; i < rowCount(); i++) {
+            rowSelection.add(new SimpleBooleanProperty(true));
+        }
         this.varMap = new HashMap<>();
         setIsotopeType(isotopeType);
         setUnctFormat(unctFormat);
@@ -150,6 +159,7 @@ public class ObservableTableData extends Observable {
             );
         }
         rowCount++;
+        rowSelection.add(index, new SimpleBooleanProperty(true));
 
         setChanged();
         notifyObservers(new DataOperation(index, -1, OperationType.INSERT_ROW));
@@ -170,6 +180,7 @@ public class ObservableTableData extends Observable {
             oldRow.add( column.remove(index).get() );
         }
         rowCount--;
+        rowSelection.remove(index);
 
 	    setChanged();
         notifyObservers(new DataOperation(index, -1, OperationType.DELETE_ROW));
@@ -353,7 +364,7 @@ public class ObservableTableData extends Observable {
             Map<String, Object> entry = new HashMap<>();
 
             // TODO Customize entry selection.
-            entry.put("Selected", true);
+            entry.put("Selected", rowSelection.get(rowIndex).get());
 
             for (Variable<Number> variable : Variables.VARIABLE_LIST) {
                 Double value;
@@ -391,6 +402,15 @@ public class ObservableTableData extends Observable {
             headers[i] = columns.get(i).getName();
         }
         return headers;
+    }
+
+    public ObservableList<BooleanProperty> getRowSelection() {
+        return rowSelection;
+    }
+
+    public void setRowSelected(int index, boolean selected) {
+        rowSelection.get(index).set(selected);
+        notifyObservers(new DataOperation(index, -1, selected ? OperationType.SELECT_ROW : OperationType.DESELECT_ROW));
     }
 
     /**
@@ -508,7 +528,9 @@ public class ObservableTableData extends Observable {
 		DELETE_ROW,
 		INSERT_COLUMN,
 		DELETE_COLUMN,
-		CHANGE_VALUE
+		CHANGE_VALUE,
+        SELECT_ROW,
+        DESELECT_ROW
 	}
 
 }

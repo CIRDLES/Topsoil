@@ -11,8 +11,8 @@ import org.cirdles.topsoil.app.TopsoilAboutScreen;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 
-import org.cirdles.topsoil.app.table.CellFormatDialog;
-import org.cirdles.topsoil.app.table.ObservableTableData;
+import org.cirdles.topsoil.app.spreadsheet.CellFormatDialog;
+import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 

@@ -8,7 +8,7 @@ import org.cirdles.commons.util.ResourceExtractor;
 
 import java.io.IOException;
 
-class AxisStylingController extends AnchorPane {
+public class AxisStylingController extends AnchorPane {
 
     private static final String CONTROLLER_FXML = "axis-styling-menu.fxml";
 
@@ -34,7 +34,7 @@ class AxisStylingController extends AnchorPane {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    AxisStylingController() {
+    public AxisStylingController() {
         try {
             FXMLLoader loader = new FXMLLoader(
                     new ResourceExtractor(AxisStylingController.class).extractResourceAsPath(CONTROLLER_FXML)

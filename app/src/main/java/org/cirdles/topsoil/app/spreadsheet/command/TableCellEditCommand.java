@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.table.command;
+package org.cirdles.topsoil.app.spreadsheet.command;
 
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.util.undo.Command;

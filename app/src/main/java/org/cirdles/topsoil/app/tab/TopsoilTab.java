@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import org.cirdles.topsoil.plot.TopsoilPlotType;
-import org.cirdles.topsoil.app.table.ObservableTableData;
+import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 

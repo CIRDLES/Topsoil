@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app;
 
+import com.google.common.base.Charsets;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -13,14 +14,22 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
+import org.cirdles.topsoil.app.style.CSSLoader;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.table.ObservableTableData;
+import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
-import java.io.IOException;
+import javax.swing.text.html.CSS;
+import java.io.*;
 import java.net.MalformedURLException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -29,27 +38,29 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class MainWindow extends Application {
 
-    /**
-     * The {@code String} path to the {@code .fxml} file for {@link MainWindowController}.
-     */
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
     private static final String MAIN_WINDOW_FXML = "main-window.fxml";
-    /**
-     * The {@code String} path to the {@code .css} file for Topsoil.
-     */
-    private static final String TOPSOIL_CSS = "topsoil-stylesheet.css";
-    /**
-     * The {@code String} path to the Topsoil logo.
-     */
+    private static final String CSS_DIR = "css/";
+    private static final String TOPSOIL_CSS;
+    private static final String SPREADSHEET_CSS;
+    private static final String SPREADSHEET_TEMP_CSS = "spreadsheet-temp.css";
+    private static final String ON_PICKER = "on-picker2.png";
+    private static final String OFF_PICKER = "off-picker2.png";
     private static final String TOPSOIL_LOGO = "topsoil-logo.png";
 
-    private static final String WINDOWS = "Windows";
-    private static final String MAC = "Mac";
-    private static final String LINUX = "Linux";
-
-    /**
-     * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
-     */
     private static final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(MainWindow.class);
+
+    static {
+        TOPSOIL_CSS = CSS_DIR + "topsoil.css";
+        SPREADSHEET_CSS = CSS_DIR + "spreadsheet.css";
+    }
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
 
     private static Stage primaryStage;
     private static Image windowIcon;
@@ -65,16 +76,6 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) {
 
         MainWindow.primaryStage = primaryStage;
-
-        // Detect OS
-        String OSName = System.getProperty("os.name").toLowerCase();
-        if (OSName.contains("windows")) {
-            MainWindow.OS = WINDOWS;
-        } else if (OSName.contains("mac") || OSName.contains("os x") || OSName.contains("macos")) {
-            MainWindow.OS = MAC;
-        } else if (OSName.contains("nix") || OSName.contains("nux") || OSName.contains("aix")) {
-            MainWindow.OS = LINUX;
-        }
 
         Parent mainWindow;
         MainWindowController mainWindowController;
@@ -94,12 +95,8 @@ public class MainWindow extends Application {
         primaryStage.setScene(scene);
 
         // Load CSS
-        try {
-            String css = RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_CSS).toUri().toURL().toExternalForm();
-            scene.getStylesheets().add(css);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Could not load " + TOPSOIL_CSS, e);
-        }
+        CSSLoader cssLoader = new CSSLoader();
+        scene.getStylesheets().addAll(cssLoader.getStylesheets());
 
         // If main window is closed, all other windows close.
         primaryStage.setOnCloseRequest(event -> {
@@ -136,8 +133,7 @@ public class MainWindow extends Application {
 
         // Load logo for use in window and system task bar
         try {
-            Image icon = new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO)
-                                                     .toUri().toString());
+            Image icon = new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
             primaryStage.getIcons().add(icon);
             MainWindow.windowIcon = icon;
 

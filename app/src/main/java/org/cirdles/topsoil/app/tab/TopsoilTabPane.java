@@ -4,7 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import org.cirdles.topsoil.app.table.ObservableTableData;
+import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 
 /**
  * A custom {@code TabPane} for managing {@link TopsoilTab}s.

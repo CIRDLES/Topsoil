@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.table;
+package org.cirdles.topsoil.app.spreadsheet;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +12,6 @@ import org.cirdles.topsoil.app.util.TopsoilException;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.Map;
 
 public class CellFormatDialog extends Dialog<String> {

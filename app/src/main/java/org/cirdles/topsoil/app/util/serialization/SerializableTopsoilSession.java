@@ -11,7 +11,7 @@ import org.cirdles.topsoil.app.tab.TopsoilDataView;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 
-import org.cirdles.topsoil.app.table.ObservableTableData;
+import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.Plot;
 
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.cirdles.topsoil.app.table.TopsoilDataColumn;
+import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
 import org.cirdles.topsoil.plot.PlotProperty;
 
 import java.util.*;

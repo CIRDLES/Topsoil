@@ -14,9 +14,9 @@ import org.cirdles.topsoil.app.plot.PlotGenerationHandler;
 import org.cirdles.topsoil.app.plot.TopsoilPlotView;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
-import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.ObservableTableData;
-import org.cirdles.topsoil.app.table.TopsoilSpreadsheetView;
+import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
+import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
+import org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.dialog.VariableChooserDialog;
 

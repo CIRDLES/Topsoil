@@ -17,7 +17,7 @@ import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.tab.TopsoilDataView;
-import org.cirdles.topsoil.app.table.TopsoilDataColumn;
+import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
 
 import java.util.ArrayList;
 import java.util.List;

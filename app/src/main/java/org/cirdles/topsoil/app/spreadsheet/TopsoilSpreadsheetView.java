@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.table;
+package org.cirdles.topsoil.app.spreadsheet;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,21 +10,24 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import org.cirdles.topsoil.app.tab.TabPaneHandler;
-import org.cirdles.topsoil.app.table.command.DeleteColumnCommand;
-import org.cirdles.topsoil.app.table.command.DeleteRowCommand;
-import org.cirdles.topsoil.app.table.command.InsertColumnCommand;
-import org.cirdles.topsoil.app.table.command.InsertRowCommand;
+import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilDoubleCell;
+import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilHeaderCell;
+import org.cirdles.topsoil.app.spreadsheet.command.DeleteColumnCommand;
+import org.cirdles.topsoil.app.spreadsheet.command.DeleteRowCommand;
+import org.cirdles.topsoil.app.spreadsheet.command.InsertColumnCommand;
+import org.cirdles.topsoil.app.spreadsheet.command.InsertRowCommand;
 import org.controlsfx.control.spreadsheet.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.*;
 
 /**
  * @author marottajb
  */
 public class TopsoilSpreadsheetView extends SpreadsheetView {
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
 
     private ObservableTableData data;
     private TableHandler tableHandler;      // reference to avoid garbage collection; no others ATOW
@@ -68,6 +71,8 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
             column.setPrefWidth(SpreadsheetConstants.INIT_COLUMN_WIDTH);
         }
 
+        this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
         dataCellFormatter.format();
     }
 
@@ -81,99 +86,94 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
 
     @Override
     public ContextMenu getSpreadsheetViewContextMenu() {
-        final ContextMenu contextMenu = new ContextMenu();
+        TablePosition<ObservableList<SpreadsheetCell>, ?> pos = this.getSelectionModel().getFocusedCell();
+        int rowIndex = getModelRow(pos.getRow());
+        int colIndex = getModelColumn(pos.getColumn());
+        System.out.println("ROW: " + rowIndex + ", COL: " + colIndex);
+        SpreadsheetCell targetCell = ((rowIndex >= 0 && colIndex >= 0) ?
+                this.getGrid().getRows().get(rowIndex).get(colIndex) : null);
 
-        final Menu addRowMenu = new Menu("Insert Row");
-        final MenuItem addRowAboveItem = new MenuItem("Above");
-        addRowAboveItem.setOnAction(event -> {
-            TablePosition<ObservableList<SpreadsheetCell>, ?> pos = this.getSelectionModel().getFocusedCell();
-            int index = getModelRow(pos.getRow());
+        if (targetCell != null && targetCell instanceof TopsoilDoubleCell) {
+            final ContextMenu contextMenu = new ContextMenu();
 
-            List<Double> row = new ArrayList<>(data.colCount());
-            for (int i = 0; i < data.colCount(); i++) {
-                row.add(0.0);
-            }
+            final Menu addRowMenu = new Menu("Insert Row");
+            final MenuItem addRowAboveItem = new MenuItem("Above");
+            addRowAboveItem.setOnAction(event -> {
+                List<Double> row = new ArrayList<>(data.colCount());
+                for (int i = 0; i < data.colCount(); i++) {
+                    row.add(0.0);
+                }
 
-            InsertRowCommand command = new InsertRowCommand(data, index, row);
-            command.execute();
-            TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
-        });
-        final MenuItem addRowBelowItem = new MenuItem("Below");
-        addRowBelowItem.setOnAction(event -> {
-            TablePosition<ObservableList<SpreadsheetCell>, ?> pos = this.getSelectionModel().getFocusedCell();
-            int index = getModelRow(pos.getRow()) + 1;
+                InsertRowCommand command = new InsertRowCommand(data, rowIndex, row);
+                command.execute();
+                TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
+            });
+            final MenuItem addRowBelowItem = new MenuItem("Below");
+            addRowBelowItem.setOnAction(event -> {
+                int index = rowIndex + 1;
 
-            List<Double> row = new ArrayList<>(data.colCount());
-            for (int i = 0; i < data.colCount(); i++) {
-                row.add(0.0);
-            }
+                List<Double> row = new ArrayList<>(data.colCount());
+                for (int i = 0; i < data.colCount(); i++) {
+                    row.add(0.0);
+                }
 
-            InsertRowCommand command = new InsertRowCommand(data, index, row);
-            command.execute();
-            TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
-        });
-        addRowMenu.getItems().addAll(addRowAboveItem, addRowBelowItem);
+                InsertRowCommand command = new InsertRowCommand(data, index, row);
+                command.execute();
+                TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
+            });
+            addRowMenu.getItems().addAll(addRowAboveItem, addRowBelowItem);
 
-        final MenuItem deleteRowItem = new MenuItem("Delete Row");
-        deleteRowItem.setOnAction(event -> {
-            TablePosition<ObservableList<SpreadsheetCell>, ?> pos = this.getSelectionModel().getFocusedCell();
-            int index = getModelRow(pos.getRow());
+            final MenuItem deleteRowItem = new MenuItem("Delete Row");
+            deleteRowItem.setOnAction(event -> {
+                DeleteRowCommand command = new DeleteRowCommand(data, rowIndex);
+                command.execute();
+                TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
+            });
 
-            DeleteRowCommand command = new DeleteRowCommand(data, index);
-            command.execute();
-            TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
-        });
+            final Menu addColumnMenu = new Menu("Add Column");
+            final MenuItem addColumnLeftItem = new MenuItem("Left");
+            addColumnLeftItem.setOnAction(event -> {
+                List<Double> column = new ArrayList<>(data.rowCount());
+                for (int i = 0; i < data.rowCount(); i++) {
+                    column.add(0.0);
+                }
 
-        final Menu addColumnMenu = new Menu("Add Column");
-        final MenuItem addColumnLeftItem = new MenuItem("Left");
-        addColumnLeftItem.setOnAction(event -> {
-            TablePosition<ObservableList<SpreadsheetCell>, ?> pos = this.getSelectionModel().getFocusedCell();
-            int index = getModelRow(pos.getColumn());
+                InsertColumnCommand command = new InsertColumnCommand(data, colIndex, column);
+                command.execute();
+                TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
+            });
+            final MenuItem addColumnRightItem = new MenuItem("Right");
+            addColumnRightItem.setOnAction(event -> {
+                int index = colIndex + 1;
 
-            List<Double> column = new ArrayList<>(data.rowCount());
-            for (int i = 0; i < data.rowCount(); i++) {
-                column.add(0.0);
-            }
+                List<Double> column = new ArrayList<>(data.rowCount());
+                for (int i = 0; i < data.rowCount(); i++) {
+                    column.add(0.0);
+                }
 
-            InsertColumnCommand command = new InsertColumnCommand(data, index, column);
-            command.execute();
-            TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
-        });
-        final MenuItem addColumnRightItem = new MenuItem("Right");
-        addColumnRightItem.setOnAction(event -> {
-            TablePosition<ObservableList<SpreadsheetCell>, ?> pos = this.getSelectionModel().getFocusedCell();
-            int index = getModelRow(pos.getColumn()) + 1;
+                InsertColumnCommand command = new InsertColumnCommand(data, index, column);
+                command.execute();
+                TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
+            });
+            addColumnMenu.getItems().addAll(addColumnLeftItem, addColumnRightItem);
 
-            List<Double> column = new ArrayList<>(data.rowCount());
-            for (int i = 0; i < data.rowCount(); i++) {
-                column.add(0.0);
-            }
+            final MenuItem deleteColumnItem = new MenuItem("Delete Column");
+            deleteColumnItem.setOnAction(event -> {
+                DeleteColumnCommand command = new DeleteColumnCommand(data, colIndex);
+                command.execute();
+                TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
+            });
 
-            InsertColumnCommand command = new InsertColumnCommand(data, index, column);
-            command.execute();
-            TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
-        });
-        addColumnMenu.getItems().addAll(addColumnLeftItem, addColumnRightItem);
+            contextMenu.getItems().addAll(
+                    addRowMenu,
+                    deleteRowItem,
+                    new SeparatorMenuItem(),
+                    addColumnMenu,
+                    deleteColumnItem);
 
-        final MenuItem deleteColumnItem = new MenuItem("Delete Column");
-        deleteColumnItem.setOnAction(event -> {
-            TablePosition<ObservableList<SpreadsheetCell>, ?> pos = this.getSelectionModel().getFocusedCell();
-            int index = getModelRow(pos.getColumn());
-
-            DeleteColumnCommand command = new DeleteColumnCommand(data, index);
-            command.execute();
-            TabPaneHandler.getTabPane().getSelectedTab().addUndo(command);
-        });
-
-        contextMenu.getItems().addAll(
-                addRowMenu,
-                deleteRowItem,
-                new SeparatorMenuItem(),
-                addColumnMenu,
-
-                deleteColumnItem);
-
-        return contextMenu;
+            return contextMenu;
+        }
+        return null;
     }
 
     /**
@@ -246,6 +246,22 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
         }
     }
 
+    void setRowSelected(int index, boolean selected) {
+        if (getGrid() != null && index >= 1) {
+            data.setRowSelected(index - 1, selected);
+            for (SpreadsheetCell cell : getGrid().getRows().get(index)) {
+                ((TopsoilDoubleCell) cell).setSelected(selected);
+            }
+        }
+    }
+
+    public void updateDataValue(SpreadsheetCell cell, Double value) {
+        int row = cell.getRow() - 1;
+        int col = cell.getColumn();
+        data.set(col, row, value);
+        dataCellFormatter.formatColumn(cell.getColumn());
+    }
+
     //**********************************************//
     //               PRIVATE METHODS                //
     //**********************************************//
@@ -256,65 +272,40 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
 
         ObservableList<ObservableList<DoubleProperty>> dataRows = data.getObservableRows();
         ObservableList<ObservableList<SpreadsheetCell>> cellRows = FXCollections.observableArrayList();
-        SpreadsheetCell cell;
 
 	    ObservableList<TopsoilDataColumn> columns = data.getDataColumns();
 	    ObservableList<SpreadsheetCell> headerRow = FXCollections.observableArrayList();
 	    for (int colIndex = 0; colIndex < data.colCount(); colIndex++) {
-		    cell = SpreadsheetCellType.STRING.createCell(
-				    data.rowCount(),
-				    colIndex,
-				    1,
-				    1,
-				    columns.get(colIndex).getName()
-		                                                );
-		    columns.get(colIndex).nameProperty().bindBidirectional(cell.itemProperty(), new StringConverterWithFormat<Object>() {
-			    @Override
-			    public Object fromString(String arg0) {
-				    return arg0;
-			    }
-			    @Override
-			    public String toString(Object arg0) {
-				    return arg0 == null ? "" : arg0.toString();
-			    }
-		    });
-		    cell.setStyle("-fx-background-color: lightgray;");
-
-		    headerRow.add(cell);
+		    headerRow.add(new TopsoilHeaderCell(
+                    this,
+                    data.rowCount(),
+                    colIndex,
+                    1,
+                    1,
+                    columns.get(colIndex)
+            ));
 	    }
 	    cellRows.add(headerRow);
 
         for (int rowIndex = 1; rowIndex <= data.rowCount(); rowIndex++) {
             ObservableList<SpreadsheetCell> row = FXCollections.observableArrayList();
-
             for (int colIndex = 0; colIndex < data.colCount(); colIndex++) {
-                cell = SpreadsheetCellType.DOUBLE.createCell(
+                row.add(new TopsoilDoubleCell(
+                        this,
                         rowIndex,
                         colIndex,
                         1,
                         1,
                         dataRows.get(rowIndex - 1).get(colIndex).get()
-                );
-//                cell.formatProperty().bind(format);
-                cell.setStyle("-fx-alignment: CENTER_RIGHT; -fx-font-family: monospaced");
-
-	            AtomicReference<SpreadsheetCell> cellRef = new AtomicReference<>(cell);
-                cell.itemProperty().addListener((observable, oldValue, newValue) ->
-		                                                updateDataValue(cellRef.get(), (Double) newValue));
-
-                row.add(cell);
+                ));
             }
             cellRows.add(row);
+
+            DataRowPicker picker = new DataRowPicker(this, rowIndex);
+            getRowPickers().put(rowIndex, picker);
         }
         grid.setRows(cellRows);
         return grid;
-    }
-
-    private void updateDataValue(SpreadsheetCell cell, Double value) {
-    	int row = cell.getRow() - 1;
-    	int col = cell.getColumn();
-	    data.set(col, row, value);
-    	dataCellFormatter.formatColumn(cell.getColumn());
     }
 
 	/**
@@ -323,9 +314,6 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
 	private class DataCellFormatter {
 
     	private TopsoilSpreadsheetView spreadsheet;
-    	private ChangeListener<Object> cellUpdatedListener = (observable, oldValue, newValue) -> {
-
-	    };
     	private ListChangeListener<ObservableList<SpreadsheetCell>> rowAddedRemovedListener =
 			    (ListChangeListener<ObservableList<SpreadsheetCell>>) c -> {
 				    while (c.next()) {
@@ -346,12 +334,14 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
 				    }
 			    };
 
+    	private Map<SpreadsheetCell, ChangeListener<Object>> cellUpdatedListeners = new HashMap<>();
+
 	    //**********************************************//
 	    //                 CONSTRUCTORS                 //
 	    //**********************************************//
 
-    	private DataCellFormatter(TopsoilSpreadsheetView tsv) {
-    		spreadsheet = tsv;
+    	private DataCellFormatter(TopsoilSpreadsheetView tsview) {
+    		this.spreadsheet = tsview;
 
     		ObservableList<ObservableList<SpreadsheetCell>> rows = spreadsheet.getItems();
     		for (ObservableList<SpreadsheetCell> row : rows) {
@@ -375,11 +365,14 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
 	    //**********************************************//
 
 	    private void listen(SpreadsheetCell cell) {
-		    cell.itemProperty().addListener(cellUpdatedListener);
+    	    ChangeListener<Object> listener = (observable, oldValue, newValue) -> formatColumn(cell.getColumn());
+		    cell.itemProperty().addListener(listener);
+            cellUpdatedListeners.put(cell, listener);
 	    }
 
 	    private void forget(SpreadsheetCell cell) {
-		    cell.itemProperty().removeListener(cellUpdatedListener);
+		    cell.itemProperty().removeListener(cellUpdatedListeners.get(cell));
+		    cellUpdatedListeners.remove(cell);
 	    }
 
 	    private void formatColumn(int col) {
