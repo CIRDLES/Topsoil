@@ -129,7 +129,7 @@ class SerializableTopsoilSession implements Serializable {
 
         tableData.put(TableDataType.TITLE, table.getTitle());
         tableData.put(TableDataType.HEADERS, table.getColumnHeaders());
-        tableData.put(TableDataType.ISOTOPE_TYPE, table.getIsotopeType().name());
+        tableData.put(TableDataType.ISOTOPE_TYPE, table.getIsotopeSystem().name());
         tableData.put(TableDataType.UNCERTANTY_FORMAT, table.getUnctFormat().name());
         tableData.put(TableDataType.DATA, table.getData());
 

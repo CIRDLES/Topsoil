@@ -63,13 +63,13 @@ public class TopsoilTab extends Tab {
 
         this.undoManager = new UndoManager(UNDO_HISTORY_MAX_SIZE);
 
-        this.isotopePrefix = data.getIsotopeType().getAbbreviation() + " - ";
+        this.isotopePrefix = data.getIsotopeSystem().getAbbreviation() + " - ";
 
         this.title = new SimpleStringProperty(data.getTitle());
         this.title.bindBidirectional(data.titleProperty()); // bind to TopsoilDataTable nameProperty
 
-        data.isotopeTypeProperty().addListener(c -> {
-            isotopePrefix = data.getIsotopeType().getAbbreviation() + " - ";
+        data.isotopeSystemProperty().addListener(c -> {
+            isotopePrefix = data.getIsotopeSystem().getAbbreviation() + " - ";
             setTitle(this.title.get());
         });
 

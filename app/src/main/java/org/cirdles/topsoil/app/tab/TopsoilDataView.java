@@ -124,7 +124,7 @@ public class TopsoilDataView extends AnchorPane {
 	    isotopeSystemComboBox.getItems().addAll(IsotopeSystem.values());
 	    uncertaintyFormatComboBox.getItems().addAll(UncertaintyFormat.values());
 
-	    isotopeSystemProperty().bindBidirectional(data.isotopeTypeProperty());
+	    isotopeSystemProperty().bindBidirectional(data.isotopeSystemProperty());
 	    setUncertaintyFormat(data.getUnctFormat());
 	    uncertaintyFormatComboBox.setDisable(true);
     }

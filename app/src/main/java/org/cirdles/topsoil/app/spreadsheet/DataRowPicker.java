@@ -47,7 +47,7 @@ public class DataRowPicker extends Picker {
             getStyleClass().remove(PICKER_ACTIVATED);
         }
         selectedProperty().set(selected);
-        spreadsheet.setRowSelected(row, isSelected());
+        spreadsheet.getData().setRowSelected(row, isSelected());
     }
 
     //**********************************************//

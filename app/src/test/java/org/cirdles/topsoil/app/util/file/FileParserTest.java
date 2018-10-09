@@ -36,17 +36,17 @@ public class FileParserTest extends ApplicationTest {
         testFileParsing(VALID_CUSTOM);
     }
 
-//    @Test
-//    public void text_exampleUPbData() {
-//        testStringParsing(EXAMPLE_UPB);
-//        testFileParsing(EXAMPLE_UPB);
-//    }
-//
-//    @Test
-//    public void test_exampleUThData() {
-//        testStringParsing(EXAMPLE_UTH);
-//        testFileParsing(EXAMPLE_UTH);
-//    }
+    @Test
+    public void text_exampleUPbData() {
+        testStringParsing(EXAMPLE_UPB);
+        testFileParsing(EXAMPLE_UPB);
+    }
+
+    @Test
+    public void test_exampleUThData() {
+        testStringParsing(EXAMPLE_UTH);
+        testFileParsing(EXAMPLE_UTH);
+    }
 
     private void testStringParsing(TestData sample) {
         try {

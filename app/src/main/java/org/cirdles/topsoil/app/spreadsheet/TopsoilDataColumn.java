@@ -12,16 +12,13 @@ import javafx.collections.FXCollections;
 import org.cirdles.topsoil.variable.Variable;
 
 /**
- * A custom {@code ArrayList} for storing data columns. The main purpose is to provide the ability to associate a data
- * column with a {@code Variable}.
- *
- * @author Jake Marotta
+ * @author marottajb
  */
 public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
 
-    //***********************
-    // Properties
-    //***********************
+    //**********************************************//
+    //                  PROPERTIES                  //
+    //**********************************************//
 
     private StringProperty name;
     public StringProperty nameProperty() {
@@ -64,7 +61,7 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
     }
 
     /**
-     * An {@code ObjectProperty} containing the {@code Variable} that is set to this column, if one exists.
+     * The {@code Variable} that is set to this column, if one exists.
      */
     private ObjectProperty<Variable> variable;
     public ObjectProperty<Variable> variableProperty() {
@@ -89,9 +86,6 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
         variableProperty().set(v);
     }
 
-    /**
-     * A {@code BooleanProperty} tracking whether or not a {@code Variable} is set to this column.
-     */
     private BooleanProperty hasVariable;
     public BooleanProperty hasVariableProperty() {
         if (hasVariable == null) {
@@ -110,22 +104,14 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
         return hasVariableProperty().get();
     }
 
-    //***********************
-    // Constructors
-    //***********************
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
-    /**
-     * Constructs an empty {@code TopsoilDataColumn}.
-     */
     public TopsoilDataColumn() {
         this("Untitled Column");
     }
 
-    /**
-     * Constructs a new {@code TopsoilDataColumn} with the specified {@code DoubleProperty}s as contents.
-     *
-     * @param properties    DoubleProperties
-     */
     public TopsoilDataColumn(DoubleProperty... properties) {
         this("Untitled Column", properties);
     }
@@ -135,6 +121,10 @@ public class TopsoilDataColumn extends SimpleListProperty<DoubleProperty> {
         setName(name);
         this.addAll(properties);
     }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     public Double[] getData() {
         Double[] data = new Double[size()];

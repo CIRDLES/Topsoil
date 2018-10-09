@@ -48,15 +48,15 @@ public class ObservableTableData extends Observable {
         title.set(str);
     }
 
-    private final ObjectProperty<IsotopeSystem> isotopeType = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
-    public final ObjectProperty<IsotopeSystem> isotopeTypeProperty() {
-        return isotopeType;
+    private final ObjectProperty<IsotopeSystem> isotopeSystem = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
+    public final ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
+        return isotopeSystem;
     }
-    public IsotopeSystem getIsotopeType() {
-        return isotopeType.get();
+    public IsotopeSystem getIsotopeSystem() {
+        return isotopeSystem.get();
     }
-    public void setIsotopeType(IsotopeSystem type ) {
-        isotopeType.set(type);
+    public void setIsotopeSystem(IsotopeSystem type ) {
+        isotopeSystem.set(type);
     }
 
     private final ObjectProperty<UncertaintyFormat> unctFormat = new SimpleObjectProperty<>(UncertaintyFormat.ONE_SIGMA_ABSOLUTE);
@@ -106,20 +106,20 @@ public class ObservableTableData extends Observable {
      *          a List of String headers for the columns
      * @param   rowFormat
      *          true if data in rows, false if in columns
-     * @param   isotopeType
+     * @param   isotopeSystem
      *          List of Lists of Double values
      * @param   unctFormat
      *          true if data in rows, false if in columns
      */
     public ObservableTableData( Double[][] data, boolean rowFormat, String[] headers,
-                                IsotopeSystem isotopeType, UncertaintyFormat unctFormat ) {
+                                IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat ) {
         this.columns = makeDataColumns(data, headers, rowFormat);
         this.rowSelection = FXCollections.observableArrayList();
         for (int i = 0; i < rowCount(); i++) {
             rowSelection.add(new SimpleBooleanProperty(true));
         }
         this.varMap = new HashMap<>();
-        setIsotopeType(isotopeType);
+        setIsotopeSystem(isotopeSystem);
         setUnctFormat(unctFormat);
     }
 
@@ -188,10 +188,10 @@ public class ObservableTableData extends Observable {
         return oldRow;
     }
 
-    public List<Double> getRow(int index) {
-        List<Double> row = new ArrayList<>(colCount);
+    public List<DoubleProperty> getRow(int index) {
+        List<DoubleProperty> row = new ArrayList<>(colCount);
         for (TopsoilDataColumn column : columns) {
-            row.add(column.get(index).get());
+            row.add(column.get(index));
         }
         return row;
     }
@@ -310,7 +310,7 @@ public class ObservableTableData extends Observable {
 
     public void set(int column, int row, double value) {
         columns.get(column).get(row).set(value);
-        notifyObservers(new DataOperation(row, column, OperationType.CHANGE_VALUE));
+//        notifyObservers(new DataOperation(row, column, OperationType.CHANGE_VALUE));
     }
 
     public Double[][] getData() {
@@ -528,7 +528,7 @@ public class ObservableTableData extends Observable {
 		DELETE_ROW,
 		INSERT_COLUMN,
 		DELETE_COLUMN,
-		CHANGE_VALUE,
+//		CHANGE_VALUE,
         SELECT_ROW,
         DESELECT_ROW
 	}

@@ -89,7 +89,7 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
         TablePosition<ObservableList<SpreadsheetCell>, ?> pos = this.getSelectionModel().getFocusedCell();
         int rowIndex = getModelRow(pos.getRow());
         int colIndex = getModelColumn(pos.getColumn());
-        System.out.println("ROW: " + rowIndex + ", COL: " + colIndex);
+
         SpreadsheetCell targetCell = ((rowIndex >= 0 && colIndex >= 0) ?
                 this.getGrid().getRows().get(rowIndex).get(colIndex) : null);
 
@@ -246,15 +246,6 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
         }
     }
 
-    void setRowSelected(int index, boolean selected) {
-        if (getGrid() != null && index >= 1) {
-            data.setRowSelected(index - 1, selected);
-            for (SpreadsheetCell cell : getGrid().getRows().get(index)) {
-                ((TopsoilDoubleCell) cell).setSelected(selected);
-            }
-        }
-    }
-
     public void updateDataValue(SpreadsheetCell cell, Double value) {
         int row = cell.getRow() - 1;
         int col = cell.getColumn();
@@ -276,14 +267,13 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
 	    ObservableList<TopsoilDataColumn> columns = data.getDataColumns();
 	    ObservableList<SpreadsheetCell> headerRow = FXCollections.observableArrayList();
 	    for (int colIndex = 0; colIndex < data.colCount(); colIndex++) {
-		    headerRow.add(new TopsoilHeaderCell(
-                    this,
-                    data.rowCount(),
-                    colIndex,
+	        headerRow.add(new TopsoilHeaderCell(
+	                this,
+                    0, colIndex,
                     1,
                     1,
-                    columns.get(colIndex)
-            ));
+                    columns.get(colIndex).nameProperty())
+            );
 	    }
 	    cellRows.add(headerRow);
 
@@ -296,8 +286,8 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
                         colIndex,
                         1,
                         1,
-                        dataRows.get(rowIndex - 1).get(colIndex).get()
-                ));
+                        dataRows.get(rowIndex - 1).get(colIndex))
+                );
             }
             cellRows.add(row);
 
@@ -309,13 +299,22 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
     }
 
 	/**
-	 *
+	 * Responsible for maintaining the text formatting of data cells. Double values within a column should be
+     * justified to the right, and aligned vertically by their decimal separator. For example, if two cells in a
+     * column have the values:
+     *
+     *      |1.123     |
+     *      |1.12345   |
+     *
+     * ... then they should be formatted like this:
+     *
+     *      |   1.123  |
+     *      |   1.12345|
 	 */
 	private class DataCellFormatter {
 
     	private TopsoilSpreadsheetView spreadsheet;
-    	private ListChangeListener<ObservableList<SpreadsheetCell>> rowAddedRemovedListener =
-			    (ListChangeListener<ObservableList<SpreadsheetCell>>) c -> {
+    	private ListChangeListener<ObservableList<SpreadsheetCell>> rowAddedRemovedListener = c -> {
 				    while (c.next()) {
 				    	if (c.wasUpdated()) {
 						    format();
@@ -365,14 +364,18 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
 	    //**********************************************//
 
 	    private void listen(SpreadsheetCell cell) {
-    	    ChangeListener<Object> listener = (observable, oldValue, newValue) -> formatColumn(cell.getColumn());
-		    cell.itemProperty().addListener(listener);
-            cellUpdatedListeners.put(cell, listener);
+    	    if (cell instanceof TopsoilDoubleCell && (! cellUpdatedListeners.containsKey(cell))) {
+                ChangeListener<Object> listener = (observable, oldValue, newValue) -> formatColumn(cell.getColumn());
+                cell.itemProperty().addListener(listener);
+                cellUpdatedListeners.put(cell, listener);
+            }
 	    }
 
 	    private void forget(SpreadsheetCell cell) {
-		    cell.itemProperty().removeListener(cellUpdatedListeners.get(cell));
-		    cellUpdatedListeners.remove(cell);
+    	    if (cell instanceof TopsoilDoubleCell && cellUpdatedListeners.containsKey(cell)) {
+                cell.itemProperty().removeListener(cellUpdatedListeners.get(cell));
+                cellUpdatedListeners.remove(cell);
+            }
 	    }
 
 	    private void formatColumn(int col) {

@@ -91,7 +91,7 @@ public class PlotGenerationHandler {
 
 	    // Connect table data to properties panel
 	    PlotPropertiesPanel panel = plotView.getPropertiesPanel();
-	    panel.isotopeSystemProperty().bindBidirectional(dataView.getData().isotopeTypeProperty());
+	    panel.isotopeSystemProperty().bindBidirectional(dataView.getData().isotopeSystemProperty());
 
         // Update properties panel with changes in the plot
         PlotObservationThread observationThread = new PlotObservationThread();

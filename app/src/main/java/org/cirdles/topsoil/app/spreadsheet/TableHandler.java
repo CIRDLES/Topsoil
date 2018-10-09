@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.spreadsheet;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.plot.TopsoilPlotView;
@@ -10,8 +12,10 @@ import org.controlsfx.control.spreadsheet.*;
 import org.cirdles.topsoil.app.spreadsheet.ObservableTableData.DataOperation;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * This class handles the spreadsheet in response to changes in the data model.
+ */
 public class TableHandler implements Observer {
 
 	private TopsoilSpreadsheetView spreadsheet;
@@ -39,43 +43,32 @@ public class TableHandler implements Observer {
 
 			Grid grid = spreadsheet.getGrid();
 			int rowIndex;
-			int colIndex;
 			DataRowPicker picker;
 
 			switch (op.getType()) {
 				case INSERT_ROW:
-					try {
-						rowIndex = op.getRowIndex();
-						grid = addRow(rowIndex, data.getRow(rowIndex));
-					} catch (TopsoilException e) {
-						e.printStackTrace();
-					}
+                    addRow();
 					break;
 				case DELETE_ROW:
-					grid = removeRow(op.getRowIndex());
+					removeRow();
 					break;
 				case INSERT_COLUMN:
-					try {
-						colIndex = op.getColIndex();
-						grid = addColumn(colIndex, Arrays.asList(data.getDataColumns().get(colIndex).getData()));
-					} catch (TopsoilException e) {
-						e.printStackTrace();
-					}
+					addColumn();
 					break;
 				case DELETE_COLUMN:
-					grid = removeColumn(op.getColIndex());
+					removeColumn();
 					break;
-				case CHANGE_VALUE:
-					rowIndex = op.getRowIndex();
-					colIndex = op.getColIndex();
-					SpreadsheetCell cell = grid.getRows().get(rowIndex).get(colIndex);
-
-					if (cell.getCellType() == SpreadsheetCellType.DOUBLE) {
-						if (Double.compare(data.get(colIndex, rowIndex).getValue(), (Double) cell.getItem()) != 0) {
-							cell.setItem(data.get(colIndex, rowIndex).getValue());
-						}
-					}
-					break;
+//				case CHANGE_VALUE:
+//					rowIndex = op.getRowIndex();
+//					colIndex = op.getColIndex();
+//					SpreadsheetCell cell = grid.getRows().get(rowIndex).get(colIndex);
+//
+//					if (cell.getCellType() == SpreadsheetCellType.DOUBLE) {
+//						if (Double.compare(data.get(colIndex, rowIndex).getValue(), (Double) cell.getItem()) != 0) {
+//							spreadsheet.getGrid().setCellValue(rowIndex, colIndex, data.get(colIndex, rowIndex).getValue());
+//						}
+//					}
+//					break;
 				case SELECT_ROW:
 					rowIndex = op.getRowIndex();
 					picker = (DataRowPicker) spreadsheet.getRowPickers().get(rowIndex + 1);
@@ -99,193 +92,110 @@ public class TableHandler implements Observer {
 				plotView.getPlot().setData(data.getPlotEntries());
 			}
 		}
+
+		resetDataCells();
+		resetPickers();
 	}
 
 	//**********************************************//
 	//               PRIVATE METHODS                //
 	//**********************************************//
 
-	private ObservableList<SpreadsheetCell> dataToCellRow( int index, List<Double> values ) {
-		ObservableList<SpreadsheetCell> cells = FXCollections.observableArrayList();
-		for (int i = 0; i < values.size(); i++) {
-			cells.add(new TopsoilDoubleCell(
+	private void addRow() {
+		Grid grid = spreadsheet.getGrid();
+		ObservableList<ObservableList<SpreadsheetCell>> gridRows = spreadsheet.getGrid().getRows();
+		DoubleProperty dummy = new SimpleDoubleProperty();
+
+		// Create new row of cells at the bottom of the grid
+		ObservableList<SpreadsheetCell> row = FXCollections.observableArrayList();
+		for (int i = 0; i < grid.getColumnCount(); i++) {
+			row.add(new TopsoilDoubleCell(
 					spreadsheet,
-					index,
+					grid.getRowCount(),
 					i,
 					1,
 					1,
-					values.get(i)
+                    null    // will be assigned by resetDataCells()
 			));
 		}
-		return cells;
+		gridRows.add(row);
+        grid.setRows(gridRows);
+
+		spreadsheet.getRowPickers().put(gridRows.size() - 1, new DataRowPicker(spreadsheet, gridRows.size() - 1));
 	}
 
-	private ObservableList<SpreadsheetCell> dataToCellColumn( int index, List<Double> values ) {
-		ObservableList<SpreadsheetCell> cells = FXCollections.observableArrayList();
-		SpreadsheetCell cell;
-		for (int i = 0; i < values.size(); i++) {
-			cell = SpreadsheetCellType.DOUBLE.createCell(
-					i,
-					index,
-					1,
-					1,
-					values.get(i)
-			                                            );
-			cells.add(cell);
-		}
-		return cells;
-	}
-
-	private Grid addRow(int index, List<Double> values) throws TopsoilException {
-		checkRowSize(values);
-
+	private void removeRow() {
 		Grid grid = spreadsheet.getGrid();
-		ObservableList<ObservableList<SpreadsheetCell>> rows = copyRows(grid);
+		ObservableList<ObservableList<SpreadsheetCell>> gridRows = spreadsheet.getGrid().getRows();
 
-		rows.add(index, dataToCellRow(index, values));
+		gridRows.remove(grid.getRowCount() - 1);
+        grid.setRows(gridRows);
 
-		for (int rowIndex = index + 1; rowIndex < rows.size(); rowIndex++) {
-
-			ObservableList<SpreadsheetCell> row = rows.get(rowIndex);
-			for (int colIndex = 0; colIndex < row.size(); colIndex++) {
-				SpreadsheetCell cell = row.get(colIndex);
-				SpreadsheetCell newCell = SpreadsheetCellType.DOUBLE.createCell(
-						cell.getRow() + 1,
-						cell.getColumn(),
-						cell.getRowSpan(),
-						cell.getColumnSpan(),
-						(Double) cell.getItem()
-				                                                               );
-
-				AtomicReference<SpreadsheetCell> cellRef = new AtomicReference<>(newCell);
-				cell.itemProperty().addListener((observable, oldValue, newValue) ->
-														spreadsheet.updateDataValue(cellRef.get(), (Double) newValue));
-				row.set(colIndex, newCell);
-			}
-		}
-		spreadsheet.getRowPickers().put(rows.size() - 1, new DataRowPicker(spreadsheet, rows.size() - 1));
-		resetPickers();
-
-		grid.setRows(rows);
-		return grid;
+		spreadsheet.getRowPickers().remove(gridRows.size() - 1, new DataRowPicker(spreadsheet, gridRows.size() - 1));
 	}
 
-	private Grid removeRow(int index) {
+	private void addColumn() {
 		Grid grid = spreadsheet.getGrid();
-		ObservableList<ObservableList<SpreadsheetCell>> rows = copyRows(grid);
-
-		rows.remove(index);
-
-		for (int rowIndex = index; rowIndex < rows.size(); rowIndex++) {
-			ObservableList<SpreadsheetCell> row = rows.get(rowIndex);
-
-			for (int colIndex = 0; colIndex < row.size(); colIndex++) {
-				SpreadsheetCell cell = row.get(colIndex);
-				SpreadsheetCell newCell = SpreadsheetCellType.DOUBLE.createCell(
-						cell.getRow() - 1,
-						cell.getColumn(),
-						cell.getRowSpan(),
-						cell.getColumnSpan(),
-						(Double) cell.getItem()
-				                                                               );
-				row.set(colIndex, newCell);
-			}
-		}
-		spreadsheet.getRowPickers().remove(rows.size() - 1, new DataRowPicker(spreadsheet, rows.size() - 1));
-		resetPickers();
-		
-		grid.setRows(rows);
-		return grid;
-	}
-
-	private Grid addColumn(int index, List<Double> values) throws TopsoilException {
-		checkColumnSize(values);
-
-		Grid grid = spreadsheet.getGrid();
-		ObservableList<ObservableList<SpreadsheetCell>> rows = copyRows(grid);
-
-		ObservableList<SpreadsheetCell> cellColumn = dataToCellColumn(index, values);
+		ObservableList<ObservableList<SpreadsheetCell>> gridRows = spreadsheet.getGrid().getRows();
 		ObservableList<SpreadsheetCell> row;
 
-		for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
-			row = rows.get(rowIndex);
-			row.add(index, cellColumn.get(rowIndex));
-
-			for (int colIndex = index + 1; colIndex < row.size(); colIndex++) {
-				SpreadsheetCell cell = row.get(colIndex);
-				SpreadsheetCell newCell = SpreadsheetCellType.DOUBLE.createCell(
-						cell.getRow(),
-						cell.getColumn() + 1,
-						cell.getRowSpan(),
-						cell.getColumnSpan(),
-						(Double) cell.getItem()
-				                                                               );
-				row.set(colIndex, newCell);
-			}
+		for (int rowIndex = 0; rowIndex < gridRows.size(); rowIndex++) {
+			row = gridRows.get(rowIndex);
+			row.add(new TopsoilDoubleCell(
+			        spreadsheet,
+                    rowIndex,
+                    grid.getColumnCount(),
+                    1,
+                    1,
+                    null    // will be assigned by resetDataCells()
+            ));
 		}
-
-		grid.setRows(rows);
-		return grid;
+		grid.setRows(gridRows);
 	}
 
-	private Grid removeColumn(int index) {
+	private void removeColumn() {
 		Grid grid = spreadsheet.getGrid();
-		ObservableList<ObservableList<SpreadsheetCell>> rows = copyRows(grid);
+		ObservableList<ObservableList<SpreadsheetCell>> rows = spreadsheet.getGrid().getRows();
 
 		for (ObservableList<SpreadsheetCell> row : rows) {
-			row.remove(index);
-
-			for (int colIndex = index; colIndex < row.size(); colIndex++) {
-				SpreadsheetCell cell = row.get(colIndex);
-				SpreadsheetCell newCell = SpreadsheetCellType.DOUBLE.createCell(
-						cell.getRow(),
-						cell.getColumn() - 1,
-						cell.getRowSpan(),
-						cell.getColumnSpan(),
-						(Double) cell.getItem()
-				                                                               );
-				row.set(colIndex, newCell);
-			}
+			row.remove(spreadsheet.getData().colCount() - 1);
 		}
-
 		grid.setRows(rows);
-		return grid;
-	}
-
-	private ObservableList<ObservableList<SpreadsheetCell>> copyRows(Grid grid) {
-		ObservableList<ObservableList<SpreadsheetCell>> rows = FXCollections.observableArrayList();
-		for (ObservableList<SpreadsheetCell> row : grid.getRows()) {
-			rows.add(FXCollections.observableArrayList(row));
-		}
-		return rows;
-	}
-
-	private void checkRowSize(List<Double> newRow) throws TopsoilException {
-		if (spreadsheet.getGrid().getColumnCount() != newRow.size()) {
-			throw new TopsoilException("Invalid row length. " +
-			                           "Expected: " + spreadsheet.getGrid().getColumnCount() + ", " +
-			                           "Actual: " + newRow.size());
-		}
-	}
-
-	private void checkColumnSize(List<Double> newCol) throws TopsoilException {
-		if ( spreadsheet.getGrid().getRowCount() != newCol.size() ) {
-			throw new TopsoilException("Invalid column length. " +
-			                           "Expected: " + spreadsheet.getGrid().getRowCount() + ", " +
-			                           "Actual: " + newCol.size());
-		}
 	}
 
 	private void resetPickers() {
-		DataRowPicker picker;
-		for (int i = 1; i <= spreadsheet.getData().rowCount(); i++) {
-			picker = (DataRowPicker) spreadsheet.getRowPickers().get(i);
-			picker.setSelected(spreadsheet.getData().getRowSelection().get(i - 1).get());
-			if ( ! picker.isSelected() ) {
-				for (SpreadsheetCell cell : spreadsheet.getGrid().getRows().get(i)) {
-					cell.setStyle("-fx-background-color: lightgray;");
-				}
-			}
-		}
+	    if (spreadsheet.getGrid().getRowCount() > 1) {
+            DataRowPicker picker;
+            for (int i = 1; i < spreadsheet.getGrid().getRowCount(); i++) {
+                picker = (DataRowPicker) spreadsheet.getRowPickers().get(i);
+                picker.setSelected(spreadsheet.getData().getRowSelection().get(i - 1).get());
+                if (!picker.isSelected()) {
+                    for (SpreadsheetCell cell : spreadsheet.getGrid().getRows().get(i)) {
+                        ((TopsoilDoubleCell) cell).setSelected(false);
+                    }
+                }
+            }
+        }
 	}
+
+	private void resetDataCells() {
+	    Grid grid = spreadsheet.getGrid();
+	    if (grid.getRowCount() > 0) {
+            ObservableList<ObservableList<SpreadsheetCell>> gridRows = grid.getRows();
+            ObservableList<SpreadsheetCell> row;
+            TopsoilDoubleCell cell;
+            DoubleProperty source;
+
+            for (int rowIndex = 0; rowIndex < spreadsheet.getData().rowCount(); rowIndex++) {
+                row = gridRows.get(rowIndex);
+                for (int colIndex = 0; colIndex < spreadsheet.getData().colCount(); colIndex++) {
+                    source = spreadsheet.getData().get(colIndex, rowIndex);
+                    cell = (TopsoilDoubleCell) row.get(colIndex);
+                    if (cell.getSource() != source) {
+                        cell.setSource(source);
+                    }
+                }
+            }
+        }
+    }
 }
