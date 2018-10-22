@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.spreadsheet.command;
 
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
-import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
+import org.cirdles.topsoil.app.data.ObservableDataColumn;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -16,9 +16,9 @@ import org.cirdles.topsoil.app.util.undo.UndoManager;
  */
 public class DeleteColumnCommand implements Command {
 
-    private ObservableTableData data;
+    private ObservableDataTable data;
     private int index;
-    private TopsoilDataColumn column;
+    private ObservableDataColumn column;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -28,11 +28,11 @@ public class DeleteColumnCommand implements Command {
      * Constructs a new delete column command from the specified data controller and index.
      *
      * @param   data
-     *          ObservableTableData containing the column
+     *          ObservableDataTable containing the column
      * @param   colIndex
      *          the int index of the column
      */
-    public DeleteColumnCommand( ObservableTableData data, int colIndex ) {
+    public DeleteColumnCommand(ObservableDataTable data, int colIndex ) {
         this.data = data;
         this.index = colIndex;
     }

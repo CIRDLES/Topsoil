@@ -4,7 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 
 /**
  * A custom {@code TabPane} for managing {@link TopsoilTab}s.
@@ -33,7 +33,7 @@ public class TopsoilTabPane extends TabPane {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public void add(ObservableTableData data) {
+    public void add(ObservableDataTable data) {
         TopsoilDataView dataView = new TopsoilDataView(data);
 
         // Create new TopsoilTab
@@ -45,12 +45,12 @@ public class TopsoilTabPane extends TabPane {
         this.getTabs().add(tab);
         this.getSelectionModel().select(tab);
 
-//        for (TopsoilDataColumn column : data.getDataColumns()) {
-//            column.nameProperty().addListener(c -> {
+//        for (ObservableDataColumn column : data.getColumns()) {
+//            column.rowIDProperty().addListener(c -> {
 //                if (column.getVariable() == Variables.X) {
-//                    dataView.getPlotPanel().setxAxisTitle(column.getName());
+//                    dataView.getPlotPanel().setxAxisTitle(column.getRowID());
 //                } else if (column.getVariable() == Variables.Y) {
-//                    dataView.getPlotPanel().setyAxisTitle(column.getName());
+//                    dataView.getPlotPanel().setyAxisTitle(column.getRowID());
 //                }
 //            });
 //        }

@@ -9,13 +9,13 @@ import javafx.scene.control.ComboBox;
 
 import javafx.scene.layout.AnchorPane;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.data.ObservableDataColumn;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.plot.PlotGenerationHandler;
 import org.cirdles.topsoil.app.plot.TopsoilPlotView;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
-import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.dialog.VariableChooserDialog;
@@ -37,7 +37,7 @@ public class TopsoilDataView extends AnchorPane {
 
     private static final String CONTROLLER_FXML = "data-view.fxml";
 
-    private ObservableTableData data;
+    private ObservableDataTable data;
     private TopsoilSpreadsheetView spreadsheetView;
 
 	//**********************************************//
@@ -91,10 +91,10 @@ public class TopsoilDataView extends AnchorPane {
     //**********************************************//
 
     public TopsoilDataView() {
-        this(new ObservableTableData());
+        this(new ObservableDataTable());
     }
 
-    public TopsoilDataView(ObservableTableData data) {
+    public TopsoilDataView(ObservableDataTable data) {
         this.data = data;
         this.spreadsheetView = new TopsoilSpreadsheetView(data);
         try {
@@ -133,31 +133,31 @@ public class TopsoilDataView extends AnchorPane {
         return spreadsheetView;
     }
 
-    public ObservableTableData getData() {
+    public ObservableDataTable getData() {
         return spreadsheetView.getData();
     }
 
     public void showVariableChooserDialog(List<Variable<Number>> required) {
-        Map<Variable<Number>, TopsoilDataColumn> selections = VariableChooserDialog.showDialog(this, required);
+        Map<Variable<Number>, ObservableDataColumn> selections = VariableChooserDialog.showDialog(this, required);
         setVariableAssignments(selections);
     }
 
-    public void setVariableAssignments(Map<Variable<Number>, TopsoilDataColumn> assignments) {
+    public void setVariableAssignments(Map<Variable<Number>, ObservableDataColumn> assignments) {
 
         if (assignments != null) {
 
-            for (Map.Entry<Variable<Number>, TopsoilDataColumn> entry : assignments.entrySet()) {
-                data.setVariableForColumn(data.getDataColumns().indexOf(entry.getValue()), entry.getKey());
+            for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : assignments.entrySet()) {
+                data.setVariableForColumn(data.getColumns().indexOf(entry.getValue()), entry.getKey());
             }
 
             for (TopsoilPlotView plotView : data.getOpenPlots().values()) {
                 plotView.getPlot().setData(data.getPlotEntries());
 	            // Re-name x and y axis titles
 	            if (assignments.containsKey(Variables.X)) {
-		            plotView.getPropertiesPanel().setXAxisTitle((assignments.get(Variables.X).getName()));
+		            plotView.getPropertiesPanel().setXAxisTitle((assignments.get(Variables.X).getHeader()));
 	            }
 	            if (assignments.containsKey(Variables.Y)) {
-		            plotView.getPropertiesPanel().setYAxisTitle((assignments.get(Variables.Y).getName()));
+		            plotView.getPropertiesPanel().setYAxisTitle((assignments.get(Variables.Y).getHeader()));
 	            }
             }
         }

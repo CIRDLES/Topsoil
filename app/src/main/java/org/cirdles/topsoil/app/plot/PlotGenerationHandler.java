@@ -7,11 +7,11 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.data.ObservableDataColumn;
 import org.cirdles.topsoil.app.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.app.tab.TopsoilDataView;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
 import org.cirdles.topsoil.plot.DefaultProperties;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
@@ -68,10 +68,10 @@ public class PlotGenerationHandler {
         Plot plot = plotType.getPlot();
 	    plot.setData(data);
 	    // reload data on column insertion/deletion
-	    dataView.getData().getDataColumns().addListener((ListChangeListener<TopsoilDataColumn>) c -> {
+	    dataView.getData().getColumns().addListener((ListChangeListener<ObservableDataColumn>) c -> {
 		    plot.setData(dataView.getData().getPlotEntries());
 	    });
-	    for (TopsoilDataColumn column : dataView.getData().getDataColumns()) {
+	    for (ObservableDataColumn column : dataView.getData().getColumns()) {
 	    	// reload data on row insertion/deletion
 	    	column.addListener((ListChangeListener<DoubleProperty>) c -> plot.setData(dataView.getData().getPlotEntries()) );
 	    	for (DoubleProperty property : column) {

@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.spreadsheet.command;
 
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class InsertRowCommand implements Command {
 
-    private ObservableTableData data;
+    private ObservableDataTable data;
     private int index;
     private List<Double> row;
 
@@ -30,13 +30,13 @@ public class InsertRowCommand implements Command {
      * Constructs a new {@code InsertRowCommand} for an inserted row at the specified index.
      *
      * @param   data
-     *          the ObservableTableData to which the row was inserted
+     *          the ObservableDataTable to which the row was inserted
      * @param   rowIndex
      *          the inserted row's index
      * @param   row
      *          the row that was inserted
      */
-    public InsertRowCommand(ObservableTableData data, int rowIndex, List<Double> row) {
+    public InsertRowCommand(ObservableDataTable data, int rowIndex, List<Double> row) {
         this.data = data;
         this.index = rowIndex;
         this.row = row;

@@ -1,7 +1,8 @@
-package org.cirdles.topsoil.app.spreadsheet;
+package org.cirdles.topsoil.app.spreadsheet.picker;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView;
 import org.controlsfx.control.spreadsheet.Picker;
 
 /**
@@ -21,21 +22,24 @@ public class DataRowPicker extends Picker {
     //**********************************************//
 
     private TopsoilSpreadsheetView spreadsheet;
-    private int row;
+    private int rowIndex;
 
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private BooleanProperty selected = new SimpleBooleanProperty(true);
+    /**
+     * Whether or not the picker's state is "activated".
+     */
+    private final BooleanProperty selected = new SimpleBooleanProperty(true);
     public BooleanProperty selectedProperty() {
         return selected;
     }
-    public boolean isSelected() {
-        return selectedProperty().get();
+    public final boolean isSelected() {
+        return selected.get();
     }
-    public void setSelected(boolean selected) {
-        if (selected) {
+    public final void setSelected(boolean b) {
+        if (b) {
             if (! getStyleClass().contains(PICKER_ACTIVATED)) {
                 getStyleClass().add(PICKER_ACTIVATED);
             }
@@ -46,17 +50,25 @@ public class DataRowPicker extends Picker {
             }
             getStyleClass().remove(PICKER_ACTIVATED);
         }
-        selectedProperty().set(selected);
-        spreadsheet.getData().setRowSelected(row, isSelected());
+        selected.set(b);
+        spreadsheet.getData().getRow(rowIndex).setSelected(b);
     }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public DataRowPicker(TopsoilSpreadsheetView spreadsheet, int row) {
+    /**
+     * Constructs a {@code DataRowPicker} for the provided {@code TopsoilSpreadsheetView} at the specified row index.
+     *
+     * @param   spreadsheet
+     *          TopsoilSpreadsheetView
+     * @param   rowIndex
+     *          the index of the row that this picker controls
+     */
+    public DataRowPicker(TopsoilSpreadsheetView spreadsheet, int rowIndex) {
         this.spreadsheet = spreadsheet;
-        this.row = row;
+        this.rowIndex = rowIndex;
         getStyleClass().addAll(PICKER_ACTIVATED);
     }
 
@@ -69,12 +81,12 @@ public class DataRowPicker extends Picker {
         this.setSelected( ! this.isSelected() );
     }
 
-    public int getRow() {
-        return row;
+    public int getRowIndex() {
+        return rowIndex;
     }
 
-    public void setRow(int index) {
-        row = index;
+    public void setRowIndex(int index) {
+        rowIndex = index;
     }
 
 }

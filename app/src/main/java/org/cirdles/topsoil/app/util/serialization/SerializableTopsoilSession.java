@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.util.serialization;
 
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.plot.PlotGenerationHandler;
 import org.cirdles.topsoil.plot.TopsoilPlotType;
@@ -11,7 +12,6 @@ import org.cirdles.topsoil.app.tab.TopsoilDataView;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.Plot;
 
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
+import org.cirdles.topsoil.app.data.ObservableDataColumn;
 import org.cirdles.topsoil.plot.PlotProperty;
 
 import java.util.*;
@@ -72,7 +72,7 @@ class SerializableTopsoilSession implements Serializable {
      * @param tabs  TopsoilTabPane
      */
     public void loadDataToTopsoilTabPane(TopsoilTabPane tabs) {
-        ObservableTableData table;
+        ObservableDataTable table;
         Double[][] data;
         String[] headers;
         IsotopeSystem isotopeType;
@@ -86,7 +86,7 @@ class SerializableTopsoilSession implements Serializable {
             isotopeType = IsotopeSystem.valueOf(String.valueOf(tableData.get(TableDataType.ISOTOPE_TYPE)));
             unctFormat = UncertaintyFormat.valueOf(String.valueOf(tableData.get(TableDataType.UNCERTANTY_FORMAT)));
 
-            table = new ObservableTableData(data, true, headers, isotopeType, unctFormat);
+            table = new ObservableDataTable(data, true, headers, isotopeType, unctFormat);
 
             table.setTitle(String.valueOf(tableData.get(TableDataType.TITLE)));
             tabs.add(table);
@@ -123,7 +123,7 @@ class SerializableTopsoilSession implements Serializable {
         out.defaultWriteObject();
     }
 
-    private HashMap<TableDataType, Serializable> extractTableData(ObservableTableData table) {
+    private HashMap<TableDataType, Serializable> extractTableData(ObservableDataTable table) {
 
         HashMap<TableDataType, Serializable> tableData = new HashMap<>();
 
@@ -133,7 +133,7 @@ class SerializableTopsoilSession implements Serializable {
         tableData.put(TableDataType.UNCERTANTY_FORMAT, table.getUnctFormat().name());
         tableData.put(TableDataType.DATA, table.getData());
 
-        List<TopsoilDataColumn> columns = table.getDataColumns();
+        List<ObservableDataColumn> columns = table.getColumns();
         HashMap<String, Integer> varMap = new HashMap<>(); // String is the name of the variable, Integer is the index of the column
         for(int i = 0; i < columns.size(); i++) {
             if (columns.get(i).hasVariable()) {

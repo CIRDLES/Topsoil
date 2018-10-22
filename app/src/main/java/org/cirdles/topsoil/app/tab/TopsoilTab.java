@@ -4,8 +4,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.plot.TopsoilPlotType;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -57,7 +57,7 @@ public class TopsoilTab extends Tab {
 
     public TopsoilTab(TopsoilDataView view) {
         this.dataView = view;
-        ObservableTableData data = view.getData();
+        ObservableDataTable data = view.getData();
 
         setContent(view);
 
@@ -66,7 +66,7 @@ public class TopsoilTab extends Tab {
         this.isotopePrefix = data.getIsotopeSystem().getAbbreviation() + " - ";
 
         this.title = new SimpleStringProperty(data.getTitle());
-        this.title.bindBidirectional(data.titleProperty()); // bind to TopsoilDataTable nameProperty
+        this.title.bindBidirectional(data.titleProperty()); // bind to TopsoilDataTable rowIDProperty
 
         data.isotopeSystemProperty().addListener(c -> {
             isotopePrefix = data.getIsotopeSystem().getAbbreviation() + " - ";

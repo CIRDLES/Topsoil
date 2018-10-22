@@ -14,10 +14,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.data.ObservableDataColumn;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.tab.TopsoilDataView;
-import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +27,11 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author Jake Marotta
  */
-public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilDataColumn>> {
+public class VariableChooserDialog extends Dialog<Map<Variable<Number>, ObservableDataColumn>> {
 
-    private VariableChooserDialog(List<TopsoilDataColumn> columns,
+    private VariableChooserDialog(List<ObservableDataColumn> columns,
                                   List<Variable<Number>> variables,
-                                  Map<Variable<Number>, TopsoilDataColumn> selections,
+                                  Map<Variable<Number>, ObservableDataColumn> selections,
                                   List<Variable<Number>> required) {
         super();
 
@@ -51,7 +51,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
 
         // Disable OK button if not all required variables are assigned.
         this.getDialogPane().lookupButton(ButtonType.OK).setDisable(isOkDisabled(required, chooser));
-        chooser.selectionsProperty().addListener((MapChangeListener<? super Variable<Number>, ? super TopsoilDataColumn>) c -> {
+        chooser.selectionsProperty().addListener((MapChangeListener<? super Variable<Number>, ? super ObservableDataColumn>) c -> {
             this.getDialogPane().lookupButton(ButtonType.OK).setDisable(isOkDisabled(required, chooser));
         });
         this.getDialogPane().setContent(container);
@@ -78,12 +78,12 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
         });
     }
 
-    public static Map<Variable<Number>, TopsoilDataColumn> showDialog(TopsoilDataView dataView,
-                                                                      List<Variable<Number>> requiredVariables) {
+    public static Map<Variable<Number>, ObservableDataColumn> showDialog(TopsoilDataView dataView,
+                                                                         List<Variable<Number>> requiredVariables) {
 
-        List<TopsoilDataColumn> columns = dataView.getData().getDataColumns();
+        List<ObservableDataColumn> columns = dataView.getData().getColumns();
         List<Variable<Number>> variables = Variables.VARIABLE_LIST;
-        Map<Variable<Number>, TopsoilDataColumn> currentSelections = dataView.getData().variableToColumnMap();
+        Map<Variable<Number>, ObservableDataColumn> currentSelections = dataView.getData().variableToColumnMap();
 
         return new VariableChooserDialog(columns, variables, currentSelections, requiredVariables).showAndWait().orElse(null);
     }
@@ -126,14 +126,14 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
 		//                  PROPERTIES                  //
 		//**********************************************//
 
-		private MapProperty<Variable<Number>, TopsoilDataColumn> selectionsProperty;
-		public MapProperty<Variable<Number>, TopsoilDataColumn> selectionsProperty() {
+		private MapProperty<Variable<Number>, ObservableDataColumn> selectionsProperty;
+		public MapProperty<Variable<Number>, ObservableDataColumn> selectionsProperty() {
 			if (selectionsProperty == null) {
 				selectionsProperty = new SimpleMapProperty<>(FXCollections.observableHashMap());
 			}
 			return selectionsProperty;
 		}
-		public Map<Variable<Number>, TopsoilDataColumn> getSelections() {
+		public Map<Variable<Number>, ObservableDataColumn> getSelections() {
 			return selectionsProperty.get();
 		}
 
@@ -141,9 +141,9 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
 		//                 CONSTRUCTORS                 //
 		//**********************************************//
 
-		public VariableColumnChooser(List<TopsoilDataColumn> columns,
+		public VariableColumnChooser(List<ObservableDataColumn> columns,
 		                             List<Variable<Number>> variables,
-		                             Map<Variable<Number>, TopsoilDataColumn> currentSelections,
+		                             Map<Variable<Number>, ObservableDataColumn> currentSelections,
 		                             List<Variable<Number>> requiredVariables) {
 			super();
 
@@ -199,7 +199,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
 			}
 
 			// Selects the current variable-column assignments
-			for (Map.Entry<Variable<Number>, TopsoilDataColumn> entry : currentSelections.entrySet()) {
+			for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : currentSelections.entrySet()) {
 				RadioButton toggle = (RadioButton) getNodeByRowColumnIndex(variables.indexOf(entry.getKey()),
 				                                                           columns.indexOf(entry.getValue()),
 				                                                           buttonGrid);
@@ -222,7 +222,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
 
 			// Configures each column name label
 			for (int i = 0; i < columns.size(); i++) {
-				Label label = new Label(columns.get(i).getName());
+				Label label = new Label(columns.get(i).getHeader());
 				label.setMinHeight(ROW_HEIGHT);
 				label.setMaxHeight(ROW_HEIGHT);
 				label.setMinWidth(Region.USE_PREF_SIZE);
@@ -238,7 +238,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, TopsoilD
 				for (Variable<Number> req : requiredVariables) {
 					variableLabels.getChildren().get(variables.indexOf(req)).setStyle("-fx-text-fill: red");
 				}
-				selectionsProperty().addListener((MapChangeListener<? super Variable<Number>, ? super TopsoilDataColumn>) c -> {
+				selectionsProperty().addListener((MapChangeListener<? super Variable<Number>, ? super ObservableDataColumn>) c -> {
 					if (c.wasAdded()) {
 						Label label = (Label) variableLabels.getChildren().get(variables.indexOf(c.getKey()));
 						if (requiredVariables.contains(c.getKey())) {

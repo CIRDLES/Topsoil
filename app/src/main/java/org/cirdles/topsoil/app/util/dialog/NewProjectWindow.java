@@ -18,10 +18,10 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
@@ -55,13 +55,13 @@ public class NewProjectWindow extends Stage {
     /**
      * Creates a new project and returns a {@code List} of {@code TopsoilDataTable}s, if such data is specified.
      *
-     * @return  List of ObservableTableData
+     * @return  List of ObservableDataTable
      */
-    public static List<ObservableTableData> newProject() {
+    public static List<ObservableDataTable> newProject() {
         return new NewProjectWindow().createNewProject();
     }
 
-    private List<ObservableTableData> createNewProject() {
+    private List<ObservableDataTable> createNewProject() {
 
         NewProjectTitleView titleView = new NewProjectTitleView();
         Scene titleScene = new Scene(titleView, WIDTH, HEIGHT);
@@ -89,7 +89,7 @@ public class NewProjectWindow extends Stage {
         // Wait for the window to close
         this.showAndWait();
 
-        List<ObservableTableData> tables = null;
+        List<ObservableDataTable> tables = null;
 
         // New project from existing sources.
         if (sourcesOptionsView.didFinish()) {
@@ -111,7 +111,7 @@ public class NewProjectWindow extends Stage {
                 format = (UncertaintyFormat) selections.get(ImportDataType.UNCERTAINTY);
                 dataRows = (Double[][]) selections.get(ImportDataType.DATA);
 
-                ObservableTableData data = new ObservableTableData(dataRows, true, headerRows, isotopeType, format);
+                ObservableDataTable data = new ObservableDataTable(dataRows, true, headerRows, isotopeType, format);
                 data.setTitle(String.valueOf(selections.get(ImportDataType.TITLE)));
 
                 Map<Variable<Number>, Integer> varIndexMap = (Map<Variable<Number>, Integer>) selections.get(

@@ -4,7 +4,7 @@ visualizations for geochronologists and other earth scientists. The project is
 led and maintained by [CIRDLES](http://cirdles.org), an undergraduate research
 lab at the College of Charleston in Charleston, South Carolina.
 
-The name "Topsoil" is an anagram of "Isoplot", the name of an enormously
+The rowID "Topsoil" is an anagram of "Isoplot", the rowID of an enormously
 successful Microsoft Excel Add-In with similar capabilities that now works
 only in older versions of Excel.
 

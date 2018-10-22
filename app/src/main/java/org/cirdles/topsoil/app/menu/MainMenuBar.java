@@ -12,7 +12,7 @@ import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 
 import org.cirdles.topsoil.app.spreadsheet.CellFormatDialog;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
@@ -240,7 +240,7 @@ public class MainMenuBar extends MenuBar {
         newTableItem.setOnAction(event -> {
 
             // get new table
-            ObservableTableData table = handleNewTable();
+            ObservableDataTable table = handleNewTable();
 
             // display new table
             if (table != null) {
@@ -251,7 +251,7 @@ public class MainMenuBar extends MenuBar {
         exportTableItem = new MenuItem("Export Table");
          
          exportTableItem.setOnAction(event -> {
-             ObservableTableData table = tabs.getSelectedTab().getDataView().getData();
+             ObservableDataTable table = tabs.getSelectedTab().getDataView().getData();
              if (table != null) {
                  handleExportTable(table);
              }
@@ -298,7 +298,7 @@ public class MainMenuBar extends MenuBar {
         // Import Table from File
         tableFromFileItem.setOnAction(event -> {
 
-            ObservableTableData table = importDataFromFile();
+            ObservableDataTable table = importDataFromFile();
 
             if (table != null) {
                 tabs.add(table);
@@ -308,7 +308,7 @@ public class MainMenuBar extends MenuBar {
         //Import Table from Clipboard
         tableFromClipboardItem.setOnAction(event -> {
 
-            ObservableTableData table = importDataFromClipboard();
+            ObservableDataTable table = importDataFromClipboard();
 
             if (table != null) {
                 tabs.add(table);

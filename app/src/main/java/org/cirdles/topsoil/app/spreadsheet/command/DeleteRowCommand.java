@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.spreadsheet.command;
 
 import org.cirdles.topsoil.app.tab.TopsoilTab;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class DeleteRowCommand implements Command {
 
-    private ObservableTableData data;
+    private ObservableDataTable data;
     private int index;
     private List<Double> row;
 
@@ -31,11 +31,11 @@ public class DeleteRowCommand implements Command {
      * is the row that was deleted.
      *
      * @param   data
-     *          ObservableTableData containing the row
+     *          ObservableDataTable containing the row
      * @param   rowIndex
      *          the int index of the row
      */
-    public DeleteRowCommand( ObservableTableData data, int rowIndex ) {
+    public DeleteRowCommand(ObservableDataTable data, int rowIndex ) {
         this.data = data;
         this.index = rowIndex;
     }

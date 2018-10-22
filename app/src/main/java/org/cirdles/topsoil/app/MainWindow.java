@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app;
 
-import com.google.common.base.Charsets;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -13,23 +12,15 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
 import org.cirdles.topsoil.app.style.CSSLoader;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
-import javax.swing.text.html.CSS;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -224,14 +215,14 @@ public class MainWindow extends Application {
         // shortcut + T creates a new tab containing an empty table
         if (keyEvent.getCode() == KeyCode.T &&
             keyEvent.isShortcutDown()) {
-            ObservableTableData table = MenuItemEventHandler.handleNewTable();
+            ObservableDataTable table = MenuItemEventHandler.handleNewTable();
             tabs.add(table);
         }
         // shortcut + I imports a new table from a file
         if (keyEvent.getCode() == KeyCode.I &&
             keyEvent.isShortcutDown()) {
 
-            ObservableTableData table = MenuItemEventHandler.importDataFromFile();
+            ObservableDataTable table = MenuItemEventHandler.importDataFromFile();
             tabs.add(table);
         }
     }

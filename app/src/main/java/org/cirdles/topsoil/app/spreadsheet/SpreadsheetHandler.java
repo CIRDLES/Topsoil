@@ -4,19 +4,20 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilDoubleCell;
-import org.cirdles.topsoil.app.util.TopsoilException;
+import org.cirdles.topsoil.app.spreadsheet.picker.DataRowPicker;
 import org.controlsfx.control.spreadsheet.*;
 
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData.DataOperation;
+import org.cirdles.topsoil.app.data.ObservableDataTable.DataOperation;
 
 import java.util.*;
 
 /**
- * This class handles the spreadsheet in response to changes in the data model.
+ * This class handles the spreadsheet and its cells in response to changes in the data model.
  */
-public class TableHandler implements Observer {
+public class SpreadsheetHandler implements Observer {
 
 	private TopsoilSpreadsheetView spreadsheet;
 
@@ -24,7 +25,7 @@ public class TableHandler implements Observer {
 	//                 CONSTRUCTORS                 //
 	//**********************************************//
 
-	TableHandler(TopsoilSpreadsheetView view) {
+	SpreadsheetHandler(TopsoilSpreadsheetView view) {
 		this.spreadsheet = view;
 	}
 
@@ -35,10 +36,10 @@ public class TableHandler implements Observer {
 	@Override
 	public void update( Observable o, Object arg ) {
 
-		if (o instanceof ObservableTableData) {
+		if (o instanceof ObservableDataTable) {
 
 			// Update SpreadsheetView with new data values
-			ObservableTableData data = (ObservableTableData) o;
+			ObservableDataTable data = (ObservableDataTable) o;
 			DataOperation op = (DataOperation) arg;
 
 			Grid grid = spreadsheet.getGrid();
@@ -85,7 +86,7 @@ public class TableHandler implements Observer {
 					break;
 			}
 
-			spreadsheet.setGrid(grid);
+			spreadsheet.setGrid(grid);  // reloads the grid so that changes are rendered
 
 			// Update any open plots with new data
 			for (TopsoilPlotView plotView : data.getOpenPlots().values()) {
@@ -163,12 +164,15 @@ public class TableHandler implements Observer {
 		grid.setRows(rows);
 	}
 
+    /**
+     * For each row in the data, set the picker's selected property to the value of that data row's selected property.
+     */
 	private void resetPickers() {
 	    if (spreadsheet.getGrid().getRowCount() > 1) {
             DataRowPicker picker;
             for (int i = 1; i < spreadsheet.getGrid().getRowCount(); i++) {
                 picker = (DataRowPicker) spreadsheet.getRowPickers().get(i);
-                picker.setSelected(spreadsheet.getData().getRowSelection().get(i - 1).get());
+                picker.setSelected(spreadsheet.getData().getRow(i - 1).isSelected());
                 if (!picker.isSelected()) {
                     for (SpreadsheetCell cell : spreadsheet.getGrid().getRows().get(i)) {
                         ((TopsoilDoubleCell) cell).setSelected(false);
@@ -178,6 +182,9 @@ public class TableHandler implements Observer {
         }
 	}
 
+    /**
+     * For each data cell in the spreadsheet, set its source to the corresponding value in the data.
+     */
 	private void resetDataCells() {
 	    Grid grid = spreadsheet.getGrid();
 	    if (grid.getRowCount() > 0) {

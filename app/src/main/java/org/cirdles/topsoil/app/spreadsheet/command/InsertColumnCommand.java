@@ -1,8 +1,8 @@
 package org.cirdles.topsoil.app.spreadsheet.command;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
-import org.cirdles.topsoil.app.spreadsheet.TopsoilDataColumn;
+import org.cirdles.topsoil.app.data.ObservableDataColumn;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
 
@@ -19,9 +19,9 @@ import java.util.List;
  */
 public class InsertColumnCommand implements Command {
 
-    private ObservableTableData data;
+    private ObservableDataTable data;
     private int index;
-    private TopsoilDataColumn column;
+    private ObservableDataColumn column;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -31,22 +31,22 @@ public class InsertColumnCommand implements Command {
      * Constructs a new insert column command from the specified data controller, column, and index.
      *
      * @param   data
-     *          the ObservableTableData that the command came from
+     *          the ObservableDataTable that the command came from
      * @param   colIndex
      *          the int index of the column
      * @param   column
-     *          the TopsoilDataColumn to be inserted
+     *          the ObservableDataColumn to be inserted
      */
-    public InsertColumnCommand( ObservableTableData data, int colIndex, TopsoilDataColumn column ) {
+    public InsertColumnCommand(ObservableDataTable data, int colIndex, ObservableDataColumn column ) {
         this.data = data;
         this.index = colIndex;
         this.column = column;
     }
 
-    public InsertColumnCommand( ObservableTableData data, int colIndex, List<Double> column ) {
+    public InsertColumnCommand(ObservableDataTable data, int colIndex, List<Double> column ) {
         this.data = data;
         this.index = colIndex;
-        this.column = new TopsoilDataColumn("Untitled");
+        this.column = new ObservableDataColumn("Untitled");
         column.forEach((value) -> this.column.add(new SimpleDoubleProperty(value)));
     }
 

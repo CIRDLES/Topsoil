@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.spreadsheet;
 import javafx.beans.property.Property;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilSpreadsheetCell;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.file.ExampleDataTable;
@@ -18,13 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.testfx.assertions.api.Assertions.assertThat;
 
 public class TopsoilSpreadsheetViewTest extends ApplicationTest {
 
     static final String DATA_DELIM = ",";
 
-    ObservableTableData data;
+    ObservableDataTable data;
     TopsoilSpreadsheetView spreadsheet;
 
     @Override
@@ -39,7 +39,7 @@ public class TopsoilSpreadsheetViewTest extends ApplicationTest {
         IsotopeSystem isoSys = IsotopeSystem.UPB;
         UncertaintyFormat unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
 
-        data = new ObservableTableData(
+        data = new ObservableDataTable(
                 rows,
                 rowFormat,
                 headers,
@@ -117,7 +117,7 @@ public class TopsoilSpreadsheetViewTest extends ApplicationTest {
                 assertTrue("Cell does not contain item of type Number.", gridCell.getItem() instanceof Number);
 
                 topsoilCell = (TopsoilSpreadsheetCell<Number>) gridCell;
-                expectedSource = data.getObservableRows().get(rowIndex).get(colIndex);
+                expectedSource = data.getRows().get(rowIndex).get(colIndex);
                 actualSource = topsoilCell.getSource();
 
                 // Cell's source should be the correct data property
@@ -129,7 +129,7 @@ public class TopsoilSpreadsheetViewTest extends ApplicationTest {
 
                            topsoilCell.getSource(),
 
-                           data.getObservableRows().get(rowIndex).get(colIndex)
+                           data.getRows().get(rowIndex).get(colIndex)
                 );
             }
         }

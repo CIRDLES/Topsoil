@@ -9,13 +9,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.spreadsheet.ObservableTableData;
 import org.cirdles.topsoil.app.util.dialog.*;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification.NotificationType;
 import org.cirdles.topsoil.app.util.file.Delimiter;
@@ -51,14 +51,14 @@ public class MenuItemEventHandler {
     //**********************************************//
 
     /**
-     * Handles the selection and importing of a table data file into an instance of {@code ObservableTableData}.
+     * Handles the selection and importing of a table data file into an instance of {@code ObservableDataTable}.
      *
-     * @return  ObservableTableData
+     * @return  ObservableDataTable
      */
-    public static ObservableTableData importDataFromFile() {
+    public static ObservableDataTable importDataFromFile() {
 
     	File file = TopsoilFileChooser.openTableFile().showOpenDialog(MainWindow.getPrimaryStage());
-        ObservableTableData table = null;
+        ObservableDataTable table = null;
 
         if (file != null) {
 	        Path path = Paths.get(file.toURI());
@@ -108,7 +108,7 @@ public class MenuItemEventHandler {
                                     isotopeType = (IsotopeSystem) selections.get(ImportDataType.ISOTOPE_TYPE);
                                 }
 
-                                table = new ObservableTableData(data, true, headers,
+                                table = new ObservableDataTable(data, true, headers,
                                                                 isotopeType, unctFormat);
                                 table.setTitle(path.getFileName().toString()
                                                    .substring(0, path.getFileName().toString().indexOf(".")));
@@ -137,13 +137,13 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Handles the importing of table data from the system clipboard into an instance of {@code ObservableTableData}.
+     * Handles the importing of table data from the system clipboard into an instance of {@code ObservableDataTable}.
      *
-     * @return  ObservableTableData
+     * @return  ObservableDataTable
      */
-    public static ObservableTableData importDataFromClipboard() {
+    public static ObservableDataTable importDataFromClipboard() {
         String content = Clipboard.getSystemClipboard().getString();
-        ObservableTableData table = null;
+        ObservableDataTable table = null;
 
         try {
             String delim = FileParser.getDelimiter(content);
@@ -175,7 +175,7 @@ public class MenuItemEventHandler {
                             isotopeType = (IsotopeSystem) selections.get(ImportDataType.ISOTOPE_TYPE);
                         }
 
-                        table = new ObservableTableData(data, true, headers, isotopeType, unctFormat);
+                        table = new ObservableDataTable(data, true, headers, isotopeType, unctFormat);
 
                         // Apply variable selections
                         Map<Variable<Number>, Integer> varIndexMap = (Map<Variable<Number>, Integer>) selections
@@ -199,13 +199,13 @@ public class MenuItemEventHandler {
     }
 
     /**
-     * Handles the creation of a new {@code ObservableTableData}.
+     * Handles the creation of a new {@code ObservableDataTable}.
      *
-     * @return  new ObservableTableData
+     * @return  new ObservableDataTable
      */
-    public static ObservableTableData handleNewTable() {
+    public static ObservableDataTable handleNewTable() {
 
-        ObservableTableData table;
+        ObservableDataTable table;
 
         // For now, the user shouldn’t have to select an isotope system; instead assume Generic.
         IsotopeSystem isotopeType = IsotopeSystem.GENERIC;
@@ -215,7 +215,7 @@ public class MenuItemEventHandler {
         UncertaintyFormat unctFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
 
         if (unctFormat != null) {
-            table = new ObservableTableData(null, true, null, isotopeType, unctFormat);
+            table = new ObservableDataTable(null, true, null, isotopeType, unctFormat);
         } else {
             table = null;
         }
@@ -233,7 +233,7 @@ public class MenuItemEventHandler {
      */
     public static void handleOpenExampleTable(TopsoilTabPane tabs, IsotopeSystem isotopeType ) {
 
-        ObservableTableData table;
+        ObservableDataTable table;
         UncertaintyFormat unctFormat;
 
         if (isotopeType != null) {
@@ -258,7 +258,7 @@ public class MenuItemEventHandler {
                         unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
                 }
 
-                table = new ObservableTableData(dataRows, true, headerRows, isotopeType, unctFormat);
+                table = new ObservableDataTable(dataRows, true, headerRows, isotopeType, unctFormat);
 
                 // Set default variable associations.
                 table.setVariableForColumn(0, Variables.X);
@@ -301,13 +301,13 @@ public class MenuItemEventHandler {
      * Handles exporting a data table to a delimited data file.
      *
      * @param   table
-     *          ObservableTableData
+     *          ObservableDataTable
      */
-    public static void handleExportTable(ObservableTableData table) {
+    public static void handleExportTable(ObservableDataTable table) {
         try {
             String[] headers = table.getColumnHeaders();
             Double[][] data = new Double[table.rowCount()][table.colCount()];
-            ObservableList<ObservableList<DoubleProperty>> observableRows = table.getObservableRows();
+            ObservableList<ObservableList<DoubleProperty>> observableRows = table.getRows();
 
             for (int i = 0; i < observableRows.size(); i++) {
                 for (int j = 0; j < observableRows.get(i).size(); j++) {
@@ -355,7 +355,7 @@ public class MenuItemEventHandler {
      * @param tabs  TopsoilTabPane
      */
     public static void handleNewProject(TopsoilTabPane tabs) {
-        AtomicReference<List<ObservableTableData>> tablesReference = new AtomicReference<>(null);
+        AtomicReference<List<ObservableDataTable>> tablesReference = new AtomicReference<>(null);
 
         if (TopsoilSerializer.isProjectOpen()) {
             TopsoilNotification.showNotification(
@@ -388,7 +388,7 @@ public class MenuItemEventHandler {
             tabs.getTabs().clear();
 
             if (tablesReference.get().isEmpty()) {
-                tabs.add(new ObservableTableData(
+                tabs.add(new ObservableDataTable(
 		                new Double[][]{ new Double[]{ 0.0, 0.0, 0.0, 0.0, 0.0 }},
 		                true,
 		                null,
@@ -400,7 +400,7 @@ public class MenuItemEventHandler {
                         "An empty table was placed in your project."
                 );
             } else {
-                for (ObservableTableData table : tablesReference.get()) {
+                for (ObservableDataTable table : tablesReference.get()) {
                     tabs.add(table);
                 }
             }
