@@ -2,8 +2,13 @@ package org.cirdles.topsoil.app.spreadsheet.picker;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView;
+import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilDoubleCell;
 import org.controlsfx.control.spreadsheet.Picker;
+import org.controlsfx.control.spreadsheet.SpreadsheetCell;
+
+import java.util.Arrays;
 
 /**
  * @author marottajb
@@ -51,7 +56,8 @@ public class DataRowPicker extends Picker {
             getStyleClass().remove(PICKER_ACTIVATED);
         }
         selected.set(b);
-        spreadsheet.getData().getRow(rowIndex).setSelected(b);
+        spreadsheet.getData().getRow(rowIndex - 1).setSelected(b);
+        System.out.println("Data picker: " + rowIndex + Arrays.toString(getStyleClass().toArray(new String[]{})));
     }
 
     //**********************************************//
@@ -67,9 +73,19 @@ public class DataRowPicker extends Picker {
      *          the index of the row that this picker controls
      */
     public DataRowPicker(TopsoilSpreadsheetView spreadsheet, int rowIndex) {
+        super(PICKER_ACTIVATED);
         this.spreadsheet = spreadsheet;
         this.rowIndex = rowIndex;
-        getStyleClass().addAll(PICKER_ACTIVATED);
+
+        // Update cells in row when "selected" property is changed
+        selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            ObservableList<SpreadsheetCell> cellRow = spreadsheet.getGrid().getRows().get(rowIndex);
+            for (SpreadsheetCell cell : cellRow) {
+                if (cell instanceof TopsoilDoubleCell) {
+                    ((TopsoilDoubleCell) cell).setSelected(newValue);
+                }
+            }
+        }));
     }
 
     //**********************************************//

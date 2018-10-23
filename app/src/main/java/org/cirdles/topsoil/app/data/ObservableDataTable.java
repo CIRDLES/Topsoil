@@ -3,9 +3,10 @@ package org.cirdles.topsoil.app.data;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.spreadsheet.ChangeHandlerBase;
+import org.cirdles.topsoil.app.util.ListenerHandlerBase;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.plot.TopsoilPlotType;
 import org.cirdles.topsoil.app.plot.TopsoilPlotView;
@@ -13,7 +14,6 @@ import org.cirdles.topsoil.variable.DependentVariable;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
-import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 
 import java.util.*;
 
@@ -147,7 +147,7 @@ public class ObservableDataTable extends Observable {
         this.columns = makeDataColumns(data, headers, rowFormat);
         this.rows = FXCollections.observableArrayList();
         ObservableDataRow newRow;
-        for (int rowIndex = 0; rowIndex < rowCount; rowCount++) {
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             newRow = new ObservableDataRow();
             for (ObservableDataColumn column : columns) {
                 newRow.add(column.get(rowIndex));
@@ -223,6 +223,7 @@ public class ObservableDataTable extends Observable {
         rowCount++;
         setChanged();
         notifyObservers(new DataOperation(index, -1, OperationType.INSERT_ROW));
+        updateOpenPlots();
     }
 
     /**
@@ -244,6 +245,7 @@ public class ObservableDataTable extends Observable {
         rowCount--;
 	    setChanged();
         notifyObservers(new DataOperation(index, -1, OperationType.DELETE_ROW));
+        updateOpenPlots();
 
         return removedRow;
     }
@@ -333,6 +335,7 @@ public class ObservableDataTable extends Observable {
         colCount++;
         setChanged();
         notifyObservers(new DataOperation(-1, index, OperationType.INSERT_COLUMN));
+        updateOpenPlots();
     }
 
     /**
@@ -354,6 +357,7 @@ public class ObservableDataTable extends Observable {
         colCount--;
         setChanged();
         notifyObservers(new DataOperation(-1, index, OperationType.DELETE_COLUMN));
+        updateOpenPlots();
 
         return oldColumn;
     }
@@ -368,13 +372,58 @@ public class ObservableDataTable extends Observable {
      */
     public void setVariableForColumn(int index, Variable<Number> variable) {
         ObservableDataColumn column = columns.get(index);
+        if (variable == null) {
+            if (column.hasVariable()) {
+                varMap.remove(column.getVariable());
+            }
+            column.setVariable(null);
+        }
 
         if (varMap.containsKey(variable)) {
             varMap.get(variable).setVariable(null);
         }
-
         column.setVariable(variable);
         varMap.put(variable, column);
+        setChanged();
+        notifyObservers(new DataOperation(-1, -1, OperationType.UPDATE_VARIABLES));
+        updateOpenPlots();
+    }
+
+    /**
+     * Makes a series of variable assignments provided as map entries.
+     *
+     * @param   map
+     *          Map containing entries for variable assignments
+     */
+    public void setVariablesForColumns(Map<Variable<Number>, ObservableDataColumn> map) {
+
+        Variable<Number> variable;
+        ObservableDataColumn column;
+
+        for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : map.entrySet()) {
+            variable = entry.getKey();
+            column = entry.getValue();
+
+            if (variable != null) {
+                if (column == null) {
+                    if (varMap.containsKey(variable)) {
+                        varMap.get(variable).setVariable(null);
+                        varMap.remove(variable);
+                    }
+                } else {
+                    if (column.getVariable() != variable) {
+                        if (varMap.containsKey(variable)) {
+                            varMap.get(variable).setVariable(null);
+                        }
+                        column.setVariable(variable);
+                        varMap.put(variable, column);
+                    }
+                }
+            }
+        }
+        setChanged();
+        notifyObservers(new DataOperation(-1, -1, OperationType.UPDATE_VARIABLES));
+        updateOpenPlots();
     }
 
     /**
@@ -382,8 +431,21 @@ public class ObservableDataTable extends Observable {
      *
      * @return  Map of Variables to TopsoilDataColumns
      */
-    public Map<Variable<Number>, ObservableDataColumn> variableToColumnMap() {
+    public Map<Variable<Number>, ObservableDataColumn> getVarMap() {
         return varMap;
+    }
+
+    /**
+     * Unassigns all variables from all columns.
+     */
+    public void clearVariableAssignments() {
+        for (ObservableDataColumn column : varMap.values()) {
+            column.setVariable(null);
+        }
+        varMap.clear();
+        setChanged();
+        notifyObservers(new DataOperation(-1, -1, OperationType.UPDATE_VARIABLES));
+        updateOpenPlots();
     }
 
     /**
@@ -426,7 +488,7 @@ public class ObservableDataTable extends Observable {
      */
     public void set(int column, int row, double value) {
         columns.get(column).get(row).set(value);
-//        notifyObservers(new DataOperation(row, column, OperationType.CHANGE_VALUE));
+        updateOpenPlots();
     }
 
     /**
@@ -554,6 +616,15 @@ public class ObservableDataTable extends Observable {
     }
 
     /**
+     * Updates the data in all open plots for this table.
+     */
+    public void updateOpenPlots() {
+        for (TopsoilPlotView plotView : openPlots.values()) {
+            plotView.getPlot().setData(getPlotEntries());
+        }
+    }
+
+    /**
      * Adds an open plot for this table to {@code openPlots}.
      *
      * @param   type
@@ -676,16 +747,16 @@ public class ObservableDataTable extends Observable {
 		DELETE_ROW,
 		INSERT_COLUMN,
 		DELETE_COLUMN,
-//		CHANGE_VALUE,
         SELECT_ROW,
-        DESELECT_ROW
+        DESELECT_ROW,
+        UPDATE_VARIABLES
 	}
 
     /**
      * Responsible for notifying its {@link ObservableDataTable} of changes in the selection of its
      * {@link ObservableDataRow}s.
      */
-	private class RowSelectionHandler extends ChangeHandlerBase<ObservableDataRow> {
+	private class RowSelectionHandler extends ListenerHandlerBase<ObservableDataRow> {
 
         //**********************************************//
         //                  ATTRIBUTES                  //
@@ -693,6 +764,16 @@ public class ObservableDataTable extends Observable {
 
         private ObservableDataTable data;
         private Map<ObservableDataRow, ChangeListener<Object>> rowSelectionListeners = new HashMap<>();
+        private ListChangeListener<ObservableDataRow> rowAddedRemovedListener = c -> {
+            while (c.next()) {
+                for (ObservableDataRow row : c.getRemoved()) {
+                    forget(row);
+                }
+                for (ObservableDataRow row : c.getAddedSubList()) {
+                    listen(row);
+                }
+            }
+        };
 
         //**********************************************//
         //                 CONSTRUCTORS                 //
@@ -701,14 +782,17 @@ public class ObservableDataTable extends Observable {
         /**
          * Constructs a {@code RowSelectionHandler} for the specified {@code ObservableTableData}.
          *
-         * @param   data
+         * @param   table
          *          ObservableTableData
          */
-        private RowSelectionHandler(ObservableDataTable data) {
-            this.data = data;
+        private RowSelectionHandler(ObservableDataTable table) {
+            data = table;
+
+            // Listen for row additions/deletions
+            data.rows.addListener(rowAddedRemovedListener);
 
             // Listen to existing rows
-            for (ObservableDataRow row : rows) {
+            for (ObservableDataRow row : data.rows) {
                 listen(row);
             }
         }
@@ -724,14 +808,17 @@ public class ObservableDataTable extends Observable {
          *          ObservableDataRow
          */
         public void listen(ObservableDataRow row) {
-            ChangeListener<Object> selectionListener = (observable, oldValue, newValue) ->
-                    data.notifyObservers(
-                            new DataOperation(
-                                    data.getRows().indexOf(row),
-                                    -1,
-                                    (row.isSelected() ? OperationType.SELECT_ROW : OperationType.DESELECT_ROW)
-                            )
-                    );
+            ChangeListener<Object> selectionListener = (observable, oldValue, newValue) -> {
+                setChanged();
+                data.notifyObservers(
+                        new DataOperation(
+                                data.rows.indexOf(row),
+                                -1,
+                                (row.isSelected() ? OperationType.SELECT_ROW : OperationType.DESELECT_ROW)
+                        )
+                );
+                data.updateOpenPlots();
+            };
             row.selectedProperty().addListener(selectionListener);
             rowSelectionListeners.put(row, selectionListener);
         }

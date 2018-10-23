@@ -5,10 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilSpreadsheetCell;
-import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.file.ExampleDataTable;
-import org.cirdles.topsoil.app.util.file.FileParser;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.controlsfx.control.spreadsheet.Grid;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 import org.junit.Test;
@@ -22,30 +19,22 @@ import static org.junit.Assert.*;
 
 public class TopsoilSpreadsheetViewTest extends ApplicationTest {
 
-    static final String DATA_DELIM = ",";
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
 
     ObservableDataTable data;
     TopsoilSpreadsheetView spreadsheet;
+
+    //**********************************************//
+    //                     SETUP                    //
+    //**********************************************//
 
     @Override
     public void start(Stage stage) throws IOException {
 
         // 1. Setup data model object
-        String content = new ExampleDataTable().getUPbSampleData();
-
-        Double[][] rows = FileParser.parseData(content, DATA_DELIM);
-        boolean rowFormat = true;
-        String[] headers = FileParser.parseHeaders(content, DATA_DELIM);
-        IsotopeSystem isoSys = IsotopeSystem.UPB;
-        UncertaintyFormat unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
-
-        data = new ObservableDataTable(
-                rows,
-                rowFormat,
-                headers,
-                isoSys,
-                unctFormat
-        );
+        data = ExampleDataTable.getUPb();
 
         // 2. Setup spreadsheet
         spreadsheet = new TopsoilSpreadsheetView(data);

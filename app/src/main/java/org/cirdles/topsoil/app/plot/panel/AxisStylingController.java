@@ -10,6 +10,10 @@ import java.io.IOException;
 
 public class AxisStylingController extends AnchorPane {
 
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
     private static final String CONTROLLER_FXML = "axis-styling-menu.fxml";
 
     //**********************************************//
@@ -27,6 +31,10 @@ public class AxisStylingController extends AnchorPane {
     @FXML Button setYExtentsButton;
 
     @FXML CheckBox axisLiveUpdateCheckBox;
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
 
     private PlotPropertiesPanel panel;
 

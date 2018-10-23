@@ -14,9 +14,11 @@ import java.io.IOException;
 
 public class DataOptionsController extends AnchorPane {
 
-    private static final String CONTROLLER_FXML = "data-options-menu.fxml";
+	//**********************************************//
+	//                  CONSTANTS                   //
+	//**********************************************//
 
-    private ToggleGroup uncertaintyToggleGroup = new ToggleGroup();
+    private static final String CONTROLLER_FXML = "data-options-menu.fxml";
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -33,6 +35,8 @@ public class DataOptionsController extends AnchorPane {
 
     @FXML RadioButton unctBarsRadioButton;
     @FXML ColorPicker unctBarsFillColorPicker;
+
+	private ToggleGroup uncertaintyToggleGroup = new ToggleGroup();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //

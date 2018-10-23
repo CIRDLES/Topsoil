@@ -29,12 +29,12 @@
                      <children>
                         <Label text="About">
                            <font>
-                              <Font rowID="Lucida Sans Demibold" size="22.0" />
+                              <Font name="Lucida Sans Demibold" size="22.0" />
                            </font>
                         </Label>
-                        <Label fx:id="messageLabel" text="Topsoil is a desktop application and Java library that creates data visualizations for geochronologists and other earth scientists. ”Topsoil” is an anagram of “Isoplot”, the rowID of an enormously successful Microsoft Excel Add-In with similar capabilities developed by Kenneth Ludwig, which now works only in older versions of Excel." textAlignment="CENTER" wrapText="true">
+                        <Label fx:id="messageLabel" text="Topsoil is a desktop application and Java library that creates data visualizations for geochronologists and other earth scientists. ”Topsoil” is an anagram of “Isoplot”, the name of an enormously successful Microsoft Excel Add-In with similar capabilities developed by Kenneth Ludwig, which now works only in older versions of Excel." textAlignment="CENTER" wrapText="true">
                            <font>
-                              <Font rowID="Lucida Sans Unicode" size="14.0" />
+                              <Font name="Lucida Sans Unicode" size="14.0" />
                            </font>
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
@@ -44,7 +44,7 @@
                            <children>
                               <Label text="For more information about Topsoil, visit our">
                                  <font>
-                                    <Font rowID="Lucida Sans Unicode" size="14.0" />
+                                    <Font name="Lucida Sans Unicode" size="14.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" top="5.0" />
@@ -52,7 +52,7 @@
                               </Label>
                               <Hyperlink fx:id="homePage" onAction="#openHome" text="home page.">
                                  <font>
-                                    <Font rowID="Lucida Sans Unicode" size="14.0" />
+                                    <Font name="Lucida Sans Unicode" size="14.0" />
                                  </font>
                               </Hyperlink>
                            </children>
@@ -81,7 +81,7 @@
          <children>
             <Label text="Links">
                <font>
-                  <Font rowID="Lucida Sans Demibold" size="22.0" />
+                  <Font name="Lucida Sans Demibold" size="22.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="5.0" />
@@ -91,17 +91,17 @@
                <children>
                   <Hyperlink fx:id="github" onAction="#openGitHub" text="GitHub Repository">
                      <font>
-                        <Font rowID="Lucida Sans Unicode" size="14.0" />
+                        <Font name="Lucida Sans Unicode" size="14.0" />
                      </font>
                   </Hyperlink>
                   <Hyperlink fx:id="cirdles" onAction="#openCIRDLES" text="CIRDLES.org">
                      <font>
-                        <Font rowID="Lucida Sans Unicode" size="14.0" />
+                        <Font name="Lucida Sans Unicode" size="14.0" />
                      </font>
                   </Hyperlink>
                   <Hyperlink fx:id="releaseLog" onAction="#openReleaseLog" text="Release Log">
                      <font>
-                        <Font rowID="Lucida Sans Unicode" size="14.0" />
+                        <Font name="Lucida Sans Unicode" size="14.0" />
                      </font>
                   </Hyperlink>
                </children>
@@ -120,7 +120,7 @@
             </ImageView>
             <Label text="Powered by CIRDLES" textFill="#949494">
                <font>
-                  <Font rowID="Lucida Sans Regular" size="10.0" />
+                  <Font name="Lucida Sans Regular" size="10.0" />
                </font>
                <HBox.margin>
                   <Insets left="10.0" />

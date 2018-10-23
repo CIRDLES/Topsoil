@@ -30,6 +30,10 @@ import org.cirdles.topsoil.app.menu.command.DeleteTableCommand;
  */
 public class MainMenuBar extends MenuBar {
 
+    //**********************************************//
+    //                   CONTROLS                   //
+    //**********************************************//
+
     // Project Menu
     private MenuItem newProjectItem, openProjectItem, saveProjectItem, saveProjectAsItem, closeProjectItem, exitItem;
 
@@ -62,10 +66,6 @@ public class MainMenuBar extends MenuBar {
         super();
         this.initialize(tabs);
     }
-
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
 
     //**********************************************//
     //               PRIVATE METHODS                //

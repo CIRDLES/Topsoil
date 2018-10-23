@@ -58,7 +58,7 @@ public class ObservableDataColumn extends TopsoilDataList {
     public final Variable getVariable() {
         return variableProperty().get();
     }
-    public final void setVariable(Variable v) {
+    final void setVariable(Variable v) {
         variableProperty().set(v);
     }
 

@@ -22,7 +22,10 @@ public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private BooleanProperty selected = new SimpleBooleanProperty();
+    /**
+     * Whether the cell is in a spreadsheet row that is "selected".
+     */
+    private BooleanProperty selected = new SimpleBooleanProperty(true);
     public BooleanProperty selectedProperty() {
         return selected;
     }
@@ -55,7 +58,7 @@ public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
     /** {@inheritDoc} */
     void onItemUpdated(Number oldValue, Number newValue) {
         if (Double.compare((Double) newValue, (Double) getSource().getValue()) != 0) {
-            spreadsheet.updateDataValue(this, (Double) newValue);
+            spreadsheet.updateDataValue(this);
         }
     }
 

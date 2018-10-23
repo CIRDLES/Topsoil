@@ -15,6 +15,10 @@ import java.io.IOException;
 
 public class PlotFeaturesController extends AnchorPane {
 
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
     private static final String CONTROLLER_FXML = "plot-features-menu.fxml";
 
     //**********************************************//
@@ -64,16 +68,11 @@ public class PlotFeaturesController extends AnchorPane {
     public final IsotopeSystem getIsotopeSystem() {
         return isotopeSystemProperty().get();
     }
-    /*
-        Right now, the isotope system property is bound to that of the table.
-     */
-//    public final void setIsotopeSystem(IsotopeSystem i) {
-//        if (i != null) {
-//            isotopeSystemProperty().set(i);
-//        } else {
-//            isotopeSystemProperty().set(IsotopeSystem.Generic);
-//        }
-//    }
+    public final void setIsotopeSystem(IsotopeSystem i) {
+        if (i != null) {
+            isotopeSystemProperty().set(i);
+        }
+    }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //

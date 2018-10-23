@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -30,16 +30,6 @@
                            <children>
                               <Label text="Isotope System:" />
                               <ComboBox fx:id="isotopeSystemComboBox">
-                                 <HBox.margin>
-                                    <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                 </HBox.margin>
-                              </ComboBox>
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                           <children>
-                              <Label text="Uncertainty Format:" />
-                              <ComboBox fx:id="uncertaintyFormatComboBox">
                                  <HBox.margin>
                                     <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                  </HBox.margin>

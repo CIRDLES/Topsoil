@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -29,6 +28,10 @@ import java.io.IOException;
  */
 public class TopsoilAboutScreen extends VBox {
 
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
     private static final double DEFAULT_WIDTH = 550;
     private static final double DEFAULT_HEIGHT = 650;
 
@@ -38,14 +41,23 @@ public class TopsoilAboutScreen extends VBox {
     private static final String CIRDLES_URL = "https://cirdles.org/";
     private static final String RELEASE_LOG_URL = "https://github.com/CIRDLES/Topsoil/releases";
 
-    private static final String ABOUT_SCREEN_FXML = "topsoil-about-screen.fxml";
-    private final ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilAboutScreen.class);
+    private static final String CONTROLLER_FXML = "topsoil-about-screen.fxml";
+
+    //**********************************************//
+    //                   CONTROLS                   //
+    //**********************************************//
 
     @FXML private ImageView topsoilLogo, cirdlesLogo;
 
     @FXML private Label versionLabel, messageLabel;
 
     @FXML private Hyperlink homePage, license, github, cirdles, releaseLog;
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilAboutScreen.class);
 
     /**
      * The system default browser as a {@code DesktopWebBrowser}. This is used to navigate to the addresses for each
@@ -75,12 +87,12 @@ public class TopsoilAboutScreen extends VBox {
         browser = new DesktopWebBrowser(Desktop.getDesktop());
 
         try {
-            FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(ABOUT_SCREEN_FXML).toUri().toURL());
+            FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
             loader.setRoot(this);
             loader.setController(this);
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Could not load " + ABOUT_SCREEN_FXML, e);
+            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
         }
     }
 

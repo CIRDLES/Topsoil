@@ -29,6 +29,14 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class VariableChooserDialog extends Dialog<Map<Variable<Number>, ObservableDataColumn>> {
 
+    /*
+        @TODO Create FXML for controller
+     */
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
+
     private VariableChooserDialog(List<ObservableDataColumn> columns,
                                   List<Variable<Number>> variables,
                                   Map<Variable<Number>, ObservableDataColumn> selections,
@@ -49,11 +57,6 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
         VBox container = new VBox(messageLabel, chooser);
         container.setAlignment(Pos.TOP_CENTER);
 
-        // Disable OK button if not all required variables are assigned.
-        this.getDialogPane().lookupButton(ButtonType.OK).setDisable(isOkDisabled(required, chooser));
-        chooser.selectionsProperty().addListener((MapChangeListener<? super Variable<Number>, ? super ObservableDataColumn>) c -> {
-            this.getDialogPane().lookupButton(ButtonType.OK).setDisable(isOkDisabled(required, chooser));
-        });
         this.getDialogPane().setContent(container);
 
         // The Scene doesn't seem to be completely done laying out its Nodes by the time this event is fired. Since
@@ -78,33 +81,23 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
         });
     }
 
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
     public static Map<Variable<Number>, ObservableDataColumn> showDialog(TopsoilDataView dataView,
                                                                          List<Variable<Number>> requiredVariables) {
 
         List<ObservableDataColumn> columns = dataView.getData().getColumns();
         List<Variable<Number>> variables = Variables.VARIABLE_LIST;
-        Map<Variable<Number>, ObservableDataColumn> currentSelections = dataView.getData().variableToColumnMap();
+        Map<Variable<Number>, ObservableDataColumn> currentSelections = dataView.getData().getVarMap();
 
         return new VariableChooserDialog(columns, variables, currentSelections, requiredVariables).showAndWait().orElse(null);
     }
 
-    //Set disabled = true when required variables are not assigned
-    private boolean isOkDisabled(List<Variable<Number>> required, VariableColumnChooser chooser) {
-        boolean areAssigned = false;
-
-        if (!(required == null)) {
-            for (Variable<Number> v : required) {
-                if (!chooser.selectionsProperty().containsKey(v)) {
-                    areAssigned = true;
-                    break;
-                }
-            }
-        }
-
-        return areAssigned;
-    }
-
-	// @TODO Create FXML for controller
+    //**********************************************//
+    //                INNER CLASSES                 //
+    //**********************************************//
 
 	public class VariableColumnChooser extends AnchorPane {
 
@@ -134,7 +127,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 			return selectionsProperty;
 		}
 		public Map<Variable<Number>, ObservableDataColumn> getSelections() {
-			return selectionsProperty.get();
+			return selectionsProperty().get();
 		}
 
 		//**********************************************//
@@ -175,15 +168,15 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 			for (int j = 0; j < columns.size(); j++) {
 				FakeToggleGroup group = new FakeToggleGroup();
 
-				// Updates selectionsProperty. It's done with the fake toggle groups because the variables are arranged
-				// vertically, and if a selection is made that de-selects a Toggle in the same column, there will still
-				// exist a key in selectionsProperty for the old variable assignment.
+				// Updates selectionsProperty. It's done with the fake toggle groups because the variables are
+                // arranged vertically, and if a selection is made that de-selects a Toggle in the same column, there
+                // will still exist a key in selectionsProperty for the old variable assignment.
 				group.selectedToggleProperty().addListener(((observable, oldValue, newValue) -> {
 					int rowIndex;
 					int columnIndex = toggleColumns.indexOf(group);
 					if (oldValue != null || newValue == null) {         // Removes old key from selectionsProperty
 						rowIndex = group.getToggles().indexOf(oldValue);
-						selectionsProperty().remove(variables.get(rowIndex));
+						selectionsProperty().put(variables.get(rowIndex), null);
 					}
 					if (newValue != null) {                             // Puts new key into selectionsProperty
 						rowIndex = group.getToggles().indexOf(newValue);

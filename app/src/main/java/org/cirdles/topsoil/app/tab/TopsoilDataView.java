@@ -27,7 +27,6 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 
 /**
- *
  * @author marottajb
  *
  * @see TopsoilTab
@@ -45,7 +44,6 @@ public class TopsoilDataView extends AnchorPane {
 	//**********************************************//
 
 	@FXML private ComboBox<IsotopeSystem> isotopeSystemComboBox;
-	@FXML private ComboBox<UncertaintyFormat> uncertaintyFormatComboBox;
 
 	@FXML private Button assignVariablesButton;
 	@FXML private Button generatePlotButton;
@@ -69,21 +67,6 @@ public class TopsoilDataView extends AnchorPane {
 	}
 	public final void setIsotopeSystem(IsotopeSystem i ) {
 		isotopeSystemProperty().set(i);
-	}
-
-	private ObjectProperty<UncertaintyFormat> uncertaintyFormat;
-	public ObjectProperty<UncertaintyFormat> uncertaintyFormatProperty() {
-		if (uncertaintyFormat == null) {
-			uncertaintyFormat = new SimpleObjectProperty<>();
-			uncertaintyFormat.bindBidirectional(uncertaintyFormatComboBox.valueProperty());
-		}
-		return uncertaintyFormat;
-	}
-	public final UncertaintyFormat getUncertaintyFormat() {
-		return uncertaintyFormatProperty().get();
-	}
-	public final void setUncertaintyFormat(UncertaintyFormat format) {
-		uncertaintyFormatProperty().set(format);
 	}
 
     //**********************************************//
@@ -122,11 +105,8 @@ public class TopsoilDataView extends AnchorPane {
         AnchorPane.setLeftAnchor(spreadsheetView, 0.0);
 
 	    isotopeSystemComboBox.getItems().addAll(IsotopeSystem.values());
-	    uncertaintyFormatComboBox.getItems().addAll(UncertaintyFormat.values());
 
 	    isotopeSystemProperty().bindBidirectional(data.isotopeSystemProperty());
-	    setUncertaintyFormat(data.getUnctFormat());
-	    uncertaintyFormatComboBox.setDisable(true);
     }
 
     public TopsoilSpreadsheetView getSpreadsheetView() {
@@ -145,10 +125,7 @@ public class TopsoilDataView extends AnchorPane {
     public void setVariableAssignments(Map<Variable<Number>, ObservableDataColumn> assignments) {
 
         if (assignments != null) {
-
-            for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : assignments.entrySet()) {
-                data.setVariableForColumn(data.getColumns().indexOf(entry.getValue()), entry.getKey());
-            }
+            data.setVariablesForColumns(assignments);
 
             for (TopsoilPlotView plotView : data.getOpenPlots().values()) {
                 plotView.getPlot().setData(data.getPlotEntries());
@@ -174,11 +151,11 @@ public class TopsoilDataView extends AnchorPane {
     @FXML private void generatePlotButtonAction() {
 
         // If X and Y aren't specified.
-        if ( ! data.variableToColumnMap().containsKey(Variables.X) || ! data.variableToColumnMap().containsKey(Variables.Y)) {
+        if (! data.getVarMap().containsKey(Variables.X) || ! data.getVarMap().containsKey(Variables.Y)) {
             showVariableChooserDialog(asList(Variables.X, Variables.Y));
         }
 
-        if (data.variableToColumnMap().containsKey(Variables.X) && data.variableToColumnMap().containsKey(Variables.Y)) {
+        if (data.getVarMap().containsKey(Variables.X) && data.getVarMap().containsKey(Variables.Y)) {
             PlotGenerationHandler.generatePlotForSelectedTab(TabPaneHandler.getTabPane());
         }
     }

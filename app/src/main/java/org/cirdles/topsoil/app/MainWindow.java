@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app;
 
+import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -10,17 +11,20 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
-import org.cirdles.topsoil.app.style.CSSLoader;
+import org.cirdles.topsoil.app.style.StyleLoader;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -33,21 +37,9 @@ public class MainWindow extends Application {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final String MAIN_WINDOW_FXML = "main-window.fxml";
-    private static final String CSS_DIR = "css/";
-    private static final String TOPSOIL_CSS;
-    private static final String SPREADSHEET_CSS;
-    private static final String SPREADSHEET_TEMP_CSS = "spreadsheet-temp.css";
-    private static final String ON_PICKER = "on-picker2.png";
-    private static final String OFF_PICKER = "off-picker2.png";
+    private static final String CONTROLLER_FXML = "main-window.fxml";
     private static final String TOPSOIL_LOGO = "topsoil-logo.png";
-
-    private static final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(MainWindow.class);
-
-    static {
-        TOPSOIL_CSS = CSS_DIR + "topsoil.css";
-        SPREADSHEET_CSS = CSS_DIR + "spreadsheet.css";
-    }
+    private static final String ARIMO_FONT = "style/font/arimo/Arimo-Regular.ttf";
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -55,7 +47,6 @@ public class MainWindow extends Application {
 
     private static Stage primaryStage;
     private static Image windowIcon;
-    private static String OS;
 
     //**********************************************//
     //                PUBLIC METHODS                //
@@ -66,6 +57,8 @@ public class MainWindow extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        ResourceExtractor resourceExtractor = new ResourceExtractor(MainWindow.class);
+
         MainWindow.primaryStage = primaryStage;
 
         Parent mainWindow;
@@ -74,24 +67,29 @@ public class MainWindow extends Application {
         // Load FXML for MainWindowController
         try {
             FXMLLoader loader = new FXMLLoader(
-                    RESOURCE_EXTRACTOR.extractResourceAsPath(MAIN_WINDOW_FXML).toUri().toURL());
+                    resourceExtractor.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
             mainWindow = loader.load();
             mainWindowController = loader.getController();
         } catch (IOException | NullPointerException e) {
-            throw new RuntimeException("Could not load " + MAIN_WINDOW_FXML, e);
+            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
         }
 
         // Create main Scene
         Scene scene = new Scene(mainWindow, 1100, 800);
-        primaryStage.setScene(scene);
 
         // Load CSS
-        CSSLoader cssLoader = new CSSLoader();
-        scene.getStylesheets().addAll(cssLoader.getStylesheets());
+        try {
+            Font.loadFont(resourceExtractor.extractResourceAsFile(ARIMO_FONT).toURI().toURL().toExternalForm(), 14);
+        } catch (MalformedURLException e) {
+            new TopsoilException("Unable to load custom font.", e).printStackTrace();
+        }
+        StyleLoader styleLoader = new StyleLoader();
+        scene.getStylesheets().addAll(styleLoader.getStylesheets());
+        StyleManager.getInstance().setUserAgentStylesheets(styleLoader.getStylesheets());
+        primaryStage.setScene(scene);
 
         // If main window is closed, all other windows close.
         primaryStage.setOnCloseRequest(event -> {
-
             event.consume();
             // If something is open
             if (!mainWindowController.getTabPane().isEmpty()) {
@@ -115,19 +113,16 @@ public class MainWindow extends Application {
                         Platform.exit();
                     }
                 }
-
             // If nothing is open.
             } else {
                 Platform.exit();
             }
         });
-
         // Load logo for use in window and system task bar
         try {
-            Image icon = new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+            Image icon = new Image(resourceExtractor.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
             primaryStage.getIcons().add(icon);
             MainWindow.windowIcon = icon;
-
         } catch (Exception e) {
             throw new RuntimeException("Could not load " + TOPSOIL_LOGO, e);
         }
@@ -193,10 +188,6 @@ public class MainWindow extends Application {
         });
 
         return reference.get();
-    }
-
-    public static String getOS() {
-        return OS;
     }
 
     public static Image getWindowIcon() {

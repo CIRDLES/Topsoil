@@ -1,3 +1,9 @@
+
+/*---------------*/
+/*    PICKERS    */
+/*---------------*/
+
+/* -- DataRowPicker -- */
 .data-picker-activated {
     -fx-graphic: url("on-picker2.png");
 }
@@ -5,6 +11,34 @@
     -fx-graphic: url("off-picker2.png");
 }
 
+/* -- ColumnVariablePicker -- */
+.column-picker {
+    -fx-alignment: center;
+}
+.no-var-picker {
+    -fx-graphic: url("no-var-picker.png");
+}
+.x-picker {
+    -fx-graphic: url("x-picker.png");
+}
+.sigma-x-picker {
+    -fx-graphic: url("sigma-x-picker.png");
+}
+.y-picker {
+    -fx-graphic: url("y-picker.png");
+}
+.sigma-y-picker {
+    -fx-graphic: url("sigma-y-picker.png");
+}
+.rho-picker {
+    -fx-graphic: url("rho-picker.png");
+}
+
+/*-------------*/
+/*    CELLS    */
+/*-------------*/
+
+/* -- TopsoilDoubleCell -- */
 .data-cell {
     -fx-alignment: center-right;
     -fx-font-family: monospace;
@@ -14,6 +48,7 @@
     -fx-text-fill: darkred;
 }
 
+/* -- TopsoilHeaderCell -- */
 .header-cell {
     -fx-background-color: lightgray;
 }

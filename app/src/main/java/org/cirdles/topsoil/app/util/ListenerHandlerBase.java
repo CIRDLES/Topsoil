@@ -1,11 +1,11 @@
-package org.cirdles.topsoil.app.spreadsheet;
+package org.cirdles.topsoil.app.util;
 
 import org.cirdles.topsoil.app.util.ListenerHandler;
 
 /**
  * @author marottajb
  */
-public abstract class ChangeHandlerBase<T> implements ListenerHandler<T> {
+public abstract class ListenerHandlerBase<T> implements ListenerHandler<T> {
 
     /*
         @TODO Do this better, probably

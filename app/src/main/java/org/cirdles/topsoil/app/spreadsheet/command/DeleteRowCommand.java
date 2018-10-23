@@ -1,11 +1,10 @@
 package org.cirdles.topsoil.app.spreadsheet.command;
 
+import org.cirdles.topsoil.app.data.ObservableDataRow;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.util.undo.Command;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
-
-import java.util.List;
 
 /**
  * An undoable {@link Command} instance that can be added to a {@link TopsoilTab}'s {@link UndoManager} when a row is
@@ -20,7 +19,7 @@ public class DeleteRowCommand implements Command {
 
     private ObservableDataTable data;
     private int index;
-    private List<Double> row;
+    private ObservableDataRow row;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -56,11 +55,9 @@ public class DeleteRowCommand implements Command {
      */
     public void undo() {
         data.addRow(index, row);
-
     }
 
-    /** {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getActionName() {
         return "Delete row";
     }

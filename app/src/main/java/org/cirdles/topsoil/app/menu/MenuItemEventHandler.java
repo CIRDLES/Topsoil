@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.menu;
 
 import com.sun.javafx.stage.StageHelper;
-import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
@@ -9,6 +8,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
+import org.cirdles.topsoil.app.data.ObservableDataRow;
 import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
@@ -231,46 +231,31 @@ public class MenuItemEventHandler {
      * @param   isotopeType
      *          the IsotopeSystem of the example table to be opened
      */
-    public static void handleOpenExampleTable(TopsoilTabPane tabs, IsotopeSystem isotopeType ) {
-
-        ObservableDataTable table;
-        UncertaintyFormat unctFormat;
+    public static void handleOpenExampleTable(TopsoilTabPane tabs, IsotopeSystem isotopeType) {
 
         if (isotopeType != null) {
-            String exampleContent = new ExampleDataTable().getSampleData(isotopeType);
-            String exampleContentDelimiter = ",";
 
-            try {
-                String[] headerRows = FileParser.parseHeaders(exampleContent, exampleContentDelimiter);
-                Double[][] dataRows = FileParser.parseData(exampleContent, exampleContentDelimiter);
-
-                switch (isotopeType) {
-                    case GENERIC:
-                        unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                        break;
-                    case UPB:
-                        unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                        break;
-                    case UTH:
-                        unctFormat = UncertaintyFormat.TWO_SIGMA_ABSOLUTE;
-                        break;
-                    default:
-                        unctFormat = UncertaintyFormat.TWO_SIGMA_PERCENT;
-                }
-
-                table = new ObservableDataTable(dataRows, true, headerRows, isotopeType, unctFormat);
-
-                // Set default variable associations.
-                table.setVariableForColumn(0, Variables.X);
-                table.setVariableForColumn(1, Variables.SIGMA_X);
-                table.setVariableForColumn(2, Variables.Y);
-                table.setVariableForColumn(3, Variables.SIGMA_Y);
-                table.setVariableForColumn(4, Variables.RHO);
-
-                tabs.add(table);
-            } catch (IOException e) {
-                e.printStackTrace();
+            ObservableDataTable table;
+            switch (isotopeType) {
+                case UPB:
+                    table = ExampleDataTable.getUPb();
+                    break;
+                case UTH:
+                    table = ExampleDataTable.getUTh();
+                    break;
+                default:
+                    table = ExampleDataTable.getGen();
+                    break;
             }
+
+            // Set default variable associations.
+            table.setVariableForColumn(0, Variables.X);
+            table.setVariableForColumn(1, Variables.SIGMA_X);
+            table.setVariableForColumn(2, Variables.Y);
+            table.setVariableForColumn(3, Variables.SIGMA_Y);
+            table.setVariableForColumn(4, Variables.RHO);
+
+            tabs.add(table);
         }
     }
 
@@ -307,11 +292,11 @@ public class MenuItemEventHandler {
         try {
             String[] headers = table.getColumnHeaders();
             Double[][] data = new Double[table.rowCount()][table.colCount()];
-            ObservableList<ObservableList<DoubleProperty>> observableRows = table.getRows();
+            ObservableList<ObservableDataRow> rows = table.getRows();
 
-            for (int i = 0; i < observableRows.size(); i++) {
-                for (int j = 0; j < observableRows.get(i).size(); j++) {
-                    data[i][j] = observableRows.get(i).get(j).get();
+            for (int i = 0; i < rows.size(); i++) {
+                for (int j = 0; j < rows.get(i).size(); j++) {
+                    data[i][j] = rows.get(i).get(j).get();
                 }
             }
 
@@ -464,7 +449,8 @@ public class MenuItemEventHandler {
      *     the project was open), then the user is forced to "Save As".
      * </p>
      *
-     * @param tabs  the active TopsoilTabPane
+     * @param   tabs
+     *          the active TopsoilTabPane
      */
     public static void handleSaveProjectFile(TopsoilTabPane tabs) {
         if (TopsoilSerializer.isProjectOpen()) {
@@ -480,7 +466,8 @@ public class MenuItemEventHandler {
     /**
      * Creates a new .topsoil file for the current tabs and plots.
      *
-     * @param tabs  the TopsoilTabPane from which to save tables
+     * @param   tabs
+     *          the TopsoilTabPane from which to save tables
      * @return  true if the file was successfully saved
      */
     public static boolean handleSaveAsProjectFile(TopsoilTabPane tabs) {
@@ -498,7 +485,8 @@ public class MenuItemEventHandler {
     /**
      * Closes the project file, and closes all open tabs and plots.
      *
-     * @param tabs  the active TopsoilTabPane
+     * @param   tabs
+     *          the active TopsoilTabPane
      * @return  true if the file is successfully closed
      */
     public static boolean handleCloseProjectFile(TopsoilTabPane tabs) {
@@ -526,7 +514,7 @@ public class MenuItemEventHandler {
      *
      * @return true if delete is confirmed, false if not
      */
-    public static Boolean confirmTableDeletion() {
+    public static boolean confirmTableDeletion() {
         final AtomicReference<Boolean> reference = new AtomicReference<>(false);
 
         TopsoilNotification.showNotification(
@@ -551,7 +539,8 @@ public class MenuItemEventHandler {
      * Closes all open tabs in the {@code TopsoilTabPane}, as well as any open plots. Used when a project is loaded,
      * or when one is closed.
      *
-     * @param tabs  the active TopsoilTabPane
+     * @param   tabs
+     *          the active TopsoilTabPane
      */
     private static void closeAllTabsAndPlots(TopsoilTabPane tabs) {
         tabs.getTabs().clear();
@@ -564,8 +553,10 @@ public class MenuItemEventHandler {
     /**
      * Saves an open .topsoil project.
      *
-     * @param file  the open .topsoil project File
-     * @param tabs  the active TopsoilTabPane
+     * @param   file
+     *          the open .topsoil project File
+     * @param   tabs
+     *          the active TopsoilTabPane
      * @return  true if file is successfully saved
      */
     private static boolean saveProjectFile(File file, TopsoilTabPane tabs) {
