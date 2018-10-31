@@ -235,11 +235,11 @@ public class MainWindow extends Application {
     	if ( ! tabs.isEmpty() ) {
 		    // shortcut + C copies a selection from the clipboard
     		if ( keyEvent.getCode() == KeyCode.C && keyEvent.isShortcutDown() ) {
-    			tabs.getSelectedTab().getDataView().getSpreadsheetView().copyClipboard();
+    			tabs.getSelectedTab().getDataView().getSpreadsheet().copyClipboard();
 		    }
 		    // shortcut + V pastes content to the clipboard
 		    if ( keyEvent.getCode() == KeyCode.V && keyEvent.isShortcutDown() ) {
-    			tabs.getSelectedTab().getDataView().getSpreadsheetView().pasteClipboard();
+    			tabs.getSelectedTab().getDataView().getSpreadsheet().pasteClipboard();
 		    }
 	    }
     }

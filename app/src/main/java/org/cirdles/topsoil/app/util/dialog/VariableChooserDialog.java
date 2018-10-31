@@ -434,7 +434,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 
 			toggles.add(toggle);
 
-			// If the new Toggle is selected already, set it as the selectedToggle
+			// If the new Toggle is selected already, setValue it as the selectedToggle
 			if (toggle.isSelected()) {
 				for (Toggle t : toggles) {
 					if (!t.equals(toggle)) {

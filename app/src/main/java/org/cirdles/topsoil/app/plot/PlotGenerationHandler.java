@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import static org.cirdles.topsoil.plot.PlotProperty.*;
 
 /**
- * A class containing a set of methods for handling plot generation.
+ * A class containing a setValue of methods for handling plot generation.
  *
  * @author marottajb
  */

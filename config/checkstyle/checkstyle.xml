@@ -1,74 +1,74 @@
 <?xml version="1.0"?>
 <!DOCTYPE module PUBLIC
-          "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
-          "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
-<module rowID = "Checker">
-    <property rowID="charset" value="UTF-8"/>
-    <property rowID="fileExtensions" value="java, properties, xml"/>
+<module name = "Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="fileExtensions" value="java, properties, xml"/>
 
-    <!--<module rowID="FileTabCharacter">-->
-        <!--<property rowID="eachLine" value="true"/>-->
+    <!--<module name="FileTabCharacter">-->
+        <!--<property name="eachLine" value="true"/>-->
     <!--</module>-->
 
-    <!--<module rowID="NewlineAtEndOfFile"/>-->
+    <!--<module name="NewlineAtEndOfFile"/>-->
 
-    <!--<module rowID="RegexpSingleline">-->
+    <!--<module name="RegexpSingleline">-->
        <!--&lt;!&ndash; no trailing whitespace &ndash;&gt;-->
-       <!--<property rowID="format" value="\s+$"/>-->
-       <!--<property rowID="message" value="Trailing whitespace."/>-->
+       <!--<property name="format" value="\s+$"/>-->
+       <!--<property name="message" value="Trailing whitespace."/>-->
     <!--</module>-->
 
-    <!--<module rowID="RegexpMultiline">-->
-        <!--<property rowID="format" value="\n(\s*\n){2}"/>-->
-        <!--<property rowID="message" value="Consecutive blank lines."/>-->
+    <!--<module name="RegexpMultiline">-->
+        <!--<property name="format" value="\n(\s*\n){2}"/>-->
+        <!--<property name="message" value="Consecutive blank lines."/>-->
     <!--</module>-->
 
-    <!--<module rowID="TreeWalker">-->
+    <!--<module name="TreeWalker">-->
         <!--&lt;!&ndash; blocks &ndash;&gt;-->
-        <!--<module rowID="AvoidNestedBlocks"/>-->
-        <!--<module rowID="EmptyBlock"/>-->
-        <!--<module rowID="EmptyCatchBlock"/>-->
-        <!--<module rowID="LeftCurly"/>-->
-        <!--<module rowID="NeedBraces"/>-->
-        <!--<module rowID="RightCurly"/>-->
+        <!--<module name="AvoidNestedBlocks"/>-->
+        <!--<module name="EmptyBlock"/>-->
+        <!--<module name="EmptyCatchBlock"/>-->
+        <!--<module name="LeftCurly"/>-->
+        <!--<module name="NeedBraces"/>-->
+        <!--<module name="RightCurly"/>-->
 
         <!--&lt;!&ndash; design &ndash;&gt;-->
-        <!--<module rowID="InnerTypeLast"/>-->
-        <!--<module rowID="InterfaceIsType"/>-->
+        <!--<module name="InnerTypeLast"/>-->
+        <!--<module name="InterfaceIsType"/>-->
 
         <!--&lt;!&ndash; imports &ndash;&gt;-->
-        <!--<module rowID="AvoidStarImport">-->
-            <!--<property rowID="excludes" value="org.hamcrest.Matchers"/>-->
-            <!--<property rowID="excludes" value="org.junit.Assert"/>-->
-            <!--<property rowID="excludes" value="org.mockito.Mockito"/>-->
+        <!--<module name="AvoidStarImport">-->
+            <!--<property name="excludes" value="org.hamcrest.Matchers"/>-->
+            <!--<property name="excludes" value="org.junit.Assert"/>-->
+            <!--<property name="excludes" value="org.mockito.Mockito"/>-->
         <!--</module>-->
 
-        <!--<module rowID="RedundantImport"/>-->
-        <!--<module rowID="UnusedImports"/>-->
+        <!--<module name="RedundantImport"/>-->
+        <!--<module name="UnusedImports"/>-->
 
         <!--&lt;!&ndash; metrics &ndash;&gt;-->
-        <!--<module rowID="BooleanExpressionComplexity"/>-->
-        <!--<module rowID="CyclomaticComplexity"/>-->
+        <!--<module name="BooleanExpressionComplexity"/>-->
+        <!--<module name="CyclomaticComplexity"/>-->
 
         <!--&lt;!&ndash; miscellaneous &ndash;&gt;-->
-        <!--<module rowID="Indentation">-->
-            <!--<property rowID="lineWrappingIndentation" value="8"/>-->
+        <!--<module name="Indentation">-->
+            <!--<property name="lineWrappingIndentation" value="8"/>-->
         <!--</module>-->
 
         <!--&lt;!&ndash; modifiers &ndash;&gt;-->
-        <!--<module rowID="ModifierOrder"/>-->
+        <!--<module name="ModifierOrder"/>-->
 
         <!--&lt;!&ndash; regexp &ndash;&gt;-->
-        <!--<module rowID="RegexpSinglelineJava">-->
-            <!--<property rowID="format" value="System\.(out|err)\.print(f|ln)?\("/>-->
+        <!--<module name="RegexpSinglelineJava">-->
+            <!--<property name="format" value="System\.(out|err)\.print(f|ln)?\("/>-->
 
-            <!--<property rowID="message"-->
+            <!--<property name="message"-->
                 <!--value="Printing to standard I/O. Please use Logger instead."/>-->
         <!--</module>-->
 
         <!--&lt;!&ndash; whitespace &ndash;&gt;-->
-        <!--<module rowID="ParenPad"/>-->
-        <!--<module rowID="WhitespaceAround"/>-->
+        <!--<module name="ParenPad"/>-->
+        <!--<module name="WhitespaceAround"/>-->
     <!--</module>-->
 </module>

@@ -49,7 +49,7 @@ public class ObservableDataTable extends Observable {
     //**********************************************//
 
     /**
-     * The title of the data set.
+     * The title of the data setValue.
      */
     private final StringProperty title = new SimpleStringProperty("");
     public StringProperty titleProperty() {
@@ -171,7 +171,7 @@ public class ObservableDataTable extends Observable {
      * @param row   List of Double values
      */
     public void addRow(List<Double> row) {
-        addRow(rowCount - 1, row);
+        addRow(rowCount, row);
     }
 
     /**
@@ -188,6 +188,16 @@ public class ObservableDataTable extends Observable {
 
     /**
      * Adds the provided {@code ObservableDataRow} to the table.
+     *
+     * @param   newRow
+     *          ObservableDataRow
+     */
+    public void addRow(ObservableDataRow newRow) {
+        addRow(rowCount, newRow);
+    }
+
+    /**
+     * Adds the provided {@code ObservableDataRow} to the table at the specified index.
      *
      * @param   index
      *          index to insert row at
@@ -216,10 +226,15 @@ public class ObservableDataTable extends Observable {
 
         // Add DoubleProperties from row to proper columns
         for (int colIndex = 0; colIndex < colCount; colIndex++) {
-            columns.get(colIndex).add(index, newRow.get(colIndex));
+            // If index == rowCount, append row
+            if (index == rowCount) {
+                columns.get(colIndex).add(newRow.get(colIndex));
+            } else {
+                columns.get(colIndex).add(index, newRow.get(colIndex));
+            }
         }
 
-        rows.add(newRow);
+        rows.add(index, newRow);
         rowCount++;
         setChanged();
         notifyObservers(new DataOperation(index, -1, OperationType.INSERT_ROW));
@@ -288,7 +303,7 @@ public class ObservableDataTable extends Observable {
     }
 
     /**
-     * Adds the provided {@code ObservableDataColumn to the table.
+     * Adds the provided {@code ObservableDataColumn} to the table.
      *
      * @param   newColumn
      *          ObservableDataColumn
@@ -372,55 +387,29 @@ public class ObservableDataTable extends Observable {
      */
     public void setVariableForColumn(int index, Variable<Number> variable) {
         ObservableDataColumn column = columns.get(index);
-        if (variable == null) {
-            if (column.hasVariable()) {
-                varMap.remove(column.getVariable());
-            }
-            column.setVariable(null);
-        }
+        if (column.getVariable() != variable) {
+            setVariableForColumn(variable, column);
 
-        if (varMap.containsKey(variable)) {
-            varMap.get(variable).setVariable(null);
+            setChanged();
+            notifyObservers(new DataOperation(-1, -1, OperationType.UPDATE_VARIABLES));
+            updateOpenPlots();
         }
-        column.setVariable(variable);
-        varMap.put(variable, column);
-        setChanged();
-        notifyObservers(new DataOperation(-1, -1, OperationType.UPDATE_VARIABLES));
-        updateOpenPlots();
     }
 
     /**
-     * Makes a series of variable assignments provided as map entries.
-     *
      * @param   map
      *          Map containing entries for variable assignments
      */
-    public void setVariablesForColumns(Map<Variable<Number>, ObservableDataColumn> map) {
-
+    public void setVariablesForColumns(Map<Integer, Variable<Number>> map) {
         Variable<Number> variable;
         ObservableDataColumn column;
 
-        for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : map.entrySet()) {
-            variable = entry.getKey();
-            column = entry.getValue();
-
-            if (variable != null) {
-                if (column == null) {
-                    if (varMap.containsKey(variable)) {
-                        varMap.get(variable).setVariable(null);
-                        varMap.remove(variable);
-                    }
-                } else {
-                    if (column.getVariable() != variable) {
-                        if (varMap.containsKey(variable)) {
-                            varMap.get(variable).setVariable(null);
-                        }
-                        column.setVariable(variable);
-                        varMap.put(variable, column);
-                    }
-                }
-            }
+        for (Map.Entry<Integer, Variable<Number>> entry : map.entrySet()) {
+            variable = entry.getValue();
+            column = (entry.getKey() >= 0 ? columns.get(entry.getKey()) : null);
+            setVariableForColumn(variable, column);
         }
+
         setChanged();
         notifyObservers(new DataOperation(-1, -1, OperationType.UPDATE_VARIABLES));
         updateOpenPlots();
@@ -451,15 +440,15 @@ public class ObservableDataTable extends Observable {
     /**
      * Gets the {@code DoubleProperty} at the specified row and column.
      *
-     * @param   column
-     *          column index
      * @param   row
      *          row index
+     * @param   column
+     *          column index
      *
      * @return  DoubleProperty at indices
      */
-    public DoubleProperty get(int column, int row) {
-        return columns.get(column).get(row);
+    public DoubleProperty get(int row, int column) {
+        return rows.get(row).get(column);
     }
 
     /**
@@ -472,22 +461,42 @@ public class ObservableDataTable extends Observable {
      *
      * @return  double data value
      */
-    public double getValue(int column, int row) {
-        return get(column, row).get();
+    public double getValue(int row, int column) {
+        return get(row, column).get();
     }
 
     /**
-     * Sets teh value at the specified row and column.
+     * Sets the {@code DoubleProperty} at the specified row and column.
+     *
+     * @param   row
+     *          row index
+     * @param   column
+     *          column index
+     * @param   property
+     *          new DoubleProperty
+     *
+     * @return  old DoubleProperty
+     */
+    public DoubleProperty set(int row, int column, DoubleProperty property) {
+        DoubleProperty rtnval = rows.get(row).set(column, property);
+        setChanged();
+        notifyObservers(new DataOperation(row, column, OperationType.UPDATE_PROPERTY));
+        updateOpenPlots();
+        return rtnval;
+    }
+
+    /**
+     * Sets the value at the specified row and column.
      *
      * @param   column
      *          column index
      * @param   row
      *          row index
      * @param   value
-     *          double data value
+     *          new double value
      */
-    public void set(int column, int row, double value) {
-        columns.get(column).get(row).set(value);
+    public void setValue(int row, int column, double value) {
+        get(row, column).set(value);
         updateOpenPlots();
     }
 
@@ -706,6 +715,35 @@ public class ObservableDataTable extends Observable {
         return dataColumns;
     }
 
+    private void setVariableForColumn(Variable<Number> variable, ObservableDataColumn column) {
+        if (column != null) {
+            if (variable == null) {
+                if (column.hasVariable()) {
+                    varMap.remove(column.getVariable());
+                    column.setVariable(null);
+                }
+            } else {
+                if (variable != column.getVariable()) {
+                    if (column.hasVariable()) {
+                        varMap.remove(column.getVariable());        // remove assignment to column's old variable
+                    }
+                    if (varMap.containsKey(variable)) {
+                        varMap.get(variable).setVariable(null);     // remove variable from a previously assigned column
+                        varMap.remove(variable);
+                    }
+                    column.setVariable(variable);
+                    varMap.put(variable, column);
+                }
+            }
+            column.setVariable(variable);
+        } else {
+            if (variable != null) {
+                varMap.get(variable).setVariable(null);
+                varMap.remove(variable);
+            }
+        }
+    }
+
 	//**********************************************//
 	//                INNER CLASSES                 //
 	//**********************************************//
@@ -749,7 +787,8 @@ public class ObservableDataTable extends Observable {
 		DELETE_COLUMN,
         SELECT_ROW,
         DESELECT_ROW,
-        UPDATE_VARIABLES
+        UPDATE_VARIABLES,
+        UPDATE_PROPERTY
 	}
 
     /**

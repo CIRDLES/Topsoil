@@ -17,7 +17,7 @@ public class ColumnVariablePicker extends Picker {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final String COLUMN_PICKER = "column-picker";
+    private static final String COLUMN_PICKER = "column-variable-picker";
 
     private static final String NO_VAR = "no-var-picker";
     private static final String X = "x-picker";
@@ -73,30 +73,17 @@ public class ColumnVariablePicker extends Picker {
         return colIndex;
     }
 
-    public void setColIndex(int colIndex) {
-        this.colIndex = colIndex;
-    }
-
     public Variable getVariable() {
         return variable;
     }
 
     public void setVariable(Variable v) {
         if (v != variable) {
-            String text = (variable != null ? variable.getAbbreviation() : "null");
-            String vText = (v != null ? v.getAbbreviation() : "null");
-            System.out.println("Setting col picker " + colIndex);
-            System.out.println("Old var: " + text);
-            System.out.println("Target var: " + vText);
+//            String oldAbbr = (variable != null ? variable.getAbbreviation() : "null");
+//            String newAbbr = (v != null ? v.getAbbreviation() : "null");
             getStyleClass().add(variableClasses.get(v));         // adds new styleclass
             getStyleClass().remove(variableClasses.get(variable));  // removes old styleclass
             variable = v;
-            text = (variable != null ? variable.getAbbreviation() : "null");
-            System.out.println("New var: " + text);
-            System.out.println(Arrays.toString(getStyleClass().toArray(new String[]{})));
-            getStyleClass().setAll(getStyleClass());    // Try to refresh graphic
-            System.out.println(Arrays.toString(getStyleClass().toArray(new String[]{})));
-            System.out.println();
         }
     }
 }

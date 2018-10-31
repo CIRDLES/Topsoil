@@ -12,7 +12,7 @@
 }
 
 /* -- ColumnVariablePicker -- */
-.column-picker {
+.column-variable-picker {
     -fx-alignment: center;
 }
 .no-var-picker {

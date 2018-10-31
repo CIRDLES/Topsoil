@@ -39,7 +39,7 @@ public class ObservableDataColumn extends TopsoilDataList {
     }
 
     /**
-     * The {@code Variable} that is set to this column, if one exists.
+     * The {@code Variable} that is setValue to this column, if one exists.
      */
     private ObjectProperty<Variable> variable;
     public ObjectProperty<Variable> variableProperty() {

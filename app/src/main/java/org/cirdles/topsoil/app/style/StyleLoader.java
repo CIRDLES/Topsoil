@@ -34,12 +34,11 @@ public class StyleLoader {
     private static final String RHO_PICKER = "rho-picker.png";
     private static final String NO_VAR_PICKER = "no-var-picker.png";
 
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(StyleLoader.class);
-
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
+    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(StyleLoader.class);
     private final List<String> stylesheets = new ArrayList<>();
 
     //**********************************************//

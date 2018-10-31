@@ -17,10 +17,10 @@ import org.cirdles.topsoil.app.plot.TopsoilPlotView;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 import org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView;
-import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.dialog.VariableChooserDialog;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,10 +34,18 @@ import static java.util.Arrays.asList;
  */
 public class TopsoilDataView extends AnchorPane {
 
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
     private static final String CONTROLLER_FXML = "data-view.fxml";
 
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
     private ObservableDataTable data;
-    private TopsoilSpreadsheetView spreadsheetView;
+    private TopsoilSpreadsheetView spreadsheet;
 
 	//**********************************************//
 	//                   CONTROLS                   //
@@ -73,13 +81,10 @@ public class TopsoilDataView extends AnchorPane {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilDataView() {
-        this(new ObservableDataTable());
-    }
 
     public TopsoilDataView(ObservableDataTable data) {
         this.data = data;
-        this.spreadsheetView = new TopsoilSpreadsheetView(data);
+        this.spreadsheet = new TopsoilSpreadsheetView(data);
         try {
             FXMLLoader loader = new FXMLLoader(new ResourceExtractor(TopsoilDataView.class).extractResourceAsPath
 		            (CONTROLLER_FXML).toUri().toURL());
@@ -98,46 +103,23 @@ public class TopsoilDataView extends AnchorPane {
     /** {@inheritDoc}
      */
     @FXML public void initialize() {
-        spreadsheetPane.getChildren().add(spreadsheetView);
-        AnchorPane.setBottomAnchor(spreadsheetView, 0.0);
-        AnchorPane.setRightAnchor(spreadsheetView, 0.0);
-        AnchorPane.setTopAnchor(spreadsheetView, 0.0);
-        AnchorPane.setLeftAnchor(spreadsheetView, 0.0);
+        spreadsheetPane.getChildren().add(spreadsheet);
+        AnchorPane.setBottomAnchor(spreadsheet, 0.0);
+        AnchorPane.setRightAnchor(spreadsheet, 0.0);
+        AnchorPane.setTopAnchor(spreadsheet, 0.0);
+        AnchorPane.setLeftAnchor(spreadsheet, 0.0);
 
 	    isotopeSystemComboBox.getItems().addAll(IsotopeSystem.values());
 
 	    isotopeSystemProperty().bindBidirectional(data.isotopeSystemProperty());
     }
 
-    public TopsoilSpreadsheetView getSpreadsheetView() {
-        return spreadsheetView;
+    public TopsoilSpreadsheetView getSpreadsheet() {
+        return spreadsheet;
     }
 
     public ObservableDataTable getData() {
-        return spreadsheetView.getData();
-    }
-
-    public void showVariableChooserDialog(List<Variable<Number>> required) {
-        Map<Variable<Number>, ObservableDataColumn> selections = VariableChooserDialog.showDialog(this, required);
-        setVariableAssignments(selections);
-    }
-
-    public void setVariableAssignments(Map<Variable<Number>, ObservableDataColumn> assignments) {
-
-        if (assignments != null) {
-            data.setVariablesForColumns(assignments);
-
-            for (TopsoilPlotView plotView : data.getOpenPlots().values()) {
-                plotView.getPlot().setData(data.getPlotEntries());
-	            // Re-name x and y axis titles
-	            if (assignments.containsKey(Variables.X)) {
-		            plotView.getPropertiesPanel().setXAxisTitle((assignments.get(Variables.X).getHeader()));
-	            }
-	            if (assignments.containsKey(Variables.Y)) {
-		            plotView.getPropertiesPanel().setYAxisTitle((assignments.get(Variables.Y).getHeader()));
-	            }
-            }
-        }
+        return spreadsheet.getData();
     }
 
     //**********************************************//
@@ -160,4 +142,38 @@ public class TopsoilDataView extends AnchorPane {
         }
     }
 
+    private void showVariableChooserDialog(List<Variable<Number>> required) {
+        Map<Variable<Number>, ObservableDataColumn> selections = VariableChooserDialog.showDialog(this, required);
+        System.out.println("*** SELECTIONS ***");
+        String keyString;
+        String valString;
+        for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : selections.entrySet()) {
+            keyString = (entry.getKey() != null ? entry.getKey().getAbbreviation() : "null");
+            valString = (entry.getValue() != null ? entry.getValue().getHeader() : "null");
+            System.out.println(keyString + " => " + valString);
+        }
+        setVariableAssignments(selections);
+    }
+
+    private void setVariableAssignments(Map<Variable<Number>, ObservableDataColumn> choices) {
+        if (choices != null) {
+            Map<Integer, Variable<Number>> assignments = new HashMap<>();
+            for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : choices.entrySet()) {
+                assignments.put(data.getColumns().indexOf(entry.getValue()), entry.getKey());
+            }
+
+            data.setVariablesForColumns(assignments);
+
+            for (TopsoilPlotView plotView : data.getOpenPlots().values()) {
+                plotView.getPlot().setData(data.getPlotEntries());
+	            // Re-name x and y axis titles
+	            if (choices.containsKey(Variables.X)) {
+		            plotView.getPropertiesPanel().setXAxisTitle((choices.get(Variables.X).getHeader()));
+	            }
+	            if (choices.containsKey(Variables.Y)) {
+		            plotView.getPropertiesPanel().setYAxisTitle((choices.get(Variables.Y).getHeader()));
+	            }
+            }
+        }
+    }
 }

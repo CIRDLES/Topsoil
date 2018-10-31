@@ -57,7 +57,6 @@ public class DataRowPicker extends Picker {
         }
         selected.set(b);
         spreadsheet.getData().getRow(rowIndex - 1).setSelected(b);
-        System.out.println("Data picker: " + rowIndex + Arrays.toString(getStyleClass().toArray(new String[]{})));
     }
 
     //**********************************************//

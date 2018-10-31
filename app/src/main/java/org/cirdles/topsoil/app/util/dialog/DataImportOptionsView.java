@@ -179,7 +179,7 @@ public class DataImportOptionsView extends VBox {
 	/**
 	 * Checks all {@code ComboBox}es other than the one that triggered this method to see if they contain the value
 	 * that the recently changed {@code ComboBox} now contains. If another {@code ComboBox} with the same value is
-	 * found, that {@code ComboBox}'s value is set to the empty option.
+	 * found, that {@code ComboBox}'s value is setValue to the empty option.
 	 *
 	 * @param   changed
 	 *          the ComboBox that was changed

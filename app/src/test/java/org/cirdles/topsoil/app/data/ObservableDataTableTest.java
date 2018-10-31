@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.data;
 
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
-import org.cirdles.topsoil.app.util.file.ExampleDataTable;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
@@ -16,7 +15,7 @@ import static org.junit.Assert.*;
 /**
  * @author marottajb
  */
-public class ObservableDataTableTest extends ApplicationTest {
+public class ObservableDataTableTest {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -30,7 +29,7 @@ public class ObservableDataTableTest extends ApplicationTest {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private static ObservableDataTable table;
+    private static ObservableDataTable data;
 
     //**********************************************//
     //                     SETUP                    //
@@ -38,32 +37,21 @@ public class ObservableDataTableTest extends ApplicationTest {
 
     @BeforeClass
     public static void setUp() {
-        System.out.println("BEGIN SETUP");
         try {
             String delim = FileParser.getDelimiter(TEST_DATA_STRING);
             String[] headers = FileParser.parseHeaders(TEST_DATA_STRING, delim);
             Double[][] data = FileParser.parseData(TEST_DATA_STRING, delim);
 
-            table = new ObservableDataTable(data, true, headers, ISOTOPE_SYSTEM, UNCT_FORMAT);
+            ObservableDataTableTest.data = new ObservableDataTable(data, true, headers, ISOTOPE_SYSTEM, UNCT_FORMAT);
         } catch (IOException e) {
             fail("Unable to parse test data.");
         }
     }
 
-//    @Before
-//    public void beforeEachTest() {
-//
-//    }
-
     @After
     public void afterEachTest() {
-        table.clearVariableAssignments();
+        data.clearVariableAssignments();
     }
-
-//    @AfterClass
-//    public static void tearDown() {
-//
-//    }
 
     //**********************************************//
     //                     TESTS                    //
@@ -73,9 +61,9 @@ public class ObservableDataTableTest extends ApplicationTest {
     public void test_setVariableForColumn() {
         Variable<Number> variable = Variables.X;
         int colIndex = 2;
-        ObservableDataColumn column = table.getColumns().get(colIndex);
+        ObservableDataColumn column = data.getColumns().get(colIndex);
 
-        table.setVariableForColumn(colIndex, variable);
+        data.setVariableForColumn(colIndex, variable);
 
         // The column's hasVariable property has been updated
         assertTrue(column.hasVariable());
@@ -84,30 +72,30 @@ public class ObservableDataTableTest extends ApplicationTest {
         assertSame(column.getVariable(), Variables.X);
 
         // The data table's varMap should have only one entry
-        assertEquals(1, table.getVarMap().size());
+        assertEquals(1, data.getVarMap().size());
 
         // The single entry in the varMap is correct
-        assertSame(table.getVarMap().get(variable), column);
+        assertSame(data.getVarMap().get(variable), column);
     }
 
     @Test
     public void test_clearVariableAssignments() {
-        table.setVariableForColumn(0, Variables.X);
-        table.setVariableForColumn(1, Variables.SIGMA_X);
-        table.setVariableForColumn(2, Variables.Y);
-        table.setVariableForColumn(3, Variables.SIGMA_Y);
-        table.setVariableForColumn(4, Variables.RHO);
+        data.setVariableForColumn(0, Variables.X);
+        data.setVariableForColumn(1, Variables.SIGMA_X);
+        data.setVariableForColumn(2, Variables.Y);
+        data.setVariableForColumn(3, Variables.SIGMA_Y);
+        data.setVariableForColumn(4, Variables.RHO);
 
-        table.clearVariableAssignments();
+        data.clearVariableAssignments();
 
         // The data table's varMap should not have any entries
-        assertEquals(0, table.getVarMap().size());
+        assertEquals(0, data.getVarMap().size());
 
-        for (ObservableDataColumn column : table.getColumns()) {
+        for (ObservableDataColumn column : data.getColumns()) {
             // The column's hasVariable property has been updated
             assertFalse(column.hasVariable());
 
-            // The column's variable property has been set to null
+            // The column's variable property has been setValue to null
             assertNull(column.getVariable());
         }
     }

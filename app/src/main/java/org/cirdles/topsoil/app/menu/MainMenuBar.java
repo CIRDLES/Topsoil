@@ -269,7 +269,7 @@ public class MainMenuBar extends MenuBar {
         setCellFormatItem.setOnAction(event -> {
         	try {
 		        String pattern = CellFormatDialog.open(null);
-		        tabs.getSelectedTab().getDataView().getSpreadsheetView().setFormat(pattern);
+		        tabs.getSelectedTab().getDataView().getSpreadsheet().setFormat(pattern);
 	        } catch (TopsoilException e) {
 		        e.printStackTrace();
 	        }

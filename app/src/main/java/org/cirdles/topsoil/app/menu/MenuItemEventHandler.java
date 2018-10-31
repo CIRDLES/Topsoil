@@ -34,11 +34,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cirdles.topsoil.app.util.file.ExampleDataTable;
+import org.cirdles.topsoil.app.data.ExampleDataTable;
 import java.awt.Desktop;
 
 /**
- * A class containing a set of methods for handling actions for {@code MenuItem}s in the {@link MainMenuBar}.
+ * A class containing a setValue of methods for handling actions for {@code MenuItem}s in the {@link MainMenuBar}.
  *
  * @author Benjamin Muldrow
  *

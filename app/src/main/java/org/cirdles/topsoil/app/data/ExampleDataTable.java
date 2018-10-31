@@ -1,8 +1,9 @@
-package org.cirdles.topsoil.app.util.file;
+package org.cirdles.topsoil.app.data;
 
 import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
 

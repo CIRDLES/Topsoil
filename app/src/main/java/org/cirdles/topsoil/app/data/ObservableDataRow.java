@@ -62,7 +62,7 @@ public class ObservableDataRow extends TopsoilDataList {
     }
 
     /**
-     * Constructs a new data row containing the provided {@code DoubleProperties}.
+     * Constructs a new data row containing the provided {@code Double} values.
      *
      * @param values    sequence of Double values
      */

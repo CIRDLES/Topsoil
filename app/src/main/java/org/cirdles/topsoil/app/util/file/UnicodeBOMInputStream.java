@@ -88,6 +88,8 @@ public class UnicodeBOMInputStream extends InputStream
         /**
          * Returns a <code>String</code> representation of this <code>BOM</code>
          * value.
+         *
+         * @return  String
          */
         public final String toString()
         {
@@ -96,6 +98,8 @@ public class UnicodeBOMInputStream extends InputStream
 
         /**
          * Returns the bytes corresponding to this <code>BOM</code> value.
+         *
+         * @return  byte[]
          */
         public final byte[] getBytes()
         {

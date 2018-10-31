@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * A set of utility methods for parsing data from text files.
+ * A setValue of utility methods for parsing data from text files.
  *
  * @author marottajb
  */

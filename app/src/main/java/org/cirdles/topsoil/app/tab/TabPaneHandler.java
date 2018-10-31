@@ -2,7 +2,7 @@ package org.cirdles.topsoil.app.tab;
 
 /**
  * This class provides utility methods for accessing the application's {@code TopsoilTabPane}. There should only be
- * one, containing tabs for each open data table. The value of {@code tabs} is set once when {@code MainWindow} starts.
+ * one, containing tabs for each open data table. The value of {@code tabs} is setValue once when {@code MainWindow} starts.
  */
 public class TabPaneHandler {
 

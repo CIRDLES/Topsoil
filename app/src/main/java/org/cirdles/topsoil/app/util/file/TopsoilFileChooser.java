@@ -6,7 +6,7 @@ import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 import java.io.File;
 
 /**
- * A class containing a set of methods for obtaining custom {@link FileChooser}s for
+ * A class containing a setValue of methods for obtaining custom {@link FileChooser}s for
  * table files or .topsoil project files.
  *
  * @author Benjamin Muldrow

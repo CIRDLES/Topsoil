@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.spreadsheet.command;
 
+import org.cirdles.topsoil.app.data.ObservableDataRow;
 import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.util.undo.Command;
@@ -20,7 +21,7 @@ public class InsertRowCommand implements Command {
 
     private ObservableDataTable data;
     private int index;
-    private List<Double> row;
+    private ObservableDataRow row;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -30,13 +31,28 @@ public class InsertRowCommand implements Command {
      * Constructs a new {@code InsertRowCommand} for an inserted row at the specified index.
      *
      * @param   data
-     *          the ObservableDataTable to which the row was inserted
+     *          ObservableDataTable
      * @param   rowIndex
-     *          the inserted row's index
-     * @param   row
-     *          the row that was inserted
+     *          inserted row's index
+     * @param   values
+     *          a List of Double values to create a row
      */
-    public InsertRowCommand(ObservableDataTable data, int rowIndex, List<Double> row) {
+    public InsertRowCommand(ObservableDataTable data, int rowIndex, List<Double> values) {
+        this(data, rowIndex, new ObservableDataRow((Double[]) values.toArray(new Double[]{})));
+
+    }
+
+    /**
+     * Constructs a new {@code InsertRowCommand} for an inserted row at the specified index.
+     *
+     * @param   data
+     *          ObservableDataTable
+     * @param   rowIndex
+     *          inserted row's index
+     * @param   row
+     *          ObservableDataRow
+     */
+    public InsertRowCommand(ObservableDataTable data, int rowIndex, ObservableDataRow row) {
         this.data = data;
         this.index = rowIndex;
         this.row = row;

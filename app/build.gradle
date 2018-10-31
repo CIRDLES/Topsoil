@@ -54,4 +54,8 @@ dependencies {
     implementation 'com.google.inject:guice:4.0'
 
     compile 'org.springframework:spring-jdbc:4.2.0.RELEASE'
+
+    testCompile "org.testfx:testfx-core:4.0.15-alpha"
+    testCompile "org.testfx:openjfx-monocle:8u76-b04"
+    testCompile "org.testfx:testfx-junit:4.0.15-alpha"
 }
