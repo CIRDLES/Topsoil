@@ -3,7 +3,9 @@ package org.cirdles.topsoil.app.spreadsheet.cell;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.cirdles.topsoil.app.data.ObservableDataColumn;
 import org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView;
+import org.cirdles.topsoil.variable.Variables;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 
 /**
@@ -22,9 +24,6 @@ public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    /**
-     * Whether the cell is in a spreadsheet row that is "selected".
-     */
     private BooleanProperty selected = new SimpleBooleanProperty(true);
     public BooleanProperty selectedProperty() {
         return selected;
@@ -39,6 +38,17 @@ public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
             getStyleClass().add(DATA_CELL_DEACTIVATED);
         }
         selectedProperty().set(selected);
+    }
+
+    private BooleanProperty uncertain = new SimpleBooleanProperty(false);
+    public BooleanProperty uncertainProperty() {
+        return uncertain;
+    }
+    public boolean isUncertain() {
+        return uncertain.get();
+    }
+    public void setUncertain(boolean val) {
+        uncertain.set(val);
     }
 
     //**********************************************//
@@ -57,15 +67,25 @@ public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
 
     /** {@inheritDoc} */
     void onItemUpdated(Number oldValue, Number newValue) {
-        if (Double.compare((Double) newValue, (Double) getSource().getValue()) != 0) {
-            spreadsheet.updateDataValue(this);
+        ObservableDataColumn column = spreadsheet.getData().getColumns().get(getColumn());
+        double dataValue = (double) newValue;
+        if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {
+            dataValue /= spreadsheet.getData().getUnctFormat().getValue();
+        }
+        if (Double.compare(dataValue, (Double) getSource().getValue()) != 0) {
+            spreadsheet.updateDataValue(getRow(), getColumn(), dataValue);
         }
     }
 
     /** {@inheritDoc} */
     void onSourceUpdated(Number oldValue, Number newValue) {
-        if (Double.compare((Double) newValue, (Double) getItem()) != 0) {
-            this.spreadsheet.getGrid().setCellValue(getRow(), getColumn(), newValue);
+        ObservableDataColumn column = spreadsheet.getData().getColumns().get(getColumn());
+        double cellValue = (double) newValue;
+        if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {
+            cellValue *= spreadsheet.getData().getUnctFormat().getValue();
+        }
+        if (Double.compare(cellValue, (Double) getItem()) != 0) {
+            this.spreadsheet.getGrid().setCellValue(getRow(), getColumn(), cellValue);
         }
     }
 }

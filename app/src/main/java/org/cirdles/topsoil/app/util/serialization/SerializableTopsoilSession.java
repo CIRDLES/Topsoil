@@ -86,7 +86,7 @@ class SerializableTopsoilSession implements Serializable {
             isotopeType = IsotopeSystem.valueOf(String.valueOf(tableData.get(TableDataType.ISOTOPE_TYPE)));
             unctFormat = UncertaintyFormat.valueOf(String.valueOf(tableData.get(TableDataType.UNCERTANTY_FORMAT)));
 
-            table = new ObservableDataTable(data, true, headers, isotopeType, unctFormat);
+            table = new ObservableDataTable(data, headers, isotopeType, unctFormat);
 
             table.setTitle(String.valueOf(tableData.get(TableDataType.TITLE)));
             tabs.add(table);

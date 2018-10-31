@@ -265,25 +265,18 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
         // 3. Update existing variable assignment
         Platform.runLater(() -> {
             data.setVariableForColumn(xIndex, Variables.Y);
-            Variable actualVar = columns.get(xIndex).getVariable();
-            assertSame("Incorrect variable set to ObservableDataColumn at index " + xIndex + ". " +
-                       "Expected: " + Variables.Y.getAbbreviation() + ", Actual: " + (actualVar != null ? actualVar.getAbbreviation() : "null"),
-                       Variables.Y, actualVar);
+            checkColumnVariables(xIndex, Variables.Y);
             assertFalse("Unexpected key in data.varMap: " + Variables.X.getAbbreviation(),
                         data.getVarMap().containsKey(Variables.X));
-            actualVar = columns.get(yIndex).getVariable();
-            assertFalse("Unexpected variable for ObservableDataColumn at index " + yIndex + ": " + actualVar,
-                        columns.get(yIndex).hasVariable());
+            checkColumnVariables(yIndex, null);
         });
 
         // 4. Remove variable assignment
         Platform.runLater(() -> {
             data.setVariableForColumn(xIndex, null);
-            Variable actualVar = columns.get(xIndex).getVariable();
+            checkColumnVariables(xIndex, null);
             assertFalse("Unexpected value in data.varMap: " + columns.get(xIndex),
                         data.getVarMap().containsValue(columns.get(xIndex)));
-            assertFalse("Unexpected variable for ObservableDataColumn at index " + xIndex + ": " + (actualVar != null ? actualVar.getAbbreviation() : "null"),
-                        columns.get(xIndex).hasVariable());
         });
     }
 
@@ -296,7 +289,9 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
 
         Platform.runLater(() -> {
             data.set(row, col, newProp);
-            assertSame(newProp, cell.getSource());
+            assertSame("Source property was not successfully updated. " +
+                       "Expected: " + newProp + ", Actual: " + cell.getSource(),
+                       newProp, cell.getSource());
         });
     }
 
@@ -322,12 +317,15 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
         ObservableList<ObservableDataColumn> columns = data.getColumns();
         Variable pickerVar = ((ColumnVariablePicker) spreadsheet.getColumnPickers().get(index)).getVariable();
         Variable columnVar = columns.get(index).getVariable();
+        String varText = (variable != null ? variable.getAbbreviation() : "null");
+        String pickerVarText = (pickerVar != null ? pickerVar.getAbbreviation() : "null");
+        String columnVarText = (columnVar != null ? columnVar.getAbbreviation() : "null");
         assertSame("Incorrect variable for ColumnVariablePicker at index " + index + ". " +
-                   "Expected: " + variable.getAbbreviation() +
-                   ", Actual: " + pickerVar.getAbbreviation(), variable, pickerVar);
+                   "Expected: " + varText +
+                   ", Actual: " + pickerVarText, variable, pickerVar);
         assertSame("Incorrect variable for ObservableDataColumn at index " + index + ". " +
-                   "Expected: " + variable.getAbbreviation() +
-                   ", Actual: " + columnVar.getAbbreviation(), variable, columns.get(index).getVariable());
+                   "Expected: " + varText +
+                   ", Actual: " + columnVarText, variable, columns.get(index).getVariable());
     }
 
     private static void assertDataCellsMatchModel() {

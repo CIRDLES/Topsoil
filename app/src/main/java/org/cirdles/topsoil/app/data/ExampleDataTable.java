@@ -123,7 +123,7 @@ public class ExampleDataTable {
             String[] headers = FileParser.parseHeaders(content, delim);
             Double[][] data = FileParser.parseData(content, delim);
 
-            ObservableDataTable table = new ObservableDataTable(data, true, headers, isotopeSystem, format);
+            ObservableDataTable table = new ObservableDataTable(data, headers, isotopeSystem, format);
             table.setTitle("Example UPb Data");
 
             return table;

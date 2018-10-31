@@ -13,11 +13,8 @@ import javafx.util.StringConverter;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.util.file.Delimiter;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 /**
- * @author Jake Marotta
+ * @author marottajb
  */
 public class DelimiterRequestDialog extends Dialog<String> {
 

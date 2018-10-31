@@ -17,6 +17,8 @@ import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 
 import java.util.*;
 
+import static org.cirdles.topsoil.app.uncertainty.UncertaintyFormat.*;
+
 /**
  * Topsoil table data stored as DoubleProperties.
  *
@@ -26,7 +28,6 @@ public class ObservableDataTable extends Observable {
 
     /*
         @TODO Divide functionality into smaller objects so this file may be less cluttered.
-        @TODO Test that a data table can't be broken by getting its rows/columns and changing them directly.
      */
 
     //**********************************************//
@@ -95,7 +96,7 @@ public class ObservableDataTable extends Observable {
     //**********************************************//
 
     public ObservableDataTable() {
-        this(new Double[][]{}, true);
+        this(new Double[][]{});
     }
 
     /**
@@ -105,16 +106,13 @@ public class ObservableDataTable extends Observable {
      *
      * @param   data
      *          List of Lists of Double values
-     * @param   rowFormat
-     *          true if data in rows, false if in columns
      */
-    public ObservableDataTable(Double[][] data, boolean rowFormat) {
+    public ObservableDataTable(Double[][] data) {
         this(
                 (data != null ? data : new Double[][]{}),
-                rowFormat,
                 null,
                 IsotopeSystem.GENERIC,
-                UncertaintyFormat.TWO_SIGMA_ABSOLUTE
+                UncertaintyFormat.ONE_SIGMA_ABSOLUTE
         );
     }
 
@@ -127,15 +125,13 @@ public class ObservableDataTable extends Observable {
      *          Lists of Double data rows
      * @param   headers
      *          a List of String headers for the columns
-     * @param   rowFormat
-     *          true if data in rows, false if in columns
      * @param   isotopeSystem
      *          List of Lists of Double values
      * @param   unctFormat
      *          true if data in rows, false if in columns
      */
-    public ObservableDataTable(Double[][] data, boolean rowFormat, String[] headers,
-                               IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat ) {
+    public ObservableDataTable(Double[][] data, String[] headers, IsotopeSystem isotopeSystem,
+                               UncertaintyFormat unctFormat ) {
         if (data == null) {
             data = new Double[][]{};
         }
@@ -144,7 +140,7 @@ public class ObservableDataTable extends Observable {
         }
 
         // Make ObservableDataColumns and ObservableDataRows with shared DoubleProperties for the data
-        this.columns = makeDataColumns(data, headers, rowFormat);
+        this.columns = getDataColumns(data, headers);
         this.rows = FXCollections.observableArrayList();
         ObservableDataRow newRow;
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
@@ -548,12 +544,10 @@ public class ObservableDataTable extends Observable {
                 Double value;
                 if (varMap.containsKey(variable)) {
 	                value = varMap.get(variable).get(rowIndex).get();
-	                if (Variables.UNCERTAINTY_VARIABLES.contains(variable)) {
-	                	value /= getUnctFormat().getValue();
-		                if (variable instanceof DependentVariable && UncertaintyFormat.PERCENT_FORMATS.contains(getUnctFormat())) {
-			                value *= varMap.get(((DependentVariable<Number>) variable).getDependency()).get(rowIndex).get();
-		                }
-	                }
+                    if (variable instanceof DependentVariable && UncertaintyFormat.PERCENT_FORMATS.contains(getUnctFormat())) {
+                        value /= 100;
+                        value *= varMap.get(((DependentVariable<Number>) variable).getDependency()).get(rowIndex).get();
+                    }
                 } else {
                     // variable is unassigned, use zero value
                     value = 0.0;
@@ -627,7 +621,7 @@ public class ObservableDataTable extends Observable {
     /**
      * Updates the data in all open plots for this table.
      */
-    public void updateOpenPlots() {
+    private void updateOpenPlots() {
         for (TopsoilPlotView plotView : openPlots.values()) {
             plotView.getPlot().setData(getPlotEntries());
         }
@@ -661,55 +655,34 @@ public class ObservableDataTable extends Observable {
     //**********************************************//
 
     /**
-     * Separates the logic for creating the table's {@code ObservableDataColumn}s from the constructor.
-     *
      * @param   data
      *          Double[][] of data values
      * @param   headers
      *          String[] of column headers
-     * @param   rowFormat
-     *          true if data is structured as row, false if columns
      *
      * @return  ObservableList of ObservableDataColumns
      */
-    private ObservableList<ObservableDataColumn> makeDataColumns(Double[][] data, String[] headers, boolean rowFormat) {
+    private ObservableList<ObservableDataColumn> getDataColumns(Double[][] data, String[] headers) {
         ObservableList<ObservableDataColumn> dataColumns = FXCollections.observableArrayList();
 
-        if (rowFormat) {
-            for (Double[] row : data) {
-                colCount = Math.max(row.length, colCount);
-            }
-            rowCount = data.length;
+        for (Double[] row : data) {
+            colCount = Math.max(row.length, colCount);
+        }
+        rowCount = data.length;
 
+        for (int i = 0; i < colCount; i++) {
+            if (i < headers.length) {
+                dataColumns.add(new ObservableDataColumn(headers[i]));
+            } else {
+                dataColumns.add(new ObservableDataColumn("Untitled"));
+            }
+        }
+
+        for (Double[] row : data) {
             for (int i = 0; i < colCount; i++) {
-                if (i < headers.length) {
-                    dataColumns.add(new ObservableDataColumn(headers[i]));
-                } else {
-                    dataColumns.add(new ObservableDataColumn("Untitled"));
-                }
-            }
-
-            for (Double[] row : data) {
-                for (int i = 0; i < colCount; i++) {
-                    dataColumns.get(i).add(new SimpleDoubleProperty(
-                            (i >= row.length) ? 0.0 : row[i])
-                    );
-                }
-            }
-
-        } else {
-            for (int colIndex = 0; colIndex < data.length; colIndex++) {
-                dataColumns.add(new ObservableDataColumn(headers[colIndex]));
-                rowCount = Math.max(data[colIndex].length, rowCount);
-            }
-            colCount = data.length;
-
-            for (int colIndex = 0; colIndex < colCount; colIndex++) {
-                for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                    dataColumns.get(colIndex).add(new SimpleDoubleProperty(
-                            (rowIndex >= data[colIndex].length) ? 0.0 : data[colIndex][rowIndex])
-                    );
-                }
+                dataColumns.get(i).add(new SimpleDoubleProperty(
+                        (i >= row.length) ? 0.0 : row[i])
+                );
             }
         }
         return dataColumns;
@@ -731,7 +704,17 @@ public class ObservableDataTable extends Observable {
                         varMap.get(variable).setVariable(null);     // remove variable from a previously assigned column
                         varMap.remove(variable);
                     }
+                    Variable oldVariable = column.getVariable();
                     column.setVariable(variable);
+                    if (Variables.UNCERTAINTY_VARIABLES.contains(variable)) {
+                        if (! Variables.UNCERTAINTY_VARIABLES.contains(oldVariable)) {
+                            uncertainifyColumn(column, ONE_SIGMA_ABSOLUTE, getUnctFormat());
+                        }
+                    } else {
+                        if (Variables.UNCERTAINTY_VARIABLES.contains(oldVariable)) {
+                            uncertainifyColumn(column, getUnctFormat(), ONE_SIGMA_ABSOLUTE);
+                        }
+                    }
                     varMap.put(variable, column);
                 }
             }
@@ -740,6 +723,31 @@ public class ObservableDataTable extends Observable {
             if (variable != null) {
                 varMap.get(variable).setVariable(null);
                 varMap.remove(variable);
+            }
+        }
+    }
+
+    /**
+     * Each {@code DoubleProperty} in the column is converted to some uncertainty format.
+     *
+     * @param   column
+     *          ObservableDataColumn
+     * @param   oldFormat
+     *          the former UncertaintyFormat of the values in the column
+     * @param   newFormat
+     *          the former UncertaintyFormat of the values in the column
+     */
+    private void uncertainifyColumn(ObservableDataColumn column, UncertaintyFormat oldFormat,
+                                    UncertaintyFormat newFormat) {
+        if (oldFormat != newFormat) {
+            double value;
+            for (DoubleProperty property : column) {
+                value = property.get();
+                if (Double.compare(oldFormat.getValue(), newFormat.getValue()) != 0) {
+                    value *= oldFormat.getValue();      // un-convert
+                    value /= newFormat.getValue();      // convert to newFormat
+                }
+                property.set(value);
             }
         }
     }

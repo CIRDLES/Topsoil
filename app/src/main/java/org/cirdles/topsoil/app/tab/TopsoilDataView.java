@@ -144,14 +144,6 @@ public class TopsoilDataView extends AnchorPane {
 
     private void showVariableChooserDialog(List<Variable<Number>> required) {
         Map<Variable<Number>, ObservableDataColumn> selections = VariableChooserDialog.showDialog(this, required);
-        System.out.println("*** SELECTIONS ***");
-        String keyString;
-        String valString;
-        for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : selections.entrySet()) {
-            keyString = (entry.getKey() != null ? entry.getKey().getAbbreviation() : "null");
-            valString = (entry.getValue() != null ? entry.getValue().getHeader() : "null");
-            System.out.println(keyString + " => " + valString);
-        }
         setVariableAssignments(selections);
     }
 

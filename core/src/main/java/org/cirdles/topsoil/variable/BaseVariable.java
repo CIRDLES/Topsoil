@@ -71,4 +71,9 @@ public class BaseVariable<T> implements Variable<T> {
         return abbreviation;
     }
 
+    @Override
+    public String toString() {
+        return name + " (" + abbreviation + ")";
+    }
+
 }

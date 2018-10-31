@@ -31,8 +31,8 @@ import java.util.*;
  */
 public class DataImportOptionsView extends VBox {
 
-	private static final String DATA_PREVIEW_FXML = "data-preview.fxml";
-	private static final String WARNING_ICON_PATH = "warning.png";
+	private static final String CONTROLLER_FXML = "controller/data-preview.fxml";
+	private static final String WARNING_ICON_PATH = "controller/warning.png";
 	private final ResourceExtractor resourceExtractor = new ResourceExtractor(DataImportOptionsView.class);
 
 	@FXML private GridPane grid;
@@ -110,12 +110,12 @@ public class DataImportOptionsView extends VBox {
 		}
 
 		try {
-			FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(DATA_PREVIEW_FXML).toUri().toURL());
+			FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
 			loader.setRoot(this);
 			loader.setController(this);
 			loader.load();
 		} catch (IOException e) {
-			throw new RuntimeException("Could not load " + DATA_PREVIEW_FXML, e);
+			throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
 		}
 	}
 

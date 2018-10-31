@@ -111,7 +111,7 @@ public class NewProjectWindow extends Stage {
                 format = (UncertaintyFormat) selections.get(ImportDataType.UNCERTAINTY);
                 dataRows = (Double[][]) selections.get(ImportDataType.DATA);
 
-                ObservableDataTable data = new ObservableDataTable(dataRows, true, headerRows, isotopeType, format);
+                ObservableDataTable data = new ObservableDataTable(dataRows, headerRows, isotopeType, format);
                 data.setTitle(String.valueOf(selections.get(ImportDataType.TITLE)));
 
                 Map<Variable<Number>, Integer> varIndexMap = (Map<Variable<Number>, Integer>) selections.get(
@@ -149,7 +149,7 @@ public class NewProjectWindow extends Stage {
 	 */
 	public class NewProjectTitleView extends AnchorPane {
 
-		private static final String PROJECT_TITLE_FXML = "project-title.fxml";
+		private static final String CONTROLLER_FXML = "controller/project-title.fxml";
 		private final ResourceExtractor resourceExtractor = new ResourceExtractor(NewProjectTitleView.class);
 
 		@FXML private TextField titleTextField, pathTextField;
@@ -193,12 +193,12 @@ public class NewProjectWindow extends Stage {
 			super();
 
 			try {
-				FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(PROJECT_TITLE_FXML).toUri().toURL());
+				FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
 				loader.setRoot(this);
 				loader.setController(this);
 				loader.load();
 			} catch (IOException e) {
-				throw new RuntimeException("Could not load " + PROJECT_TITLE_FXML, e);
+				throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
 			}
 		}
 
@@ -326,7 +326,7 @@ public class NewProjectWindow extends Stage {
 	 */
 	public class NewProjectSourcesView extends AnchorPane {
 
-		private static final String PROJECT_SOURCES_FXML = "project-sources.fxml";
+		private static final String CONTROLLER_FXML = "controller/project-sources.fxml";
 		private final ResourceExtractor resourceExtractor = new ResourceExtractor(NewProjectSourcesView.class);
 
 		private ToggleGroup toggle;
@@ -375,12 +375,12 @@ public class NewProjectWindow extends Stage {
 			super();
 
 			try {
-				FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(PROJECT_SOURCES_FXML).toUri().toURL());
+				FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
 				loader.setRoot(this);
 				loader.setController(this);
 				loader.load();
 			} catch ( IOException e ) {
-				throw new RuntimeException("Could not load " + PROJECT_SOURCES_FXML, e);
+				throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
 			}
 		}
 
@@ -645,7 +645,7 @@ public class NewProjectWindow extends Stage {
 	 */
 	public class ProjectSourcesOptionsView extends AnchorPane {
 
-		private static final String CONTROLLER_FXML = "project-preview.fxml";
+		private static final String CONTROLLER_FXML = "controller/project-preview.fxml";
 		private static final String WARNING_ICON_PATH = "warning.png";
 
 		private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(ProjectSourcesOptionsView.class);

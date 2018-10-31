@@ -42,7 +42,7 @@ public class ObservableDataTableTest {
             String[] headers = FileParser.parseHeaders(TEST_DATA_STRING, delim);
             Double[][] data = FileParser.parseData(TEST_DATA_STRING, delim);
 
-            ObservableDataTableTest.data = new ObservableDataTable(data, true, headers, ISOTOPE_SYSTEM, UNCT_FORMAT);
+            ObservableDataTableTest.data = new ObservableDataTable(data, headers, ISOTOPE_SYSTEM, UNCT_FORMAT);
         } catch (IOException e) {
             fail("Unable to parse test data.");
         }

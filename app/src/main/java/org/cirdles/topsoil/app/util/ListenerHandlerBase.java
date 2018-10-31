@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app.util;
 
-import org.cirdles.topsoil.app.util.ListenerHandler;
-
 /**
  * @author marottajb
  */

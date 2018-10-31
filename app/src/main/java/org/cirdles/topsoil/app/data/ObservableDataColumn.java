@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.cirdles.topsoil.variable.Variable;
+import org.cirdles.topsoil.variable.Variables;
 
 /**
  * @author marottajb
@@ -58,8 +59,11 @@ public class ObservableDataColumn extends TopsoilDataList {
     public final Variable getVariable() {
         return variableProperty().get();
     }
-    final void setVariable(Variable v) {
-        variableProperty().set(v);
+    final void setVariable(Variable newVar) {
+        Variable oldVar = getVariable();
+        if (newVar != oldVar) {
+            variableProperty().set(newVar);
+        }
     }
 
     /**

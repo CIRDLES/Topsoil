@@ -108,8 +108,7 @@ public class MenuItemEventHandler {
                                     isotopeType = (IsotopeSystem) selections.get(ImportDataType.ISOTOPE_TYPE);
                                 }
 
-                                table = new ObservableDataTable(data, true, headers,
-                                                                isotopeType, unctFormat);
+                                table = new ObservableDataTable(data,headers, isotopeType, unctFormat);
                                 table.setTitle(path.getFileName().toString()
                                                    .substring(0, path.getFileName().toString().indexOf(".")));
 
@@ -175,7 +174,7 @@ public class MenuItemEventHandler {
                             isotopeType = (IsotopeSystem) selections.get(ImportDataType.ISOTOPE_TYPE);
                         }
 
-                        table = new ObservableDataTable(data, true, headers, isotopeType, unctFormat);
+                        table = new ObservableDataTable(data, headers, isotopeType, unctFormat);
 
                         // Apply variable selections
                         Map<Variable<Number>, Integer> varIndexMap = (Map<Variable<Number>, Integer>) selections
@@ -215,7 +214,7 @@ public class MenuItemEventHandler {
         UncertaintyFormat unctFormat = uncertaintyChoiceDialog.selectUncertaintyFormat();
 
         if (unctFormat != null) {
-            table = new ObservableDataTable(null, true, null, isotopeType, unctFormat);
+            table = new ObservableDataTable(null, null, isotopeType, unctFormat);
         } else {
             table = null;
         }
@@ -235,27 +234,26 @@ public class MenuItemEventHandler {
 
         if (isotopeType != null) {
 
-            ObservableDataTable table;
+            ObservableDataTable data;
             switch (isotopeType) {
                 case UPB:
-                    table = ExampleDataTable.getUPb();
+                    data = ExampleDataTable.getUPb();
                     break;
                 case UTH:
-                    table = ExampleDataTable.getUTh();
+                    data = ExampleDataTable.getUTh();
                     break;
                 default:
-                    table = ExampleDataTable.getGen();
+                    data = ExampleDataTable.getGen();
                     break;
             }
+            tabs.add(data);
 
             // Set default variable associations.
-            table.setVariableForColumn(0, Variables.X);
-            table.setVariableForColumn(1, Variables.SIGMA_X);
-            table.setVariableForColumn(2, Variables.Y);
-            table.setVariableForColumn(3, Variables.SIGMA_Y);
-            table.setVariableForColumn(4, Variables.RHO);
-
-            tabs.add(table);
+            data.setVariableForColumn(0, Variables.X);
+            data.setVariableForColumn(1, Variables.SIGMA_X);
+            data.setVariableForColumn(2, Variables.Y);
+            data.setVariableForColumn(3, Variables.SIGMA_Y);
+            data.setVariableForColumn(4, Variables.RHO);
         }
     }
 
@@ -375,7 +373,6 @@ public class MenuItemEventHandler {
             if (tablesReference.get().isEmpty()) {
                 tabs.add(new ObservableDataTable(
 		                new Double[][]{ new Double[]{ 0.0, 0.0, 0.0, 0.0, 0.0 }},
-		                true,
 		                null,
 		                IsotopeSystem.GENERIC,
 		                UncertaintyFormat.TWO_SIGMA_ABSOLUTE));

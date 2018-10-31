@@ -14,8 +14,8 @@ public enum UncertaintyFormat {
 
     ONE_SIGMA_ABSOLUTE("1σ (abs)", 1.0),
     TWO_SIGMA_ABSOLUTE("2σ (abs)", 2.0),
-    ONE_SIGMA_PERCENT("1σ (%)", 100.0),
-    TWO_SIGMA_PERCENT("2σ (%)", 200.0),
+    ONE_SIGMA_PERCENT("1σ (%)", 1.0),
+    TWO_SIGMA_PERCENT("2σ (%)", 2.0),
     NINETY_FIVE_PERCENT_CONFIDENCE("95% Conf.", 2.4477);
 
     /**
@@ -76,9 +76,9 @@ public enum UncertaintyFormat {
     /**
      * Returns the value of the {@code UncertaintyFormat}.
      *
-     * @return  Double value
+     * @return  double value
      */
-    public Double getValue() {
+    public double getValue() {
         return value;
     }
 
