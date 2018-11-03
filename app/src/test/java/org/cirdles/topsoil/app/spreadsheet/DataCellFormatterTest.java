@@ -8,6 +8,7 @@ import org.controlsfx.control.spreadsheet.Grid;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
+import static org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView.DATA_ROW_OFFSET;
 import static org.junit.Assert.*;
 
 /**
@@ -59,7 +60,7 @@ public class DataCellFormatterTest extends ApplicationTest {
         int columnDecimalPlaces = -1;
         int cellDecimalPlaces;
         String text;
-        for (int row = 1; row < grid.getRowCount(); row++) {
+        for (int row = DATA_ROW_OFFSET; row < grid.getRowCount(); row++) {
             text = grid.getRows().get(row).get(col).getText();
             cellDecimalPlaces = text.substring(text.lastIndexOf(".") + 1).length();
             if (columnDecimalPlaces < 0) {
