@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.spreadsheet.cell;
 
+import javafx.beans.binding.Binding;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -24,12 +25,14 @@ public abstract class TopsoilSpreadsheetCellBase<T> extends SpreadsheetCellBase 
             (observable, oldValue, newValue) -> onSourceUpdated(oldValue, newValue)
     );
 
+    private Property<T> bindingProp = new SimpleObjectProperty<>(null);
+
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private Property<Property<T>> source = new SimpleObjectProperty<>(new SimpleObjectProperty<>(null));
-    private Property<Property<T>> sourceProperty() {
+    protected final Property<Property<T>> source = new SimpleObjectProperty<>(new SimpleObjectProperty<>(null));
+    public Property<Property<T>> sourceProperty() {
         return source;
     }
     /** {@inheritDoc} */
@@ -39,14 +42,25 @@ public abstract class TopsoilSpreadsheetCellBase<T> extends SpreadsheetCellBase 
     /** {@inheritDoc} */
     public boolean setSource(Property<T> p) {
         boolean changed = false;
-        Property<T> src = source.getValue();
-        if (p != null && (! p.equals(src))) {
-            if (getCellType().match(p.getValue())) {
+        if (p != null) {
+            Property<T> src = source.getValue();
+            if (p != src && getCellType().match(p.getValue())) {
                 src.removeListener(sourceListener);
                 p.addListener(sourceListener);
                 source.setValue(p);
+                setItem(source.getValue().getValue());
                 changed = true;
             }
+        }
+        return changed;
+    }
+
+    public boolean setSource(Binding<T> b) {
+        boolean changed = false;
+        bindingProp.unbind();
+        bindingProp.bind(b);
+        if (getSource() != bindingProp) {
+            changed = setSource(bindingProp);
         }
         return changed;
     }
@@ -56,15 +70,23 @@ public abstract class TopsoilSpreadsheetCellBase<T> extends SpreadsheetCellBase 
     //**********************************************//
 
     TopsoilSpreadsheetCellBase(TopsoilSpreadsheetView spreadsheet, final int row, final int col,
-                                      final int rowSpan, final int colSpan, final SpreadsheetCellType<? extends T> type,
-                                      final Property<T> source) {
-        super(row, col, rowSpan, colSpan, type);
+                                       final SpreadsheetCellType type, Property<T> property) {
+        super(row, col, 1, 1, type);
         this.spreadsheet = spreadsheet;
 
-        setSource(source);
-        setItem(getSource().getValue());
+        setSource(property);
         // @TODO Check the type casts
-        itemProperty().addListener((observable, oldValue, newValue) -> onItemUpdated((T) oldValue, (T) newValue));
+        itemProperty().addListener((observable, oldValue, newValue) -> onItemUpdated(oldValue, newValue));
+    }
+
+    TopsoilSpreadsheetCellBase(TopsoilSpreadsheetView spreadsheet, final int row, final int col,
+                               final SpreadsheetCellType type, Binding<T> binding) {
+        super(row, col, 1, 1, type);
+        this.spreadsheet = spreadsheet;
+
+        setSource(binding);
+        // @TODO Check the type casts
+        itemProperty().addListener((observable, oldValue, newValue) -> onItemUpdated(oldValue, newValue));
     }
 
     //**********************************************//
@@ -74,12 +96,12 @@ public abstract class TopsoilSpreadsheetCellBase<T> extends SpreadsheetCellBase 
     /**
      * This method is called internally when the cell's item is changed. It should not be called manually.
      */
-    abstract void onItemUpdated(T oldValue, T newValue);
+    abstract void onItemUpdated(Object oldValue, Object newValue);
 
     /**
      * This method is called internally when the cell's source is changed. It should not be called manually.
      */
-    abstract void onSourceUpdated(T oldValue, T newValue);
+    abstract void onSourceUpdated(Object oldValue, Object newValue);
 
     //**********************************************//
     //                PUBLIC METHODS                //

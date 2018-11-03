@@ -11,7 +11,7 @@ import org.cirdles.topsoil.app.data.ExampleDataTable;
 import org.cirdles.topsoil.app.data.ObservableDataColumn;
 import org.cirdles.topsoil.app.data.ObservableDataRow;
 import org.cirdles.topsoil.app.data.ObservableDataTable;
-import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilDoubleCell;
+import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilNumberCell;
 import org.cirdles.topsoil.app.spreadsheet.picker.ColumnVariablePicker;
 import org.cirdles.topsoil.app.spreadsheet.picker.DataRowPicker;
 import org.cirdles.topsoil.variable.Variable;
@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView.DATA_ROW_OFFSET;
 import static org.junit.Assert.*;
 
 /**
@@ -72,8 +73,8 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
 
         // 2. Insert row at end of data
         ObservableDataRow rowAtEnd = new ObservableDataRow(zeroRow());
+        Platform.runLater(() -> data.addRow(rowAtEnd));
         Platform.runLater(() -> {
-            data.addRow(rowAtEnd);
             assertSame(rowAtEnd, data.getRow(data.rowCount() - 1));
             assertEquals(data.rowCount() - 1, data.getRows().indexOf(rowAtEnd));
             assertDataCellsMatchModel();
@@ -82,8 +83,8 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
         // 3. Insert row in middle of data
         ObservableDataRow rowInMiddle = new ObservableDataRow(zeroRow());
         int index = data.rowCount() / 2;
+        Platform.runLater(() -> data.addRow(index, rowInMiddle));
         Platform.runLater(() -> {
-            data.addRow(index, rowInMiddle);
             assertSame(rowInMiddle, data.getRow(index));
             assertEquals(index, data.getRows().indexOf(rowInMiddle));
             assertDataCellsMatchModel();
@@ -203,7 +204,7 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
             row.setSelected(false);     // Ensure row is deselected
             row.setSelected(true);
             assertTrue("Corresponding DataRowPicker was not selected.",
-                       ((DataRowPicker) spreadsheet.getRowPickers().get(index + 1)).isSelected());
+                       ((DataRowPicker) spreadsheet.getRowPickers().get(index + DATA_ROW_OFFSET)).isSelected());
         });
     }
 
@@ -215,7 +216,7 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
             row.setSelected(true);      // Ensure row is selected
             row.setSelected(false);
             assertFalse("Corresponding DataRowPicker was not deselected.",
-                        ((DataRowPicker) spreadsheet.getRowPickers().get(index + 1)).isSelected());
+                        ((DataRowPicker) spreadsheet.getRowPickers().get(index + DATA_ROW_OFFSET)).isSelected());
         });
     }
 
@@ -234,11 +235,7 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
         // 1. Add single variable assignment
         Platform.runLater(() -> {
             data.setVariableForColumn(xIndex, Variables.X);
-            Variable pickerVar = ((ColumnVariablePicker) spreadsheet.getColumnPickers().get(xIndex)).getVariable();
             Variable columnVar = columns.get(xIndex).getVariable();
-            assertEquals("Incorrect variable for ColumnVariablePicker at index " + xIndex + ". " +
-                         "Expected: " + Variables.X.getAbbreviation() +
-                         ", Actual: " + pickerVar.getAbbreviation(), Variables.X, pickerVar);
             assertEquals("Incorrect number of variable assignments. " +
                          "Expected: " + 1 + ", Actual: " + data.getVarMap().size(),
                          1, data.getVarMap().size());
@@ -285,7 +282,7 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
         DoubleProperty newProp = new SimpleDoubleProperty(-1.0);
         int row = 0;
         int col = 0;
-        TopsoilDoubleCell cell = ((TopsoilDoubleCell) spreadsheet.getGrid().getRows().get(row + 1).get(col));
+        TopsoilNumberCell cell = ((TopsoilNumberCell) spreadsheet.getGrid().getRows().get(row + DATA_ROW_OFFSET).get(col));
 
         Platform.runLater(() -> {
             data.set(row, col, newProp);
@@ -314,36 +311,29 @@ public class SpreadsheetIntegrationTest extends ApplicationTest {
     }
 
     private static void checkColumnVariables(int index, Variable variable) {
-        ObservableList<ObservableDataColumn> columns = data.getColumns();
-        Variable pickerVar = ((ColumnVariablePicker) spreadsheet.getColumnPickers().get(index)).getVariable();
-        Variable columnVar = columns.get(index).getVariable();
-        String varText = (variable != null ? variable.getAbbreviation() : "null");
-        String pickerVarText = (pickerVar != null ? pickerVar.getAbbreviation() : "null");
-        String columnVarText = (columnVar != null ? columnVar.getAbbreviation() : "null");
-        assertSame("Incorrect variable for ColumnVariablePicker at index " + index + ". " +
-                   "Expected: " + varText +
-                   ", Actual: " + pickerVarText, variable, pickerVar);
+        Variable columnVar = data.getColumns().get(index).getVariable();
         assertSame("Incorrect variable for ObservableDataColumn at index " + index + ". " +
-                   "Expected: " + varText +
-                   ", Actual: " + columnVarText, variable, columns.get(index).getVariable());
+                   "Expected: " + (variable != null ? variable.getAbbreviation() : "null") +
+                   ", Actual: " + (columnVar != null ? columnVar.getAbbreviation() : "null"),
+                   variable, columnVar);
     }
 
     private static void assertDataCellsMatchModel() {
         Grid grid = spreadsheet.getGrid();
 
-        TopsoilDoubleCell cell;
+        TopsoilNumberCell cell;
         Property<Number> expectedSource;
         Property<Number> actualSource;
-        for (int rowIndex = 1; rowIndex < grid.getRowCount(); rowIndex++) {
+        for (int rowIndex = DATA_ROW_OFFSET; rowIndex < grid.getRowCount(); rowIndex++) {
             for (int colIndex = 0; colIndex < grid.getColumnCount(); colIndex++) {
-                cell = (TopsoilDoubleCell) grid.getRows().get(rowIndex).get(colIndex);
-                expectedSource = data.get(rowIndex - 1, colIndex);
+                cell = (TopsoilNumberCell) grid.getRows().get(rowIndex).get(colIndex);
+                expectedSource = data.get(rowIndex - DATA_ROW_OFFSET, colIndex);
                 actualSource = cell.getSource();
 
                 // Cell's source should be the correct data property
                 assertSame("Listening to wrong source property." +
-                           "\nExpected: " + expectedSource +
-                           "\nActual: " + actualSource,
+                           "\nExpected: " + expectedSource + ", Actual: " + actualSource +
+                           "\nDataRow: " + (rowIndex - DATA_ROW_OFFSET) + ", Column: " + colIndex + "\n",
                            actualSource,
                            expectedSource
                 );

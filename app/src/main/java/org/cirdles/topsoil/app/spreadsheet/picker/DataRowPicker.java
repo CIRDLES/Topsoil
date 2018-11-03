@@ -4,11 +4,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView;
-import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilDoubleCell;
+import org.cirdles.topsoil.app.spreadsheet.cell.TopsoilNumberCell;
 import org.controlsfx.control.spreadsheet.Picker;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 
-import java.util.Arrays;
+import static org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView.DATA_ROW_OFFSET;
 
 /**
  * @author marottajb
@@ -56,7 +56,7 @@ public class DataRowPicker extends Picker {
             getStyleClass().remove(PICKER_ACTIVATED);
         }
         selected.set(b);
-        spreadsheet.getData().getRow(rowIndex - 1).setSelected(b);
+        spreadsheet.getData().getRow(rowIndex - DATA_ROW_OFFSET).setSelected(b);
     }
 
     //**********************************************//
@@ -80,8 +80,8 @@ public class DataRowPicker extends Picker {
         selectedProperty().addListener(((observable, oldValue, newValue) -> {
             ObservableList<SpreadsheetCell> cellRow = spreadsheet.getGrid().getRows().get(rowIndex);
             for (SpreadsheetCell cell : cellRow) {
-                if (cell instanceof TopsoilDoubleCell) {
-                    ((TopsoilDoubleCell) cell).setSelected(newValue);
+                if (cell instanceof TopsoilNumberCell) {
+                    ((TopsoilNumberCell) cell).setSelected(newValue);
                 }
             }
         }));

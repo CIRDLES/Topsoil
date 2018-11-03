@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.spreadsheet.cell;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.cirdles.topsoil.app.data.ObservableDataColumn;
 import org.cirdles.topsoil.app.spreadsheet.TopsoilSpreadsheetView;
@@ -11,7 +12,7 @@ import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 /**
  * @author marottajb
  */
-public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
+public class TopsoilNumberCell extends TopsoilSpreadsheetCellBase<Number> {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -40,24 +41,13 @@ public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
         selectedProperty().set(selected);
     }
 
-    private BooleanProperty uncertain = new SimpleBooleanProperty(false);
-    public BooleanProperty uncertainProperty() {
-        return uncertain;
-    }
-    public boolean isUncertain() {
-        return uncertain.get();
-    }
-    public void setUncertain(boolean val) {
-        uncertain.set(val);
-    }
-
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilDoubleCell(TopsoilSpreadsheetView spreadsheet, final int row, final int col,
-                             final int rowSpan, final int colSpan, final DoubleProperty source) {
-        super(spreadsheet, row, col, rowSpan, colSpan, SpreadsheetCellType.DOUBLE, source);
+    public TopsoilNumberCell(TopsoilSpreadsheetView spreadsheet, final int row, final int col,
+                             final Property<Number> property) {
+        super(spreadsheet, row, col, SpreadsheetCellType.DOUBLE, property);
         this.getStyleClass().add(DATA_CELL);
     }
 
@@ -66,7 +56,7 @@ public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
     //**********************************************//
 
     /** {@inheritDoc} */
-    void onItemUpdated(Number oldValue, Number newValue) {
+    void onItemUpdated(Object oldValue, Object newValue) {
         ObservableDataColumn column = spreadsheet.getData().getColumns().get(getColumn());
         double dataValue = (double) newValue;
         if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {
@@ -78,7 +68,7 @@ public class TopsoilDoubleCell extends TopsoilSpreadsheetCellBase<Number> {
     }
 
     /** {@inheritDoc} */
-    void onSourceUpdated(Number oldValue, Number newValue) {
+    void onSourceUpdated(Object oldValue, Object newValue) {
         ObservableDataColumn column = spreadsheet.getData().getColumns().get(getColumn());
         double cellValue = (double) newValue;
         if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {

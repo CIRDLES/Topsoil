@@ -19,9 +19,8 @@ public class TopsoilHeaderCell extends TopsoilSpreadsheetCellBase<String> {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilHeaderCell(TopsoilSpreadsheetView spreadsheet, final int row, final int col,
-                             final int rowSpan, final int colSpan, StringProperty source) {
-        super(spreadsheet, row, col, rowSpan, colSpan, SpreadsheetCellType.STRING, source);
+    public TopsoilHeaderCell(TopsoilSpreadsheetView spreadsheet, final int row, final int col, StringProperty property) {
+        super(spreadsheet, row, col, SpreadsheetCellType.STRING, property);
         this.getStyleClass().add(HEADER_CELL);
     }
 
@@ -30,16 +29,16 @@ public class TopsoilHeaderCell extends TopsoilSpreadsheetCellBase<String> {
     //**********************************************//
 
     /** {@inheritDoc} */
-    void onItemUpdated(String oldValue, String newValue) {
+    void onItemUpdated(Object oldValue, Object newValue) {
         if (! newValue.equals(getSource().getValue())) {
-            getSource().setValue(newValue);
+            getSource().setValue(String.valueOf(newValue));
         }
     }
 
     /** {@inheritDoc} */
-    void onSourceUpdated(String oldValue, String newValue) {
+    void onSourceUpdated(Object oldValue, Object newValue) {
         if (! newValue.equals(getItem())) {
-            this.spreadsheet.getGrid().setCellValue(getRow(), getColumn(), newValue);
+            this.spreadsheet.getGrid().setCellValue(getRow(), getColumn(), String.valueOf(newValue));
         }
     }
 }

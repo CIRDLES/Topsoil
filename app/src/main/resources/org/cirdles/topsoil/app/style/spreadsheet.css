@@ -38,7 +38,7 @@
 /*    CELLS    */
 /*-------------*/
 
-/* -- TopsoilDoubleCell -- */
+/* -- TopsoilNumberCell -- */
 .data-cell {
     -fx-alignment: center-right;
     -fx-font-family: monospace;
@@ -51,5 +51,21 @@
 /* -- TopsoilHeaderCell -- */
 .header-cell {
     -fx-background-color: lightgray;
+}
+
+/* -- TopsoilVariableChooserCell -- */
+.var-chooser-cell {
+    -fx-alignment: center;
+    -fx-background-color: lightgray;
+}
+
+.var-chooser-with-var {
+    -fx-text-fill: darkgreen;
+    -fx-font-weight: bold;
+}
+
+.var-chooser-no-var {
+    -fx-text-fill: white;
+    -fx-font-weight: normal;
 }
 

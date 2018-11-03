@@ -16,7 +16,9 @@
 package org.cirdles.topsoil.variable;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 
@@ -63,6 +65,8 @@ public final class Variables {
      */
     public static final List<Variable<Number>> UNCERTAINTY_VARIABLES;
 
+    private static final Map<String, Variable> ABBREVIATIONS;
+
     static {
         X = new IndependentVariable<>("x", "X");
         SIGMA_X = new DependentVariable<>("sigma_x", "σX", X);
@@ -80,6 +84,13 @@ public final class Variables {
                 SIGMA_X,
                 SIGMA_Y
         ));
+        Map<String, Variable> abbrs = new HashMap<>();
+        VARIABLE_LIST.forEach(v -> abbrs.put(v.getAbbreviation(), v));
+        ABBREVIATIONS = Collections.unmodifiableMap(abbrs);
+    }
+
+    public static Variable fromAbbreviation(String abbr) {
+        return ABBREVIATIONS.get(abbr);
     }
 
 }
