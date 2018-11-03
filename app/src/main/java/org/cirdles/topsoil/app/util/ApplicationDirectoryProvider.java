@@ -44,7 +44,7 @@ public class ApplicationDirectoryProvider
     public ApplicationDirectoryProvider(
             ApplicationMetadata metadata,
             FileSystem fileSystem,
-            // nullable because appdata is not set on Linux and Mac OS
+            // nullable because appdata is not setValue on Linux and Mac OS
             @Named("appdata") @Nullable String appData,
             @Named("os.name") String osName,
             @Named("user.home") String userHome) {

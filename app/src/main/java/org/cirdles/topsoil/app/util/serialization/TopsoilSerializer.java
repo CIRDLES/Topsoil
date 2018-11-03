@@ -17,23 +17,19 @@ import java.io.FileNotFoundException;
 /**
  * A class for reading and writing .topsoil project files.
  *
- * @author Jake Marotta
+ * @author marottajb
  * @see SerializableTopsoilSession
  */
 public class TopsoilSerializer {
-
-    //***********************
-    // Attributes
-    //***********************
 
     /**
      * An {@code ObjectProperty} containing the open .topsoil project {@code File}, if it exists.
      */
     private static ObjectProperty<File> currentProjectFile;
 
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     /**
      * Creates a {@link SerializableTopsoilSession} and writes it to a
@@ -124,9 +120,6 @@ public class TopsoilSerializer {
      * @return  the loaded .topsoil File
      */
     public static File getCurrentProjectFile() {
-        if (!isProjectOpen()) {
-            return null;
-        }
         return currentProjectFileProperty().get();
     }
 

@@ -26,8 +26,7 @@ import org.cirdles.topsoil.plot.JavaScriptPlot;
  */
 public class BasePlot extends JavaScriptPlot {
 
-    private static final ResourceExtractor RESOURCE_EXTRACTOR
-            = new ResourceExtractor(BasePlot.class);
+    private static final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(BasePlot.class);
 
     private static final String RESOURCE_NAME = "BasePlot.js";
 

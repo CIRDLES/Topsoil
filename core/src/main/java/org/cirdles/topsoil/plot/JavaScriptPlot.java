@@ -63,52 +63,14 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     private static final Logger LOGGER
             = LoggerFactory.getLogger(JavaScriptPlot.class);
 
-    private static final String HTML_TEMPLATE;
-
     // When loaded into the WebEngine, it seems to significantly decrease the time it takes for the WebEngine to stop
     // running JavaScript. The message itself is inconsequential.
     private static final String HALT_MESSAGE = "This message will be loaded into the WebEngine to attempt to stop it " +
                                                "from running JavaScript.";
 
-    static {
-        final ResourceExtractor RESOURCE_EXTRACTOR
-                = new ResourceExtractor(JavaScriptPlot.class);
+    private String HTML_TEMPLATE;
 
-        // prepare the local URI for d3.js
-        final URI D3_JS_URI = RESOURCE_EXTRACTOR
-                .extractResourceAsPath("d3.min.js")
-                .toUri();
-
-        // prepare the local URI for numeric.js
-        final URI NUMERIC_JS_URI = RESOURCE_EXTRACTOR
-                .extractResourceAsPath("numeric.min.js")
-                .toUri();
-
-        // prepare the local URI for topsoil.js
-        final URI TOPSOIL_JS_URI = RESOURCE_EXTRACTOR
-                .extractResourceAsPath("topsoil.js")
-                .toUri();
-
-        // build the HTML template (comments show implicit elements/tags)
-        HTML_TEMPLATE = (""
-                + "<!DOCTYPE html>\n"
-                // <html>
-                // <head>
-                + "<style>\n"
-                + "body {\n"
-                + "  margin: 0; padding: 0;\n"
-                + "}\n"
-                + "</style>\n"
-                // </head>
-                + "<body>"
-                + "<script src=\"" + D3_JS_URI + "\"></script>\n"
-                + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
-                + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
-                + "<script src=\"%s\"></script>\n" // JS file for plot
-                // </body>
-                // </html>
-                + "").replaceAll("%20", "%%20");
-    }
+    public final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(JavaScriptPlot.class);
 
     private final Path sourcePath;
     private final CompletableFuture<Void> loadFuture;
@@ -136,6 +98,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
      */
     public JavaScriptPlot(Path sourcePath, Map<PlotProperty, Object> properties) {
         super(properties);
+        setLocalURIs();
 
         if (Files.isDirectory(sourcePath)) {
             throw new IllegalArgumentException("sourcePath must be a file");
@@ -143,6 +106,43 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
         this.sourcePath = sourcePath;
         loadFuture = new CompletableFuture<>();
+    }
+
+    private void setLocalURIs() {
+        // prepare the local URI for d3.js
+        final URI D3_JS_URI = RESOURCE_EXTRACTOR
+                .extractResourceAsPath("d3.min.js")
+                .toUri();
+
+        // prepare the local URI for numeric.js
+        final URI NUMERIC_JS_URI = RESOURCE_EXTRACTOR
+                .extractResourceAsPath("numeric.min.js")
+                .toUri();
+
+        // prepare the local URI for topsoil.js
+        final URI TOPSOIL_JS_URI = RESOURCE_EXTRACTOR
+                .extractResourceAsPath("topsoil.js")
+                .toUri();
+
+        // build the HTML template (comments show implicit elements/tags)
+        HTML_TEMPLATE = (""
+                         + "<!DOCTYPE html>\n"
+                         // <html>
+                         // <head>
+                         + "<style>\n"
+                         + "body {\n"
+                         + "  margin: 0; padding: 0;\n"
+                         + "}\n"
+                         + "</style>\n"
+                         // </head>
+                         + "<body>"
+                         + "<script src=\"" + D3_JS_URI + "\"></script>\n"
+                         + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
+                         + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
+                         + "<script src=\"%s\"></script>\n" // JS file for plot
+                         + "</body>"
+                         // </html>
+                         + "").replaceAll("%20", "%%20");
     }
 
     private static <T> T supplyOnFxApplicationThread(Supplier<T> supplier) {

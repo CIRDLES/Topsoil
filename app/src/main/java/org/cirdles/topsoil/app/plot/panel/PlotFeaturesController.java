@@ -9,11 +9,15 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
 
 import java.io.IOException;
 
 public class PlotFeaturesController extends AnchorPane {
+
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
 
     private static final String CONTROLLER_FXML = "plot-features-menu.fxml";
 
@@ -39,17 +43,17 @@ public class PlotFeaturesController extends AnchorPane {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private ObjectProperty<IsotopeType> isotopeSystem;
-    public ObjectProperty<IsotopeType> isotopeSystemProperty() {
+    private ObjectProperty<IsotopeSystem> isotopeSystem;
+    public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
         if (isotopeSystem == null) {
-            isotopeSystem = new SimpleObjectProperty<>(IsotopeType.Generic);
+            isotopeSystem = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
             isotopeSystem.addListener(c -> {
             	if (isotopeSystem.get() != null) {
 		            switch ( isotopeSystem.get() ) {
-			            case UPb:
+			            case UPB:
 				            container.getChildren().setAll(mcLeanRegressionControls, wetherillControls);
 				            break;
-			            case UTh:
+			            case UTH:
 				            container.getChildren().setAll(mcLeanRegressionControls, evolutionControls);
 				            break;
 			            default:
@@ -61,19 +65,14 @@ public class PlotFeaturesController extends AnchorPane {
         }
         return isotopeSystem;
     }
-    public final IsotopeType getIsotopeSystem() {
+    public final IsotopeSystem getIsotopeSystem() {
         return isotopeSystemProperty().get();
     }
-    /*
-        Right now, the isotope system property is bound to that of the table.
-     */
-//    public final void setIsotopeSystem(IsotopeType i) {
-//        if (i != null) {
-//            isotopeSystemProperty().set(i);
-//        } else {
-//            isotopeSystemProperty().set(IsotopeType.Generic);
-//        }
-//    }
+    public final void setIsotopeSystem(IsotopeSystem i) {
+        if (i != null) {
+            isotopeSystemProperty().set(i);
+        }
+    }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //

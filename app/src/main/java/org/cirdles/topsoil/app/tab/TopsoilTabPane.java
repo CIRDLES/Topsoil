@@ -1,21 +1,10 @@
 package org.cirdles.topsoil.app.tab;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.plot.variable.Variables;
-import org.cirdles.topsoil.app.table.TopsoilDataColumn;
-import org.cirdles.topsoil.app.table.TopsoilDataTable;
-import org.cirdles.topsoil.app.table.TopsoilTableController;
-
-import java.io.IOException;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 
 /**
  * A custom {@code TabPane} for managing {@link TopsoilTab}s.
@@ -26,23 +15,11 @@ import java.io.IOException;
  */
 public class TopsoilTabPane extends TabPane {
 
-    //***********************
-    // Attributes
-    //***********************
-
-    /**
-     * A count of the number of default-titled tabs in the tab pane.
-     */
     private int untitledCount;
 
-    /**
-     * A {@code BooleanProperty} that keeps track of whether or not the tab pane has tabs in it.
-     */
-    private BooleanProperty isEmpty = new SimpleBooleanProperty(true);
-
-    //***********************
-    // Constructors
-    //***********************
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     /**
      * Constructs an empty {@code TopsoilTabPane}.
@@ -50,32 +27,34 @@ public class TopsoilTabPane extends TabPane {
     public TopsoilTabPane() {
         super();
         this.untitledCount = 0;
-        this.getTabs().addListener((ListChangeListener<? super Tab>) c -> isEmptyProperty().set(this.getTabs().isEmpty()));
     }
 
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
-    /**
-     * Adds a {@code TopsoilDataTable} to the {@code TopsoilTabPane} by loading a {@code TopsoilTabContent} from FXML, creating a
-     * {@code TopsoilTableController} to manage them, and putting the controller and tab content into a {@code TopsoilTab}.
-     *
-     * @param table the TopsoilDataTable to be added
-     */
-    public void add(TopsoilDataTable table) {
-        TopsoilTabContent tabContent = new TopsoilTabContent(table);
+    public void add(ObservableDataTable data) {
+        TopsoilDataView dataView = new TopsoilDataView(data);
 
         // Create new TopsoilTab
-        TopsoilTab tab = createTopsoilTab(tabContent, new TopsoilTableController(table, tabContent));
-
-        tab.setContent(tabContent);
+        TopsoilTab tab = createTopsoilTab(dataView);
 
         // Disables 'x' button to close tab.
         tab.setClosable(false);
 
-        this.getTabs().addAll(tab);
+        this.getTabs().add(tab);
         this.getSelectionModel().select(tab);
+
+//        for (ObservableDataColumn column : data.getColumns()) {
+//            column.rowIDProperty().addListener(c -> {
+//                if (column.getVariable() == Variables.X) {
+//                    dataView.getPlotPanel().setxAxisTitle(column.getRowID());
+//                } else if (column.getVariable() == Variables.Y) {
+//                    dataView.getPlotPanel().setyAxisTitle(column.getRowID());
+//                }
+//            });
+//        }
+
     }
 
     /**
@@ -101,19 +80,16 @@ public class TopsoilTabPane extends TabPane {
         return (TopsoilTab) this.getSelectionModel().getSelectedItem();
     }
 
-    /**
-     * Creates a new {@code TopsoilTab}. for the specified {@code TopsoilTabContent} and {@code TopsoilTableController}.
-     *
-     * @param tabContent    TopsoilTabContent to display
-     * @param tableController   TopsoilTableController
-     * @return  a new TopsoilTab
-     */
-    private TopsoilTab createTopsoilTab(TopsoilTabContent tabContent, TopsoilTableController tableController) {
-        String title = tableController.getTable().getTitle();
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
+
+    private TopsoilTab createTopsoilTab(TopsoilDataView dataView) {
+        String title = dataView.getData().getTitle();
 
         // If the table has just been generated.
         if (title.equals("Untitled Table")) {
-            return newUntitledTab(tabContent, tableController);
+            return newUntitledTab(dataView);
         }
 
         // If the table is being read in, and starts with "Table".
@@ -126,40 +102,27 @@ public class TopsoilTabPane extends TabPane {
                 } catch (NumberFormatException e) {
                     // Do nothing, is not a default-named table.
                 }
-                return new TopsoilTab(tabContent, tableController);
+                return new TopsoilTab(dataView);
             }
         }
         // The table has a custom name.
-        return new TopsoilTab(tabContent, tableController);
+        return new TopsoilTab(dataView);
     }
 
-    /**
-     * Creates a new {@code TopsoilTab} with a default title, if the {@code TopsoilDataTable} being added does not have its own title.
-     *
-     * @param tabContent    TopsoilTabContent to display
-     * @param tableController   TopsoilTabController
-     * @return  a new default-titled TopsoilTab
-     */
-    private TopsoilTab newUntitledTab(TopsoilTabContent tabContent, TopsoilTableController tableController) {
-        TopsoilTab tab = new TopsoilTab(tabContent, tableController);
-        tab.setContent(tabContent.getTableView());
+    private TopsoilTab newUntitledTab(TopsoilDataView dataView) {
+        TopsoilTab tab = new TopsoilTab(dataView);
+        tab.setContent(dataView);
         tab.setTitle("Table" + ++this.untitledCount);
         return tab;
     }
 
-    public final BooleanProperty isEmptyProperty() {
-        if (isEmpty == null) {
-            isEmpty = new SimpleBooleanProperty();
-        }
-        return isEmpty;
-    }
     /**
      * Returns true if there are no tabs in the {@code TopsoilTabPane}.
      *
      * @return  true if there are no tabs in the TopsoilTabPane
      */
     public boolean isEmpty() {
-        return isEmptyProperty().get();
+        return getTabs().isEmpty();
     }
 
 }

@@ -11,6 +11,8 @@ allprojects {
     sourceCompatibility = 8
     targetCompatibility = 8
 
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
     ext {
         java9Compatible = JavaVersion.current().java9Compatible
     }
@@ -30,8 +32,6 @@ subprojects {
     apply plugin: 'checkstyle'
 //    apply plugin: 'findbugs'
     apply plugin: 'maven'
-
-    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
     checkstyle {
         configFile file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")

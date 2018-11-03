@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.dialog;
 
 import javafx.scene.control.ChoiceDialog;
-import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 
 import java.util.ArrayList;
 import java.util.List;

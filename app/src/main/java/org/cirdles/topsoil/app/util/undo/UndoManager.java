@@ -8,14 +8,11 @@ import java.util.ArrayDeque;
  * {@link ArrayDeque}s, one for executed {@code Command}s, and the other for undone {@code Command}s. Each stores up
  * to maxSize {@code Command}s.
  *
- * @author Jake Marotta
+ * @author marottajb
+ *
  * @see Command
  */
 public class UndoManager {
-
-    //***********************
-    // Attributes
-    //***********************
 
     /**
      * The maximum size of both the undo and redo {@code ArrayDeque}s. Effectively, the maximum number of changes
@@ -25,24 +22,25 @@ public class UndoManager {
 
     /**
      * An {@code ArrayDeque} which stores recently executed {@link Command}s in
-     * order. {@code Command}s are popped off of undo when one needs to be undone.
+     * order. A {@code Command} is popped off of the deque when one needs to be undone.
      */
     private ArrayDeque<Command> undo;
 
     /**
      * An {@code ArrayDeque} which stores recently undone {@link Command}s in order.
-     * {@code Command}s are popped off of redo when one needs to be re-executed.
+     * A {@code Command} is popped off of the deque when one needs to be re-executed.
      */
     private ArrayDeque<Command> redo;
 
-    //***********************
-    // Constructors
-    //***********************
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     /**
      * Constructs an empty {@code UndoManager}, with undo and redo {@code ArrayDeque}s of size maxSize.
      *
-     * @param maxSize   the maximum number of commands that can be stored
+     * @param   maxSize
+     *          the maximum number of commands that can be stored
      */
     public UndoManager(int maxSize) {
         undo = new ArrayDeque<>(maxSize);
@@ -50,14 +48,14 @@ public class UndoManager {
         this.maxSize = maxSize;
     }
 
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     /**
-     * Adds a newly executed {@code Command} instance to the {@code UndoManager}.
+     * Adds a newly executed {@code Command} to the {@code UndoManager}.
      *
-     * @param command   new Command instance
+     * @param command   new Command
      */
     public void add(Command command) {
         if (command != null && maxSize > 0) {

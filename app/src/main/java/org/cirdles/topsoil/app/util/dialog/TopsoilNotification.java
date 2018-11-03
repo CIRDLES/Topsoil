@@ -94,7 +94,7 @@ public class TopsoilNotification extends Dialog<ButtonType> {
     }
 
     /**
-     * A {@code NotificationType} contains pre-set {@code Image}s and {@code ButtonType}s for construction a
+     * A {@code NotificationType} contains pre-setValue {@code Image}s and {@code ButtonType}s for construction a
      * {@link TopsoilNotification}.
      */
     public enum NotificationType {

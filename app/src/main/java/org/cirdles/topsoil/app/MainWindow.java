@@ -1,269 +1,170 @@
 package org.cirdles.topsoil.app;
 
+import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.LoadException;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.data.ObservableDataTable;
 import org.cirdles.topsoil.app.menu.MenuItemEventHandler;
+import org.cirdles.topsoil.app.style.StyleLoader;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.table.TopsoilDataTable;
+import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * The main class of Topsoil.
- *
  * @see Application
  * @see MainWindowController
  */
 public class MainWindow extends Application {
 
-    //***********************
-    // Attributes
-    //***********************
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
 
-    /**
-     * A {@code ResourceExtractor} for extracting necessary resources. Used by CIRDLES projects.
-     */
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(MainWindow.class);
+    private static final String CONTROLLER_FXML = "main-window.fxml";
+    private static final String TOPSOIL_LOGO = "topsoil-logo.png";
+    private static final String ARIMO_FONT = "style/font/arimo/Arimo-Regular.ttf";
 
-    /**
-     * The {@code String} path to the {@code .fxml} file for {@link MainWindowController}.
-     */
-    private final String TOPSOIL_MAIN_WINDOW_FXML_PATH = "main-window.fxml";
-
-    /**
-     * The {@code String} path to the {@code .fxml} file for {@link TopsoilAboutScreen}.
-     */
-    private final String TOPSOIL_ABOUT_SCREEN_FXML_PATH = "topsoil-about-screen.fxml";
-
-    /**
-     * The {@code String} path to the {@code .css} file for Topsoil.
-     */
-    private final String TOPSOIL_CSS_FILE_PATH = "topsoil-stylesheet.css";
-
-    /**
-     * The {@code String} path to the Topsoil logo.
-     */
-    private final String TOPSOIL_LOGO_FILE_PATH = "topsoil-logo.png";
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
 
     private static Stage primaryStage;
     private static Image windowIcon;
-    private static String OS;
 
-    private static final String WINDOWS = "Windows";
-    private static final String MAC = "Mac";
-    private static final String LINUX = "Linux";
-
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     /** {@inheritDoc}
      */
     @Override
     public void start(Stage primaryStage) {
 
-        setPrimaryStage(primaryStage);
+        ResourceExtractor resourceExtractor = new ResourceExtractor(MainWindow.class);
 
-        // Detect OS
-        String OSName = System.getProperty("os.name").toLowerCase();
+        MainWindow.primaryStage = primaryStage;
 
-        if (OSName.contains("windows")) {
-            setOS(WINDOWS);
-        } else if (OSName.contains("mac") || OSName.contains("os x") || OSName.contains("macos")) {
-            setOS(MAC);
-        } else if (OSName.contains("nix") || OSName.contains("nux") || OSName.contains("aix")) {
-            setOS(LINUX);
+        Parent mainWindow;
+        MainWindowController mainWindowController;
+
+        // Load FXML for MainWindowController
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    resourceExtractor.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
+            mainWindow = loader.load();
+            mainWindowController = loader.getController();
+        } catch (IOException | NullPointerException e) {
+            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
         }
 
+        // Create main Scene
+        Scene scene = new Scene(mainWindow, 1100, 800);
+
+        // Load CSS
         try {
-            Parent mainWindow;
-            MainWindowController mainWindowController;
+            Font.loadFont(resourceExtractor.extractResourceAsFile(ARIMO_FONT).toURI().toURL().toExternalForm(), 14);
+        } catch (MalformedURLException e) {
+            new TopsoilException("Unable to load custom font.", e).printStackTrace();
+        }
+        StyleLoader styleLoader = new StyleLoader();
+        scene.getStylesheets().addAll(styleLoader.getStylesheets());
+        StyleManager.getInstance().setUserAgentStylesheets(styleLoader.getStylesheets());
+        primaryStage.setScene(scene);
 
-            // Load FXML for MainWindowController
-            try {
-                FXMLLoader mainFXMLLoader = new FXMLLoader(
-                        RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_MAIN_WINDOW_FXML_PATH).toUri().toURL());
-                mainWindow = mainFXMLLoader.load();
-                mainWindowController = mainFXMLLoader.getController();
-            } catch (IOException | NullPointerException e) {
-                e.printStackTrace();
-                throw new LoadException("Could not load " + TOPSOIL_MAIN_WINDOW_FXML_PATH);
-            }
-
-            // Create main Scene
-            Scene scene = new Scene(mainWindow, 1100, 800);
-
-            // Load CSS
-            try {
-                String css = RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_CSS_FILE_PATH).toUri().toURL()
-                                               .toExternalForm();
-                scene.getStylesheets().add(css);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
-            // If main window is closed, all other windows close.
-            primaryStage.setOnCloseRequest(event -> {
-
-                event.consume();
-                // If something is open
-                if (!mainWindowController.getTabPane().isEmpty()) {
-                    Boolean save = verifyFinalSave();
-                    // If save verification was not cancelled
-                    if (save != null) {
-                        if (save) {
-                            // If file was successfully saved
-                            if (MenuItemEventHandler.handleSaveAsProjectFile(mainWindowController.getTabPane())) {
-                                //Close all open plots
-                                for(TopsoilTab tab : mainWindowController.getTabPane().getTopsoilTabs()) {
-                                    tab.closeTabPlots();
-                                }
-                                Platform.exit();
-                            }
-                        // If user doesn't want to save
-                        } else {
+        // If main window is closed, all other windows close.
+        primaryStage.setOnCloseRequest(event -> {
+            event.consume();
+            // If something is open
+            if (!mainWindowController.getTabPane().isEmpty()) {
+                Boolean save = verifyFinalSave();
+                // If save verification was not cancelled
+                if (save != null) {
+                    if (save) {
+                        // If file was successfully saved
+                        if (MenuItemEventHandler.handleSaveAsProjectFile(mainWindowController.getTabPane())) {
+                            //Close all open plots
                             for(TopsoilTab tab : mainWindowController.getTabPane().getTopsoilTabs()) {
                                 tab.closeTabPlots();
                             }
                             Platform.exit();
                         }
+                    // If user doesn't want to save
+                    } else {
+                        for(TopsoilTab tab : mainWindowController.getTabPane().getTopsoilTabs()) {
+                            tab.closeTabPlots();
+                        }
+                        Platform.exit();
                     }
-
-                // If nothing is open.
-                } else {
-                    Platform.exit();
                 }
-            });
-
-            // Load logo for use in window and system task bar
-            try {
-                Image icon = new Image(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_LOGO_FILE_PATH)
-                                                         .toUri().toString());
-                primaryStage.getIcons().add(icon);
-                setWindowIcon(icon);
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            // If nothing is open.
+            } else {
+                Platform.exit();
             }
-
-            // Set minimum window dimensions
-            primaryStage.setMinHeight(400.0);
-            primaryStage.setMinWidth(650.0);
-
-            // If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
-            primaryStage.setTitle("Topsoil");
-            TopsoilSerializer.currentProjectFileProperty().addListener(c -> {
-                if (TopsoilSerializer.projectFileExists()) {
-                    primaryStage.setTitle("Topsoil - " + TopsoilSerializer.getCurrentProjectFile().getName());
-                } else {
-                    primaryStage.setTitle("Topsoil");
-                }
-            });
-
-            primaryStage.setScene(scene);
-            primaryStage.show();
-
-            // TODO Move to MainWindowController
-            // Load splash screen
-            try {
-                Parent splashScreen = FXMLLoader.load(RESOURCE_EXTRACTOR.extractResourceAsPath(TOPSOIL_ABOUT_SCREEN_FXML_PATH).toUri().toURL());
-                Scene splashScene = new Scene(splashScreen, 550, 650);
-                Stage splashWindow = new Stage(StageStyle.UNDECORATED);
-                splashWindow.setResizable(false);
-                splashWindow.setScene(splashScene);
-                
-                //splashWindow.setX(primaryStage.getX());
-                //splashWindow.setY(primaryStage.getY());
-
-                splashWindow.requestFocus();
-                splashWindow.initOwner(primaryStage);
-                splashWindow.initModality(Modality.NONE);
-                // Close window if main window gains focus.
-                primaryStage.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue) {
-                        splashWindow.close();
-                    }
-                });
-                splashWindow.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // Handle Keyboard Shortcuts
-            scene.setOnKeyPressed(keyEvent -> {
-                initializeTableKeyboardShortcuts(keyEvent, mainWindowController.getTabPane());
-                initializeUndoKeyboardShortcuts(keyEvent, mainWindowController.getTabPane());
-                keyEvent.consume();
-            });
-        } catch (LoadException e) {
-            e.printStackTrace();
+        });
+        // Load logo for use in window and system task bar
+        try {
+            Image icon = new Image(resourceExtractor.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+            primaryStage.getIcons().add(icon);
+            MainWindow.windowIcon = icon;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load " + TOPSOIL_LOGO, e);
         }
+
+        // Set minimum window dimensions
+        primaryStage.setMinHeight(400.0);
+        primaryStage.setMinWidth(650.0);
+
+        // If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
+        primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
+            return TopsoilSerializer.projectFileExists()
+                    ? "Topsoil - " + TopsoilSerializer.getCurrentProjectFile().getName()
+                    : "Topsoil";
+        }, TopsoilSerializer.currentProjectFileProperty()));
+
+        primaryStage.show();
+
+        // Load about screen
+        Stage aboutWindow = TopsoilAboutScreen.getFloatingStage();
+
+        aboutWindow.requestFocus();
+        aboutWindow.initOwner(primaryStage);
+        aboutWindow.initModality(Modality.NONE);
+        // Close window if main window gains focus.
+        primaryStage.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                aboutWindow.close();
+            }
+        });
+        aboutWindow.show();
+
+        // Handle Keyboard Shortcuts
+        scene.setOnKeyPressed(keyEvent -> {
+            initializeTableKeyboardShortcuts(keyEvent, mainWindowController.getTabPane());
+            initializeUndoKeyboardShortcuts(keyEvent, mainWindowController.getTabPane());
+            initializeCopyPasteKeyboardShortcuts(keyEvent, mainWindowController.getTabPane());
+            keyEvent.consume();
+        });
     }
 
-    /**
-     * Initializes shortcuts for managing tables.
-     *
-     * @param keyEvent  an occurring KeyEvent
-     * @param tabs  the TopsoilTabPane where the tables are located
-     */
-    private static void initializeTableKeyboardShortcuts(KeyEvent keyEvent, TopsoilTabPane tabs) {
-        // shortcut + T creates a new tab containing an empty table
-        if (keyEvent.getCode() == KeyCode.T &&
-            keyEvent.isShortcutDown()) {
-            TopsoilDataTable table = MenuItemEventHandler.handleNewTable();
-            tabs.add(table);
-        }
-        // shortcut + I imports a new table from a file
-        if (keyEvent.getCode() == KeyCode.I &&
-                keyEvent.isShortcutDown()) {
-            try {
-                TopsoilDataTable table = MenuItemEventHandler.handleTableFromFile();
-                tabs.add(table);
-            } catch (IOException e) {
-                TopsoilNotification.showNotification(
-                        TopsoilNotification.NotificationType.ERROR,
-                        "Error",
-                        "File I/O Error."
-                );
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Initializes shortcuts for managing undo and redo.
-     *
-     * @param keyEvent  an occurring KeyEvent
-     * @param tabs  the TopsoilTabPane where the tables are located
-     */
-    private static void initializeUndoKeyboardShortcuts(KeyEvent keyEvent, TopsoilTabPane tabs) {
-        // shortcut + Z undoes the last undoable action
-        if (keyEvent.getCode() == KeyCode.Z &&
-                keyEvent.isShortcutDown() &&
-                !tabs.isEmpty()) {
-            tabs.getSelectedTab().undo();
-        }
-        // shortcut + Y redoes the last undone action
-        if (keyEvent.getCode() == KeyCode.Y &&
-                keyEvent.isShortcutDown() &&
-                !tabs.isEmpty()) {
-            tabs.getSelectedTab().redo();
-        }
+    public static void main(String[] args) {
+        launch(args);
     }
 
     /**
@@ -289,34 +190,58 @@ public class MainWindow extends Application {
         return reference.get();
     }
 
-    public static String getOS() {
-        return OS;
-    }
-
-    public static void setOS(String OS) {
-        MainWindow.OS = OS;
-    }
-
     public static Image getWindowIcon() {
         return windowIcon;
-    }
-
-    private static void setWindowIcon(Image image) {
-        windowIcon = image;
     }
 
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
 
-    private static void setPrimaryStage(Stage stage) {
-        primaryStage = stage;
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
+
+    private static void initializeTableKeyboardShortcuts(KeyEvent keyEvent, TopsoilTabPane tabs) {
+        // shortcut + T creates a new tab containing an empty table
+        if (keyEvent.getCode() == KeyCode.T &&
+            keyEvent.isShortcutDown()) {
+            ObservableDataTable table = MenuItemEventHandler.handleNewTable();
+            tabs.add(table);
+        }
+        // shortcut + I imports a new table from a file
+        if (keyEvent.getCode() == KeyCode.I &&
+            keyEvent.isShortcutDown()) {
+
+            ObservableDataTable table = MenuItemEventHandler.importDataFromFile();
+            tabs.add(table);
+        }
     }
 
-    /** {@inheritDoc}
-     */
-    public static void main(String[] args) {
-        launch(args);
+    private static void initializeUndoKeyboardShortcuts(KeyEvent keyEvent, TopsoilTabPane tabs) {
+	    if ( ! tabs.isEmpty() ) {
+		    // shortcut + Z undoes the last undoable action
+		    if ( keyEvent.getCode() == KeyCode.Z && keyEvent.isShortcutDown() ) {
+			    tabs.getSelectedTab().undo();
+		    }
+		    // shortcut + Y redoes the last undone action
+		    if ( keyEvent.getCode() == KeyCode.Y && keyEvent.isShortcutDown() ) {
+			    tabs.getSelectedTab().redo();
+		    }
+	    }
+    }
+
+    private static void initializeCopyPasteKeyboardShortcuts(KeyEvent keyEvent, TopsoilTabPane tabs) {
+    	if ( ! tabs.isEmpty() ) {
+		    // shortcut + C copies a selection from the clipboard
+    		if ( keyEvent.getCode() == KeyCode.C && keyEvent.isShortcutDown() ) {
+    			tabs.getSelectedTab().getDataView().getSpreadsheet().copyClipboard();
+		    }
+		    // shortcut + V pastes content to the clipboard
+		    if ( keyEvent.getCode() == KeyCode.V && keyEvent.isShortcutDown() ) {
+    			tabs.getSelectedTab().getDataView().getSpreadsheet().pasteClipboard();
+		    }
+	    }
     }
 
 }

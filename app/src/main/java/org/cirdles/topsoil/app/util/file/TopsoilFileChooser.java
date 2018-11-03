@@ -6,23 +6,23 @@ import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
 import java.io.File;
 
 /**
- * A class containing a set of methods for obtaining custom {@link FileChooser}s for
+ * A class containing a setValue of methods for obtaining custom {@link FileChooser}s for
  * table files or .topsoil project files.
  *
  * @author Benjamin Muldrow
  */
 public class TopsoilFileChooser {
 
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     /**
-     * Returns a {@code FileChooser} that opens Topsoil projects.
+     * Returns a {@code FileChooser} that chooses Topsoil projects for opening.
      *
-     * @return instance of FileChooser with a .topsoil ExtensionFilter
+     * @return instance of FileChooser with a .topsoil extension filter
      */
-    public static FileChooser getTopsoilOpenFileChooser() {
+    public static FileChooser openTopsoilFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Topsoil Project");
         fileChooser.getExtensionFilters().addAll(
@@ -31,21 +31,24 @@ public class TopsoilFileChooser {
         );
 
         if (TopsoilSerializer.projectFileExists()) {
-            try {
-                fileChooser.setInitialDirectory(new File(TopsoilSerializer.getCurrentProjectFile().getParent()));
-            } catch (NullPointerException e) {
-                // FileChooser opens to default directory
+
+            File initialDir;
+            if (TopsoilSerializer.getCurrentProjectFile().getParent() != null) {
+                initialDir = new File(TopsoilSerializer.getCurrentProjectFile().getParent());
+            } else {
+                initialDir = new File(System.getProperty("user.home"));
             }
+            fileChooser.setInitialDirectory(initialDir);
         }
         return fileChooser;
     }
 
     /**
-     * Returns a {@code FileChooser} that saves Topsoil projects
+     * Returns a {@code FileChooser} that chooses Topsoil projects for saving.
      *
-     * @return instance of FileChooser with a .topsoil ExtensionFilter
+     * @return instance of FileChooser with a .topsoil extension filter
      */
-    public static FileChooser getTopsoilSaveFileChooser() {
+    public static FileChooser saveTopsoilFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Topsoil Project");
         fileChooser.getExtensionFilters().addAll(
@@ -53,21 +56,25 @@ public class TopsoilFileChooser {
         );
 
         if (TopsoilSerializer.projectFileExists()) {
-            try {
-                fileChooser.setInitialDirectory(new File(TopsoilSerializer.getCurrentProjectFile().getParent()));
-            } catch (NullPointerException e) {
-                // FileChooser opens to default directory
+
+            File initialDir;
+            if (TopsoilSerializer.getCurrentProjectFile().getParent() != null) {
+                initialDir = new File(TopsoilSerializer.getCurrentProjectFile().getParent());
+            } else {
+                initialDir = new File(System.getProperty("user.home"));
             }
+            fileChooser.setInitialDirectory(initialDir);
+            fileChooser.setInitialFileName(TopsoilSerializer.getCurrentProjectFile().getName());
         }
         return fileChooser;
     }
 
     /**
-     * Returns a {@code FileChooser} that opens tab-delimited text files.
+     * Returns a {@code FileChooser} that chooses tab-delimited text {@code File}s for opening.
      *
-     * @return instance of FileChooser with .tsv/.csv/.txt ExtensionFilters
+     * @return  FileChooser with supported extension filters
      */
-    public static FileChooser getTableFileChooser() {
+    public static FileChooser openTableFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Table File");
         fileChooser.getExtensionFilters().addAll(
@@ -77,7 +84,12 @@ public class TopsoilFileChooser {
         return fileChooser;
     }
 
-    public static FileChooser getExportTableFileChooser() {
+    /**
+     * Returns a {@code FileChooser} that chooses tab-delimited text {@code File}s for saving.
+     *
+     * @return  FileChooser with supported extension filters
+     */
+    public static FileChooser exportTableFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export Table File");
         fileChooser.getExtensionFilters().addAll(

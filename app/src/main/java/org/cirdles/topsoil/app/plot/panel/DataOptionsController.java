@@ -7,22 +7,24 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.isotope.IsotopeType;
-import org.cirdles.topsoil.app.table.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 
 import java.io.IOException;
 
 public class DataOptionsController extends AnchorPane {
 
-    private static final String CONTROLLER_FXML = "data-options-menu.fxml";
+	//**********************************************//
+	//                  CONSTANTS                   //
+	//**********************************************//
 
-    private ToggleGroup uncertaintyToggleGroup = new ToggleGroup();
+    private static final String CONTROLLER_FXML = "data-options-menu.fxml";
 
     //**********************************************//
     //                   CONTROLS                   //
     //**********************************************//
 
-	@FXML ComboBox<IsotopeType> isotopeSystemComboBox;
+	@FXML ComboBox<IsotopeSystem> isotopeSystemComboBox;
 	@FXML ComboBox<UncertaintyFormat> uncertaintyFormatComboBox;
 
     @FXML CheckBox pointsCheckBox;
@@ -33,6 +35,8 @@ public class DataOptionsController extends AnchorPane {
 
     @FXML RadioButton unctBarsRadioButton;
     @FXML ColorPicker unctBarsFillColorPicker;
+
+	private ToggleGroup uncertaintyToggleGroup = new ToggleGroup();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -52,8 +56,9 @@ public class DataOptionsController extends AnchorPane {
     }
 
     @FXML protected void initialize() {
-    	isotopeSystemComboBox.getItems().addAll(IsotopeType.values());
-    	uncertaintyFormatComboBox.getItems().addAll(UncertaintyFormat.values());
+    	isotopeSystemComboBox.getItems().addAll(IsotopeSystem.values());
+    	uncertaintyFormatComboBox.getItems().addAll(UncertaintyFormat.ONE_SIGMA_ABSOLUTE, UncertaintyFormat
+			    .TWO_SIGMA_ABSOLUTE, UncertaintyFormat.NINETY_FIVE_PERCENT_CONFIDENCE);
 
     	RadioButtonSelectionHandler ellipsesSelectionHandler = new RadioButtonSelectionHandler(ellipsesRadioButton);
         ellipsesRadioButton.setToggleGroup(uncertaintyToggleGroup);

@@ -1,18 +1,22 @@
 package org.cirdles.topsoil.app;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * A controller for Topsoil's about screen, a small pop-up that appears when starting Topsoil. It contains About
@@ -22,72 +26,38 @@ import java.awt.*;
  *
  * @author Jake Marotta
  */
-public class TopsoilAboutScreen extends Pane {
+public class TopsoilAboutScreen extends VBox {
 
-    //***********************
-    // Attributes
-    //***********************
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
 
-    /**
-     * An {@code ImageView} for the Topsoil logo.
-     */
-    @FXML private ImageView topsoilLogo;
+    private static final double DEFAULT_WIDTH = 550;
+    private static final double DEFAULT_HEIGHT = 650;
 
-    /**
-     * An {@code ImageView} for the CIRDLES logo.
-     */
-    @FXML private ImageView cirdlesLogo;
+    private static final String HOME_URL = "http://cirdles.org/projects/topsoil/";
+    private static final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0";
+    private static final String GITHUB_URL = "https://github.com/CIRDLES/Topsoil";
+    private static final String CIRDLES_URL = "https://cirdles.org/";
+    private static final String RELEASE_LOG_URL = "https://github.com/CIRDLES/Topsoil/releases";
 
-    /**
-     * The text for the current Topsoil version.
-     */
-    @FXML private Label versionLabel;
+    private static final String CONTROLLER_FXML = "topsoil-about-screen.fxml";
 
-    /**
-     * The text for the about message.
-     */
-    @FXML private Label messageLabel;
+    //**********************************************//
+    //                   CONTROLS                   //
+    //**********************************************//
 
-    @FXML private Hyperlink homePage;
+    @FXML private ImageView topsoilLogo, cirdlesLogo;
 
-    /**
-     * A {@code Hyperlink} that leads to the Apache License 2.0 page.
-     */
-    @FXML private Hyperlink license;
+    @FXML private Label versionLabel, messageLabel;
 
-    /**
-     * A {@code Hyperlink} that leads to the Topsoil GitHub repository.
-     */
-    @FXML private Hyperlink github;
+    @FXML private Hyperlink homePage, license, github, cirdles, releaseLog;
 
-    /**
-     * A {@code Hyperlink} that leads to the CIRDLES home page.
-     */
-    @FXML private Hyperlink cirdles;
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
 
-    /**
-     * A {@code Hyperlink} that leads to the Topsoil GitHub release log.
-     */
-    @FXML private Hyperlink releaseLog;
-
-    private final String HOME_URL = "http://cirdles.org/projects/topsoil/";
-
-    private final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0";
-
-    /**
-     * The {@code String} URL for the Topsoil GitHub repository.
-     */
-    private final String GITHUB_URL = "https://github.com/CIRDLES/Topsoil";
-
-    /**
-     * The {@code String} URL for the CIRDLES home page.
-     */
-    private final String CIRDLES_URL = "https://cirdles.org/";
-
-    /**
-     * The {@code String} URL for the Topsoil GitHub release log.
-     */
-    private final String RELEASE_LOG_URL = "https://github.com/CIRDLES/Topsoil/releases";
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilAboutScreen.class);
 
     /**
      * The system default browser as a {@code DesktopWebBrowser}. This is used to navigate to the addresses for each
@@ -107,26 +77,59 @@ public class TopsoilAboutScreen extends Pane {
      */
     private double yOffset;
 
-    // ResourceExtractor
-    /**
-     * A custom extractor for extracting necessary resources. Used by CIRDLES projects.
-     */
-    private final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(TopsoilAboutScreen.class);
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
-    //***********************
-    // Methods
-    //***********************
+    public TopsoilAboutScreen() {
+        super();
+
+        browser = new DesktopWebBrowser(Desktop.getDesktop());
+
+        try {
+            FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
+            loader.setRoot(this);
+            loader.setController(this);
+            loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+        }
+    }
 
     /** {@inheritDoc}
      */
-    @FXML public void initialize() {
-        topsoilLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
-        cirdlesLogo.setImage(new Image(RESOURCE_EXTRACTOR.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
+    @FXML protected void initialize() {
+        topsoilLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
+        cirdlesLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
 
         versionLabel.setText("Version " + (new TopsoilMetadata()).getVersion().split("-")[0]);
-
-        browser = new DesktopWebBrowser(Desktop.getDesktop());
     }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    public static Stage getFloatingStage() {
+        Scene scene = new Scene(new TopsoilAboutScreen(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
+        Stage stage = new Stage(StageStyle.UNDECORATED);
+        stage.setScene(scene);
+        stage.setResizable(false);
+
+        double newX = MainWindow.getPrimaryStage().getX() + (MainWindow.getPrimaryStage().getWidth() / 2) -
+                      (DEFAULT_WIDTH / 2);
+        double newY = MainWindow.getPrimaryStage().getY() + (MainWindow.getPrimaryStage().getHeight() / 2) -
+                      (DEFAULT_HEIGHT / 2);
+
+        stage.setX(newX);
+        stage.setY(newY);
+
+        return stage;
+    }
+
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
 
     @FXML private void openHome() { browser.browse(HOME_URL); }
 

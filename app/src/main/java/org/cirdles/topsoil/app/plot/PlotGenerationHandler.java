@@ -2,21 +2,21 @@ package org.cirdles.topsoil.app.plot;
 
 import com.sun.javafx.stage.StageHelper;
 import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
+import javafx.beans.property.DoubleProperty;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.data.ObservableDataColumn;
 import org.cirdles.topsoil.app.plot.panel.PlotPropertiesPanel;
-import org.cirdles.topsoil.app.plot.variable.Variables;
+import org.cirdles.topsoil.app.tab.TopsoilDataView;
 import org.cirdles.topsoil.app.tab.TopsoilTab;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
-import org.cirdles.topsoil.app.table.TopsoilTableController;
-import org.cirdles.topsoil.app.util.serialization.PlotInformation;
 import org.cirdles.topsoil.plot.DefaultProperties;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
+import org.cirdles.topsoil.plot.TopsoilPlotType;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,86 +24,80 @@ import java.util.concurrent.ScheduledExecutorService;
 import static org.cirdles.topsoil.plot.PlotProperty.*;
 
 /**
- * A class containing a set of methods for handling plot generation.
+ * A class containing a setValue of methods for handling plot generation.
  *
- * @author Jake Marotta
+ * @author marottajb
  */
 public class PlotGenerationHandler {
+
+    private static double DEFAULT_WIDTH = 1000;
+    private static double DEFAULT_HEIGHT = 600;
 
     /**
      * Generates a plot for the selected {@code TopsoilTab}.
      *
      * @param tabs  the active TopsoilTabPane
      */
-    public static void handlePlotGenerationForSelectedTab(TopsoilTabPane tabs) {
-        TopsoilTableController tableController = tabs.getSelectedTab().getTableController();
+    public static void generatePlotForSelectedTab(TopsoilTabPane tabs) {
+        TopsoilDataView dataView = tabs.getSelectedTab().getDataView();
 
         // Check for open plots.
         List<Stage> stages = StageHelper.getStages();
         if (stages.size() > 1) {
             for (TopsoilTab tab : tabs.getTopsoilTabs()) {
-                for (PlotInformation plotInfo : tab.getTableController().getTable().getOpenPlots()) {
-                    tab.getTableController().getTable().removeOpenPlot(plotInfo.getTopsoilPlotType());
-                    plotInfo.getStage().close();
+                if ( ! tab.getDataView().getData().getOpenPlots().isEmpty() ) {
+                    for (TopsoilPlotType type : tab.getDataView().getData().getOpenPlots().keySet()) {
+                        tab.getDataView().getData().removePlot(type);
+                    }
                 }
             }
-            generatePlot(tableController, TopsoilPlotType.BASE_PLOT, null);
+            generatePlot(dataView, TopsoilPlotType.BASE_PLOT, null);
         } else {
-            generatePlot(tableController, TopsoilPlotType.BASE_PLOT, null);
+            generatePlot(dataView, TopsoilPlotType.BASE_PLOT, null);
         }
     }
 
-    /**
-     * Generates a saved {@code Plot} from a .topsoil file.
-     *
-     * @param tableController   the TopsoilTableController for the table
-     * @param plotType  the TopsoilPlotType of the plot
-     */
-    public static void handlePlotGenerationFromFile(TopsoilTableController tableController, TopsoilPlotType plotType,
-                                                    Map<PlotProperty, Object> properties) {
-        generatePlot(tableController, plotType, properties);
+    public static void generatePlotForDataView(TopsoilDataView dataView, TopsoilPlotType plotType) {
+        generatePlot(dataView, plotType, null);
     }
 
-    /**
-     * Generates a {@code Plot}.
-     *
-     * @param tableController   the TopsoilTableController for the table
-     * @param plotType  the TopsoilPlotType of the plot
-     */
-    private static void generatePlot(TopsoilTableController tableController, TopsoilPlotType plotType, Map<PlotProperty, Object> properties) {
+    private static void generatePlot(TopsoilDataView dataView, TopsoilPlotType plotType, Map<PlotProperty, Object> properties) {
 
-        List<Map<String, Object>> data = tableController.getPlotData();
+        List<Map<String, Object>> data = dataView.getData().getPlotEntries();
 
         Plot plot = plotType.getPlot();
 	    plot.setData(data);
+	    // reload data on column insertion/deletion
+	    dataView.getData().getColumns().addListener((ListChangeListener<ObservableDataColumn>) c -> {
+		    plot.setData(dataView.getData().getPlotEntries());
+	    });
+	    for (ObservableDataColumn column : dataView.getData().getColumns()) {
+	    	// reload data on row insertion/deletion
+	    	column.addListener((ListChangeListener<DoubleProperty>) c -> plot.setData(dataView.getData().getPlotEntries()) );
+	    	for (DoubleProperty property : column) {
+	    		// reload data on data changed
+	    		property.addListener(c -> plot.setData(dataView.getData().getPlotEntries()) );
+		    }
+	    }
 
 	    if (properties == null) {
 		    properties = new DefaultProperties();
 	    }
-	    properties.put(TITLE, tableController.getTable().getTitle());
-	    if (tableController.getAssignedVariables().contains(Variables.X)) {
-		    properties.put(X_AXIS, tableController.getTable().getVariableAssignments().get(Variables.Y).getName());
-	    }
-	    if (tableController.getAssignedVariables().contains(Variables.Y)) {
-	    	properties.put(Y_AXIS, tableController.getTable().getVariableAssignments().get(Variables.Y).getName());
-	    }
-	    properties.put(UNCERTAINTY, tableController.getTable().getUncertaintyFormat().getValue());
-	    plot.setProperties(properties);
 
+	    properties.put(TITLE, dataView.getData().getTitle());
+		// @TODO assign and Y axis labels
+	    properties.put(UNCERTAINTY, dataView.getData().getUnctFormat().getMultiplier());
 	    TopsoilPlotView plotView = new TopsoilPlotView(plot);
 
-	    // Connect Plot with PropertiesPanel
+	    // Connect table data to properties panel
 	    PlotPropertiesPanel panel = plotView.getPropertiesPanel();
-	    panel.isotopeSystemProperty().bindBidirectional(tableController.getTable().isotopeTypeObjectProperty());
+	    panel.isotopeSystemProperty().bindBidirectional(dataView.getData().isotopeSystemProperty());
 
         // Update properties panel with changes in the plot
         PlotObservationThread observationThread = new PlotObservationThread();
         ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, panel);
 
-	    // Create Plot Scene
-	    Scene scene = new Scene(plotView, 1000, 600);
-
-	    // Create Plot Stage
+	    Scene scene = new Scene(plotView, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	    Stage plotStage = new Stage();
 	    plotStage.setScene(scene);
 	    plotStage.getIcons().add(MainWindow.getWindowIcon());
@@ -112,15 +106,13 @@ public class PlotGenerationHandler {
         plotStage.setOnCloseRequest(closeEvent -> {
             observer.shutdown();
             plot.stop();
-            tableController.getTable().removeOpenPlot(plotType);
+            dataView.getData().removePlot(plotType);
         });
-//        plotStage.setOnShown((event) -> panel.refreshPlot() );
 
         // Show Plot
         plotStage.show();
 
         // Store plot information in TopsoilDataTable
-        PlotInformation plotInfo = new PlotInformation(plot, plotType, FXCollections.observableMap(panel.getPlotProperties()), plotStage);
-        tableController.getTable().addOpenPlot(plotInfo);
+        dataView.getData().addPlot(plotType, plotView);
     }
 }
