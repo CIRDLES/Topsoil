@@ -103,47 +103,6 @@ public class TopsoilSpreadsheetView extends SpreadsheetView {
         }
 
         this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);    // disable multi-cell selection
-
-        //////////////////////////////////
-
-        Button printButton = new Button("Print Data");
-        printButton.setOnAction(event -> {
-            StringJoiner lineJoiner = new StringJoiner("\n");
-            StringJoiner itemJoiner = new StringJoiner(" | ");
-            itemJoiner.add(fixedString(""));
-            for (ObservableDataColumn column : data.getColumns()) {
-                itemJoiner.add(fixedString((column.hasVariable() ? column.getVariable().getAbbreviation() : "")));
-            }
-            lineJoiner.add(itemJoiner.toString());
-
-            itemJoiner = new StringJoiner(" | ");
-            itemJoiner.add(fixedString(""));
-            for (String header : data.getColumnHeaders()) {
-                itemJoiner.add(fixedString(header));
-            }
-            lineJoiner.add(itemJoiner.toString());
-
-            for (ObservableDataRow row : data.getRows()) {
-                itemJoiner = new StringJoiner(" | ");
-                itemJoiner.add(fixedString(String.valueOf(row.isSelected())));
-                for (DoubleProperty property : row) {
-                    itemJoiner.add(fixedString(String.valueOf(property.get())));
-                }
-                lineJoiner.add(itemJoiner.toString());
-            }
-
-            System.out.println(lineJoiner.toString() + "\n");
-        });
-        VBox vBox = new VBox(printButton);
-        vBox.setAlignment(Pos.CENTER);
-        Scene tempScene = new Scene(vBox, 200, 160);
-        Stage tempStage = new Stage();
-        tempStage.setScene(tempScene);
-        tempStage.show();
-    }
-
-    private String fixedString(String content) {
-        return String.format("%1$12s", content);
     }
 
     //**********************************************//

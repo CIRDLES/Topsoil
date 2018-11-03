@@ -1,15 +1,14 @@
 package org.cirdles.topsoil.app.menu;
 
 import com.sun.javafx.stage.StageHelper;
-import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
-import org.cirdles.topsoil.app.data.ObservableDataRow;
 import org.cirdles.topsoil.app.data.ObservableDataTable;
+import org.cirdles.topsoil.app.util.file.TableFileExtension;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.variable.Variable;
@@ -18,7 +17,6 @@ import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.app.tab.TopsoilTabPane;
 import org.cirdles.topsoil.app.util.dialog.*;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification.NotificationType;
-import org.cirdles.topsoil.app.util.file.Delimiter;
 import org.cirdles.topsoil.app.util.file.FileParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
@@ -289,42 +287,35 @@ public class MenuItemEventHandler {
     public static void handleExportTable(ObservableDataTable table) {
         try {
             String[] headers = table.getColumnHeaders();
-            Double[][] data = new Double[table.rowCount()][table.colCount()];
-            ObservableList<ObservableDataRow> rows = table.getRows();
-
-            for (int i = 0; i < rows.size(); i++) {
-                for (int j = 0; j < rows.get(i).size(); j++) {
-                    data[i][j] = rows.get(i).get(j).get();
-                }
-            }
+            Double[][] data = table.getData();
 
             Path path = Paths.get(TopsoilFileChooser.exportTableFile().showSaveDialog(StageHelper.getStages().get(0))
                                                     .toURI());
 
             if (path != null) {
                 String location = path.toString();
-                String extension = location.substring(location.lastIndexOf('.'));
+                String extension = location.substring(location.lastIndexOf('.') + 1);
 
-                String delim = Delimiter.valueOf(extension.toUpperCase()).toString();
+                String delim = TableFileExtension.valueOf(extension.toUpperCase()).getDelimiter().toString();
 
-                StringJoiner tableJoiner = new StringJoiner("\t");
-                StringJoiner rowJoiner = new StringJoiner(delim);
+                StringJoiner lineJoiner = new StringJoiner(System.lineSeparator());
+                StringJoiner itemJoiner = new StringJoiner(delim);
 
                 for (int i = 0; i < headers.length; i++) {
-                    rowJoiner.add(headers[i]);
+                    itemJoiner.add(headers[i]);
                 }
-                tableJoiner.add(rowJoiner.toString());
+                lineJoiner.add(itemJoiner.toString());
 
                 for (int i = 0; i < data.length; i++) {
-                    rowJoiner = new StringJoiner(delim);
+                    itemJoiner = new StringJoiner(delim);
 
                     for (int j = 0; j < data[i].length; j++) {
-                        rowJoiner.add(data[i][j].toString());
+                        itemJoiner.add(data[i][j].toString());
                     }
-                    tableJoiner.add(rowJoiner.toString());
+                    lineJoiner.add(itemJoiner.toString());
                 }
                 BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
-                writer.write(tableJoiner.toString());
+                writer.write(lineJoiner.toString());
                 writer.close();
             }
         } catch (IOException ex) {

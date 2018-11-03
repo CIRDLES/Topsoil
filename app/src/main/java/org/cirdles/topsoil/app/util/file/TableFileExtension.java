@@ -9,7 +9,7 @@ import java.nio.file.Path;
  *
  * @see     FileParser#isFileSupported(Path)
  */
-enum TableFileExtension {
+public enum TableFileExtension {
 
     CSV("csv", Delimiter.COMMA),
     TSV("tsv", Delimiter.TAB),
