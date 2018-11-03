@@ -6,7 +6,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 /**
- * Provides a format for plot uncertainty, including a name and a {@code Double} value.
+ * Provides a format for plot uncertainty, including a name and a {@code Double} multiplier.
  *
  * @author marottajb
  */
@@ -24,9 +24,9 @@ public enum UncertaintyFormat {
     private String name;
 
     /**
-     * The {@code Double} value of the uncertainty format.
+     * The {@code Double} multiplier of the uncertainty format.
      */
-    private Double value;
+    private Double multiplier;
 
     public static final List<UncertaintyFormat> PLOT_FORMATS = Collections.unmodifiableList(asList(
             ONE_SIGMA_ABSOLUTE,
@@ -45,19 +45,19 @@ public enum UncertaintyFormat {
     ));
 
     /**
-     * Constructs a new {@code UncertaintyFormat} with the specified name and value.
+     * Constructs a new {@code UncertaintyFormat} with the specified name and multiplier.
      *
      * @param name  String name
-     * @param value Double value
+     * @param value Double multiplier
      */
     UncertaintyFormat(String name, Double value) {
         this.name = name;
-        this.value = value;
+        this.multiplier = value;
     }
 
     public static UncertaintyFormat fromValue(double val) {
         for (UncertaintyFormat format : values()) {
-            if (Double.compare(val, format.getValue()) == 0) {
+            if (Double.compare(val, format.getMultiplier()) == 0) {
                 return format;
             }
         }
@@ -74,12 +74,12 @@ public enum UncertaintyFormat {
     }
 
     /**
-     * Returns the value of the {@code UncertaintyFormat}.
+     * Returns the multiplier of the {@code UncertaintyFormat}.
      *
-     * @return  double value
+     * @return  double multiplier
      */
-    public double getValue() {
-        return value;
+    public double getMultiplier() {
+        return multiplier;
     }
 
     @Override
@@ -89,7 +89,7 @@ public enum UncertaintyFormat {
 
     public static UncertaintyFormat getFromValue(Double value) {
         for (UncertaintyFormat format : values()) {
-            if (Double.compare(format.getValue(), value) == 0) {
+            if (Double.compare(format.getMultiplier(), value) == 0) {
                 return format;
             }
         }

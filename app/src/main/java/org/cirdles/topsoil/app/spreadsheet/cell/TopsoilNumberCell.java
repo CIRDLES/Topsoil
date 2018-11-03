@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.spreadsheet.cell;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.cirdles.topsoil.app.data.ObservableDataColumn;
@@ -60,7 +59,7 @@ public class TopsoilNumberCell extends TopsoilSpreadsheetCellBase<Number> {
         ObservableDataColumn column = spreadsheet.getData().getColumns().get(getColumn());
         double dataValue = (double) newValue;
         if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {
-            dataValue /= spreadsheet.getData().getUnctFormat().getValue();
+            dataValue /= spreadsheet.getData().getUnctFormat().getMultiplier();
         }
         if (Double.compare(dataValue, (Double) getSource().getValue()) != 0) {
             spreadsheet.updateDataValue(getRow(), getColumn(), dataValue);
@@ -72,7 +71,7 @@ public class TopsoilNumberCell extends TopsoilSpreadsheetCellBase<Number> {
         ObservableDataColumn column = spreadsheet.getData().getColumns().get(getColumn());
         double cellValue = (double) newValue;
         if (Variables.UNCERTAINTY_VARIABLES.contains(column.getVariable())) {
-            cellValue *= spreadsheet.getData().getUnctFormat().getValue();
+            cellValue *= spreadsheet.getData().getUnctFormat().getMultiplier();
         }
         if (Double.compare(cellValue, (Double) getItem()) != 0) {
             this.spreadsheet.getGrid().setCellValue(getRow(), getColumn(), cellValue);

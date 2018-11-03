@@ -12,6 +12,7 @@ public enum TableDataType {
     ISOTOPE_TYPE("Isotope Type"),
     UNCERTANTY_FORMAT("Uncertainty Format"),
     DATA("Data"),
+    SELECTED_ROWS("Selected Rows"),
     VARIABLE_ASSIGNMENTS("Variable Assignments"),
     PLOTS("Plots");
 

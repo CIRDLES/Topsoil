@@ -86,7 +86,7 @@ public class PlotGenerationHandler {
 
 	    properties.put(TITLE, dataView.getData().getTitle());
 		// @TODO assign and Y axis labels
-	    properties.put(UNCERTAINTY, dataView.getData().getUnctFormat().getValue());
+	    properties.put(UNCERTAINTY, dataView.getData().getUnctFormat().getMultiplier());
 	    TopsoilPlotView plotView = new TopsoilPlotView(plot);
 
 	    // Connect table data to properties panel

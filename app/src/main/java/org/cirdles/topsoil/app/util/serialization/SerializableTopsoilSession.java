@@ -73,22 +73,28 @@ class SerializableTopsoilSession implements Serializable {
      */
     public void loadDataToTopsoilTabPane(TopsoilTabPane tabs) {
         ObservableDataTable table;
-        Double[][] data;
         String[] headers;
+        Double[][] data;
+        boolean[] selected;
         IsotopeSystem isotopeType;
         UncertaintyFormat unctFormat;
 
         TopsoilDataView dataView;
 
         for (Map<TableDataType, Serializable> tableData : this.data) {
-            data = (Double[][]) tableData.get(TableDataType.DATA);
             headers = (String[]) tableData.get(TableDataType.HEADERS);
+            data = (Double[][]) tableData.get(TableDataType.DATA);
+            selected = (boolean[]) tableData.get(TableDataType.SELECTED_ROWS);
+
             isotopeType = IsotopeSystem.valueOf(String.valueOf(tableData.get(TableDataType.ISOTOPE_TYPE)));
             unctFormat = UncertaintyFormat.valueOf(String.valueOf(tableData.get(TableDataType.UNCERTANTY_FORMAT)));
 
             table = new ObservableDataTable(data, headers, isotopeType, unctFormat);
-
             table.setTitle(String.valueOf(tableData.get(TableDataType.TITLE)));
+            for (int row = 0; row < data.length; row++) {
+                table.getRow(row).setSelected(selected[row]);
+            }
+
             tabs.add(table);
 
             dataView = tabs.getSelectedTab().getDataView();
@@ -126,9 +132,13 @@ class SerializableTopsoilSession implements Serializable {
     private HashMap<TableDataType, Serializable> extractTableData(ObservableDataTable table) {
 
         HashMap<TableDataType, Serializable> tableData = new HashMap<>();
-
         tableData.put(TableDataType.TITLE, table.getTitle());
         tableData.put(TableDataType.HEADERS, table.getColumnHeaders());
+        boolean[] selected = new boolean[table.rowCount()];
+        for (int row = 0; row < table.rowCount(); row++) {
+            selected[row] = table.getRow(row).isSelected();
+        }
+        tableData.put(TableDataType.SELECTED_ROWS, selected);
         tableData.put(TableDataType.ISOTOPE_TYPE, table.getIsotopeSystem().name());
         tableData.put(TableDataType.UNCERTANTY_FORMAT, table.getUnctFormat().name());
         tableData.put(TableDataType.DATA, table.getData());

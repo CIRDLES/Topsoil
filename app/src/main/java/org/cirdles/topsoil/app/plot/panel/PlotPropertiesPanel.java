@@ -515,7 +515,7 @@ public class PlotPropertiesPanel extends Accordion {
     		refreshPlot();
 	    });
     	uncertaintyFormatProperty().addListener(c -> {
-    		properties.put(UNCERTAINTY, getUncertaintyFormat().getValue());
+    		properties.put(UNCERTAINTY, getUncertaintyFormat().getMultiplier());
     		refreshPlot();
 	    });
 

@@ -503,10 +503,17 @@ public class ObservableDataTable extends Observable {
      */
     public Double[][] getData() {
         Double[][] rows = new Double[rowCount][colCount];
+        Variable<Number> columnVar;
+        double value;
 
         for (int row = 0; row < rowCount; row++) {
             for (int col = 0; col < colCount; col++) {
-                rows[row][col] = columns.get(col).get(row).get();
+                columnVar = columns.get(col).getVariable();
+                value = columns.get(col).get(row).get();
+                if (Variables.UNCERTAINTY_VARIABLES.contains(columnVar)) {
+                    value *= getUnctFormat().getMultiplier();
+                }
+                rows[row][col] = value;
             }
         }
 
@@ -690,21 +697,25 @@ public class ObservableDataTable extends Observable {
 
     private void setVariableForColumn(Variable<Number> variable, ObservableDataColumn column) {
         if (column != null) {
+            Variable oldVariable = column.getVariable();
             if (variable == null) {
-                if (column.hasVariable()) {
-                    varMap.remove(column.getVariable());
+                if (oldVariable != null) {
+                    varMap.remove(oldVariable);
                     column.setVariable(null);
+                    if (Variables.UNCERTAINTY_VARIABLES.contains(oldVariable)) {
+                        uncertainifyColumn(column, getUnctFormat(), ONE_SIGMA_ABSOLUTE);
+                    }
                 }
             } else {
-                if (variable != column.getVariable()) {
-                    if (column.hasVariable()) {
-                        varMap.remove(column.getVariable());        // remove assignment to column's old variable
+                if (variable != oldVariable) {
+                    if (oldVariable != null) {
+                        varMap.remove(oldVariable);        // remove assignment to column's old variable
                     }
                     if (varMap.containsKey(variable)) {
                         varMap.get(variable).setVariable(null);     // remove variable from a previously assigned column
                         varMap.remove(variable);
                     }
-                    Variable oldVariable = column.getVariable();
+
                     column.setVariable(variable);
                     if (Variables.UNCERTAINTY_VARIABLES.contains(variable)) {
                         if (! Variables.UNCERTAINTY_VARIABLES.contains(oldVariable)) {
@@ -741,13 +752,13 @@ public class ObservableDataTable extends Observable {
                                     UncertaintyFormat newFormat) {
         if (oldFormat != newFormat) {
             double value;
-            for (DoubleProperty property : column) {
-                value = property.get();
-                if (Double.compare(oldFormat.getValue(), newFormat.getValue()) != 0) {
-                    value *= oldFormat.getValue();      // un-convert
-                    value /= newFormat.getValue();      // convert to newFormat
+            for (int row = 0; row < rowCount; row++) {
+                value = column.get(row).get();
+                if (Double.compare(oldFormat.getMultiplier(), newFormat.getMultiplier()) != 0) {
+                    value *= oldFormat.getMultiplier();      // un-convert
+                    value /= newFormat.getMultiplier();      // convert to newFormat
                 }
-                property.set(value);
+                setValue(row, columns.indexOf(column), value);
             }
         }
     }
