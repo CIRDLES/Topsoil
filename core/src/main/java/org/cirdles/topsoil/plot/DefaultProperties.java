@@ -36,6 +36,9 @@ public class DefaultProperties extends HashMap<PlotProperty, Object> {
 	    put(WETHERILL_LINE, false);
 	    put(WETHERILL_LINE_FILL, "blue");
 	    put(WETHERILL_ENVELOPE_FILL, "lightgray");
+		put(WASSERBURG_LINE, false);
+		put(WASSERBURG_LINE_FILL, "blue");
+		put(WASSERBURG_ENVELOPE_FILL, "lightgray");
 	    put(MCLEAN_REGRESSION, false);
 	    put(MCLEAN_REGRESSION_ENVELOPE, false);
 	    put(EVOLUTION, false);
@@ -46,5 +49,6 @@ public class DefaultProperties extends HashMap<PlotProperty, Object> {
 	    put(LAMBDA_U235, 9.8485e-10);
 	    put(LAMBDA_U238, 1.55125e-10);
 	    put(LAMBDA_TH230, 9.1705e-6);
+	    put(R238_235S, 137.88);
     }
 }

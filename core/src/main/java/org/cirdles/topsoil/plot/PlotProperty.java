@@ -30,6 +30,9 @@ public enum PlotProperty {
 	WETHERILL_LINE("Wetherill Line"),
 	WETHERILL_LINE_FILL("Wetherill Line Fill"),
 	WETHERILL_ENVELOPE_FILL("Wetherill Envelope Fill"),
+	WASSERBURG_LINE("Wasserburg Line"),
+	WASSERBURG_LINE_FILL("Wasserburg Line Fill"),
+	WASSERBURG_ENVELOPE_FILL("Wasserburg Envelope Fill"),
 	EVOLUTION("Evolution Matrix"),
 	MCLEAN_REGRESSION("McLean Regression"),
 	MCLEAN_REGRESSION_ENVELOPE("McLean Regression Envelope"),
@@ -39,7 +42,8 @@ public enum PlotProperty {
 	LAMBDA_U234("U234"),
 	LAMBDA_U235("U235"),
 	LAMBDA_U238("U238"),
-	LAMBDA_TH230("Th230");
+	LAMBDA_TH230("Th230"),
+	R238_235S("R238_235S");
 
 	private String key;
 
