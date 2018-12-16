@@ -67,12 +67,10 @@ plot.updateConcordia = function() {
         var minT = Math.max(
             newtonMethod(wetherill.x, plot.xAxisScale.domain()[0]),
             newtonMethod(wetherill.y, plot.yAxisScale.domain()[0]));
-        alert(minT);
 
         var maxT = Math.min(
             newtonMethod(wetherill.x, plot.xAxisScale.domain()[1]),
             newtonMethod(wetherill.y, plot.yAxisScale.domain()[1]));
-        alert(maxT);
 
         var minT1 = Math.max(Math.log1p(plot.xAxisScale.domain()[0] / plot.lambda.U235),
             Math.log(1 + plot.yAxisScale.domain()[0]) / plot.lambda.U238);

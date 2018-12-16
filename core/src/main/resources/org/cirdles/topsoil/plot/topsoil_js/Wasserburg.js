@@ -9,13 +9,13 @@
 
         // X value for a given t(time in years)
         wasserburg.x = function (t) {
-            return 1.0 / (Math.exp(constants.LAMBDA_238 * t) - 1);
+            return 1.0 / (Math.exp(constants.LAMBDA_238 * t) - 1.0);
         };
 
         // Y value for a given t(time in years)
         wasserburg.y = function (t) {
-            return (1.0 / constants.R238_235S) * ((Math.exp(constants.LAMBDA_235 * t) - 1) /
-                (Math.exp(constants.LAMBDA_238 * t) - 1));
+            return (1.0 / constants.R238_235S) * ((Math.exp(constants.LAMBDA_235 * t) - 1.0) /
+                (Math.exp(constants.LAMBDA_238 * t) - 1.0));
         };
 
         // Vector containing derivative of x and derivative of y for given t(time in years)
@@ -87,9 +87,8 @@
         };
 
         var variance = function (t) {
-            var top = multiply(v(t), J_xyλ(t), Σ_λ, numeric.transpose(J_xyλ(t)), numeric.transpose(v(t)));
-            var bottom = numeric.dot(v(t), numeric.transpose(v(t)));
-
+            var top = multiply(v(t), J_xyλ(t), Σ_λ, numeric.transpose(J_xyλ(t)), v(t));
+            var bottom = numeric.dot(v(t), v(t));
             return top / bottom;
         };
 

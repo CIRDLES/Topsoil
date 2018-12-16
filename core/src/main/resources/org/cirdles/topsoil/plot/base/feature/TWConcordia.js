@@ -74,23 +74,17 @@ plot.updateTWConcordia = function() {
             R238_235S: plot.lambda.R238_235S
         });
 
-        var minT = Math.max(
-            newtonMethod(wasserburg.x, plot.xAxisScale.domain()[0]),
-            newtonMethod(wasserburg.y, plot.yAxisScale.domain()[0]));
-        alert(minT);
-        //minT = 50639827.9585347;
-        /*
-        var minX_T = (Math.log1p(plot.xAxisScale.domain()[1]) - Math.log(plot.xAxisScale.domain()[1])) / plot.lambda.U238;
 
-        var minY_T = 0;
+        var minX_T = (Math.log1p(plot.xAxisScale.domain()[1]) - Math.log(plot.xAxisScale.domain()[1]))
+            / plot.lambda.U238;
+        var minY_T = calculateDate(plot.yAxisScale.domain()[0], 0.0);
+        var minT = Math.max(minX_T, minY_T);
 
-        var minT = Math.max(minX_T, minY_T);*/
 
-        var maxT = Math.min(
-            newtonMethod(wasserburg.x, plot.xAxisScale.domain()[1]),
-            newtonMethod(wasserburg.y, plot.yAxisScale.domain()[1]));
-        alert(maxT);
-        //maxT = 3510564142.818673;
+        var maxX_T = (Math.log1p(plot.xAxisScale.domain()[0]) - Math.log(plot.xAxisScale.domain()[0]))
+            / plot.lambda.U238;
+        var maxY_T = calculateDate(plot.yAxisScale.domain()[1], 0.0);
+        var maxT = Math.min(maxX_T, maxY_T);
 
 
         // build the concordia line
@@ -155,13 +149,14 @@ plot.updateTWConcordia = function() {
                     plot.cubicBezier(path, p1, p2, p3);
                 };
 
-                var minT = Math.max(
+                var minT = Math.min(
                     newtonMethod(wasserburg.upperEnvelope.x, plot.xAxisScale.domain()[0]),
                     newtonMethod(wasserburg.upperEnvelope.y, plot.yAxisScale.domain()[0]));
 
                 var maxT = Math.min(
                     newtonMethod(wasserburg.upperEnvelope.x, plot.xAxisScale.domain()[1]),
                     newtonMethod(wasserburg.upperEnvelope.y, plot.yAxisScale.domain()[1]));
+
 
                 // initialize path
                 var path = [];
@@ -178,7 +173,7 @@ plot.updateTWConcordia = function() {
 
                 lineTo(path, [plot.xAxisScale.range()[1], plot.yAxisScale.range()[1]]);
 
-                minT = Math.max(
+                minT = Math.min(
                     newtonMethod(wasserburg.lowerEnvelope.x, plot.xAxisScale.domain()[0]),
                     newtonMethod(wasserburg.lowerEnvelope.y, plot.yAxisScale.domain()[0]));
 
