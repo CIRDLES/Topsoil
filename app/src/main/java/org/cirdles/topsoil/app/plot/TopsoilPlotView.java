@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -33,8 +34,10 @@ public class TopsoilPlotView extends VBox {
 
 	@FXML private ToolBar toolbar;
 	@FXML private Button saveSVGButton;
+	@FXML private Button savePDFButton;
 	@FXML private Button resetViewButton;
 	@FXML private Button snapToCornersButton;
+	@FXML private SplitPane plotView;
 
 	private PlotPropertiesPanel propertiesPanel;
 
@@ -84,6 +87,10 @@ public class TopsoilPlotView extends VBox {
 
 	@FXML private void saveSVGButtonAction() {
 		new SVGSaver().save(plot.displayAsSVGDocument());
+	}
+
+	@FXML private void savePDFButtonAction() {
+		//plotView.snapshot();
 	}
 
 	@FXML private void resetViewButtonAction() {
