@@ -77,8 +77,6 @@ plot.updateConcordia = function() {
         var maxT1 = Math.min(Math.log1p(plot.xAxisScale.domain()[1] / plot.lambda.U235),
             Math.log(1 + plot.yAxisScale.domain()[1]) / plot.lambda.U238);
 
-        alert(minT1);
-        alert(maxT1);
 
         // build the concordia line
         plot.concordia = plot.concordiaGroup.select(".concordia")
