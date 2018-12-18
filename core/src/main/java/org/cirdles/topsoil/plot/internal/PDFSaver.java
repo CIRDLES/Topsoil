@@ -9,7 +9,8 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import javax.imageio.ImageIO;
-import java.io.File;
+import java.io.*;
+import java.util.Optional;
 
 /**
  * {@code PDFSaver} saves an image of the current javascript plot to a PDF designated file
@@ -21,9 +22,21 @@ public class PDFSaver {
     private static final File FILE_CHOOSER_INITIAL_DIRECTORY
             = new File(System.getProperty("user.home"));
 
-    public static void saveToPDF(WritableImage plotToSave){
 
-        String pathToImage = FILE_CHOOSER_INITIAL_DIRECTORY.toString() + "/nametonotbespoken.png";
+    //***********************
+    // Methods
+    //***********************
+
+    public static void saveToPDF(WritableImage plotToSave){
+        generateSaveUI().ifPresent(stream -> {
+                writeToPDF(plotToSave, stream);
+        });
+
+    }
+
+    private static void writeToPDF(WritableImage plotToSave, OutputStream out){
+
+        String pathToImage = FILE_CHOOSER_INITIAL_DIRECTORY.toString() + "/nametonotbespoken123412.png";
         File file = new File(pathToImage);
 
         try{
@@ -39,7 +52,7 @@ public class PDFSaver {
             content.drawImage(pdImage, 80, 210, 500, 400);
             content.close();
             doc.addPage(page);
-            doc.save(FILE_CHOOSER_INITIAL_DIRECTORY.toString() + "/bestnewpdf.pdf");
+            doc.save(out);
             doc.close();
             file.delete();
 
@@ -49,7 +62,7 @@ public class PDFSaver {
     }
 
 
-    private FileChooser getFileChooser() {
+    private static FileChooser getFileChooser() {
         FileChooser fileChooser = new FileChooser();
 
         fileChooser.setTitle("Export to PDF");
@@ -60,5 +73,17 @@ public class PDFSaver {
                 new FileChooser.ExtensionFilter("All Files", "*.*"));
 
         return fileChooser;
+    }
+
+    private static Optional<OutputStream> generateSaveUI() {
+        return Optional.ofNullable(getFileChooser().showSaveDialog(null))
+                .map(file -> {
+                    try {
+                        return new FileOutputStream(file);
+                    } catch (FileNotFoundException ex) {
+                        ex.printStackTrace();
+                        return null;
+                    }
+                });
     }
 }
