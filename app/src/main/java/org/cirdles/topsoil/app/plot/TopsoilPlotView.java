@@ -2,12 +2,16 @@ package org.cirdles.topsoil.app.plot;
 
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -17,8 +21,11 @@ import org.cirdles.topsoil.app.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
+import org.cirdles.topsoil.plot.internal.PDFSaver;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -37,7 +44,6 @@ public class TopsoilPlotView extends VBox {
 	@FXML private Button savePDFButton;
 	@FXML private Button resetViewButton;
 	@FXML private Button snapToCornersButton;
-	@FXML private SplitPane plotView;
 
 	private PlotPropertiesPanel propertiesPanel;
 
@@ -90,7 +96,10 @@ public class TopsoilPlotView extends VBox {
 	}
 
 	@FXML private void savePDFButtonAction() {
-		//plotView.snapshot();
+
+		WritableImage plotSnap = plotAnchorPane.snapshot(new SnapshotParameters(), null);
+		PDFSaver.saveToPDF(plotSnap);
+
 	}
 
 	@FXML private void resetViewButtonAction() {
