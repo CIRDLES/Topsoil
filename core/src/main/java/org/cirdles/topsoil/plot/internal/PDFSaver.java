@@ -6,6 +6,10 @@ import javafx.stage.FileChooser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1CFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.PDType3Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import javax.imageio.ImageIO;
@@ -27,16 +31,16 @@ public class PDFSaver {
     // Methods
     //***********************
 
-    public static void saveToPDF(WritableImage plotToSave){
+    public static void saveToPDF(WritableImage plotToSave, String uncertaintyFormat){
         generateSaveUI().ifPresent(stream -> {
-                writeToPDF(plotToSave, stream);
+                writeToPDF(plotToSave, stream, uncertaintyFormat);
         });
 
     }
 
-    private static void writeToPDF(WritableImage plotToSave, OutputStream out){
+    private static void writeToPDF(WritableImage plotToSave, OutputStream out, String uncertaintyFormat){
 
-        String pathToImage = FILE_CHOOSER_INITIAL_DIRECTORY.toString() + "/nametonotbespoken123412.png";
+        String pathToImage = FILE_CHOOSER_INITIAL_DIRECTORY.toString() + "/topsoilPlotImgPlaceholder123.png";
         File file = new File(pathToImage);
 
         try{
@@ -49,7 +53,15 @@ public class PDFSaver {
 
             pdImage = PDImageXObject.createFromFile(pathToImage, doc);
             content = new PDPageContentStream(doc, page);
+
             content.drawImage(pdImage, 80, 210, 500, 400);
+            content.beginText();
+            content.setFont(PDType1Font.TIMES_ROMAN, 18);
+            content.newLineAtOffset(200, 200);
+            uncertaintyFormat = uncertaintyFormat.replace("σ", "s");
+            content.showText("Uncertainty Format: " + uncertaintyFormat);
+            content.endText();
+
             content.close();
             doc.addPage(page);
             doc.save(out);

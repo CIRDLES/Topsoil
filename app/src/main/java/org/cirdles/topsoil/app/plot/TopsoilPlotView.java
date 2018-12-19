@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.plot.DefaultProperties;
 import org.cirdles.topsoil.app.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
@@ -23,6 +24,8 @@ import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
 import org.cirdles.topsoil.plot.internal.PDFSaver;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -92,13 +95,28 @@ public class TopsoilPlotView extends VBox {
 	//**********************************************//
 
 	@FXML private void saveSVGButtonAction() {
-		new SVGSaver().save(plot.displayAsSVGDocument());
+
+		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
+		Document doc = plot.displayAsSVGDocument();
+
+		Element ele = doc.getDocumentElement();
+		Element textNode = doc.createElement("text");
+		textNode.setAttribute("x", "230");
+		textNode.setAttribute("y", "553");
+		textNode.setAttribute("font-family", "sans-serif");
+		textNode.setAttribute("font-size", "18px");
+		textNode.setTextContent("Uncertainty Format: " + uncValue);
+
+		ele.appendChild(textNode);
+
+		new SVGSaver().save(doc);
 	}
 
 	@FXML private void savePDFButtonAction() {
 
 		WritableImage plotSnap = plotAnchorPane.snapshot(new SnapshotParameters(), null);
-		PDFSaver.saveToPDF(plotSnap);
+		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
+		PDFSaver.saveToPDF(plotSnap, uncValue);
 
 	}
 
