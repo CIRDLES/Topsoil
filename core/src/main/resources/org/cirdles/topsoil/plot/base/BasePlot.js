@@ -41,6 +41,9 @@ plot.propertiesKeys = [
     'Wetherill Line',
     'Wetherill Line Fill',
     'Wetherill Envelope Fill',
+    'Wasserburg Line',
+    'Wasserburg Line Fill',
+    'Wasserburg Envelope Fill',
     'Evolution Matrix',
     'McLean Regression',
     'McLean Regression Envelope',
@@ -50,7 +53,8 @@ plot.propertiesKeys = [
     'U234',
     'U235',
     'U238',
-    'Th230'
+    'Th230',
+    'R238_235S'
 ];
 
 /*
@@ -278,12 +282,14 @@ plot.update = function (data) {
 
     var redrawEvolution = false;
     var redrawConcordia = false;
+    var redrawTWConcordia = false;
 
     if (plot.getProperty('U234') != null && !isNaN(plot.getProperty('U234'))) {
         if (plot.lambda.U234 != plot.getProperty("U234")) {
             plot.lambda.U234 = plot.getProperty("U234");
             redrawConcordia = true;
-            redrawEvolution = true
+            redrawEvolution = true;
+            redrawTWConcordia = true;
         }
     } else if (plot.lambda.U234 === null) {
         plot.lambda.U234 = topsoil.defaultLambda.U234;
@@ -292,6 +298,7 @@ plot.update = function (data) {
         if (plot.lambda.U235 != plot.getProperty("U235")) {
             plot.lambda.U235 = plot.getProperty("U235");
             redrawConcordia = true;
+            redrawTWConcordia = true;
         }
     } else if (plot.lambda.U235 === null) {
         plot.lambda.U235 = topsoil.defaultLambda.U235;
@@ -312,6 +319,14 @@ plot.update = function (data) {
     } else if (plot.lambda.Th230 === null) {
         plot.lambda.Th230 = topsoil.defaultLambda.Th230;
     }
+    if (plot.getProperty('R238_235S') != null && !isNaN(plot.getProperty('R238_235S'))) {
+        if (plot.lambda.R238_235S != plot.getProperty("R238_235S")) {
+            plot.lambda.R238_235S = plot.getProperty("R238_235S");
+            redrawTWConcordia = true;
+        }
+    } else if (plot.lambda.R238_235S === null) {
+        plot.lambda.R238_235S = topsoil.defaultLambda.R238_235S;
+    }
 
     if (redrawEvolution) {
         plot.removeEvolutionMatrix();
@@ -320,6 +335,10 @@ plot.update = function (data) {
 
     if (redrawConcordia) {
         plot.removeConcordia();
+    }
+
+    if (redrawTWConcordia) {
+        plot.removeTWConcordia();
     }
 
     //draw title and axis labels
@@ -536,11 +555,28 @@ plot.managePlotFeatures = function () {
         else if (plot.concordiaVisible) {
             plot.removeConcordia();
         }
+
+        if (plot.getProperty("Wasserburg Line")) {
+            if (!plot.twconcordiaVisible) {
+                plot.drawTWConcordia();
+            }
+            else {
+                plot.updateTWConcordia();
+            }
+        }
+        else if (plot.twconcordiaVisible) {
+            plot.removeTWConcordia();
+        }
     }
 
     // If the isotope system is not UPb, but the concordia line is visible...
-    else if (plot.concordiaVisible) {
-        plot.removeConcordia();
+    else if (plot.concordiaVisible || plot.twconcordiaVisible) {
+        if(plot.concordiaVisible){
+            plot.removeConcordia();
+        }
+        if(plot.twconcordiaVisible){
+            plot.removeTWConcordia();
+        }
     }
 
     // If the isotope system is UTh...
@@ -585,6 +621,7 @@ plot.removePlotFeatures = function () {
     plot.removeRegressionLine();
     plot.removeConcordia();
     plot.removeEvolutionMatrix();
+    plot.removeTWConcordia();
 };
 
 

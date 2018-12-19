@@ -352,6 +352,64 @@ public class PlotPropertiesPanel extends Accordion {
     	wetherillEnvelopeFillProperty().set(c);
     }
 
+
+
+
+
+
+	private BooleanProperty wasserburgLine;
+	public BooleanProperty wasserburgLineProperty() {
+		if ( wasserburgLine == null) {
+			wasserburgLine = new SimpleBooleanProperty();
+			wasserburgLine.bindBidirectional(plotFeatures.wasserburgCheckBox.selectedProperty());
+		}
+		return wasserburgLine;
+	}
+	public final Boolean wasserburgLine() {
+		return wasserburgLine.get();
+	}
+	public final void setWasserburgLine( boolean b ) {
+		wasserburgLineProperty().set(b);
+	}
+
+	private ObjectProperty<Color> wasserburgLineFill;
+	public ObjectProperty<Color> wasserburgLineFillProperty() {
+		if (wasserburgLineFill == null) {
+			wasserburgLineFill = new SimpleObjectProperty<>();
+			wasserburgLineFill.bindBidirectional(plotFeatures.wasserburgLineFillColorPicker.valueProperty());
+		}
+		return wasserburgLineFill;
+	}
+	public final Color getWasserburgLineFill() {
+		return wasserburgLineFillProperty().get();
+	}
+	public final void setWasserburgLineFill(Color c) {
+		wasserburgLineFillProperty().set(c);
+	}
+
+	private ObjectProperty<Color> wasserburgEnvelopeFill;
+	public ObjectProperty<Color> wasserburgEnvelopeFillProperty() {
+		if (wasserburgEnvelopeFill == null) {
+			wasserburgEnvelopeFill = new SimpleObjectProperty<>();
+			wasserburgEnvelopeFill.bindBidirectional(plotFeatures.wasserburgEnvelopeFillColorPicker.valueProperty());
+		}
+		return wasserburgEnvelopeFill;
+	}
+	public final Color getWasserburgEnvelopeFill() {
+		return wasserburgEnvelopeFillProperty().get();
+	}
+	public final void setWasserburgEnvelopeFill(Color c) {
+		wasserburgEnvelopeFillProperty().set(c);
+	}
+
+
+
+
+
+
+
+
+
     private BooleanProperty evolutionMatrix;
     public BooleanProperty evolutionMatrixProperty() {
         if (evolutionMatrix == null) {
@@ -430,6 +488,14 @@ public class PlotPropertiesPanel extends Accordion {
 	    		Color.valueOf(String.valueOf(properties.get(WETHERILL_LINE_FILL))));
 	    if (properties.containsKey(WETHERILL_ENVELOPE_FILL)) setWetherillEnvelopeFill(
 	    		Color.valueOf(String.valueOf(properties.get(WETHERILL_ENVELOPE_FILL))));
+
+		if (properties.containsKey(WASSERBURG_LINE)) setWasserburgLine((Boolean) properties.get(WASSERBURG_LINE));
+		if (properties.containsKey(WASSERBURG_LINE_FILL)) setWasserburgLineFill(
+				Color.valueOf(String.valueOf(properties.get(WASSERBURG_LINE_FILL))));
+		if (properties.containsKey(WASSERBURG_ENVELOPE_FILL)) setWasserburgEnvelopeFill(
+				Color.valueOf(String.valueOf(properties.get(WASSERBURG_ENVELOPE_FILL))));
+
+
 	    if (properties.containsKey(EVOLUTION)) setEvolutionMatrix((Boolean) properties.get(EVOLUTION));
 	    if (properties.containsKey(MCLEAN_REGRESSION)) setMcLeanRegressionLine((Boolean) properties.get(MCLEAN_REGRESSION));
 	    if (properties.containsKey(MCLEAN_REGRESSION_ENVELOPE)) setMcLeanRegressionEnvelope((Boolean) properties.get
@@ -561,6 +627,24 @@ public class PlotPropertiesPanel extends Accordion {
     		properties.put(WETHERILL_ENVELOPE_FILL, convertColor(getWetherillEnvelopeFill()));
     		refreshPlot();
 	    });
+
+
+
+		wasserburgLineProperty().addListener(c -> {
+			properties.put(WASSERBURG_LINE, wasserburgLine());
+			refreshPlot();
+		});
+		wasserburgLineFillProperty().addListener(c -> {
+			properties.put(WASSERBURG_LINE_FILL, convertColor(getWasserburgLineFill()));
+			refreshPlot();
+		});
+		wasserburgEnvelopeFillProperty().addListener(c -> {
+			properties.put(WASSERBURG_ENVELOPE_FILL, convertColor(getWasserburgEnvelopeFill()));
+			refreshPlot();
+		});
+
+
+
     	evolutionMatrixProperty().addListener(c -> {
     		properties.put(EVOLUTION, evolutionMatrix());
     		refreshPlot();
