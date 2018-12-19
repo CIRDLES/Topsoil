@@ -17,7 +17,8 @@
 (function(){
     window.constants = {
         LAMBDA_235 : 9.8485e-10,
-        LAMBDA_238 : 1.55125e-10
+        LAMBDA_238 : 1.55125e-10,
+        R238_235S : 137.88
     };
 })();
 
