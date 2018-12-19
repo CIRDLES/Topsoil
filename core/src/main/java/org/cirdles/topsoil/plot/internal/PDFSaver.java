@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.plot.internal;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
@@ -11,8 +12,10 @@ import org.apache.pdfbox.pdmodel.font.PDType1CFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.PDType3Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.graphics.image.PDInlineImage;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Optional;
 
@@ -40,20 +43,23 @@ public class PDFSaver {
 
     private static void writeToPDF(WritableImage plotToSave, OutputStream out, String uncertaintyFormat){
 
-        String pathToImage = FILE_CHOOSER_INITIAL_DIRECTORY.toString() + "/topsoilPlotImgPlaceholder123.png";
-        File file = new File(pathToImage);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         try{
-            ImageIO.write(SwingFXUtils.fromFXImage(plotToSave, null), "png", file);
+            ImageIO.write(SwingFXUtils.fromFXImage(plotToSave, null), "png", bos);
+            bos.flush();
+            String base64String=Base64.encode(bos.toByteArray());
+            bos.close();
+            byte[] byteArray = Base64.decode(base64String);
+
 
             PDDocument doc = new PDDocument();
             PDPage page = new PDPage();
             PDImageXObject pdImage;
             PDPageContentStream content;
 
-            pdImage = PDImageXObject.createFromFile(pathToImage, doc);
+            pdImage = PDImageXObject.createFromByteArray(doc, byteArray, "plotImg");
             content = new PDPageContentStream(doc, page);
-
             content.drawImage(pdImage, 80, 210, 500, 400);
             content.beginText();
             content.setFont(PDType1Font.TIMES_ROMAN, 18);
@@ -66,7 +72,6 @@ public class PDFSaver {
             doc.addPage(page);
             doc.save(out);
             doc.close();
-            file.delete();
 
         }catch(Exception e){
             e.printStackTrace();
