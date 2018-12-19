@@ -36,6 +36,11 @@ public class PlotFeaturesController extends AnchorPane {
     @FXML ColorPicker wetherillLineFillColorPicker;
     @FXML ColorPicker wetherillEnvelopeFillColorPicker;
 
+    @FXML private VBox wasserburgControls;
+    @FXML CheckBox wasserburgCheckBox;
+    @FXML ColorPicker wasserburgLineFillColorPicker;
+    @FXML ColorPicker wasserburgEnvelopeFillColorPicker;
+
     @FXML private VBox evolutionControls;
     @FXML CheckBox evolutionCheckBox;
 
@@ -51,7 +56,7 @@ public class PlotFeaturesController extends AnchorPane {
             	if (isotopeSystem.get() != null) {
 		            switch ( isotopeSystem.get() ) {
 			            case UPB:
-				            container.getChildren().setAll(mcLeanRegressionControls, wetherillControls);
+				            container.getChildren().setAll(mcLeanRegressionControls, wetherillControls, wasserburgControls);
 				            break;
 			            case UTH:
 				            container.getChildren().setAll(mcLeanRegressionControls, evolutionControls);
