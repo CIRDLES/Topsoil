@@ -322,6 +322,21 @@ public class PlotPropertiesPanel extends Accordion {
         wetherillLineProperty().set(b);
     }
 
+	private BooleanProperty wetherillEnvelope;
+	public BooleanProperty wetherillEnvelopeProperty() {
+		if ( wetherillEnvelope == null) {
+			wetherillEnvelope = new SimpleBooleanProperty();
+			wetherillEnvelope.bindBidirectional(plotFeatures.wetherillEnvelopeCheckBox.selectedProperty());
+		}
+		return wetherillEnvelope;
+	}
+	public final Boolean wetherillEnvelope() {
+		return wetherillEnvelope.get();
+	}
+	public final void setWetherillEnvelope( boolean b ) {
+		wetherillEnvelopeProperty().set(b);
+	}
+
     private ObjectProperty<Color> wetherillLineFill;
     public ObjectProperty<Color> wetherillLineFillProperty() {
     	if (wetherillLineFill == null) {
@@ -370,6 +385,21 @@ public class PlotPropertiesPanel extends Accordion {
 	}
 	public final void setWasserburgLine( boolean b ) {
 		wasserburgLineProperty().set(b);
+	}
+
+	private BooleanProperty wasserburgEnvelope;
+	public BooleanProperty wasserburgEnvelopeProperty() {
+		if ( wasserburgEnvelope == null) {
+			wasserburgEnvelope = new SimpleBooleanProperty();
+			wasserburgEnvelope.bindBidirectional(plotFeatures.wasserburgEnvelopeCheckBox.selectedProperty());
+		}
+		return wasserburgEnvelope;
+	}
+	public final Boolean wasserburgEnvelope() {
+		return wasserburgEnvelope.get();
+	}
+	public final void setWasserburgEnvelope( boolean b ) {
+		wasserburgEnvelopeProperty().set(b);
 	}
 
 	private ObjectProperty<Color> wasserburgLineFill;
@@ -484,12 +514,14 @@ public class PlotPropertiesPanel extends Accordion {
 	    if (properties.containsKey(UNCERTAINTY)) setUncertaintyFormat(UncertaintyFormat.fromValue(
 			    (Double) properties.get(UNCERTAINTY)));
 	    if (properties.containsKey(WETHERILL_LINE)) setWetherillLine((Boolean) properties.get(WETHERILL_LINE));
+		if (properties.containsKey(WETHERILL_ENVELOPE)) setWetherillEnvelope((Boolean) properties.get(WETHERILL_ENVELOPE));
 	    if (properties.containsKey(WETHERILL_LINE_FILL)) setWetherillLineFill(
 	    		Color.valueOf(String.valueOf(properties.get(WETHERILL_LINE_FILL))));
 	    if (properties.containsKey(WETHERILL_ENVELOPE_FILL)) setWetherillEnvelopeFill(
 	    		Color.valueOf(String.valueOf(properties.get(WETHERILL_ENVELOPE_FILL))));
 
 		if (properties.containsKey(WASSERBURG_LINE)) setWasserburgLine((Boolean) properties.get(WASSERBURG_LINE));
+		if (properties.containsKey(WASSERBURG_ENVELOPE)) setWasserburgEnvelope((Boolean) properties.get(WASSERBURG_ENVELOPE));
 		if (properties.containsKey(WASSERBURG_LINE_FILL)) setWasserburgLineFill(
 				Color.valueOf(String.valueOf(properties.get(WASSERBURG_LINE_FILL))));
 		if (properties.containsKey(WASSERBURG_ENVELOPE_FILL)) setWasserburgEnvelopeFill(
@@ -619,6 +651,10 @@ public class PlotPropertiesPanel extends Accordion {
 			properties.put(WETHERILL_LINE, wetherillLine());
     		refreshPlot();
 	    });
+		wetherillEnvelopeProperty().addListener(c -> {
+			properties.put(WETHERILL_ENVELOPE, wetherillEnvelope());
+			refreshPlot();
+		});
     	wetherillLineFillProperty().addListener(c -> {
     		properties.put(WETHERILL_LINE_FILL, convertColor(getWetherillLineFill()));
     		refreshPlot();

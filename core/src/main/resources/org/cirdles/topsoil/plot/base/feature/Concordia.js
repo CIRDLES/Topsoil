@@ -112,80 +112,82 @@ plot.updateConcordia = function() {
             .attr("stroke", plot.getProperty('Wetherill Line Fill'))
             .attr("stroke-width", 2);
 
-        plot.concordiaGroup.select(".uncertaintyEnvelope")
-            .attr("d", function () {
-                var approximateUpperSegment = function (path, minT, maxT) {
-                    var p1 = wetherill.upperEnvelope(minT).plus(
-                        wetherill.prime(minT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p2 = wetherill.upperEnvelope(maxT).minus(
-                        wetherill.prime(maxT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p3 = wetherill.upperEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
+        if (plot.getProperty("Wetherill Envelope")) {
+            plot.concordiaGroup.select(".uncertaintyEnvelope")
+                .attr("d", function () {
+                    var approximateUpperSegment = function (path, minT, maxT) {
+                        var p1 = wetherill.upperEnvelope(minT).plus(
+                            wetherill.prime(minT).times((maxT - minT) / 3))
+                            .scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p2 = wetherill.upperEnvelope(maxT).minus(
+                            wetherill.prime(maxT).times((maxT - minT) / 3))
+                            .scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p3 = wetherill.upperEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
 
-                    // append a cubic bezier to the path
-                    plot.cubicBezier(path, p1, p2, p3);
-                };
+                        // append a cubic bezier to the path
+                        plot.cubicBezier(path, p1, p2, p3);
+                    };
 
-                var approximateLowerSegment = function (path, minT, maxT) {
-                    var p1 = wetherill.lowerEnvelope(minT).plus(
-                        wetherill.prime(minT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p2 = wetherill.lowerEnvelope(maxT).minus(
-                        wetherill.prime(maxT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p3 = wetherill.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
+                    var approximateLowerSegment = function (path, minT, maxT) {
+                        var p1 = wetherill.lowerEnvelope(minT).plus(
+                            wetherill.prime(minT).times((maxT - minT) / 3))
+                            .scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p2 = wetherill.lowerEnvelope(maxT).minus(
+                            wetherill.prime(maxT).times((maxT - minT) / 3))
+                            .scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p3 = wetherill.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
 
-                    // append a cubic bezier to the path
-                    plot.cubicBezier(path, p1, p2, p3);
-                };
+                        // append a cubic bezier to the path
+                        plot.cubicBezier(path, p1, p2, p3);
+                    };
 
-                var minT = Math.max(
-                    newtonMethod(wetherill.upperEnvelope.x, plot.xAxisScale.domain()[0]),
-                    newtonMethod(wetherill.upperEnvelope.y, plot.yAxisScale.domain()[0]));
+                    var minT = Math.max(
+                        newtonMethod(wetherill.upperEnvelope.x, plot.xAxisScale.domain()[0]),
+                        newtonMethod(wetherill.upperEnvelope.y, plot.yAxisScale.domain()[0]));
 
-                var maxT = Math.min(
-                    newtonMethod(wetherill.upperEnvelope.x, plot.xAxisScale.domain()[1]),
-                    newtonMethod(wetherill.upperEnvelope.y, plot.yAxisScale.domain()[1]));
+                    var maxT = Math.min(
+                        newtonMethod(wetherill.upperEnvelope.x, plot.xAxisScale.domain()[1]),
+                        newtonMethod(wetherill.upperEnvelope.y, plot.yAxisScale.domain()[1]));
 
-                // initialize path
-                var path = [];
-                moveTo(path, wetherill.upperEnvelope(minT).scaleBy(plot.xAxisScale, plot.yAxisScale));
+                    // initialize path
+                    var path = [];
+                    moveTo(path, wetherill.upperEnvelope(minT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
-                // determine the step size using the number of pieces
-                var pieces = 30;
-                var stepSize = (maxT - minT) / pieces;
+                    // determine the step size using the number of pieces
+                    var pieces = 30;
+                    var stepSize = (maxT - minT) / pieces;
 
-                // build the pieces
-                for (var i = 0; i < pieces; i++) {
-                    approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
-                }
+                    // build the pieces
+                    for (var i = 0; i < pieces; i++) {
+                        approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
+                    }
 
-                lineTo(path, [plot.xAxisScale.range()[1], plot.yAxisScale.range()[1]]);
+                    lineTo(path, [plot.xAxisScale.range()[1], plot.yAxisScale.range()[1]]);
 
-                minT = Math.max(
-                    newtonMethod(wetherill.lowerEnvelope.x, plot.xAxisScale.domain()[0]),
-                    newtonMethod(wetherill.lowerEnvelope.y, plot.yAxisScale.domain()[0]));
+                    minT = Math.max(
+                        newtonMethod(wetherill.lowerEnvelope.x, plot.xAxisScale.domain()[0]),
+                        newtonMethod(wetherill.lowerEnvelope.y, plot.yAxisScale.domain()[0]));
 
-                maxT = Math.min(
-                    newtonMethod(wetherill.lowerEnvelope.x, plot.xAxisScale.domain()[1]),
-                    newtonMethod(wetherill.lowerEnvelope.y, plot.yAxisScale.domain()[1]));
+                    maxT = Math.min(
+                        newtonMethod(wetherill.lowerEnvelope.x, plot.xAxisScale.domain()[1]),
+                        newtonMethod(wetherill.lowerEnvelope.y, plot.yAxisScale.domain()[1]));
 
-                lineTo(path, wetherill.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale));
+                    lineTo(path, wetherill.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
-                stepSize = (maxT - minT) / pieces;
+                    stepSize = (maxT - minT) / pieces;
 
-                // build the pieces
-                for (i = 0; i < pieces; i++) {
-                    approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
-                }
+                    // build the pieces
+                    for (i = 0; i < pieces; i++) {
+                        approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
+                    }
 
-                lineTo(path, [plot.xAxisScale.range()[0], plot.yAxisScale.range()[0]]);
-                close(path);
+                    lineTo(path, [plot.xAxisScale.range()[0], plot.yAxisScale.range()[0]]);
+                    close(path);
 
-                return path.join("");
-            })
-            .attr("fill", plot.getProperty('Wetherill Envelope Fill'));
+                    return path.join("");
+                })
+                .attr("fill", plot.getProperty('Wetherill Envelope Fill'));
+        }
 
         plot.t.domain([minT, maxT]);
 
@@ -195,7 +197,10 @@ plot.updateConcordia = function() {
             .enter()
             .append("circle")
             .attr("class", "concordiaTicks")
-            .attr("r", 5);
+            .attr("r", 5)
+            .style('stroke-width', 2)
+            .style("stroke", "black")
+            .style("fill", "white");
 
         concordiaTicks
             .attr("cx", function (t) {

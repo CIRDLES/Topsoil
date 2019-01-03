@@ -121,81 +121,83 @@ plot.updateTWConcordia = function() {
             .attr("stroke", plot.getProperty('Wasserburg Line Fill'))
             .attr("stroke-width", 2);
 
-        plot.twconcordiaGroup.select(".twuncertaintyEnvelope")
-            .attr("d", function () {
-                var approximateUpperSegment = function (path, minT, maxT) {
-                    var p1 = wasserburg.upperEnvelope(minT).plus(
-                        wasserburg.prime(minT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p2 = wasserburg.upperEnvelope(maxT).minus(
-                        wasserburg.prime(maxT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p3 = wasserburg.upperEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
+        if (plot.getProperty("Wasserburg Envelope")) {
+            plot.twconcordiaGroup.select(".twuncertaintyEnvelope")
+                .attr("d", function () {
+                    var approximateUpperSegment = function (path, minT, maxT) {
+                        var p1 = wasserburg.upperEnvelope(minT).plus(
+                            wasserburg.prime(minT).times((maxT - minT) / 3))
+                            .scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p2 = wasserburg.upperEnvelope(maxT).minus(
+                            wasserburg.prime(maxT).times((maxT - minT) / 3))
+                            .scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p3 = wasserburg.upperEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
 
-                    // append a cubic bezier to the path
-                    plot.cubicBezier(path, p1, p2, p3);
-                };
+                        // append a cubic bezier to the path
+                        plot.cubicBezier(path, p1, p2, p3);
+                    };
 
-                var approximateLowerSegment = function (path, minT, maxT) {
-                    var p1 = wasserburg.lowerEnvelope(minT).plus(
-                        wasserburg.prime(minT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p2 = wasserburg.lowerEnvelope(maxT).minus(
-                        wasserburg.prime(maxT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p3 = wasserburg.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
+                    var approximateLowerSegment = function (path, minT, maxT) {
+                        var p1 = wasserburg.lowerEnvelope(minT).plus(
+                            wasserburg.prime(minT).times((maxT - minT) / 3))
+                            .scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p2 = wasserburg.lowerEnvelope(maxT).minus(
+                            wasserburg.prime(maxT).times((maxT - minT) / 3))
+                            .scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p3 = wasserburg.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
 
-                    // append a cubic bezier to the path
-                    plot.cubicBezier(path, p1, p2, p3);
-                };
+                        // append a cubic bezier to the path
+                        plot.cubicBezier(path, p1, p2, p3);
+                    };
 
-                var minT = Math.min(
-                    newtonMethod(wasserburg.upperEnvelope.x, plot.xAxisScale.domain()[0]),
-                    newtonMethod(wasserburg.upperEnvelope.y, plot.yAxisScale.domain()[0]));
+                    var minT = Math.min(
+                        newtonMethod(wasserburg.upperEnvelope.x, plot.xAxisScale.domain()[0]),
+                        newtonMethod(wasserburg.upperEnvelope.y, plot.yAxisScale.domain()[0]));
 
-                var maxT = Math.min(
-                    newtonMethod(wasserburg.upperEnvelope.x, plot.xAxisScale.domain()[1]),
-                    newtonMethod(wasserburg.upperEnvelope.y, plot.yAxisScale.domain()[1]));
+                    var maxT = Math.min(
+                        newtonMethod(wasserburg.upperEnvelope.x, plot.xAxisScale.domain()[1]),
+                        newtonMethod(wasserburg.upperEnvelope.y, plot.yAxisScale.domain()[1]));
 
 
-                // initialize path
-                var path = [];
-                moveTo(path, wasserburg.upperEnvelope(minT).scaleBy(plot.xAxisScale, plot.yAxisScale));
+                    // initialize path
+                    var path = [];
+                    moveTo(path, wasserburg.upperEnvelope(minT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
-                // determine the step size using the number of pieces
-                var pieces = 30;
-                var stepSize = (maxT - minT) / pieces;
+                    // determine the step size using the number of pieces
+                    var pieces = 30;
+                    var stepSize = (maxT - minT) / pieces;
 
-                // build the pieces
-                for (var i = 0; i < pieces; i++) {
-                    approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
-                }
+                    // build the pieces
+                    for (var i = 0; i < pieces; i++) {
+                        approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
+                    }
 
-                lineTo(path, [plot.xAxisScale.range()[1], plot.yAxisScale.range()[1]]);
+                    lineTo(path, [plot.xAxisScale.range()[1], plot.yAxisScale.range()[1]]);
 
-                minT = Math.min(
-                    newtonMethod(wasserburg.lowerEnvelope.x, plot.xAxisScale.domain()[0]),
-                    newtonMethod(wasserburg.lowerEnvelope.y, plot.yAxisScale.domain()[0]));
+                    minT = Math.min(
+                        newtonMethod(wasserburg.lowerEnvelope.x, plot.xAxisScale.domain()[0]),
+                        newtonMethod(wasserburg.lowerEnvelope.y, plot.yAxisScale.domain()[0]));
 
-                maxT = Math.min(
-                    newtonMethod(wasserburg.lowerEnvelope.x, plot.xAxisScale.domain()[1]),
-                    newtonMethod(wasserburg.lowerEnvelope.y, plot.yAxisScale.domain()[1]));
+                    maxT = Math.min(
+                        newtonMethod(wasserburg.lowerEnvelope.x, plot.xAxisScale.domain()[1]),
+                        newtonMethod(wasserburg.lowerEnvelope.y, plot.yAxisScale.domain()[1]));
 
-                lineTo(path, wasserburg.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale));
+                    lineTo(path, wasserburg.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
-                stepSize = (maxT - minT) / pieces;
+                    stepSize = (maxT - minT) / pieces;
 
-                // build the pieces
-                for (i = 0; i < pieces; i++) {
-                    approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
-                }
+                    // build the pieces
+                    for (i = 0; i < pieces; i++) {
+                        approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
+                    }
 
-                lineTo(path, [plot.xAxisScale.range()[0], plot.yAxisScale.range()[0]]);
-                close(path);
+                    lineTo(path, [plot.xAxisScale.range()[0], plot.yAxisScale.range()[0]]);
+                    close(path);
 
-                return path.join("");
-            })
-            .attr("fill", plot.getProperty('Wasserburg Envelope Fill'));
+                    return path.join("");
+                })
+                .attr("fill", plot.getProperty('Wasserburg Envelope Fill'));
+        }
 
         plot.t.domain([minT, maxT]);
 
@@ -205,7 +207,10 @@ plot.updateTWConcordia = function() {
             .enter()
             .append("circle")
             .attr("class", "concordiaTicks")
-            .attr("r", 5);
+            .attr("r", 5)
+            .style('stroke-width', 2)
+            .style("stroke", "black")
+            .style("fill", "white");;
 
         concordiaTicks
             .attr("cx", function (t) {
