@@ -670,6 +670,10 @@ public class PlotPropertiesPanel extends Accordion {
 			properties.put(WASSERBURG_LINE, wasserburgLine());
 			refreshPlot();
 		});
+		wasserburgEnvelopeProperty().addListener(c -> {
+			properties.put(WASSERBURG_ENVELOPE, wasserburgEnvelope());
+			refreshPlot();
+		});
 		wasserburgLineFillProperty().addListener(c -> {
 			properties.put(WASSERBURG_LINE_FILL, convertColor(getWasserburgLineFill()));
 			refreshPlot();
