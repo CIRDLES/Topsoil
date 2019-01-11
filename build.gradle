@@ -74,6 +74,7 @@ subprojects {
         implementation 'ch.qos.logback:logback-classic:1.1.3'
         implementation 'com.github.johnzeringue:extendsfx:v1.0.0-alpha.2'
         implementation 'com.github.cirdles:commons:0f628cc'
+        implementation 'org.apache.pdfbox:pdfbox:2.0.13'
 
         testCompile 'org.hamcrest:hamcrest-all:1.3'
         testCompile 'com.google.code.findbugs:annotations:3.0.0'

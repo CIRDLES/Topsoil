@@ -108,7 +108,7 @@ plot.updateTWConcordia = function() {
                 moveTo(path, wasserburg(minT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
                 // determine the step size using the number of pieces
-                var pieces = 30;
+                var pieces = 60;
                 var stepSize = (maxT - minT) / pieces;
 
                 // build the pieces
