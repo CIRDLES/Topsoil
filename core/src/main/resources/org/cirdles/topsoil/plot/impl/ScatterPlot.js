@@ -39,9 +39,11 @@ plot.propertiesKeys = [
     'Unct Bars Opacity',
 
     'Wetherill Line',
+    'Wetherill Envelope',
     'Wetherill Line Fill',
     'Wetherill Envelope Fill',
     'Wasserburg Line',
+    'Wasserburg Envelope',
     'Wasserburg Line Fill',
     'Wasserburg Envelope Fill',
     'Evolution Matrix',
@@ -90,7 +92,7 @@ plot.initialize = function (data) {
         .attr("class", "label")
         .style("font-size", "16px")
         .attr("x", plot.width / 2)
-        .attr("y", 45);
+        .attr("y", -10);
 
     //create y axis label
     plot.area.append("g")
@@ -100,7 +102,7 @@ plot.initialize = function (data) {
         .attr("transform", "rotate(-90)")
         .style("font-size", "16px")
         .attr("x", -plot.height / 2)
-        .attr("y", -50)
+        .attr("y", 15)
         .attr("dy", ".1em");
 
     // defaults if no data is provided
@@ -225,6 +227,8 @@ plot.initialize = function (data) {
         changeAxes( concordiaXMin, concordiaXMax, concordiaYMin, concordiaYMax );
         
     };
+
+    //Helper function that will bring the concordia line to the front
 
     plot.initialized = true;
     plot.manageAxisExtents();
@@ -547,7 +551,7 @@ plot.managePlotFeatures = function () {
             }
             // If the concordia line should be visible, and already is...
             else {
-                plot.updateConcordia();
+                plot.drawConcordia();
             }
         }
 
@@ -561,7 +565,7 @@ plot.managePlotFeatures = function () {
                 plot.drawTWConcordia();
             }
             else {
-                plot.updateTWConcordia();
+                plot.drawTWConcordia();
             }
         }
         else if (plot.twconcordiaVisible) {
