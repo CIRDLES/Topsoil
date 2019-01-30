@@ -16,24 +16,12 @@
 package org.cirdles.topsoil.app.metadata;
 
 /**
- * Stores information about an application.
- *
  * @author John Zeringue
  */
 public interface ApplicationMetadata {
 
-    /**
-     * Returns the name of the application.
-     *
-     * @return  String name
-     */
     public String getName();
 
-    /**
-     * Returns the version of the application.
-     *
-     * @return  String version
-     */
     public String getVersion();
 
 }

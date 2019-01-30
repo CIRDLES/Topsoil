@@ -1,15 +1,17 @@
 package org.cirdles.topsoil.app;
 
-import javafx.collections.ListChangeListener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.Priority;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import org.cirdles.topsoil.app.menu.MainMenuBar;
-import org.cirdles.topsoil.app.tab.TabPaneHandler;
-import org.cirdles.topsoil.app.tab.TopsoilTabPane;
+import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.view.TopsoilProjectView;
+
+import java.io.IOException;
 
 /**
  * A controller class for Topsoil's {@link MainWindow}.
@@ -17,63 +19,81 @@ import org.cirdles.topsoil.app.tab.TopsoilTabPane;
  * @author Jake Marotta
  * @see MainWindow
  */
-public class MainWindowController {
+public class MainWindowController extends VBox {
 
-	//***********************
-	// Attributes
-	//***********************
+	//**********************************************//
+	//                  CONSTANTS                   //
+	//**********************************************//
 
-	/**
-	 * The {@code VBox} that contains both the {@link TopsoilTabPane} and {@link MainMenuBar} for the
-	 * {@code MainWindow}.
-	 */
-	@FXML private VBox container;   // tabs and menuBar are children of container
+	private static final String CONTROLLER_FXML = "main-window.fxml";
+	private static final String TOPSOIL_LOGO = "topsoil-logo.png";
 
-	/**
-	 * A {@code TopsoilTabPane} that holds all {@code Tab}s open in Topsoil.
-	 */
-	@FXML private TabPane tabs;
+	//**********************************************//
+	//                   CONTROLS                   //
+	//**********************************************//
 
-	/**
-	 * The {@code MenuBar} for the {@link MainWindow}.
-	 */
-	@FXML private MenuBar menuBar;
+	@FXML private AnchorPane mainContentPane;
+	private Image topsoilLogo;
 
-	//***********************
-	// Methods
-	//***********************
+	//**********************************************//
+	//                  PROPERTIES                  //
+	//**********************************************//
 
-	/** {@inheritDoc}
-	 */
-	public void initialize() {
-		assert tabs != null : "fx:id=\"tabs\" was not injected: check your FXML file 'main-window.fxml'.";
-		assert menuBar != null : "fx:id=\"mainMenuBar\" was not injected: check your FXML file 'main-window.fxml'.";
-
-		tabs = new TopsoilTabPane();
-		VBox.setVgrow(tabs, Priority.ALWAYS);
-		TabPaneHandler.setTabPane((TopsoilTabPane) tabs);
-
-		menuBar = new MainMenuBar((TopsoilTabPane) tabs);
-		VBox.setVgrow(menuBar, Priority.NEVER);
-
-		container.getChildren().setAll(menuBar, tabs);
-		container.setStyle("-fx-background-color: lightgrey");
-
-		tabs.getTabs().addListener((ListChangeListener<Tab>) c -> {
-			if (c.getList().size() <= 0) {
-				container.setStyle("-fx-background-color: lightgrey");
-			} else {
-				container.setStyle("-fx-background-color: whitesmoke");
-			}
-		});
+	private BooleanProperty dataShowing = new SimpleBooleanProperty(false);
+	public BooleanProperty dataShowingProperty() {
+		return dataShowing;
+	}
+	public boolean isDataShowing() {
+		return (mainContentPane.getChildren().get(0) instanceof TopsoilProjectView);
 	}
 
-	/**
-	 * Returns the {@code TopsoilTabPane} associated with this window.
-	 *
-	 * @return  the TopsoilTabPane associated with this window
-	 */
-	TopsoilTabPane getTabPane() {
-		return (TopsoilTabPane) tabs;
+	//**********************************************//
+	//                 CONSTRUCTORS                 //
+	//**********************************************//
+
+	MainWindowController() {
+		final ResourceExtractor re = new ResourceExtractor(MainWindowController.class);
+		FXMLLoader loader;
+
+		try {
+			loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
+			loader.setRoot(this);
+			loader.setController(this);
+			loader.load();
+		} catch (IOException e) {
+			throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+		}
+
+		topsoilLogo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+		MainWindow.primaryStage.getIcons().add(topsoilLogo);
 	}
+
+	@FXML
+	protected void initialize() {
+		replaceMainContent(new TopsoilAboutScreen());
+	}
+
+	//**********************************************//
+	//                PUBLIC METHODS                //
+	//**********************************************//
+
+	public Node getMainContent() {
+		return mainContentPane.getChildren().get(0);
+	}
+
+	public Node replaceMainContent(Node content) {
+		Node rtnval = mainContentPane.getChildren().isEmpty() ? null : mainContentPane.getChildren().get(0);
+		mainContentPane.getChildren().clear();
+		mainContentPane.getChildren().add(content);
+		AnchorPane.setTopAnchor(content, 0.0);
+		AnchorPane.setRightAnchor(content, 0.0);
+		AnchorPane.setBottomAnchor(content, 0.0);
+		AnchorPane.setLeftAnchor(content, 0.0);
+		return rtnval;
+	}
+
+	public Image getTopsoilLogo() {
+	    return topsoilLogo;
+    }
+
 }

@@ -10,10 +10,7 @@ import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * @author marottajb
@@ -24,16 +21,13 @@ public class DataTable extends BranchNode<DataSegment> {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private final BranchNode<DataNode> rootColumnNode = new BranchNode<>("");
     private final BiMap<Variable, DataColumn> variableColumnBiMap = HashBiMap.create();
+    private ColumnTree columnTree;
 
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
 
-    /**
-     * The {@code isotope system} of the data provided.
-     */
     private final ObjectProperty<IsotopeSystem> isotopeSystem = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
     public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
         return isotopeSystem;
@@ -45,9 +39,6 @@ public class DataTable extends BranchNode<DataSegment> {
         isotopeSystem.set(type);
     }
 
-    /**
-     * The {@code UncertaintyFormat} of provided uncertainty values.
-     */
     private final ObjectProperty<UncertaintyFormat> unctFormat = new SimpleObjectProperty<>(UncertaintyFormat.ONE_SIGMA_ABSOLUTE);
     public ObjectProperty<UncertaintyFormat> unctFormatProperty() {
         return unctFormat;
@@ -65,12 +56,21 @@ public class DataTable extends BranchNode<DataSegment> {
 
     private DataTable() { }
 
-    public DataTable(String title, IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat, List<DataNode> categories,
+    public DataTable(String label, IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat, List<DataNode> categories,
                      List<DataSegment> dataSegments) {
-        super(title);
+        super(label);
         setIsotopeSystem(isotopeSystem);
         setUnctFormat(unctFormat);
-        rootColumnNode.getChildren().addAll(categories);
+        this.columnTree = new ColumnTree(categories);
+        this.children.addAll(dataSegments);
+    }
+
+    public DataTable(String label, IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat, ColumnTree columnTree,
+                     List<DataSegment> dataSegments) {
+        super(label);
+        setIsotopeSystem(isotopeSystem);
+        setUnctFormat(unctFormat);
+        this.columnTree = columnTree;
         this.children.addAll(dataSegments);
     }
 
@@ -78,12 +78,12 @@ public class DataTable extends BranchNode<DataSegment> {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public BranchNode<DataNode> getRootColumnNode() {
-        return rootColumnNode;
+    public ColumnTree getColumnTree() {
+        return columnTree;
     }
 
-    public Map<Variable, DataColumn> getVariableColumnMap() {
-        return new HashMap<>(variableColumnBiMap);
+    public BiMap<Variable, DataColumn> getVariableColumnMap() {
+        return HashBiMap.create(variableColumnBiMap);
     }
 
     public DataColumn setColumnForVariable(Variable var, DataColumn col) {
@@ -96,15 +96,11 @@ public class DataTable extends BranchNode<DataSegment> {
     }
 
     public int colCount() {
-        return rootColumnNode.countTotalLeafNodes();
+        return columnTree.countTotalLeafNodes();
     }
 
     public int rowCount() {
         return this.countTotalLeafNodes();
     }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
 
 }

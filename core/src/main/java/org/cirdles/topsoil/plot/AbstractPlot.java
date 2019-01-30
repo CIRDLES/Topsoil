@@ -15,6 +15,8 @@
  */
 package org.cirdles.topsoil.plot;
 
+import org.cirdles.topsoil.plot.impl.ScatterPlot;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +30,23 @@ import static java.util.Collections.emptyList;
  */
 public abstract class AbstractPlot implements Plot {
 
-    private List<Map<String, Object>> data;
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
+    private List<List<Map<String, Object>>> data;
+    private PlotType plotType;
     private Map<PlotProperty, Object> properties;
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     /**
      * Constructs a new {@code AbstractPlot}. No properties are set by default.
      */
-    public AbstractPlot() {
-        this(new HashMap<>());
+    public AbstractPlot(PlotType plotType) {
+        this(plotType, new HashMap<>());
     }
 
     /**
@@ -43,20 +54,27 @@ public abstract class AbstractPlot implements Plot {
      *
      * @param properties a Map of PlotProperty keys to Object values
      */
-    public AbstractPlot(Map<PlotProperty, Object> properties) {
+    public AbstractPlot(PlotType plotType, Map<PlotProperty, Object> properties) {
+        this.plotType = plotType;
         data = emptyList();
         this.properties = properties;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public List<Map<String, Object>> getData() {
+    public PlotType getPlotType() {
+        return plotType;
+    }
+
+    /**{@inheritDoc}*/
+    @Override
+    public List<List<Map<String, Object>>> getData() {
         return data;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setData(List<Map<String, Object>> data) {
+    public void setData(List<List<Map<String, Object>>> data) {
         this.data = data;
     }
 
@@ -78,12 +96,54 @@ public abstract class AbstractPlot implements Plot {
         this.properties.put(key, value);
     }
 
-    /**
-     * Attempts to destroy the {@code Plot} object to avoid concurrency problems in the {@code WebEngine}.
-     *
-     * @throws Throwable    literally any problem
-     */
-    public void killPlot() throws Throwable {
-        super.finalize();
+//    /**
+//     * Attempts to destroy the {@code Plot} object to avoid concurrency problems in the {@code WebEngine}.
+//     *
+//     * @throws Throwable    literally any problem
+//     */
+//    public void killPlot() throws Throwable {
+//        super.finalize();
+//    }
+
+    //**********************************************//
+    //                INNER CLASSES                 //
+    //**********************************************//
+
+    public enum PlotType {
+
+        SCATTER("Scatter Plot", ScatterPlot.class);
+
+        //**********************************************//
+        //                  ATTRIBUTES                  //
+        //**********************************************//
+
+        private final String name;
+        private final Class<? extends Plot> plot;
+
+        //**********************************************//
+        //                 CONSTRUCTORS                 //
+        //**********************************************//
+
+        PlotType(String name, Class<? extends Plot> plot) {
+            this.name = name;
+            this.plot = plot;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        //**********************************************//
+        //                PUBLIC METHODS                //
+        //**********************************************//
+
+        public Plot getPlot() {
+            try {
+                return plot.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }

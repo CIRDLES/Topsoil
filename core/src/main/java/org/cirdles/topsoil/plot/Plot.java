@@ -18,8 +18,6 @@ package org.cirdles.topsoil.plot;
 import java.util.List;
 import java.util.Map;
 
-import javafx.scene.web.WebEngine;
-
 /**
  * A generalized plot that can express itself as a {@link javafx.scene.Node}.
  *
@@ -27,19 +25,11 @@ import javafx.scene.web.WebEngine;
  */
 public interface Plot extends Displayable {
 
-    /**
-     * Gets the data for the {@code Plot}.
-     *
-     * @return  a List of Maps of String field names to Object data values
-     */
-    List<Map<String, Object>> getData();
+    AbstractPlot.PlotType getPlotType();
 
-    /**
-     * Sets the data for the {@code Plot}.
-     *
-     * @param data  a List of Maps of String field names to Object data values
-     */
-    void setData(List<Map<String, Object>> data);
+    List<List<Map<String, Object>>> getData();
+
+    void setData(List<List<Map<String, Object>>> data);
 
     /**
      * Gets the properties for the {@code Plot}.
@@ -96,9 +86,5 @@ public interface Plot extends Displayable {
      */
     void snapToCorners();
 
-    /**
-     * Attempts to stop the {@code Plot}'s {@link WebEngine} running JavaScript content.
-     */
-    void stop();
 
 }

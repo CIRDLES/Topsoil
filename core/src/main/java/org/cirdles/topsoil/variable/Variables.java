@@ -15,79 +15,40 @@
  */
 package org.cirdles.topsoil.variable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
 /**
- * A class containing a set of {@link Variable}s used in plotting.
+ * A class containing various sets of {@link Variable}s.
  *
  * @author John Zeringue
  * @see Variable
  */
 public final class Variables {
 
-    /**
-     * A {@code Variable} that acts as an 'X' variable.
-     */
-    public static final Variable<Number> X;
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
 
-    /**
-     * A {@code Variable} that acts as an 'σX' variable.
-     */
-    public static final Variable<Number> SIGMA_X;
-
-    /**
-     * A {@code Variable} that acts as an 'Y' variable.
-     */
-    public static final Variable<Number> Y;
-
-    /**
-     * A {@code Variable} that acts as an 'σY' variable.
-     */
-    public static final Variable<Number> SIGMA_Y;
-
-    /**
-     * A {@code Variable} that acts as an 'Corr Coef' or 'rho' variable.
-     */
-    public static final Variable<Number> RHO;
-
-    /**
-     * A {@code List} of the {@code Variable}s defined in this class.
-     */
-    public static final List<Variable<Number>> VARIABLE_LIST;
-
-    /**
-     * A {@code List} of variables that are dependent.
-     */
-    public static final List<Variable<Number>> UNCERTAINTY_VARIABLES;
-
-    private static final Map<String, Variable> ABBREVIATIONS;
-
+    public static final List<Variable<?>> ALL;
     static {
-        X = new IndependentVariable<>("x", "X");
-        SIGMA_X = new DependentVariable<>("sigma_x", "σX", X);
-        Y = new IndependentVariable<>("y", "Y");
-        SIGMA_Y = new DependentVariable<>("sigma_y", "σY", Y);
-        RHO = new IndependentVariable<>("rho", "rho");
-        VARIABLE_LIST = Collections.unmodifiableList(asList(
-                X,
-                SIGMA_X,
-                Y,
-                SIGMA_Y,
-                RHO
-        ));
-        UNCERTAINTY_VARIABLES = Collections.unmodifiableList(asList(
-                SIGMA_X,
-                SIGMA_Y
+        ALL = Collections.unmodifiableList(asList(
+                TextVariable.LABEL,
+                DateVariable.TIMESTAMP,
+                IndependentVariable.X,
+                DependentVariable.SIGMA_X,
+                IndependentVariable.Y,
+                DependentVariable.SIGMA_Y,
+                IndependentVariable.RHO,
+                BooleanVariable.SELECTED
         ));
         Map<String, Variable> abbrs = new HashMap<>();
-        VARIABLE_LIST.forEach(v -> abbrs.put(v.getAbbreviation(), v));
+        ALL.forEach(v -> abbrs.put(v.getAbbreviation(), v));
         ABBREVIATIONS = Collections.unmodifiableMap(abbrs);
     }
+
+    private static final Map<String, Variable> ABBREVIATIONS;
 
     public static Variable fromAbbreviation(String abbr) {
         return ABBREVIATIONS.get(abbr);

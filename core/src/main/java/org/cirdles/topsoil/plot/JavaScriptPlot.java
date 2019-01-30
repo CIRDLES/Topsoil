@@ -24,8 +24,8 @@ import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.bridges.JavaScriptBridge;
-import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
 import org.cirdles.topsoil.plot.bridges.Regression;
+import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
 import org.cirdles.topsoil.plot.internal.BoundsToRectangle;
 import org.cirdles.topsoil.plot.internal.IsBlankImage;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
@@ -86,8 +86,8 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
      *
      * @param sourcePath the path to a valid JavaScript file
      */
-    public JavaScriptPlot(Path sourcePath) {
-        this(sourcePath, new HashMap<>());
+    public JavaScriptPlot(PlotType plotType, Path sourcePath) {
+        this(plotType, new HashMap<>(), sourcePath);
     }
 
     /**
@@ -96,8 +96,8 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
      * @param sourcePath the path to a valid JavaScript file
      * @param properties a Map containing properties for the plot
      */
-    public JavaScriptPlot(Path sourcePath, Map<PlotProperty, Object> properties) {
-        super(properties);
+    public JavaScriptPlot(PlotType plotType, Map<PlotProperty, Object> properties, Path sourcePath) {
+        super(plotType, properties);
         setLocalURIs();
 
         if (Files.isDirectory(sourcePath)) {
@@ -366,7 +366,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
     /**{@inheritDoc}*/
     @Override
-    public void setData(List<Map<String, Object>> data) {
+    public void setData(List<List<Map<String, Object>>> data) {
         super.setData(data);
 
         if (topsoil != null) {
@@ -421,10 +421,10 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
         }
     }
 
-    @Override
-    public void stop() {
-        getWebEngine().loadContent(HALT_MESSAGE);
-    }
+//    @Override
+//    public void stop() {
+//        getWebEngine().loadContent(HALT_MESSAGE);
+//    }
 
     private Map<String, Object> convertProperties(Map<PlotProperty, Object> properties) {
         Map<String, Object> newProperties = new HashMap<>(properties.size());

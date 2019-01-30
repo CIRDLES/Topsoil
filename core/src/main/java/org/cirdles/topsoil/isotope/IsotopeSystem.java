@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.isotope;
 
-import org.cirdles.topsoil.plot.TopsoilPlotType;
+import org.cirdles.topsoil.plot.AbstractPlot;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,15 +13,15 @@ public enum IsotopeSystem {
     //Isotope abbreviation, isotope name, array of default headers as strings
     GENERIC("Gen", "Generic",
             new String[]{"x", "y", "xσ", "yσ", "Corr Coef"},
-            new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT}),
+            new AbstractPlot.PlotType[] {AbstractPlot.PlotType.SCATTER}),
 
     UPB("UPb", "Uranium Lead",
         new String[]{"207Pb*/235U", "206Pb*/238U", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-        new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT}),
+        new AbstractPlot.PlotType[] {AbstractPlot.PlotType.SCATTER}),
 
     UTH("UTh", "Uranium Thorium",
         new String[]{"[234Pb/238U]t", "[230Th/238U]t", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-        new TopsoilPlotType[] {TopsoilPlotType.BASE_PLOT});
+        new AbstractPlot.PlotType[] {AbstractPlot.PlotType.SCATTER});
 
     /**
      * An abbreviation of the {@code IsotopeSystem}'s name.
@@ -39,9 +39,9 @@ public enum IsotopeSystem {
     private final String[] headers;
 
     /**
-     * The available {@code TopsoilPlotType}s for the {@code IsotopeSystem}.
+     * The available {@code PlotType}s for the {@code IsotopeSystem}.
      */
-    private final TopsoilPlotType[] plots;
+    private final AbstractPlot.PlotType[] plots;
 
     /**
      * A {@code List} of all {@code IsotopeSystem}s.
@@ -59,7 +59,7 @@ public enum IsotopeSystem {
     // Constructors
     //***********************
 
-    IsotopeSystem( String abbr, String name, String [] headers, TopsoilPlotType [] plots ) {
+    IsotopeSystem( String abbr, String name, String [] headers, AbstractPlot.PlotType[] plots ) {
         this.abbreviation = abbr;
         this.name = name;
         this.headers = headers;
@@ -128,11 +128,11 @@ public enum IsotopeSystem {
     }
 
     /**
-     * Returns the available {@code TopsoilPlotType}s for the {@code IsotopeSystem}.
+     * Returns the available {@code PlotType}s for the {@code IsotopeSystem}.
      *
      * @return array of TopsoilPlotTypes
      */
-    public TopsoilPlotType[] getPlots() {
+    public AbstractPlot.PlotType[] getPlots() {
         return plots.clone();
     }
 

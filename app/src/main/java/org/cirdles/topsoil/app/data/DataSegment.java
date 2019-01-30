@@ -38,8 +38,4 @@ public class DataSegment extends BranchNode<DataRow> {
         return rtnval;
     }
 
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
 }

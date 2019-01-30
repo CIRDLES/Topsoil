@@ -18,8 +18,4 @@ public class LeafNode extends DataNode {
         setLabel(title);
     }
 
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
-
 }

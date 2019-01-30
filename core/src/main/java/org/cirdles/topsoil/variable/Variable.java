@@ -20,7 +20,6 @@ package org.cirdles.topsoil.variable;
  *
  * @author John Zeringue
  * @param <T> the variable type
- * @see BaseVariable
  * @see DependentVariable
  * @see IndependentVariable
  * @see Variables

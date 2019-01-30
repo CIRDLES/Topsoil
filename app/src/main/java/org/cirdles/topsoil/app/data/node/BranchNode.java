@@ -4,8 +4,11 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.cirdles.topsoil.app.data.DataColumn;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author marottajb
@@ -84,10 +87,18 @@ public class BranchNode<T extends DataNode> extends DataNode {
         return target;
     }
 
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-
+    public List<? extends LeafNode> getLeafNodes() {
+        List<LeafNode> leafNodes = new ArrayList<>();
+        BranchNode<DataNode> branch;
+        for (DataNode child : children) {
+            if (child instanceof BranchNode) {
+                branch = (BranchNode<DataNode>) child;
+                leafNodes.addAll(branch.getLeafNodes());
+            } else {
+                leafNodes.add((LeafNode) child);
+            }
+        }
+        return leafNodes;
+    }
 
 }

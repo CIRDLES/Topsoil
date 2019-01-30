@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.data;
 
-import javafx.beans.property.MapProperty;
-import javafx.beans.property.SimpleMapProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import org.cirdles.topsoil.app.data.node.LeafNode;
@@ -17,12 +16,24 @@ public class DataRow extends LeafNode {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private MapProperty<DataColumn, Object> dataValueMap = new SimpleMapProperty<>(FXCollections.observableHashMap());
-    public MapProperty<DataColumn, Object> dataValueMapProperty() {
-        return dataValueMap;
+    private MapProperty<DataColumn, ObjectProperty<?>> dataPropertyMap =
+            new SimpleMapProperty<>(FXCollections.observableHashMap());
+    public MapProperty<DataColumn, ObjectProperty<?>> dataPropertyMapProperty() {
+        return dataPropertyMap;
     }
-    public final ObservableMap<DataColumn, Object> getDataValueMap() {
-        return dataValueMap.get();
+    public final ObservableMap<DataColumn, ObjectProperty<?>> getDataPropertyMap() {
+        return dataPropertyMap.get();
+    }
+
+    private BooleanProperty selected = new SimpleBooleanProperty(true);
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+    public final boolean isSelected() {
+        return true;
+    }
+    public final void setSelected(boolean b) {
+        selected.set(b);
     }
 
     //**********************************************//
@@ -35,26 +46,30 @@ public class DataRow extends LeafNode {
 
     public DataRow(String label, Map<DataColumn, Object> valMap) {
         this(label);
+        dataPropertyMap.setValue(FXCollections.observableHashMap());
         valMap.forEach((col, value) -> {
-            dataValueMap.putIfAbsent(col, value);
+            dataPropertyMap.putIfAbsent(col, putObjectInProperty(value));
         });
-        dataValueMap.setValue(FXCollections.observableMap(valMap));
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public Object getValueForColumn(DataColumn column) {
-        return dataValueMap.get(column);
+    public ObjectProperty<?> getValuePropertyForColumn(DataColumn column) {
+        return dataPropertyMap.get(column);
     }
 
     public int size() {
-        return dataValueMap.size();
+        return dataPropertyMap.size();
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
+
+    private <T> ObjectProperty<T> putObjectInProperty(T obj) {
+        return new SimpleObjectProperty<>(obj);
+    }
 
 }

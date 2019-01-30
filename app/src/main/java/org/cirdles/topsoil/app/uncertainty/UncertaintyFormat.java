@@ -18,42 +18,34 @@ public enum UncertaintyFormat {
     TWO_SIGMA_PERCENT("2σ (%)", 2.0),
     NINETY_FIVE_PERCENT_CONFIDENCE("95% Conf.", 2.4477);
 
-    /**
-     * The name of the uncertainty format.
-     */
-    private String name;
-
-    /**
-     * The {@code Double} multiplier of the uncertainty format.
-     */
-    private Double multiplier;
-
-    public static final List<UncertaintyFormat> PLOT_FORMATS = Collections.unmodifiableList(asList(
-            ONE_SIGMA_ABSOLUTE,
-            TWO_SIGMA_ABSOLUTE,
-            NINETY_FIVE_PERCENT_CONFIDENCE
-    ));
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
 
     public static final List<UncertaintyFormat> PERCENT_FORMATS = Collections.unmodifiableList(asList(
             ONE_SIGMA_PERCENT,
             TWO_SIGMA_PERCENT
     ));
 
-    public static final List<UncertaintyFormat> ABSOLUTE_FORMATS = Collections.unmodifiableList(asList(
-            ONE_SIGMA_ABSOLUTE,
-            TWO_SIGMA_ABSOLUTE
-    ));
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
 
-    /**
-     * Constructs a new {@code UncertaintyFormat} with the specified name and multiplier.
-     *
-     * @param name  String name
-     * @param value Double multiplier
-     */
+    private String name;
+    private Double multiplier;
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
+
     UncertaintyFormat(String name, Double value) {
         this.name = name;
         this.multiplier = value;
     }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     public static UncertaintyFormat fromValue(double val) {
         for (UncertaintyFormat format : values()) {
@@ -64,20 +56,10 @@ public enum UncertaintyFormat {
         return null;
     }
 
-    /**
-     * Returns the name of the {@code UncertaintyFormat}.
-     *
-     * @return  String name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Returns the multiplier of the {@code UncertaintyFormat}.
-     *
-     * @return  double multiplier
-     */
     public double getMultiplier() {
         return multiplier;
     }
@@ -86,6 +68,10 @@ public enum UncertaintyFormat {
     public String toString() {
         return name;
     }
+
+    //**********************************************//
+    //                 CLASS METHODS                //
+    //**********************************************//
 
     public static UncertaintyFormat getFromValue(Double value) {
         for (UncertaintyFormat format : values()) {

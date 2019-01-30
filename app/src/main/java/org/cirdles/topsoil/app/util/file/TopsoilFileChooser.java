@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
 import javafx.stage.FileChooser;
-import org.cirdles.topsoil.app.util.serialization.TopsoilSerializer;
+import org.cirdles.topsoil.app.util.serialization.Serializer;
 
 import java.io.File;
 
@@ -30,11 +30,11 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
 
-        if (TopsoilSerializer.projectFileExists()) {
+        if (Serializer.projectFileExists()) {
 
             File initialDir;
-            if (TopsoilSerializer.getCurrentProjectFile().getParent() != null) {
-                initialDir = new File(TopsoilSerializer.getCurrentProjectFile().getParent());
+            if (Serializer.getCurrentProjectFile().getParent() != null) {
+                initialDir = new File(Serializer.getCurrentProjectFile().getParent());
             } else {
                 initialDir = new File(System.getProperty("user.home"));
             }
@@ -55,16 +55,16 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil")
         );
 
-        if (TopsoilSerializer.projectFileExists()) {
+        if (Serializer.projectFileExists()) {
 
             File initialDir;
-            if (TopsoilSerializer.getCurrentProjectFile().getParent() != null) {
-                initialDir = new File(TopsoilSerializer.getCurrentProjectFile().getParent());
+            if (Serializer.getCurrentProjectFile().getParent() != null) {
+                initialDir = new File(Serializer.getCurrentProjectFile().getParent());
             } else {
                 initialDir = new File(System.getProperty("user.home"));
             }
             fileChooser.setInitialDirectory(initialDir);
-            fileChooser.setInitialFileName(TopsoilSerializer.getCurrentProjectFile().getName());
+            fileChooser.setInitialFileName(Serializer.getCurrentProjectFile().getName());
         }
         return fileChooser;
     }
@@ -100,4 +100,36 @@ public class TopsoilFileChooser {
         return fileChooser;
     }
 
+    /**
+     * Supported file extensions for data files.
+     *
+     * @author  marottajb
+     */
+    public enum TableFileExtension {
+
+        CSV("csv", DataParser.Delimiter.COMMA),
+        TSV("tsv", DataParser.Delimiter.TAB),
+        TXT("txt", null);
+
+        private String extension;
+        private DataParser.Delimiter delim;
+
+        TableFileExtension(String ext, DataParser.Delimiter delim) {
+            this.extension = ext;
+            this.delim = delim;
+        }
+
+        @Override
+        public String toString() {
+            return extension;
+        }
+
+        public String getExtension() {
+            return extension;
+        }
+
+        public DataParser.Delimiter getDelimiter() {
+            return delim;
+        }
+    }
 }

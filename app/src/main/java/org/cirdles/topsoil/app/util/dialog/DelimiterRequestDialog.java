@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.cirdles.topsoil.app.MainWindow;
-import org.cirdles.topsoil.app.util.file.Delimiter;
+import org.cirdles.topsoil.app.util.file.DataParser;
 
 /**
  * @author marottajb
@@ -25,21 +25,21 @@ public class DelimiterRequestDialog extends Dialog<String> {
 
         this.setTitle(windowTitle);
         ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(
-                MainWindow.getWindowIcon());
+                MainWindow.getController().getTopsoilLogo());
         this.initOwner(MainWindow.getPrimaryStage());
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER_RIGHT);
 
         Label requestLabel = new Label(message);
-        ChoiceBox delimiterChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(Delimiter.values()));
+        ChoiceBox delimiterChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(DataParser.Delimiter.values()));
         delimiterChoiceBox.getItems().addAll(new Separator(), otherDelimiterOption, unknownDelimiterOption);
         delimiterChoiceBox.getItems().addAll(otherDelimiterOption, unknownDelimiterOption);
         delimiterChoiceBox.setConverter(new StringConverter() {
             @Override
             public String toString(Object object) {
-                if (object instanceof Delimiter) {
-                    return ((Delimiter) object).getName();
+                if (object instanceof DataParser.Delimiter) {
+                    return ((DataParser.Delimiter) object).getName();
                 }
                 return object.toString();
             }
@@ -47,7 +47,7 @@ public class DelimiterRequestDialog extends Dialog<String> {
             @Override
             public Object fromString(String string) {
                 try {
-                    return Delimiter.valueOf(string.toUpperCase());
+                    return DataParser.Delimiter.valueOf(string.toUpperCase());
                 } catch (IllegalArgumentException e) {
                     return string;
                 }

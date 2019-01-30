@@ -33,36 +33,27 @@ import org.slf4j.LoggerFactory;
  */
 public class DesktopWebBrowser implements WebBrowser {
 
-    //***********************
-    // Attributes
-    //***********************
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
 
-    /**
-     * {@code Logger} for this class.
-     */
-    private static final Logger LOGGER
-            = LoggerFactory.getLogger(DesktopWebBrowser.class);
-
-    /**
-     * System desktop.
-     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DesktopWebBrowser.class);
     private final Desktop desktop;
 
-    //***********************
-    // Constructors
-    //***********************
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     @Inject
     public DesktopWebBrowser(@Nullable Desktop desktop) {
         this.desktop = desktop;
     }
 
-    //***********************
-    // Methods
-    //***********************
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
-    /** {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void browse(String uriString) {
         try {
@@ -73,6 +64,10 @@ public class DesktopWebBrowser implements WebBrowser {
             throw new RuntimeException(ex);
         }
     }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
 
     /**
      * Checks whether browsin is supported.g

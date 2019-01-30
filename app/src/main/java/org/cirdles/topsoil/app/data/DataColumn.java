@@ -7,9 +7,8 @@ import org.cirdles.topsoil.app.data.node.LeafNode;
  */
 public class DataColumn extends LeafNode {
 
-
-    public DataColumn(String title) {
-        super(title);
+    public DataColumn(String label) {
+        super(label);
     }
 
 }

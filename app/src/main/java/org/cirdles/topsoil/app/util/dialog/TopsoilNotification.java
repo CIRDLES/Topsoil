@@ -27,10 +27,22 @@ import java.util.Optional;
  */
 public class TopsoilNotification extends Dialog<ButtonType> {
 
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final Double STANDARD_WIDTH = 400.0;
+    private static final Double STANDARD_HEIGHT = 150.0;
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
     private ImageView image;
 
-    private final Double STANDARD_WIDTH = 400.0;
-    private final Double STANDARD_HEIGHT = 150.0;
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     private TopsoilNotification(String windowTitle, String message) {
         super();
@@ -39,7 +51,7 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         Stage thisStage = (Stage) this.getDialogPane().getScene().getWindow();
 
         // Set icon
-        thisStage.getIcons().add(MainWindow.getWindowIcon());
+        thisStage.getIcons().add(MainWindow.getController().getTopsoilLogo());
 
         // Build layout
         HBox hBox = new HBox();
@@ -71,10 +83,10 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         this.initOwner(MainWindow.getPrimaryStage());
     }
 
-    private void setImage(Image image) {
-        this.image.setImage(image);
-    }
 
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
     /**
      * Shows a small notification window with the specified title and message. Other attributes, such as the
      * available {@code ButtonType}s and the graphic are based on the supplied {@code NotificationType}.
@@ -92,6 +104,18 @@ public class TopsoilNotification extends Dialog<ButtonType> {
 
         return notification.showAndWait();
     }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
+
+    private void setImage(Image image) {
+        this.image.setImage(image);
+    }
+
+    //**********************************************//
+    //                INNER CLASSES                 //
+    //**********************************************//
 
     /**
      * A {@code NotificationType} contains pre-setValue {@code Image}s and {@code ButtonType}s for construction a

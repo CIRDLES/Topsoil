@@ -14,10 +14,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.MainWindow;
-import org.cirdles.topsoil.app.data.ObservableDataColumn;
+import org.cirdles.topsoil.app.data.ColumnTree;
+import org.cirdles.topsoil.app.data.DataColumn;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
-import org.cirdles.topsoil.app.tab.TopsoilDataView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author Jake Marotta
  */
-public class VariableChooserDialog extends Dialog<Map<Variable<Number>, ObservableDataColumn>> {
+public class VariableChooserDialog extends Dialog<Map<Variable, DataColumn>> {
 
     /*
         @TODO Create FXML for controller
@@ -37,14 +38,11 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    private VariableChooserDialog(List<ObservableDataColumn> columns,
-                                  List<Variable<Number>> variables,
-                                  Map<Variable<Number>, ObservableDataColumn> selections,
-                                  List<Variable<Number>> required) {
+    private VariableChooserDialog(DataTable table, List<Variable> required) {
         super();
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(MainWindow.getWindowIcon());
+        stage.getIcons().add(MainWindow.getController().getTopsoilLogo());
         stage.initOwner(MainWindow.getPrimaryStage());
         stage.setTitle("Variable Chooser");
         stage.setResizable(true);
@@ -52,7 +50,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 
         Label messageLabel = new Label("Choose which variables to associate with each column.");
         messageLabel.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
-        VariableColumnChooser chooser = new VariableColumnChooser(columns, variables, selections, required);
+        VariableColumnChooser chooser = new VariableColumnChooser(table, required);
 
         VBox container = new VBox(messageLabel, chooser);
         container.setAlignment(Pos.TOP_CENTER);
@@ -85,14 +83,8 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static Map<Variable<Number>, ObservableDataColumn> showDialog(TopsoilDataView dataView,
-                                                                         List<Variable<Number>> requiredVariables) {
-
-        List<ObservableDataColumn> columns = dataView.getData().getColumns();
-        List<Variable<Number>> variables = Variables.VARIABLE_LIST;
-        Map<Variable<Number>, ObservableDataColumn> currentSelections = dataView.getData().getVarMap();
-
-        return new VariableChooserDialog(columns, variables, currentSelections, requiredVariables).showAndWait().orElse(null);
+    public static Map<Variable, DataColumn> showDialog(DataTable table, List<Variable> required) {
+        return new VariableChooserDialog(table, required).showAndWait().orElse(null);
     }
 
     //**********************************************//
@@ -119,14 +111,14 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 		//                  PROPERTIES                  //
 		//**********************************************//
 
-		private MapProperty<Variable<Number>, ObservableDataColumn> selectionsProperty;
-		public MapProperty<Variable<Number>, ObservableDataColumn> selectionsProperty() {
+		private MapProperty<Variable, DataColumn> selectionsProperty;
+		public MapProperty<Variable, DataColumn> selectionsProperty() {
 			if (selectionsProperty == null) {
 				selectionsProperty = new SimpleMapProperty<>(FXCollections.observableHashMap());
 			}
 			return selectionsProperty;
 		}
-		public Map<Variable<Number>, ObservableDataColumn> getSelections() {
+		public Map<Variable, DataColumn> getSelections() {
 			return selectionsProperty().get();
 		}
 
@@ -134,18 +126,19 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 		//                 CONSTRUCTORS                 //
 		//**********************************************//
 
-		public VariableColumnChooser(List<ObservableDataColumn> columns,
-		                             List<Variable<Number>> variables,
-		                             Map<Variable<Number>, ObservableDataColumn> currentSelections,
-		                             List<Variable<Number>> requiredVariables) {
+		public VariableColumnChooser(DataTable table, List<Variable> required) {
 			super();
+
+			ColumnTree columnTree = table.getColumnTree();
+			List<DataColumn> columns = columnTree.getLeafNodes();
+			Map<Variable, DataColumn> currentSelections = table.getVariableColumnMap();
 
 			initializeControls();
 
 			// Configures each of the ToggleGroups so that no two horizontally-aligned RadioButtons can be selected at the
 			// same time.
 			this.toggleRows = new ArrayList<>();
-			for (int i = 0; i < variables.size(); i++) {
+			for (int i = 0; i < Variables.ALL.size(); i++) {
 				ToggleGroup group = new ToggleGroup();
 
 				buttonGrid.addRow(i);
@@ -172,19 +165,19 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
                 // arranged vertically, and if a selection is made that de-selects a Toggle in the same column, there
                 // will still exist a key in selectionsProperty for the old variable assignment.
 				group.selectedToggleProperty().addListener(((observable, oldValue, newValue) -> {
-					int rowIndex;
-					int columnIndex = toggleColumns.indexOf(group);
+					DataColumn column = columns.get(toggleColumns.indexOf(group));
+					Variable variable;
 					if (oldValue != null || newValue == null) {         // Removes old key from selectionsProperty
-						rowIndex = group.getToggles().indexOf(oldValue);
-						selectionsProperty().put(variables.get(rowIndex), null);
+					    variable = Variables.ALL.get(group.getToggles().indexOf(oldValue));
+						selectionsProperty().put(variable, column);
 					}
 					if (newValue != null) {                             // Puts new key into selectionsProperty
-						rowIndex = group.getToggles().indexOf(newValue);
-						selectionsProperty().put(variables.get(rowIndex), columns.get(columnIndex));
+					    variable = Variables.ALL.get(group.getToggles().indexOf(newValue));
+						selectionsProperty().put(variable, column);
 					}
 				}));
 
-				for (int i = 0; i < variables.size(); i++) {
+				for (int i = 0; i < Variables.ALL.size(); i++) {
 					group.addToggle((RadioButton) getNodeByRowColumnIndex(i, j, buttonGrid));
 				}
 
@@ -192,16 +185,16 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 			}
 
 			// Selects the current variable-column assignments
-			for (Map.Entry<Variable<Number>, ObservableDataColumn> entry : currentSelections.entrySet()) {
-				RadioButton toggle = (RadioButton) getNodeByRowColumnIndex(variables.indexOf(entry.getKey()),
+			for (Map.Entry<Variable, DataColumn> entry : currentSelections.entrySet()) {
+				RadioButton toggle = (RadioButton) getNodeByRowColumnIndex(Variables.ALL.indexOf(entry.getKey()),
 				                                                           columns.indexOf(entry.getValue()),
 				                                                           buttonGrid);
 				toggle.setSelected(true);
 			}
 
 			// Configures each variable name label
-			for (int i = 0; i < variables.size(); i++) {
-				Label label = new Label(variables.get(i).getName() + ": ");
+			for (int i = 0; i < Variables.ALL.size(); i++) {
+				Label label = new Label(Variables.ALL.get(i).getName() + ": ");
 				label.setMinHeight(ROW_HEIGHT);
 				label.setMaxHeight(ROW_HEIGHT);
 				label.setMinWidth(Region.USE_PREF_SIZE);
@@ -215,7 +208,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 
 			// Configures each column name label
 			for (int i = 0; i < columns.size(); i++) {
-				Label label = new Label(columns.get(i).getHeader());
+				Label label = new Label(columns.get(i).getLabel());
 				label.setMinHeight(ROW_HEIGHT);
 				label.setMaxHeight(ROW_HEIGHT);
 				label.setMinWidth(Region.USE_PREF_SIZE);
@@ -226,20 +219,21 @@ public class VariableChooserDialog extends Dialog<Map<Variable<Number>, Observab
 				buttonGrid.getColumnConstraints().get(i).minWidthProperty().bind(label.widthProperty());
 			}
 
-			if (requiredVariables != null) {
+			if (required != null) {
 				// Manages color-changing for required variables
-				for (Variable<Number> req : requiredVariables) {
-					variableLabels.getChildren().get(variables.indexOf(req)).setStyle("-fx-text-fill: red");
+				for (Variable req : required) {
+					variableLabels.getChildren().get(Variables.ALL.indexOf(req)).setStyle("-fx-text-fill: red");
 				}
-				selectionsProperty().addListener((MapChangeListener<? super Variable<Number>, ? super ObservableDataColumn>) c -> {
+				selectionsProperty().addListener((MapChangeListener<? super Variable, ? super DataColumn>) c -> {
+                    Label label;
 					if (c.wasAdded()) {
-						Label label = (Label) variableLabels.getChildren().get(variables.indexOf(c.getKey()));
-						if (requiredVariables.contains(c.getKey())) {
+						label = (Label) variableLabels.getChildren().get(Variables.ALL.indexOf(c.getKey()));
+						if (required.contains(c.getKey())) {
 							label.setStyle("-fx-text-fill: black");
 						}
 					} else if (c.wasRemoved()) {
-						Label label = (Label) variableLabels.getChildren().get(variables.indexOf(c.getKey()));
-						if (requiredVariables.contains(c.getKey())) {
+						label = (Label) variableLabels.getChildren().get(Variables.ALL.indexOf(c.getKey()));
+						if (required.contains(c.getKey())) {
 							label.setStyle("-fx-text-fill: red");
 						}
 					}
