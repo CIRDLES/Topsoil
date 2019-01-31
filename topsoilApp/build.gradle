@@ -47,7 +47,7 @@ task jarWithDependencies(type: Jar) {
 }
 
 dependencies {
-    implementation project(':core')
+    implementation project(':topsoilCore')
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
     implementation 'org.controlsfx:controlsfx:8.40.14'
