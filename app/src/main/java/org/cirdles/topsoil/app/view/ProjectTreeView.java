@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.view;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.CheckBoxTreeCell;
 import org.cirdles.topsoil.app.data.DataRow;
 import org.cirdles.topsoil.app.data.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -29,7 +30,8 @@ public class ProjectTreeView extends TreeView<DataNode> {
 
     public ProjectTreeView() {
         super();
-        final TreeItem<DataNode> rootItem = new TreeItem<>(new BranchNode<>("dummy"));
+        final CheckBoxTreeItem<DataNode> rootItem = new CheckBoxTreeItem<>(new BranchNode<>("dummy"));
+        this.setCellFactory(CheckBoxTreeCell.forTreeView());
         this.setRoot(rootItem);
         this.setShowRoot(false);
     }
@@ -51,13 +53,17 @@ public class ProjectTreeView extends TreeView<DataNode> {
 
     public void addDataTable(DataTable table) {
         TreeItem<DataNode> tableItem, segmentItem, rowItem;
-        tableItem = new TreeItem<>(new BranchNode<>(table.getLabel()));
+        tableItem = new CheckBoxTreeItem<>(new BranchNode<>(table.getLabel()));
+        ((CheckBoxTreeItem<DataNode>) tableItem).setSelected(true);
+        tableItem.setExpanded(true);
         treeItemMap.put(table, tableItem);
         for (DataSegment segment : table.getChildren()) {
             segmentItem = new CheckBoxTreeItem<>(new BranchNode(segment.getLabel()));
+            ((CheckBoxTreeItem<DataNode>) segmentItem).setSelected(true);
             treeItemMap.put(segment, segmentItem);
             for (DataRow row : segment.getChildren()) {
                 rowItem = new CheckBoxTreeItem<>(new LeafNode(row.getLabel()));
+                ((CheckBoxTreeItem<DataNode>) rowItem).setSelected(true);
                 treeItemMap.put(row, rowItem);
                 segmentItem.getChildren().add(rowItem);
             }

@@ -37,6 +37,7 @@ public class TopsoilProjectView extends SplitPane {
     @FXML private TabPane tabPane;
     @FXML private ProjectTreeView projectTreeView;
     @FXML private Label projectViewLabel;
+    @FXML private ConstantsEditor constantsEditor;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -92,18 +93,16 @@ public class TopsoilProjectView extends SplitPane {
 
     public void addDataTable(DataTable dataTable) {
         dataTableList.add(dataTable);
+        projectTreeView.addDataTable(dataTable);
     }
 
     public void removeDataTable(DataTable dataTable) {
         dataTableList.remove(dataTable);
+        projectTreeView.removeDataTable(dataTable);
     }
 
     public TabPane getTabPane() {
         return tabPane;
-    }
-
-    public ProjectTreeView getProjectTreeView() {
-        return projectTreeView;
     }
 
     public Table<AbstractPlot.PlotType, DataTable, TopsoilPlotView> getOpenPlots() {
@@ -118,23 +117,14 @@ public class TopsoilProjectView extends SplitPane {
         openPlots.remove(plotType, dataTable);
     }
 
-    public void setSelectedForNode(ProjectViewTabPane tab, DataNode node, boolean b) {
-        TreeItem<DataRow> item = tab.getTreeItemForNode(node);
-        if (item instanceof CheckBoxTreeItem) {
-            CheckBoxTreeItem<DataRow> cbti = (CheckBoxTreeItem<DataRow>) item;
-            cbti.setSelected(b);
-        }
-    }
-
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private void addTabForTable(DataTable dataTable) {
-        Tab tab = new Tab();
-        tab.setContent(new ProjectViewTabPane(dataTable));
-        tab.textProperty().bindBidirectional(dataTable.labelProperty());
-        tabPane.getTabs().add(tab);
+    private void addTabForTable(DataTable table) {
+        ProjectTableTab tableTab = new ProjectTableTab(table);
+        tableTab.textProperty().bindBidirectional(table.labelProperty());
+        tabPane.getTabs().add(tableTab);
     }
 
 }

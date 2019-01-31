@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.data.node;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -33,6 +35,17 @@ public abstract class DataNode {
         labelProperty().set(label);
     }
 
+    protected BooleanProperty selected = new SimpleBooleanProperty(true);
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+    public final boolean isSelected() {
+        return selected.get();
+    }
+    public final void setSelected(boolean val) {
+        selected.set(val);
+    }
+
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
@@ -43,6 +56,11 @@ public abstract class DataNode {
 
     public DataNode(String label) {
         setLabel(label);
+    }
+
+    @Override
+    public String toString() {
+        return label.get();
     }
 
 }

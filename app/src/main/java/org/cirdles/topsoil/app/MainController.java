@@ -14,12 +14,12 @@ import org.cirdles.topsoil.app.view.TopsoilProjectView;
 import java.io.IOException;
 
 /**
- * A controller class for Topsoil's {@link MainWindow}.
+ * A controller class for Topsoil's {@link Main}.
  *
  * @author Jake Marotta
- * @see MainWindow
+ * @see Main
  */
-public class MainWindowController extends VBox {
+public class MainController extends VBox {
 
 	//**********************************************//
 	//                  CONSTANTS                   //
@@ -51,8 +51,8 @@ public class MainWindowController extends VBox {
 	//                 CONSTRUCTORS                 //
 	//**********************************************//
 
-	MainWindowController() {
-		final ResourceExtractor re = new ResourceExtractor(MainWindowController.class);
+	MainController() {
+		final ResourceExtractor re = new ResourceExtractor(MainController.class);
 		FXMLLoader loader;
 
 		try {
@@ -65,7 +65,7 @@ public class MainWindowController extends VBox {
 		}
 
 		topsoilLogo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
-		MainWindow.primaryStage.getIcons().add(topsoilLogo);
+		Main.primaryStage.getIcons().add(topsoilLogo);
 	}
 
 	@FXML

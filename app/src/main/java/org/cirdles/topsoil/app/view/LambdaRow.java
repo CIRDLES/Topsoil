@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.controls;
+package org.cirdles.topsoil.app.view;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;

@@ -16,24 +16,13 @@ public class DataRow extends LeafNode {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private MapProperty<DataColumn, ObjectProperty<?>> dataPropertyMap =
+    private MapProperty<DataColumn, ObjectProperty<Object>> dataPropertyMap =
             new SimpleMapProperty<>(FXCollections.observableHashMap());
-    public MapProperty<DataColumn, ObjectProperty<?>> dataPropertyMapProperty() {
+    public MapProperty<DataColumn, ObjectProperty<Object>> dataPropertyMapProperty() {
         return dataPropertyMap;
     }
-    public final ObservableMap<DataColumn, ObjectProperty<?>> getDataPropertyMap() {
+    public final ObservableMap<DataColumn, ObjectProperty<Object>> getDataPropertyMap() {
         return dataPropertyMap.get();
-    }
-
-    private BooleanProperty selected = new SimpleBooleanProperty(true);
-    public BooleanProperty selectedProperty() {
-        return selected;
-    }
-    public final boolean isSelected() {
-        return true;
-    }
-    public final void setSelected(boolean b) {
-        selected.set(b);
     }
 
     //**********************************************//
@@ -56,7 +45,7 @@ public class DataRow extends LeafNode {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public ObjectProperty<?> getValuePropertyForColumn(DataColumn column) {
+    public ObjectProperty<Object> getValuePropertyForColumn(DataColumn column) {
         return dataPropertyMap.get(column);
     }
 

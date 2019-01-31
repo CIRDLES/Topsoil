@@ -7,9 +7,10 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
-import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.util.serialization.Serializer;
-import org.cirdles.topsoil.app.view.ProjectViewTabPane;
+import org.cirdles.topsoil.app.view.ProjectTableTab;
+import org.cirdles.topsoil.app.view.ProjectViewTab;
 import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.menu.helpers.ViewMenuHelper;
@@ -84,9 +85,9 @@ public class TopsoilMenuBar extends MenuBar {
         MenuItem openSquid3SampleItem = new MenuItem("Squid 3 Data");
         openSquid3SampleItem.setOnAction(event -> {
             if (projectView == null) {
-                projectView = FileMenuHelper.openSampleData(SampleData.SQUID3);
+                projectView = FileMenuHelper.openSampleData(SampleData.SQUID_3);
             } else {
-                FileMenuHelper.openSampleData(SampleData.SQUID3, projectView);
+                FileMenuHelper.openSampleData(SampleData.SQUID_3, projectView);
             }
         });
         Menu openSampleMenu = new Menu("Open Sample", null,
@@ -207,8 +208,7 @@ public class TopsoilMenuBar extends MenuBar {
         MenuItem generatePlotItem = new MenuItem("Generate Plot...");
         generatePlotItem.setOnAction(event -> {
             // @TODO Check to make sure proper variables are assigned
-            ProjectViewTabPane projectTab =
-                    (ProjectViewTabPane) projectView.getTabPane().getSelectionModel().getSelectedItem().getContent();
+            ProjectTableTab projectTab = (ProjectTableTab) projectView.getTabPane().getSelectionModel().getSelectedItem();
             VisualizationsMenuHelper.generatePlot(AbstractPlot.PlotType.SCATTER, projectTab.getDataTable(), projectView, null);
         });
         return new Menu("Visualizations", null,
@@ -224,7 +224,7 @@ public class TopsoilMenuBar extends MenuBar {
         reportIssueItem.setOnAction(event -> HelpMenuHelper.openIssueReporter());
 
         MenuItem aboutItem = new MenuItem("About...");
-        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(MainWindow.getPrimaryStage()));
+        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Main.getPrimaryStage()));
 
         return new Menu("Help", null,
                         onlineHelpItem,

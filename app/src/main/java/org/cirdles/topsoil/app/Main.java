@@ -23,23 +23,22 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @see Application
- * @see MainWindowController
+ * @see MainController
  */
-public class MainWindow extends Application {
-
-    //**********************************************//
-    //                  CONSTANTS                   //
-    //**********************************************//
-
-    private static final String ARIMO_FONT = "style/font/arimo/Arimo-Regular.ttf";
+public class Main extends Application {
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
     static Stage primaryStage;
-    private static MainWindowController controller;
+    private static MainController controller;
 
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final String ARIMO_FONT = "style/font/arimo/Arimo-Regular.ttf";
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
@@ -47,10 +46,10 @@ public class MainWindow extends Application {
     @Override
     public void start(Stage primary) {
 
-        ResourceExtractor resourceExtractor = new ResourceExtractor(MainWindow.class);
+        ResourceExtractor resourceExtractor = new ResourceExtractor(Main.class);
 
-        MainWindow.primaryStage = primary;
-        MainWindow.controller = new MainWindowController();
+        Main.primaryStage = primary;
+        Main.controller = new MainController();
 
         // Create main Scene
         Scene scene = new Scene(controller, 900, 700);
@@ -83,7 +82,7 @@ public class MainWindow extends Application {
         launch(args);
     }
 
-    public static MainWindowController getController() {
+    public static MainController getController() {
         return controller;
     }
 

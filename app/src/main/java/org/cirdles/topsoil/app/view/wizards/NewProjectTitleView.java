@@ -13,7 +13,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
@@ -149,7 +149,7 @@ class NewProjectTitleView extends WizardPane {
         DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Choose Project Location");
 
-        File file = dirChooser.showDialog(MainWindow.getPrimaryStage());
+        File file = dirChooser.showDialog(Main.getPrimaryStage());
         if (file != null) {
             setProjectLocation(file.toPath());
         }

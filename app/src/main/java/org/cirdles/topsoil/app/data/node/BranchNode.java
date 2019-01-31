@@ -41,30 +41,6 @@ public class BranchNode<T extends DataNode> extends DataNode {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public int countTotalLeafNodes() {
-        int count = 0;
-        for (DataNode child : children) {
-            if (child instanceof BranchNode) {
-                count += ((BranchNode) child).countTotalLeafNodes();
-            } else {
-                count += children.getSize();
-            }
-        }
-        return count;
-    }
-
-    public int countTotalNodes() {
-        int count = 0;
-        for (DataNode child : children) {
-            if (child instanceof BranchNode) {
-                count += (((BranchNode) child).countTotalNodes() + 1);
-            } else {
-                count += (children.getSize() + 1);
-            }
-        }
-        return count;
-    }
-
     /**
      * Returns the first {@code DataNode} within this branch with the specified title.
      *

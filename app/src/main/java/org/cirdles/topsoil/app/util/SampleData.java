@@ -20,15 +20,15 @@ public enum SampleData {
     UPB("upb-sample.csv", IsotopeSystem.UPB, UncertaintyFormat.TWO_SIGMA_PERCENT),
     UTH("uth-sample.csv", IsotopeSystem.UTH, UncertaintyFormat.TWO_SIGMA_ABSOLUTE),
     GENERIC("", IsotopeSystem.GENERIC, UncertaintyFormat.ONE_SIGMA_ABSOLUTE),
-    SQUID3("squid3-sample.csv", IsotopeSystem.GENERIC, UncertaintyFormat.ONE_SIGMA_ABSOLUTE);
+    SQUID_3("squid3-sample.csv", IsotopeSystem.GENERIC, UncertaintyFormat.ONE_SIGMA_ABSOLUTE);
 
     private String fileName;
     private IsotopeSystem isotopeSystem;
     private UncertaintyFormat unctFormat;
 
     SampleData(String fileName, IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat) {
-        this.isotopeSystem = isotopeSystem;
         this.fileName = fileName;
+        this.isotopeSystem = isotopeSystem;
         this.unctFormat = unctFormat;
     }
 
@@ -36,7 +36,7 @@ public enum SampleData {
         final ResourceExtractor re = new ResourceExtractor(SampleData.class);
         Path filePath = re.extractResourceAsPath(fileName);
         DataParser dataParser;
-        if (this == SQUID3) {
+        if (this == SQUID_3) {
             dataParser = new Squid3DataParser(filePath);
         } else {
             dataParser = new DefaultDataParser(filePath);

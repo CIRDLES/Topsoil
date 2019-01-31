@@ -116,9 +116,9 @@ public class TopsoilAboutScreen extends VBox {
         stage.setScene(scene);
         stage.setResizable(false);
 
-        double newX = MainWindow.getPrimaryStage().getX() + (MainWindow.getPrimaryStage().getWidth() / 2) -
+        double newX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() / 2) -
                       (DEFAULT_WIDTH / 2);
-        double newY = MainWindow.getPrimaryStage().getY() + (MainWindow.getPrimaryStage().getHeight() / 2) -
+        double newY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() / 2) -
                       (DEFAULT_HEIGHT / 2);
 
         stage.setX(newX);

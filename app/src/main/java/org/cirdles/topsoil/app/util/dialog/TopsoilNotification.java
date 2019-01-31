@@ -13,7 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.Main;
 
 import java.util.Optional;
 
@@ -51,7 +51,7 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         Stage thisStage = (Stage) this.getDialogPane().getScene().getWindow();
 
         // Set icon
-        thisStage.getIcons().add(MainWindow.getController().getTopsoilLogo());
+        thisStage.getIcons().add(Main.getController().getTopsoilLogo());
 
         // Build layout
         HBox hBox = new HBox();
@@ -80,7 +80,7 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         this.getDialogPane().setContent(hBox);
 
         // Sets owner (main window)
-        this.initOwner(MainWindow.getPrimaryStage());
+        this.initOwner(Main.getPrimaryStage());
     }
 
 

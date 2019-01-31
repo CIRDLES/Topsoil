@@ -4,7 +4,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
-import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.ColumnTree;
 import org.cirdles.topsoil.app.data.DataSegment;
 
@@ -33,8 +33,8 @@ public class DataImportDialog extends Dialog<Map<ImportKey, Object>> {
         this.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.FINISH);
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
-        stage.initOwner(MainWindow.getPrimaryStage());
-        stage.getIcons().add(MainWindow.getController().getTopsoilLogo());
+        stage.initOwner(Main.getPrimaryStage());
+        stage.getIcons().add(Main.getController().getTopsoilLogo());
 
         DataImportOptionsView controller = new DataImportOptionsView(columnTree, Arrays.asList(dataSegments));
         this.getDialogPane().setContent(controller);

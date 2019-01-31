@@ -95,12 +95,4 @@ public class DataTable extends BranchNode<DataSegment> {
         variableColumnBiMap.putAll(map);
     }
 
-    public int colCount() {
-        return columnTree.countTotalLeafNodes();
-    }
-
-    public int rowCount() {
-        return this.countTotalLeafNodes();
-    }
-
 }

@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 
-<HBox alignment="CENTER_RIGHT" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.controls.LambdaRow">
+<HBox alignment="CENTER_RIGHT" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cirdles.topsoil.app.view.LambdaRow">
    <children>
       <Label fx:id="constantLabel" text="constantName" />
       <TextField fx:id="textField" minWidth="-Infinity" prefWidth="120.0" />

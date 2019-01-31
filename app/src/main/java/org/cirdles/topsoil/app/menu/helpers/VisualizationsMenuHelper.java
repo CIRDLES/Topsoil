@@ -5,7 +5,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.util.PlotObservationThread;
 import org.cirdles.topsoil.app.view.plot.TopsoilPlotView;
@@ -69,7 +69,7 @@ public class VisualizationsMenuHelper {
         Scene scene = new Scene(plotView, DEFAULT_PLOT_WIDTH, DEFAULT_PLOT_HEIGHT);
         Stage plotStage = new Stage();
         plotStage.setScene(scene);
-        plotStage.getIcons().add(MainWindow.getController().getTopsoilLogo());
+        plotStage.getIcons().add(Main.getController().getTopsoilLogo());
         plotStage.titleProperty().bind(Bindings.createStringBinding(
                 () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
         plotStage.setOnCloseRequest(closeEvent -> {
@@ -123,7 +123,7 @@ public class VisualizationsMenuHelper {
                             IndependentVariable dependency = (IndependentVariable) dependentVariable.getDependency();
                             DataColumn dependentColumn = varMap.get(dependency);
                             doubleVal /= 100;
-                            doubleVal *= ((ObjectProperty<Double>) row.getValuePropertyForColumn(dependentColumn)).get();
+                            doubleVal *= (Double) row.getValuePropertyForColumn(dependentColumn).get();
                             value = doubleVal;
                         }
                     } else {

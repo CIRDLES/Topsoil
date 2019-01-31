@@ -98,7 +98,7 @@ public class SerializableDataTable implements Serializable {
                 rowProperties = new HashMap<>();
                 HashMap<String, Serializable> valueMap = new HashMap<>();
                 rowProperties.put(RowKey.LABEL, row.getLabel());
-                for (Map.Entry<DataColumn, ObjectProperty<?>> entry : row.getDataPropertyMap().entrySet()) {
+                for (Map.Entry<DataColumn, ObjectProperty<Object>> entry : row.getDataPropertyMap().entrySet()) {
                     // TODO Ensure this value is Serializable vvv
                     valueMap.put(entry.getKey().getLabel(), (Serializable) entry.getValue().get());
                 }

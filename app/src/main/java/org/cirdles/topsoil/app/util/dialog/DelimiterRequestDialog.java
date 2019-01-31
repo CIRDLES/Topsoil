@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.cirdles.topsoil.app.MainWindow;
+import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.util.file.DataParser;
 
 /**
@@ -20,13 +20,14 @@ public class DelimiterRequestDialog extends Dialog<String> {
 
     private DelimiterRequestDialog(String windowTitle, String message, Boolean isImport) {
         super();
-        String otherDelimiterOption = "Other";
-        String unknownDelimiterOption = "Unknown";
 
         this.setTitle(windowTitle);
         ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(
-                MainWindow.getController().getTopsoilLogo());
-        this.initOwner(MainWindow.getPrimaryStage());
+                Main.getController().getTopsoilLogo());
+        this.initOwner(Main.getPrimaryStage());
+
+        String otherDelimiterOption = "Other";
+        String unknownDelimiterOption = "Unknown";
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER_RIGHT);

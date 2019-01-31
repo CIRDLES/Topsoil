@@ -21,11 +21,23 @@ import java.util.regex.Pattern;
  */
 public abstract class DataParser {
 
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
+    protected Path path;
+    protected String delim;
     protected String[] lines;
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     public DataParser(Path path) {
         try {
+            this.path = path;
             this.lines = DataParser.readLines(path);
+            this.delim = getDelimiter();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -33,11 +45,20 @@ public abstract class DataParser {
 
     public DataParser(String content) {
         this.lines = DataParser.readLines(content);
+        this.delim = getDelimiter();
     }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     public abstract ColumnTree parseColumnTree();
 
     public abstract DataSegment[] parseData();
+
+    public Path getPath() {
+        return path;
+    }
 
     public String getDelimiter() {
         final int NUM_LINES = 5;
@@ -58,6 +79,34 @@ public abstract class DataParser {
 
         return rtnval;
     }
+
+    protected String[][] parseCells() {
+        List<List<String>> splits = new ArrayList<>();
+        for (String line : lines) {
+            List<String> split = new ArrayList<>(Arrays.asList(line.split(getDelimiter(), -1)));
+            for (int index = 0; index < split.size(); index++) {
+                // @TODO Get rid of BOM characters
+                split.set(index, split.get(index).trim());
+            }
+            splits.add(split);
+        }
+
+        // Remove empty rows
+        while (splits.get(splits.size() - 1).size() == 1 && splits.get(splits.size() - 1).get(0).equals("")) {
+            splits.remove(splits.size() - 1);
+        }
+
+        String[][] rtnval = new String[splits.size()][];
+        for (int index = 0; index < splits.size(); index++) {
+            rtnval[index] = splits.get(index).toArray(new String[]{});
+        }
+
+        return rtnval;
+    }
+
+    //**********************************************//
+    //                 CLASS METHODS                //
+    //**********************************************//
 
     /**
      * Gets the lines of a text file as an array of {@code String}s.
@@ -248,6 +297,10 @@ public abstract class DataParser {
         String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
         return ext;
     }
+
+    //**********************************************//
+    //                INNER CLASSES                 //
+    //**********************************************//
 
     /**
      * Common delimiters used to separate data values. This is used when attempting to determine the delimiter of a

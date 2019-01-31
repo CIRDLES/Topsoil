@@ -19,7 +19,7 @@ public class ColumnTree extends BranchNode<DataNode> {
         this(root.getChildren());
     }
 
-    public ColumnTree(List<DataNode> topLevel) {
+    public ColumnTree(List<? extends DataNode> topLevel) {
         this.getChildren().addAll(topLevel);
     }
 
