@@ -19,14 +19,9 @@ import java.awt.*;
 import java.io.IOException;
 
 /**
- * A controller for Topsoil's about screen, a small pop-up that appears when starting Topsoil. It contains About
- * information, as well as some helpful links to further CIRDLES resources. The {@link Stage} for this controller
- * doesn't have a border around it, so dragging is handled programmatically by
- * {@link #mousePressedAction(MouseEvent)} and {@link #mouseDraggedAction(MouseEvent)}.
- *
- * @author Jake Marotta
+ * @author marottajb
  */
-public class TopsoilAboutScreen extends VBox {
+public class TopsoilAboutView extends VBox {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -41,7 +36,7 @@ public class TopsoilAboutScreen extends VBox {
     private static final String CIRDLES_URL = "https://cirdles.org/";
     private static final String RELEASE_LOG_URL = "https://github.com/CIRDLES/Topsoil/releases";
 
-    private static final String CONTROLLER_FXML = "topsoil-about-screen.fxml";
+    private static final String CONTROLLER_FXML = "about-view.fxml";
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -57,7 +52,7 @@ public class TopsoilAboutScreen extends VBox {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private final ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilAboutScreen.class);
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilAboutView.class);
 
     /**
      * The system default browser as a {@code DesktopWebBrowser}. This is used to navigate to the addresses for each
@@ -69,19 +64,19 @@ public class TopsoilAboutScreen extends VBox {
      * A {@code double} value that represents the offset between the x position of the parent {@code Stage} and this
      * one. Used for programmatically changing the position of this window when it is dragged.
      */
-    private double xOffset;
+    double xOffset;
 
     /**
      * A {@code double} value that represents the offset between the y position of the parent {@code Stage} and this
      * one. Used for programmatically changing the position of this window when it is dragged.
      */
-    private double yOffset;
+    double yOffset;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilAboutScreen() {
+    public TopsoilAboutView() {
         super();
 
         browser = new DesktopWebBrowser(Desktop.getDesktop());
@@ -100,8 +95,6 @@ public class TopsoilAboutScreen extends VBox {
      */
     @FXML protected void initialize() {
         topsoilLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
-        cirdlesLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
-
         versionLabel.setText("Version " + (new TopsoilMetadata()).getVersion().split("-")[0]);
     }
 
@@ -110,7 +103,17 @@ public class TopsoilAboutScreen extends VBox {
     //**********************************************//
 
     public static Stage getFloatingStage() {
-        Scene scene = new Scene(new TopsoilAboutScreen(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        TopsoilAboutView aboutView = new TopsoilAboutView();
+        aboutView.setStyle("-fx-border-color: #67ccff; -fx-border-width: 0.5em;");
+//        aboutView.setOnMousePressed(event -> {
+//            aboutView.xOffset = Main.getPrimaryStage().getX() - event.getScreenX();
+//            aboutView.yOffset = Main.getPrimaryStage().getScene().getWindow().getY() - event.getScreenY();
+//        });
+//        aboutView.setOnMouseDragged(event -> {
+//            aboutView.getScene().getWindow().setX(event.getScreenX() + aboutView.xOffset);
+//            aboutView.getScene().getWindow().setY(event.getScreenY() + aboutView.yOffset);
+//        });
+        Scene scene = new Scene(aboutView, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
         Stage stage = new Stage(StageStyle.UNDECORATED);
         stage.setScene(scene);
@@ -161,27 +164,4 @@ public class TopsoilAboutScreen extends VBox {
         browser.browse(LICENSE_URL);
     }
 
-    /**
-     * Sets the xOffset and yOffset of the window when the mouse is pressed on it.
-     *
-     * @param event a MouseEvent that triggers this action
-     */
-    @FXML private void mousePressedAction(MouseEvent event) {
-        if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-            xOffset = topsoilLogo.getScene().getWindow().getX() - event.getScreenX();
-            yOffset = topsoilLogo.getScene().getWindow().getY() - event.getScreenY();
-        }
-    }
-
-    /**
-     * Changes the position of the window when the mouse is dragged on it, effectively creating a click-and-drag window.
-     *
-     * @param event a MouseEvent that triggers this action
-     */
-    @FXML private void mouseDraggedAction(MouseEvent event) {
-        if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-            topsoilLogo.getScene().getWindow().setX(event.getScreenX() + xOffset);
-            topsoilLogo.getScene().getWindow().setY(event.getScreenY() + yOffset);
-        }
-    }
 }

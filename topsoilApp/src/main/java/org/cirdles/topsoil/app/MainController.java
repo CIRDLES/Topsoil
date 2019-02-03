@@ -70,7 +70,7 @@ public class MainController extends VBox {
 
 	@FXML
 	protected void initialize() {
-		replaceMainContent(new TopsoilAboutScreen());
+		replaceMainContent(new TopsoilHomeView());
 	}
 
 	//**********************************************//
