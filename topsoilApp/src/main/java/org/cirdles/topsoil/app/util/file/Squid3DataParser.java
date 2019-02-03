@@ -38,12 +38,12 @@ public class Squid3DataParser extends DataParser {
     public ColumnTree parseColumnTree() {
         List<DataNode> topLevel = new ArrayList<>();
         int[] categoryIndices = readCategories(cells[0]);
-        for (int i = 0; i < (categoryIndices.length - 1); i++) {
+        for (int i = 0; i < categoryIndices.length; i++) {
             topLevel.add(parseCategory(
-                    Arrays.copyOfRange(cells, 0, 5),
+                    cells,
                     categoryIndices[i],
-                    categoryIndices[i + 1])
-            );
+                    (i == (categoryIndices.length - 1) ? -1 : categoryIndices[i + 1])
+            ));
         }
         return new ColumnTree(topLevel);
     }
@@ -51,14 +51,18 @@ public class Squid3DataParser extends DataParser {
     public DataSegment[] parseData() {
         ColumnTree columnTree = parseColumnTree();
         List<DataColumn> columns = columnTree.getLeafNodes();
-        int[] segIndices = readDataSegments(cells);
-        DataSegment[] dataSegments = new DataSegment[segIndices.length];
-        String[][] segRows;
+
+        Integer[] segIndices = readDataSegments(cells);
+        List<DataSegment> dataSegments = new ArrayList<>();
         for (int i = 0; i < segIndices.length; i++) {
-            segRows = Arrays.copyOfRange(cells, 5, cells.length);
-            dataSegments[i] = parseDataSegment(segRows, i + 1, segIndices[i + 1], columns);
+            dataSegments.add(parseDataSegment(
+                    cells,
+                    segIndices[i],
+                    (i == (segIndices.length - 1) ? -1 : segIndices[i + 1]),
+                    columns
+            ));
         }
-        return dataSegments;
+        return dataSegments.toArray(new DataSegment[]{});
     }
 
     //**********************************************//
@@ -72,7 +76,7 @@ public class Squid3DataParser extends DataParser {
         List<DataColumn> columns = new ArrayList<>();
         StringJoiner joiner;
         String str;
-        if (nextCatIndex == -1) {
+        if (nextCatIndex == -1 || nextCatIndex > catRow.length) {
             nextCatIndex = catRow.length;
         }
         for (int colIndex = catIndex; colIndex < nextCatIndex; colIndex++) {
@@ -83,7 +87,10 @@ public class Squid3DataParser extends DataParser {
                     joiner.add(str);
                 }
             }
-            columns.add(new DataColumn(joiner.toString()));
+            str = joiner.toString().trim();
+            if (! str.equals("")) {
+                columns.add(new DataColumn(joiner.toString()));
+            }
         }
 
         return new DataCategory(catLabel, columns.toArray(new DataColumn[]{}));
@@ -95,13 +102,13 @@ public class Squid3DataParser extends DataParser {
         List<DataRow> dataRows = new ArrayList<>();
         String rowLabel;
         Map<DataColumn, Object> valueMap;
-        if (nextSegIndex == -1) {
+        if (nextSegIndex == -1 || nextSegIndex > rows.length) {
             nextSegIndex = rows.length;
         }
         for (int rowIndex = startIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
             rowLabel = rows[rowIndex][0];
             valueMap = new HashMap<>();
-            for (int colIndex = 1; colIndex < rows[rowIndex].length; colIndex++) {
+            for (int colIndex = 1; colIndex < rows[rowIndex].length - 1; colIndex++) {
                 valueMap.put(columns.get(colIndex - 1), rows[rowIndex][colIndex]);
             }
             dataRows.add(new DataRow(rowLabel, valueMap));
@@ -123,29 +130,26 @@ public class Squid3DataParser extends DataParser {
         return rtnval;
     }
 
-    private static int[] readDataSegments(String[][] cells) {
+    private static Integer[] readDataSegments(String[][] cells) {
         List<Integer> idxs = new ArrayList<>();
-        for (int index = 5; index < cells.length; index++) {
-            if (cells[index].length == 0) {
 
-            } else {
-                if (! cells[index][0].equals("")) {
-                    if (cells[index].length > 1) {
-                        if (cells[index][1].equals("")) {
-                            idxs.add(index);
-                        }
-                    } else {
-                        idxs.add(index);
-                    }
+        String last = cells[5][0];
+        String current;
+        if (! "".equals(last)) {
+            idxs.add(5);
+            for (int index = 6; index < cells.length; index++) {
+                current = cells[index][0];
+                if (! current.startsWith(last)) {
+                    idxs.add(index);
                 }
-
+            }
+            int[] rtnval = new int[idxs.size()];
+            for (int index = 0; index < rtnval.length; index++) {
+                rtnval[index] = idxs.get(index);
             }
         }
-        int[] rtnval = new int[idxs.size()];
-        for (int index = 0; index < rtnval.length; index++) {
-            rtnval[index] = idxs.get(index);
-        }
-        return rtnval;
+
+        return idxs.toArray(new Integer[]{});
     }
 
 }

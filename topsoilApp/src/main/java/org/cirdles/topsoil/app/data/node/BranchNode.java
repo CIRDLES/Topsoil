@@ -9,6 +9,7 @@ import org.cirdles.topsoil.app.data.DataColumn;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * @author marottajb
@@ -75,6 +76,38 @@ public class BranchNode<T extends DataNode> extends DataNode {
             }
         }
         return leafNodes;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof BranchNode<?>) {
+            BranchNode<?> other = (BranchNode<?>) object;
+            if (! this.getLabel().equals(other.getLabel())) {
+                return false;
+            }
+            if (this.getChildren().size() != other.getChildren().size()) {
+                return false;
+            }
+            for (int i = 0; i < this.getChildren().size(); i++) {
+                Object thisObject = this.getChildren().get(i);
+                Object thatObject = other.getChildren().get(i);
+                if (! thisObject.equals(thatObject)) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (DataNode node : children) {
+            joiner.add(node.getLabel());
+        }
+        return "BranchNode(\"" + this.label.get() + "\"){ " + joiner.toString() + " }";
     }
 
 }

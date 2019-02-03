@@ -95,4 +95,29 @@ public class DataTable extends BranchNode<DataSegment> {
         variableColumnBiMap.putAll(map);
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof DataTable) {
+            DataTable other = (DataTable) object;
+            if (! super.equals(object)) {
+                return false;
+            }
+            if (this.getIsotopeSystem() != other.getIsotopeSystem()) {
+                return false;
+            }
+            if (this.getUnctFormat() != other.getUnctFormat()) {
+                return false;
+            }
+            if (! this.getColumnTree().equals(other.getColumnTree())) {
+                return false;
+            }
+            if (! this.getVariableColumnMap().equals(other.getVariableColumnMap())) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
 }

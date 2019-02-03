@@ -65,12 +65,12 @@ public abstract class DataParser {
         String rtnval = null;
 
         if (lines.length > 1) {
+            String[] testLines = lines;
             if (lines.length > NUM_LINES) {
-                lines = Arrays.copyOfRange(lines, 0, NUM_LINES);
+                testLines = Arrays.copyOfRange(lines, 0, NUM_LINES);
             }
-
             for (Delimiter delim : Delimiter.values()) {
-                if (isDelimiter(lines, delim)) {
+                if (isDelimiter(testLines, delim)) {
                     rtnval = delim.toString();
                     break;
                 }

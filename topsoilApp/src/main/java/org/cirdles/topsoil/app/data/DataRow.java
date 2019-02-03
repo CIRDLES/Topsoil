@@ -6,6 +6,7 @@ import javafx.collections.ObservableMap;
 import org.cirdles.topsoil.app.data.node.LeafNode;
 
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * @author marottajb
@@ -51,6 +52,46 @@ public class DataRow extends LeafNode {
 
     public int size() {
         return dataPropertyMap.size();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof DataRow) {
+            DataRow other = (DataRow) object;
+            if (! this.getLabel().equals(other.getLabel())) {
+                System.out.println("label");
+                return false;
+            }
+            if (this.isSelected() != other.isSelected()) {
+                return false;
+            }
+            if (this.size() != other.size()) {
+                System.out.println("size");
+                return false;
+            }
+            // TODO Figure out how to test equivalence for each value
+//            for (Map.Entry<DataColumn, ObjectProperty<Object>> entry : this.getDataPropertyMap().entrySet()) {
+//                Object thisValue = entry.getValue().get();
+//                Object thatValue = other.getValuePropertyForColumn(entry.getKey()).get();
+//                if (thisValue.equals(thatValue)) {
+//                    System.out.println(thisValue);
+//                    System.out.println(thatValue);
+//                    return false;
+//                }
+//            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (Map.Entry<DataColumn, ObjectProperty<Object>> entry : this.dataPropertyMap.get().entrySet()) {
+            joiner.add("\"" + entry.getKey().getLabel() + "\" => " + entry.getValue().get().toString());
+        }
+        return "DataRow(\"" + this.label.get() + "\"){ " + joiner.toString() + " }";
     }
 
     //**********************************************//

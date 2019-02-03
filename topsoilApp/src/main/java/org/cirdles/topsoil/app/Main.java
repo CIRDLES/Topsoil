@@ -52,7 +52,7 @@ public class Main extends Application {
         Main.controller = new MainController();
 
         // Create main Scene
-        Scene scene = new Scene(controller, 900, 700);
+        Scene scene = new Scene(controller, 1200, 750);
 
         // Load CSS
         try {

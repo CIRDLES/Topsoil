@@ -20,22 +20,4 @@ public class DataSegment extends BranchNode<DataRow> {
         children.addAll(rows);
     }
 
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
-
-    public DataRow getRow(int index) {
-        return children.get(index);
-    }
-
-    public DataRow getRow(String label) {
-        DataRow rtnval = null;
-        for (DataRow row : children) {
-            if (label.equals(row.getLabel())) {
-                rtnval = row;
-            }
-        }
-        return rtnval;
-    }
-
 }
