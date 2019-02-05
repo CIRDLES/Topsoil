@@ -18,6 +18,7 @@ package org.cirdles.topsoil.plot.impl;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.DefaultProperties;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
+import org.cirdles.topsoil.plot.PlotType;
 
 /**
  * A {@code Plot} which handles features for all isotope systems.

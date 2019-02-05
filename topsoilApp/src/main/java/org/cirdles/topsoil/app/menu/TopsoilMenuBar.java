@@ -8,25 +8,18 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
 import org.cirdles.topsoil.app.Main;
-import org.cirdles.topsoil.app.util.serialization.Serializer;
+import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 import org.cirdles.topsoil.app.view.ProjectTableTab;
-import org.cirdles.topsoil.app.view.ProjectViewTab;
 import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.menu.helpers.HelpMenuHelper;
-import org.cirdles.topsoil.app.menu.helpers.ViewMenuHelper;
 import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
-import org.cirdles.topsoil.app.util.SampleData;
 import org.cirdles.topsoil.app.view.TopsoilProjectView;
-import org.cirdles.topsoil.plot.AbstractPlot;
-
-import java.nio.file.Path;
+import org.cirdles.topsoil.plot.PlotType;
 
 /**
  * @author marottajb
  */
 public class TopsoilMenuBar extends MenuBar {
-
-    private TopsoilProjectView projectView;
 
     public TopsoilMenuBar() {
         super();
@@ -39,18 +32,10 @@ public class TopsoilMenuBar extends MenuBar {
         );
     }
 
-    public void setProjectView(TopsoilProjectView projectView) {
-        this.projectView = projectView;
-    }
-
     private Menu getFileMenu() {
         MenuItem newProjectItem = new MenuItem("Project from Files");
         newProjectItem.setOnAction(event -> {
-            TopsoilProjectView pv = FileMenuHelper.newProject();
-            if (projectView != null) {
-                // TODO Close old project
-            }
-            projectView = pv;
+            // @TODO
         });
         Menu newMenu = new Menu("New", null,
                                 newProjectItem
@@ -58,7 +43,7 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem openProjectItem = new MenuItem ("Open...");
         openProjectItem.setOnAction(event -> {
-            FileMenuHelper.openProject(projectView);
+            // @TODO
         });
         Menu openRecentProjectMenu = new Menu("Open Recent");
         openRecentProjectMenu.setDisable(true);
@@ -68,27 +53,15 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem openUPbSampleItem = new MenuItem("Uranium-Lead");
         openUPbSampleItem.setOnAction(event -> {
-            if (projectView == null) {
-                projectView = FileMenuHelper.openSampleData(SampleData.UPB);
-            } else {
-                FileMenuHelper.openSampleData(SampleData.UPB, projectView);
-            }
+            // @TODO
         });
         MenuItem openUThSampleItem = new MenuItem("Uranium-Thorium");
         openUThSampleItem.setOnAction(event -> {
-            if (projectView == null) {
-                projectView = FileMenuHelper.openSampleData(SampleData.UTH);
-            } else {
-                FileMenuHelper.openSampleData(SampleData.UTH, projectView);
-            }
+            // @TODO
         });
         MenuItem openSquid3SampleItem = new MenuItem("Squid 3 Data");
         openSquid3SampleItem.setOnAction(event -> {
-            if (projectView == null) {
-                projectView = FileMenuHelper.openSampleData(SampleData.SQUID_3);
-            } else {
-                FileMenuHelper.openSampleData(SampleData.SQUID_3, projectView);
-            }
+            // @TODO
         });
         Menu openSampleMenu = new Menu("Open Sample", null,
                                        openUPbSampleItem,
@@ -97,27 +70,25 @@ public class TopsoilMenuBar extends MenuBar {
         );
 
         MenuItem saveProjectItem = new MenuItem("Save");
-        saveProjectItem.disableProperty().bind(Bindings.isNotNull(Serializer.currentProjectFileProperty()));
+        saveProjectItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectFileProperty()));
         saveProjectItem.setOnAction(event -> {
-            FileMenuHelper.saveProject(projectView);
+            // @TODO
         });
         MenuItem saveAsProjectItem = new MenuItem("Save As...");
-        saveAsProjectItem.disableProperty().bind(Bindings.isNotNull(Serializer.currentProjectFileProperty()));
+        saveAsProjectItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectFileProperty()));
         saveAsProjectItem.setOnAction(event -> {
-            Path path = null;
             // @TODO
-            FileMenuHelper.saveProjectAs(projectView, path);
         });
         MenuItem closeProjectItem = new MenuItem("Close Project");
-        closeProjectItem.disableProperty().bind(Bindings.isNotNull(Serializer.currentProjectFileProperty()));
+        closeProjectItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectFileProperty()));
         closeProjectItem.setOnAction(event -> {
-            FileMenuHelper.closeProject(projectView);
+            // @TODO
         });
 
         Menu importTableMenu = getImportTableMenu();
         MenuItem exportTableMenuItem = new MenuItem("Export Table...");
         exportTableMenuItem.setOnAction(event -> {
-            FileMenuHelper.exportTable(projectView);
+            // @TODO
         });
 
         MenuItem exitTopsoilItem = new MenuItem("Exit Topsoil");
@@ -144,24 +115,12 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getImportTableMenu() {
         MenuItem fromFileItem = new MenuItem("From File");
         fromFileItem.setOnAction(event -> {
-            if (projectView == null) {
-                projectView = FileMenuHelper.importTableFromFile();
-            } else {
-                if (! FileMenuHelper.importTableFromFile(projectView)) {
-                    // TODO Show some error notification
-                }
-            }
+            // @TODO
         });
         MenuItem fromClipboardItem = new MenuItem("From Clipboard");
         fromClipboardItem.disableProperty().bind(new ReadOnlyBooleanWrapper(Clipboard.getSystemClipboard().hasString()));
         fromClipboardItem.setOnAction(event -> {
-            if (projectView == null) {
-                projectView = FileMenuHelper.importTableFromClipboard();
-            } else {
-                if (! FileMenuHelper.importTableFromClipboard(projectView)) {
-                    // TODO Show some error notification
-                }
-            }
+            // @TODO
         });
 
         Menu importTableMenu =  new Menu("Import Table", null,
@@ -187,15 +146,15 @@ public class TopsoilMenuBar extends MenuBar {
         Menu dataFormatMenu = new Menu("Set Data Format");
         MenuItem formatTextItem = new MenuItem("Text...");
         formatTextItem.setOnAction(event -> {
-            ViewMenuHelper.editTextFormatting(projectView);
+            // @TODO
         });
         MenuItem formatNumberItem = new MenuItem("Numbers...");
         formatNumberItem.setOnAction(event -> {
-            ViewMenuHelper.editNumberFormatting(projectView);
+            // @TODO
         });
         MenuItem formatDateItem = new MenuItem("Timestamps...");
         formatDateItem.setOnAction(event -> {
-            ViewMenuHelper.editDateFormatting(projectView);
+            // @TODO
         });
 
         Menu viewMenu = new Menu("View", null,
@@ -208,8 +167,9 @@ public class TopsoilMenuBar extends MenuBar {
         MenuItem generatePlotItem = new MenuItem("Generate Plot...");
         generatePlotItem.setOnAction(event -> {
             // @TODO Check to make sure proper variables are assigned
-            ProjectTableTab projectTab = (ProjectTableTab) projectView.getTabPane().getSelectionModel().getSelectedItem();
-            VisualizationsMenuHelper.generatePlot(AbstractPlot.PlotType.SCATTER, projectTab.getDataTable(), projectView, null);
+            ProjectTableTab projectTab = (ProjectTableTab) getCurrentProjectView().getTabPane().getSelectionModel().getSelectedItem();
+            VisualizationsMenuHelper.generatePlot(PlotType.SCATTER, projectTab.getDataTable(),
+                                                  getCurrentProjectView().getProject(), null);
         });
         return new Menu("Visualizations", null,
                         generatePlotItem
@@ -231,6 +191,14 @@ public class TopsoilMenuBar extends MenuBar {
                         reportIssueItem,
                         aboutItem
         );
+    }
+
+    private TopsoilProjectView getCurrentProjectView() {
+        return isProjectOpen() ? (TopsoilProjectView) Main.getController().getMainContent() : null;
+    }
+
+    private boolean isProjectOpen() {
+        return Main.getController().getMainContent() instanceof TopsoilProjectView;
     }
 
 }

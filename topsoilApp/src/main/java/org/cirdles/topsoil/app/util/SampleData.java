@@ -32,7 +32,7 @@ public enum SampleData {
         this.unctFormat = unctFormat;
     }
 
-    public DataTable parseDataTable() {
+    public DataTable getDataTable() {
         final ResourceExtractor re = new ResourceExtractor(SampleData.class);
         Path filePath = re.extractResourceAsPath(fileName);
         DataParser dataParser;
@@ -46,45 +46,6 @@ public enum SampleData {
                              unctFormat,
                              dataParser.parseColumnTree(),
                              Arrays.asList(dataParser.parseData()));
-    }
-
-    public DataTable getDataTable() {
-        DataColumn noCatOne = new DataColumn("noCatOne");
-        DataColumn noCatTwo = new DataColumn("noCatTwo");
-        DataColumn firstCatOne = new DataColumn("firstCatOne");
-        DataColumn firstCatTwo = new DataColumn("firstCatTwo");
-        DataColumn secondCatOne = new DataColumn("secondCatOne");
-
-        DataCategory firstCat = new DataCategory("firstCat", firstCatOne, firstCatTwo);
-        DataCategory secondCat = new DataCategory("secondCat", secondCatOne);
-        DataCategory emptyCat = new DataCategory("emptyCat");
-
-        List<DataNode> categories = new ArrayList<>(Arrays.asList(noCatOne, noCatTwo, firstCat, secondCat, emptyCat));
-
-        List<DataSegment> dataSegments = new ArrayList<>();
-        DataSegment segment;
-        DataRow row;
-        Map<DataColumn, Object> values;
-        int size = 3;
-        for (int i = 0; i < size; i++) {
-            segment = new DataSegment("DataSegment" + (i + 1));
-            for (int j = 0; j < size; j++) {
-                values = new HashMap<>();
-                values.put(noCatOne, (double) i + j);
-                values.put(noCatTwo, (double) i + j + 1);
-                values.put(firstCatOne, (double) i + j + 2);
-                values.put(firstCatTwo, (double) i + j + 3);
-                values.put(secondCatOne, (double) i + j + 4);
-                row = new DataRow("DataRow" + (i + 1), values);
-                segment.getChildren().add(row);
-            }
-            dataSegments.add(segment);
-        }
-
-        IsotopeSystem isotopeSystem = IsotopeSystem.GENERIC;
-        UncertaintyFormat unctFormat = UncertaintyFormat.ONE_SIGMA_ABSOLUTE;
-
-        return new DataTable("TestDataTable", isotopeSystem, unctFormat, categories, dataSegments);
     }
 
 }

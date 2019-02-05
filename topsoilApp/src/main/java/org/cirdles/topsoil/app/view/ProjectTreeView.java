@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.view;
 
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -7,6 +8,7 @@ import javafx.scene.control.cell.CheckBoxTreeCell;
 import org.cirdles.topsoil.app.data.DataRow;
 import org.cirdles.topsoil.app.data.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.data.node.BranchNode;
 import org.cirdles.topsoil.app.data.node.DataNode;
 import org.cirdles.topsoil.app.data.node.LeafNode;
@@ -36,19 +38,32 @@ public class ProjectTreeView extends TreeView<DataNode> {
         this.setShowRoot(false);
     }
 
-    public ProjectTreeView(TopsoilProjectView dataView) {
+    public ProjectTreeView(TopsoilProject project) {
         this();
-        for (DataTable table : dataView.getDataTables()) {
-            addDataTable(table);
-        }
+        setProject(project);
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public TreeItem<DataNode> getTreeItemForDataNode(DataNode node) {
-        return treeItemMap.get(node);
+    public void setProject(TopsoilProject project) {
+        for (DataTable table : project.getDataTableList()) {
+            addDataTable(table);
+        }
+        project.dataTableListProperty().addListener((ListChangeListener<? super DataTable>) c -> {
+            c.next();
+            if (c.wasAdded()) {
+                for (DataTable table : c.getAddedSubList()) {
+                    addDataTable(table);
+                }
+            }
+            if (c.wasRemoved()) {
+                for (DataTable table : c.getRemoved()) {
+                    removeDataTable(table);
+                }
+            }
+        });
     }
 
     public void addDataTable(DataTable table) {

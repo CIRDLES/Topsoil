@@ -13,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.view.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
@@ -27,7 +28,6 @@ public class TopsoilPlotView extends VBox {
 
 	private static final String CONTROLLER_FXML = "plot-view.fxml";
 
-	private Plot plot;
 
 	//**********************************************//
 	//                   CONTROLS                   //
@@ -45,12 +45,20 @@ public class TopsoilPlotView extends VBox {
 	@FXML private AnchorPane propertiesPanelAnchorPane;
 
 	//**********************************************//
+	//                  ATTRIBUTES                  //
+	//**********************************************//
+
+	private Plot plot;
+	private DataTable table;
+
+	//**********************************************//
 	//                 CONSTRUCTORS                 //
 	//**********************************************//
 
-	public TopsoilPlotView(Plot plot) {
+	public TopsoilPlotView(Plot plot, DataTable table) {
 		super();
 		this.plot = plot;
+		this.table = table;
 		this.propertiesPanel = new PlotPropertiesPanel(plot);
 		try {
 			FXMLLoader loader = new FXMLLoader(new ResourceExtractor(TopsoilPlotView.class).extractResourceAsPath(CONTROLLER_FXML)
@@ -75,6 +83,10 @@ public class TopsoilPlotView extends VBox {
 
 	public Plot getPlot() {
 		return plot;
+	}
+
+	public DataTable getDataTable() {
+		return table;
 	}
 
 	public PlotPropertiesPanel getPropertiesPanel() {

@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app.view;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -10,11 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.data.DataRow;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.node.DataNode;
-import org.cirdles.topsoil.app.view.plot.TopsoilPlotView;
-import org.cirdles.topsoil.plot.AbstractPlot;
+import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,33 +38,14 @@ public class TopsoilProjectView extends SplitPane {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private Table<AbstractPlot.PlotType, DataTable, TopsoilPlotView> openPlots = HashBasedTable.create();
-
-    //**********************************************//
-    //                  PROPERTIES                  //
-    //**********************************************//
-
-    private ListProperty<DataTable> dataTableList = new SimpleListProperty<>(FXCollections.observableArrayList());
-    public ListProperty<DataTable> dataTableListProperty() {
-        return dataTableList;
-    }
-    public final List<DataTable> getDataTables() {
-        return dataTableList.get();
-    }
+    private TopsoilProject project;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilProjectView() {
-        dataTableList.addListener((ListChangeListener.Change<? extends DataTable> c) -> {
-            c.next();
-            if (c.wasAdded()) {
-                for (DataTable table : c.getAddedSubList()) {
-                    addTabForTable(table);
-                }
-            }
-        });
+    public TopsoilProjectView(TopsoilProject project) {
+        this.project = project;
 
         try {
             final ResourceExtractor re = new ResourceExtractor(TopsoilProjectView.class);
@@ -84,37 +60,31 @@ public class TopsoilProjectView extends SplitPane {
 
     @FXML
     public void initialize() {
-
+        project.dataTableListProperty().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
+            c.next();
+            if (c.wasAdded()) {
+                for (DataTable table : c.getAddedSubList()) {
+                    addTabForTable(table);
+                }
+            }
+            if (c.wasRemoved()) {
+                for (DataTable table : c.getRemoved()) {
+                    removeTabForTable(table);
+                }
+            }
+        });
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public void addDataTable(DataTable dataTable) {
-        dataTableList.add(dataTable);
-        projectTreeView.addDataTable(dataTable);
-    }
-
-    public void removeDataTable(DataTable dataTable) {
-        dataTableList.remove(dataTable);
-        projectTreeView.removeDataTable(dataTable);
-    }
-
     public TabPane getTabPane() {
         return tabPane;
     }
 
-    public Table<AbstractPlot.PlotType, DataTable, TopsoilPlotView> getOpenPlots() {
-        return openPlots;
-    }
-
-    public void addOpenPlot(AbstractPlot.PlotType plotType, DataTable dataTable, TopsoilPlotView plotView) {
-        openPlots.put(plotType, dataTable, plotView);
-    }
-
-    public void removeOpenPlot(AbstractPlot.PlotType plotType, DataTable dataTable) {
-        openPlots.remove(plotType, dataTable);
+    public TopsoilProject getProject() {
+        return project;
     }
 
     //**********************************************//
@@ -125,6 +95,17 @@ public class TopsoilProjectView extends SplitPane {
         ProjectTableTab tableTab = new ProjectTableTab(table);
         tableTab.textProperty().bindBidirectional(table.labelProperty());
         tabPane.getTabs().add(tableTab);
+    }
+
+    private void removeTabForTable(DataTable table) {
+        for (Tab tab : tabPane.getTabs()) {
+            if (tab instanceof  ProjectTableTab) {
+                if (((ProjectTableTab) tab).getDataTable().equals(table)) {
+                    tabPane.getTabs().remove(tab);
+                    break;
+                }
+            }
+        }
     }
 
 }

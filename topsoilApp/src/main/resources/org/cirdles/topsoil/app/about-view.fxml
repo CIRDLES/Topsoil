@@ -28,14 +28,14 @@
          <children>
             <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
                <children>
-                  <VBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                  <VBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
                      <children>
                         <Label text="About">
                            <font>
                               <Font name="Lucida Sans Demibold" size="22.0" />
                            </font>
                         </Label>
-                        <Label fx:id="messageLabel" text="Topsoil is a desktop application and Java library that creates data visualizations for geochronologists and other earth scientists. ”Topsoil” is an anagram of “Isoplot”, the name of an enormously successful Microsoft Excel Add-In with similar capabilities developed by Kenneth Ludwig, which now works only in older versions of Excel." textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
+                        <Label fx:id="messageLabel" text="Topsoil is a desktop application and Java library that creates data visualizations for geochronologists and other earth scientists. ”Topsoil” is an anagram of “Isoplot”, the name of an enormously successful Microsoft Excel Add-In with similar capabilities developed by Kenneth Ludwig, which now works only in older versions of Excel." wrapText="true" VBox.vgrow="NEVER">
                            <font>
                               <Font name="Lucida Sans Unicode" size="14.0" />
                            </font>
@@ -43,7 +43,7 @@
                               <Insets />
                            </VBox.margin>
                         </Label>
-                        <HBox alignment="CENTER">
+                        <HBox alignment="CENTER_LEFT">
                            <children>
                               <Label text="For more information about Topsoil, visit our">
                                  <font>

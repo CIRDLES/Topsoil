@@ -1,17 +1,17 @@
 package org.cirdles.topsoil.app.menu.helpers;
 
 import com.google.common.collect.BiMap;
+import com.sun.javafx.stage.StageHelper;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.util.PlotObservationThread;
+import org.cirdles.topsoil.app.view.plot.PlotStage;
 import org.cirdles.topsoil.app.view.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.view.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
-import org.cirdles.topsoil.app.view.TopsoilProjectView;
 import org.cirdles.topsoil.plot.*;
 import org.cirdles.topsoil.variable.*;
 
@@ -40,9 +40,9 @@ public class VisualizationsMenuHelper {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static boolean generatePlot(AbstractPlot.PlotType plotType, DataTable dataTable, TopsoilProjectView dataView,
+    public static boolean generatePlot(PlotType plotType, DataTable table, TopsoilProject project,
                                        Map<PlotProperty, Object> properties) {
-        List<List<Map<String, Object>>> data = getPlotDataFromTable(dataTable, dataView);
+        List<List<Map<String, Object>>> data = getPlotDataFromTable(table);
 
         Plot plot = plotType.getPlot();
         plot.setData(data);
@@ -53,14 +53,14 @@ public class VisualizationsMenuHelper {
             properties = new DefaultProperties();
         }
 
-        properties.put(TITLE, dataTable.getLabel());
-        // @TODO assign and Y axis labels
-        properties.put(UNCERTAINTY, dataTable.getUnctFormat().getMultiplier());
-        TopsoilPlotView plotView = new TopsoilPlotView(plot);
+        properties.put(TITLE, table.getLabel());
+        // @TODO assign X and Y axis labels
+        properties.put(UNCERTAINTY, table.getUnctFormat().getMultiplier());
+        TopsoilPlotView plotView = new TopsoilPlotView(plot, table);
 
         // Connect table data to properties panel
         PlotPropertiesPanel panel = plotView.getPropertiesPanel();
-        panel.isotopeSystemProperty().bindBidirectional(dataTable.isotopeSystemProperty());
+        panel.isotopeSystemProperty().bindBidirectional(table.isotopeSystemProperty());
 
         // Update properties panel with changes in the plot
         PlotObservationThread observationThread = new PlotObservationThread();
@@ -75,25 +75,40 @@ public class VisualizationsMenuHelper {
         plotStage.setOnCloseRequest(closeEvent -> {
             observer.shutdown();
 //            plot.stop();
-            VisualizationsMenuHelper.closePlot(plotType, dataTable, dataView);
+            VisualizationsMenuHelper.closePlot(plotType, table, project);
         });
 
         // Show Plot
         plotStage.show();
 
-        dataView.addOpenPlot(plotType, dataTable, plotView);
+        project.addOpenPlot(plotType, table, plotView);
         return true;
     }
 
-    public static boolean closePlot(AbstractPlot.PlotType plotType, DataTable dataTable, TopsoilProjectView dataView) {
-        dataView.removeOpenPlot(plotType, dataTable);
+    public static boolean closePlot(PlotType plotType, DataTable table, TopsoilProject project) {
+        project.removeOpenPlot(plotType, table);
         return true;
     }
 
-    public static List<List<Map<String, Object>>> getPlotDataFromTable(DataTable dataTable, TopsoilProjectView dataView) {
+    public static TopsoilPlotView findPlotViewForTable(PlotType plotType, DataTable table) {
+        TopsoilPlotView plotView = null;
+        boolean found = false;
+        for (Stage stage : StageHelper.getStages()) {
+            if (stage instanceof PlotStage) {
+                plotView = (TopsoilPlotView) stage.getScene().getRoot();
+                if (plotView.getPlot().getPlotType() == plotType && plotView.getDataTable().equals(table)) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        return found ? plotView : null;
+    }
+
+    public static List<List<Map<String, Object>>> getPlotDataFromTable(DataTable table) {
         List<List<Map<String, Object>>> plotData = new ArrayList<>();
-        List<DataSegment> tableAliquots = dataTable.getChildren();
-        BiMap<Variable, DataColumn> varMap = dataTable.getVariableColumnMap();
+        List<DataSegment> tableAliquots = table.getChildren();
+        BiMap<Variable, DataColumn> varMap = table.getVariableColumnMap();
 
         List<DataRow> rows;
         DataColumn column;
@@ -116,7 +131,7 @@ public class VisualizationsMenuHelper {
                     if (varMap.containsKey(var)) {
                         column = varMap.get(var);
                         value = row.getValuePropertyForColumn(column).get();
-                        if (var instanceof DependentVariable && UncertaintyFormat.PERCENT_FORMATS.contains(dataTable.getUnctFormat())) {
+                        if (var instanceof DependentVariable && UncertaintyFormat.PERCENT_FORMATS.contains(table.getUnctFormat())) {
                             // @TODO The code below assumes that a dep-variable is always dependent on an ind-variable
                             double doubleVal = (double) value;
                             DependentVariable dependentVariable = (DependentVariable) var;

@@ -1,11 +1,14 @@
 package org.cirdles.topsoil.app.util.serialization.objects;
 
+import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.serialization.Serializer;
+import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
+import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 import org.cirdles.topsoil.app.view.TopsoilProjectView;
 import org.cirdles.topsoil.app.view.plot.TopsoilPlotView;
 import org.cirdles.topsoil.constants.Lambda;
-import org.cirdles.topsoil.plot.AbstractPlot;
+import org.cirdles.topsoil.plot.PlotType;
 
 import java.io.Serializable;
 
@@ -16,9 +19,15 @@ import static org.cirdles.topsoil.app.util.serialization.objects.SerializableTop
 /**
  * @author marottajb
  *
- * @see Serializer
+ * @see ProjectSerializer
  */
 public class SerializableTopsoilProject implements Serializable {
+
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final long serialVersionUID = -3402100385336874762L;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -30,17 +39,20 @@ public class SerializableTopsoilProject implements Serializable {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public SerializableTopsoilProject(TopsoilProjectView projectView) {
+    public SerializableTopsoilProject(TopsoilProject project) {
         data.put(LAMBDAS, extractLambdaSettings());
         ArrayList<SerializableDataTable> sTables = new ArrayList<>();
-        ArrayList<SerializablePlotView> sPlots;
+        ArrayList<SerializablePlotData> sPlots;
         SerializableDataTable sT;
 
-        for (DataTable table : projectView.getDataTables()) {
-            Map<AbstractPlot.PlotType, TopsoilPlotView> openPlots = projectView.getOpenPlots().columnMap().get(table);
+        for (DataTable table : project.getDataTableList()) {
+            Map<PlotType, TopsoilPlotView> openPlots = project.getOpenPlots().columnMap().get(table);
             sPlots = new ArrayList<>();
-            for (TopsoilPlotView plotView : openPlots.values()) {
-                sPlots.add(new SerializablePlotView(plotView));
+            if (openPlots != null) {
+                for (TopsoilPlotView plotView : openPlots.values()) {
+                    sPlots.add(new SerializablePlotData(plotView.getPlot().getPlotType(),
+                                                        plotView.getPropertiesPanel().getPlotProperties()));
+                }
             }
 
             sT = new SerializableDataTable(table);
@@ -54,14 +66,60 @@ public class SerializableTopsoilProject implements Serializable {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public void reloadProjectToDataView(TopsoilProjectView projectView) {
-        // TODO
+    public TopsoilProject getTopsoilProjectObject() {
+        List<DataTable> tables = new ArrayList<>();
+        DataTable table;
+        List<SerializableDataTable> sTables = (List<SerializableDataTable>) data.get(DATA_TABLES);
+        for (SerializableDataTable sTable : sTables) {
+            table = sTable.getDataTable();
+            tables.add(table);
+        }
+        return new TopsoilProject(tables.toArray(new DataTable[]{}));
+    }
+
+    public void reloadProject() {
+        // Reload lambdas
+        Map<Lambda, Double> lambdas = (Map<Lambda, Double>) data.get(LAMBDAS);
+        for (Map.Entry<Lambda, Double> entry : lambdas.entrySet()) {
+            entry.getKey().setValue(entry.getValue());
+        }
+
+        // Reload data tables
+        List<DataTable> tables = new ArrayList<>();
+        Map<DataTable, List<SerializablePlotData>> plotsToOpen = new HashMap<>();
+        DataTable table;
+        List<SerializableDataTable> sTables = (List<SerializableDataTable>) data.get(DATA_TABLES);
+        for (SerializableDataTable sTable : sTables) {
+            table = sTable.getDataTable();
+            plotsToOpen.put(table, new ArrayList<>());
+            for (SerializablePlotData plotData : sTable.getOpenPlotData()) {
+                plotsToOpen.get(table).add(plotData);
+            }
+            tables.add(table);
+        }
+
+        // Reload project
+        TopsoilProject project = new TopsoilProject(tables.toArray(new DataTable[]{}));
+        Main.replaceMainContent(new TopsoilProjectView(project));
+
+        // Reopen plots
+        for (Map.Entry<DataTable, List<SerializablePlotData>> entry : plotsToOpen.entrySet()) {
+            for (SerializablePlotData plotData : entry.getValue()) {
+                VisualizationsMenuHelper.generatePlot(plotData.getPlotType(), entry.getKey(), project,
+                                                      plotData.getPlotProperties());
+
+            }
+        }
     }
 
     //**********************************************//
     //               PRIVATE METHODS                //
     //**********************************************//
 
+//    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+//        in.defaultReadObject();
+//    }
+//
 //    private void writeObject(ObjectOutputStream out) throws IOException {
 //        out.defaultWriteObject();
 //    }

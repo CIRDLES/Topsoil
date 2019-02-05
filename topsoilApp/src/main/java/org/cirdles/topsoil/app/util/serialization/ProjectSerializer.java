@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.util.serialization;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.objects.SerializableTopsoilProject;
 import org.cirdles.topsoil.app.view.TopsoilProjectView;
@@ -21,7 +22,7 @@ import java.io.FileNotFoundException;
  * @author marottajb
  * @see SerializableTopsoilProject
  */
-public class Serializer {
+public class ProjectSerializer {
 
     /**
      * An {@code ObjectProperty} containing the open .topsoil project {@code File}, if it exists.
@@ -41,38 +42,25 @@ public class Serializer {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static void serialize(File file, TopsoilProjectView projectView) {
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(out);
-
-            oos.writeObject(new SerializableTopsoilProject(projectView));
-
-            out.flush();
-            out.close();
-            oos.close();
+    public static void serialize(File file, TopsoilProject project) {
+        try (FileOutputStream out = new FileOutputStream(file);
+             ObjectOutputStream oos = new ObjectOutputStream(out)) {
+            oos.writeObject(new SerializableTopsoilProject(project));
         } catch (IOException e) {
+            e.printStackTrace();
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.ERROR,
                     "Error",
                     "Unable to save project to file."
             );
-            e.printStackTrace();
         }
     }
 
-    public static void deserialize(File file, TopsoilProjectView projectView) {
-        try {
-            FileInputStream in = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(in);
-
+    public static SerializableTopsoilProject deserialize(File file) {
+        try (FileInputStream in = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(in)) {
             SerializableTopsoilProject project = (SerializableTopsoilProject) ois.readObject();
-            project.reloadProjectToDataView(projectView);
-
             setCurrentProjectFile(file);
-
-            in.close();
-            ois.close();
+            return project;
         } catch (InvalidClassException | ClassNotFoundException e) {
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.ERROR,
@@ -95,7 +83,7 @@ public class Serializer {
             );
             e.printStackTrace();
         }
-
+        return null;
     }
 
     /**

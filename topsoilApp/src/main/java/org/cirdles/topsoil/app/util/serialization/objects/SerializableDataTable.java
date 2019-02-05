@@ -11,10 +11,18 @@ import org.cirdles.topsoil.variable.Variable;
 import java.io.Serializable;
 import java.util.*;
 
+import static org.cirdles.topsoil.app.util.serialization.objects.SerializableDataTable.TableKey.COLUMN_TREE;
+
 /**
  * @author marottajb
  */
 public class SerializableDataTable implements Serializable {
+
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final long serialVersionUID = 8734376815882803639L;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -29,7 +37,7 @@ public class SerializableDataTable implements Serializable {
     public SerializableDataTable(DataTable table) {
         data.put(TableKey.LABEL, table.getLabel());
         data.put(TableKey.DATA_SEGMENTS, extractData(table));
-        data.put(TableKey.COLUMN_TREE, extractHeaders(table.getColumnTree()));
+        data.put(COLUMN_TREE, extractHeaders(table.getColumnTree()));
         data.put(TableKey.ISO_SYSTEM, table.getIsotopeSystem());
         data.put(TableKey.UNCT_FORMAT, table.getUnctFormat());
         HashMap<Variable, String> varToColName = new HashMap<>();
@@ -57,13 +65,25 @@ public class SerializableDataTable implements Serializable {
         return new DataTable(label, isoSystem, unctFormat, columnTree, dataSegments);
     }
 
-    public void setOpenPlotData(ArrayList<SerializablePlotView> plots) {
+    public void setOpenPlotData(ArrayList<SerializablePlotData> plots) {
         data.put(TableKey.OPEN_PLOTS, plots);
+    }
+
+    public List<SerializablePlotData> getOpenPlotData() {
+        return (List<SerializablePlotData>) data.get(TableKey.OPEN_PLOTS);
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
+
+//    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+//        in.defaultReadObject();
+//    }
+//
+//    private void writeObject(ObjectOutputStream out) throws IOException {
+//        out.defaultWriteObject();
+//    }
 
     private ArrayList<HashMap<SerializableDataKey<? extends DataNode>, Serializable>> extractHeaders(
             BranchNode<? extends DataNode> branchNode) {
@@ -113,7 +133,7 @@ public class SerializableDataTable implements Serializable {
 
     private ColumnTree reconstructColumns() {
         List<Map<SerializableDataKey<? extends DataNode>, Object>> headers =
-                (List<Map<SerializableDataKey<? extends DataNode>, Object>>) data.get(CategoryKey.CHILDREN);
+                (List<Map<SerializableDataKey<? extends DataNode>, Object>>) data.get(COLUMN_TREE);
         ColumnTree columnTree = new ColumnTree(reconstructHeaders(headers));
         return columnTree;
     }
@@ -142,13 +162,14 @@ public class SerializableDataTable implements Serializable {
         List<DataSegment> dataSegments = new ArrayList<>();
         String segmentLabel;
         List<DataRow> segmentRows;
+        List<Map<SerializableDataKey<DataRow>, Object>> rowMaps;
+        String rowLabel;
+        Map<DataColumn, Object> columnValueMap;
+
         for (Map<SerializableDataKey<DataSegment>, Object> segMap : segmentMaps) {
             segmentLabel = String.valueOf(segMap.get(SegmentKey.LABEL));
-            List<Map<SerializableDataKey<DataRow>, Object>> rowMaps =
-                    (List<Map<SerializableDataKey<DataRow>, Object>>) data.get(SegmentKey.ROWS);
             segmentRows = new ArrayList<>();
-            String rowLabel;
-            Map<DataColumn, Object> columnValueMap;
+            rowMaps = (List<Map<SerializableDataKey<DataRow>, Object>>) segMap.get(SegmentKey.ROWS);
             for (Map<SerializableDataKey<DataRow>, Object> rowMap : rowMaps) {
                 rowLabel = String.valueOf(rowMap.get(RowKey.LABEL));
                 columnValueMap = convertRowValueMap((Map<String, Object>) rowMap.get(RowKey.VALUE_MAP), columnTree);

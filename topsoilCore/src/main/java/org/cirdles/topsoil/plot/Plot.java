@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public interface Plot extends Displayable {
 
-    AbstractPlot.PlotType getPlotType();
+    PlotType getPlotType();
 
     List<List<Map<String, Object>>> getData();
 

@@ -14,7 +14,7 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.style.StyleLoader;
 import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.util.serialization.Serializer;
+import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
 
 import java.net.MalformedURLException;
@@ -70,10 +70,10 @@ public class Main extends Application {
 
         // If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
         primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
-            return Serializer.projectFileExists()
-                    ? "Topsoil - " + Serializer.getCurrentProjectFile().getName()
+            return ProjectSerializer.projectFileExists()
+                    ? "Topsoil - " + ProjectSerializer.getCurrentProjectFile().getName()
                     : "Topsoil";
-        }, Serializer.currentProjectFileProperty()));
+        }, ProjectSerializer.currentProjectFileProperty()));
 
         primaryStage.show();
     }

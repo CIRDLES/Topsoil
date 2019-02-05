@@ -50,9 +50,9 @@ public class DefaultDataParser extends DataParser {
             for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
                 valueMap.put(columns.get(colIndex), cells[rowIndex][colIndex]);
             }
-            rows.add(new DataRow("", valueMap));
+            rows.add(new DataRow("row" + (rowIndex - startIndex + 1), valueMap));
         }
-        return new DataSegment[]{ new DataSegment("", rows.toArray(new DataRow[]{})) };
+        return new DataSegment[]{ new DataSegment("data", rows.toArray(new DataRow[]{})) };
     }
 
     private List<DataColumn> parseHeaders(String[][] headerRows) {

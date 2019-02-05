@@ -100,14 +100,4 @@ public class BranchNode<T extends DataNode> extends DataNode {
         }
         return true;
     }
-
-    @Override
-    public String toString() {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (DataNode node : children) {
-            joiner.add(node.getLabel());
-        }
-        return "BranchNode(\"" + this.label.get() + "\"){ " + joiner.toString() + " }";
-    }
-
 }

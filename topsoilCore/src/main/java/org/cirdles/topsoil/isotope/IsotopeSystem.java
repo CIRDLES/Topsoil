@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.isotope;
 
-import org.cirdles.topsoil.plot.AbstractPlot;
+import org.cirdles.topsoil.plot.PlotType;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,15 +13,15 @@ public enum IsotopeSystem {
     //Isotope abbreviation, isotope name, array of default headers as strings
     GENERIC("Gen", "Generic",
             new String[]{"x", "y", "xσ", "yσ", "Corr Coef"},
-            new AbstractPlot.PlotType[] {AbstractPlot.PlotType.SCATTER}),
+            new PlotType[] {PlotType.SCATTER}),
 
     UPB("UPb", "Uranium Lead",
         new String[]{"207Pb*/235U", "206Pb*/238U", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-        new AbstractPlot.PlotType[] {AbstractPlot.PlotType.SCATTER}),
+        new PlotType[] {PlotType.SCATTER}),
 
     UTH("UTh", "Uranium Thorium",
         new String[]{"[234Pb/238U]t", "[230Th/238U]t", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-        new AbstractPlot.PlotType[] {AbstractPlot.PlotType.SCATTER});
+        new PlotType[] {PlotType.SCATTER});
 
     /**
      * An abbreviation of the {@code IsotopeSystem}'s name.
@@ -41,7 +41,7 @@ public enum IsotopeSystem {
     /**
      * The available {@code PlotType}s for the {@code IsotopeSystem}.
      */
-    private final AbstractPlot.PlotType[] plots;
+    private final PlotType[] plots;
 
     /**
      * A {@code List} of all {@code IsotopeSystem}s.
@@ -59,7 +59,7 @@ public enum IsotopeSystem {
     // Constructors
     //***********************
 
-    IsotopeSystem( String abbr, String name, String [] headers, AbstractPlot.PlotType[] plots ) {
+    IsotopeSystem( String abbr, String name, String [] headers, PlotType[] plots ) {
         this.abbreviation = abbr;
         this.name = name;
         this.headers = headers;
@@ -132,7 +132,7 @@ public enum IsotopeSystem {
      *
      * @return array of TopsoilPlotTypes
      */
-    public AbstractPlot.PlotType[] getPlots() {
+    public PlotType[] getPlots() {
         return plots.clone();
     }
 

@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
 import javafx.stage.FileChooser;
-import org.cirdles.topsoil.app.util.serialization.Serializer;
+import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 
 import java.io.File;
 
@@ -30,11 +30,11 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
 
-        if (Serializer.projectFileExists()) {
+        if (ProjectSerializer.projectFileExists()) {
 
             File initialDir;
-            if (Serializer.getCurrentProjectFile().getParent() != null) {
-                initialDir = new File(Serializer.getCurrentProjectFile().getParent());
+            if (ProjectSerializer.getCurrentProjectFile().getParent() != null) {
+                initialDir = new File(ProjectSerializer.getCurrentProjectFile().getParent());
             } else {
                 initialDir = new File(System.getProperty("user.home"));
             }
@@ -55,16 +55,16 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil")
         );
 
-        if (Serializer.projectFileExists()) {
+        if (ProjectSerializer.projectFileExists()) {
 
             File initialDir;
-            if (Serializer.getCurrentProjectFile().getParent() != null) {
-                initialDir = new File(Serializer.getCurrentProjectFile().getParent());
+            if (ProjectSerializer.getCurrentProjectFile().getParent() != null) {
+                initialDir = new File(ProjectSerializer.getCurrentProjectFile().getParent());
             } else {
                 initialDir = new File(System.getProperty("user.home"));
             }
             fileChooser.setInitialDirectory(initialDir);
-            fileChooser.setInitialFileName(Serializer.getCurrentProjectFile().getName());
+            fileChooser.setInitialFileName(ProjectSerializer.getCurrentProjectFile().getName());
         }
         return fileChooser;
     }

@@ -49,7 +49,7 @@ public class DefaultDataParserTest {
             rows.add(new DataRow("", valueMap));
         }
         dataSegmentsOracle = new DataSegment[]{
-                new DataSegment("", rows.toArray(new DataRow[]{}))
+                new DataSegment("data", rows.toArray(new DataRow[]{}))
         };
     }
 
