@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
@@ -24,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 
 import static org.cirdles.topsoil.app.view.wizards.NewProjectWizard.Key.SOURCES;
 
@@ -69,8 +71,7 @@ class NewProjectSourcesView extends WizardPane {
                 for (Object object : c.getAddedSubList()) {
                     if (object instanceof ProjectSource) {
                         ProjectSource source = (ProjectSource) object;
-                        ComboBox<DataParser.DataTemplate> templateComboBox =
-                                new ComboBox<>(FXCollections.observableArrayList(DataParser.DataTemplate.values()));
+                        ComboBox<DataTemplate> templateComboBox = new ComboBox<>(FXCollections.observableArrayList(DataTemplate.values()));
                         templateComboBox.getSelectionModel().select(source.getTemplate());
                         templateComboBox.getSelectionModel().selectedItemProperty().addListener(
                                 (observable, oldValue, newValue) -> source.setTemplate(newValue));
@@ -141,16 +142,15 @@ class NewProjectSourcesView extends WizardPane {
                         iterator.remove();
                         rejectedFiles.add(file);
                     } else {
-                        sources.add(new ProjectSource(path, DataParser.DataTemplate.DEFAULT, null, null));
+                        sources.add(new ProjectSource(path, DataTemplate.DEFAULT, null, null));
                     }
                 }
             }
 
             if ( rejectedFiles.size() > 0 ) {
-                StringBuilder badFileNames = new StringBuilder("");
+                StringJoiner badFileNames = new StringJoiner("\n");
                 for (File file : rejectedFiles) {
-                    badFileNames.append(file.getName());
-                    badFileNames.append("\n");
+                    badFileNames.add(file.getName());
                 }
 
                 TopsoilNotification.showNotification(

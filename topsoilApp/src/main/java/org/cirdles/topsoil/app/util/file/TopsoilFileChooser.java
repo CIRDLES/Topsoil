@@ -2,8 +2,11 @@ package org.cirdles.topsoil.app.util.file;
 
 import javafx.stage.FileChooser;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
+import org.cirdles.topsoil.app.view.ProjectTableTab;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * A class containing a setValue of methods for obtaining custom {@link FileChooser}s for
@@ -30,15 +33,13 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
 
-        if (ProjectSerializer.projectFileExists()) {
+        Path path = ProjectSerializer.getCurrentProjectPath();
+        if (path != null) {
 
-            File initialDir;
-            if (ProjectSerializer.getCurrentProjectFile().getParent() != null) {
-                initialDir = new File(ProjectSerializer.getCurrentProjectFile().getParent());
-            } else {
-                initialDir = new File(System.getProperty("user.home"));
+            if (path.getParent() == null) {
+                path = Paths.get(System.getProperty("user.home"));
             }
-            fileChooser.setInitialDirectory(initialDir);
+            fileChooser.setInitialDirectory(path.toFile());
         }
         return fileChooser;
     }
@@ -55,16 +56,14 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil")
         );
 
-        if (ProjectSerializer.projectFileExists()) {
+        Path path = ProjectSerializer.getCurrentProjectPath();
+        if (path != null) {
 
-            File initialDir;
-            if (ProjectSerializer.getCurrentProjectFile().getParent() != null) {
-                initialDir = new File(ProjectSerializer.getCurrentProjectFile().getParent());
-            } else {
-                initialDir = new File(System.getProperty("user.home"));
+            if (path.getParent() == null) {
+                path = Paths.get(System.getProperty("user.home"));
             }
-            fileChooser.setInitialDirectory(initialDir);
-            fileChooser.setInitialFileName(ProjectSerializer.getCurrentProjectFile().getName());
+            fileChooser.setInitialDirectory(path.toFile());
+            fileChooser.setInitialFileName(path.getFileName().toString());
         }
         return fileChooser;
     }

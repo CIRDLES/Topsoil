@@ -5,10 +5,12 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.data.DataColumn;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.util.SampleData;
+import org.cirdles.topsoil.app.util.dialog.VariableChooserDialog;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 import org.cirdles.topsoil.app.view.ProjectTableTab;
@@ -17,10 +19,14 @@ import org.cirdles.topsoil.app.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.app.view.TopsoilProjectView;
 import org.cirdles.topsoil.plot.PlotType;
+import org.cirdles.topsoil.variable.IndependentVariable;
+import org.cirdles.topsoil.variable.Variable;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -50,7 +56,6 @@ public class TopsoilMenuBar extends MenuBar {
         );
 
         MenuItem openProjectItem = new MenuItem ("Open...");
-        openProjectItem.setDisable(true);
         openProjectItem.setOnAction(event -> {
             if (! FileMenuHelper.openProject()) {
                 // TODO
@@ -71,6 +76,7 @@ public class TopsoilMenuBar extends MenuBar {
                                         FileMenuHelper.openSampleData(SampleData.UPB)))
                 );
             }
+            SampleData.UPB.printDataTable();
         });
         MenuItem openUThSampleItem = new MenuItem("Uranium-Thorium");
         openUThSampleItem.setOnAction(event -> {
@@ -81,6 +87,7 @@ public class TopsoilMenuBar extends MenuBar {
                         FileMenuHelper.openSampleData(SampleData.UTH)))
                 );
             }
+            SampleData.UTH.printDataTable();
         });
         MenuItem openSquid3SampleItem = new MenuItem("Squid 3 Data");
         openSquid3SampleItem.setOnAction(event -> {
@@ -91,6 +98,7 @@ public class TopsoilMenuBar extends MenuBar {
                         FileMenuHelper.openSampleData(SampleData.SQUID_3)))
                 );
             }
+            SampleData.SQUID_3.printDataTable();
         });
         Menu openSampleMenu = new Menu("Open Sample", null,
                                        openUPbSampleItem,
@@ -206,11 +214,6 @@ public class TopsoilMenuBar extends MenuBar {
         formatNumberItem.setOnAction(event -> {
             // @TODO
         });
-        MenuItem formatDateItem = new MenuItem("Timestamps...");
-        formatDateItem.setDisable(true);
-        formatDateItem.setOnAction(event -> {
-            // @TODO
-        });
 
         Menu viewMenu = new Menu("View", null,
                         dataFormatMenu
@@ -219,6 +222,14 @@ public class TopsoilMenuBar extends MenuBar {
     }
 
     private Menu getVisualizationsMenu() {
+        MenuItem assignVarsItem = new MenuItem("Assign Variables...");
+        assignVarsItem.setOnAction(event -> {
+            Map<Variable, DataColumn> selections = VariableChooserDialog.showDialog(getCurrentDataTable(),
+                                                                                    Arrays.asList(IndependentVariable.X,
+                                                                                                IndependentVariable.Y));
+            getCurrentDataTable().setColumnsForAllVariables(selections);
+        });
+
         MenuItem generatePlotItem = new MenuItem("Generate Plot...");
         generatePlotItem.setOnAction(event -> {
             // @TODO Check to make sure proper variables are assigned
@@ -227,6 +238,8 @@ public class TopsoilMenuBar extends MenuBar {
                                                   getCurrentProjectView().getProject(), null);
         });
         return new Menu("Visualizations", null,
+                        assignVarsItem,
+                        new SeparatorMenuItem(),
                         generatePlotItem
         );
     }
@@ -250,6 +263,10 @@ public class TopsoilMenuBar extends MenuBar {
 
     private TopsoilProjectView getCurrentProjectView() {
         return isProjectOpen() ? (TopsoilProjectView) Main.getController().getMainContent() : null;
+    }
+
+    private DataTable getCurrentDataTable() {
+        return ((ProjectTableTab) getCurrentProjectView().getTabPane().getSelectionModel().getSelectedItem()).getDataTable();
     }
 
     private boolean isProjectOpen() {

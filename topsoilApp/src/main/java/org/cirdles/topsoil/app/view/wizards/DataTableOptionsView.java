@@ -16,10 +16,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.data.ColumnTree;
-import org.cirdles.topsoil.app.data.DataColumn;
-import org.cirdles.topsoil.app.data.DataRow;
-import org.cirdles.topsoil.app.data.DataSegment;
+import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
@@ -34,7 +31,7 @@ import java.util.*;
  *
  * @author marottajb
  */
-public class DataImportOptionsView extends VBox {
+public class DataTableOptionsView extends VBox {
 
 	//**********************************************//
 	//                  CONSTANTS                   //
@@ -60,58 +57,16 @@ public class DataImportOptionsView extends VBox {
 	private ImageView warningIcon;
 	private List<ComboBox<Variable>> columnComboBoxes;
 	private Map<Variable, DataColumn> variableColumnMap;
-	private ColumnTree columnTree;
-	private List<DataSegment> dataSegments;
-
-	//**********************************************//
-	//                  PROPERTIES                  //
-	//**********************************************//
-
-	private ObjectProperty<UncertaintyFormat> uncertaintyFormat;
-	public ObjectProperty<UncertaintyFormat> uncertaintyFormatProperty() {
-		if (uncertaintyFormat == null) {
-			uncertaintyFormat = new SimpleObjectProperty<>();
-			uncertaintyFormat.bind(unctComboBox.getSelectionModel().selectedItemProperty());
-		}
-		return uncertaintyFormat;
-	}
-	/**
-	 * Returns the selected {@code UncertaintyFormat}, as indicated by the uncertainty format {@code ChoiceBox}.
-	 *
-	 * @return  selected UncertaintyFormat
-	 */
-	public UncertaintyFormat getUncertaintyFormat() {
-		return uncertaintyFormatProperty().get();
-	}
-
-	private ObjectProperty<IsotopeSystem> isotopeType;
-	public ObjectProperty<IsotopeSystem> isotopeTypeProperty() {
-		if (isotopeType == null) {
-			isotopeType = new SimpleObjectProperty<>();
-			isotopeType.bind(isoComboBox.getSelectionModel().selectedItemProperty());
-		}
-		return isotopeType;
-	}
-	/**
-	 * Returns the selected {@code IsotopeSystem}, as indicated by the isotope type {@code ChoiceBox}.
-	 *
-	 * @return  selected IsotopeSystem
-	 */
-	public IsotopeSystem getIsotopeType() {
-		return isotopeTypeProperty().get() == null ? IsotopeSystem.GENERIC : isotopeTypeProperty().get();
-	}
+	private DataTable table;
 
 	//**********************************************//
 	//                 CONSTRUCTORS                 //
 	//**********************************************//
 
-	DataImportOptionsView(ColumnTree columnTree, List<DataSegment> dataSegments) {
+	DataTableOptionsView(DataTable table) {
 		super();
-
-		this.columnTree = columnTree;
-		this.dataSegments = dataSegments;
-
-		final ResourceExtractor re = new ResourceExtractor(DataImportOptionsView.class);
+		this.table = table;
+		final ResourceExtractor re = new ResourceExtractor(DataTableOptionsView.class);
 
 		warningIcon = new ImageView(new Image(re.extractResourceAsPath(WARNING_ICON_PATH).toString()));
 		warningIcon.setPreserveRatio(true);
@@ -133,21 +88,14 @@ public class DataImportOptionsView extends VBox {
 		columnComboBoxes = new ArrayList<>();
 		variableColumnMap = new LinkedHashMap<>(Variables.ALL.size());
 
-		if (getUncertaintyFormat() == null) {
-			uncLabel.setGraphic(warningIcon);
-		}
-		uncertaintyFormatProperty().addListener(c -> {
-			if (getUncertaintyFormat() == null) {
-				uncLabel.setGraphic(warningIcon);
-			} else {
-				uncLabel.setGraphic(null);
-			}
-		});
-
 		unctComboBox.getItems().addAll(UncertaintyFormat.values());
+		unctComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			table.setUnctFormat(newValue);
+		});
 		isoComboBox.getItems().addAll(IsotopeSystem.values());
-		isoComboBox.getSelectionModel().select(IsotopeSystem.GENERIC);
-
+		isoComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->  {
+			table.setIsotopeSystem(newValue);
+		});
 		makeGrid();
 	}
 
@@ -159,13 +107,9 @@ public class DataImportOptionsView extends VBox {
 		return variableColumnMap;
 	}
 
-	public List<DataSegment> getDataSegments() {
-	    return dataSegments;
-    }
-
-    public ColumnTree getColumnTree() {
-	    return columnTree;
-    }
+    public DataTable getDataTable() {
+		return table;
+	}
 
 	//**********************************************//
 	//               PRIVATE METHODS                //
@@ -192,8 +136,8 @@ public class DataImportOptionsView extends VBox {
 	}
 
 	private void makeGrid() {
-		List<DataColumn> columns = columnTree.getLeafNodes();
-		List<DataRow> firstSegmentRows = dataSegments.get(0).getChildren();
+		List<DataColumn> columns = table.getColumnTree().getLeafNodes();
+		List<DataRow> firstSegmentRows = table.getChildren().get(0).getChildren();
 		DataRow[] sampleRows = Arrays.copyOfRange(firstSegmentRows.toArray(new DataRow[]{}), 0,
 												  Math.min(firstSegmentRows.size(), SAMPLE_SIZE));
 

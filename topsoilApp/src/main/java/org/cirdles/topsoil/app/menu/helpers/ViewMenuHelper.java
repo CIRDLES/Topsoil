@@ -19,7 +19,4 @@ public class ViewMenuHelper {
         // @TODO
     }
 
-    public static void editDateFormatting(TopsoilProjectView projectView) {
-        // @TODO
-    }
 }

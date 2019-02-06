@@ -24,7 +24,7 @@ public class DefaultDataParserTest {
                             "0.4,1.4,2.4,3.4,4.4\n";
     static DefaultDataParser dataParser;
     static ColumnTree columnTreeOracle;
-    static DataSegment[] dataSegmentsOracle;
+    static List<DataSegment> dataSegmentsOracle;
 
     @BeforeClass
     public static void setup() {
@@ -46,11 +46,10 @@ public class DefaultDataParserTest {
             valueMap.put(col3, "2." + i);
             valueMap.put(col4, "3." + i);
             valueMap.put(col5, "4." + i);
-            rows.add(new DataRow("", valueMap));
+            rows.add(new DataRow("row" + (i + 1), valueMap));
         }
-        dataSegmentsOracle = new DataSegment[]{
-                new DataSegment("data", rows.toArray(new DataRow[]{}))
-        };
+        dataSegmentsOracle = new ArrayList<>();
+        dataSegmentsOracle.add(new DataSegment("data", rows.toArray(new DataRow[]{})));
     }
 
     @Test
@@ -61,7 +60,9 @@ public class DefaultDataParserTest {
 
     @Test
     public void parseData_test() {
-        DataSegment[] dataSegments = dataParser.parseData();
+        List<DataSegment> dataSegments = dataParser.parseData();
+        System.out.println(dataSegments.get(0).getChildren());
+        System.out.println(dataSegmentsOracle.get(0).getChildren());
         assertEquals(dataSegmentsOracle, dataSegments);
     }
 

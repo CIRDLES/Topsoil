@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.data.ColumnTree;
 import org.cirdles.topsoil.app.data.DataSegment;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.util.file.*;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
@@ -75,52 +76,20 @@ class NewProjectPreView extends WizardPane {
 
     }
 
-    /**
-     * Returns a {@code List} of {@code Map}s containing information from each of the {@link DataImportOptionsView}s
-     * from the specified source files.
-     *
-     * @return  List of Maps of DataImportKeys to Objects
-     */
-    List<Map<ImportKey, Object>> getSelections() {
+    List<DataTable> getSelections() {
         // TODO
-        List<Map<ImportKey, Object>> allSelections = new ArrayList<>();
-
-        DataImportOptionsView controller;
+        List<DataTable> tables = new ArrayList<>();
+        DataTableOptionsView controller;
         for (Tab tab : fileTabs.getTabs()) {
             controller = ((PreViewTab) tab).getController();
-            Map<ImportKey, Object> selections = new HashMap<>();
-
-            selections.put(ImportKey.LABEL, tab.getText());
-            selections.put(ImportKey.COLUMN_TREE, controller.getColumnTree());
-            selections.put(ImportKey.DATA_SEGMENTS, controller.getDataSegments());
-            selections.put(ImportKey.UNCT_FORMAT, controller.getUncertaintyFormat());
-            selections.put(ImportKey.ISO_SYSTEM, controller.getIsotopeType());
-            selections.put(ImportKey.VARIABLE_MAP, controller.getVariableColumnMap());
-
-            allSelections.add(selections);
+            tables.add(controller.getDataTable());
         }
-
-        return allSelections;
+        return tables;
     }
 
     //**********************************************//
     //               PRIVATE METHODS                //
     //**********************************************//
-
-    private void updateFinishButtonDisabledProperty(Wizard wizard) {
-        boolean incomplete = false;
-        for (Tab t : fileTabs.getTabs()) {
-            if (((PreViewTab) t).getController().getUncertaintyFormat() == null) {
-                incomplete = true;
-                break;
-            }
-        }
-        if (incomplete) {
-            wizard.setInvalid(true);
-        } else {
-            wizard.setInvalid(false);
-        }
-    }
 
     private void removeOldTabs(Wizard wizard) {
         List<ProjectSource> settingsSources = (List<ProjectSource>) wizard.getSettings().get(SOURCES);
@@ -137,7 +106,6 @@ class NewProjectPreView extends WizardPane {
         for (ProjectSource source : settingsSources) {
             if (! sources.contains(source)) {
                 PreViewTab tab = new PreViewTab(source);
-                tab.getController().uncertaintyFormatProperty().addListener(c -> updateFinishButtonDisabledProperty(wizard));
                 fileTabs.getTabs().add(tab);
             }
         }
@@ -149,7 +117,7 @@ class NewProjectPreView extends WizardPane {
 
     class PreViewTab extends Tab {
 
-        private DataImportOptionsView controller;
+        private DataTableOptionsView controller;
         private ProjectSource source;
 
         PreViewTab(ProjectSource src) {
@@ -168,42 +136,17 @@ class NewProjectPreView extends WizardPane {
                     dataParser = new DefaultDataParser(path);
                     break;
             }
-            ColumnTree columnTree = dataParser.parseColumnTree();
-            DataSegment[] dataSegments = dataParser.parseData();
-            controller = new DataImportOptionsView(columnTree, Arrays.asList(dataSegments));
+            controller = new DataTableOptionsView(dataParser.parseDataTable(path.getFileName().toString()));
 
             this.setContent(controller);
             this.setText(path.getFileName().toString());
-
-            ImageView warningIconCopy = new ImageView(warningIcon.getImage());
-            warningIconCopy.setPreserveRatio(true);
-            warningIconCopy.setFitHeight(20.0);
-            this.setGraphic(warningIconCopy);
-
-            controller.uncertaintyFormatProperty().addListener(c -> {
-                if (controller.getUncertaintyFormat() == null) {
-                    this.setGraphic(warningIconCopy);
-                } else {
-                    this.setGraphic(null);
-                }
-                /*
-                The TabPane overflow menu doesn't automatically update the tab's graphic when it's changed,
-                so the only way to get it to do so is to remove the tab, then add it again. The animations
-                have been disabled to make this a smoother process.
-                */
-                TabPane tabPane = this.getTabPane();
-                int index = tabPane.getTabs().indexOf(this);
-                tabPane.getTabs().remove(this);
-                tabPane.getTabs().add(index, this);
-                tabPane.getSelectionModel().select(this);
-            });
         }
 
         public ProjectSource getSource() {
             return source;
         }
 
-        private DataImportOptionsView getController() {
+        private DataTableOptionsView getController() {
             return controller;
         }
     }

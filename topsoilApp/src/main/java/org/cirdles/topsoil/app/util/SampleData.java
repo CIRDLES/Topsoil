@@ -41,11 +41,21 @@ public enum SampleData {
         } else {
             dataParser = new DefaultDataParser(filePath);
         }
-        return new DataTable("Sample_UPb_Data",
-                             isotopeSystem,
-                             unctFormat,
-                             dataParser.parseColumnTree(),
-                             Arrays.asList(dataParser.parseData()));
+        DataTable table = dataParser.parseDataTable(fileName);
+        table.setIsotopeSystem(isotopeSystem);
+        table.setUnctFormat(unctFormat);
+        return table;
+    }
+
+    public void printDataTable() {
+        DataTable table = getDataTable();
+        System.out.println("LABEL: " + table.getLabel());
+        for (DataSegment seg : table.getChildren()) {
+            System.out.println(("SEGMENT_LABEL: " + seg.getLabel()));
+            for (DataRow row : seg.getChildren()) {
+                System.out.println(row);
+            }
+        }
     }
 
 }

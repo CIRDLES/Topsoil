@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.util.PlotObservationThread;
+import org.cirdles.topsoil.app.util.SampleData;
 import org.cirdles.topsoil.app.view.plot.PlotStage;
 import org.cirdles.topsoil.app.view.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.view.plot.panel.PlotPropertiesPanel;
@@ -90,21 +91,6 @@ public class VisualizationsMenuHelper {
         return true;
     }
 
-    public static TopsoilPlotView findPlotViewForTable(PlotType plotType, DataTable table) {
-        TopsoilPlotView plotView = null;
-        boolean found = false;
-        for (Stage stage : StageHelper.getStages()) {
-            if (stage instanceof PlotStage) {
-                plotView = (TopsoilPlotView) stage.getScene().getRoot();
-                if (plotView.getPlot().getPlotType() == plotType && plotView.getDataTable().equals(table)) {
-                    found = true;
-                    break;
-                }
-            }
-        }
-        return found ? plotView : null;
-    }
-
     public static List<List<Map<String, Object>>> getPlotDataFromTable(DataTable table) {
         List<List<Map<String, Object>>> plotData = new ArrayList<>();
         List<DataSegment> tableAliquots = table.getChildren();
@@ -123,12 +109,12 @@ public class VisualizationsMenuHelper {
 
                 entry.put(TextVariable.LABEL.getName(), row.getLabel());
                 entry.put(TextVariable.ALIQUOT.getName(), aliquot.getLabel());
-                // @TODO determine selected/unselected
-                entry.put("Selected", true);
+                entry.put(BooleanVariable.SELECTED.getName(), row.isSelected());
 
                 for (Variable var : Variables.ALL) {
                     Object value;
-                    if (varMap.containsKey(var)) {
+                    column = varMap.get(var);
+                    if (column != null) {
                         column = varMap.get(var);
                         value = row.getValuePropertyForColumn(column).get();
                         if (var instanceof DependentVariable && UncertaintyFormat.PERCENT_FORMATS.contains(table.getUnctFormat())) {

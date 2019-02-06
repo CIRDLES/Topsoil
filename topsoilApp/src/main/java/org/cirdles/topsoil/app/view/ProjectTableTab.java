@@ -5,7 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.view.treetable.TopsoilTreeTableView;
 
 import java.io.IOException;
 
@@ -22,6 +25,11 @@ public class ProjectTableTab extends Tab {
         this.table = table;
         this.tabView = new TabView(table);
         this.setContent(tabView);
+        this.setOnClosed(event -> {
+            if (((TopsoilProjectView) Main.getController().getMainContent()).getTabPane().getTabs().isEmpty()) {
+                FileMenuHelper.closeProject();
+            }
+        });
     }
 
     public DataTable getDataTable() {
@@ -38,11 +46,14 @@ public class ProjectTableTab extends Tab {
 
         @FXML private TopsoilTreeTableView treeTableView;
 
+        private DataTable table;
+
         //**********************************************//
         //                 CONSTRUCTORS                 //
         //**********************************************//
 
         TabView(DataTable table) {
+            this.table = table;
             try {
                 final ResourceExtractor re = new ResourceExtractor(TabView.class);
                 final FXMLLoader loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());

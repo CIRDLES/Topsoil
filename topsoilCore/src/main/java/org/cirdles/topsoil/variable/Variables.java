@@ -34,14 +34,12 @@ public final class Variables {
     public static final List<Variable<?>> ALL;
     static {
         ALL = Collections.unmodifiableList(asList(
-                TextVariable.LABEL,
                 DateVariable.TIMESTAMP,
                 IndependentVariable.X,
                 DependentVariable.SIGMA_X,
                 IndependentVariable.Y,
                 DependentVariable.SIGMA_Y,
-                IndependentVariable.RHO,
-                BooleanVariable.SELECTED
+                IndependentVariable.RHO
         ));
         Map<String, Variable> abbrs = new HashMap<>();
         ALL.forEach(v -> abbrs.put(v.getAbbreviation(), v));

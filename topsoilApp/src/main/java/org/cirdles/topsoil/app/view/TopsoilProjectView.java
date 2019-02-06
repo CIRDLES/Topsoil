@@ -60,6 +60,9 @@ public class TopsoilProjectView extends SplitPane {
 
     @FXML
     public void initialize() {
+        for (DataTable table : project.getDataTableList()) {
+            addTabForTable(table);
+        }
         project.dataTableListProperty().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
             c.next();
             if (c.wasAdded()) {

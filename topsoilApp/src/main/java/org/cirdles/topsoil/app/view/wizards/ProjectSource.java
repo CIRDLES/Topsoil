@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.view.wizards;
 
+import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
-import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 
 import java.nio.file.Path;
@@ -11,11 +11,11 @@ import java.nio.file.Path;
  */
 public class ProjectSource {
     private Path path;
-    private DataParser.DataTemplate template;
+    private DataTemplate template;
     private IsotopeSystem isotopeSystem;
     private UncertaintyFormat unctFormat;
 
-    public ProjectSource(Path path, DataParser.DataTemplate template, IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat) {
+    public ProjectSource(Path path, DataTemplate template, IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat) {
         this.path = path;
         this.template = template;
         this.isotopeSystem = isotopeSystem;
@@ -30,11 +30,11 @@ public class ProjectSource {
         this.path = path;
     }
 
-    public DataParser.DataTemplate getTemplate() {
+    public DataTemplate getTemplate() {
         return template;
     }
 
-    public void setTemplate(DataParser.DataTemplate template) {
+    public void setTemplate(DataTemplate template) {
         this.template = template;
     }
 

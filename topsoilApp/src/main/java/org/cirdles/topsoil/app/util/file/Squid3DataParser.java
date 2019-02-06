@@ -59,7 +59,7 @@ public class Squid3DataParser extends DataParser {
             dataSegments.add(parseDataSegment(
                     cells,
                     segIndices[i],
-                    (i == (segIndices.length - 1) ? -1 : segIndices[i + 1]),
+                    (i < (segIndices.length - 1) ? segIndices[i + 1] : -1),
                     columns
             ));
         }
@@ -93,8 +93,7 @@ public class Squid3DataParser extends DataParser {
         return new DataCategory(catLabel, columns.toArray(new DataColumn[]{}));
     }
 
-    static DataSegment parseDataSegment(String[][] rows, int startIndex, int nextSegIndex,
-                                         List<DataColumn> columns) {
+    static DataSegment parseDataSegment(String[][] rows, int startIndex, int nextSegIndex, List<DataColumn> columns) {
         String segmentLabel = rows[startIndex][0];
         List<DataRow> dataRows = new ArrayList<>();
         String rowLabel;
@@ -138,6 +137,7 @@ public class Squid3DataParser extends DataParser {
                 current = cells[index][0];
                 if (! current.startsWith(last)) {
                     idxs.add(index);
+                    last = current;
                 }
             }
             int[] rtnval = new int[idxs.size()];
