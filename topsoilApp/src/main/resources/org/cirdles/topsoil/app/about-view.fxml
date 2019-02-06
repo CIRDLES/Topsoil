@@ -36,26 +36,26 @@
                            </font>
                         </Label>
                         <Label fx:id="messageLabel" text="Topsoil is a desktop application and Java library that creates data visualizations for geochronologists and other earth scientists. ”Topsoil” is an anagram of “Isoplot”, the name of an enormously successful Microsoft Excel Add-In with similar capabilities developed by Kenneth Ludwig, which now works only in older versions of Excel." wrapText="true" VBox.vgrow="NEVER">
-                           <font>
-                              <Font name="Lucida Sans Unicode" size="14.0" />
-                           </font>
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT">
                            <children>
                               <Label text="For more information about Topsoil, visit our">
-                                 <font>
-                                    <Font name="Lucida Sans Unicode" size="14.0" />
-                                 </font>
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" top="5.0" />
                                  </HBox.margin>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
                               </Label>
                               <Hyperlink fx:id="homePage" onAction="#openHome" text="home page.">
                                  <font>
-                                    <Font name="Lucida Sans Unicode" size="14.0" />
+                                    <Font size="14.0" />
                                  </font>
                               </Hyperlink>
                            </children>
@@ -100,17 +100,17 @@
                <children>
                   <Hyperlink fx:id="github" onAction="#openGitHub" text="GitHub Repository">
                      <font>
-                        <Font name="Lucida Sans Unicode" size="14.0" />
+                        <Font size="14.0" />
                      </font>
                   </Hyperlink>
                   <Hyperlink fx:id="cirdles" onAction="#openCIRDLES" text="CIRDLES.org">
                      <font>
-                        <Font name="Lucida Sans Unicode" size="14.0" />
+                        <Font size="14.0" />
                      </font>
                   </Hyperlink>
                   <Hyperlink fx:id="releaseLog" onAction="#openReleaseLog" text="Release Log">
                      <font>
-                        <Font name="Lucida Sans Unicode" size="14.0" />
+                        <Font size="14.0" />
                      </font>
                   </Hyperlink>
                </children>

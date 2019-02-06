@@ -1,18 +1,25 @@
 package org.cirdles.topsoil.app.view;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.constants.Lambda;
 import org.controlsfx.control.PopOver;
+
+import java.io.IOException;
 
 /**
  * @author marottajb
  */
-public class LambdaRow extends VBox {
+public class LambdaRow extends HBox {
+
+    private static String CONTROLLER_FXML = "lambda-row.fxml";
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -34,17 +41,36 @@ public class LambdaRow extends VBox {
 
     public LambdaRow(Lambda l) {
         this.lambda = l;
+        try {
+            final ResourceExtractor re = new ResourceExtractor(LambdaRow.class);
+            final FXMLLoader loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
+            loader.setRoot(this);
+            loader.setController(this);
+            loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+        }
     }
 
     @FXML
     protected void initialize() {
         constantLabel.textProperty().bind(lambda.titleProperty());
-//        lambda.valueProperty().bindBidirectional(textField.textProperty());
+        textField.setText(lambda.getValue().toString());
+
+        Button setButton = new Button("Set Value");
+        setButton.setOnAction(event -> {
+            try {
+                double value = Double.parseDouble(textField.getText());
+                lambda.setValue(value);
+            } catch (NumberFormatException e) {
+                textField.setText(lambda.getValue().toString());
+            }
+        });
 
         Button resetButton = new Button("Reset to Default");
         resetButton.setOnAction(event -> lambda.resetToDefault());
 
-        VBox vBox = new VBox(resetButton);
+        VBox vBox = new VBox(setButton, resetButton);
         vBox.setSpacing(10.0);
         vBox.setPadding(new Insets(10.0));
 

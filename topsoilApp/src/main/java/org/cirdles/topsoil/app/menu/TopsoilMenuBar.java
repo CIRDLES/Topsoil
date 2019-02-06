@@ -237,11 +237,17 @@ public class TopsoilMenuBar extends MenuBar {
             VisualizationsMenuHelper.generatePlot(PlotType.SCATTER, projectTab.getDataTable(),
                                                   getCurrentProjectView().getProject(), null);
         });
-        return new Menu("Visualizations", null,
-                        assignVarsItem,
-                        new SeparatorMenuItem(),
-                        generatePlotItem
+
+        Menu visualizationsMenu = new Menu("Visualizations", null,
+                                           assignVarsItem,
+                                           new SeparatorMenuItem(),
+                                           generatePlotItem
         );
+        visualizationsMenu.setOnShown(event -> {
+            assignVarsItem.setDisable(! isProjectOpen());
+            generatePlotItem.setDisable(! isProjectOpen());
+        });
+        return visualizationsMenu;
     }
 
     private Menu getHelpMenu() {

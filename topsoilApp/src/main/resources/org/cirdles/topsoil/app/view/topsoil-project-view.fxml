@@ -8,8 +8,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import org.cirdles.topsoil.app.view.ProjectTreeView?>
-
 <fx:root dividerPositions="0.2896494156928214" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" type="SplitPane" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -31,25 +29,11 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </padding>
                               </Label>
-                              <ProjectTreeView fx:id="projectTreeView" />
+                              <AnchorPane fx:id="projectTreeViewPane" />
                            </children>
                         </VBox>
                      </children></AnchorPane>
-                <AnchorPane>
-                     <children>
-                        <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <Label text="Constants Editor">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding></Label>
-                           </children>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
+                <AnchorPane fx:id="constantsEditorPane" />
               </items>
             </SplitPane>
          </children></AnchorPane>

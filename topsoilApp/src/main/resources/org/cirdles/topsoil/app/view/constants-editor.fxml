@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root type="VBox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" type="VBox" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label text="Constants Editor">
          <font>
@@ -23,7 +23,7 @@
       </Label>
       <Accordion fx:id="accordion">
          <panes>
-            <TitledPane animated="false" text="Lambda">
+            <TitledPane text="Lambda">
               <content>
                 <AnchorPane minHeight="-Infinity" minWidth="-Infinity">
                      <children>
