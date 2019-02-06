@@ -2,12 +2,14 @@ package org.cirdles.topsoil.app.menu;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.DataTemplate;
+import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.util.SampleData;
+import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 import org.cirdles.topsoil.app.view.ProjectTableTab;
 import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
@@ -15,6 +17,11 @@ import org.cirdles.topsoil.app.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.app.view.TopsoilProjectView;
 import org.cirdles.topsoil.plot.PlotType;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * @author marottajb
@@ -35,15 +42,19 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getFileMenu() {
         MenuItem newProjectItem = new MenuItem("Project from Files");
         newProjectItem.setOnAction(event -> {
-            // @TODO
+            TopsoilProjectView projectView = new TopsoilProjectView(FileMenuHelper.newProject());
+            Main.getController().setProjectView(projectView);
         });
         Menu newMenu = new Menu("New", null,
                                 newProjectItem
         );
 
         MenuItem openProjectItem = new MenuItem ("Open...");
+        openProjectItem.setDisable(true);
         openProjectItem.setOnAction(event -> {
-            // @TODO
+            if (! FileMenuHelper.openProject()) {
+                // TODO
+            }
         });
         Menu openRecentProjectMenu = new Menu("Open Recent");
         openRecentProjectMenu.setDisable(true);
@@ -53,15 +64,33 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem openUPbSampleItem = new MenuItem("Uranium-Lead");
         openUPbSampleItem.setOnAction(event -> {
-            // @TODO
+            if (isProjectOpen()) {
+                getCurrentProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.UPB));
+            } else {
+                Main.getController().setProjectView(new TopsoilProjectView(new TopsoilProject(
+                                        FileMenuHelper.openSampleData(SampleData.UPB)))
+                );
+            }
         });
         MenuItem openUThSampleItem = new MenuItem("Uranium-Thorium");
         openUThSampleItem.setOnAction(event -> {
-            // @TODO
+            if (isProjectOpen()) {
+                getCurrentProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.UTH));
+            } else {
+                Main.getController().setProjectView(new TopsoilProjectView(new TopsoilProject(
+                        FileMenuHelper.openSampleData(SampleData.UTH)))
+                );
+            }
         });
         MenuItem openSquid3SampleItem = new MenuItem("Squid 3 Data");
         openSquid3SampleItem.setOnAction(event -> {
-            // @TODO
+            if (isProjectOpen()) {
+                getCurrentProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.SQUID_3));
+            } else {
+                Main.getController().setProjectView(new TopsoilProjectView(new TopsoilProject(
+                        FileMenuHelper.openSampleData(SampleData.SQUID_3)))
+                );
+            }
         });
         Menu openSampleMenu = new Menu("Open Sample", null,
                                        openUPbSampleItem,
@@ -70,25 +99,45 @@ public class TopsoilMenuBar extends MenuBar {
         );
 
         MenuItem saveProjectItem = new MenuItem("Save");
-        saveProjectItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectFileProperty()));
+        saveProjectItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectPathProperty()));
         saveProjectItem.setOnAction(event -> {
-            // @TODO
+            FileMenuHelper.saveProject(getCurrentProjectView().getProject());
         });
-        MenuItem saveAsProjectItem = new MenuItem("Save As...");
-        saveAsProjectItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectFileProperty()));
-        saveAsProjectItem.setOnAction(event -> {
-            // @TODO
+        MenuItem saveProjectAsItem = new MenuItem("Save As...");
+        saveProjectAsItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectPathProperty()));
+        saveProjectAsItem.setOnAction(event -> {
+            if (getCurrentProjectView() != null) {
+                if (! FileMenuHelper.saveProjectAs(getCurrentProjectView().getProject())) {
+                    // TODO Error message
+                }
+            } else {
+                // TODO Error message
+            }
         });
         MenuItem closeProjectItem = new MenuItem("Close Project");
-        closeProjectItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectFileProperty()));
+        closeProjectItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectPathProperty()));
         closeProjectItem.setOnAction(event -> {
-            // @TODO
+            if (getCurrentProjectView() != null) {
+                if (! FileMenuHelper.closeProject()) {
+                    // TODO Error message
+                }
+            } else {
+                // TODO Error message
+            }
         });
 
         Menu importTableMenu = getImportTableMenu();
         MenuItem exportTableMenuItem = new MenuItem("Export Table...");
         exportTableMenuItem.setOnAction(event -> {
-            // @TODO
+            if (getCurrentProjectView() != null) {
+                DataTable table = ((ProjectTableTab) getCurrentProjectView().getTabPane().getSelectionModel()
+                                                                            .getSelectedItem()).getDataTable();
+                if (! FileMenuHelper.exportTableAs(table)) {
+                    // TODO Error message
+                }
+            } else {
+                // TODO Error message
+            }
         });
 
         MenuItem exitTopsoilItem = new MenuItem("Exit Topsoil");
@@ -100,7 +149,7 @@ public class TopsoilMenuBar extends MenuBar {
                 openRecentProjectMenu,
                 openSampleMenu,
                 saveProjectItem,
-                saveAsProjectItem,
+                saveProjectAsItem,
                 closeProjectItem,
                 new SeparatorMenuItem(),
                 importTableMenu,
@@ -108,14 +157,17 @@ public class TopsoilMenuBar extends MenuBar {
                 new SeparatorMenuItem(),
                 exitTopsoilItem
         );
-
         return fileMenu;
     }
 
     private Menu getImportTableMenu() {
         MenuItem fromFileItem = new MenuItem("From File");
         fromFileItem.setOnAction(event -> {
-            // @TODO
+            File file = TopsoilFileChooser.openTableFile().showOpenDialog(Main.getPrimaryStage());
+            if (file.exists()) {
+                Path path = Paths.get(file.toURI());
+                // TODO Show dialog for DataTemplate/IsotopeSystem/UncertaintyFormat
+            }
         });
         MenuItem fromClipboardItem = new MenuItem("From Clipboard");
         fromClipboardItem.disableProperty().bind(new ReadOnlyBooleanWrapper(Clipboard.getSystemClipboard().hasString()));
@@ -145,14 +197,17 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getViewMenu() {
         Menu dataFormatMenu = new Menu("Set Data Format");
         MenuItem formatTextItem = new MenuItem("Text...");
+        formatTextItem.setDisable(true);
         formatTextItem.setOnAction(event -> {
             // @TODO
         });
         MenuItem formatNumberItem = new MenuItem("Numbers...");
+        formatNumberItem.setDisable(true);
         formatNumberItem.setOnAction(event -> {
             // @TODO
         });
         MenuItem formatDateItem = new MenuItem("Timestamps...");
+        formatDateItem.setDisable(true);
         formatDateItem.setOnAction(event -> {
             // @TODO
         });

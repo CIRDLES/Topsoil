@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.util.file;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.data.node.DataNode;
 
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -32,10 +33,10 @@ public class Squid3DataParser extends DataParser {
     }
 
     //**********************************************//
-    //                PUBLIC METHODS                //
+    //                PRIVATE METHODS               //
     //**********************************************//
 
-    public ColumnTree parseColumnTree() {
+    ColumnTree parseColumnTree() {
         List<DataNode> topLevel = new ArrayList<>();
         int[] categoryIndices = readCategories(cells[0]);
         for (int i = 0; i < categoryIndices.length; i++) {
@@ -48,7 +49,7 @@ public class Squid3DataParser extends DataParser {
         return new ColumnTree(topLevel);
     }
 
-    public DataSegment[] parseData() {
+    List<DataSegment> parseData() {
         ColumnTree columnTree = parseColumnTree();
         List<DataColumn> columns = columnTree.getLeafNodes();
 
@@ -62,12 +63,8 @@ public class Squid3DataParser extends DataParser {
                     columns
             ));
         }
-        return dataSegments.toArray(new DataSegment[]{});
+        return dataSegments;
     }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
 
     static DataCategory parseCategory(String[][] cells, int catIndex, int nextCatIndex) {
         String[] catRow = cells[0];

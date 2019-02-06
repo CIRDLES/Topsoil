@@ -5,16 +5,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.objects.SerializableTopsoilProject;
-import org.cirdles.topsoil.app.view.TopsoilProjectView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-import java.io.InvalidClassException;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * A class for reading and writing .topsoil project files.
@@ -27,25 +21,26 @@ public class ProjectSerializer {
     /**
      * An {@code ObjectProperty} containing the open .topsoil project {@code File}, if it exists.
      */
-    private static ObjectProperty<File> currentProjectFile = new SimpleObjectProperty<>(null);
-    public static ObjectProperty<File> currentProjectFileProperty() {
-        return currentProjectFile;
+    private static ObjectProperty<Path> currentProjectPath = new SimpleObjectProperty<>(null);
+    public static ObjectProperty<Path> currentProjectPathProperty() {
+        return currentProjectPath;
     }
-    public static File getCurrentProjectFile() {
-        return currentProjectFileProperty().get();
+    public static Path getCurrentProjectPath() {
+        return currentProjectPathProperty().get();
     }
-    public static void setCurrentProjectFile(File file) {
-        currentProjectFileProperty().set(file);
+    public static void setCurrentProjectPath(Path path) {
+        currentProjectPathProperty().set(path);
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static void serialize(File file, TopsoilProject project) {
-        try (FileOutputStream out = new FileOutputStream(file);
-             ObjectOutputStream oos = new ObjectOutputStream(out)) {
+    public static void serialize(Path projectPath, TopsoilProject project) {
+        try (OutputStream out = Files.newOutputStream(projectPath); ObjectOutputStream oos =
+                new ObjectOutputStream(out)) {
             oos.writeObject(new SerializableTopsoilProject(project));
+            currentProjectPath.set(projectPath);
         } catch (IOException e) {
             e.printStackTrace();
             TopsoilNotification.showNotification(
@@ -56,10 +51,10 @@ public class ProjectSerializer {
         }
     }
 
-    public static SerializableTopsoilProject deserialize(File file) {
-        try (FileInputStream in = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(in)) {
+    public static SerializableTopsoilProject deserialize(Path projectPath) {
+        try (InputStream in = Files.newInputStream(projectPath); ObjectInputStream ois = new ObjectInputStream(in)) {
             SerializableTopsoilProject project = (SerializableTopsoilProject) ois.readObject();
-            setCurrentProjectFile(file);
+            currentProjectPath.set(projectPath);
             return project;
         } catch (InvalidClassException | ClassNotFoundException e) {
             TopsoilNotification.showNotification(
@@ -85,31 +80,4 @@ public class ProjectSerializer {
         }
         return null;
     }
-
-    /**
-     * Sets the working .topsoil {@code File} to null.
-     */
-    public static void closeProjectFile() {
-        currentProjectFileProperty().set(null);
-    }
-
-    /**
-     * Checks whether a .topsoil {@code File} is open.
-     *
-     * @return  true if currentProjectFile != null
-     */
-    public static boolean isProjectOpen() {
-        return currentProjectFileProperty().get() != null;
-    }
-
-    /**
-     * Checks whether the current .topsoil {@code File} exists. Important if the file was deleted externally while
-     * open in Topsoil.
-     *
-     * @return  true if the current .topsoil {@code File}.exists()
-     */
-    public static boolean projectFileExists() {
-        return (isProjectOpen() && currentProjectFileProperty().get().exists());
-    }
-
 }

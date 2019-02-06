@@ -77,7 +77,8 @@ public class SerializableTopsoilProject implements Serializable {
         return new TopsoilProject(tables.toArray(new DataTable[]{}));
     }
 
-    public void reloadProject() {
+    public boolean reloadProject() {
+        boolean completed = false;
         // Reload lambdas
         Map<Lambda, Double> lambdas = (Map<Lambda, Double>) data.get(LAMBDAS);
         for (Map.Entry<Lambda, Double> entry : lambdas.entrySet()) {
@@ -100,7 +101,7 @@ public class SerializableTopsoilProject implements Serializable {
 
         // Reload project
         TopsoilProject project = new TopsoilProject(tables.toArray(new DataTable[]{}));
-        Main.replaceMainContent(new TopsoilProjectView(project));
+        Main.getController().setProjectView(new TopsoilProjectView(project));
 
         // Reopen plots
         for (Map.Entry<DataTable, List<SerializablePlotData>> entry : plotsToOpen.entrySet()) {
@@ -110,6 +111,8 @@ public class SerializableTopsoilProject implements Serializable {
 
             }
         }
+        completed = true;
+        return completed;
     }
 
     //**********************************************//

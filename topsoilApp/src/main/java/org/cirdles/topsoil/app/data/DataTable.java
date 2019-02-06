@@ -54,7 +54,13 @@ public class DataTable extends BranchNode<DataSegment> {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    private DataTable() { }
+    public DataTable(String label, ColumnTree columnTree, List<DataSegment> dataSegments) {
+        super(label);
+        setIsotopeSystem(IsotopeSystem.GENERIC);
+        setUnctFormat(UncertaintyFormat.ONE_SIGMA_ABSOLUTE);
+        this.columnTree = columnTree;
+        this.children.addAll(dataSegments);
+    }
 
     public DataTable(String label, IsotopeSystem isotopeSystem, UncertaintyFormat unctFormat, List<DataNode> categories,
                      List<DataSegment> dataSegments) {

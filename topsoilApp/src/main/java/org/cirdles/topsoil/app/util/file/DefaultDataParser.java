@@ -1,10 +1,8 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.data.ColumnTree;
-import org.cirdles.topsoil.app.data.DataColumn;
-import org.cirdles.topsoil.app.data.DataRow;
-import org.cirdles.topsoil.app.data.DataSegment;
+import org.cirdles.topsoil.app.data.*;
 
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -33,13 +31,17 @@ public class DefaultDataParser extends DataParser {
         this.cells = parseCells();
     }
 
-    public ColumnTree parseColumnTree() {
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
+
+    ColumnTree parseColumnTree() {
         // TODO see template project
         String[][] headerRows = Arrays.copyOfRange(cells, 0, countHeaderRows());
         return new ColumnTree(parseHeaders(headerRows));
     }
 
-    public DataSegment[] parseData() {
+    List<DataSegment> parseData() {
         ColumnTree columnTree = parseColumnTree();
         List<DataColumn> columns = columnTree.getLeafNodes();
         int startIndex = countHeaderRows();
@@ -52,7 +54,9 @@ public class DefaultDataParser extends DataParser {
             }
             rows.add(new DataRow("row" + (rowIndex - startIndex + 1), valueMap));
         }
-        return new DataSegment[]{ new DataSegment("data", rows.toArray(new DataRow[]{})) };
+        List<DataSegment> segments = new ArrayList<>();
+        segments.add(new DataSegment("data", rows.toArray(new DataRow[]{})));
+        return segments;
     }
 
     private List<DataColumn> parseHeaders(String[][] headerRows) {

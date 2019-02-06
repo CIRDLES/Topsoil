@@ -44,6 +44,14 @@ public class TopsoilProject {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    public void addDataTable(DataTable table) {
+        dataTableList.add(table);
+    }
+
+    public boolean removeDataTable(DataTable table) {
+        return dataTableList.remove(table);
+    }
+
     public Table<PlotType, DataTable, TopsoilPlotView> getOpenPlots() {
         return openPlots;
     }

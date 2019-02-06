@@ -5,7 +5,6 @@ import com.sun.javafx.stage.StageHelper;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.text.Font;
@@ -70,10 +69,10 @@ public class Main extends Application {
 
         // If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
         primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
-            return ProjectSerializer.projectFileExists()
-                    ? "Topsoil - " + ProjectSerializer.getCurrentProjectFile().getName()
+            return ProjectSerializer.getCurrentProjectPath() != null
+                    ? "Topsoil - " + ProjectSerializer.getCurrentProjectPath().getFileName().toString()
                     : "Topsoil";
-        }, ProjectSerializer.currentProjectFileProperty()));
+        }, ProjectSerializer.currentProjectPathProperty()));
 
         primaryStage.show();
     }
@@ -111,10 +110,6 @@ public class Main extends Application {
 
     public static Stage getPrimaryStage() {
         return primaryStage;
-    }
-
-    public static Node replaceMainContent(Node content) {
-        return replaceMainContent(content);
     }
 
     public static void shutdown() {

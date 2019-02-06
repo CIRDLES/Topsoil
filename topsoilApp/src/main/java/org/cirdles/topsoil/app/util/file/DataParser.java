@@ -2,8 +2,10 @@ package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.data.ColumnTree;
 import org.cirdles.topsoil.app.data.DataSegment;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,9 +54,26 @@ public abstract class DataParser {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public abstract ColumnTree parseColumnTree();
+    public DataTable parseDataTable(@Nullable String title) {
+        String label;
+        if (title == null) {
+            if (path == null) {
+                label = "ClipboardContent";
+            } else {
+                label = path.getFileName().toString();
+            }
+        } else {
+            label = title;
+        }
+        ColumnTree columnTree = parseColumnTree();
+        List<DataSegment> dataSegments = parseData();
 
-    public abstract DataSegment[] parseData();
+        return new DataTable(label, columnTree, dataSegments);
+    }
+
+    abstract ColumnTree parseColumnTree();
+
+    abstract List<DataSegment> parseData();
 
     public Path getPath() {
         return path;
@@ -331,13 +350,5 @@ public abstract class DataParser {
         public String toString() {
             return value;
         }
-    }
-
-    /**
-     * @author marottajb
-     */
-    public enum DataTemplate {
-        DEFAULT,
-        SQUID_3
     }
 }

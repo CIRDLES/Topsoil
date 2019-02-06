@@ -34,6 +34,7 @@ public class MainController extends VBox {
 
 	@FXML private AnchorPane mainContentPane;
 	private Image topsoilLogo;
+	private TopsoilHomeView homeView;
 
 	//**********************************************//
 	//                  PROPERTIES                  //
@@ -70,7 +71,8 @@ public class MainController extends VBox {
 
 	@FXML
 	protected void initialize() {
-		replaceMainContent(new TopsoilHomeView());
+		homeView = new TopsoilHomeView();
+		replaceMainContent(homeView);
 	}
 
 	//**********************************************//
@@ -81,19 +83,30 @@ public class MainController extends VBox {
 		return mainContentPane.getChildren().get(0);
 	}
 
-	public Node replaceMainContent(Node content) {
-		Node rtnval = mainContentPane.getChildren().isEmpty() ? null : mainContentPane.getChildren().get(0);
-		mainContentPane.getChildren().clear();
-		mainContentPane.getChildren().add(content);
-		AnchorPane.setTopAnchor(content, 0.0);
-		AnchorPane.setRightAnchor(content, 0.0);
-		AnchorPane.setBottomAnchor(content, 0.0);
-		AnchorPane.setLeftAnchor(content, 0.0);
-		return rtnval;
+	public Node setProjectView(TopsoilProjectView projectView) {
+		return replaceMainContent(projectView);
+	}
+
+	public void closeProjectView() {
+		replaceMainContent(homeView);
 	}
 
 	public Image getTopsoilLogo() {
 	    return topsoilLogo;
     }
 
+	//**********************************************//
+	//                PRIVATE METHODS               //
+	//**********************************************//
+
+    private Node replaceMainContent(Node content) {
+    	Node rtnval = mainContentPane.getChildren().isEmpty() ? null : mainContentPane.getChildren().get(0);
+    	mainContentPane.getChildren().clear();
+    	mainContentPane.getChildren().add(content);
+    	AnchorPane.setTopAnchor(content, 0.0);
+    	AnchorPane.setRightAnchor(content, 0.0);
+    	AnchorPane.setBottomAnchor(content, 0.0);
+    	AnchorPane.setLeftAnchor(content, 0.0);
+    	return rtnval;
+	}
 }
