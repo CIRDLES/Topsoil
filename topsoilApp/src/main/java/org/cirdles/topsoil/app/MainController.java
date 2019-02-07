@@ -9,7 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.view.TopsoilProjectView;
+import org.cirdles.topsoil.app.control.TopsoilHomeView;
+import org.cirdles.topsoil.app.control.TopsoilProjectView;
 
 import java.io.IOException;
 

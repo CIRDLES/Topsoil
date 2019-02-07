@@ -21,7 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

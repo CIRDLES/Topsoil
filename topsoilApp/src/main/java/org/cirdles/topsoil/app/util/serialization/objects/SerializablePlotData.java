@@ -1,12 +1,8 @@
 package org.cirdles.topsoil.app.util.serialization.objects;
 
-import org.cirdles.topsoil.app.view.plot.TopsoilPlotView;
 import org.cirdles.topsoil.plot.PlotProperty;
 import org.cirdles.topsoil.plot.PlotType;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

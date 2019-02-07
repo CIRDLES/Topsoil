@@ -1,9 +1,9 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.data.ColumnTree;
-import org.cirdles.topsoil.app.data.DataColumn;
-import org.cirdles.topsoil.app.data.DataRow;
-import org.cirdles.topsoil.app.data.DataSegment;
+import org.cirdles.topsoil.app.model.ColumnTree;
+import org.cirdles.topsoil.app.model.DataColumn;
+import org.cirdles.topsoil.app.model.DataRow;
+import org.cirdles.topsoil.app.model.DataSegment;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -49,7 +49,7 @@ public class DefaultDataParserTest {
             rows.add(new DataRow("row" + (i + 1), valueMap));
         }
         dataSegmentsOracle = new ArrayList<>();
-        dataSegmentsOracle.add(new DataSegment("data", rows.toArray(new DataRow[]{})));
+        dataSegmentsOracle.add(new DataSegment("model", rows.toArray(new DataRow[]{})));
     }
 
     @Test

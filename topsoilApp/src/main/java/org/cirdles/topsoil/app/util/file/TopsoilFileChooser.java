@@ -2,9 +2,7 @@ package org.cirdles.topsoil.app.util.file;
 
 import javafx.stage.FileChooser;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
-import org.cirdles.topsoil.app.view.ProjectTableTab;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -100,7 +98,7 @@ public class TopsoilFileChooser {
     }
 
     /**
-     * Supported file extensions for data files.
+     * Supported file extensions for model files.
      *
      * @author  marottajb
      */

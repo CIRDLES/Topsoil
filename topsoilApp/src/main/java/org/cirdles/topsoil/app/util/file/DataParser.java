@@ -1,8 +1,8 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.data.ColumnTree;
-import org.cirdles.topsoil.app.data.DataSegment;
-import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.model.ColumnTree;
+import org.cirdles.topsoil.app.model.DataSegment;
+import org.cirdles.topsoil.app.model.DataTable;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
@@ -167,7 +167,7 @@ public abstract class DataParser {
     }
 
     /**
-     * Checks whether a file contains any data.
+     * Checks whether a file contains any model.
      *
      * @param   path
      *          the Path to the file to check
@@ -186,7 +186,7 @@ public abstract class DataParser {
     }
 
     /**
-     * Determines whether the file at the specified {@code Path} contains valid data.
+     * Determines whether the file at the specified {@code Path} contains valid model.
      * <p>
      * At time of writing, the criteria that this method checks to determine validity are:
      * <ul>
@@ -196,7 +196,7 @@ public abstract class DataParser {
      * @param   path
      *          a Path to a file
      *
-     * @return  true if the file's data are valid
+     * @return  true if the file's model are valid
      *
      * @throws  IOException
      *          if an I/O error occurs opening the file
@@ -285,7 +285,7 @@ public abstract class DataParser {
      * occurrences is the same for each line, then the {@code String} is likely a delimiter.
      *
      * @param   lines
-     *          a String[] of lines containing data
+     *          a String[] of lines containing model
      * @param   delim
      *          the potential String delimiter
      *
@@ -322,7 +322,7 @@ public abstract class DataParser {
     //**********************************************//
 
     /**
-     * Common delimiters used to separate data values. This is used when attempting to determine the delimiter of a
+     * Common delimiters used to separate model values. This is used when attempting to determine the delimiter of a
      * body of text.
      *
      * @author  marottajb

@@ -9,7 +9,7 @@ plot.cubicBezier = function (path, p1, p2, p3) {
         ",", p3[0], ",", p3[1]);
 };
 
-// utilities for generating path data elements
+// utilities for generating path model elements
 var moveTo = function (path, p) {
     path.push("M", p[0], ",", p[1]);
 };

@@ -22,7 +22,7 @@ import java.util.Map;
 import static java.util.Collections.emptyList;
 
 /**
- * A partial implementation of {@link Plot} that stores and retrieves set data.
+ * A partial implementation of {@link Plot} that stores and retrieves set model.
  *
  * @author John Zeringue
  */

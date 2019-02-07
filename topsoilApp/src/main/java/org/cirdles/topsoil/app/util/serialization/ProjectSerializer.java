@@ -2,8 +2,8 @@ package org.cirdles.topsoil.app.util.serialization;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.model.TopsoilProject;
+import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.objects.SerializableTopsoilProject;
 
 import java.io.*;

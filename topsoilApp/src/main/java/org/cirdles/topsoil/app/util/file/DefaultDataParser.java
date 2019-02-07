@@ -1,8 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.data.*;
+import org.cirdles.topsoil.app.model.*;
 
-import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -55,7 +54,7 @@ public class DefaultDataParser extends DataParser {
             rows.add(new DataRow("row" + (rowIndex - startIndex + 1), valueMap));
         }
         List<DataSegment> segments = new ArrayList<>();
-        segments.add(new DataSegment("data", rows.toArray(new DataRow[]{})));
+        segments.add(new DataSegment("model", rows.toArray(new DataRow[]{})));
         return segments;
     }
 

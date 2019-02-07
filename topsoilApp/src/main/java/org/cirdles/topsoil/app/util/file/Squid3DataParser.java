@@ -1,9 +1,8 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.data.*;
-import org.cirdles.topsoil.app.data.node.DataNode;
+import org.cirdles.topsoil.app.model.*;
+import org.cirdles.topsoil.app.model.node.DataNode;
 
-import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.*;
 

@@ -180,9 +180,9 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
         ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(JavaScriptPlot.class);
 
-        final URI POINTS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Points.js").toUri();
-        final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/Ellipses.js").toUri();
-        final URI CROSSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/data/UncertaintyBars.js").toUri();
+        final URI POINTS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/model/Points.js").toUri();
+        final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/model/Ellipses.js").toUri();
+        final URI CROSSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/model/UncertaintyBars.js").toUri();
         final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Concordia.js").toUri();
         final URI TWCONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/TWConcordia.js").toUri();
         final URI REGRESSION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Regression.js").toUri();

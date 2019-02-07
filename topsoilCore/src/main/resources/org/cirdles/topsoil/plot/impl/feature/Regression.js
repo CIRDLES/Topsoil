@@ -219,7 +219,7 @@ plot.drawRegressionEnvelope = function () {
 };
 
 /**
- * Updates the regression uncertainty envelope on zoom, resize, or data update.
+ * Updates the regression uncertainty envelope on zoom, resize, or model update.
  */
 plot.updateRegressionEnvelope = function () {
 

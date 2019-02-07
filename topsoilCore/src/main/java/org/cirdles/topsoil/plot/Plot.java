@@ -72,7 +72,7 @@ public interface Plot extends Displayable {
     void setIfUpdated(boolean update);
 
     /**
-     * Re-centers the plot to its default view.
+     * Re-centers the plot to its default control.
      */
     void recenter();
 

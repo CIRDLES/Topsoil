@@ -34,7 +34,7 @@ public enum IsotopeSystem {
     private final String name;
 
     /**
-     * Default headers for data of an {@code IsotopeSystem}.
+     * Default headers for model of an {@code IsotopeSystem}.
      */
     private final String[] headers;
 
@@ -119,7 +119,7 @@ public enum IsotopeSystem {
     }
 
     /**
-     * Returns the default headers for data of {@code IsotopeSystem}.
+     * Returns the default headers for model of {@code IsotopeSystem}.
      *
      * @return array of String headers
      */

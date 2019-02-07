@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app.util.serialization.objects;
 
-import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.SampleData;
 import org.cirdles.topsoil.app.util.serialization.ObjectSerializer;
 import org.cirdles.topsoil.plot.PlotProperty;
 import org.cirdles.topsoil.plot.PlotType;
@@ -10,7 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.HashMap;
 

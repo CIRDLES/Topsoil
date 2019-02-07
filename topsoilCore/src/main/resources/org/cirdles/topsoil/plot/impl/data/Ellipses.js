@@ -6,7 +6,7 @@ if (plot.ellipsesVisible == null) {
     plot.ellipsesVisible = false;
 }
 
-// Calculate constants used to draw ellipses
+// Calculate constant used to draw ellipses
 plot.calcEllipses = function(data) {
     var k = 4 / 3 * (Math.sqrt(2) - 1);
     var controlPointsBase = [
@@ -73,7 +73,7 @@ plot.drawEllipses = function() {
 plot.updateEllipses = function() {
     if (plot.ellipsesVisible) {
 
-        // the data join (http://bost.ocks.org/mike/join/)
+        // the model join (http://bost.ocks.org/mike/join/)
         var ellipses = plot.ellipseGroup.selectAll(".ellipse").data(plot.ellipseData);
 
         // If the dataset is smaller than before, this will remove any unnecessary ellipse elements.
@@ -83,7 +83,7 @@ plot.updateEllipses = function() {
         ellipses.enter().append("path")
             .attr("class", "ellipse");
 
-        // The following applies variable data to all ellipse elements.
+        // The following applies variable model to all ellipse elements.
         ellipses.attr("d", function (d) {
                 var ellipsePath = d3.svg.line()
                     .x(function (datum) {

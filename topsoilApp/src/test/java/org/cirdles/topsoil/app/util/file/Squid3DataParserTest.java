@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.data.*;
+import org.cirdles.topsoil.app.model.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

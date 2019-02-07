@@ -1,13 +1,13 @@
 package org.cirdles.topsoil.app.util.serialization.objects;
 
 import org.cirdles.topsoil.app.Main;
-import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
+import org.cirdles.topsoil.app.model.DataTable;
+import org.cirdles.topsoil.app.model.TopsoilProject;
+import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
-import org.cirdles.topsoil.app.view.TopsoilProjectView;
-import org.cirdles.topsoil.app.view.plot.TopsoilPlotView;
-import org.cirdles.topsoil.constants.Lambda;
+import org.cirdles.topsoil.app.control.TopsoilProjectView;
+import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
+import org.cirdles.topsoil.constant.Lambda;
 import org.cirdles.topsoil.plot.PlotType;
 
 import java.io.Serializable;
@@ -85,7 +85,7 @@ public class SerializableTopsoilProject implements Serializable {
             entry.getKey().setValue(entry.getValue());
         }
 
-        // Reload data tables
+        // Reload model tables
         List<DataTable> tables = new ArrayList<>();
         Map<DataTable, List<SerializablePlotData>> plotsToOpen = new HashMap<>();
         DataTable table;

@@ -12,9 +12,9 @@ import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.style.StyleLoader;
 import org.cirdles.topsoil.app.util.TopsoilException;
-import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
-import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 
 import java.net.MalformedURLException;
 import java.util.List;

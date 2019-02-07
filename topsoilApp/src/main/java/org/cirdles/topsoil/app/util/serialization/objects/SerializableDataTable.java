@@ -1,10 +1,10 @@
 package org.cirdles.topsoil.app.util.serialization.objects;
 
 import javafx.beans.property.ObjectProperty;
-import org.cirdles.topsoil.app.data.*;
-import org.cirdles.topsoil.app.data.node.BranchNode;
-import org.cirdles.topsoil.app.data.node.DataNode;
-import org.cirdles.topsoil.app.uncertainty.UncertaintyFormat;
+import org.cirdles.topsoil.app.model.*;
+import org.cirdles.topsoil.app.model.node.BranchNode;
+import org.cirdles.topsoil.app.model.node.DataNode;
+import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
 
@@ -58,7 +58,7 @@ public class SerializableDataTable implements Serializable {
     public DataTable getDataTable() {
         String label = String.valueOf(data.get(TableKey.LABEL));
         IsotopeSystem isoSystem = (IsotopeSystem) data.get(TableKey.ISO_SYSTEM);
-        UncertaintyFormat unctFormat = (UncertaintyFormat) data.get(TableKey.UNCT_FORMAT);
+        Uncertainty unctFormat = (Uncertainty) data.get(TableKey.UNCT_FORMAT);
         ColumnTree columnTree = reconstructColumns();
         List<DataSegment> dataSegments = reconstructData(columnTree);
 

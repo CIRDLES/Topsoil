@@ -1,9 +1,7 @@
 package org.cirdles.topsoil.app.util.serialization.objects;
 
-import org.cirdles.topsoil.app.data.DataRow;
-import org.cirdles.topsoil.app.data.DataSegment;
-import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.SampleData;
+import org.cirdles.topsoil.app.model.DataTable;
+import org.cirdles.topsoil.app.model.SampleData;
 import org.cirdles.topsoil.app.util.serialization.ObjectSerializer;
 import org.junit.Assert;
 import org.junit.BeforeClass;

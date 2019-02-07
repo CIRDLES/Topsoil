@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.serialization;
 
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.data.*;
+import org.cirdles.topsoil.app.model.*;
 import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.app.util.file.Squid3DataParser;
 import org.cirdles.topsoil.app.util.serialization.objects.SerializableTopsoilProject;

@@ -60,8 +60,8 @@ plot.propertiesKeys = [
 ];
 
 /*
-    Creates an SVG group for data elements like points and ellipses. Inserting other groups below this one ensures that
-    the data is always the top layer.
+    Creates an SVG group for model elements like points and ellipses. Inserting other groups below this one ensures that
+    the model is always the top layer.
  */
 plot.dataGroup = plot.area.clipped.append("g")
     .attr("class", "dataGroup");
@@ -105,7 +105,7 @@ plot.initialize = function (data) {
         .attr("y", 15)
         .attr("dy", ".1em");
 
-    // defaults if no data is provided
+    // defaults if no model is provided
     plot.xDataMin = 0;
     plot.xDataMax = 1;
     plot.yDataMin = 0;
@@ -123,7 +123,7 @@ plot.initialize = function (data) {
 
     plot.data = data;
 
-    // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
+    // Updates plot.xDataMin, plot.xDataMax, etc. based on the model.
     plot.updateDataExtent();
 
     // Updates the scales for the x and y axes
@@ -160,7 +160,7 @@ plot.initialize = function (data) {
     zoom.on("zoom", zoomed);
     plot.area.clipped.call(zoom);
 
-    // function to recenter the plot to its original view
+    // function to recenter the plot to its original control
     topsoil.recenter = function() {
         changeAxes(plot.xDataMin, plot.xDataMax, plot.yDataMin, plot.yDataMax);
     };
@@ -237,7 +237,7 @@ plot.initialize = function (data) {
 
 /*
     Draws and sets plot elements, defines special behaviors like topsoil.recenter() and d3.behavior.zoom(). This function
-    handles operations that need to be re-performed whenever new data is entered.
+    handles operations that need to be re-performed whenever new model is entered.
  */
 plot.setData = function (data) {
 
@@ -253,7 +253,7 @@ plot.setData = function (data) {
         plot.drawRegressionLine();
     }
 
-    // Updates plot.xDataMin, plot.xDataMax, etc. based on the data.
+    // Updates plot.xDataMin, plot.xDataMax, etc. based on the model.
     plot.updateDataExtent();
 
     plot.update(plot.data);
@@ -275,7 +275,7 @@ plot.update = function (data) {
         plot.currentIsotope = plot.getProperty('Isotope System');
     }
 
-    // If the uncertainty has changed, the plot extent and ellipse data have to be re-calculated, and the ellipses
+    // If the uncertainty has changed, the plot extent and ellipse model have to be re-calculated, and the ellipses
     // redrawn. Removes ellipses to be later re-drawn by plot.manageEllipses().
     if (plot.uncertainty != plot.getProperty("Uncertainty")) {
         plot.uncertainty = plot.getProperty("Uncertainty");
@@ -393,7 +393,7 @@ plot.zoomed = function() {
 };
 
 /*
-    Updates the global variables plot.xDataMin, plot.yDataMin, plot.xDataMax, and plot.yDataMax based on the data provided. If
+    Updates the global variables plot.xDataMin, plot.yDataMin, plot.xDataMax, and plot.yDataMax based on the model provided. If
     plot.uncertainty is unspecified, the default value 2 is used.
  */
 plot.updateDataExtent = function () {
@@ -423,7 +423,7 @@ plot.updateDataExtent = function () {
 };
 
 plot.manageAxisExtents = function() {
-    //Keep properties up-to-date with plot view
+    //Keep properties up-to-date with plot control
     //toFixed truncates the extents to 8 decimal places
     var xmin = plot.xAxisScale.domain()[0].toFixed(8),
         xmax = plot.xAxisScale.domain()[1].toFixed(8),

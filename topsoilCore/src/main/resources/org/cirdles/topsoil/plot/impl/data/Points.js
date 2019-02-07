@@ -25,7 +25,7 @@ plot.drawPoints = function (data) {
 plot.updatePoints = function (data) {
     if (plot.pointsVisible) {
 
-        // the data join (http://bost.ocks.org/mike/join/)
+        // the model join (http://bost.ocks.org/mike/join/)
         var points = plot.pointGroup.selectAll(".point").data(data);
 
         // If the dataset is smaller than before, this will remove unnecessary point elements.
@@ -36,7 +36,7 @@ plot.updatePoints = function (data) {
             .attr("class", "point")
             .attr("r", 2.5);
 
-        // This applies variable data to all point elements.
+        // This applies variable model to all point elements.
         points
             .attr("fill", plot.getProperty("Points Fill"))
             .attr("fill-opacity", plot.getProperty("Points Opacity"))

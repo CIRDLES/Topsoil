@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app.util.serialization;
 
-import org.cirdles.topsoil.app.util.dialog.TopsoilNotification;
-
 import java.io.*;
 
 /**

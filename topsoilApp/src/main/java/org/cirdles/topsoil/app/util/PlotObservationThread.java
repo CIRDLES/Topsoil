@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.util;
 
-import org.cirdles.topsoil.app.view.plot.panel.PlotPropertiesPanel;
+import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperty;
 
