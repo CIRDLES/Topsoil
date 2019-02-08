@@ -8,14 +8,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import org.cirdles.topsoil.app.control.TopsoilAboutView?>
+<?import org.cirdles.topsoil.app.control.AboutView?>
 <fx:root alignment="CENTER_LEFT" spacing="10.0" type="VBox" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
     <children>
       <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
          <children>
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
-                  <TopsoilAboutView fx:id="aboutView" />
+                  <AboutView fx:id="aboutView" />
                </children>
             </HBox>
               <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">

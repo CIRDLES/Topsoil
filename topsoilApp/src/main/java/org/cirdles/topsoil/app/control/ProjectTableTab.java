@@ -26,7 +26,7 @@ public class ProjectTableTab extends Tab {
         this.tabView = new TabView(table);
         this.setContent(tabView);
         this.setOnClosed(event -> {
-            if (((TopsoilProjectView) Main.getController().getMainContent()).getTabPane().getTabs().isEmpty()) {
+            if (((ProjectView) Main.getController().getMainContent()).getTabPane().getTabs().isEmpty()) {
                 FileMenuHelper.closeProject();
             }
         });

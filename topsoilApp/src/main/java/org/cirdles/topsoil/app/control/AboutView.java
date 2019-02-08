@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * @author marottajb
  */
-public class TopsoilAboutView extends VBox {
+public class AboutView extends VBox {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -52,7 +52,7 @@ public class TopsoilAboutView extends VBox {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private final ResourceExtractor resourceExtractor = new ResourceExtractor(TopsoilAboutView.class);
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(AboutView.class);
 
     /**
      * The system default browser as a {@code DesktopWebBrowser}. This is used to navigate to the addresses for each
@@ -76,7 +76,7 @@ public class TopsoilAboutView extends VBox {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilAboutView() {
+    public AboutView() {
         super();
 
         browser = new DesktopWebBrowser(Desktop.getDesktop());
@@ -103,7 +103,7 @@ public class TopsoilAboutView extends VBox {
     //**********************************************//
 
     public static Stage getFloatingStage() {
-        TopsoilAboutView aboutView = new TopsoilAboutView();
+        AboutView aboutView = new AboutView();
         aboutView.setStyle("-fx-border-color: #67ccff; -fx-border-width: 0.5em;");
 //        aboutView.setOnMousePressed(event -> {
 //            aboutView.xOffset = Main.getPrimaryStage().getX() - event.getScreenX();

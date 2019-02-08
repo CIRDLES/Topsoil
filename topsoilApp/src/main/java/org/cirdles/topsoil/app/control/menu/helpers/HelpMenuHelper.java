@@ -2,7 +2,7 @@ package org.cirdles.topsoil.app.control.menu.helpers;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.control.TopsoilAboutView;
+import org.cirdles.topsoil.app.control.AboutView;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 import org.cirdles.topsoil.app.util.issue.IssueCreator;
@@ -35,7 +35,7 @@ public class HelpMenuHelper {
     }
 
     public static void openAboutScreen(Stage owner) {
-        Stage aboutWindow = TopsoilAboutView.getFloatingStage();
+        Stage aboutWindow = AboutView.getFloatingStage();
 
         aboutWindow.requestFocus();
         aboutWindow.initOwner(owner);

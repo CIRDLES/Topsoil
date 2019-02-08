@@ -16,7 +16,7 @@ import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
-import org.cirdles.topsoil.app.control.TopsoilProjectView;
+import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.plot.PlotType;
 import org.cirdles.topsoil.variable.IndependentVariable;
 import org.cirdles.topsoil.variable.Variable;
@@ -46,7 +46,7 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getFileMenu() {
         MenuItem newProjectItem = new MenuItem("Project from Files");
         newProjectItem.setOnAction(event -> {
-            TopsoilProjectView projectView = new TopsoilProjectView(FileMenuHelper.newProject());
+            ProjectView projectView = new ProjectView(FileMenuHelper.newProject());
             Main.getController().setProjectView(projectView);
         });
         Menu newMenu = new Menu("New", null,
@@ -70,7 +70,7 @@ public class TopsoilMenuBar extends MenuBar {
             if (isProjectOpen()) {
                 getCurrentProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.UPB));
             } else {
-                Main.getController().setProjectView(new TopsoilProjectView(new TopsoilProject(
+                Main.getController().setProjectView(new ProjectView(new TopsoilProject(
                                         FileMenuHelper.openSampleData(SampleData.UPB)))
                 );
             }
@@ -81,7 +81,7 @@ public class TopsoilMenuBar extends MenuBar {
             if (isProjectOpen()) {
                 getCurrentProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.UTH));
             } else {
-                Main.getController().setProjectView(new TopsoilProjectView(new TopsoilProject(
+                Main.getController().setProjectView(new ProjectView(new TopsoilProject(
                         FileMenuHelper.openSampleData(SampleData.UTH)))
                 );
             }
@@ -92,7 +92,7 @@ public class TopsoilMenuBar extends MenuBar {
             if (isProjectOpen()) {
                 getCurrentProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.SQUID_3));
             } else {
-                Main.getController().setProjectView(new TopsoilProjectView(new TopsoilProject(
+                Main.getController().setProjectView(new ProjectView(new TopsoilProject(
                         FileMenuHelper.openSampleData(SampleData.SQUID_3)))
                 );
             }
@@ -265,8 +265,8 @@ public class TopsoilMenuBar extends MenuBar {
         );
     }
 
-    private TopsoilProjectView getCurrentProjectView() {
-        return isProjectOpen() ? (TopsoilProjectView) Main.getController().getMainContent() : null;
+    private ProjectView getCurrentProjectView() {
+        return isProjectOpen() ? (ProjectView) Main.getController().getMainContent() : null;
     }
 
     private DataTable getCurrentDataTable() {
@@ -274,7 +274,7 @@ public class TopsoilMenuBar extends MenuBar {
     }
 
     private boolean isProjectOpen() {
-        return Main.getController().getMainContent() instanceof TopsoilProjectView;
+        return Main.getController().getMainContent() instanceof ProjectView;
     }
 
 }

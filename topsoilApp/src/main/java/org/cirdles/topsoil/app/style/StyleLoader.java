@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.style;
 
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.util.TopsoilException;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -124,7 +123,7 @@ public class StyleLoader {
                 stylesheet = path.toUri().toURL().toExternalForm();
             }
         } catch (MalformedURLException e) {
-            new TopsoilException("Unable to load: " + path.toAbsolutePath().toString(), e).printStackTrace();
+            e.printStackTrace();
         }
         return stylesheet;
     }

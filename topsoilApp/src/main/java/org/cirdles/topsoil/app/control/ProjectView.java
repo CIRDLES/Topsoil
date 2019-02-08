@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * @author marottajb
  */
-public class TopsoilProjectView extends SplitPane {
+public class ProjectView extends SplitPane {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -43,11 +43,11 @@ public class TopsoilProjectView extends SplitPane {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilProjectView(TopsoilProject project) {
+    public ProjectView(TopsoilProject project) {
         this.project = project;
 
         try {
-            final ResourceExtractor re = new ResourceExtractor(TopsoilProjectView.class);
+            final ResourceExtractor re = new ResourceExtractor(ProjectView.class);
             final FXMLLoader loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
             loader.setRoot(this);
             loader.setController(this);

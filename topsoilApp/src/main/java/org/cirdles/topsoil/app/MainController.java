@@ -9,8 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.control.TopsoilHomeView;
-import org.cirdles.topsoil.app.control.TopsoilProjectView;
+import org.cirdles.topsoil.app.control.HomeView;
+import org.cirdles.topsoil.app.control.ProjectView;
 
 import java.io.IOException;
 
@@ -35,7 +35,7 @@ public class MainController extends VBox {
 
 	@FXML private AnchorPane mainContentPane;
 	private Image topsoilLogo;
-	private TopsoilHomeView homeView;
+	private HomeView homeView;
 
 	//**********************************************//
 	//                  PROPERTIES                  //
@@ -46,7 +46,7 @@ public class MainController extends VBox {
 		return dataShowing;
 	}
 	public boolean isDataShowing() {
-		return (mainContentPane.getChildren().get(0) instanceof TopsoilProjectView);
+		return (mainContentPane.getChildren().get(0) instanceof ProjectView);
 	}
 
 	//**********************************************//
@@ -72,7 +72,7 @@ public class MainController extends VBox {
 
 	@FXML
 	protected void initialize() {
-		homeView = new TopsoilHomeView();
+		homeView = new HomeView();
 		replaceMainContent(homeView);
 	}
 
@@ -84,7 +84,7 @@ public class MainController extends VBox {
 		return mainContentPane.getChildren().get(0);
 	}
 
-	public Node setProjectView(TopsoilProjectView projectView) {
+	public Node setProjectView(ProjectView projectView) {
 		return replaceMainContent(projectView);
 	}
 

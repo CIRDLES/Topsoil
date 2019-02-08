@@ -14,7 +14,7 @@ import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 import org.cirdles.topsoil.app.util.serialization.objects.SerializableTopsoilProject;
-import org.cirdles.topsoil.app.control.TopsoilProjectView;
+import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 
 import java.io.File;
@@ -168,14 +168,14 @@ public class FileMenuHelper {
 
     private static TopsoilProject getCurrentProject() {
         Node mainNode = Main.getController().getMainContent();
-        if (mainNode instanceof TopsoilProjectView) {
-            return ((TopsoilProjectView) mainNode).getProject();
+        if (mainNode instanceof ProjectView) {
+            return ((ProjectView) mainNode).getProject();
         }
         return null;
     }
 
     private static boolean isDataOpen() {
-        return Main.getController().getMainContent() instanceof TopsoilProjectView;
+        return Main.getController().getMainContent() instanceof ProjectView;
     }
 
     private static boolean shouldOverwriteData(String windowTitle) {

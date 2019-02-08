@@ -5,7 +5,7 @@ import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.app.model.TopsoilProject;
 import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
-import org.cirdles.topsoil.app.control.TopsoilProjectView;
+import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.constant.Lambda;
 import org.cirdles.topsoil.plot.PlotType;
@@ -101,7 +101,7 @@ public class SerializableTopsoilProject implements Serializable {
 
         // Reload project
         TopsoilProject project = new TopsoilProject(tables.toArray(new DataTable[]{}));
-        Main.getController().setProjectView(new TopsoilProjectView(project));
+        Main.getController().setProjectView(new ProjectView(project));
 
         // Reopen plots
         for (Map.Entry<DataTable, List<SerializablePlotData>> entry : plotsToOpen.entrySet()) {
@@ -135,7 +135,7 @@ public class SerializableTopsoilProject implements Serializable {
         return valueMap;
     }
 
-    public enum ProjectKey implements SerializableDataKey<TopsoilProjectView> {
+    public enum ProjectKey implements SerializableDataKey<ProjectView> {
         LAMBDAS,
         DATA_TABLES
     }

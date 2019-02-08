@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author marottajb
  */
-public class TopsoilHomeView extends VBox {
+public class HomeView extends VBox {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -52,13 +52,13 @@ public class TopsoilHomeView extends VBox {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private final ResourceExtractor re = new ResourceExtractor(TopsoilHomeView.class);
+    private final ResourceExtractor re = new ResourceExtractor(HomeView.class);
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilHomeView(Path... recentFiles) {
+    public HomeView(Path... recentFiles) {
         FXMLLoader loader;
         try {
             loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());

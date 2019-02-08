@@ -11,7 +11,6 @@ import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.style.StyleLoader;
-import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
@@ -57,7 +56,7 @@ public class Main extends Application {
         try {
             Font.loadFont(resourceExtractor.extractResourceAsFile(ARIMO_FONT).toURI().toURL().toExternalForm(), 14);
         } catch (MalformedURLException e) {
-            new TopsoilException("Unable to load custom font.", e).printStackTrace();
+            e.printStackTrace();
         }
         StyleLoader styleLoader = new StyleLoader();
         scene.getStylesheets().addAll(styleLoader.getStylesheets());
