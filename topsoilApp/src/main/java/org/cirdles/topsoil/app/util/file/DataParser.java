@@ -1,8 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.model.ColumnTree;
-import org.cirdles.topsoil.app.model.DataSegment;
-import org.cirdles.topsoil.app.model.DataTable;
+import org.cirdles.topsoil.app.model.*;
+import org.cirdles.topsoil.app.model.generic.DataValue;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
@@ -13,9 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -30,6 +27,7 @@ public abstract class DataParser {
     protected Path path;
     protected String delim;
     protected String[] lines;
+    protected String[][] cells;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -40,6 +38,7 @@ public abstract class DataParser {
             this.path = path;
             this.lines = DataParser.readLines(path);
             this.delim = getDelimiter();
+            this.cells = parseCells();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -48,6 +47,7 @@ public abstract class DataParser {
     public DataParser(String content) {
         this.lines = DataParser.readLines(content);
         this.delim = getDelimiter();
+        this.cells = parseCells();
     }
 
     //**********************************************//
@@ -74,6 +74,20 @@ public abstract class DataParser {
     abstract ColumnTree parseColumnTree();
 
     abstract List<DataSegment> parseData();
+
+    protected List<DataValue<?>> getValuesForRow(String[] row, List<DataColumn<?>> columns) {
+        List<DataValue<?>> values = new ArrayList<>();
+        for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
+            if (columns.get(colIndex).getType() == Double.class) {
+                DataColumn<Double> doubleCol = (DataColumn<Double>) columns.get(colIndex);
+                values.add(new DoubleValue(doubleCol, Double.parseDouble(row[colIndex])));
+            } else {
+                DataColumn<String> stringCol = (DataColumn<String>) columns.get(colIndex);
+                values.add(new StringValue(stringCol, row[colIndex]));
+            }
+        }
+        return values;
+    }
 
     public Path getPath() {
         return path;
@@ -121,6 +135,47 @@ public abstract class DataParser {
         }
 
         return rtnval;
+    }
+
+    protected List<DataColumn<?>> parseHeaders(int numHeaderRows) {
+        List<DataColumn<?>> columns = new ArrayList<>();
+        StringJoiner joiner;
+        for (int i = 0; i < cells[0].length; i++) {
+            joiner = new StringJoiner("\n");
+            for (int j = 0; j < numHeaderRows; j++) {
+                joiner.add(cells[j][i]);
+            }
+            columns.add(new DataColumn(joiner.toString(), getColumnDataType(i, numHeaderRows)));
+        }
+        return columns;
+    }
+
+    protected Class getColumnDataType(int colIndex, int numHeaderRows) {
+        final int SAMPLE_SIZE = 5;
+        boolean isDouble = true;
+        for (int i = numHeaderRows; i < numHeaderRows + SAMPLE_SIZE; i++) {
+            try {
+                Double.parseDouble(cells[i][colIndex]);
+            } catch (NumberFormatException e) {
+                isDouble = false;
+                break;
+            }
+        }
+        return isDouble ? Double.class : String.class;
+    }
+
+    protected int countHeaderRows() {
+        boolean isHeader = true;
+        int count = 0;
+        while (isHeader) {
+            try {
+                Double.parseDouble(cells[count][0]);
+                isHeader = false;
+            } catch (NumberFormatException e) {
+                count++;
+            }
+        }
+        return count;
     }
 
     //**********************************************//

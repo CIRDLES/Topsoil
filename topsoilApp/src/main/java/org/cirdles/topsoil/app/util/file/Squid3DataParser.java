@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
-import org.cirdles.topsoil.app.model.node.DataNode;
+import org.cirdles.topsoil.app.model.generic.DataNode;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -12,23 +12,15 @@ import java.util.*;
 public class Squid3DataParser extends DataParser {
 
     //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
-
-    private String[][] cells;
-
-    //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     public Squid3DataParser(Path path) {
         super(path);
-        this.cells = parseCells();
     }
 
     public Squid3DataParser(String content) {
         super(content);
-        this.cells = parseCells();
     }
 
     //**********************************************//
@@ -50,7 +42,7 @@ public class Squid3DataParser extends DataParser {
 
     List<DataSegment> parseData() {
         ColumnTree columnTree = parseColumnTree();
-        List<DataColumn> columns = columnTree.getLeafNodes();
+        List<DataColumn<?>> columns = columnTree.getLeafNodes();
 
         Integer[] segIndices = readDataSegments(cells);
         List<DataSegment> dataSegments = new ArrayList<>();
@@ -65,7 +57,7 @@ public class Squid3DataParser extends DataParser {
         return dataSegments;
     }
 
-    static DataCategory parseCategory(String[][] cells, int catIndex, int nextCatIndex) {
+    DataCategory parseCategory(String[][] cells, int catIndex, int nextCatIndex) {
         String[] catRow = cells[0];
         String catLabel = catRow[catIndex];
 
@@ -85,28 +77,28 @@ public class Squid3DataParser extends DataParser {
             }
             str = joiner.toString().trim();
             if (! str.equals("")) {
-                columns.add(new DataColumn(joiner.toString()));
+                Class clazz = getColumnDataType(colIndex, 5);
+                if (clazz == Double.class) {
+                    columns.add(new DataColumn<>(joiner.toString(), (Class<Double>) clazz));
+                } else {
+                    columns.add(new DataColumn<>(joiner.toString(), (Class<String>) clazz));
+                }
             }
         }
 
         return new DataCategory(catLabel, columns.toArray(new DataColumn[]{}));
     }
 
-    static DataSegment parseDataSegment(String[][] rows, int startIndex, int nextSegIndex, List<DataColumn> columns) {
+    DataSegment parseDataSegment(String[][] rows, int startIndex, int nextSegIndex, List<DataColumn<?>> columns) {
         String segmentLabel = rows[startIndex][0];
         List<DataRow> dataRows = new ArrayList<>();
         String rowLabel;
-        Map<DataColumn, Object> valueMap;
         if (nextSegIndex == -1 || nextSegIndex > rows.length) {
             nextSegIndex = rows.length;
         }
         for (int rowIndex = startIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
             rowLabel = rows[rowIndex][0];
-            valueMap = new HashMap<>();
-            for (int colIndex = 1; colIndex < rows[rowIndex].length - 1; colIndex++) {
-                valueMap.put(columns.get(colIndex - 1), rows[rowIndex][colIndex]);
-            }
-            dataRows.add(new DataRow(rowLabel, valueMap));
+            dataRows.add(new DataRow(rowLabel, getValuesForRow(rows[rowIndex], columns)));
         }
         return new DataSegment(segmentLabel, dataRows.toArray(new DataRow[]{}));
     }

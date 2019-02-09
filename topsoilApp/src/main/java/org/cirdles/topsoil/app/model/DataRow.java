@@ -1,30 +1,22 @@
 package org.cirdles.topsoil.app.model;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
-import org.cirdles.topsoil.app.model.node.LeafNode;
+import org.cirdles.topsoil.app.model.generic.BranchNode;
+import org.cirdles.topsoil.app.model.generic.DataValue;
 
-import java.util.Map;
+import java.io.Serializable;
+import java.util.List;
 import java.util.StringJoiner;
 
 /**
  * @author marottajb
  */
-public class DataRow extends LeafNode {
+public class DataRow extends BranchNode<DataValue<?>> {
 
     //**********************************************//
-    //                  PROPERTIES                  //
+    //                  CONSTANTS                   //
     //**********************************************//
 
-    private MapProperty<DataColumn, ObjectProperty<Object>> dataPropertyMap =
-            new SimpleMapProperty<>(FXCollections.observableHashMap());
-    public MapProperty<DataColumn, ObjectProperty<Object>> dataPropertyMapProperty() {
-        return dataPropertyMap;
-    }
-    public final ObservableMap<DataColumn, ObjectProperty<Object>> getDataPropertyMap() {
-        return dataPropertyMap.get();
-    }
+    private static final long serialVersionUID = -1183289797433461340L;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -34,24 +26,24 @@ public class DataRow extends LeafNode {
         super(label);
     }
 
-    public DataRow(String label, Map<DataColumn, Object> valMap) {
+    public DataRow(String label, List<DataValue<?>> values) {
         this(label);
-        dataPropertyMap.setValue(FXCollections.observableHashMap());
-        valMap.forEach((col, value) -> {
-            dataPropertyMap.putIfAbsent(col, putObjectInProperty(value));
-        });
+        this.getChildren().addAll(values);
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public ObjectProperty<Object> getValuePropertyForColumn(DataColumn column) {
-        return dataPropertyMap.get(column);
-    }
-
-    public int size() {
-        return dataPropertyMap.size();
+    public <T extends Serializable> DataValue<T> getValueForColumn(DataColumn<T> column) {
+        DataValue<T> value = null;
+        for (DataValue<?> val : this.getChildren()) {
+            if (val.getColumn() == column) {
+                value = (DataValue<T>) val;
+                break;
+            }
+        }
+        return value;
     }
 
     @Override
@@ -59,26 +51,23 @@ public class DataRow extends LeafNode {
         if (object instanceof DataRow) {
             DataRow other = (DataRow) object;
             if (! this.getLabel().equals(other.getLabel())) {
-                System.out.println("label");
                 return false;
             }
             if (this.isSelected() != other.isSelected()) {
                 return false;
             }
-            if (this.size() != other.size()) {
-                System.out.println("size");
+            if (this.getChildren().size() != other.getChildren().size()) {
                 return false;
             }
-            // TODO Figure out how to test equivalence for each value
-//            for (Map.Entry<DataColumn, ObjectProperty<Object>> entry : this.getDataPropertyMap().entrySet()) {
-//                Object thisValue = entry.getValue().get();
-//                Object thatValue = other.getValuePropertyForColumn(entry.getKey()).get();
-//                if (thisValue.equals(thatValue)) {
-//                    System.out.println(thisValue);
-//                    System.out.println(thatValue);
-//                    return false;
-//                }
-//            }
+            DataValue<?> thisValue;
+            DataValue<?> otherValue;
+            for (int i = 0; i < this.getChildren().size(); i++) {
+                thisValue = this.getChildren().get(i);
+                otherValue = other.getChildren().get(i);
+                if (! thisValue.equals(otherValue)) {
+                    return false;
+                }
+            }
         } else {
             return false;
         }
@@ -88,18 +77,10 @@ public class DataRow extends LeafNode {
     @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner(", ");
-        for (Map.Entry<DataColumn, ObjectProperty<Object>> entry : this.dataPropertyMap.get().entrySet()) {
-            joiner.add("\"" + entry.getKey().getLabel() + "\" => " + entry.getValue().get().toString());
+        for (DataValue<?> value : this.getChildren()) {
+            joiner.add("\"" + value.getColumn().getLabel() + "\" => " + value.getLabel());
         }
         return "DataRow(\"" + this.label.get() + "\"){ " + joiner.toString() + " }";
-    }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private <T> ObjectProperty<T> putObjectInProperty(T obj) {
-        return new SimpleObjectProperty<>(obj);
     }
 
 }

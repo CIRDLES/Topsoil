@@ -20,7 +20,7 @@ public class ProjectView extends SplitPane {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final String CONTROLLER_FXML = "topsoil-project-control.fxml";
+    private static final String CONTROLLER_FXML = "topsoil-project-view.fxml";
 
     //**********************************************//
     //                   CONTROLS                   //

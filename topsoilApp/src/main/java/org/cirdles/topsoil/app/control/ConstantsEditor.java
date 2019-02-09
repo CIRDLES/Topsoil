@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public class ConstantsEditor extends VBox {
 
-    private static String CONTROLLER_FXML = "constant-editor.fxml";
+    private static String CONTROLLER_FXML = "constants-editor.fxml";
 
     @FXML private VBox lambdaBox;
 

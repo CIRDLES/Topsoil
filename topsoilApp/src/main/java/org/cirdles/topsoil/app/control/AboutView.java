@@ -36,7 +36,8 @@ public class AboutView extends VBox {
     private static final String CIRDLES_URL = "https://cirdles.org/";
     private static final String RELEASE_LOG_URL = "https://github.com/CIRDLES/Topsoil/releases";
 
-    private static final String CONTROLLER_FXML = "about-control.fxml";
+    private static final String CONTROLLER_FXML = "about-view.fxml";
+    private static final String LOGO = "topsoil-logo-text.png";
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -94,7 +95,7 @@ public class AboutView extends VBox {
     /** {@inheritDoc}
      */
     @FXML protected void initialize() {
-        topsoilLogo.setImage(new Image(resourceExtractor.extractResourceAsPath("topsoil-logo-text.png").toUri().toString()));
+        topsoilLogo.setImage(new Image(resourceExtractor.extractResourceAsPath(LOGO).toUri().toString()));
         versionLabel.setText("Version " + (new TopsoilMetadata()).getVersion().split("-")[0]);
     }
 

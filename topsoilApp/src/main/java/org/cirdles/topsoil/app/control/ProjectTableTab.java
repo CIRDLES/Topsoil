@@ -42,7 +42,7 @@ public class ProjectTableTab extends Tab {
 
     class TabView extends VBox {
 
-        private static final String CONTROLLER_FXML = "project-table-tab-control.fxml";
+        private static final String CONTROLLER_FXML = "project-table-tab-view.fxml";
 
         @FXML private TopsoilTreeTableView treeTableView;
 

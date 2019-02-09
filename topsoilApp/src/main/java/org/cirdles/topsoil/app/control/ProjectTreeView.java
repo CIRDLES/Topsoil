@@ -9,9 +9,9 @@ import org.cirdles.topsoil.app.model.DataRow;
 import org.cirdles.topsoil.app.model.DataSegment;
 import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.app.model.TopsoilProject;
-import org.cirdles.topsoil.app.model.node.BranchNode;
-import org.cirdles.topsoil.app.model.node.DataNode;
-import org.cirdles.topsoil.app.model.node.LeafNode;
+import org.cirdles.topsoil.app.model.generic.BranchNode;
+import org.cirdles.topsoil.app.model.generic.DataNode;
+import org.cirdles.topsoil.app.model.generic.LeafNode;
 
 import java.util.*;
 

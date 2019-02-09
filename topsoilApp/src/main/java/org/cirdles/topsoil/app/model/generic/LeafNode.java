@@ -1,9 +1,15 @@
-package org.cirdles.topsoil.app.model.node;
+package org.cirdles.topsoil.app.model.generic;
 
 /**
  * @author marottajb
  */
 public class LeafNode extends DataNode {
+
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final long serialVersionUID = -9122019912022411715L;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //

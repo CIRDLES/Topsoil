@@ -1,6 +1,9 @@
-package org.cirdles.topsoil.app.model;
+package org.cirdles.topsoil.app.util;
 
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.model.DataRow;
+import org.cirdles.topsoil.app.model.DataSegment;
+import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.app.util.file.DefaultDataParser;

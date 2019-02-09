@@ -1,25 +1,25 @@
 package org.cirdles.topsoil.app.model;
 
-import org.cirdles.topsoil.app.model.generic.BranchNode;
-import org.cirdles.topsoil.app.model.generic.DataNode;
+import javafx.util.converter.DefaultStringConverter;
+import org.cirdles.topsoil.app.model.generic.DataValue;
 
 /**
  * @author marottajb
  */
-public class DataCategory extends BranchNode<DataNode> {
+public class StringValue extends DataValue<String> {
 
     //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = 372814634643053288L;
+    private static final long serialVersionUID = 1416736277609076650L;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public DataCategory(String label, DataNode... children) {
-        super(label, children);
+    public StringValue(DataColumn<String> column, String value) {
+        super(column, value, new DefaultStringConverter());
     }
 
 }

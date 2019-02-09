@@ -13,18 +13,6 @@ import static org.junit.Assert.*;
  */
 public class Squid3DataParserTest {
 
-    private static String TEST_FILE = "squid3-sample.csv";
-    static String[][] cells = new String[][]{
-            new String[]{ "", "Cat1", "", "", "Cat2", "", "Cat3" },
-            new String[]{ "", "", "Col2", "", "", "", "" },
-            new String[]{ "", "Col1", "Col2", "", "", "", "" },
-            new String[]{ "", "Col1", "Col2", "", "Col4", "", "" },
-            new String[]{ "", "Col1", "Col2", "Col3", "Col4", "Col5", "" },
-            new String[]{ "Seg1", "", "", "", "", "", "" },
-            new String[]{ "Seg1:Row1", "0.0", "0.0", "0.0", "0.0", "0.0", "" },
-            new String[]{ "Seg2", "", "", "", "", "", "" },
-            new String[]{ "Seg2:Row1", "0.0", "0.0", "0.0", "0.0", "0.0", "" }
-    };
     private static String CONTENT = (
             ",Cat1,,,Cat2,,Cat3\n" +
             ",,Col2,,,,\n" +

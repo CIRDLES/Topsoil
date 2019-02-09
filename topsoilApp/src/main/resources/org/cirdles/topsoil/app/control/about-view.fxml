@@ -13,7 +13,7 @@
    <children>
       <ImageView fx:id="topsoilLogo" fitHeight="180.0" fitWidth="206.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../topsoil-logo-text.png" />
+            <Image url="@topsoil-logo-text.png" />
          </image>
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

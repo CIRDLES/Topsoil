@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.model;
 
-import org.cirdles.topsoil.app.model.node.BranchNode;
-import org.cirdles.topsoil.app.model.node.DataNode;
+import org.cirdles.topsoil.app.model.generic.BranchNode;
+import org.cirdles.topsoil.app.model.generic.DataNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +12,14 @@ import java.util.List;
 public class ColumnTree extends BranchNode<DataNode> {
 
     //**********************************************//
-    //                 CONSTRUCTORS                 //
+    //                PUBLIC METHODS                //
     //**********************************************//
 
-    public ColumnTree(BranchNode<DataNode> root) {
-        this(root.getChildren());
-    }
+    private static final long serialVersionUID = 6635594781414924593L;
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     public ColumnTree(List<? extends DataNode> topLevel) {
         this.getChildren().addAll(topLevel);
@@ -28,7 +30,7 @@ public class ColumnTree extends BranchNode<DataNode> {
     //**********************************************//
 
     @Override
-    public List<DataColumn> getLeafNodes() {
+    public List<DataColumn<?>> getLeafNodes() {
         return leafHelper(super.getLeafNodes());
     }
 
@@ -36,8 +38,8 @@ public class ColumnTree extends BranchNode<DataNode> {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private <T> List<DataColumn> leafHelper(List<T> leaves) {
-        List<DataColumn> columns = new ArrayList<>();
+    private <T> List<DataColumn<?>> leafHelper(List<T> leaves) {
+        List<DataColumn<?>> columns = new ArrayList<>();
         for (T leaf : leaves) {
             if (leaf instanceof DataColumn) {
                 columns.add((DataColumn) leaf);

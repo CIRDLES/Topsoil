@@ -1,9 +1,13 @@
 package org.cirdles.topsoil.app.model;
 
+import org.cirdles.topsoil.app.model.generic.DataValue;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,76 +15,70 @@ import java.util.Map;
  */
 public class DataRowTest {
 
-    static DataColumn[] COLUMNS = new DataColumn[]{
-            new DataColumn("Zero"),
-            new DataColumn("One")
-    };
-
-    DataRow rowOne;
-    DataRow rowTwo;
+    private static DataColumn<String> stringCol = new DataColumn<>("StringCol", String.class);
+    private static DataColumn<Double> doubleCol = new DataColumn<>("DoubleCol", Double.class);
+    private DataRow rowOne, rowTwo;
 
     @Test
     public void equals_test() {
-        Map<DataColumn, Object> valueMapOne = new HashMap<>();
-        valueMapOne.put(COLUMNS[0], "0.0");
-        valueMapOne.put(COLUMNS[1], "1.0");
-        rowOne = new DataRow("Row", valueMapOne);
+        List<DataValue<?>> valueListOne = new ArrayList<>();
+        valueListOne.add(new StringValue(stringCol, "0.0"));
+        valueListOne.add(new DoubleValue(doubleCol, 0.0));
+        rowOne = new DataRow("Row", valueListOne);
 
-        Map<DataColumn, Object> valueMapTwo = new HashMap<>();
-        valueMapTwo.put(COLUMNS[0], "0.0");
-        valueMapTwo.put(COLUMNS[1], "1.0");
-        rowTwo = new DataRow("Row", valueMapTwo);
+        List<DataValue<?>> valueListTwo = new ArrayList<>();
+        valueListTwo.add(new StringValue(stringCol, "0.0"));
+        valueListTwo.add(new DoubleValue(doubleCol, 0.0));
+        rowTwo = new DataRow("Row", valueListTwo);
 
-        boolean equal = rowOne.equals(rowTwo);
-        Assert.assertTrue(equal);
+        Assert.assertEquals(rowOne, rowTwo);
     }
 
     @Test
     public void equalsFalseLabel_test() {
-        Map<DataColumn, Object> valueMapOne = new HashMap<>();
-        valueMapOne.put(COLUMNS[0], "0.0");
-        valueMapOne.put(COLUMNS[1], "1.0");
-        rowOne = new DataRow("Row1", valueMapOne);
+        List<DataValue<?>> valueListOne = new ArrayList<>();
+        valueListOne.add(new StringValue(stringCol, "0.0"));
+        valueListOne.add(new DoubleValue(doubleCol, 0.0));
+        rowOne = new DataRow("Row1", valueListOne);
 
-        Map<DataColumn, Object> valueMapTwo = new HashMap<>();
-        valueMapTwo.put(COLUMNS[0], "0.0");
-        valueMapTwo.put(COLUMNS[1], "1.0");
-        rowTwo = new DataRow("Row2", valueMapTwo);
+        List<DataValue<?>> valueListTwo = new ArrayList<>();
+        valueListTwo.add(new StringValue(stringCol, "0.0"));
+        valueListTwo.add(new DoubleValue(doubleCol, 0.0));
+        rowTwo = new DataRow("Row2", valueListTwo);
 
-        boolean equal = rowOne.equals(rowTwo);
-        Assert.assertFalse(equal);
+        Assert.assertEquals(rowOne, rowTwo);
     }
 
     @Test
     public void equalsFalseSelected_test() {
-        Map<DataColumn, Object> valueMapOne = new HashMap<>();
-        valueMapOne.put(COLUMNS[0], "0.0");
-        valueMapOne.put(COLUMNS[1], "1.0");
-        rowOne = new DataRow("Row", valueMapOne);
-        rowOne.setSelected(false);
+        List<DataValue<?>> valueListOne = new ArrayList<>();
+        valueListOne.add(new StringValue(stringCol, "0.0"));
+        valueListOne.add(new DoubleValue(doubleCol, 0.0));
+        rowOne = new DataRow("Row", valueListOne);
+        rowOne.setSelected(true);
 
-        Map<DataColumn, Object> valueMapTwo = new HashMap<>();
-        valueMapTwo.put(COLUMNS[0], "0.0");
-        valueMapTwo.put(COLUMNS[1], "1.0");
-        rowTwo = new DataRow("Row", valueMapTwo);
+        List<DataValue<?>> valueListTwo = new ArrayList<>();
+        valueListTwo.add(new StringValue(stringCol, "0.0"));
+        valueListTwo.add(new DoubleValue(doubleCol, 0.0));
+        rowTwo = new DataRow("Row", valueListTwo);
+        rowTwo.setSelected(false);
 
-        boolean equal = rowOne.equals(rowTwo);
-        Assert.assertFalse(equal);
+        Assert.assertEquals(rowOne, rowTwo);
     }
 
     @Test
-    public void equalsFalseValueMap_test() {
-        Map<DataColumn, Object> valueMapOne = new HashMap<>();
-        valueMapOne.put(COLUMNS[0], "0.0");
-        rowOne = new DataRow("Row", valueMapOne);
+    public void equalsFalseValues_test() {
+        List<DataValue<?>> valueListOne = new ArrayList<>();
+        valueListOne.add(new StringValue(stringCol, "0.0"));
+        valueListOne.add(new DoubleValue(doubleCol, 0.0));
+        rowOne = new DataRow("Row", valueListOne);
 
-        Map<DataColumn, Object> valueMapTwo = new HashMap<>();
-        valueMapTwo.put(COLUMNS[0], "1.0");
-        valueMapTwo.put(COLUMNS[1], "0.0");
-        rowTwo = new DataRow("Row", valueMapTwo);
+        List<DataValue<?>> valueListTwo = new ArrayList<>();
+        valueListTwo.add(new StringValue(stringCol, "1.0"));
+        valueListTwo.add(new DoubleValue(doubleCol, 1.0));
+        rowTwo = new DataRow("Row", valueListTwo);
 
-        boolean equal = rowOne.equals(rowTwo);
-        Assert.assertFalse(equal);
+        Assert.assertEquals(rowOne, rowTwo);
     }
 
 }

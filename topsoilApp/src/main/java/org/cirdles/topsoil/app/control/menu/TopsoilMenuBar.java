@@ -8,7 +8,7 @@ import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.model.DataColumn;
 import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.app.model.TopsoilProject;
-import org.cirdles.topsoil.app.model.SampleData;
+import org.cirdles.topsoil.app.util.SampleData;
 import org.cirdles.topsoil.app.control.dialog.VariableChooserDialog;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
@@ -55,9 +55,7 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem openProjectItem = new MenuItem ("Open...");
         openProjectItem.setOnAction(event -> {
-            if (! FileMenuHelper.openProject()) {
-                // TODO
-            }
+            // TODO
         });
         Menu openRecentProjectMenu = new Menu("Open Recent");
         openRecentProjectMenu.setDisable(true);
@@ -222,7 +220,7 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getVisualizationsMenu() {
         MenuItem assignVarsItem = new MenuItem("Assign Variables...");
         assignVarsItem.setOnAction(event -> {
-            Map<Variable, DataColumn> selections = VariableChooserDialog.showDialog(getCurrentDataTable(),
+            Map<Variable<?>, DataColumn<?>> selections = VariableChooserDialog.showDialog(getCurrentDataTable(),
                                                                                     Arrays.asList(IndependentVariable.X,
                                                                                                 IndependentVariable.Y));
             getCurrentDataTable().setColumnsForAllVariables(selections);

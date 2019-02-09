@@ -4,7 +4,6 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.model.*;
 import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.app.util.file.Squid3DataParser;
-import org.cirdles.topsoil.app.util.serialization.objects.SerializableTopsoilProject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -48,7 +47,7 @@ public class ProjectSerializerTest extends ApplicationTest {
             System.out.println();
             ProjectSerializer.serialize(tempPath, project);
             SerializableTopsoilProject sProject = ProjectSerializer.deserialize(tempPath);
-            DataTable after = sProject.getTopsoilProjectObject().getDataTableList().get(0);
+            DataTable after = sProject.getTopsoilProject().getDataTableList().get(0);
             printDataTable(after);
             Assert.assertEquals(before, after);
         } catch (IOException e) {

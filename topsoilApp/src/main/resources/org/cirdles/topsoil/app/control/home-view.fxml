@@ -40,7 +40,7 @@
             <children>
                 <ImageView fx:id="cirdlesLogo" fitHeight="28.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../cirdles-logo-yellow.png" />
+                        <Image url="@cirdles-logo-yellow.png" />
                     </image>
                     <HBox.margin>
                         <Insets />

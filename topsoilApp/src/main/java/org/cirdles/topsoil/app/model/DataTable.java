@@ -4,12 +4,15 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.model.node.BranchNode;
-import org.cirdles.topsoil.app.model.node.DataNode;
+import org.cirdles.topsoil.app.model.generic.BranchNode;
+import org.cirdles.topsoil.app.model.generic.DataNode;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
@@ -18,17 +21,24 @@ import java.util.*;
 public class DataTable extends BranchNode<DataSegment> {
 
     //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final long serialVersionUID = 2353637336965993167L;
+
+    //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private final BiMap<Variable, DataColumn> variableColumnBiMap = HashBiMap.create();
+    private HashBiMap<Variable<?>, DataColumn<?>> variableColumnBiMap = HashBiMap.create();
     private ColumnTree columnTree;
 
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private final ObjectProperty<IsotopeSystem> isotopeSystem = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
+    private transient final ObjectProperty<IsotopeSystem> isotopeSystem =
+            new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
     public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
         return isotopeSystem;
     }
@@ -39,7 +49,8 @@ public class DataTable extends BranchNode<DataSegment> {
         isotopeSystem.set(type);
     }
 
-    private final ObjectProperty<Uncertainty> unctFormat = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
+    private transient final ObjectProperty<Uncertainty> unctFormat =
+            new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
     public ObjectProperty<Uncertainty> unctFormatProperty() {
         return unctFormat;
     }
@@ -88,15 +99,15 @@ public class DataTable extends BranchNode<DataSegment> {
         return columnTree;
     }
 
-    public BiMap<Variable, DataColumn> getVariableColumnMap() {
+    public BiMap<Variable<?>, DataColumn<?>> getVariableColumnMap() {
         return HashBiMap.create(variableColumnBiMap);
     }
 
-    public DataColumn setColumnForVariable(Variable var, DataColumn col) {
+    public DataColumn<?> setColumnForVariable(Variable<?> var, DataColumn<?> col) {
         return variableColumnBiMap.putIfAbsent(var, col);
     }
 
-    public void setColumnsForAllVariables(Map<Variable, DataColumn> map) {
+    public void setColumnsForAllVariables(Map<Variable<?>, DataColumn<?>> map) {
         variableColumnBiMap.clear();
         variableColumnBiMap.putAll(map);
     }
@@ -124,6 +135,22 @@ public class DataTable extends BranchNode<DataSegment> {
             return false;
         }
         return true;
+    }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeFields();
+        out.writeObject(isotopeSystem);
+        out.writeObject(unctFormat);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.readFields();
+        isotopeSystem.set((IsotopeSystem) in.readObject());
+        unctFormat.set((Uncertainty) in.readObject());
     }
 
 }

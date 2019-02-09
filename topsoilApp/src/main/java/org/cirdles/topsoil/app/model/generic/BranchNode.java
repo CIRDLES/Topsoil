@@ -1,22 +1,29 @@
-package org.cirdles.topsoil.app.model.node;
+package org.cirdles.topsoil.app.model.generic;
 
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author marottajb
  */
 public class BranchNode<T extends DataNode> extends DataNode {
 
-    protected ListProperty<T> children = new SimpleListProperty<>(FXCollections.observableArrayList());
-    public final ObservableList<T> getChildren() {
-        return children.get();
-    }
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final long serialVersionUID = 4826726036796946067L;
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
+    protected ArrayList<T> children = new ArrayList<>();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -32,12 +39,16 @@ public class BranchNode<T extends DataNode> extends DataNode {
 
     public BranchNode(String title, T... children) {
         this(title);
-        this.children.addAll(children);
+        this.children.addAll(asList(children));
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
+    public ArrayList<T> getChildren() {
+        return children;
+    }
 
     /**
      * Returns the first {@code DataNode} within this branch with the specified title.
@@ -97,4 +108,19 @@ public class BranchNode<T extends DataNode> extends DataNode {
         }
         return true;
     }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeFields();
+        out.writeObject(children);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.readFields();
+        children.addAll((ArrayList<T>) in.readObject());
+    }
+
 }

@@ -7,8 +7,8 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import org.cirdles.topsoil.app.model.*;
-import org.cirdles.topsoil.app.model.node.BranchNode;
-import org.cirdles.topsoil.app.model.node.DataNode;
+import org.cirdles.topsoil.app.model.generic.BranchNode;
+import org.cirdles.topsoil.app.model.generic.DataNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,21 +82,20 @@ public class TopsoilTreeTableView extends TreeTableView<DataNode> {
         return column;
     }
 
-    private List<TreeTableColumn<DataNode, Object>> getTableColumnsForBranchNode(BranchNode<DataNode> branchNode) {
-        List<TreeTableColumn<DataNode, Object>> tableColumns = new ArrayList<>();
-        TreeTableColumn<DataNode, Object> newColumn;
+    private List<TreeTableColumn<DataNode, String>> getTableColumnsForBranchNode(BranchNode<DataNode> branchNode) {
+        List<TreeTableColumn<DataNode, String>> tableColumns = new ArrayList<>();
+        TreeTableColumn<DataNode, String> newColumn;
         for (DataNode node : branchNode.getChildren()) {
             if (node instanceof DataColumn) {
-                DataColumn dataColumn = (DataColumn) node;
+                DataColumn dataColumn = (DataColumn<?>) node;
                 newColumn = new TreeTableColumn<>(dataColumn.getLabel());
-                newColumn.setCellValueFactory(value -> {
-                    if (value.getValue().getValue() instanceof DataRow) {
-                        DataRow row = (DataRow) value.getValue().getValue();
-                        return row.getValuePropertyForColumn(dataColumn);
+                newColumn.setCellValueFactory(param -> {
+                    if (param.getValue().getValue() instanceof DataRow) {
+                        DataRow row = (DataRow) param.getValue().getValue();
+                        return row.getValueForColumn(dataColumn).labelProperty();
                     }
                     return null;
                 });
-
             } else {
                 BranchNode<DataNode> childBranch = (BranchNode<DataNode>) node;
                 newColumn = new TreeTableColumn<>(childBranch.getLabel());

@@ -91,7 +91,7 @@ public class VisualizationsMenuHelper {
     public static List<List<Map<String, Object>>> getPlotDataFromTable(DataTable table) {
         List<List<Map<String, Object>>> plotData = new ArrayList<>();
         List<DataSegment> tableAliquots = table.getChildren();
-        BiMap<Variable, DataColumn> varMap = table.getVariableColumnMap();
+        BiMap<Variable<?>, DataColumn<?>> varMap = table.getVariableColumnMap();
 
         List<DataRow> rows;
         DataColumn column;
@@ -113,7 +113,7 @@ public class VisualizationsMenuHelper {
                     column = varMap.get(var);
                     if (column != null) {
                         column = varMap.get(var);
-                        value = row.getValuePropertyForColumn(column).get();
+                        value = row.getValueForColumn(column).getValue();
                         if (var instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(table.getUnctFormat())) {
                             // @TODO The code below assumes that a dep-variable is always dependent on an ind-variable
                             double doubleVal = (double) value;
@@ -121,7 +121,7 @@ public class VisualizationsMenuHelper {
                             IndependentVariable dependency = (IndependentVariable) dependentVariable.getDependency();
                             DataColumn dependentColumn = varMap.get(dependency);
                             doubleVal /= 100;
-                            doubleVal *= (Double) row.getValuePropertyForColumn(dependentColumn).get();
+                            doubleVal *= (Double) row.getValueForColumn(dependentColumn).getValue();
                             value = doubleVal;
                         }
                     } else {

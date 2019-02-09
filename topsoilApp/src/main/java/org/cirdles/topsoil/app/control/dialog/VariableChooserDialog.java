@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author Jake Marotta
  */
-public class VariableChooserDialog extends Dialog<Map<Variable, DataColumn>> {
+public class VariableChooserDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
 
     /*
         @TODO Create FXML for controller
@@ -83,7 +83,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable, DataColumn>> {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static Map<Variable, DataColumn> showDialog(DataTable table, List<Variable> required) {
+    public static Map<Variable<?>, DataColumn<?>> showDialog(DataTable table, List<Variable> required) {
         return new VariableChooserDialog(table, required).showAndWait().orElse(null);
     }
 
@@ -111,14 +111,14 @@ public class VariableChooserDialog extends Dialog<Map<Variable, DataColumn>> {
 		//                  PROPERTIES                  //
 		//**********************************************//
 
-		private MapProperty<Variable, DataColumn> selectionsProperty;
-		public MapProperty<Variable, DataColumn> selectionsProperty() {
+		private MapProperty<Variable<?>, DataColumn<?>> selectionsProperty;
+		public MapProperty<Variable<?>, DataColumn<?>> selectionsProperty() {
 			if (selectionsProperty == null) {
 				selectionsProperty = new SimpleMapProperty<>(FXCollections.observableHashMap());
 			}
 			return selectionsProperty;
 		}
-		public Map<Variable, DataColumn> getSelections() {
+		public Map<Variable<?>, DataColumn<?>> getSelections() {
 			return selectionsProperty().get();
 		}
 
@@ -130,8 +130,8 @@ public class VariableChooserDialog extends Dialog<Map<Variable, DataColumn>> {
 			super();
 
 			ColumnTree columnTree = table.getColumnTree();
-			List<DataColumn> columns = columnTree.getLeafNodes();
-			Map<Variable, DataColumn> currentSelections = table.getVariableColumnMap();
+			List<DataColumn<?>> columns = columnTree.getLeafNodes();
+			Map<Variable<?>, DataColumn<?>> currentSelections = table.getVariableColumnMap();
 
 			initializeControls();
 
@@ -185,7 +185,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable, DataColumn>> {
 			}
 
 			// Selects the current variable-column assignments
-			for (Map.Entry<Variable, DataColumn> entry : currentSelections.entrySet()) {
+			for (Map.Entry<Variable<?>, DataColumn<?>> entry : currentSelections.entrySet()) {
 				RadioButton toggle = (RadioButton) getNodeByRowColumnIndex(Variables.ALL.indexOf(entry.getKey()),
 				                                                           columns.indexOf(entry.getValue()),
 				                                                           buttonGrid);

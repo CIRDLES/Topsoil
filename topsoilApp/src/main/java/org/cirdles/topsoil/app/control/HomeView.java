@@ -25,7 +25,7 @@ public class HomeView extends VBox {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final String CONTROLLER_FXML = "home-control.fxml";
+    private static final String CONTROLLER_FXML = "home-view.fxml";
 
     //**********************************************//
     //                   CONTROLS                   //

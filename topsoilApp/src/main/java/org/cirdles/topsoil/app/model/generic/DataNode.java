@@ -1,9 +1,14 @@
-package org.cirdles.topsoil.app.model.node;
+package org.cirdles.topsoil.app.model.generic;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * A {@code DataNode} is the basic building block for reading in structured model. When parsing delimited model
@@ -12,19 +17,20 @@ import javafx.beans.property.StringProperty;
  *
  * @author marottajb
  */
-public abstract class DataNode {
+public abstract class DataNode implements Serializable {
 
     //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
 
+    private static final long serialVersionUID = 7042768990238389822L;
     protected static String DEFAULT_LABEL = "";
 
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
 
-    protected StringProperty label = new SimpleStringProperty(DEFAULT_LABEL);
+    protected transient StringProperty label = new SimpleStringProperty(DEFAULT_LABEL);
     public StringProperty labelProperty() {
         return label;
     }
@@ -35,7 +41,7 @@ public abstract class DataNode {
         labelProperty().set(label);
     }
 
-    protected BooleanProperty selected = new SimpleBooleanProperty(true);
+    protected transient BooleanProperty selected = new SimpleBooleanProperty(true);
     public BooleanProperty selectedProperty() {
         return selected;
     }
@@ -58,9 +64,29 @@ public abstract class DataNode {
         setLabel(label);
     }
 
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
     @Override
     public String toString() {
         return label.get();
+    }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeFields();
+        out.writeChars(label.get());
+        out.writeBoolean(selected.get());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.readFields();
+        label.set(String.valueOf(in.readObject()));
+        selected.set(in.readBoolean());
     }
 
 }

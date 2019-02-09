@@ -134,7 +134,7 @@ public class DataTableOptionsView extends VBox {
 	}
 
 	private void makeGrid() {
-		List<DataColumn> columns = table.getColumnTree().getLeafNodes();
+		List<DataColumn<?>> columns = table.getColumnTree().getLeafNodes();
 		List<DataRow> firstSegmentRows = table.getChildren().get(0).getChildren();
 		DataRow[] sampleRows = Arrays.copyOfRange(firstSegmentRows.toArray(new DataRow[]{}), 0,
 												  Math.min(firstSegmentRows.size(), SAMPLE_SIZE));
@@ -181,10 +181,10 @@ public class DataTableOptionsView extends VBox {
 		for (int i = 0; i < sampleRows.length; i++) {
 			rowIndex = i + 2;
 			for (int j = 0; j < columns.size(); j++) {
-				if (i >= sampleRows[i].size()) {
+				if (i >= sampleRows[i].getChildren().size()) {
 					label = new Label("0.0");
 				} else {
-					label = new Label(sampleRows[i].getValuePropertyForColumn(columns.get(j)).toString());
+					label = new Label(sampleRows[i].getValueForColumn((DataColumn) columns.get(j)).getLabel());
 				}
 				label.setFont(Font.font("Monospaced"));
 				label.setMinSize(100.0, 17.0);

@@ -7,13 +7,14 @@ import org.cirdles.topsoil.app.MainController;
 import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.app.model.DataTemplate;
 import org.cirdles.topsoil.app.model.TopsoilProject;
+import org.cirdles.topsoil.app.util.file.DataWriter;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
-import org.cirdles.topsoil.app.model.SampleData;
+import org.cirdles.topsoil.app.util.SampleData;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
-import org.cirdles.topsoil.app.util.serialization.objects.SerializableTopsoilProject;
+import org.cirdles.topsoil.app.util.serialization.SerializableTopsoilProject;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 
@@ -40,15 +41,14 @@ public class FileMenuHelper {
         return project;
     }
 
-    public static boolean openProject() {
-        boolean completed = false;
+    public static TopsoilProject openProject() {
         if (ProjectSerializer.getCurrentProjectPath() != null && shouldOverwriteData("Open Project")) {
             File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getPrimaryStage());
             if (file.exists()) {
-                completed = openProject(Paths.get(file.toURI()));
+                return openProject(Paths.get(file.toURI()));
             }
         }
-        return completed;
+        return null;
     }
 
     public static DataTable openSampleData(SampleData data) {
@@ -187,11 +187,8 @@ public class FileMenuHelper {
         return (response.isPresent() && response.get().equals(ButtonType.YES));
     }
 
-    private static boolean openProject(Path projectPath) {
-        boolean completed;
-        SerializableTopsoilProject sProject = ProjectSerializer.deserialize(projectPath);
-        completed = sProject.reloadProject();
-        return completed;
+    private static TopsoilProject openProject(Path projectPath) {
+        return ProjectSerializer.deserialize(projectPath).getTopsoilProject();
     }
 
     private static boolean saveProjectAs(TopsoilProject project, Path path) {
@@ -212,9 +209,7 @@ public class FileMenuHelper {
     }
 
     private static boolean exportTableAs(DataTable table, Path path) {
-        boolean completed = false;
-        // @TODO
-        return completed;
+        return DataWriter.writeTableToFile(table, path);
     }
 
 }
