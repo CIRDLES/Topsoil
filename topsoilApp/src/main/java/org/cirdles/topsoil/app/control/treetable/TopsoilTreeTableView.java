@@ -3,9 +3,13 @@ package org.cirdles.topsoil.app.control.treetable;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
+import javafx.scene.text.Font;
 import org.cirdles.topsoil.app.model.*;
 import org.cirdles.topsoil.app.model.generic.BranchNode;
 import org.cirdles.topsoil.app.model.generic.DataNode;
@@ -64,20 +68,23 @@ public class TopsoilTreeTableView extends TreeTableView<DataNode> {
         column.setCellFactory(col -> {
             CheckBoxTreeTableCell<DataNode, ObservableValue<Boolean>> cell = new CheckBoxTreeTableCell<>();
             cell.setAlignment(Pos.CENTER);
-            cell.setEditable(true);
-            cell.setDisable(false);
-            cell.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-                cell.getTreeTableRow().getTreeItem().getValue().setSelected(newValue);
-            }));
+//            cell.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+//                cell.getTreeTableRow().getTreeItem().getValue().setSelected(newValue);
+//            }));
             return cell;
         });
-        column.setPrefWidth(50);
         return column;
     }
 
     private TreeTableColumn<DataNode, String> getLabelColumn() {
         TreeTableColumn<DataNode, String> column = new TreeTableColumn<>("Label");
         column.setCellValueFactory(value -> value.getValue().getValue().labelProperty());
+        column.setCellFactory(value -> {
+            TreeTableCell<DataNode, String> cell = new TextFieldTreeTableCell<>();
+            cell.setAlignment(Pos.CENTER_LEFT);
+            cell.setStyle("-fx-font-style: italic;");
+            return cell;
+        });
         column.setPrefWidth(150);
         return column;
     }
@@ -96,11 +103,22 @@ public class TopsoilTreeTableView extends TreeTableView<DataNode> {
                     }
                     return null;
                 });
+                newColumn.setCellFactory(value -> {
+                    TreeTableCell<DataNode, String> cell = new TextFieldTreeTableCell<>();
+                    if (dataColumn.getType() == Double.class) {
+                        cell.setAlignment(Pos.CENTER_RIGHT);
+                    } else if (dataColumn.getType() == String.class) {
+                        cell.setAlignment(Pos.CENTER_LEFT);
+                        cell.setStyle("-fx-font-style: italic;");
+                    }
+                    return cell;
+                });
             } else {
                 BranchNode<DataNode> childBranch = (BranchNode<DataNode>) node;
                 newColumn = new TreeTableColumn<>(childBranch.getLabel());
                 newColumn.getColumns().addAll(getTableColumnsForBranchNode(childBranch));
             }
+            newColumn.setPrefWidth(100.0);
             tableColumns.add(newColumn);
         }
         return tableColumns;

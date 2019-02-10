@@ -114,13 +114,14 @@ public class BranchNode<T extends DataNode> extends DataNode {
     //**********************************************//
 
     private void writeObject(ObjectOutputStream out) throws IOException {
+        ObjectOutputStream.PutField fields = out.putFields();
+        fields.put("children", children);
         out.writeFields();
-        out.writeObject(children);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.readFields();
-        children.addAll((ArrayList<T>) in.readObject());
+        ObjectInputStream.GetField fields = in.readFields();
+        children = (ArrayList<T>) fields.get("children", null);
     }
 
 }

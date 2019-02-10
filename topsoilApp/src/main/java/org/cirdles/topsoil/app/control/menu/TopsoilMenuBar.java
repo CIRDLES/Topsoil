@@ -72,7 +72,6 @@ public class TopsoilMenuBar extends MenuBar {
                                         FileMenuHelper.openSampleData(SampleData.UPB)))
                 );
             }
-            SampleData.UPB.printDataTable();
         });
         MenuItem openUThSampleItem = new MenuItem("Uranium-Thorium");
         openUThSampleItem.setOnAction(event -> {
@@ -83,7 +82,6 @@ public class TopsoilMenuBar extends MenuBar {
                         FileMenuHelper.openSampleData(SampleData.UTH)))
                 );
             }
-            SampleData.UTH.printDataTable();
         });
         MenuItem openSquid3SampleItem = new MenuItem("Squid 3 Data");
         openSquid3SampleItem.setOnAction(event -> {
@@ -94,7 +92,6 @@ public class TopsoilMenuBar extends MenuBar {
                         FileMenuHelper.openSampleData(SampleData.SQUID_3)))
                 );
             }
-            SampleData.SQUID_3.printDataTable();
         });
         Menu openSampleMenu = new Menu("Open Sample", null,
                                        openUPbSampleItem,

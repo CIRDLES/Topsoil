@@ -78,13 +78,11 @@ public abstract class DataNode implements Serializable {
     //**********************************************//
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeFields();
         out.writeChars(label.get());
         out.writeBoolean(selected.get());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.readFields();
         label.set(String.valueOf(in.readObject()));
         selected.set(in.readBoolean());
     }

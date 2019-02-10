@@ -47,7 +47,6 @@ public abstract class DataValue<T extends Serializable> extends LeafNode {
         this.column = column;
         this.value.set(value);
         this.label.bind(Bindings.createStringBinding(() -> converter.toString(value), this.value));
-
     }
 
     //**********************************************//
@@ -77,12 +76,15 @@ public abstract class DataValue<T extends Serializable> extends LeafNode {
     //**********************************************//
 
     private void writeObject(ObjectOutputStream out) throws IOException {
+        ObjectOutputStream.PutField fields = out.putFields();
+        fields.put("column", column);
         out.writeFields();
         out.writeObject(value.get());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.readFields();
+        ObjectInputStream.GetField fields = in.readFields();
+        column = (DataColumn<T>) fields.get("column", null);
         value.set((T) in.readObject());
     }
 

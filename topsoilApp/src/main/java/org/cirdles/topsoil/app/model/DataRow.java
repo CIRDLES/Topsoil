@@ -36,14 +36,12 @@ public class DataRow extends BranchNode<DataValue<?>> {
     //**********************************************//
 
     public <T extends Serializable> DataValue<T> getValueForColumn(DataColumn<T> column) {
-        DataValue<T> value = null;
         for (DataValue<?> val : this.getChildren()) {
-            if (val.getColumn() == column) {
-                value = (DataValue<T>) val;
-                break;
+            if (val.getColumn().equals(column)) {
+                return (DataValue<T>) val;
             }
         }
-        return value;
+        return null;
     }
 
     @Override

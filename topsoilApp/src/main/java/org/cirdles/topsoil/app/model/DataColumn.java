@@ -2,6 +2,10 @@ package org.cirdles.topsoil.app.model;
 
 import org.cirdles.topsoil.app.model.generic.LeafNode;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /**
  * @author marottajb
  */
@@ -44,6 +48,21 @@ public class DataColumn<T> extends LeafNode {
             }
         }
         return false;
+    }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        ObjectOutputStream.PutField fields = out.putFields();
+        fields.put("type", type);
+        out.writeFields();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        ObjectInputStream.GetField fields = in.readFields();
+        type = (Class<T>) fields.get("type", null);
     }
 
 }

@@ -30,7 +30,7 @@ public class DataTable extends BranchNode<DataSegment> {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private HashBiMap<Variable<?>, DataColumn<?>> variableColumnBiMap = HashBiMap.create();
+    private HashBiMap<Variable<?>, DataColumn<?>> varMap = HashBiMap.create();
     private ColumnTree columnTree;
 
     //**********************************************//
@@ -100,16 +100,16 @@ public class DataTable extends BranchNode<DataSegment> {
     }
 
     public BiMap<Variable<?>, DataColumn<?>> getVariableColumnMap() {
-        return HashBiMap.create(variableColumnBiMap);
+        return HashBiMap.create(varMap);
     }
 
     public DataColumn<?> setColumnForVariable(Variable<?> var, DataColumn<?> col) {
-        return variableColumnBiMap.putIfAbsent(var, col);
+        return varMap.putIfAbsent(var, col);
     }
 
     public void setColumnsForAllVariables(Map<Variable<?>, DataColumn<?>> map) {
-        variableColumnBiMap.clear();
-        variableColumnBiMap.putAll(map);
+        varMap.clear();
+        varMap.putAll(map);
     }
 
     @Override
@@ -142,13 +142,18 @@ public class DataTable extends BranchNode<DataSegment> {
     //**********************************************//
 
     private void writeObject(ObjectOutputStream out) throws IOException {
+        ObjectOutputStream.PutField fields = out.putFields();
+        fields.put("varMap", varMap);
+        fields.put("columnTree", columnTree);
         out.writeFields();
-        out.writeObject(isotopeSystem);
-        out.writeObject(unctFormat);
+        out.writeObject(isotopeSystem.get());
+        out.writeObject(unctFormat.get());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.readFields();
+        ObjectInputStream.GetField fields = in.readFields();
+        varMap = (HashBiMap<Variable<?>, DataColumn<?>>) fields.get("varMap", null);
+        columnTree = (ColumnTree) fields.get("columnTree", null);
         isotopeSystem.set((IsotopeSystem) in.readObject());
         unctFormat.set((Uncertainty) in.readObject());
     }

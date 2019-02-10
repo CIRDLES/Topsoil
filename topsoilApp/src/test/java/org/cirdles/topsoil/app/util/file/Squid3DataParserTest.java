@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
+import org.cirdles.topsoil.app.model.generic.DataValue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -32,39 +33,39 @@ public class Squid3DataParserTest {
     public static void setup() {
         DataCategory cat1 = new DataCategory(
                 "Cat1",
-                new DataColumn("Col1 Col1 Col1"),
-                new DataColumn("Col2 Col2 Col2 Col2"),
-                new DataColumn("Col3")
+                new DataColumn<>("Col1 Col1 Col1", Double.class),
+                new DataColumn<>("Col2 Col2 Col2 Col2", Double.class),
+                new DataColumn<>("Col3", Double.class)
         );
         DataCategory cat2 = new DataCategory(
                 "Cat2",
-                new DataColumn("Col4 Col4"),
-                new DataColumn("Col5")
+                new DataColumn<>("Col4 Col4", Double.class),
+                new DataColumn<>("Col5", Double.class)
         );
         DataCategory cat3 = new DataCategory(
                 "Cat3"
         );
         columnTreeOracle = new ColumnTree(Arrays.asList(cat1, cat2, cat3));
 
-        Map<DataColumn, Object> valueMap = new HashMap<>();
-        valueMap.put((DataColumn) cat1.getChildren().get(0), "1.0");
-        valueMap.put((DataColumn) cat1.getChildren().get(1), "2.0");
-        valueMap.put((DataColumn) cat1.getChildren().get(2), "3.0");
-        valueMap.put((DataColumn) cat2.getChildren().get(0), "4.0");
-        valueMap.put((DataColumn) cat2.getChildren().get(1), "5.0");
+        List<DataValue<?>> values = new ArrayList<>();
+        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(0)), 1.0));
+        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(1)), 2.0));
+        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(2)), 3.0));
+        values.add(new DoubleValue(((DataColumn<Double>) cat2.getChildren().get(0)), 4.0));
+        values.add(new DoubleValue(((DataColumn<Double>) cat2.getChildren().get(1)), 5.0));
         DataSegment seg1 = new DataSegment(
                 "Seg1",
-                new DataRow("Seg1:Row1", valueMap)
+                new DataRow("Seg1:Row1", values)
         );
-        valueMap = new HashMap<>();
-        valueMap.put((DataColumn) cat1.getChildren().get(0), "1.0");
-        valueMap.put((DataColumn) cat1.getChildren().get(1), "2.0");
-        valueMap.put((DataColumn) cat1.getChildren().get(2), "3.0");
-        valueMap.put((DataColumn) cat2.getChildren().get(0), "4.0");
-        valueMap.put((DataColumn) cat2.getChildren().get(1), "5.0");
+        values = new ArrayList<>();
+        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(0)), 1.0));
+        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(1)), 2.0));
+        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(2)), 3.0));
+        values.add(new DoubleValue(((DataColumn<Double>) cat2.getChildren().get(0)), 4.0));
+        values.add(new DoubleValue(((DataColumn<Double>) cat2.getChildren().get(1)), 5.0));
         DataSegment seg2 = new DataSegment(
                 "Seg2",
-                new DataRow("Seg2:Row1", valueMap)
+                new DataRow("Seg2:Row1", values)
         );
         dataSegmentsOracle = new ArrayList<>();
         dataSegmentsOracle.addAll(Arrays.asList(seg1, seg2));

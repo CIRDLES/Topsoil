@@ -1,8 +1,12 @@
 package org.cirdles.topsoil.app.model;
 
+import org.cirdles.topsoil.app.model.generic.DataValue;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -12,11 +16,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class DataSegmentTest {
 
-    static DataColumn[] COLUMNS = new DataColumn[]{
-            new DataColumn("Zero"),
-            new DataColumn("One"),
-            new DataColumn("Two")
-    };
+    static DataColumn<String> stringCol = new DataColumn<>("StringCol", String.class);
+    static DataColumn<Double> doubleCol = new DataColumn<>("DoubleCol", Double.class);
 
     DataSegment segOne;
     DataSegment segTwo;
@@ -24,18 +25,19 @@ public class DataSegmentTest {
     static DataRow rowOne;
     static DataRow rowTwo;
     static DataRow rowThree;
-    static {
-        Map<DataColumn, Object> valueMap = new HashMap<>();
-        valueMap.put(COLUMNS[0], "0.0");
-        valueMap.put(COLUMNS[1], "1.0");
-        rowOne = new DataRow("SameRow", valueMap);
-        rowTwo = new DataRow("SameRow", valueMap);
 
-        valueMap = new HashMap<>();
-        valueMap.put(COLUMNS[0], "0.0");
-        valueMap.put(COLUMNS[1], "2.0");
-        valueMap.put(COLUMNS[2], "4.0");
-        rowThree = new DataRow("DifferentRow", valueMap);
+    @BeforeClass
+    public static void setup() {
+        List<DataValue<?>> values = new ArrayList<>();
+        values.add(new StringValue(stringCol, "0.0"));
+        values.add(new DoubleValue(doubleCol, 0.0));
+        rowOne = new DataRow("SameRow", values);
+        rowTwo = new DataRow("SameRow", values);
+
+        values = new ArrayList<>();
+        values.add(new StringValue(stringCol, "1.0"));
+        values.add(new DoubleValue(doubleCol, 1.0));
+        rowThree = new DataRow("DifferentRow", values);
     }
 
     @Test

@@ -1,9 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.model.ColumnTree;
-import org.cirdles.topsoil.app.model.DataColumn;
-import org.cirdles.topsoil.app.model.DataRow;
-import org.cirdles.topsoil.app.model.DataSegment;
+import org.cirdles.topsoil.app.model.*;
+import org.cirdles.topsoil.app.model.generic.DataValue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -30,23 +28,23 @@ public class DefaultDataParserTest {
     public static void setup() {
         dataParser = new DefaultDataParser(CONTENT);
 
-        DataColumn col1 = new DataColumn("Col1");
-        DataColumn col2 = new DataColumn("Col2");
-        DataColumn col3 = new DataColumn("Col3");
-        DataColumn col4 = new DataColumn("Col4");
-        DataColumn col5 = new DataColumn("Col5");
+        DataColumn col1 = new DataColumn<>("Col1", Double.class);
+        DataColumn col2 = new DataColumn<>("Col2", Double.class);
+        DataColumn col3 = new DataColumn<>("Col3", Double.class);
+        DataColumn col4 = new DataColumn<>("Col4", Double.class);
+        DataColumn col5 = new DataColumn<>("Col5", Double.class);
         columnTreeOracle = new ColumnTree(Arrays.asList(col1, col2, col3, col4, col5));
 
         List<DataRow> rows = new ArrayList<>();
-        Map<DataColumn, Object> valueMap;
+        List<DataValue<?>> values;
         for (int i = 0; i < 5; i++) {
-            valueMap = new HashMap<>();
-            valueMap.put(col1, "0." + i);
-            valueMap.put(col2, "1." + i);
-            valueMap.put(col3, "2." + i);
-            valueMap.put(col4, "3." + i);
-            valueMap.put(col5, "4." + i);
-            rows.add(new DataRow("row" + (i + 1), valueMap));
+            values = new ArrayList<>();
+            values.add(new DoubleValue(col1, Double.parseDouble("0." + i)));
+            values.add(new DoubleValue(col2, Double.parseDouble("1." + i)));
+            values.add(new DoubleValue(col3, Double.parseDouble("2." + i)));
+            values.add(new DoubleValue(col4, Double.parseDouble("3." + i)));
+            values.add(new DoubleValue(col5, Double.parseDouble("4." + i)));
+            rows.add(new DataRow("row" + (i + 1), values));
         }
         dataSegmentsOracle = new ArrayList<>();
         dataSegmentsOracle.add(new DataSegment("model", rows.toArray(new DataRow[]{})));

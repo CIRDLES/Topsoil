@@ -9,16 +9,28 @@ import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.plot.PlotType;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * @author marottajb
  */
-public class TopsoilProject {
+public class TopsoilProject implements Serializable {
+
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final long serialVersionUID = 4647274955420518003L;
 
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private ListProperty<DataTable> dataTableList = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private transient ListProperty<DataTable> dataTableList = new SimpleListProperty<>(FXCollections.observableArrayList());
     public ListProperty<DataTable> dataTableListProperty() {
         return dataTableList;
     }
@@ -64,6 +76,16 @@ public class TopsoilProject {
         openPlots.remove(plotType, dataTable);
     }
 
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(dataTableList.get());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        dataTableList.addAll((List<DataTable>) in.readObject());
+    }
 
 }
