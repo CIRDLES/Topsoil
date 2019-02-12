@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.model.generic;
+package org.cirdles.topsoil.app.model.composite;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -11,13 +11,13 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
- * A {@code DataNode} is the basic building block for reading in structured model. When parsing delimited model
- * with moderately complex nested columns, the header structure is represented with a tree of {@code DataNode}s
+ * A {@code DataComponent} is the basic building block for reading in structured model. When parsing delimited model
+ * with moderately complex nested columns, the header structure is represented with a tree of {@code DataComponent}s
  * . Each node should have single header, and references a list of objects.
  *
  * @author marottajb
  */
-public abstract class DataNode implements Serializable {
+public abstract class DataComponent implements Serializable {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -56,11 +56,11 @@ public abstract class DataNode implements Serializable {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public DataNode() {
+    public DataComponent() {
         this(DEFAULT_LABEL);
     }
 
-    public DataNode(String label) {
+    public DataComponent(String label) {
         setLabel(label);
     }
 

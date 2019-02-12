@@ -1,9 +1,10 @@
 package org.cirdles.topsoil.app.model;
 
 import javafx.util.converter.DefaultStringConverter;
-import org.cirdles.topsoil.app.model.generic.DataValue;
 
 /**
+ * A {@code DataValue} for a {@code String} object.
+ *
  * @author marottajb
  */
 public class StringValue extends DataValue<String> {

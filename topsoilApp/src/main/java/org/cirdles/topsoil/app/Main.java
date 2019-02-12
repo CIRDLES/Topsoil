@@ -37,78 +37,38 @@ public class Main extends Application {
     //**********************************************//
 
     private static final String ARIMO_FONT = "style/font/arimo/Arimo-Regular.ttf";
+
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
-
-    @Override
-    public void start(Stage primary) {
-
-        ResourceExtractor resourceExtractor = new ResourceExtractor(Main.class);
-
-        Main.primaryStage = primary;
-        Main.controller = new MainController();
-
-        // Create main Scene
-        Scene scene = new Scene(controller, 1200, 750);
-
-        // Load CSS
-        try {
-            Font.loadFont(resourceExtractor.extractResourceAsFile(ARIMO_FONT).toURI().toURL().toExternalForm(), 14);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        StyleLoader styleLoader = new StyleLoader();
-        scene.getStylesheets().addAll(styleLoader.getStylesheets());
-        StyleManager.getInstance().setUserAgentStylesheets(styleLoader.getStylesheets());
-        primaryStage.setScene(scene);
-
-        // If main window is closed, all other windows close.
-        configureCloseRequest(primaryStage);
-
-        // If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
-        primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
-            return ProjectSerializer.getCurrentProjectPath() != null
-                    ? "Topsoil - " + ProjectSerializer.getCurrentProjectPath().getFileName().toString()
-                    : "Topsoil";
-        }, ProjectSerializer.currentProjectPathProperty()));
-
-        primaryStage.show();
-    }
 
     public static void main(String[] args) {
         launch(args);
     }
 
+    @Override
+    public void start(Stage primaryStage) {
+        Main.controller = new MainController(primaryStage);
+        Scene scene = new Scene(controller, 1200, 750);
+
+        ResourceExtractor resourceExtractor = new ResourceExtractor(Main.class);
+        // Load font
+        try {
+            Font.loadFont(resourceExtractor.extractResourceAsFile(ARIMO_FONT).toURI().toURL().toExternalForm(), 14);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        StyleLoader styleLoader = new StyleLoader();
+        scene.getStylesheets().addAll(styleLoader.getStylesheets());
+        StyleManager.getInstance().setUserAgentStylesheets(styleLoader.getStylesheets());
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
     public static MainController getController() {
         return controller;
-    }
-
-    /**
-     * Asks the user whether they want to save their work, typically when exiting Topsoil.
-     *
-     * @return true if saving, false if not, null if cancelled
-     */
-    public static Boolean verifyFinalSave() {
-        final AtomicReference<Boolean> reference = new AtomicReference<>(null);
-
-        TopsoilNotification.showNotification(
-                TopsoilNotification.NotificationType.YES_NO,
-                "Save Changes",
-                "Would you like to save your work?"
-        ).ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                reference.set(true);
-            } else if (response == ButtonType.NO) {
-                reference.set(false);
-            }
-        });
-
-        return reference.get();
-    }
-
-    public static Stage getPrimaryStage() {
-        return primaryStage;
     }
 
     public static void shutdown() {
@@ -117,17 +77,6 @@ public class Main extends Application {
             stages.get(index).close();
         }
         Platform.exit();
-    }
-
-    //**********************************************//
-    //               PRIVATE METHODS                //
-    //**********************************************//
-
-    private static void configureCloseRequest(Stage stage) {
-        stage.setOnCloseRequest(event -> {
-            event.consume();
-            FileMenuHelper.exitTopsoilSafely();
-        });
     }
 
 }

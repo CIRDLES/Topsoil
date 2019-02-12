@@ -1,9 +1,9 @@
-package org.cirdles.topsoil.app.model.generic;
+package org.cirdles.topsoil.app.model.composite;
 
 /**
  * @author marottajb
  */
-public class LeafNode extends DataNode {
+public class DataLeaf extends DataComponent {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -15,19 +15,19 @@ public class LeafNode extends DataNode {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public LeafNode() {
+    public DataLeaf() {
         this(DEFAULT_LABEL);
     }
 
-    public LeafNode(String title) {
+    public DataLeaf(String title) {
         super();
         setLabel(title);
     }
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof LeafNode) {
-            LeafNode other = (LeafNode) object;
+        if (object instanceof DataLeaf) {
+            DataLeaf other = (DataLeaf) object;
             if (! this.getLabel().equals(other.getLabel())) {
                 return false;
             }

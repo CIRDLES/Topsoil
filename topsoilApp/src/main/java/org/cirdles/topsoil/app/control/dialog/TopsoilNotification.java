@@ -80,7 +80,7 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         this.getDialogPane().setContent(hBox);
 
         // Sets owner (main window)
-        this.initOwner(Main.getPrimaryStage());
+        this.initOwner(Main.getController().getPrimaryStage());
     }
 
 

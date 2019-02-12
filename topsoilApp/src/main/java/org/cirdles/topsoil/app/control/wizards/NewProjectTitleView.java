@@ -149,7 +149,7 @@ class NewProjectTitleView extends WizardPane {
         DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Choose Project Location");
 
-        File file = dirChooser.showDialog(Main.getPrimaryStage());
+        File file = dirChooser.showDialog(Main.getController().getPrimaryStage());
         if (file != null) {
             setProjectLocation(file.toPath());
         }

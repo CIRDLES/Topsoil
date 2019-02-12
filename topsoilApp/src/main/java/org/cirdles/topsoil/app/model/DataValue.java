@@ -1,10 +1,10 @@
-package org.cirdles.topsoil.app.model.generic;
+package org.cirdles.topsoil.app.model;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.StringConverter;
-import org.cirdles.topsoil.app.model.DataColumn;
+import org.cirdles.topsoil.app.model.composite.DataLeaf;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,9 +12,12 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
+ * Represents a mapping of a {@link DataColumn} to some value. A string converter must be provided so that the label
+ * property can be properly updated with a String format of the value.
+ *
  * @author marottajb
  */
-public abstract class DataValue<T extends Serializable> extends LeafNode {
+public abstract class DataValue<T extends Serializable> extends DataLeaf {
 
     //**********************************************//
     //                  ATTRIBUTES                  //

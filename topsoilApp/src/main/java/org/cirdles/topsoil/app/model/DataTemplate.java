@@ -8,6 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 
 /**
+ * Each template represents a possible format for imported data, and has a {@code DataParser} associated with it.
+ *
  * @author marottajb
  */
 public enum DataTemplate {
@@ -21,6 +23,12 @@ public enum DataTemplate {
         this.parserClass = clazz;
     }
 
+    /**
+     * Returns a new instance of the {@code DataParser} for the template, given the specified path.
+     *
+     * @param path  Path to data
+     * @return      DataParser
+     */
     public DataParser getDataParser(Path path) {
         try {
             return parserClass.getConstructor(Path.class).newInstance(path);
@@ -30,6 +38,12 @@ public enum DataTemplate {
         return null;
     }
 
+    /**
+     * Returns a new instance of the {@code DataParser} for the template, given the specified {@code String} content.
+     *
+     * @param content   String content
+     * @return          DataParser
+     */
     public DataParser getDataParser(String content) {
         try {
             return parserClass.getConstructor(String.class).newInstance(content);

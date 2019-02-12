@@ -3,6 +3,9 @@ package org.cirdles.topsoil.app.control.menu.helpers;
 import org.cirdles.topsoil.app.control.ProjectView;
 
 /**
+ * A utility class providing helper methods for the logic behind items in
+ * {@link org.cirdles.topsoil.app.control.menu.TopsoilMenuBar}.
+ *
  * @author marottajb
  */
 public class ViewMenuHelper {

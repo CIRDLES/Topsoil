@@ -16,6 +16,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Represents a working state of Topsoil data. Maintains a list of active {@link DataTable}s, and tracks which plots
+ * belong to which tables.
+ *
  * @author marottajb
  */
 public class TopsoilProject implements Serializable {

@@ -24,7 +24,7 @@ public class DelimiterRequestDialog extends Dialog<String> {
         this.setTitle(windowTitle);
         ((Stage) this.getDialogPane().getScene().getWindow()).getIcons().add(
                 Main.getController().getTopsoilLogo());
-        this.initOwner(Main.getPrimaryStage());
+        this.initOwner(Main.getController().getPrimaryStage());
 
         String otherDelimiterOption = "Other";
         String unknownDelimiterOption = "Unknown";

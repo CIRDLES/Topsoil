@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
-import org.cirdles.topsoil.app.model.generic.DataNode;
+import org.cirdles.topsoil.app.model.composite.DataComponent;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -27,8 +27,10 @@ public class Squid3DataParser extends DataParser {
     //                PRIVATE METHODS               //
     //**********************************************//
 
+    /** {@inheritDoc} */
+    @Override
     ColumnTree parseColumnTree() {
-        List<DataNode> topLevel = new ArrayList<>();
+        List<DataComponent> topLevel = new ArrayList<>();
         int[] categoryIndices = readCategories(cells[0]);
         for (int i = 0; i < categoryIndices.length; i++) {
             topLevel.add(parseCategory(
@@ -40,6 +42,8 @@ public class Squid3DataParser extends DataParser {
         return new ColumnTree(topLevel);
     }
 
+    /** {@inheritDoc} */
+    @Override
     List<DataSegment> parseData() {
         ColumnTree columnTree = parseColumnTree();
         List<DataColumn<?>> columns = columnTree.getLeafNodes();
@@ -57,7 +61,15 @@ public class Squid3DataParser extends DataParser {
         return dataSegments;
     }
 
-    DataCategory parseCategory(String[][] cells, int catIndex, int nextCatIndex) {
+    /**
+     * Parses a {@code DataCategory} from the provided start and end indices.
+     *
+     * @param cells         String[][] of data values
+     * @param catIndex      start index of the category
+     * @param nextCatIndex  index of the next category
+     * @return              DataCategory
+     */
+    private DataCategory parseCategory(String[][] cells, int catIndex, int nextCatIndex) {
         String[] catRow = cells[0];
         String catLabel = catRow[catIndex];
 
@@ -89,20 +101,36 @@ public class Squid3DataParser extends DataParser {
         return new DataCategory(catLabel, columns.toArray(new DataColumn[]{}));
     }
 
-    DataSegment parseDataSegment(String[][] rows, int startIndex, int nextSegIndex, List<DataColumn<?>> columns) {
-        String segmentLabel = rows[startIndex][0];
+    /**
+     * Parses a {@code DataSegment} from the provided start and end indices.
+     *
+     * @param cells         String[][] of data values
+     * @param segIndex      start index of the segment
+     * @param nextSegIndex  index of the next segment
+     * @param columns       List of DataColumns for the table
+     * @return              DataSegment
+     */
+    private DataSegment parseDataSegment(String[][] cells, int segIndex, int nextSegIndex,
+                                        List<DataColumn<?>> columns) {
+        String segmentLabel = cells[segIndex][0];
         List<DataRow> dataRows = new ArrayList<>();
         String rowLabel;
-        if (nextSegIndex == -1 || nextSegIndex > rows.length) {
-            nextSegIndex = rows.length;
+        if (nextSegIndex == -1 || nextSegIndex > cells.length) {
+            nextSegIndex = cells.length;
         }
-        for (int rowIndex = startIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
-            rowLabel = rows[rowIndex][0];
-            dataRows.add(new DataRow(rowLabel, getValuesForRow(rows[rowIndex], columns)));
+        for (int rowIndex = segIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
+            rowLabel = cells[rowIndex][0];
+            dataRows.add(new DataRow(rowLabel, getValuesForRow(cells[rowIndex], columns)));
         }
         return new DataSegment(segmentLabel, dataRows.toArray(new DataRow[]{}));
     }
 
+    /**
+     * Returns an array of ints representing the column indices of each of the top-level data categories.
+     *
+     * @param catRow    the top row of data
+     * @return          category indices
+     */
     private static int[] readCategories(String[] catRow) {
         List<Integer> idxs = new ArrayList<>();
         for (int index = 0; index < catRow.length; index++) {
@@ -117,6 +145,12 @@ public class Squid3DataParser extends DataParser {
         return rtnval;
     }
 
+    /**
+     * Returns an array of ints representing the row indices of each data segment.
+     *
+     * @param cells     String[][] of data values
+     * @return          segment indices
+     */
     private static Integer[] readDataSegments(String[][] cells) {
         List<Integer> idxs = new ArrayList<>();
 

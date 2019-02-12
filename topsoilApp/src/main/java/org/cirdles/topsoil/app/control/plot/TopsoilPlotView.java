@@ -24,10 +24,13 @@ import org.w3c.dom.Element;
 
 import java.io.IOException;
 
+/**
+ * A custom control for viewing a {@link Plot}, containing the plot itself, its button bar, and its
+ * {@link PlotPropertiesPanel}.
+ */
 public class TopsoilPlotView extends VBox {
 
 	private static final String CONTROLLER_FXML = "plot-control.fxml";
-
 
 	//**********************************************//
 	//                   CONTROLS                   //
@@ -97,6 +100,9 @@ public class TopsoilPlotView extends VBox {
 	//                PRIVATE METHODS               //
 	//**********************************************//
 
+	/**
+	 * Saves the current view of the plot as an SVG file.
+	 */
 	@FXML private void saveSVGButtonAction() {
 
 		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
@@ -115,6 +121,9 @@ public class TopsoilPlotView extends VBox {
 		new SVGSaver().save(doc);
 	}
 
+	/**
+	 * Saves the current view of the plot as a PDF file.
+	 */
 	@FXML private void savePDFButtonAction() {
 
 		WritableImage plotSnap = plotAnchorPane.snapshot(new SnapshotParameters(), null);
@@ -123,10 +132,16 @@ public class TopsoilPlotView extends VBox {
 
 	}
 
+	/**
+	 * Resets the plot to its initial view.
+	 */
 	@FXML private void resetViewButtonAction() {
 		plot.recenter();
 	}
 
+	/**
+	 * If applicable, adjusts the plot view so that the concordia line passes through the corners.
+	 */
 	@FXML private void snapToCornersButtonAction() {
 		plot.snapToCorners();
 	}

@@ -43,7 +43,7 @@ public class VariableChooserDialog extends Dialog<Map<Variable<?>, DataColumn<?>
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.getIcons().add(Main.getController().getTopsoilLogo());
-        stage.initOwner(Main.getPrimaryStage());
+        stage.initOwner(Main.getController().getPrimaryStage());
         stage.setTitle("Variable Chooser");
         stage.setResizable(true);
         this.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);

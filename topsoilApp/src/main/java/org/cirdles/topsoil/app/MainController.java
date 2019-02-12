@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
@@ -8,9 +9,12 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
+import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 
 import java.io.IOException;
 
@@ -38,6 +42,12 @@ public class MainController extends VBox {
 	private HomeView homeView;
 
 	//**********************************************//
+	//                  ATTRIBUTES                  //
+	//**********************************************//
+
+	private Stage primaryStage;
+
+	//**********************************************//
 	//                  PROPERTIES                  //
 	//**********************************************//
 
@@ -53,7 +63,19 @@ public class MainController extends VBox {
 	//                 CONSTRUCTORS                 //
 	//**********************************************//
 
-	MainController() {
+	MainController(Stage primaryStage) {
+		this.primaryStage = primaryStage;
+		// If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
+		this.primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
+			return ProjectSerializer.getCurrentProjectPath() != null
+					? "Topsoil - " + ProjectSerializer.getCurrentProjectPath().getFileName().toString()
+					: "Topsoil";
+		}, ProjectSerializer.currentProjectPathProperty()));
+		this.primaryStage.setOnCloseRequest(event -> {
+			event.consume();
+			FileMenuHelper.exitTopsoilSafely();
+		});
+
 		final ResourceExtractor re = new ResourceExtractor(MainController.class);
 		FXMLLoader loader;
 
@@ -67,7 +89,7 @@ public class MainController extends VBox {
 		}
 
 		topsoilLogo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
-		Main.primaryStage.getIcons().add(topsoilLogo);
+		this.primaryStage.getIcons().add(topsoilLogo);
 	}
 
 	@FXML
@@ -88,6 +110,14 @@ public class MainController extends VBox {
 		return replaceMainContent(projectView);
 	}
 
+	public Stage getPrimaryStage() {
+		return primaryStage;
+	}
+
+	public void setPrimaryStage(Stage primaryStage) {
+		this.primaryStage = primaryStage;
+	}
+
 	public void closeProjectView() {
 		replaceMainContent(homeView);
 	}
@@ -97,7 +127,7 @@ public class MainController extends VBox {
     }
 
 	//**********************************************//
-	//                PRIVATE METHODS               //
+	//               PRIVATE METHODS                //
 	//**********************************************//
 
     private Node replaceMainContent(Node content) {

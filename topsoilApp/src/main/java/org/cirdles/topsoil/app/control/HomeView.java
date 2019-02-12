@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
+ * The main view of Topsoil when no data is showing.
+ *
  * @author marottajb
  */
 public class HomeView extends VBox {

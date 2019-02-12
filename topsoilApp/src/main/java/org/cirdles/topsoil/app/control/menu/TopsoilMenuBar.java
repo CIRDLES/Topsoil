@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
+ * The main {@code MenuBar} for the application.
+ *
  * @author marottajb
  */
 public class TopsoilMenuBar extends MenuBar {
@@ -164,7 +166,7 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getImportTableMenu() {
         MenuItem fromFileItem = new MenuItem("From File");
         fromFileItem.setOnAction(event -> {
-            File file = TopsoilFileChooser.openTableFile().showOpenDialog(Main.getPrimaryStage());
+            File file = TopsoilFileChooser.openTableFile().showOpenDialog(Main.getController().getPrimaryStage());
             if (file.exists()) {
                 Path path = Paths.get(file.toURI());
                 // TODO Show dialog for DataTemplate/IsotopeSystem/Uncertainty
@@ -251,7 +253,7 @@ public class TopsoilMenuBar extends MenuBar {
         reportIssueItem.setOnAction(event -> HelpMenuHelper.openIssueReporter());
 
         MenuItem aboutItem = new MenuItem("About...");
-        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Main.getPrimaryStage()));
+        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Main.getController().getPrimaryStage()));
 
         return new Menu("Help", null,
                         onlineHelpItem,

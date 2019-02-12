@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.variable;
 
 /**
+ * A {@code Variable} for a {@code Double} data type.
+ *
  * @author marottajb
  */
 public enum IndependentVariable implements Variable<Double> {

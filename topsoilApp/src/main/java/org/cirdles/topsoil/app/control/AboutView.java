@@ -120,9 +120,11 @@ public class AboutView extends VBox {
         stage.setScene(scene);
         stage.setResizable(false);
 
-        double newX = Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() / 2) -
+        Stage primaryStage = Main.getController().getPrimaryStage();
+
+        double newX = primaryStage.getX() + (primaryStage.getWidth() / 2) -
                       (DEFAULT_WIDTH / 2);
-        double newY = Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() / 2) -
+        double newY = primaryStage.getY() + (primaryStage.getHeight() / 2) -
                       (DEFAULT_HEIGHT / 2);
 
         stage.setX(newX);

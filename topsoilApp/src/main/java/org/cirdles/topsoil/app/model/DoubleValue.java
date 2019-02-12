@@ -1,9 +1,10 @@
 package org.cirdles.topsoil.app.model;
 
-import org.cirdles.topsoil.app.model.generic.DataValue;
 import org.cirdles.topsoil.app.util.DecimalStringConverter;
 
 /**
+ * A {@code DataValue} for a {@code Double} object.
+ *
  * @author marottajb
  */
 public class DoubleValue extends DataValue<Double> {

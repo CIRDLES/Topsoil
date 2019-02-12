@@ -1,12 +1,14 @@
 package org.cirdles.topsoil.app.model;
 
-import org.cirdles.topsoil.app.model.generic.BranchNode;
-import org.cirdles.topsoil.app.model.generic.DataNode;
+import org.cirdles.topsoil.app.model.composite.DataComposite;
+import org.cirdles.topsoil.app.model.composite.DataComponent;
 
 /**
+ * Represents a category of data columns. Can be composed of {@link DataColumn}s as well as other {@code DataCategory}s.
+ *
  * @author marottajb
  */
-public class DataCategory extends BranchNode<DataNode> {
+public class DataCategory extends DataComposite<DataComponent> {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -18,7 +20,7 @@ public class DataCategory extends BranchNode<DataNode> {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public DataCategory(String label, DataNode... children) {
+    public DataCategory(String label, DataComponent... children) {
         super(label, children);
     }
 

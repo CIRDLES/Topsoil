@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
-import org.cirdles.topsoil.app.model.generic.DataValue;
+import org.cirdles.topsoil.app.model.DataValue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

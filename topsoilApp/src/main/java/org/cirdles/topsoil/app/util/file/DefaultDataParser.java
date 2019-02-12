@@ -26,10 +26,14 @@ public class DefaultDataParser extends DataParser {
     //                PRIVATE METHODS               //
     //**********************************************//
 
+    /** {@inheritDoc} */
+    @Override
     ColumnTree parseColumnTree() {
         return new ColumnTree(parseHeaders(countHeaderRows()));
     }
 
+    /** {@inheritDoc} */
+    @Override
     List<DataSegment> parseData() {
         ColumnTree columnTree = parseColumnTree();
         List<DataColumn<?>> columns = columnTree.getLeafNodes();
@@ -42,6 +46,25 @@ public class DefaultDataParser extends DataParser {
         List<DataSegment> segments = new ArrayList<>();
         segments.add(new DataSegment("model", rows.toArray(new DataRow[]{})));
         return segments;
+    }
+
+    /**
+     * Parses
+     *
+     * @param numHeaderRows
+     * @return
+     */
+    private List<DataColumn<?>> parseHeaders(int numHeaderRows) {
+        List<DataColumn<?>> columns = new ArrayList<>();
+        StringJoiner joiner;
+        for (int i = 0; i < cells[0].length; i++) {
+            joiner = new StringJoiner("\n");
+            for (int j = 0; j < numHeaderRows; j++) {
+                joiner.add(cells[j][i]);
+            }
+            columns.add(new DataColumn(joiner.toString(), getColumnDataType(i, numHeaderRows)));
+        }
+        return columns;
     }
 
 }

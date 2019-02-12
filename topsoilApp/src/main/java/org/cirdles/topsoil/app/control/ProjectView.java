@@ -12,6 +12,8 @@ import org.cirdles.topsoil.app.model.TopsoilProject;
 import java.io.IOException;
 
 /**
+ * The main view of Topsoil when there is data showing.
+ *
  * @author marottajb
  */
 public class ProjectView extends SplitPane {
@@ -107,12 +109,22 @@ public class ProjectView extends SplitPane {
     //                PRIVATE METHODS               //
     //**********************************************//
 
+    /**
+     * Adds a new {@code Tab} to the {@code TabPane} for the {@code DataTable}.
+     *
+     * @param table DataTable
+     */
     private void addTabForTable(DataTable table) {
         ProjectTableTab tableTab = new ProjectTableTab(table);
         tableTab.textProperty().bindBidirectional(table.labelProperty());
         tabPane.getTabs().add(tableTab);
     }
 
+    /**
+     * Removes the {@code Tab} for the specified {@code DataTable} from the {@code TabPane}.
+     *
+     * @param table DataTable
+     */
     private void removeTabForTable(DataTable table) {
         for (Tab tab : tabPane.getTabs()) {
             if (tab instanceof  ProjectTableTab) {

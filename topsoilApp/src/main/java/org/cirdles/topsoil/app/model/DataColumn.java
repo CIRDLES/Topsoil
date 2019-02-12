@@ -1,15 +1,21 @@
 package org.cirdles.topsoil.app.model;
 
-import org.cirdles.topsoil.app.model.generic.LeafNode;
+import org.cirdles.topsoil.app.model.composite.DataLeaf;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
+ * Represents a column of data, and acts as a leaf in a {@link ColumnTree}.
+ *
+ * @param <T>   the type of data for this DataColumn
+ *
  * @author marottajb
+ *
+ * @see org.cirdles.topsoil.app.model.composite.DataComponent
  */
-public class DataColumn<T> extends LeafNode {
+public class DataColumn<T> extends DataLeaf {
 
     //**********************************************//
     //                  CONSTANTS                   //

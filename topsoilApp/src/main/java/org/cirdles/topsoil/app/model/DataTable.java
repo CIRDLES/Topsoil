@@ -4,8 +4,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.model.generic.BranchNode;
-import org.cirdles.topsoil.app.model.generic.DataNode;
+import org.cirdles.topsoil.app.model.composite.DataComposite;
+import org.cirdles.topsoil.app.model.composite.DataComponent;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
@@ -16,9 +16,20 @@ import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
+ * Represents a table of column-based data. Each {@code DataTable} is composed of one or more {@code DataSegment}s,
+ * which contain {@link DataRow}s representing single entries of data. A data table has a corresponding
+ * {@link ColumnTree}, which defines the structure of the table's columns. Each {@code DataRow} contains {@code
+ * DataValue}s which map {@code DataColumn}s to the row's values.
+ *
  * @author marottajb
+ *
+ * @see ColumnTree
+ * @see DataComposite
+ * @see DataRow
+ * @see DataSegment
+ * @see DataValue
  */
-public class DataTable extends BranchNode<DataSegment> {
+public class DataTable extends DataComposite<DataSegment> {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -30,6 +41,9 @@ public class DataTable extends BranchNode<DataSegment> {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
+    /**
+     * A bi-directional map of {@code Variable}s to the columns that are assigned to them for the table.
+     */
     private HashBiMap<Variable<?>, DataColumn<?>> varMap = HashBiMap.create();
     private ColumnTree columnTree;
 
@@ -66,24 +80,11 @@ public class DataTable extends BranchNode<DataSegment> {
     //**********************************************//
 
     public DataTable(String label, ColumnTree columnTree, List<DataSegment> dataSegments) {
-        super(label);
-        setIsotopeSystem(IsotopeSystem.GENERIC);
-        setUnctFormat(Uncertainty.ONE_SIGMA_ABSOLUTE);
-        this.columnTree = columnTree;
-        this.children.addAll(dataSegments);
+        this(label, columnTree, dataSegments, IsotopeSystem.GENERIC, Uncertainty.ONE_SIGMA_ABSOLUTE);
     }
 
-    public DataTable(String label, IsotopeSystem isotopeSystem, Uncertainty unctFormat, List<DataNode> categories,
-                     List<DataSegment> dataSegments) {
-        super(label);
-        setIsotopeSystem(isotopeSystem);
-        setUnctFormat(unctFormat);
-        this.columnTree = new ColumnTree(categories);
-        this.children.addAll(dataSegments);
-    }
-
-    public DataTable(String label, IsotopeSystem isotopeSystem, Uncertainty unctFormat, ColumnTree columnTree,
-                     List<DataSegment> dataSegments) {
+    public DataTable(String label, ColumnTree columnTree, List<DataSegment> dataSegments,
+                     IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
         super(label);
         setIsotopeSystem(isotopeSystem);
         setUnctFormat(unctFormat);
@@ -107,9 +108,16 @@ public class DataTable extends BranchNode<DataSegment> {
         return varMap.putIfAbsent(var, col);
     }
 
+    /**
+     * A convenience method for setting all variable/column mappings for the table.
+     *
+     * @param map   a Map containing the new mappings
+     */
     public void setColumnsForAllVariables(Map<Variable<?>, DataColumn<?>> map) {
         varMap.clear();
-        varMap.putAll(map);
+        for (Map.Entry<Variable<?>, DataColumn<?>> entry : map.entrySet()) {
+            varMap.putIfAbsent(entry.getKey(), entry.getValue());
+        }
     }
 
     @Override

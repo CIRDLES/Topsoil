@@ -10,6 +10,9 @@ import java.util.*;
 import static org.cirdles.topsoil.app.util.serialization.SerializableTopsoilProject.ProjectKey.*;
 
 /**
+ * Represents a serializable state of Topsoil by storing the information in a {@link TopsoilProject} in a {@code
+ * Serializable} format.
+ *
  * @author marottajb
  *
  * @see ProjectSerializer

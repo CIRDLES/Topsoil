@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
-import org.cirdles.topsoil.app.model.generic.DataValue;
+import org.cirdles.topsoil.app.model.DataValue;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
@@ -16,6 +16,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
+ * Provides fields and methods for reading data from text files. Extending classes must implement {@code
+ * parseColumnTree()} and {@code parseData()}, in order to define the necessary behavior to create a {@link DataTable}.
+ *
  * @author marottajb
  */
 public abstract class DataParser {
@@ -54,6 +57,12 @@ public abstract class DataParser {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Creates a new {@code DataTable} with the specified title based on the source for this parser.
+     *
+     * @param title String title
+     * @return      DataTable
+     */
     public DataTable parseDataTable(@Nullable String title) {
         String label;
         if (title == null) {
@@ -71,10 +80,26 @@ public abstract class DataParser {
         return new DataTable(label, columnTree, dataSegments);
     }
 
+    /**
+     * Returns a {@code ColumnTree} based on the source for the parser.
+     *
+     * @return  parsed ColumnTree
+     */
     abstract ColumnTree parseColumnTree();
 
+    /**
+     * Returns a {@code List} of {@code DataSegments} based on the source for the parser.
+     * @return
+     */
     abstract List<DataSegment> parseData();
 
+    /**
+     * Returns a list of new {@code DataValue}s based on the provided row values and the types of the data columns.
+     *
+     * @param row       String[] of row values as Strings
+     * @param columns   List of DataColumns for the data
+     * @return          List of DataValues for the row
+     */
     protected List<DataValue<?>> getValuesForRow(String[] row, List<DataColumn<?>> columns) {
         List<DataValue<?>> values = new ArrayList<>();
         for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
@@ -93,6 +118,11 @@ public abstract class DataParser {
         return path;
     }
 
+    /**
+     * Guesses the {@code String} used to separate data values in a row.
+     *
+     * @return  String delimiter
+     */
     public String getDelimiter() {
         final int NUM_LINES = 5;
         String rtnval = null;
@@ -113,6 +143,11 @@ public abstract class DataParser {
         return rtnval;
     }
 
+    /**
+     * Returns a 2D array of {@code String} values representing each of the data values from the source of the parser.
+     *
+     * @return  2D array of String values
+     */
     protected String[][] parseCells() {
         List<List<String>> splits = new ArrayList<>();
         for (String line : lines) {
@@ -135,19 +170,6 @@ public abstract class DataParser {
         }
 
         return rtnval;
-    }
-
-    protected List<DataColumn<?>> parseHeaders(int numHeaderRows) {
-        List<DataColumn<?>> columns = new ArrayList<>();
-        StringJoiner joiner;
-        for (int i = 0; i < cells[0].length; i++) {
-            joiner = new StringJoiner("\n");
-            for (int j = 0; j < numHeaderRows; j++) {
-                joiner.add(cells[j][i]);
-            }
-            columns.add(new DataColumn(joiner.toString(), getColumnDataType(i, numHeaderRows)));
-        }
-        return columns;
     }
 
     protected Class getColumnDataType(int colIndex, int numHeaderRows) {

@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.model.generic;
+package org.cirdles.topsoil.app.model.composite;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +11,7 @@ import static java.util.Arrays.asList;
 /**
  * @author marottajb
  */
-public class BranchNode<T extends DataNode> extends DataNode {
+public class DataComposite<T extends DataComponent> extends DataComponent {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -29,15 +29,15 @@ public class BranchNode<T extends DataNode> extends DataNode {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public BranchNode() {
+    public DataComposite() {
         this(DEFAULT_LABEL);
     }
 
-    public BranchNode(String title) {
+    public DataComposite(String title) {
         super(title);
     }
 
-    public BranchNode(String title, T... children) {
+    public DataComposite(String title, T... children) {
         this(title);
         this.children.addAll(asList(children));
     }
@@ -51,19 +51,19 @@ public class BranchNode<T extends DataNode> extends DataNode {
     }
 
     /**
-     * Returns the first {@code DataNode} within this branch with the specified title.
+     * Returns the first {@code DataComponent} within this branch with the specified title.
      *
      * @param   title
      *          the title of the node to find
-     * @return  DataNode with title; else null
+     * @return  DataComponent with title; else null
      */
-    public DataNode find(String title) {
+    public DataComponent find(String title) {
         return findIn(title, this);
     }
 
-    public static DataNode findIn(String title, BranchNode<?> parent) {
-        DataNode target = null;
-        for (DataNode node : parent.getChildren()) {
+    public static DataComponent findIn(String title, DataComposite<?> parent) {
+        DataComponent target = null;
+        for (DataComponent node : parent.getChildren()) {
             if (node.getLabel().equals(title)) {
                 target = node;
                 break;
@@ -72,15 +72,15 @@ public class BranchNode<T extends DataNode> extends DataNode {
         return target;
     }
 
-    public List<? extends LeafNode> getLeafNodes() {
-        List<LeafNode> leafNodes = new ArrayList<>();
-        BranchNode<DataNode> branch;
-        for (DataNode child : children) {
-            if (child instanceof BranchNode) {
-                branch = (BranchNode<DataNode>) child;
+    public List<? extends DataLeaf> getLeafNodes() {
+        List<DataLeaf> leafNodes = new ArrayList<>();
+        DataComposite<DataComponent> branch;
+        for (DataComponent child : children) {
+            if (child instanceof DataComposite) {
+                branch = (DataComposite<DataComponent>) child;
                 leafNodes.addAll(branch.getLeafNodes());
             } else {
-                leafNodes.add((LeafNode) child);
+                leafNodes.add((DataLeaf) child);
             }
         }
         return leafNodes;
@@ -88,8 +88,8 @@ public class BranchNode<T extends DataNode> extends DataNode {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof BranchNode<?>) {
-            BranchNode<?> other = (BranchNode<?>) object;
+        if (object instanceof DataComposite<?>) {
+            DataComposite<?> other = (DataComposite<?>) object;
             if (! this.getLabel().equals(other.getLabel())) {
                 return false;
             }

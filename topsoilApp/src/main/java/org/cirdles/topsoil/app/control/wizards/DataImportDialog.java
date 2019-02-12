@@ -18,7 +18,7 @@ public class DataImportDialog extends Dialog<DataTable> {
         this.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.FINISH);
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
-        stage.initOwner(Main.getPrimaryStage());
+        stage.initOwner(Main.getController().getPrimaryStage());
         stage.getIcons().add(Main.getController().getTopsoilLogo());
 
         DataTableOptionsView controller = new DataTableOptionsView(table);

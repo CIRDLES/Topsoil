@@ -15,6 +15,8 @@ import org.controlsfx.control.PopOver;
 import java.io.IOException;
 
 /**
+ * A custom control for editing constant values.
+ *
  * @author marottajb
  */
 public class ConstantsEditor extends VBox {

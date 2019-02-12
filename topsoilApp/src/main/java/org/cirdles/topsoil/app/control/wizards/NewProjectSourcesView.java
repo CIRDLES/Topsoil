@@ -123,7 +123,7 @@ class NewProjectSourcesView extends WizardPane {
      */
     @FXML
     private void addFilesButtonAction() {
-        List<File> files = TopsoilFileChooser.openTableFile().showOpenMultipleDialog(Main.getPrimaryStage());
+        List<File> files = TopsoilFileChooser.openTableFile().showOpenMultipleDialog(Main.getController().getPrimaryStage());
         if ( files != null && !files.isEmpty() ) {
             List<File> selectedFiles = new ArrayList<>(files);
             List<File> rejectedFiles = new ArrayList<>();

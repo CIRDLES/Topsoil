@@ -11,6 +11,9 @@ import org.cirdles.topsoil.app.util.issue.StandardGitHubIssueCreator;
 import java.awt.*;
 
 /**
+ * A utility class providing helper methods for the logic behind items in
+ * {@link org.cirdles.topsoil.app.control.menu.TopsoilMenuBar}.
+ *
  * @author marottajb
  */
 public class HelpMenuHelper {

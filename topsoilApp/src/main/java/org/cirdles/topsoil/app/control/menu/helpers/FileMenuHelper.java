@@ -25,6 +25,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * A utility class providing helper methods for the logic behind items in
+ * {@link org.cirdles.topsoil.app.control.menu.TopsoilMenuBar}.
+ *
  * @author marottajb
  */
 public class FileMenuHelper {
@@ -43,7 +46,7 @@ public class FileMenuHelper {
 
     public static TopsoilProject openProject() {
         if (ProjectSerializer.getCurrentProjectPath() != null && shouldOverwriteData("Open Project")) {
-            File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getPrimaryStage());
+            File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
             if (file.exists()) {
                 return openProject(Paths.get(file.toURI()));
             }
@@ -67,7 +70,7 @@ public class FileMenuHelper {
 
     public static boolean saveProjectAs(TopsoilProject project) {
         boolean completed = false;
-        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getPrimaryStage());
+        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
         if (file.exists()) {
             completed = saveProjectAs(project, Paths.get(file.toURI()));
         }
@@ -107,7 +110,7 @@ public class FileMenuHelper {
 
     public static boolean exportTableAs(DataTable table) {
         boolean completed = false;
-        File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Main.getPrimaryStage());
+        File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Main.getController().getPrimaryStage());
         completed = exportTableAs(table, Paths.get(file.toURI()));
         return completed;
     }
@@ -127,7 +130,7 @@ public class FileMenuHelper {
                     if (isDataOpen()) {
                         saved = FileMenuHelper.saveProject(project);
                     } else {
-                        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getPrimaryStage());
+                        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
                         if (file != null) {
                             saved = FileMenuHelper.saveProjectAs(project, file.toPath());
                         }

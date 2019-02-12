@@ -3,6 +3,8 @@ package org.cirdles.topsoil.variable;
 import java.util.Date;
 
 /**
+ * A {@code Variable} for a {@code Date} data type.
+ *
  * @author marottajb
  */
 public enum DateVariable implements Variable<Date> {

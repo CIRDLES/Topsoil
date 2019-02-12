@@ -9,22 +9,22 @@ import org.cirdles.topsoil.app.model.DataRow;
 import org.cirdles.topsoil.app.model.DataSegment;
 import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.app.model.TopsoilProject;
-import org.cirdles.topsoil.app.model.generic.BranchNode;
-import org.cirdles.topsoil.app.model.generic.DataNode;
-import org.cirdles.topsoil.app.model.generic.LeafNode;
+import org.cirdles.topsoil.app.model.composite.DataComposite;
+import org.cirdles.topsoil.app.model.composite.DataComponent;
+import org.cirdles.topsoil.app.model.composite.DataLeaf;
 
 import java.util.*;
 
 /**
  * @author marottajb
  */
-public class ProjectTreeView extends TreeView<DataNode> {
+public class ProjectTreeView extends TreeView<DataComponent> {
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private Map<DataNode, TreeItem<DataNode>> treeItemMap = new HashMap<>();
+    private Map<DataComponent, TreeItem<DataComponent>> treeItemMap = new HashMap<>();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -32,7 +32,7 @@ public class ProjectTreeView extends TreeView<DataNode> {
 
     public ProjectTreeView() {
         super();
-        final CheckBoxTreeItem<DataNode> rootItem = new CheckBoxTreeItem<>(new BranchNode<>("dummy"));
+        final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataComposite<>("dummy"));
         this.setCellFactory(CheckBoxTreeCell.forTreeView());
         this.setRoot(rootItem);
         this.setShowRoot(false);
@@ -67,18 +67,18 @@ public class ProjectTreeView extends TreeView<DataNode> {
     }
 
     public void addDataTable(DataTable table) {
-        TreeItem<DataNode> tableItem, segmentItem, rowItem;
-        tableItem = new CheckBoxTreeItem<>(new BranchNode<>(table.getLabel()));
-        ((CheckBoxTreeItem<DataNode>) tableItem).setSelected(true);
+        TreeItem<DataComponent> tableItem, segmentItem, rowItem;
+        tableItem = new CheckBoxTreeItem<>(new DataComposite<>(table.getLabel()));
+        ((CheckBoxTreeItem<DataComponent>) tableItem).setSelected(true);
         tableItem.setExpanded(true);
         treeItemMap.put(table, tableItem);
         for (DataSegment segment : table.getChildren()) {
-            segmentItem = new CheckBoxTreeItem<>(new BranchNode(segment.getLabel()));
-            ((CheckBoxTreeItem<DataNode>) segmentItem).setSelected(true);
+            segmentItem = new CheckBoxTreeItem<>(new DataComposite(segment.getLabel()));
+            ((CheckBoxTreeItem<DataComponent>) segmentItem).setSelected(true);
             treeItemMap.put(segment, segmentItem);
             for (DataRow row : segment.getChildren()) {
-                rowItem = new CheckBoxTreeItem<>(new LeafNode(row.getLabel()));
-                ((CheckBoxTreeItem<DataNode>) rowItem).setSelected(true);
+                rowItem = new CheckBoxTreeItem<>(new DataLeaf(row.getLabel()));
+                ((CheckBoxTreeItem<DataComponent>) rowItem).setSelected(true);
                 treeItemMap.put(row, rowItem);
                 segmentItem.getChildren().add(rowItem);
             }
@@ -88,7 +88,7 @@ public class ProjectTreeView extends TreeView<DataNode> {
     }
 
     public void removeDataTable(DataTable table) {
-        TreeItem<DataNode> tableItem = treeItemMap.get(table);
+        TreeItem<DataComponent> tableItem = treeItemMap.get(table);
         this.getRoot().getChildren().remove(tableItem);
     }
 

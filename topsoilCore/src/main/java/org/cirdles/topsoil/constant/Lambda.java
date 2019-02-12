@@ -1,11 +1,5 @@
 package org.cirdles.topsoil.constant;
 
-/**
- * @author Jake
- * @version 1.0
- * @since 1/20/2019
- */
-
 import javafx.beans.property.*;
 
 /**

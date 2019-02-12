@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.variable;
 
 /**
+ * A {@code Variable} for a {@code Boolean} data type.
+ *
  * @author marottajb
  */
 public enum BooleanVariable implements Variable<Boolean> {

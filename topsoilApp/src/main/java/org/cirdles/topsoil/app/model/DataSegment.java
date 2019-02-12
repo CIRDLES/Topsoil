@@ -1,13 +1,19 @@
 package org.cirdles.topsoil.app.model;
 
-import org.cirdles.topsoil.app.model.generic.BranchNode;
+import org.cirdles.topsoil.app.model.composite.DataComposite;
 
 import static java.util.Arrays.asList;
 
 /**
+ * Represents a sub-dataset within a {@link DataTable}. All rows in each {@code DataSegment} in a table map to the same
+ * {@code ColumnTree}.
+ *
  * @author marottajb
+ *
+ * @see DataTable
+ * @see ColumnTree
  */
-public class DataSegment extends BranchNode<DataRow> {
+public class DataSegment extends DataComposite<DataRow> {
 
     //**********************************************//
     //                PUBLIC METHODS                //

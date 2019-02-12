@@ -10,6 +10,9 @@ import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 
 /**
+ * A custom {@code StringConverter} that uses a {@code DecimalFormat} object to convert {@code Double}s to {@code
+ * String}s based on a variable {@code String} pattern.
+ *
  * @author marottajb
  */
 public class DecimalStringConverter extends StringConverter<Double> {
@@ -63,20 +66,6 @@ public class DecimalStringConverter extends StringConverter<Double> {
     @Override
     public Double fromString(String string) {
         return Double.parseDouble(string);
-    }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeFields();
-        out.writeObject(pattern.get());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.readFields();
-        setPattern(String.valueOf(in.readObject()));
     }
 
 }

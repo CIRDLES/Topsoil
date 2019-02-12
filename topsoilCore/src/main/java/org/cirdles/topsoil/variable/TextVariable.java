@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.variable;
 
 /**
+ * A {@code Variable} for a {@code String} data type.
+ *
  * @author marottajb
  */
 public enum TextVariable implements Variable<String> {

@@ -13,12 +13,22 @@ import org.cirdles.topsoil.app.control.treetable.TopsoilTreeTableView;
 import java.io.IOException;
 
 /**
+ * A custom {@code Tab} associated with a particular {@code DataTable}.
+ *
  * @author marottajb
  */
 public class ProjectTableTab extends Tab {
 
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
     private DataTable table;
     private TabView tabView;
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     public ProjectTableTab(DataTable table) {
         super();
@@ -32,19 +42,39 @@ public class ProjectTableTab extends Tab {
         });
     }
 
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
     public DataTable getDataTable() {
         return table;
     }
 
     //**********************************************//
+    //**********************************************//
     //                INNER CLASSES                 //
     //**********************************************//
 
+    /**
+     * The content of each {@link ProjectTableTab}.
+     */
     class TabView extends VBox {
+
+        //**********************************************//
+        //                  CONSTANTS                   //
+        //**********************************************//
 
         private static final String CONTROLLER_FXML = "project-table-tab-view.fxml";
 
+        //**********************************************//
+        //                   CONTROLS                   //
+        //**********************************************//
+
         @FXML private TopsoilTreeTableView treeTableView;
+
+        //**********************************************//
+        //                  ATTRIBUTES                  //
+        //**********************************************//
 
         private DataTable table;
 

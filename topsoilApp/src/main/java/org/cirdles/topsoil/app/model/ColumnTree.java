@@ -1,15 +1,19 @@
 package org.cirdles.topsoil.app.model;
 
-import org.cirdles.topsoil.app.model.generic.BranchNode;
-import org.cirdles.topsoil.app.model.generic.DataNode;
+import org.cirdles.topsoil.app.model.composite.DataComposite;
+import org.cirdles.topsoil.app.model.composite.DataComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Uses {@code DataCategory} and {@code DataColumn} objects to model the structure of nested columns. Adheres to the
+ * Composite pattern in that it implements the {@code DataComposite} interface, and is composed of {@code
+ * DataComposite} objects.
+ *
  * @author marottajb
  */
-public class ColumnTree extends BranchNode<DataNode> {
+public class ColumnTree extends DataComposite<DataComponent> {
 
     //**********************************************//
     //                PUBLIC METHODS                //
@@ -21,7 +25,7 @@ public class ColumnTree extends BranchNode<DataNode> {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public ColumnTree(List<? extends DataNode> topLevel) {
+    public ColumnTree(List<? extends DataComponent> topLevel) {
         this.getChildren().addAll(topLevel);
     }
 
@@ -38,6 +42,13 @@ public class ColumnTree extends BranchNode<DataNode> {
     //                PRIVATE METHODS               //
     //**********************************************//
 
+    /**
+     * Helper method to capture wildcards from getLeafNodes().
+     *
+     * @param leaves    List of leaves in this tree
+     * @param <T>       the type of the leaves in this tree
+     * @return          List o
+     */
     private <T> List<DataColumn<?>> leafHelper(List<T> leaves) {
         List<DataColumn<?>> columns = new ArrayList<>();
         for (T leaf : leaves) {

@@ -1,16 +1,17 @@
 package org.cirdles.topsoil.app.model;
 
-import org.cirdles.topsoil.app.model.generic.BranchNode;
-import org.cirdles.topsoil.app.model.generic.DataValue;
+import org.cirdles.topsoil.app.model.composite.DataComposite;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.StringJoiner;
 
 /**
+ * Represents a single entry of data as a set of column/value mappings.
+ *
  * @author marottajb
  */
-public class DataRow extends BranchNode<DataValue<?>> {
+public class DataRow extends DataComposite<DataValue<?>> {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -35,6 +36,13 @@ public class DataRow extends BranchNode<DataValue<?>> {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Returns the value for the provided {@code DataColumn}.
+     *
+     * @param column    DataColumn
+     * @param <T>       the type of the data for the DataColumn
+     * @return          the row's value for column
+     */
     public <T extends Serializable> DataValue<T> getValueForColumn(DataColumn<T> column) {
         for (DataValue<?> val : this.getChildren()) {
             if (val.getColumn().equals(column)) {
