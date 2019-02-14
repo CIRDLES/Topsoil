@@ -175,7 +175,7 @@ public abstract class DataParser {
     protected Class getColumnDataType(int colIndex, int numHeaderRows) {
         final int SAMPLE_SIZE = 5;
         boolean isDouble = true;
-        for (int i = numHeaderRows; i < numHeaderRows + SAMPLE_SIZE; i++) {
+        for (int i = numHeaderRows; i < numHeaderRows + SAMPLE_SIZE - 1; i++) {
             try {
                 Double.parseDouble(cells[i][colIndex]);
             } catch (NumberFormatException e) {

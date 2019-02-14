@@ -26,17 +26,16 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Main extends Application {
 
     //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
-
-    static Stage primaryStage;
-    private static MainController controller;
-
-    //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
 
     private static final String ARIMO_FONT = "style/font/arimo/Arimo-Regular.ttf";
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
+    private static MainController controller;
 
     //**********************************************//
     //                PUBLIC METHODS                //
@@ -71,6 +70,9 @@ public class Main extends Application {
         return controller;
     }
 
+    /**
+     * Exits the application.
+     */
     public static void shutdown() {
         List<Stage> stages = StageHelper.getStages();
         for (int index = stages.size() - 1; index > 0; index--) {

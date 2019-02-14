@@ -49,9 +49,14 @@ public class DataColumn<T> extends DataLeaf {
     @Override
     public boolean equals(Object object) {
         if (object instanceof DataColumn) {
-            if (((DataColumn) object).getType().equals(type)) {
-                return true;
+            DataColumn<?> other = (DataColumn<?>) object;
+            if (! getLabel().equals(other.getLabel())) {
+                return false;
             }
+            if (! type.equals(other.getType())) {
+                return false;
+            }
+            return true;
         }
         return false;
     }

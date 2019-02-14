@@ -1,6 +1,9 @@
 package org.cirdles.topsoil.app.control.treetable;
 
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeTableCell;
@@ -12,13 +15,17 @@ import org.cirdles.topsoil.app.model.*;
 import org.cirdles.topsoil.app.model.composite.DataComposite;
 import org.cirdles.topsoil.app.model.composite.DataComponent;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * @author marottajb
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
+
+    private DataTable table;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -30,6 +37,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
     public TopsoilTreeTableView(DataTable table) {
         this();
+        this.setEditable(true);
         setDataTable(table);
     }
 
@@ -38,6 +46,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     //**********************************************//
 
     public void setDataTable(DataTable table) {
+        this.table = table;
         this.getChildren().clear();
 
         CheckBoxTreeItem<DataComponent> tableItem;
@@ -46,6 +55,9 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         // Add TreeItems for model
         for (DataSegment segment : table.getChildren()) {
             tableItem.getChildren().add(makeTreeItemForDataSegment(segment));
+        }
+        if (tableItem.getChildren().size() == 1) {
+            tableItem.getChildren().get(0).setExpanded(true);
         }
 
         // Add columns
@@ -66,16 +78,16 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      *
      * @return  new TreeTableColumn
      */
-    private TreeTableColumn<DataComponent, ObservableValue<Boolean>> makeCheckBoxColumn() {
-        TreeTableColumn<DataComponent, ObservableValue<Boolean>> column = new TreeTableColumn<>("Selected");
-        column.setCellFactory(col -> {
-            CheckBoxTreeTableCell<DataComponent, ObservableValue<Boolean>> cell = new CheckBoxTreeTableCell<>();
-            cell.setAlignment(Pos.CENTER);
-//            cell.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-//                cell.getTreeTableRow().getTreeItem().getValue().setSelected(newValue);
-//            }));
-            return cell;
+    private TreeTableColumn<DataComponent, Boolean> makeCheckBoxColumn() {
+        TreeTableColumn<DataComponent, Boolean> column = new TreeTableColumn<>("Selected");
+        column.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(column));
+        column.setCellValueFactory(param -> {
+            DataComponent component = param.getValue().getValue();
+            BooleanProperty property = new SimpleBooleanProperty(component.isSelected());
+            property.bindBidirectional(component.selectedProperty());
+            return property;
         });
+        column.setEditable(true);
         return column;
     }
 
@@ -86,56 +98,67 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      */
     private TreeTableColumn<DataComponent, String> makeLabelColumn() {
         TreeTableColumn<DataComponent, String> column = new TreeTableColumn<>("Label");
-        column.setCellValueFactory(value -> value.getValue().getValue().labelProperty());
-        column.setCellFactory(value -> {
-            TreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
+        column.setCellFactory(param -> {
+            TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
             cell.setAlignment(Pos.CENTER_LEFT);
             cell.setStyle("-fx-font-style: italic;");
             return cell;
         });
+        column.setCellValueFactory(param -> {
+            DataComponent component = param.getValue().getValue();
+            StringProperty property = new SimpleStringProperty("");
+            property.bind(component.labelProperty());
+            return property;
+        });
         column.setPrefWidth(150);
+        column.setEditable(true);
         return column;
     }
 
     /**
      * Returns a {@code List} of {@code TreeTableColumn}s created based on the provided {@code DataComposite}.
      *
-     * @param dataComposite     DataComposite
+     * @param composite     DataComposite
      * @return                  List of new TreeTableColumns
      */
-    private List<TreeTableColumn<DataComponent, String>> makeTableColumnsForComposite(DataComposite<DataComponent> dataComposite) {
+    private List<TreeTableColumn<DataComponent, String>> makeTableColumnsForComposite(DataComposite<DataComponent> composite) {
         List<TreeTableColumn<DataComponent, String>> tableColumns = new ArrayList<>();
-        TreeTableColumn<DataComponent, String> newColumn;
-        for (DataComponent node : dataComposite.getChildren()) {
+        for (DataComponent node : composite.getChildren()) {
+            TreeTableColumn<DataComponent, String> newColumn;
             if (node instanceof DataColumn) {
-                DataColumn dataColumn = (DataColumn<?>) node;
-                newColumn = new TreeTableColumn<>(dataColumn.getLabel());
-                newColumn.setCellValueFactory(param -> {
-                    if (param.getValue().getValue() instanceof DataRow) {
-                        DataRow row = (DataRow) param.getValue().getValue();
-                        return row.getValueForColumn(dataColumn).labelProperty();
-                    }
-                    return null;
-                });
-                newColumn.setCellFactory(value -> {
-                    TreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
-                    if (dataColumn.getType() == Double.class) {
-                        cell.setAlignment(Pos.CENTER_RIGHT);
-                    } else if (dataColumn.getType() == String.class) {
-                        cell.setAlignment(Pos.CENTER_LEFT);
-                        cell.setStyle("-fx-font-style: italic;");
-                    }
-                    return cell;
-                });
+                if (((DataColumn) node).getType().equals(Double.class)) {
+                    newColumn = makeTreeTableColumn((DataColumn<Double>) node);
+                } else {
+                    newColumn = makeTreeTableColumn((DataColumn<String>) node);
+                }
             } else {
-                DataComposite<DataComponent> childBranch = (DataComposite<DataComponent>) node;
-                newColumn = new TreeTableColumn<>(childBranch.getLabel());
-                newColumn.getColumns().addAll(makeTableColumnsForComposite(childBranch));
+                newColumn = makeTreeTableColumn((DataCategory) node);
             }
             newColumn.setPrefWidth(100.0);
             tableColumns.add(newColumn);
         }
         return tableColumns;
+    }
+
+    private <T extends Serializable> TreeTableColumn<DataComponent, String> makeTreeTableColumn(DataColumn<T> dataColumn) {
+        TreeTableColumn<DataComponent, String> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
+        newColumn.setCellValueFactory(param -> {
+            if (param.getValue().getValue() instanceof DataSegment) {
+                return new SimpleStringProperty("");
+            }
+            if (param.getValue().getValue() instanceof DataRow) {
+                DataValue<T> dataValue = ((DataRow) param.getValue().getValue()).getValueForColumn(dataColumn);
+                return dataValue.labelProperty();
+            }
+            return null;
+        });
+        return newColumn;
+    }
+
+    private TreeTableColumn<DataComponent, String> makeTreeTableColumn(DataCategory dataCategory) {
+        TreeTableColumn<DataComponent, String> newColumn = new TreeTableColumn<>(dataCategory.getLabel());
+        newColumn.getColumns().addAll(makeTableColumnsForComposite(dataCategory));
+        return newColumn;
     }
 
     /**

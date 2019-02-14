@@ -120,7 +120,7 @@ public class Squid3DataParser extends DataParser {
         }
         for (int rowIndex = segIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
             rowLabel = cells[rowIndex][0];
-            dataRows.add(new DataRow(rowLabel, getValuesForRow(cells[rowIndex], columns)));
+            dataRows.add(new DataRow(rowLabel, getValuesForRow(Arrays.copyOfRange(cells[rowIndex], 1, cells[rowIndex].length, String[].class), columns)));
         }
         return new DataSegment(segmentLabel, dataRows.toArray(new DataRow[]{}));
     }

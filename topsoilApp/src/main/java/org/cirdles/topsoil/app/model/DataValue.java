@@ -49,6 +49,7 @@ public abstract class DataValue<T extends Serializable> extends DataLeaf {
         super();
         this.column = column;
         this.value.set(value);
+        this.label.set(converter.toString(value));
         this.label.bind(Bindings.createStringBinding(() -> converter.toString(value), this.value));
     }
 

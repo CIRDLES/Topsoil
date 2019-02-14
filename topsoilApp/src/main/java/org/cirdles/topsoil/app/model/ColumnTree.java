@@ -38,6 +38,20 @@ public class ColumnTree extends DataComposite<DataComponent> {
         return leafHelper(super.getLeafNodes());
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof ColumnTree) {
+            ColumnTree other = (ColumnTree) object;
+            for (int i = 0; i < this.getChildren().size(); i++) {
+                if (! this.getChildren().get(i).equals(other.getChildren().get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//

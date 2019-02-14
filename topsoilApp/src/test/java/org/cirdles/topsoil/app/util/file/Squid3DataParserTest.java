@@ -2,6 +2,8 @@ package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
 import org.cirdles.topsoil.app.model.DataValue;
+import org.cirdles.topsoil.app.model.composite.DataComponent;
+import org.cirdles.topsoil.app.model.composite.DataComposite;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -75,6 +77,15 @@ public class Squid3DataParserTest {
     @Test
     public void parseColumnTree_test() {
         ColumnTree cT = new Squid3DataParser(CONTENT).parseColumnTree();
+        System.out.println(cT.getChildren());
+        for (DataComponent component : cT.getChildren()) {
+            if (component instanceof DataComposite) {
+                System.out.println(((DataComposite) component).getChildren().size() + " ");
+                for (DataComponent c : ((DataComposite<DataComponent>) component).getChildren()) {
+                    System.out.println(c);
+                }
+            }
+        }
         assertEquals(columnTreeOracle, cT);
     }
 

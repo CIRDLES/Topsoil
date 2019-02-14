@@ -120,6 +120,19 @@ public class DataTable extends DataComposite<DataSegment> {
         }
     }
 
+    public DataRow getRowByIndex(int index) {
+        DataSegment segment;
+        int rowCount = 0;
+        for (int segIndex = 0; segIndex < this.getChildren().size(); segIndex++) {
+            segment = getChildren().get(segIndex);
+            if (index < rowCount + segment.getChildren().size()) {
+                return segment.getChildren().get(index - rowCount);
+            }
+            rowCount += segment.getChildren().size();
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (object instanceof DataTable) {

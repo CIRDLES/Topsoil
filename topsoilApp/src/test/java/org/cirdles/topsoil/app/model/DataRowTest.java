@@ -19,12 +19,12 @@ public class DataRowTest {
     public void equals_test() {
         List<DataValue<?>> valueListOne = new ArrayList<>();
         valueListOne.add(new StringValue(stringCol, "0.0"));
-        valueListOne.add(new DoubleValue(doubleCol, 0.0));
+        valueListOne.add(new DoubleValue(doubleCol, 1.0));
         rowOne = new DataRow("Row", valueListOne);
 
         List<DataValue<?>> valueListTwo = new ArrayList<>();
         valueListTwo.add(new StringValue(stringCol, "0.0"));
-        valueListTwo.add(new DoubleValue(doubleCol, 0.0));
+        valueListTwo.add(new DoubleValue(doubleCol, 1.0));
         rowTwo = new DataRow("Row", valueListTwo);
 
         Assert.assertEquals(rowOne, rowTwo);
@@ -34,47 +34,47 @@ public class DataRowTest {
     public void equalsFalseLabel_test() {
         List<DataValue<?>> valueListOne = new ArrayList<>();
         valueListOne.add(new StringValue(stringCol, "0.0"));
-        valueListOne.add(new DoubleValue(doubleCol, 0.0));
+        valueListOne.add(new DoubleValue(doubleCol, 1.0));
         rowOne = new DataRow("Row1", valueListOne);
 
         List<DataValue<?>> valueListTwo = new ArrayList<>();
         valueListTwo.add(new StringValue(stringCol, "0.0"));
-        valueListTwo.add(new DoubleValue(doubleCol, 0.0));
+        valueListTwo.add(new DoubleValue(doubleCol, 1.0));
         rowTwo = new DataRow("Row2", valueListTwo);
 
-        Assert.assertEquals(rowOne, rowTwo);
+        Assert.assertNotEquals(rowOne, rowTwo);
     }
 
     @Test
     public void equalsFalseSelected_test() {
         List<DataValue<?>> valueListOne = new ArrayList<>();
         valueListOne.add(new StringValue(stringCol, "0.0"));
-        valueListOne.add(new DoubleValue(doubleCol, 0.0));
+        valueListOne.add(new DoubleValue(doubleCol, 1.0));
         rowOne = new DataRow("Row", valueListOne);
         rowOne.setSelected(true);
 
         List<DataValue<?>> valueListTwo = new ArrayList<>();
         valueListTwo.add(new StringValue(stringCol, "0.0"));
-        valueListTwo.add(new DoubleValue(doubleCol, 0.0));
+        valueListTwo.add(new DoubleValue(doubleCol, 1.0));
         rowTwo = new DataRow("Row", valueListTwo);
         rowTwo.setSelected(false);
 
-        Assert.assertEquals(rowOne, rowTwo);
+        Assert.assertNotEquals(rowOne, rowTwo);
     }
 
     @Test
     public void equalsFalseValues_test() {
         List<DataValue<?>> valueListOne = new ArrayList<>();
         valueListOne.add(new StringValue(stringCol, "0.0"));
-        valueListOne.add(new DoubleValue(doubleCol, 0.0));
+        valueListOne.add(new DoubleValue(doubleCol, 1.0));
         rowOne = new DataRow("Row", valueListOne);
 
         List<DataValue<?>> valueListTwo = new ArrayList<>();
         valueListTwo.add(new StringValue(stringCol, "1.0"));
-        valueListTwo.add(new DoubleValue(doubleCol, 1.0));
+        valueListTwo.add(new DoubleValue(doubleCol, 2.0));
         rowTwo = new DataRow("Row", valueListTwo);
 
-        Assert.assertEquals(rowOne, rowTwo);
+        Assert.assertNotEquals(rowOne, rowTwo);
     }
 
 }

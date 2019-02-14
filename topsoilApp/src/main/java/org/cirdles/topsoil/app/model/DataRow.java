@@ -65,14 +65,8 @@ public class DataRow extends DataComposite<DataValue<?>> {
             if (this.getChildren().size() != other.getChildren().size()) {
                 return false;
             }
-            DataValue<?> thisValue;
-            DataValue<?> otherValue;
-            for (int i = 0; i < this.getChildren().size(); i++) {
-                thisValue = this.getChildren().get(i);
-                otherValue = other.getChildren().get(i);
-                if (! thisValue.equals(otherValue)) {
-                    return false;
-                }
+            if (! this.getChildren().equals(other.getChildren())) {
+                return false;
             }
         } else {
             return false;

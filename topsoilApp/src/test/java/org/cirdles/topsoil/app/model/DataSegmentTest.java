@@ -40,11 +40,7 @@ public class DataSegmentTest {
     @Test
     public void equals_test() {
         segOne = new DataSegment("Segment", rowOne, rowTwo);
-        System.out.println(segOne);
-        System.out.println("#rows: " + segOne.getChildren().size());
         segTwo = new DataSegment("Segment", rowOne, rowTwo);
-        System.out.println(segTwo);
-        System.out.println("#rows: " + segTwo.getChildren().size());
         assertEquals(segOne, segTwo);
     }
 }
