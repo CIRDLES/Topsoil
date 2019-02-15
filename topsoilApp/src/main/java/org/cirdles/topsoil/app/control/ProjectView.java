@@ -118,6 +118,7 @@ public class ProjectView extends SplitPane {
         ProjectTableTab tableTab = new ProjectTableTab(table);
         tableTab.textProperty().bindBidirectional(table.labelProperty());
         tabPane.getTabs().add(tableTab);
+        tabPane.getSelectionModel().select(tableTab);
     }
 
     /**

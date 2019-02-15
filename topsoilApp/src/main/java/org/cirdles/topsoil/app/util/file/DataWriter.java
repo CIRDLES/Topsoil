@@ -33,22 +33,4 @@ public class DataWriter {
         return completed;
     }
 
-    public enum FileType {
-
-        CSV("csv"),
-        TSV("tsv"),
-        TXT("txt");
-
-        private String extension;
-
-        FileType(String ext) {
-            this.extension = ext;
-        }
-
-        public String getExtension() {
-            return extension;
-        }
-
-    }
-
 }

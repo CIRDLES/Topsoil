@@ -21,33 +21,15 @@ import java.util.*;
 public class ProjectTreeView extends TreeView<DataComponent> {
 
     //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
-
-    private Map<DataComponent, TreeItem<DataComponent>> treeItemMap = new HashMap<>();
-
-    //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public ProjectTreeView() {
-        super();
+    public ProjectTreeView(TopsoilProject project) {
         final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataComposite<>("dummy"));
         this.setCellFactory(CheckBoxTreeCell.forTreeView());
         this.setRoot(rootItem);
         this.setShowRoot(false);
-    }
 
-    public ProjectTreeView(TopsoilProject project) {
-        this();
-        setProject(project);
-    }
-
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
-
-    public void setProject(TopsoilProject project) {
         for (DataTable table : project.getDataTableList()) {
             addDataTable(table);
         }
@@ -66,20 +48,21 @@ public class ProjectTreeView extends TreeView<DataComponent> {
         });
     }
 
-    public void addDataTable(DataTable table) {
-        TreeItem<DataComponent> tableItem, segmentItem, rowItem;
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    private void addDataTable(DataTable table) {
+        CheckBoxTreeItem<DataComponent> tableItem, segmentItem, rowItem;
         tableItem = new CheckBoxTreeItem<>(new DataComposite<>(table.getLabel()));
-        ((CheckBoxTreeItem<DataComponent>) tableItem).setSelected(true);
+        tableItem.selectedProperty().bindBidirectional(table.selectedProperty());
         tableItem.setExpanded(true);
-        treeItemMap.put(table, tableItem);
         for (DataSegment segment : table.getChildren()) {
             segmentItem = new CheckBoxTreeItem<>(new DataComposite(segment.getLabel()));
-            ((CheckBoxTreeItem<DataComponent>) segmentItem).setSelected(true);
-            treeItemMap.put(segment, segmentItem);
+            segmentItem.selectedProperty().bindBidirectional(segment.selectedProperty());
             for (DataRow row : segment.getChildren()) {
                 rowItem = new CheckBoxTreeItem<>(new DataLeaf(row.getLabel()));
-                ((CheckBoxTreeItem<DataComponent>) rowItem).setSelected(true);
-                treeItemMap.put(row, rowItem);
+                rowItem.selectedProperty().bindBidirectional(row.selectedProperty());
                 segmentItem.getChildren().add(rowItem);
             }
             tableItem.getChildren().add(segmentItem);
@@ -87,9 +70,12 @@ public class ProjectTreeView extends TreeView<DataComponent> {
         this.getRoot().getChildren().add(tableItem);
     }
 
-    public void removeDataTable(DataTable table) {
-        TreeItem<DataComponent> tableItem = treeItemMap.get(table);
-        this.getRoot().getChildren().remove(tableItem);
+    private void removeDataTable(DataTable table) {
+        for (TreeItem<DataComponent> item : getRoot().getChildren()) {
+            if (item.getValue().equals(table)) {
+                this.getRoot().getChildren().remove(item);
+            }
+        }
     }
 
 }

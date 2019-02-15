@@ -1,16 +1,20 @@
 package org.cirdles.topsoil.app.control.wizards;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
+import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.app.model.DataTemplate;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.file.DataParser;
@@ -22,12 +26,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.Key.SOURCES;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_HEIGHT;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_WIDTH;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.Key.TABLES;
 
 /**
  * @author marottajb
@@ -36,20 +39,23 @@ class NewProjectSourcesView extends WizardPane {
 
     private static final String CONTROLLER_FXML = "project-sources.fxml";
 
-    @FXML private Button addFilesButton, removeFileButton;
-    @FXML private ListView<ProjectSource> sourceFileListView;
+    @FXML private Button addFilesButton, removeFilesButton;
+    @FXML private ListView<DataTable> filesListView;
 
     //**********************************************//
-    //                  PROPERTIES                  //
+    //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private ListProperty<ProjectSource> sources = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private ListProperty<DataTable> tables = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private BiMap<DataTable, Path> tablePathMap = HashBiMap.create();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     NewProjectSourcesView() {
+        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
+
         final ResourceExtractor re = new ResourceExtractor(NewProjectSourcesView.class);
         FXMLLoader loader;
         try {
@@ -64,33 +70,10 @@ class NewProjectSourcesView extends WizardPane {
 
     @FXML
     protected void initialize() {
-        sourceFileListView.itemsProperty().bind(sources);
-        sourceFileListView.itemsProperty().get().addListener((ListChangeListener<? super ProjectSource>) c -> {
-            c.next();
-            if (c.wasAdded()) {
-                for (Object object : c.getAddedSubList()) {
-                    if (object instanceof ProjectSource) {
-                        ProjectSource source = (ProjectSource) object;
-                        ComboBox<DataTemplate> templateComboBox = new ComboBox<>(FXCollections.observableArrayList(DataTemplate.values()));
-                        templateComboBox.getSelectionModel().select(source.getTemplate());
-                        templateComboBox.getSelectionModel().selectedItemProperty().addListener(
-                                (observable, oldValue, newValue) -> source.setTemplate(newValue));
-                    }
-                }
-            }
-        });
-        // Disable file selection controls
-        addFilesButton.setDisable(true);
-        removeFileButton.setDisable(true);
-        sourceFileListView.setDisable(true);
-
-        sourceFileListView.getSelectionModel().selectedItemProperty().addListener(c -> {
-            if ( sourceFileListView.getSelectionModel().getSelectedItem() == null ) {
-                removeFileButton.setDisable(true);
-            } else {
-                removeFileButton.setDisable(false);
-            }
-        });
+        filesListView.itemsProperty().bind(tables);
+        removeFilesButton.disableProperty().bind(
+                Bindings.isNull(filesListView.getSelectionModel().selectedItemProperty())
+        );
     }
 
     //**********************************************//
@@ -99,23 +82,32 @@ class NewProjectSourcesView extends WizardPane {
 
     @Override
     public void onEnteringPage(Wizard wizard) {
+        wizard.invalidProperty().bind(tables.emptyProperty());
         wizard.setTitle("New Project: Sources");
-        wizard.invalidProperty().bind(sources.emptyProperty());
-        if (wizard.getSettings().containsKey(SOURCES)) {
-            List<ProjectSource> projectSources = (List<ProjectSource>) wizard.getSettings().get("SOURCES");
-            sources.setAll(projectSources);
+        if (wizard.getSettings().containsKey(TABLES)) {
+            List<DataTable> tableList = (List<DataTable>) wizard.getSettings().get(TABLES);
+            updateTables(tableList);
         }
     }
 
     @Override
     public void onExitingPage(Wizard wizard) {
         wizard.invalidProperty().unbind();
-        wizard.getSettings().put(SOURCES, sources.get());
+        wizard.getSettings().put(TABLES, tables.get());
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
+
+    private void updateTables(List<DataTable> newList) {
+        for (DataTable table : tables) {
+            if (! newList.contains(table)) {
+                tables.remove(table);
+                tablePathMap.remove(table);
+            }
+        }
+    }
 
     /**
      * Upon pressing "Add Files...", the user is presented with a {@code FileChooser} where they can select multiple
@@ -137,12 +129,25 @@ class NewProjectSourcesView extends WizardPane {
                 if ( !isFileValid(file) ) {
                     iterator.remove();
                     rejectedFiles.add(file);
+                } else if (tablePathMap.containsValue(path)) {
+                    iterator.remove();  // don't read in duplicates
                 } else {
-                    if ( alreadyReadPath(path)) {
+                    try {
+                        DataParser.Delimiter guess = DataParser.guessDelimiter(path);
+                        Map<DataImportDialog.Key, Object> fileSettings =
+                                DataImportDialog.showDialog(path.getFileName().toString(), guess, (Stage) this.getScene().getWindow());
+                        if (guess == null) {
+                            guess = (DataParser.Delimiter) fileSettings.get(DataImportDialog.Key.DELIMITER);
+                        }
+                        String delimiter = (guess != null) ? guess.toString() : fileSettings.get(DataImportDialog.Key.DELIMITER).toString();
+                        DataTemplate template = (DataTemplate) fileSettings.get(DataImportDialog.Key.TEMPLATE);
+                        DataParser parser = template.getDataParser();
+                        DataTable table = parser.parseDataTable(path, delimiter, path.getFileName().toString());
+                        tables.add(table);
+                        tablePathMap.put(table, path);
+                    } catch (IOException e) {
                         iterator.remove();
                         rejectedFiles.add(file);
-                    } else {
-                        sources.add(new ProjectSource(path, DataTemplate.DEFAULT, null, null));
                     }
                 }
             }
@@ -163,32 +168,25 @@ class NewProjectSourcesView extends WizardPane {
     }
 
     /**
-     * Upon pressing "Remove File", the currently selected item in {@link #sourceFileListView} is removed.
+     * Upon pressing "Remove File", the currently selected item in {@link #filesListView} is removed.
      */
     @FXML
-    private void removeFileButtonAction() {
+    private void removeFilesButtonAction() {
         // Remove from paths
-        sources.remove(sourceFileListView.getSelectionModel().getSelectedItem());
+        DataTable selected = filesListView.getSelectionModel().getSelectedItem();
+        tables.remove(selected);
+        tablePathMap.remove(selected);
     }
 
     private boolean isFileValid(File file) {
         Path path = Paths.get(file.toURI());
         boolean valid;
         try {
-            valid = DataParser.isFileSupported(path) && !DataParser.isFileEmpty(path);
+            valid = DataParser.isFileSupported(path) && ! DataParser.isFileEmpty(path);
         } catch ( IOException e ) {
             throw new RuntimeException(e);
         }
         return valid;
-    }
-
-    private boolean alreadyReadPath(Path path) {
-        for (ProjectSource source : sources) {
-            if (source.getPath().equals(path)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

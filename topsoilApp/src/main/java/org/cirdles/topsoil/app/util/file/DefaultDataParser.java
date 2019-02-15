@@ -47,20 +47,6 @@ public class DefaultDataParser implements DataParser {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private int countHeaderRows(String[][] rows) {
-        boolean isHeader = true;
-        int count = 0;
-        while (isHeader) {
-            try {
-                Double.parseDouble(rows[count][0]);
-                isHeader = false;
-            } catch (NumberFormatException e) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     private ColumnTree parseColumnTree(String[][] rows) {
         List<DataColumn<?>> columns = new ArrayList<>();
         int numHeaderRows = countHeaderRows(rows);
@@ -68,7 +54,9 @@ public class DefaultDataParser implements DataParser {
         for (int i = 0; i < rows[0].length; i++) {
             joiner = new StringJoiner("\n");
             for (int j = 0; j < numHeaderRows; j++) {
-                joiner.add(rows[j][i]);
+                if (! rows[j][i].isEmpty()) {
+                    joiner.add(rows[j][i]);
+                }
             }
             columns.add(new DataColumn<>(joiner.toString(), DataParser.getColumnDataType(rows, i, numHeaderRows)));
         }
@@ -91,6 +79,17 @@ public class DefaultDataParser implements DataParser {
         segments.add(new DataSegment("model", dataRows.toArray(new DataRow[]{})));
 
         return new DataTable(label, columnTree, segments);
+    }
+
+    private int countHeaderRows(String[][] rows) {
+        int count = 0;
+        for (String[] row : rows) {
+            if (DataParser.isDouble(row[0])) {
+                break;
+            }
+            count++;
+        }
+        return count;
     }
 }
 

@@ -5,6 +5,7 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.model.DataColumn;
 import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.app.model.TopsoilProject;
@@ -48,8 +49,11 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getFileMenu() {
         MenuItem newProjectItem = new MenuItem("Project from Files");
         newProjectItem.setOnAction(event -> {
-            ProjectView projectView = new ProjectView(FileMenuHelper.newProject());
-            Main.getController().setProjectView(projectView);
+            TopsoilProject project = FileMenuHelper.newProject();
+            if (project != null) {
+                ProjectView projectView = new ProjectView(project);
+                Main.getController().setProjectView(projectView);
+            }
         });
         Menu newMenu = new Menu("New", null,
                                 newProjectItem
@@ -57,7 +61,11 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem openProjectItem = new MenuItem ("Open...");
         openProjectItem.setOnAction(event -> {
-            // TODO
+            TopsoilProject project = FileMenuHelper.openProject();
+            if (project != null) {
+                ProjectView projectView = new ProjectView(project);
+                Main.getController().setProjectView(projectView);
+            }
         });
         Menu openRecentProjectMenu = new Menu("Open Recent");
         openRecentProjectMenu.setDisable(true);
@@ -107,14 +115,13 @@ public class TopsoilMenuBar extends MenuBar {
             FileMenuHelper.saveProject(getCurrentProjectView().getProject());
         });
         MenuItem saveProjectAsItem = new MenuItem("Save As...");
-        saveProjectAsItem.disableProperty().bind(Bindings.isNotNull(ProjectSerializer.currentProjectPathProperty()));
         saveProjectAsItem.setOnAction(event -> {
             if (getCurrentProjectView() != null) {
                 if (! FileMenuHelper.saveProjectAs(getCurrentProjectView().getProject())) {
-                    // TODO Error message
+                    TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
+                                                         "Error",
+                                                         "Could not save project.");
                 }
-            } else {
-                // TODO Error message
             }
         });
         MenuItem closeProjectItem = new MenuItem("Close Project");
@@ -122,10 +129,10 @@ public class TopsoilMenuBar extends MenuBar {
         closeProjectItem.setOnAction(event -> {
             if (getCurrentProjectView() != null) {
                 if (! FileMenuHelper.closeProject()) {
-                    // TODO Error message
+                    TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
+                                                         "Error",
+                                                         "Could not close project.");
                 }
-            } else {
-                // TODO Error message
             }
         });
 
@@ -136,10 +143,10 @@ public class TopsoilMenuBar extends MenuBar {
                 DataTable table = ((ProjectTableTab) getCurrentProjectView().getTabPane().getSelectionModel()
                                                                             .getSelectedItem()).getDataTable();
                 if (! FileMenuHelper.exportTableAs(table)) {
-                    // TODO Error message
+                    TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
+                                                         "Error",
+                                                         "Could not export table.");
                 }
-            } else {
-                // TODO Error message
             }
         });
 
@@ -209,6 +216,7 @@ public class TopsoilMenuBar extends MenuBar {
         formatNumberItem.setOnAction(event -> {
             // @TODO
         });
+        dataFormatMenu.getItems().addAll(formatNumberItem);
 
         Menu viewMenu = new Menu("View", null,
                         dataFormatMenu

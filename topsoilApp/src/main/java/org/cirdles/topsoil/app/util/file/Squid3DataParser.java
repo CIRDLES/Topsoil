@@ -65,7 +65,7 @@ public class Squid3DataParser implements DataParser {
         ColumnTree columnTree = parseColumnTree(rows);
         List<DataColumn<?>> columns = columnTree.getLeafNodes();
 
-        Integer[] segIndices = readDataSegments(rows);
+        int[] segIndices = readDataSegments(rows);
         List<DataSegment> segments = new ArrayList<>();
         for (int i = 0; i < segIndices.length; i++) {
             segments.add(parseDataSegment(
@@ -156,11 +156,7 @@ public class Squid3DataParser implements DataParser {
                 idxs.add(index);
             }
         }
-        int[] rtnval = new int[idxs.size()];
-        for (int index = 0; index < rtnval.length; index++) {
-            rtnval[index] = idxs.get(index);
-        }
-        return rtnval;
+        return convertIntArray(idxs);
     }
 
     /**
@@ -169,7 +165,7 @@ public class Squid3DataParser implements DataParser {
      * @param cells     String[][] of data values
      * @return          segment indices
      */
-    private static Integer[] readDataSegments(String[][] cells) {
+    private static int[] readDataSegments(String[][] cells) {
         List<Integer> idxs = new ArrayList<>();
 
         String last = cells[5][0];
@@ -183,13 +179,16 @@ public class Squid3DataParser implements DataParser {
                     last = current;
                 }
             }
-            int[] rtnval = new int[idxs.size()];
-            for (int index = 0; index < rtnval.length; index++) {
-                rtnval[index] = idxs.get(index);
-            }
         }
+        return convertIntArray(idxs);
+    }
 
-        return idxs.toArray(new Integer[]{});
+    private static int[] convertIntArray(List<Integer> integers) {
+        int[] rtnval = new int[integers.size()];
+        for (int index = 0; index < rtnval.length; index++) {
+            rtnval[index] = integers.get(index);
+        }
+        return rtnval;
     }
 
 }

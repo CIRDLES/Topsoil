@@ -119,45 +119,28 @@ public interface DataParser {
         return null;
     }
 
-    /**
-     * Guesses whether the specified {@code String} is a delimiter for the provided lines. This is done by taking a
-     * subset of lines and counting the number of times the potential delimiter occurs in each line. If the number of
-     * occurrences is the same for each line, then the {@code String} is likely a delimiter.
-     *
-     * @param   lines
-     *          a String[] of lines containing model
-     * @param   delim
-     *          the potential String delimiter
-     *
-     * @return  true, if delimiter occurs the same number of times in each line
-     */
     static boolean isDelimiter(String[] lines, Delimiter delim) {
         final int NUM_LINES = 5;
         int numLines = Math.min(NUM_LINES, lines.length);
-
         int[] counts = new int[numLines];
-
         for (int i = 0; i < numLines; i++) {
-            counts[i] = StringUtils.countOccurrencesOf(lines[i], delim.toString());
+            counts[i] = StringUtils.countOccurrencesOf(lines[i], delim.getValue());
         }
 
-        // If the number of occurrences of delimiter is not the same for each line, return false.
+        // If the number of occurrences of delimiter is not the same for each line, return false.;
         for (int i = 1; i < counts.length; i++) {
             if (counts[i] == 0 || (counts[i] != counts[i - 1]) ) {
                 return false;
             }
         }
-
         return true;
     }
 
     static Class getColumnDataType(String[][] rows, int colIndex, int numHeaderRows) {
-        final int SAMPLE_SIZE = 5;
+        final int SAMPLE_SIZE = Math.min(5, rows.length - numHeaderRows);
         boolean isDouble = true;
         for (int i = numHeaderRows; i < numHeaderRows + SAMPLE_SIZE - 1; i++) {
-            try {
-                Double.parseDouble(rows[i][colIndex]);
-            } catch (NumberFormatException e) {
+            if (! isDouble(rows[i][colIndex])) {
                 isDouble = false;
                 break;
             }
@@ -168,7 +151,7 @@ public interface DataParser {
     static List<DataValue<?>> getValuesForRow(String[] row, List<DataColumn<?>> columns) {
         List<DataValue<?>> values = new ArrayList<>();
         for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
-            if (columns.get(colIndex).getType() == Double.class) {
+            if (columns.get(colIndex).getType() == Double.class && isDouble(row[colIndex])) {
                 DataColumn<Double> doubleCol = (DataColumn<Double>) columns.get(colIndex);
                 values.add(new DoubleValue(doubleCol, Double.parseDouble(row[colIndex])));
             } else {

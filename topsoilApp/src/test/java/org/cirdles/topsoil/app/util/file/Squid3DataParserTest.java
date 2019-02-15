@@ -1,9 +1,6 @@
 package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
-import org.cirdles.topsoil.app.model.DataValue;
-import org.cirdles.topsoil.app.model.composite.DataComponent;
-import org.cirdles.topsoil.app.model.composite.DataComposite;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,54 +20,48 @@ public class Squid3DataParserTest {
             ",Col1,Col2,,Col4,,\n" +
             ",Col1,Col2,Col3,Col4,Col5,\n" +
             "Seg1,,,,,,\n" +
-            "Seg1:Row1,1.0,2.0,3.0,4.0,5.0,\n" +
+            "Seg1:Row1,1.0,two,3.0,four,5.0,\n" +
             "Seg2,,,,,,\n" +
-            "Seg2:Row1,1.0,2.0,3.0,4.0,5.0,\n"
+            "Seg2:Row1,2.0,three,4.0,five,6.0,\n"
     );
 
     static ColumnTree columnTreeOracle;
-    static List<DataSegment> dataSegmentsOracle;
+    static DataTable dataTableOracle;
 
     @BeforeClass
     public static void setup() {
-        DataCategory cat1 = new DataCategory(
-                "Cat1",
-                new DataColumn<>("Col1 Col1 Col1", Double.class),
-                new DataColumn<>("Col2 Col2 Col2 Col2", Double.class),
-                new DataColumn<>("Col3", Double.class)
-        );
-        DataCategory cat2 = new DataCategory(
-                "Cat2",
-                new DataColumn<>("Col4 Col4", Double.class),
-                new DataColumn<>("Col5", Double.class)
-        );
-        DataCategory cat3 = new DataCategory(
-                "Cat3"
-        );
+        DataColumn<Double> col1 = new DataColumn<>("Col1 Col1 Col1", Double.class);
+        DataColumn<String> col2 = new DataColumn<>("Col2 Col2 Col2 Col2", String.class);
+        DataColumn<Double> col3 = new DataColumn<>("Col3", Double.class);
+        DataColumn<String> col4 = new DataColumn<>("Col4 Col4", String.class);
+        DataColumn<Double> col5 = new DataColumn<>("Col5", Double.class);
+
+        DataCategory cat1 = new DataCategory("Cat1", col1, col2, col3);
+        DataCategory cat2 = new DataCategory("Cat2", col4, col5);
+        DataCategory cat3 = new DataCategory("Cat3");
         columnTreeOracle = new ColumnTree(Arrays.asList(cat1, cat2, cat3));
 
-        List<DataValue<?>> values = new ArrayList<>();
-        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(0)), 1.0));
-        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(1)), 2.0));
-        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(2)), 3.0));
-        values.add(new DoubleValue(((DataColumn<Double>) cat2.getChildren().get(0)), 4.0));
-        values.add(new DoubleValue(((DataColumn<Double>) cat2.getChildren().get(1)), 5.0));
-        DataSegment seg1 = new DataSegment(
-                "Seg1",
-                new DataRow("Seg1:Row1", values)
-        );
-        values = new ArrayList<>();
-        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(0)), 1.0));
-        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(1)), 2.0));
-        values.add(new DoubleValue(((DataColumn<Double>) cat1.getChildren().get(2)), 3.0));
-        values.add(new DoubleValue(((DataColumn<Double>) cat2.getChildren().get(0)), 4.0));
-        values.add(new DoubleValue(((DataColumn<Double>) cat2.getChildren().get(1)), 5.0));
+        DataSegment seg1 =
+                new DataSegment("Seg1",
+                                new DataRow("Seg1:Row1", Arrays.asList(
+                                        new DoubleValue(col1, 1.0),
+                                        new StringValue(col2, "two"),
+                                        new DoubleValue(col3, 3.0),
+                                        new StringValue(col4, "four"),
+                                        new DoubleValue(col5, 5.0)
+                                ))
+                );
         DataSegment seg2 = new DataSegment(
                 "Seg2",
-                new DataRow("Seg2:Row1", values)
+                new DataRow("Seg2:Row1", Arrays.asList(
+                        new DoubleValue(col1, 2.0),
+                        new StringValue(col2, "three"),
+                        new DoubleValue(col3, 4.0),
+                        new StringValue(col4, "five"),
+                        new DoubleValue(col5, 6.0)
+                ))
         );
-        dataSegmentsOracle = new ArrayList<>();
-        dataSegmentsOracle.addAll(Arrays.asList(seg1, seg2));
+        dataTableOracle = new DataTable("CONTENT", columnTreeOracle, Arrays.asList(seg1, seg2));
 
     }
 
@@ -81,9 +72,9 @@ public class Squid3DataParserTest {
     }
 
     @Test
-    public void parseData_test() {
+    public void parseDataTable_test() {
         DataTable table = new Squid3DataParser().parseDataTable(CONTENT, ",", "CONTENT");
-        assertEquals(dataSegmentsOracle, table.getChildren());
+        assertEquals(dataTableOracle, table);
     }
 
 }

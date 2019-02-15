@@ -13,7 +13,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
@@ -25,6 +24,8 @@ import java.nio.file.Paths;
 
 import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.Key.TITLE;
 import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.Key.LOCATION;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_WIDTH;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_HEIGHT;
 
 /**
  * @author marottajb
@@ -78,6 +79,8 @@ class NewProjectTitleView extends WizardPane {
     //**********************************************//
 
     NewProjectTitleView() {
+        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
+
         final ResourceExtractor re = new ResourceExtractor(NewProjectTitleView.class);
         FXMLLoader loader;
         try {
@@ -119,16 +122,8 @@ class NewProjectTitleView extends WizardPane {
     public void onEnteringPage(Wizard wizard) {
         wizard.setTitle("New Project: Title and Location");
         wizard.invalidProperty().bind(Bindings.createBooleanBinding(() -> {
-            if (projectLocation.get() == null) {
-                return true;
-            } else {
-                if (titleTextField.getText().equals("")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }, projectLocation));
+            return (pathTextField.getText().equals("") || titleTextField.getText().equals(""));
+        }, pathTextField.textProperty(), titleTextField.textProperty()));
     }
 
     public void onExitingPage(Wizard wizard) {
@@ -149,7 +144,7 @@ class NewProjectTitleView extends WizardPane {
         DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle("Choose Project Location");
 
-        File file = dirChooser.showDialog(Main.getController().getPrimaryStage());
+        File file = dirChooser.showDialog(this.getScene().getWindow());
         if (file != null) {
             setProjectLocation(file.toPath());
         }

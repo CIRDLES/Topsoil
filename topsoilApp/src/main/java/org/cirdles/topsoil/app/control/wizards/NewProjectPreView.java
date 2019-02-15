@@ -1,47 +1,43 @@
 package org.cirdles.topsoil.app.control.wizards;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.model.DataTable;
-import org.cirdles.topsoil.app.util.file.*;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.Key.SOURCES;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_HEIGHT;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_WIDTH;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.Key.TABLES;
 
 /**
  * @author marottajb
  */
 class NewProjectPreView extends WizardPane {
 
-    private static final String CONTROLLER_FXML = "controller/project-preview.fxml";
-    private static final String WARNING_ICON_PATH = "warning.png";
+    private static final String CONTROLLER_FXML = "project-preview.fxml";
+    private static final String WARNING_ICON = "warning.png";
 
     @FXML private TabPane fileTabs;
     
-    private ImageView warningIcon;
-    private List<ProjectSource> sources;
+    private List<DataTable> tables;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     NewProjectPreView() {
+        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
+
         final ResourceExtractor re = new ResourceExtractor(NewProjectPreView.class);
-
-        warningIcon = new ImageView(new Image(re.extractResourceAsPath(WARNING_ICON_PATH).toString()));
-        warningIcon.setPreserveRatio(true);
-        warningIcon.setFitHeight(20.0);
-
         FXMLLoader loader;
         try {
             loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
@@ -65,48 +61,66 @@ class NewProjectPreView extends WizardPane {
     @Override
     public void onEnteringPage(Wizard wizard) {
         wizard.setTitle("New Project: Preview");
-        removeOldTabs(wizard);
-        createNewTabs(wizard);
+        List<DataTable> newTables = (List<DataTable>) wizard.getSettings().get(TABLES);
+        wizard.setInvalid(true);
+        updateTabs(newTables, wizard);
     }
 
     @Override
     public void onExitingPage(Wizard wizard) {
-
-    }
-
-    List<DataTable> getSelections() {
-        // TODO
+        PreViewTab preViewTab;
         List<DataTable> tables = new ArrayList<>();
-        DataTableOptionsView controller;
         for (Tab tab : fileTabs.getTabs()) {
-            controller = ((PreViewTab) tab).getController();
-            tables.add(controller.getDataTable());
+            preViewTab = (PreViewTab) tab;
+            tables.add(preViewTab.getTable());
         }
-        return tables;
+        wizard.getSettings().put(TABLES, tables);
     }
 
     //**********************************************//
     //               PRIVATE METHODS                //
     //**********************************************//
 
-    private void removeOldTabs(Wizard wizard) {
-        List<ProjectSource> settingsSources = (List<ProjectSource>) wizard.getSettings().get(SOURCES);
+    private void updateTabs(List<DataTable> tableList, Wizard wizard) {
         for (Tab tab : fileTabs.getTabs()) {
-            ProjectSource source = ((PreViewTab) tab).getSource();
-            if (! settingsSources.contains(source)) {
+            DataTable table = ((PreViewTab) tab).getTable();
+            if (! tableList.contains(table)) {
                 fileTabs.getTabs().remove(tab);
+            }
+        }
+        for (DataTable table : tableList) {
+            if (! hasTabForTable(table)) {
+                PreViewTab tab = new PreViewTab(table);
+                tab.controller.isoComboBox.getSelectionModel().selectedItemProperty()
+                                          .addListener(((observable, oldValue, newValue) -> {
+                    wizard.setInvalid(! requiredFieldsFilled());
+                }));
+                tab.controller.unctComboBox.getSelectionModel().selectedItemProperty()
+                                           .addListener(((observable, oldValue, newValue) -> {
+                    wizard.setInvalid(! requiredFieldsFilled());
+                }));
+                fileTabs.getTabs().add(tab);
             }
         }
     }
 
-    private void createNewTabs(Wizard wizard) {
-        List<ProjectSource> settingsSources = (List<ProjectSource>) wizard.getSettings().get(SOURCES);
-        for (ProjectSource source : settingsSources) {
-            if (! sources.contains(source)) {
-                PreViewTab tab = new PreViewTab(source);
-                fileTabs.getTabs().add(tab);
+    private boolean hasTabForTable(DataTable table) {
+        for (Tab tab : fileTabs.getTabs()) {
+            if (((PreViewTab) tab).getTable().equals(table)) {
+                return true;
             }
         }
+        return false;
+    }
+
+    private boolean requiredFieldsFilled() {
+        for (Tab t : fileTabs.getTabs()) {
+            PreViewTab tab = (PreViewTab) t;
+            if (tab.controller.isoComboBox.getValue() == null || tab.controller.unctComboBox.getValue() == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //**********************************************//
@@ -116,32 +130,19 @@ class NewProjectPreView extends WizardPane {
     class PreViewTab extends Tab {
 
         private DataTableOptionsView controller;
-        private ProjectSource source;
+        private DataTable table;
 
-        PreViewTab(ProjectSource src) {
-            super();
-            this.source = src;
-            Path path = source.getPath();
-            DataParser dataParser;
-            switch (source.getTemplate()) {
-                case DEFAULT:
-                    dataParser = new DefaultDataParser(path);
-                    break;
-                case SQUID_3:
-                    dataParser = new Squid3DataParser(path);
-                    break;
-                default:
-                    dataParser = new DefaultDataParser(path);
-                    break;
-            }
-            controller = new DataTableOptionsView(dataParser.parseDataTable(path.getFileName().toString()));
+        PreViewTab(DataTable table) {
+            super(table.getLabel());
+            this.table = table;
+            // TODO if table == null
+            controller = new DataTableOptionsView(table);
 
             this.setContent(controller);
-            this.setText(path.getFileName().toString());
         }
 
-        public ProjectSource getSource() {
-            return source;
+        public DataTable getTable() {
+            return table;
         }
 
         private DataTableOptionsView getController() {

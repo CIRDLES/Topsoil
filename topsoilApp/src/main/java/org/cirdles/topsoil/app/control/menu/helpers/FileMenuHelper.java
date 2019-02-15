@@ -4,23 +4,25 @@ import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.MainController;
+import org.cirdles.topsoil.app.control.wizards.NewProjectWizard;
 import org.cirdles.topsoil.app.model.DataTable;
 import org.cirdles.topsoil.app.model.DataTemplate;
 import org.cirdles.topsoil.app.model.TopsoilProject;
+import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.app.util.file.DataWriter;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.app.util.SampleData;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.util.file.DataParser;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
-import org.cirdles.topsoil.app.util.serialization.SerializableTopsoilProject;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -39,19 +41,43 @@ public class FileMenuHelper {
     public static TopsoilProject newProject() {
         TopsoilProject project = null;
         if (! isDataOpen() || shouldOverwriteData("New Project")) {
-            // TODO NewProjectWizard
+            Map<String, Object> settings = NewProjectWizard.startWizard();
+            if (settings != null) {
+                String title = String.valueOf(settings.get(NewProjectWizard.Key.TITLE));
+                Path location = (Path) settings.get(NewProjectWizard.Key.LOCATION);
+                List<DataTable> tables = (List<DataTable>) settings.get(NewProjectWizard.Key.TABLES);
+                project = new TopsoilProject(tables.toArray(new DataTable[]{}));
+
+                File newFile = new File(location.toFile(), title + ".topsoil");
+                ProjectSerializer.serialize(newFile.toPath(), project);
+            }
         }
         return project;
     }
 
     public static TopsoilProject openProject() {
-        if (ProjectSerializer.getCurrentProjectPath() != null && shouldOverwriteData("Open Project")) {
-            File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
-            if (file.exists()) {
-                return openProject(Paths.get(file.toURI()));
+        Path path = Paths.get(TopsoilFileChooser.openTopsoilFile().showOpenDialog(Main.getController().getPrimaryStage()).toURI());
+        if (path != null && path.equals(ProjectSerializer.getCurrentProjectPath())) {
+            return null;    // project already open
+        }
+
+        // handle overwriting project
+        if (isDataOpen()) {
+            TopsoilProject currentProject = getCurrentProject();
+            ButtonType shouldSave = showOverwriteDialog();
+            if (shouldSave.equals(ButtonType.YES)) {
+                if (ProjectSerializer.getCurrentProjectPath() == null) {
+                    saveProjectAs(currentProject);
+                } else {
+                    serializeProject(currentProject, ProjectSerializer.getCurrentProjectPath());
+                }
+            }
+            if (shouldSave.equals(ButtonType.CANCEL)) {
+                return null;
             }
         }
-        return null;
+
+        return openProject(path);
     }
 
     public static DataTable openSampleData(SampleData data) {
@@ -61,7 +87,7 @@ public class FileMenuHelper {
     public static boolean saveProject(TopsoilProject project) {
         boolean completed;
         if (ProjectSerializer.getCurrentProjectPath() != null) {
-            completed = saveProjectAs(project, ProjectSerializer.getCurrentProjectPath());
+            completed = serializeProject(project, ProjectSerializer.getCurrentProjectPath());
         } else {
             completed = saveProjectAs(project);
         }
@@ -72,7 +98,7 @@ public class FileMenuHelper {
         boolean completed = false;
         File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
         if (file.exists()) {
-            completed = saveProjectAs(project, Paths.get(file.toURI()));
+            completed = serializeProject(project, Paths.get(file.toURI()));
         }
         return completed;
     }
@@ -92,20 +118,22 @@ public class FileMenuHelper {
 
     public static DataTable importTableFromFile(Path path, DataTemplate template,
                                                 IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
-        DataParser parser = template.getDataParser(path);
-        if (parser == null) {
-            return null;
-        }
-        return importTable(path.getFileName().toString(), parser, isotopeSystem, unctFormat);
+//        DataParserBase parser = template.getDataParser(path);
+//        if (parser == null) {
+//            return null;
+//        }
+//        return importTable(path.getFileName().toString(), parser, isotopeSystem, unctFormat);
+        return null;
     }
 
     public static DataTable importTableFromString(String content, DataTemplate template, IsotopeSystem isotopeSystem,
                                                      Uncertainty unctFormat) {
-        DataParser parser = template.getDataParser(content);
-        if (parser == null) {
-            return null;
-        }
-        return importTable("clipboard-content", parser, isotopeSystem, unctFormat);
+//        DataParserBase parser = template.getDataParser(content);
+//        if (parser == null) {
+//            return null;
+//        }
+//        return importTable("clipboard-content", parser, isotopeSystem, unctFormat);
+        return null;
     }
 
     public static boolean exportTableAs(DataTable table) {
@@ -132,7 +160,7 @@ public class FileMenuHelper {
                     } else {
                         File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
                         if (file != null) {
-                            saved = FileMenuHelper.saveProjectAs(project, file.toPath());
+                            saved = FileMenuHelper.serializeProject(project, file.toPath());
                         }
                     }
                     // If file was successfully saved
@@ -190,25 +218,30 @@ public class FileMenuHelper {
         return (response.isPresent() && response.get().equals(ButtonType.YES));
     }
 
+    private static ButtonType showOverwriteDialog() {
+        return TopsoilNotification.showNotification(TopsoilNotification.NotificationType.YES_NO,
+                                                    "Overwrite",
+                                                    "This will overwrite your current data. Save?").orElse(null);
+    }
+
     private static TopsoilProject openProject(Path projectPath) {
         return ProjectSerializer.deserialize(projectPath).getTopsoilProject();
     }
 
-    private static boolean saveProjectAs(TopsoilProject project, Path path) {
+    private static boolean serializeProject(TopsoilProject project, Path path) {
         boolean completed;
         ProjectSerializer.serialize(path, project);
         completed = true;
         return completed;
     }
 
-    private static DataTable importTable(String title, DataParser parser, IsotopeSystem isotopeSystem,
-                                         Uncertainty unctFormat) {
-        DataTable table = parser.parseDataTable(title);
-        if (table != null) {
-            table.setIsotopeSystem(isotopeSystem);
-            table.setUnctFormat(unctFormat);
-        }
-        return table;
+    private static DataTable importTable(String title, DataParser parser, IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
+//        DataTable table = parser.parseDataTable(title);
+//        if (table != null) {
+//            table.setIsotopeSystem(isotopeSystem);
+//            table.setUnctFormat(unctFormat);
+//        }
+        return null;
     }
 
     private static boolean exportTableAs(DataTable table, Path path) {

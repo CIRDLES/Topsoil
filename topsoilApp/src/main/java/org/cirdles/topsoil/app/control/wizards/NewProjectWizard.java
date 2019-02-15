@@ -14,8 +14,8 @@ public class NewProjectWizard extends Wizard {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final double WIDTH = 600.0;
-    private static final double HEIGHT = 550.0;
+    public static final double INIT_WIDTH = 600.0;
+    public static final double INIT_HEIGHT = 550.0;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -62,7 +62,7 @@ public class NewProjectWizard extends Wizard {
     public class Key {
         public static final String TITLE = "TITLE";
         public static final String LOCATION = "LOCATION";
-        public static final String SOURCES = "SOURCES";
+        public static final String TABLES = "TABLES";
     }
 
 }
