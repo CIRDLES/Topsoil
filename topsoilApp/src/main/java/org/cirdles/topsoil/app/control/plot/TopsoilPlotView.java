@@ -13,7 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.model.DataTable;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;

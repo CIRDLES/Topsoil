@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util.serialization;
 
-import org.cirdles.topsoil.app.model.DataTable;
-import org.cirdles.topsoil.app.model.TopsoilProject;
+import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.io.Serializable;
 

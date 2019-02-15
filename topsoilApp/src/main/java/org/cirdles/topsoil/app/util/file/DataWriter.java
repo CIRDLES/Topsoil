@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.util.file;
 
-import org.cirdles.topsoil.app.model.DataTable;
+import org.cirdles.topsoil.app.data.DataTable;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

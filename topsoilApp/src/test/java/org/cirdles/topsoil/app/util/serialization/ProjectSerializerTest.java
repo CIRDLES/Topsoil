@@ -1,9 +1,10 @@
 package org.cirdles.topsoil.app.util.serialization;
 
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.model.*;
-import org.cirdles.topsoil.app.util.file.DataParser;
-import org.cirdles.topsoil.app.util.file.Squid3DataParser;
+import org.cirdles.topsoil.app.data.*;
+import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.util.file.parser.FileParser;
+import org.cirdles.topsoil.app.util.file.parser.Squid3FileParser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -33,8 +34,8 @@ public class ProjectSerializerTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        DataParser dataParser = new Squid3DataParser();
-        DataTable table = dataParser.parseDataTable(CONTENT, ",", "CONTENT");
+        FileParser fileParser = new Squid3FileParser();
+        DataTable table = fileParser.parseDataTable(CONTENT, ",", "CONTENT");
         project = new TopsoilProject(table);
     }
 

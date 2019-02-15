@@ -3,14 +3,16 @@ package org.cirdles.topsoil.app.control;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
-import org.cirdles.topsoil.app.model.DataTable;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
-import org.cirdles.topsoil.app.control.treetable.TopsoilTreeTableView;
+import org.cirdles.topsoil.app.control.tree.TopsoilTreeTableView;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A custom {@code Tab} associated with a particular {@code DataTable}.
@@ -35,11 +37,6 @@ public class ProjectTableTab extends Tab {
         this.table = table;
         this.tabView = new TabView(table);
         this.setContent(tabView);
-        this.setOnClosed(event -> {
-            if (((ProjectView) Main.getController().getMainContent()).getTabPane().getTabs().isEmpty()) {
-                FileMenuHelper.closeProject();
-            }
-        });
     }
 
     //**********************************************//

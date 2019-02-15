@@ -14,10 +14,11 @@ import javafx.stage.Stage;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
-import org.cirdles.topsoil.app.model.DataTable;
-import org.cirdles.topsoil.app.model.DataTemplate;
+import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.util.file.DataParser;
+import org.cirdles.topsoil.app.util.file.parser.FileParser;
+import org.cirdles.topsoil.app.util.file.parser.Delimiter;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
@@ -133,15 +134,16 @@ class NewProjectSourcesView extends WizardPane {
                     iterator.remove();  // don't read in duplicates
                 } else {
                     try {
-                        DataParser.Delimiter guess = DataParser.guessDelimiter(path);
+                        Delimiter guess = FileParser.guessDelimiter(path);
                         Map<DataImportDialog.Key, Object> fileSettings =
                                 DataImportDialog.showDialog(path.getFileName().toString(), guess, (Stage) this.getScene().getWindow());
                         if (guess == null) {
-                            guess = (DataParser.Delimiter) fileSettings.get(DataImportDialog.Key.DELIMITER);
+                            guess = (Delimiter) fileSettings.get(DataImportDialog.Key.DELIMITER);
                         }
-                        String delimiter = (guess != null) ? guess.toString() : fileSettings.get(DataImportDialog.Key.DELIMITER).toString();
+                        String delimiter = (guess != null) ? guess.getValue() :
+                                ((Delimiter) fileSettings.get(DataImportDialog.Key.DELIMITER)).getValue();
                         DataTemplate template = (DataTemplate) fileSettings.get(DataImportDialog.Key.TEMPLATE);
-                        DataParser parser = template.getDataParser();
+                        FileParser parser = template.getDataParser();
                         DataTable table = parser.parseDataTable(path, delimiter, path.getFileName().toString());
                         tables.add(table);
                         tablePathMap.put(table, path);
@@ -182,7 +184,7 @@ class NewProjectSourcesView extends WizardPane {
         Path path = Paths.get(file.toURI());
         boolean valid;
         try {
-            valid = DataParser.isFileSupported(path) && ! DataParser.isFileEmpty(path);
+            valid = FileParser.isFileSupported(path) && ! FileParser.isFileEmpty(path);
         } catch ( IOException e ) {
             throw new RuntimeException(e);
         }

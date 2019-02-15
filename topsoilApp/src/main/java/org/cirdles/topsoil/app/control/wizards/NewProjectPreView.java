@@ -1,13 +1,11 @@
 package org.cirdles.topsoil.app.control.wizards;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.model.DataTable;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 

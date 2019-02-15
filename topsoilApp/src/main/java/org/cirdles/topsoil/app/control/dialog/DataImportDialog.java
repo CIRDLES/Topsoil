@@ -3,24 +3,19 @@ package org.cirdles.topsoil.app.control.dialog;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
-import org.cirdles.topsoil.app.model.DataTemplate;
-import org.cirdles.topsoil.app.util.file.DataParser;
+import org.cirdles.topsoil.app.data.DataTemplate;
+import org.cirdles.topsoil.app.util.file.parser.Delimiter;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_HEIGHT;
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_WIDTH;
 
 /**
  * @author marottajb
@@ -31,7 +26,7 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    private DataImportDialog(String sourceName, DataParser.Delimiter initial, Stage owner) {
+    private DataImportDialog(String sourceName, Delimiter initial, Stage owner) {
         this.setTitle("Importing: " + sourceName);
         this.initOwner(owner);
 
@@ -65,11 +60,11 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
         return showDialog(sourceName, null);
     }
 
-    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, DataParser.Delimiter initial) {
+    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter initial) {
         return showDialog(sourceName, initial, Main.getController().getPrimaryStage());
     }
 
-    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, DataParser.Delimiter initial,
+    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter initial,
                                                                Stage owner) {
         return new DataImportDialog(sourceName, initial, owner).showAndWait().orElse(null);
     }
@@ -82,12 +77,12 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
 
         private static final String CONTROLLER_FXML = "data-import-dialog.fxml";
 
-        @FXML private ComboBox<DataParser.Delimiter> delimiterComboBox;
+        @FXML private ComboBox<Delimiter> delimiterComboBox;
         @FXML private ComboBox<DataTemplate> templateComboBox;
 
-        private DataParser.Delimiter delimiter;
+        private Delimiter delimiter;
 
-        DataImportDialogController(DataParser.Delimiter initial) {
+        DataImportDialogController(Delimiter initial) {
             delimiter = initial;
             final ResourceExtractor re = new ResourceExtractor(DataImportDialogController.class);
 
@@ -104,7 +99,7 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
 
         @FXML
         protected void initialize() {
-            delimiterComboBox.getItems().addAll(DataParser.Delimiter.values());
+            delimiterComboBox.getItems().addAll(Delimiter.values());
             if (delimiter != null) {
                 delimiterComboBox.getSelectionModel().select(delimiter);
                 delimiterComboBox.setDisable(true);

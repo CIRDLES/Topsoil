@@ -5,10 +5,10 @@ import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.MainController;
 import org.cirdles.topsoil.app.control.wizards.NewProjectWizard;
-import org.cirdles.topsoil.app.model.DataTable;
-import org.cirdles.topsoil.app.model.DataTemplate;
-import org.cirdles.topsoil.app.model.TopsoilProject;
-import org.cirdles.topsoil.app.util.file.DataParser;
+import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.DataTemplate;
+import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.util.file.parser.FileParser;
 import org.cirdles.topsoil.app.util.file.DataWriter;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.app.util.SampleData;
@@ -235,7 +235,7 @@ public class FileMenuHelper {
         return completed;
     }
 
-    private static DataTable importTable(String title, DataParser parser, IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
+    private static DataTable importTable(String title, FileParser parser, IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
 //        DataTable table = parser.parseDataTable(title);
 //        if (table != null) {
 //            table.setIsotopeSystem(isotopeSystem);

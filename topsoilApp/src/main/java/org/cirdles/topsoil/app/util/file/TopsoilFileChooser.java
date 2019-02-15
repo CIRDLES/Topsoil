@@ -97,36 +97,4 @@ public class TopsoilFileChooser {
         return fileChooser;
     }
 
-    /**
-     * Supported file extensions for model files.
-     *
-     * @author  marottajb
-     */
-    public enum TableFileExtension {
-
-        CSV("csv", DataParser.Delimiter.COMMA),
-        TSV("tsv", DataParser.Delimiter.TAB),
-        TXT("txt", null);
-
-        private String extension;
-        private DataParser.Delimiter delim;
-
-        TableFileExtension(String ext, DataParser.Delimiter delim) {
-            this.extension = ext;
-            this.delim = delim;
-        }
-
-        @Override
-        public String toString() {
-            return extension;
-        }
-
-        public String getExtension() {
-            return extension;
-        }
-
-        public DataParser.Delimiter getDelimiter() {
-            return delim;
-        }
-    }
 }

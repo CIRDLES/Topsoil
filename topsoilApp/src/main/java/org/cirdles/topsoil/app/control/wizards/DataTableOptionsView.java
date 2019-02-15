@@ -2,18 +2,13 @@ package org.cirdles.topsoil.app.control.wizards;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.VPos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.control.ColumnTreeView;
-import org.cirdles.topsoil.app.model.*;
+import org.cirdles.topsoil.app.control.tree.ColumnTreeView;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 
@@ -70,7 +65,12 @@ public class DataTableOptionsView extends VBox {
 
 	@FXML
 	protected void initialize() {
-		columnViewPane.getChildren().add(new ColumnTreeView(table.getColumnTree()));
+		ColumnTreeView treeView = new ColumnTreeView(table.getColumnTree());
+		columnViewPane.getChildren().add(treeView);
+		AnchorPane.setTopAnchor(treeView, 0.0);
+		AnchorPane.setRightAnchor(treeView, 0.0);
+		AnchorPane.setBottomAnchor(treeView, 0.0);
+		AnchorPane.setLeftAnchor(treeView, 0.0);
 
 		unctComboBox.getItems().addAll(Uncertainty.values());
 		unctComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {

@@ -14,9 +14,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Main;
-import org.cirdles.topsoil.app.model.ColumnTree;
-import org.cirdles.topsoil.app.model.DataColumn;
-import org.cirdles.topsoil.app.model.DataTable;
+import org.cirdles.topsoil.app.data.column.ColumnTree;
+import org.cirdles.topsoil.app.data.column.DataColumn;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 
