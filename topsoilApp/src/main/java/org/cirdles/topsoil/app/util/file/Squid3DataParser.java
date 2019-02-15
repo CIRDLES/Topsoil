@@ -3,38 +3,57 @@ package org.cirdles.topsoil.app.util.file;
 import org.cirdles.topsoil.app.model.*;
 import org.cirdles.topsoil.app.model.composite.DataComponent;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
 /**
  * @author marottajb
  */
-public class Squid3DataParser extends DataParser {
+public class Squid3DataParser implements DataParser {
 
     //**********************************************//
-    //                 CONSTRUCTORS                 //
+    //                PUBLIC METHODS                //
     //**********************************************//
 
-    public Squid3DataParser(Path path) {
-        super(path);
+    /** {@inheritDoc} */
+    @Override
+    public ColumnTree parseColumnTree(Path path, String delimiter) throws IOException {
+        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
+        return parseColumnTree(rows);
     }
 
-    public Squid3DataParser(String content) {
-        super(content);
+    /** {@inheritDoc} */
+    @Override
+    public ColumnTree parseColumnTree(String content, String delimiter) {
+        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
+        return parseColumnTree(rows);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
+        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
+        return parseDataTable(rows, (label != null) ? label : path.getFileName().toString());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DataTable parseDataTable(String content, String delimiter, String label) {
+        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
+        return parseDataTable(rows, label);
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    /** {@inheritDoc} */
-    @Override
-    ColumnTree parseColumnTree() {
+    private ColumnTree parseColumnTree(String[][] rows) {
         List<DataComponent> topLevel = new ArrayList<>();
-        int[] categoryIndices = readCategories(cells[0]);
+        int[] categoryIndices = readCategories(rows[0]);
         for (int i = 0; i < categoryIndices.length; i++) {
             topLevel.add(parseCategory(
-                    cells,
+                    rows,
                     categoryIndices[i],
                     (i == (categoryIndices.length - 1) ? -1 : categoryIndices[i + 1])
             ));
@@ -42,35 +61,33 @@ public class Squid3DataParser extends DataParser {
         return new ColumnTree(topLevel);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    List<DataSegment> parseData() {
-        ColumnTree columnTree = parseColumnTree();
+    private DataTable parseDataTable(String[][] rows, String label) {
+        ColumnTree columnTree = parseColumnTree(rows);
         List<DataColumn<?>> columns = columnTree.getLeafNodes();
 
-        Integer[] segIndices = readDataSegments(cells);
-        List<DataSegment> dataSegments = new ArrayList<>();
+        Integer[] segIndices = readDataSegments(rows);
+        List<DataSegment> segments = new ArrayList<>();
         for (int i = 0; i < segIndices.length; i++) {
-            dataSegments.add(parseDataSegment(
-                    cells,
+            segments.add(parseDataSegment(
+                    rows,
                     segIndices[i],
                     (i < (segIndices.length - 1) ? segIndices[i + 1] : -1),
                     columns
             ));
         }
-        return dataSegments;
+        return new DataTable(label, columnTree, segments);
     }
 
     /**
      * Parses a {@code DataCategory} from the provided start and end indices.
      *
-     * @param cells         String[][] of data values
+     * @param rows         String[][] of data values
      * @param catIndex      start index of the category
      * @param nextCatIndex  index of the next category
      * @return              DataCategory
      */
-    private DataCategory parseCategory(String[][] cells, int catIndex, int nextCatIndex) {
-        String[] catRow = cells[0];
+    private DataCategory parseCategory(String[][] rows, int catIndex, int nextCatIndex) {
+        String[] catRow = rows[0];
         String catLabel = catRow[catIndex];
 
         List<DataColumn> columns = new ArrayList<>();
@@ -82,14 +99,14 @@ public class Squid3DataParser extends DataParser {
         for (int colIndex = catIndex; colIndex < nextCatIndex; colIndex++) {
             joiner = new StringJoiner(" ");
             for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
-                str = cells[rowIndex][colIndex];
+                str = rows[rowIndex][colIndex];
                 if (! str.equals("")) {
                     joiner.add(str);
                 }
             }
             str = joiner.toString().trim();
             if (! str.equals("")) {
-                Class clazz = getColumnDataType(colIndex, 5);
+                Class clazz = DataParser.getColumnDataType(rows, colIndex, 5);
                 if (clazz == Double.class) {
                     columns.add(new DataColumn<>(joiner.toString(), (Class<Double>) clazz));
                 } else {
@@ -104,23 +121,24 @@ public class Squid3DataParser extends DataParser {
     /**
      * Parses a {@code DataSegment} from the provided start and end indices.
      *
-     * @param cells         String[][] of data values
+     * @param rows         String[][] of data values
      * @param segIndex      start index of the segment
      * @param nextSegIndex  index of the next segment
      * @param columns       List of DataColumns for the table
      * @return              DataSegment
      */
-    private DataSegment parseDataSegment(String[][] cells, int segIndex, int nextSegIndex,
+    private DataSegment parseDataSegment(String[][] rows, int segIndex, int nextSegIndex,
                                         List<DataColumn<?>> columns) {
-        String segmentLabel = cells[segIndex][0];
+        String segmentLabel = rows[segIndex][0];
         List<DataRow> dataRows = new ArrayList<>();
         String rowLabel;
-        if (nextSegIndex == -1 || nextSegIndex > cells.length) {
-            nextSegIndex = cells.length;
+        if (nextSegIndex == -1 || nextSegIndex > rows.length) {
+            nextSegIndex = rows.length;
         }
         for (int rowIndex = segIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
-            rowLabel = cells[rowIndex][0];
-            dataRows.add(new DataRow(rowLabel, getValuesForRow(Arrays.copyOfRange(cells[rowIndex], 1, cells[rowIndex].length, String[].class), columns)));
+            rowLabel = rows[rowIndex][0];
+            dataRows.add(new DataRow(rowLabel, DataParser.getValuesForRow(Arrays.copyOfRange(rows[rowIndex], 1,
+                                                                                   rows[rowIndex].length, String[].class), columns)));
         }
         return new DataSegment(segmentLabel, dataRows.toArray(new DataRow[]{}));
     }

@@ -1,15 +1,14 @@
 package org.cirdles.topsoil.app.util;
 
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.model.DataRow;
-import org.cirdles.topsoil.app.model.DataSegment;
 import org.cirdles.topsoil.app.model.DataTable;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.app.util.file.DataParser;
+import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.app.util.file.DefaultDataParser;
 import org.cirdles.topsoil.app.util.file.Squid3DataParser;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -36,13 +35,18 @@ public enum SampleData {
         Path filePath = re.extractResourceAsPath(fileName);
         DataParser dataParser;
         if (this == SQUID_3) {
-            dataParser = new Squid3DataParser(filePath);
+            dataParser = new Squid3DataParser();
         } else {
-            dataParser = new DefaultDataParser(filePath);
+            dataParser = new DefaultDataParser();
         }
-        DataTable table = dataParser.parseDataTable(fileName);
-        table.setIsotopeSystem(isotopeSystem);
-        table.setUnctFormat(unctFormat);
+        DataTable table = null;
+        try {
+            table = dataParser.parseDataTable(filePath, ",", fileName);
+            table.setIsotopeSystem(isotopeSystem);
+            table.setUnctFormat(unctFormat);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return table;
     }
 

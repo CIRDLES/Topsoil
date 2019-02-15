@@ -1,208 +1,29 @@
 package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
-import org.cirdles.topsoil.app.model.DataValue;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Provides fields and methods for reading data from text files. Extending classes must implement {@code
- * parseColumnTree()} and {@code parseData()}, in order to define the necessary behavior to create a {@link DataTable}.
- *
  * @author marottajb
  */
-public abstract class DataParser {
+public interface DataParser {
 
-    //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
+    ColumnTree parseColumnTree(Path path, String delimiter) throws IOException;
+    ColumnTree parseColumnTree(String content, String delimiter);
 
-    protected Path path;
-    protected String delim;
-    protected String[] lines;
-    protected String[][] cells;
-
-    //**********************************************//
-    //                 CONSTRUCTORS                 //
-    //**********************************************//
-
-    public DataParser(Path path) {
-        try {
-            this.path = path;
-            this.lines = DataParser.readLines(path);
-            this.delim = getDelimiter();
-            this.cells = parseCells();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public DataParser(String content) {
-        this.lines = DataParser.readLines(content);
-        this.delim = getDelimiter();
-        this.cells = parseCells();
-    }
-
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
-
-    /**
-     * Creates a new {@code DataTable} with the specified title based on the source for this parser.
-     *
-     * @param title String title
-     * @return      DataTable
-     */
-    public DataTable parseDataTable(@Nullable String title) {
-        String label;
-        if (title == null) {
-            if (path == null) {
-                label = "ClipboardContent";
-            } else {
-                label = path.getFileName().toString();
-            }
-        } else {
-            label = title;
-        }
-        ColumnTree columnTree = parseColumnTree();
-        List<DataSegment> dataSegments = parseData();
-
-        return new DataTable(label, columnTree, dataSegments);
-    }
-
-    /**
-     * Returns a {@code ColumnTree} based on the source for the parser.
-     *
-     * @return  parsed ColumnTree
-     */
-    abstract ColumnTree parseColumnTree();
-
-    /**
-     * Returns a {@code List} of {@code DataSegments} based on the source for the parser.
-     * @return
-     */
-    abstract List<DataSegment> parseData();
-
-    /**
-     * Returns a list of new {@code DataValue}s based on the provided row values and the types of the data columns.
-     *
-     * @param row       String[] of row values as Strings
-     * @param columns   List of DataColumns for the data
-     * @return          List of DataValues for the row
-     */
-    protected List<DataValue<?>> getValuesForRow(String[] row, List<DataColumn<?>> columns) {
-        List<DataValue<?>> values = new ArrayList<>();
-        for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
-            if (columns.get(colIndex).getType() == Double.class) {
-                DataColumn<Double> doubleCol = (DataColumn<Double>) columns.get(colIndex);
-                values.add(new DoubleValue(doubleCol, Double.parseDouble(row[colIndex])));
-            } else {
-                DataColumn<String> stringCol = (DataColumn<String>) columns.get(colIndex);
-                values.add(new StringValue(stringCol, row[colIndex]));
-            }
-        }
-        return values;
-    }
-
-    public Path getPath() {
-        return path;
-    }
-
-    /**
-     * Guesses the {@code String} used to separate data values in a row.
-     *
-     * @return  String delimiter
-     */
-    public String getDelimiter() {
-        final int NUM_LINES = 5;
-        String rtnval = null;
-
-        if (lines.length > 1) {
-            String[] testLines = lines;
-            if (lines.length > NUM_LINES) {
-                testLines = Arrays.copyOfRange(lines, 0, NUM_LINES);
-            }
-            for (Delimiter delim : Delimiter.values()) {
-                if (isDelimiter(testLines, delim)) {
-                    rtnval = delim.toString();
-                    break;
-                }
-            }
-        }
-
-        return rtnval;
-    }
-
-    /**
-     * Returns a 2D array of {@code String} values representing each of the data values from the source of the parser.
-     *
-     * @return  2D array of String values
-     */
-    protected String[][] parseCells() {
-        List<List<String>> splits = new ArrayList<>();
-        for (String line : lines) {
-            List<String> split = new ArrayList<>(Arrays.asList(line.split(getDelimiter(), -1)));
-            for (int index = 0; index < split.size(); index++) {
-                // @TODO Get rid of BOM characters
-                split.set(index, split.get(index).trim());
-            }
-            splits.add(split);
-        }
-
-        // Remove empty rows
-        while (splits.get(splits.size() - 1).size() == 1 && splits.get(splits.size() - 1).get(0).equals("")) {
-            splits.remove(splits.size() - 1);
-        }
-
-        String[][] rtnval = new String[splits.size()][];
-        for (int index = 0; index < splits.size(); index++) {
-            rtnval[index] = splits.get(index).toArray(new String[]{});
-        }
-
-        return rtnval;
-    }
-
-    protected Class getColumnDataType(int colIndex, int numHeaderRows) {
-        final int SAMPLE_SIZE = 5;
-        boolean isDouble = true;
-        for (int i = numHeaderRows; i < numHeaderRows + SAMPLE_SIZE - 1; i++) {
-            try {
-                Double.parseDouble(cells[i][colIndex]);
-            } catch (NumberFormatException e) {
-                isDouble = false;
-                break;
-            }
-        }
-        return isDouble ? Double.class : String.class;
-    }
-
-    protected int countHeaderRows() {
-        boolean isHeader = true;
-        int count = 0;
-        while (isHeader) {
-            try {
-                Double.parseDouble(cells[count][0]);
-                isHeader = false;
-            } catch (NumberFormatException e) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    //**********************************************//
-    //                 CLASS METHODS                //
-    //**********************************************//
+    DataTable parseDataTable(Path path, String delimiter, String label) throws IOException;
+    DataTable parseDataTable(String content, String delimiter, String label);
 
     /**
      * Gets the lines of a text file as an array of {@code String}s.
@@ -212,10 +33,10 @@ public abstract class DataParser {
      *
      * @return  array of lines as Strings
      *
-     * @throws  IOException
+     * @throws IOException
      *          if an I/O error occurs opening the file
      */
-    public static String[] readLines(Path path) throws IOException {
+    static String[] readLines(Path path) throws IOException {
         try (UnicodeBOMInputStream uis = new UnicodeBOMInputStream(Files.newInputStream(path));
              InputStreamReader isr = new InputStreamReader(uis);
              BufferedReader reader = new BufferedReader(isr) ) {
@@ -239,8 +60,123 @@ public abstract class DataParser {
      *
      * @return  String[] of lines
      */
-    public static String[] readLines(String content) {
+    static String[] readLines(String content) {
         return content.split("[\\r\\n]+");
+    }
+
+    static String[][] readCells(String[] lines, String delimiter) {
+        List<List<String>> splits = new ArrayList<>();
+        for (String line : lines) {
+            List<String> split = new ArrayList<>(Arrays.asList(line.split(delimiter, -1)));
+            for (int index = 0; index < split.size(); index++) {
+                // @TODO Get rid of BOM characters
+                split.set(index, split.get(index).trim());
+            }
+            splits.add(split);
+        }
+
+        // Remove empty rows
+        while (splits.get(splits.size() - 1).size() == 1 && splits.get(splits.size() - 1).get(0).equals("")) {
+            splits.remove(splits.size() - 1);
+        }
+
+        String[][] rtnval = new String[splits.size()][];
+        for (int index = 0; index < splits.size(); index++) {
+            rtnval[index] = splits.get(index).toArray(new String[]{});
+        }
+
+        return rtnval;
+    }
+
+    static Delimiter guessDelimiter(Path path) throws IOException {
+
+        String ext = getExtension(path);
+        for (TopsoilFileChooser.TableFileExtension extension : TopsoilFileChooser.TableFileExtension.values()) {
+            if (extension.getExtension().equals(ext)) {
+                return extension.getDelimiter();
+            }
+        }
+
+        final int NUM_LINES = 5;
+        String[] lines = readLines(path);
+
+        return guessDelimiter(Arrays.copyOfRange(lines, 0, NUM_LINES));
+    }
+
+    static Delimiter guessDelimiter(String content) {
+        final int NUM_LINES = 5;
+        String[] lines = readLines(content);
+
+        return guessDelimiter(Arrays.copyOfRange(lines, 0, NUM_LINES));
+    }
+
+    static Delimiter guessDelimiter(String[] lines) {
+        for (Delimiter delim : Delimiter.values()) {
+            if (isDelimiter(lines, delim)) {
+                return delim;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Guesses whether the specified {@code String} is a delimiter for the provided lines. This is done by taking a
+     * subset of lines and counting the number of times the potential delimiter occurs in each line. If the number of
+     * occurrences is the same for each line, then the {@code String} is likely a delimiter.
+     *
+     * @param   lines
+     *          a String[] of lines containing model
+     * @param   delim
+     *          the potential String delimiter
+     *
+     * @return  true, if delimiter occurs the same number of times in each line
+     */
+    static boolean isDelimiter(String[] lines, Delimiter delim) {
+        final int NUM_LINES = 5;
+        int numLines = Math.min(NUM_LINES, lines.length);
+
+        int[] counts = new int[numLines];
+
+        for (int i = 0; i < numLines; i++) {
+            counts[i] = StringUtils.countOccurrencesOf(lines[i], delim.toString());
+        }
+
+        // If the number of occurrences of delimiter is not the same for each line, return false.
+        for (int i = 1; i < counts.length; i++) {
+            if (counts[i] == 0 || (counts[i] != counts[i - 1]) ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    static Class getColumnDataType(String[][] rows, int colIndex, int numHeaderRows) {
+        final int SAMPLE_SIZE = 5;
+        boolean isDouble = true;
+        for (int i = numHeaderRows; i < numHeaderRows + SAMPLE_SIZE - 1; i++) {
+            try {
+                Double.parseDouble(rows[i][colIndex]);
+            } catch (NumberFormatException e) {
+                isDouble = false;
+                break;
+            }
+        }
+        return isDouble ? Double.class : String.class;
+    }
+
+    static List<DataValue<?>> getValuesForRow(String[] row, List<DataColumn<?>> columns) {
+        List<DataValue<?>> values = new ArrayList<>();
+        for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
+            if (columns.get(colIndex).getType() == Double.class) {
+                DataColumn<Double> doubleCol = (DataColumn<Double>) columns.get(colIndex);
+                values.add(new DoubleValue(doubleCol, Double.parseDouble(row[colIndex])));
+            } else {
+                DataColumn<String> stringCol = (DataColumn<String>) columns.get(colIndex);
+                values.add(new StringValue(stringCol, row[colIndex]));
+            }
+        }
+        return values;
     }
 
     /**
@@ -254,37 +190,12 @@ public abstract class DataParser {
      * @throws  IOException
      *          if an I/O error occurs opening the file
      */
-    public static boolean isFileEmpty(Path path) throws IOException {
+    static boolean isFileEmpty(Path path) throws IOException {
         BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
         String line = bufferedReader.readLine();
         bufferedReader.close();
 
         return line == null;
-    }
-
-    /**
-     * Determines whether the file at the specified {@code Path} contains valid model.
-     * <p>
-     * At time of writing, the criteria that this method checks to determine validity are:
-     * <ul>
-     * <li> The character encoding of the file is UTF-8.
-     * </ul>
-     *
-     * @param   path
-     *          a Path to a file
-     *
-     * @return  true if the file's model are valid
-     *
-     * @throws  IOException
-     *          if an I/O error occurs opening the file
-     */
-    public static boolean isFileValid(Path path) throws IOException {
-        try {
-            Files.newBufferedReader(path, StandardCharsets.UTF_8).close();
-            return true;
-        } catch (UnsupportedEncodingException e) {
-            return false;
-        }
     }
 
     /**
@@ -295,7 +206,7 @@ public abstract class DataParser {
      *
      * @return  true, if the extension is supported
      */
-    public static boolean isFileSupported(Path path) throws IOException {
+    static boolean isFileSupported(Path path) throws IOException {
         try {
             TopsoilFileChooser.TableFileExtension.valueOf(getExtension(path).toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -313,7 +224,7 @@ public abstract class DataParser {
      *
      * @return  true if the String can be parsed into a Double
      */
-    public static boolean isDouble(String string) {
+    static boolean isDouble(String string) {
         final String Digits     = "(\\p{Digit}+)";
         final String HexDigits  = "(\\p{XDigit}+)";
         // an exponent is 'e' or 'E' followed by an optionally
@@ -356,39 +267,7 @@ public abstract class DataParser {
         return Pattern.matches(fpRegex, string);
     }
 
-    /**
-     * Guesses whether the specified {@code String} is a delimiter for the provided lines. This is done by taking a
-     * subset of lines and counting the number of times the potential delimiter occurs in each line. If the number of
-     * occurrences is the same for each line, then the {@code String} is likely a delimiter.
-     *
-     * @param   lines
-     *          a String[] of lines containing model
-     * @param   delim
-     *          the potential String delimiter
-     *
-     * @return  true, if delim occurs the same number of times in each line
-     */
-    private static boolean isDelimiter(String[] lines, Delimiter delim) {
-        final int NUM_LINES = 5;
-        int numLines = Math.min(NUM_LINES, lines.length);
-
-        int[] counts = new int[numLines];
-
-        for (int i = 0; i < numLines; i++) {
-            counts[i] = StringUtils.countOccurrencesOf(lines[i], delim.toString());
-        }
-
-        // If the number of occurrences of delim is not the same for each line, return false.
-        for (int i = 1; i < counts.length; i++) {
-            if (counts[i] == 0 || (counts[i] != counts[i - 1]) ) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static String getExtension(Path path) {
+    static String getExtension(Path path) {
         String fileName = path.getFileName().toString();
         String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
         return ext;
@@ -404,7 +283,7 @@ public abstract class DataParser {
      *
      * @author  marottajb
      */
-    public enum Delimiter {
+    enum Delimiter {
 
         COMMA("Comma", ","),
         TAB("Tab", "\t"),
@@ -423,9 +302,9 @@ public abstract class DataParser {
             return name;
         }
 
-        @Override
-        public String toString() {
+        public String getValue() {
             return value;
         }
     }
+
 }

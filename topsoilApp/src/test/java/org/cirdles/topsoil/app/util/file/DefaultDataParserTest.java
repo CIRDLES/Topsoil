@@ -23,10 +23,11 @@ public class DefaultDataParserTest {
     static DefaultDataParser dataParser;
     static ColumnTree columnTreeOracle;
     static List<DataSegment> dataSegmentsOracle;
+    static String[][] rows;
 
     @BeforeClass
     public static void setup() {
-        dataParser = new DefaultDataParser(CONTENT);
+        dataParser = new DefaultDataParser();
 
         DataColumn col1 = new DataColumn<>("Col1", Double.class);
         DataColumn col2 = new DataColumn<>("Col2", Double.class);
@@ -52,16 +53,14 @@ public class DefaultDataParserTest {
 
     @Test
     public void parseColumnTree_test() {
-        ColumnTree columnTree = dataParser.parseColumnTree();
+        ColumnTree columnTree = dataParser.parseColumnTree(CONTENT, ",");
         assertEquals(columnTreeOracle, columnTree);
     }
 
     @Test
     public void parseData_test() {
-        List<DataSegment> dataSegments = dataParser.parseData();
-        System.out.println(dataSegments.get(0).getChildren());
-        System.out.println(dataSegmentsOracle.get(0).getChildren());
-        assertEquals(dataSegmentsOracle, dataSegments);
+        DataTable table = dataParser.parseDataTable(CONTENT, ",", "CONTENT");
+        assertEquals(dataSegmentsOracle, table.getChildren());
     }
 
 }

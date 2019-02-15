@@ -76,23 +76,14 @@ public class Squid3DataParserTest {
 
     @Test
     public void parseColumnTree_test() {
-        ColumnTree cT = new Squid3DataParser(CONTENT).parseColumnTree();
-        System.out.println(cT.getChildren());
-        for (DataComponent component : cT.getChildren()) {
-            if (component instanceof DataComposite) {
-                System.out.println(((DataComposite) component).getChildren().size() + " ");
-                for (DataComponent c : ((DataComposite<DataComponent>) component).getChildren()) {
-                    System.out.println(c);
-                }
-            }
-        }
+        ColumnTree cT = new Squid3DataParser().parseColumnTree(CONTENT, ",");
         assertEquals(columnTreeOracle, cT);
     }
 
     @Test
     public void parseData_test() {
-        List<DataSegment> data = new Squid3DataParser(CONTENT).parseData();
-        assertEquals(dataSegmentsOracle, data);
+        DataTable table = new Squid3DataParser().parseDataTable(CONTENT, ",", "CONTENT");
+        assertEquals(dataSegmentsOracle, table.getChildren());
     }
 
 }

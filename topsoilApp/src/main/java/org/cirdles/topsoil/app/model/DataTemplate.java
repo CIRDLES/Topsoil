@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 
 /**
- * Each template represents a possible format for imported data, and has a {@code DataParser} associated with it.
+ * Each template represents a possible format for imported data, and has a {@code DataParserBase} associated with it.
  *
  * @author marottajb
  */
@@ -24,30 +24,14 @@ public enum DataTemplate {
     }
 
     /**
-     * Returns a new instance of the {@code DataParser} for the template, given the specified path.
+     * Returns a new instance of the {@code DataParserBase} for the template.
      *
-     * @param path  Path to data
-     * @return      DataParser
-     */
-    public DataParser getDataParser(Path path) {
-        try {
-            return parserClass.getConstructor(Path.class).newInstance(path);
-        } catch (InstantiationException|IllegalAccessException|NoSuchMethodException|InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * Returns a new instance of the {@code DataParser} for the template, given the specified {@code String} content.
-     *
-     * @param content   String content
      * @return          DataParser
      */
-    public DataParser getDataParser(String content) {
+    public DataParser getDataParser() {
         try {
-            return parserClass.getConstructor(String.class).newInstance(content);
-        } catch (InstantiationException|IllegalAccessException|NoSuchMethodException|InvocationTargetException e) {
+            return parserClass.newInstance();
+        } catch (InstantiationException|IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;

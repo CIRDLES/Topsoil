@@ -33,8 +33,8 @@ public class ProjectSerializerTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        DataParser dataParser = new Squid3DataParser(CONTENT);
-        DataTable table = dataParser.parseDataTable("TestTable");
+        DataParser dataParser = new Squid3DataParser();
+        DataTable table = dataParser.parseDataTable(CONTENT, ",", "CONTENT");
         project = new TopsoilProject(table);
     }
 
@@ -43,26 +43,14 @@ public class ProjectSerializerTest extends ApplicationTest {
         try {
             Path tempPath = Files.createTempFile(null, ".topsoil");
             DataTable before = project.getDataTableList().get(0);
-            printDataTable(before);
-            System.out.println();
+
             ProjectSerializer.serialize(tempPath, project);
             SerializableTopsoilProject sProject = ProjectSerializer.deserialize(tempPath);
             DataTable after = sProject.getTopsoilProject().getDataTableList().get(0);
-            printDataTable(after);
+
             Assert.assertEquals(before, after);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-    }
-
-    private void printDataTable(DataTable table) {
-        System.out.println("LABEL: " + table.getLabel());
-        for (DataSegment seg : table.getChildren()) {
-            System.out.println(("SEGMENT_LABEL: " + seg.getLabel()));
-            for (DataRow row : seg.getChildren()) {
-                System.out.println(row);
-            }
         }
     }
 

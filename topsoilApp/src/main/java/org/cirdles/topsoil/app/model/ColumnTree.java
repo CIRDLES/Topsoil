@@ -42,6 +42,10 @@ public class ColumnTree extends DataComposite<DataComponent> {
     public boolean equals(Object object) {
         if (object instanceof ColumnTree) {
             ColumnTree other = (ColumnTree) object;
+            if (! this.getLabel().equals(other.getLabel())) {
+                return false;
+            }
+
             for (int i = 0; i < this.getChildren().size(); i++) {
                 if (! this.getChildren().get(i).equals(other.getChildren().get(i))) {
                     return false;

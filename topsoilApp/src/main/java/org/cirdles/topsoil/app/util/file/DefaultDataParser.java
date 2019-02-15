@@ -2,69 +2,95 @@ package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.*;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
 /**
  * @author marottajb
  */
-public class DefaultDataParser extends DataParser {
+public class DefaultDataParser implements DataParser {
 
     //**********************************************//
-    //                 CONSTRUCTORS                 //
+    //                PUBLIC METHODS                //
     //**********************************************//
 
-    public DefaultDataParser(Path path) {
-        super(path);
+    /** {@inheritDoc} */
+    @Override
+    public ColumnTree parseColumnTree(Path path, String delimiter) throws IOException {
+        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
+        return parseColumnTree(rows);
     }
 
-    public DefaultDataParser(String content) {
-        super(content);
+    /** {@inheritDoc} */
+    @Override
+    public ColumnTree parseColumnTree(String content, String delimiter) {
+        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
+        return parseColumnTree(rows);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
+        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
+        return parseDataTable(rows, (label != null) ? label : path.getFileName().toString());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DataTable parseDataTable(String content, String delimiter, String label) {
+        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
+        return parseDataTable(rows, label);
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    /** {@inheritDoc} */
-    @Override
-    ColumnTree parseColumnTree() {
-        return new ColumnTree(parseHeaders(countHeaderRows()));
+    private int countHeaderRows(String[][] rows) {
+        boolean isHeader = true;
+        int count = 0;
+        while (isHeader) {
+            try {
+                Double.parseDouble(rows[count][0]);
+                isHeader = false;
+            } catch (NumberFormatException e) {
+                count++;
+            }
+        }
+        return count;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    List<DataSegment> parseData() {
-        ColumnTree columnTree = parseColumnTree();
+    private ColumnTree parseColumnTree(String[][] rows) {
+        List<DataColumn<?>> columns = new ArrayList<>();
+        int numHeaderRows = countHeaderRows(rows);
+        StringJoiner joiner;
+        for (int i = 0; i < rows[0].length; i++) {
+            joiner = new StringJoiner("\n");
+            for (int j = 0; j < numHeaderRows; j++) {
+                joiner.add(rows[j][i]);
+            }
+            columns.add(new DataColumn<>(joiner.toString(), DataParser.getColumnDataType(rows, i, numHeaderRows)));
+        }
+        return new ColumnTree(columns);
+    }
+
+    private DataTable parseDataTable(String[][] rows, String label) {
+        ColumnTree columnTree = parseColumnTree(rows);
         List<DataColumn<?>> columns = columnTree.getLeafNodes();
-        int startIndex = countHeaderRows();
-        List<DataRow> rows = new ArrayList<>();
-        for (int rowIndex = startIndex; rowIndex < cells.length; rowIndex++) {
-            rows.add(new DataRow("row" + (rowIndex - startIndex + 1), getValuesForRow(cells[rowIndex], columns)));
+        int startIndex = countHeaderRows(rows);
+        List<DataRow> dataRows = new ArrayList<>();
+        for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
+            dataRows.add(new DataRow(
+                    "row" + (rowIndex - startIndex + 1),
+                    DataParser.getValuesForRow(rows[rowIndex], columns)
+            ));
         }
 
         List<DataSegment> segments = new ArrayList<>();
-        segments.add(new DataSegment("model", rows.toArray(new DataRow[]{})));
-        return segments;
-    }
+        segments.add(new DataSegment("model", dataRows.toArray(new DataRow[]{})));
 
-    /**
-     * Parses
-     *
-     * @param numHeaderRows
-     * @return
-     */
-    private List<DataColumn<?>> parseHeaders(int numHeaderRows) {
-        List<DataColumn<?>> columns = new ArrayList<>();
-        StringJoiner joiner;
-        for (int i = 0; i < cells[0].length; i++) {
-            joiner = new StringJoiner("\n");
-            for (int j = 0; j < numHeaderRows; j++) {
-                joiner.add(cells[j][i]);
-            }
-            columns.add(new DataColumn(joiner.toString(), getColumnDataType(i, numHeaderRows)));
-        }
-        return columns;
+        return new DataTable(label, columnTree, segments);
     }
-
 }
+

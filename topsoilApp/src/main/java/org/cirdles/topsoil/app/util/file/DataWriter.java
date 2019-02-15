@@ -2,6 +2,11 @@ package org.cirdles.topsoil.app.util.file;
 
 import org.cirdles.topsoil.app.model.DataTable;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 /**
@@ -15,7 +20,16 @@ public class DataWriter {
 
     public static boolean writeTableToFile(DataTable table, Path path) {
         boolean completed = false;
-        // TODO
+
+        try (OutputStreamWriter writer =
+                     new OutputStreamWriter(new FileOutputStream(path.toFile()), StandardCharsets.UTF_8)) {
+            // TODO
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return completed;
     }
 

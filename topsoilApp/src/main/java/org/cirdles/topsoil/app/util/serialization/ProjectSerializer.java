@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.util.serialization;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.cirdles.topsoil.app.model.TopsoilProject;
