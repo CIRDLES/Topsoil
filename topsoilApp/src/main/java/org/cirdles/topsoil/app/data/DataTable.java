@@ -55,28 +55,32 @@ public class DataTable extends DataComposite<DataSegment> {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private transient final ObjectProperty<IsotopeSystem> isotopeSystem =
-            new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
+    private transient ObjectProperty<IsotopeSystem> isotopeSystem;
     public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
+        if (isotopeSystem == null) {
+            isotopeSystem = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
+        }
         return isotopeSystem;
     }
     public final IsotopeSystem getIsotopeSystem() {
-        return isotopeSystem.get();
+        return isotopeSystemProperty().get();
     }
     public final void setIsotopeSystem(IsotopeSystem type ) {
-        isotopeSystem.set(type);
+        isotopeSystemProperty().set(type);
     }
 
-    private transient final ObjectProperty<Uncertainty> unctFormat =
-            new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
+    private transient ObjectProperty<Uncertainty> unctFormat;
     public ObjectProperty<Uncertainty> unctFormatProperty() {
+        if (unctFormat == null) {
+            unctFormat = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
+        }
         return unctFormat;
     }
     public final Uncertainty getUnctFormat() {
-        return unctFormat.get();
+        return unctFormatProperty().get();
     }
     public final void setUnctFormat(Uncertainty format) {
-        unctFormat.set(format);
+        unctFormatProperty().set(format);
     }
 
     //**********************************************//
@@ -167,20 +171,19 @@ public class DataTable extends DataComposite<DataSegment> {
     //**********************************************//
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        ObjectOutputStream.PutField fields = out.putFields();
-        fields.put("varMap", varMap);
-        fields.put("columnTree", columnTree);
-        out.writeFields();
-        out.writeObject(isotopeSystem.get());
-        out.writeObject(unctFormat.get());
+        out.defaultWriteObject();
+        out.writeObject(varMap);
+        out.writeObject(columnTree);
+        out.writeObject(getIsotopeSystem());
+        out.writeObject(getUnctFormat());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        ObjectInputStream.GetField fields = in.readFields();
-        varMap = (HashBiMap<Variable<?>, DataColumn<?>>) fields.get("varMap", null);
-        columnTree = (ColumnTree) fields.get("columnTree", null);
-        isotopeSystem.set((IsotopeSystem) in.readObject());
-        unctFormat.set((Uncertainty) in.readObject());
+        in.defaultReadObject();
+        varMap = (HashBiMap<Variable<?>, DataColumn<?>>) in.readObject();
+        columnTree = (ColumnTree) in.readObject();
+        setIsotopeSystem((IsotopeSystem) in.readObject());
+        setUnctFormat((Uncertainty) in.readObject());
     }
 
 }

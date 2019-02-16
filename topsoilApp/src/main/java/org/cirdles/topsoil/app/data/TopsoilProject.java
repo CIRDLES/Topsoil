@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,26 +34,29 @@ public class TopsoilProject implements Serializable {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private transient ListProperty<DataTable> dataTableList = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private transient ListProperty<DataTable> dataTableList;
     public ListProperty<DataTable> dataTableListProperty() {
+        if (dataTableList == null) {
+            dataTableList = new SimpleListProperty<>(FXCollections.observableArrayList());
+        }
         return dataTableList;
     }
     public final ObservableList<DataTable> getDataTableList() {
-        return dataTableList.get();
+        return dataTableListProperty().get();
     }
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private Table<PlotType, DataTable, TopsoilPlotView> openPlots = HashBasedTable.create();
+    private transient Table<PlotType, DataTable, TopsoilPlotView> openPlots = HashBasedTable.create();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     public TopsoilProject(DataTable... tables) {
-        dataTableList.addAll(tables);
+        getDataTableList().addAll(tables);
     }
 
     //**********************************************//
@@ -60,11 +64,11 @@ public class TopsoilProject implements Serializable {
     //**********************************************//
 
     public void addDataTable(DataTable table) {
-        dataTableList.add(table);
+        getDataTableList().add(table);
     }
 
     public boolean removeDataTable(DataTable table) {
-        return dataTableList.remove(table);
+        return getDataTableList().remove(table);
     }
 
     public Table<PlotType, DataTable, TopsoilPlotView> getOpenPlots() {
@@ -84,11 +88,13 @@ public class TopsoilProject implements Serializable {
     //**********************************************//
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(dataTableList.get());
+        out.defaultWriteObject();
+        out.writeObject(new ArrayList<>(getDataTableList()));
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        dataTableList.addAll((List<DataTable>) in.readObject());
+        in.defaultReadObject();
+        getDataTableList().addAll((List<DataTable>) in.readObject());
     }
 
 }

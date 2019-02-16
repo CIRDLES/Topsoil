@@ -108,20 +108,4 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
         }
         return true;
     }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        ObjectOutputStream.PutField fields = out.putFields();
-        fields.put("children", children);
-        out.writeFields();
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        ObjectInputStream.GetField fields = in.readFields();
-        children = (ArrayList<T>) fields.get("children", null);
-    }
-
 }

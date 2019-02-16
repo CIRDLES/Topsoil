@@ -36,9 +36,8 @@ public class ProjectSerializer {
     //**********************************************//
 
     public static void serialize(Path projectPath, TopsoilProject project) {
-        try (OutputStream out = Files.newOutputStream(projectPath); ObjectOutputStream oos =
-                new ObjectOutputStream(out)) {
-            oos.writeObject(new SerializableTopsoilProject(project));
+        try (OutputStream out = Files.newOutputStream(projectPath); ObjectOutputStream oos = new ObjectOutputStream(out)) {
+            oos.writeObject(project);
             currentProjectPath.set(projectPath);
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,32 +49,37 @@ public class ProjectSerializer {
         }
     }
 
-    public static SerializableTopsoilProject deserialize(Path projectPath) {
+    public static TopsoilProject deserialize(Path projectPath) {
         try (InputStream in = Files.newInputStream(projectPath); ObjectInputStream ois = new ObjectInputStream(in)) {
-            SerializableTopsoilProject project = (SerializableTopsoilProject) ois.readObject();
+            TopsoilProject project = (TopsoilProject) ois.readObject();
             currentProjectPath.set(projectPath);
             return project;
         } catch (InvalidClassException | ClassNotFoundException e) {
+            e.printStackTrace();
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.ERROR,
                     "Outdated File",
                     "Unable to load .topsoil file. This may be outdated."
             );
-            e.printStackTrace();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.ERROR,
                     "Invalid File",
                     "The specified file does not exist."
             );
+        } catch (OptionalDataException e) {
+            System.err.println("EOF? " + e.eof);
+            System.err.println("length: " + e.length);
             e.printStackTrace();
+
         } catch (IOException e) {
+            e.printStackTrace();
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.ERROR,
                     "Error",
                     "An unknown error has occurred."
             );
-            e.printStackTrace();
         }
         return null;
     }

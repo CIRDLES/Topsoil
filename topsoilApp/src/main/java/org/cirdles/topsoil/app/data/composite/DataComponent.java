@@ -30,8 +30,11 @@ public abstract class DataComponent implements Serializable {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    protected transient StringProperty label = new SimpleStringProperty(DEFAULT_LABEL);
+    protected transient StringProperty label;
     public StringProperty labelProperty() {
+        if (label == null) {
+            label = new SimpleStringProperty(DEFAULT_LABEL);
+        }
         return label;
     }
     public String getLabel() {
@@ -41,15 +44,18 @@ public abstract class DataComponent implements Serializable {
         labelProperty().set(label);
     }
 
-    protected transient BooleanProperty selected = new SimpleBooleanProperty(true);
+    protected transient BooleanProperty selected;
     public BooleanProperty selectedProperty() {
+        if (selected == null) {
+            selected = new SimpleBooleanProperty(true);
+        }
         return selected;
     }
     public final boolean isSelected() {
-        return selected.get();
+        return selectedProperty().get();
     }
     public final void setSelected(boolean val) {
-        selected.set(val);
+        selectedProperty().set(val);
     }
 
     //**********************************************//
@@ -78,13 +84,15 @@ public abstract class DataComponent implements Serializable {
     //**********************************************//
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeChars(label.get());
-        out.writeBoolean(selected.get());
+        out.defaultWriteObject();
+        out.writeUTF(getLabel());
+        out.writeBoolean(isSelected());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        label.set(String.valueOf(in.readObject()));
-        selected.set(in.readBoolean());
+        in.defaultReadObject();
+        setLabel(in.readUTF());
+        setSelected(in.readBoolean());
     }
 
 }

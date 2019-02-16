@@ -1,11 +1,15 @@
 package org.cirdles.topsoil.app.util.serialization;
 
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.util.file.parser.FileParser;
 import org.cirdles.topsoil.app.util.file.parser.Squid3FileParser;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
@@ -18,9 +22,10 @@ import java.nio.file.Path;
  */
 public class ProjectSerializerTest extends ApplicationTest {
 
-    TopsoilProject project;
+    static TopsoilProject project;
+    static DataTable table;
 
-    String CONTENT = (
+    static String CONTENT = (
             ",Cat1,,,Cat2,,Cat3\n" +
             ",,Col2,,,,\n" +
             ",Col1,Col2,,,,\n" +
@@ -34,8 +39,12 @@ public class ProjectSerializerTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
+    }
+
+    @Before
+    public void setupTest() {
         FileParser fileParser = new Squid3FileParser();
-        DataTable table = fileParser.parseDataTable(CONTENT, ",", "CONTENT");
+        table = fileParser.parseDataTable(CONTENT, ",", "CONTENT");
         project = new TopsoilProject(table);
     }
 
@@ -43,13 +52,11 @@ public class ProjectSerializerTest extends ApplicationTest {
     public void serialization_test() {
         try {
             Path tempPath = Files.createTempFile(null, ".topsoil");
-            DataTable before = project.getDataTableList().get(0);
-
             ProjectSerializer.serialize(tempPath, project);
-            SerializableTopsoilProject sProject = ProjectSerializer.deserialize(tempPath);
-            DataTable after = sProject.getTopsoilProject().getDataTableList().get(0);
+            TopsoilProject tP = ProjectSerializer.deserialize(tempPath);
+            DataTable after = tP.getDataTableList().get(0);
 
-            Assert.assertEquals(before, after);
+            Assert.assertEquals(table, after);
         } catch (IOException e) {
             e.printStackTrace();
         }

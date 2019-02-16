@@ -31,15 +31,18 @@ public abstract class DataValue<T extends Serializable> extends DataLeaf {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private transient ObjectProperty<T> value = new SimpleObjectProperty<>(null);
+    private transient ObjectProperty<T> value;
     public ObjectProperty<T> valueProperty() {
+        if (value == null) {
+            value = new SimpleObjectProperty<>(null);
+        }
         return value;
     }
     public final T getValue() {
-        return value.get();
+        return valueProperty().get();
     }
     public final void setValue(T val) {
-        value.set(val);
+        valueProperty().set(val);
     }
 
     //**********************************************//
@@ -49,9 +52,9 @@ public abstract class DataValue<T extends Serializable> extends DataLeaf {
     public DataValue(DataColumn<T> column, T value, StringConverter<T> converter) {
         super();
         this.column = column;
-        this.value.set(value);
-        this.label.set(converter.toString(value));
-        this.label.bind(Bindings.createStringBinding(() -> converter.toString(value), this.value));
+        setValue(value);
+        setLabel(converter.toString(value));
+        labelProperty().bind(Bindings.createStringBinding(() -> converter.toString(value), this.value));
     }
 
     //**********************************************//
@@ -68,7 +71,7 @@ public abstract class DataValue<T extends Serializable> extends DataLeaf {
         if (object instanceof DataValue) {
             if (column.equals(((DataValue) object).getColumn())) {
                 DataValue<T> other = (DataValue<T>) object;
-                if (value.equals(other.getValue())){
+                if (valueProperty().equals(other.getValue())){
                     eq = true;
                 }
             }
@@ -81,16 +84,13 @@ public abstract class DataValue<T extends Serializable> extends DataLeaf {
     //**********************************************//
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        ObjectOutputStream.PutField fields = out.putFields();
-        fields.put("column", column);
-        out.writeFields();
-        out.writeObject(value.get());
+        out.defaultWriteObject();
+        out.writeObject(valueProperty().get());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        ObjectInputStream.GetField fields = in.readFields();
-        column = (DataColumn<T>) fields.get("column", null);
-        value.set((T) in.readObject());
+        in.defaultReadObject();
+        setValue((T) in.readObject());
     }
 
 }

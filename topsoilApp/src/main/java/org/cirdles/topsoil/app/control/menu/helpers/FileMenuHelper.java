@@ -225,7 +225,7 @@ public class FileMenuHelper {
     }
 
     private static TopsoilProject openProject(Path projectPath) {
-        return ProjectSerializer.deserialize(projectPath).getTopsoilProject();
+        return ProjectSerializer.deserialize(projectPath);
     }
 
     private static boolean serializeProject(TopsoilProject project, Path path) {

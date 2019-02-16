@@ -15,6 +15,8 @@
  */
 package org.cirdles.topsoil.variable;
 
+import java.io.Serializable;
+
 /**
  * An interface implemented by classes that act as a variable for plotting.
  *
@@ -24,15 +26,15 @@ package org.cirdles.topsoil.variable;
  * @see IndependentVariable
  * @see Variables
  */
-public interface Variable<T> {
+public interface Variable<T> extends Serializable {
 
     /**
      * Returns the name of the variable.
      *
      * @return  String name
      */
-    public String getName();
+    String getName();
 
-    public String getAbbreviation();
+    String getAbbreviation();
 
 }

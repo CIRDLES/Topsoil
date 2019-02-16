@@ -60,20 +60,4 @@ public class DataColumn<T> extends DataLeaf {
         }
         return false;
     }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        ObjectOutputStream.PutField fields = out.putFields();
-        fields.put("type", type);
-        out.writeFields();
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        ObjectInputStream.GetField fields = in.readFields();
-        type = (Class<T>) fields.get("type", null);
-    }
-
 }
