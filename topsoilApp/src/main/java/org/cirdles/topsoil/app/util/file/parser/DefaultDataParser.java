@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.util.file.parser;
 
+import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
@@ -13,7 +14,7 @@ import java.util.*;
 /**
  * @author marottajb
  */
-public class DefaultFileParser implements FileParser {
+public class DefaultDataParser implements DataParser {
 
     //**********************************************//
     //                PUBLIC METHODS                //
@@ -22,29 +23,29 @@ public class DefaultFileParser implements FileParser {
     /** {@inheritDoc} */
     @Override
     public ColumnTree parseColumnTree(Path path, String delimiter) throws IOException {
-        String[][] rows = FileParser.readCells(FileParser.readLines(path), delimiter);
+        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
         return parseColumnTree(rows);
     }
 
     /** {@inheritDoc} */
     @Override
     public ColumnTree parseColumnTree(String content, String delimiter) {
-        String[][] rows = FileParser.readCells(FileParser.readLines(content), delimiter);
+        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
         return parseColumnTree(rows);
     }
 
     /** {@inheritDoc} */
     @Override
     public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
-        String[] lines = FileParser.readLines(path);
-        String[][] rows = FileParser.readCells(lines, delimiter);
+        String[] lines = DataParser.readLines(path);
+        String[][] rows = DataParser.readCells(lines, delimiter);
         return parseDataTable(rows, (label != null) ? label : path.getFileName().toString());
     }
 
     /** {@inheritDoc} */
     @Override
     public DataTable parseDataTable(String content, String delimiter, String label) {
-        String[][] rows = FileParser.readCells(FileParser.readLines(content), delimiter);
+        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
         return parseDataTable(rows, label);
     }
 
@@ -63,9 +64,9 @@ public class DefaultFileParser implements FileParser {
                     joiner.add(rows[j][i]);
                 }
             }
-            columns.add(new DataColumn<>(joiner.toString(), FileParser.getColumnDataType(rows, i, numHeaderRows)));
+            columns.add(new DataColumn<>(joiner.toString(), DataParser.getColumnDataType(rows, i, numHeaderRows)));
         }
-        return new ColumnTree(columns);
+        return new ColumnTree(columns.toArray(new DataColumn[]{}));
     }
 
     private DataTable parseDataTable(String[][] rows, String label) {
@@ -76,20 +77,20 @@ public class DefaultFileParser implements FileParser {
         for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
             dataRows.add(new DataRow(
                     "row" + (rowIndex - startIndex + 1),
-                    FileParser.getValuesForRow(rows[rowIndex], columns)
+                    DataParser.getValuesForRow(rows[rowIndex], columns)
             ));
         }
 
         List<DataSegment> segments = new ArrayList<>();
         segments.add(new DataSegment("model", dataRows.toArray(new DataRow[]{})));
 
-        return new DataTable(label, columnTree, segments);
+        return new DataTable(DataTemplate.DEFAULT, label, columnTree, segments);
     }
 
     private int countHeaderRows(String[][] rows) {
         int count = 0;
         for (String[] row : rows) {
-            if (FileParser.isDouble(row[0])) {
+            if (DataParser.isDouble(row[0])) {
                 break;
             }
             count++;

@@ -9,7 +9,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.cirdles.topsoil.constant.Lambda;
 import org.controlsfx.control.PopOver;
 
@@ -95,7 +94,10 @@ public class ConstantsEditor extends VBox {
             });
 
             Button resetButton = new Button("Reset to Default");
-            resetButton.setOnAction(event -> lambda.resetToDefault());
+            resetButton.setOnAction(event -> {
+                lambda.resetToDefault();
+                textField.setText(lambda.getValue().toString());
+            });
 
             VBox vBox = new VBox(setButton, resetButton);
             vBox.setSpacing(10.0);

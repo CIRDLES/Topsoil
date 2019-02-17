@@ -3,7 +3,7 @@ package org.cirdles.topsoil.app.control.plot.panel;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import org.cirdles.topsoil.app.util.FXMLUtils;
+import org.cirdles.topsoil.app.control.FXMLUtils;
 
 import java.io.IOException;
 

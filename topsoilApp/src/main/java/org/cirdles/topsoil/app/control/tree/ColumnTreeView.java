@@ -18,8 +18,8 @@ public class ColumnTreeView extends TreeView<DataComponent> {
     //**********************************************//
 
     public ColumnTreeView(ColumnTree columnTree) {
-        final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataComposite<>("dummy"));
         this.setCellFactory(CheckBoxTreeCell.forTreeView());
+        final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataComposite<>("dummy"));
         this.setRoot(rootItem);
         this.setShowRoot(false);
 

@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
-import org.cirdles.topsoil.app.util.FXMLUtils;
+import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.internal.PDFSaver;

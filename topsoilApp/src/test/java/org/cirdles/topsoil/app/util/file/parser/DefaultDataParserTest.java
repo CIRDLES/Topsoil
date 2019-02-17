@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.file;
+package org.cirdles.topsoil.app.util.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
@@ -6,7 +6,7 @@ import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.*;
 import org.cirdles.topsoil.app.data.value.DoubleValue;
 import org.cirdles.topsoil.app.data.value.StringValue;
-import org.cirdles.topsoil.app.util.file.parser.DefaultFileParser;
+import org.cirdles.topsoil.app.util.file.parser.DefaultDataParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,26 +17,26 @@ import static org.junit.Assert.*;
 /**
  * @author marottajb
  */
-public class DefaultFileParserTest {
+public class DefaultDataParserTest {
 
     static String CONTENT = "Col1,Col2,Col3,Col4,Col5\n" +
                             "sub1,,,sub2,\n" +
                             "0.0,one,2.0,three,4.0\n" +
                             "1.0,two,3.0,four,5.0\n";
-    static DefaultFileParser dataParser;
+    static DefaultDataParser dataParser;
     static ColumnTree columnTreeOracle;
     static List<DataSegment> dataSegmentsOracle;
 
     @BeforeClass
     public static void setup() {
-        dataParser = new DefaultFileParser();
+        dataParser = new DefaultDataParser();
 
         DataColumn<Double> col1 = new DataColumn<>("Col1\nsub1", Double.class);
         DataColumn<String> col2 = new DataColumn<>("Col2", String.class);
         DataColumn<Double> col3 = new DataColumn<>("Col3", Double.class);
         DataColumn<String> col4 = new DataColumn<>("Col4\nsub2", String.class);
         DataColumn<Double> col5 = new DataColumn<>("Col5", Double.class);
-        columnTreeOracle = new ColumnTree(Arrays.asList(col1, col2, col3, col4, col5));
+        columnTreeOracle = new ColumnTree(col1, col2, col3, col4, col5);
 
         DataRow row1 = new DataRow("row1", Arrays.asList(
                 new DoubleValue(col1, 0.0),

@@ -14,7 +14,7 @@ public class StringValue extends DataValue<String> {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = 1416736277609076650L;
+    private static final long serialVersionUID = -6356599026765983636L;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //

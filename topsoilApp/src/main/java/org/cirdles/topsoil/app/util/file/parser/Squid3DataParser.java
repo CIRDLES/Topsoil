@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.util.file.parser;
 
+import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -15,7 +16,7 @@ import java.util.*;
 /**
  * @author marottajb
  */
-public class Squid3FileParser implements FileParser {
+public class Squid3DataParser implements DataParser {
 
     //**********************************************//
     //                PUBLIC METHODS                //
@@ -24,28 +25,28 @@ public class Squid3FileParser implements FileParser {
     /** {@inheritDoc} */
     @Override
     public ColumnTree parseColumnTree(Path path, String delimiter) throws IOException {
-        String[][] rows = FileParser.readCells(FileParser.readLines(path), delimiter);
+        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
         return parseColumnTree(rows);
     }
 
     /** {@inheritDoc} */
     @Override
     public ColumnTree parseColumnTree(String content, String delimiter) {
-        String[][] rows = FileParser.readCells(FileParser.readLines(content), delimiter);
+        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
         return parseColumnTree(rows);
     }
 
     /** {@inheritDoc} */
     @Override
     public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
-        String[][] rows = FileParser.readCells(FileParser.readLines(path), delimiter);
+        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
         return parseDataTable(rows, (label != null) ? label : path.getFileName().toString());
     }
 
     /** {@inheritDoc} */
     @Override
     public DataTable parseDataTable(String content, String delimiter, String label) {
-        String[][] rows = FileParser.readCells(FileParser.readLines(content), delimiter);
+        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
         return parseDataTable(rows, label);
     }
 
@@ -63,7 +64,7 @@ public class Squid3FileParser implements FileParser {
                     (i == (categoryIndices.length - 1) ? -1 : categoryIndices[i + 1])
             ));
         }
-        return new ColumnTree(topLevel);
+        return new ColumnTree(topLevel.toArray(new DataComponent[]{}));
     }
 
     private DataTable parseDataTable(String[][] rows, String label) {
@@ -80,7 +81,7 @@ public class Squid3FileParser implements FileParser {
                     columns
             ));
         }
-        return new DataTable(label, columnTree, segments);
+        return new DataTable(DataTemplate.SQUID_3, label, columnTree, segments);
     }
 
     /**
@@ -111,7 +112,7 @@ public class Squid3FileParser implements FileParser {
             }
             str = joiner.toString().trim();
             if (! str.equals("")) {
-                Class clazz = FileParser.getColumnDataType(rows, colIndex, 5);
+                Class clazz = DataParser.getColumnDataType(rows, colIndex, 5);
                 if (clazz == Double.class) {
                     columns.add(new DataColumn<>(joiner.toString(), (Class<Double>) clazz));
                 } else {
@@ -142,7 +143,7 @@ public class Squid3FileParser implements FileParser {
         }
         for (int rowIndex = segIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
             rowLabel = rows[rowIndex][0];
-            dataRows.add(new DataRow(rowLabel, FileParser.getValuesForRow(Arrays.copyOfRange(rows[rowIndex], 1,
+            dataRows.add(new DataRow(rowLabel, DataParser.getValuesForRow(Arrays.copyOfRange(rows[rowIndex], 1,
                                                                                              rows[rowIndex].length, String[].class), columns)));
         }
         return new DataSegment(segmentLabel, dataRows.toArray(new DataRow[]{}));

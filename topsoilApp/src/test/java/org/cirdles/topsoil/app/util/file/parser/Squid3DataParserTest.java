@@ -1,13 +1,14 @@
-package org.cirdles.topsoil.app.util.file;
+package org.cirdles.topsoil.app.util.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.*;
 import org.cirdles.topsoil.app.data.value.DoubleValue;
 import org.cirdles.topsoil.app.data.value.StringValue;
-import org.cirdles.topsoil.app.util.file.parser.Squid3FileParser;
+import org.cirdles.topsoil.app.util.file.parser.Squid3DataParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import static org.junit.Assert.*;
 /**
  * @author marottajb
  */
-public class Squid3FileParserTest {
+public class Squid3DataParserTest {
 
     private static String CONTENT = (
             ",Cat1,,,Cat2,,Cat3\n" +
@@ -46,7 +47,7 @@ public class Squid3FileParserTest {
         DataCategory cat1 = new DataCategory("Cat1", col1, col2, col3);
         DataCategory cat2 = new DataCategory("Cat2", col4, col5);
         DataCategory cat3 = new DataCategory("Cat3");
-        columnTreeOracle = new ColumnTree(Arrays.asList(cat1, cat2, cat3));
+        columnTreeOracle = new ColumnTree(cat1, cat2, cat3);
 
         DataSegment seg1 =
                 new DataSegment("Seg1",
@@ -68,19 +69,19 @@ public class Squid3FileParserTest {
                         new DoubleValue(col5, 6.0)
                 ))
         );
-        dataTableOracle = new DataTable("CONTENT", columnTreeOracle, Arrays.asList(seg1, seg2));
+        dataTableOracle = new DataTable(DataTemplate.SQUID_3, "CONTENT", columnTreeOracle, Arrays.asList(seg1, seg2));
 
     }
 
     @Test
     public void parseColumnTree_test() {
-        ColumnTree cT = new Squid3FileParser().parseColumnTree(CONTENT, ",");
+        ColumnTree cT = new Squid3DataParser().parseColumnTree(CONTENT, ",");
         assertEquals(columnTreeOracle, cT);
     }
 
     @Test
     public void parseDataTable_test() {
-        DataTable table = new Squid3FileParser().parseDataTable(CONTENT, ",", "CONTENT");
+        DataTable table = new Squid3DataParser().parseDataTable(CONTENT, ",", "CONTENT");
         assertEquals(dataTableOracle, table);
     }
 

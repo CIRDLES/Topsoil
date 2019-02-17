@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.data;
+package org.cirdles.topsoil.app.data.value;
 
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.value.DataValue;

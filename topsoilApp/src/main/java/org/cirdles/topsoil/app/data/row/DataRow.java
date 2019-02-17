@@ -19,7 +19,7 @@ public class DataRow extends DataComposite<DataValue<?>> {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = -1183289797433461340L;
+    private static final long serialVersionUID = -8788288059689780519L;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -52,28 +52,6 @@ public class DataRow extends DataComposite<DataValue<?>> {
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof DataRow) {
-            DataRow other = (DataRow) object;
-            if (! this.getLabel().equals(other.getLabel())) {
-                return false;
-            }
-            if (this.isSelected() != other.isSelected()) {
-                return false;
-            }
-            if (this.getChildren().size() != other.getChildren().size()) {
-                return false;
-            }
-            if (! this.getChildren().equals(other.getChildren())) {
-                return false;
-            }
-        } else {
-            return false;
-        }
-        return true;
     }
 
     @Override

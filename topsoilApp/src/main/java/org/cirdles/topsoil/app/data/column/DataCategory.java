@@ -14,7 +14,7 @@ public class DataCategory extends DataComposite<DataComponent> {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = 372814634643053288L;
+    private static final long serialVersionUID = -2907499123449897179L;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //

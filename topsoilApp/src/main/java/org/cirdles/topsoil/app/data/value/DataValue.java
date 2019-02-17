@@ -24,7 +24,7 @@ public abstract class DataValue<T extends Serializable> extends DataLeaf {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private static final long serialVersionUID = 7416030591288798050L;
+    private static final long serialVersionUID = 3466168248198642427L;
     private DataColumn<T> column;
 
     //**********************************************//
@@ -67,16 +67,20 @@ public abstract class DataValue<T extends Serializable> extends DataLeaf {
 
     @Override
     public boolean equals(Object object) {
-        boolean eq = super.equals(object);
         if (object instanceof DataValue) {
-            if (column.equals(((DataValue) object).getColumn())) {
-                DataValue<T> other = (DataValue<T>) object;
-                if (valueProperty().equals(other.getValue())){
-                    eq = true;
-                }
+            DataValue<T> other = (DataValue<T>) object;
+            if (! super.equals(other)) {
+                return false;
             }
+            if (! column.equals(((DataValue) object).getColumn())) {
+                return false;
+            }
+            if (! getValue().equals(other.getValue())){
+                return false;
+            }
+            return true;
         }
-        return eq;
+        return false;
     }
 
     //**********************************************//

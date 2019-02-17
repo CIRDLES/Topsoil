@@ -4,12 +4,17 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.TreeSortMode;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
@@ -21,6 +26,7 @@ import org.cirdles.topsoil.app.data.value.DataValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -42,9 +48,9 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     public TopsoilTreeTableView(DataTable table) {
         this();
         this.setEditable(true);
+        this.setSortMode(TreeSortMode.ONLY_FIRST_LEVEL);
         setDataTable(table);
     }
-
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
@@ -78,24 +84,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     //**********************************************//
 
     /**
-     * Returns the column of {@link javafx.scene.control.CheckBox}es for row/segment selection.
-     *
-     * @return  new TreeTableColumn
-     */
-    private TreeTableColumn<DataComponent, Boolean> makeCheckBoxColumn() {
-        TreeTableColumn<DataComponent, Boolean> column = new TreeTableColumn<>("Selected");
-        column.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(column));
-        column.setCellValueFactory(param -> {
-            DataComponent component = param.getValue().getValue();
-            BooleanProperty property = new SimpleBooleanProperty(component.isSelected());
-            property.bindBidirectional(component.selectedProperty());
-            return property;
-        });
-        column.setEditable(true);
-        return column;
-    }
-
-    /**
      * Returns the column of {@code String} labels for rows/segments.
      *
      * @return  new TreeTableColumn
@@ -104,17 +92,37 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         TreeTableColumn<DataComponent, String> column = new TreeTableColumn<>("Label");
         column.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.setStyle("-fx-font-style: italic;");
+            cell.setTextAlignment(TextAlignment.LEFT);
             return cell;
         });
         column.setCellValueFactory(param -> {
             DataComponent component = param.getValue().getValue();
-            StringProperty property = new SimpleStringProperty("");
-            property.bind(component.labelProperty());
-            return property;
+            return component.labelProperty();
         });
         column.setPrefWidth(150);
+        column.setEditable(true);
+        return column;
+    }
+
+    /**
+     * Returns the column of {@link javafx.scene.control.CheckBox}es for row/segment selection.
+     *
+     * @return  new TreeTableColumn
+     */
+    private TreeTableColumn<DataComponent, Boolean> makeCheckBoxColumn() {
+        TreeTableColumn<DataComponent, Boolean> column = new TreeTableColumn<>("Selected");
+        column.setCellFactory(param -> {
+            CheckBoxTreeTableCell<DataComponent, Boolean> cell = new CheckBoxTreeTableCell<>();
+            cell.setAlignment(Pos.CENTER);
+            cell.setEditable(true);
+            return cell;
+        });
+        column.setCellValueFactory(param -> {
+            DataComponent component = param.getValue().getValue();
+            BooleanProperty property = new SimpleBooleanProperty(component.isSelected());
+            property.bindBidirectional(component.selectedProperty());
+            return property;
+        });
         column.setEditable(true);
         return column;
     }
@@ -146,6 +154,11 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
     private <T extends Serializable> TreeTableColumn<DataComponent, String> makeTreeTableColumn(DataColumn<T> dataColumn) {
         TreeTableColumn<DataComponent, String> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
+        newColumn.setCellFactory(param -> {
+            TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
+            cell.setTextAlignment(TextAlignment.RIGHT);
+            return cell;
+        });
         newColumn.setCellValueFactory(param -> {
             if (param.getValue().getValue() instanceof DataSegment) {
                 return new SimpleStringProperty("");

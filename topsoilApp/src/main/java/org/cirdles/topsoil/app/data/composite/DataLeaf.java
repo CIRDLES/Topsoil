@@ -9,7 +9,7 @@ public class DataLeaf extends DataComponent {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = -9122019912022411715L;
+    private static final long serialVersionUID = 8156642754912935606L;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //

@@ -17,7 +17,7 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = 4826726036796946067L;
+    private static final long serialVersionUID = -7225522174882434258L;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -72,6 +72,20 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
         return target;
     }
 
+    public int countLeafNodes() {
+        int count = 0;
+        DataComposite<DataComponent> branch;
+        for (DataComponent child : children) {
+            if (child instanceof DataComposite) {
+                branch = (DataComposite<DataComponent>) child;
+                count += branch.countLeafNodes();
+            } else {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
     public List<? extends DataLeaf> getLeafNodes() {
         List<DataLeaf> leafNodes = new ArrayList<>();
         DataComposite<DataComponent> branch;
@@ -90,16 +104,14 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
     public boolean equals(Object object) {
         if (object instanceof DataComposite<?>) {
             DataComposite<?> other = (DataComposite<?>) object;
-            if (! this.getLabel().equals(other.getLabel())) {
+            if (! super.equals(other)) {
                 return false;
             }
             if (this.getChildren().size() != other.getChildren().size()) {
                 return false;
             }
             for (int i = 0; i < this.getChildren().size(); i++) {
-                Object thisObject = this.getChildren().get(i);
-                Object thatObject = other.getChildren().get(i);
-                if (! thisObject.equals(thatObject)) {
+                if (! this.getChildren().get(i).equals(other.getChildren().get(i))) {
                     return false;
                 }
             }

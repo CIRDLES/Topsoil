@@ -8,7 +8,6 @@ import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.util.FXMLUtils;
 
 import java.io.IOException;
 
@@ -58,17 +57,11 @@ public class ProjectView extends SplitPane {
     @FXML
     public void initialize() {
         this.projectTreeView = new ProjectTreeView(project);
-        AnchorPane.setTopAnchor(projectTreeView, 0.0);
-        AnchorPane.setRightAnchor(projectTreeView, 0.0);
-        AnchorPane.setBottomAnchor(projectTreeView, 0.0);
-        AnchorPane.setLeftAnchor(projectTreeView, 0.0);
+        FXMLUtils.setAnchorPaneBounds(projectTreeView, 0.0, 0.0, 0.0, 0.0);
         projectTreeViewPane.getChildren().add(projectTreeView);
 
         this.constantsEditor = new ConstantsEditor();
-        AnchorPane.setTopAnchor(this.constantsEditor, 0.0);
-        AnchorPane.setRightAnchor(this.constantsEditor, 0.0);
-        AnchorPane.setBottomAnchor(this.constantsEditor, 0.0);
-        AnchorPane.setLeftAnchor(this.constantsEditor, 0.0);
+        FXMLUtils.setAnchorPaneBounds(constantsEditor, 0.0, 0.0, 0.0, 0.0);
         constantsEditorPane.getChildren().add(constantsEditor);
 
         for (DataTable table : project.getDataTableList()) {

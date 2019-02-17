@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.DataTemplate;
-import org.cirdles.topsoil.app.util.FXMLUtils;
+import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.util.file.parser.Delimiter;
 
 import java.io.IOException;

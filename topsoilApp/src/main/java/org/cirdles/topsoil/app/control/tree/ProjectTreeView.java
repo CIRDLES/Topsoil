@@ -23,8 +23,8 @@ public class ProjectTreeView extends TreeView<DataComponent> {
     //**********************************************//
 
     public ProjectTreeView(TopsoilProject project) {
-        final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataComposite<>("dummy"));
         this.setCellFactory(CheckBoxTreeCell.forTreeView());
+        final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataComposite<>("dummy"));
         this.setRoot(rootItem);
         this.setShowRoot(false);
 

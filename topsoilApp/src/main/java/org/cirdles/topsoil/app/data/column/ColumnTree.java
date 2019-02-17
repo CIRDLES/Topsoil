@@ -4,6 +4,7 @@ import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,14 +20,16 @@ public class ColumnTree extends DataComposite<DataComponent> {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    private static final long serialVersionUID = 6635594781414924593L;
+    private static final long serialVersionUID = -3676485771872253255L;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public ColumnTree(List<? extends DataComponent> topLevel) {
-        this.getChildren().addAll(topLevel);
+    public ColumnTree(DataComponent... topLevel) {
+        for (DataComponent component : topLevel) {
+            this.getChildren().add(component);
+        }
     }
 
     //**********************************************//
@@ -54,6 +57,11 @@ public class ColumnTree extends DataComposite<DataComponent> {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "ColumnTree" + Arrays.toString(children.toArray());
     }
 
     //**********************************************//

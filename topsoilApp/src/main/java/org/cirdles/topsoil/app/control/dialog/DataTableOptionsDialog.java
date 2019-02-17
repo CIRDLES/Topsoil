@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.control.tree.ColumnTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.FXMLUtils;
+import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 
@@ -111,10 +111,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         protected void initialize() {
             ColumnTreeView treeView = new ColumnTreeView(table.getColumnTree());
             columnViewPane.getChildren().add(treeView);
-            AnchorPane.setTopAnchor(treeView, 0.0);
-            AnchorPane.setRightAnchor(treeView, 0.0);
-            AnchorPane.setBottomAnchor(treeView, 0.0);
-            AnchorPane.setLeftAnchor(treeView, 0.0);
+            FXMLUtils.setAnchorPaneBounds(treeView, 0.0, 0.0, 0.0, 0.0);
 
             unctComboBox.getItems().addAll(Uncertainty.values());
             unctComboBox.getSelectionModel().select(table.getUnctFormat());

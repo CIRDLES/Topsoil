@@ -12,7 +12,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.util.FXMLUtils;
+import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -78,12 +78,12 @@ class NewProjectTitleView extends WizardPane {
     //**********************************************//
 
     NewProjectTitleView() {
-        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
         try {
             FXMLUtils.loadController(CONTROLLER_FXML, NewProjectTitleView.class, this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
     }
 
     @FXML

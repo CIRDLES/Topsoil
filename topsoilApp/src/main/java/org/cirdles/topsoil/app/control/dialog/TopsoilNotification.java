@@ -23,7 +23,7 @@ import java.util.Optional;
  * having to do so wherever they are called. It also makes adding new types of notifications relatively simple. All
  * notifications have the Topsoil logo on the window.
  *
- * @author Jake Marotta
+ * @author marottajb
  */
 public class TopsoilNotification extends Dialog<ButtonType> {
 
@@ -101,7 +101,6 @@ public class TopsoilNotification extends Dialog<ButtonType> {
 
         notification.setImage(type.getImage());
         notification.getDialogPane().getButtonTypes().addAll(type.getButtonTypes());
-
         return notification.showAndWait();
     }
 

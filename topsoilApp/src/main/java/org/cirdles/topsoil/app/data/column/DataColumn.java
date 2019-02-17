@@ -5,6 +5,7 @@ import org.cirdles.topsoil.app.data.composite.DataLeaf;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * Represents a column of data, and acts as a leaf in a {@link ColumnTree}.
@@ -15,13 +16,13 @@ import java.io.ObjectOutputStream;
  *
  * @see org.cirdles.topsoil.app.data.composite.DataComponent
  */
-public class DataColumn<T> extends DataLeaf {
+public class DataColumn<T extends Serializable> extends DataLeaf {
 
     //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = -1370769600447020972L;
+    private static final long serialVersionUID = 455246801295932422L;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -50,7 +51,7 @@ public class DataColumn<T> extends DataLeaf {
     public boolean equals(Object object) {
         if (object instanceof DataColumn) {
             DataColumn<?> other = (DataColumn<?>) object;
-            if (! getLabel().equals(other.getLabel())) {
+            if (! super.equals(other)) {
                 return false;
             }
             if (! type.equals(other.getType())) {

@@ -6,7 +6,7 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.value.DataValue;
 import org.cirdles.topsoil.app.data.value.DoubleValue;
 import org.cirdles.topsoil.app.data.value.StringValue;
-import org.cirdles.topsoil.app.util.file.TableFileExtension;
+import org.cirdles.topsoil.app.util.file.writer.TableFileExtension;
 import org.cirdles.topsoil.app.util.file.UnicodeBOMInputStream;
 import org.springframework.util.StringUtils;
 
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * @author marottajb
  */
-public interface FileParser {
+public interface DataParser {
 
     ColumnTree parseColumnTree(Path path, String delimiter) throws IOException;
     ColumnTree parseColumnTree(String content, String delimiter);

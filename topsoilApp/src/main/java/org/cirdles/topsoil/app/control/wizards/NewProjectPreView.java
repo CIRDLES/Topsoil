@@ -5,7 +5,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.FXMLUtils;
+import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -33,12 +33,12 @@ class NewProjectPreView extends WizardPane {
     //**********************************************//
 
     NewProjectPreView() {
-        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
         try {
             FXMLUtils.loadController(CONTROLLER_FXML, NewProjectPreView.class, this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
     }
 
     @FXML

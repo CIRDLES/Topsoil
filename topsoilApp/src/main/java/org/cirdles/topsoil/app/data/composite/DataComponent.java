@@ -23,7 +23,7 @@ public abstract class DataComponent implements Serializable {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = 7042768990238389822L;
+    private static final long serialVersionUID = -5314772239757317389L;
     protected static String DEFAULT_LABEL = "";
 
     //**********************************************//
@@ -67,12 +67,28 @@ public abstract class DataComponent implements Serializable {
     }
 
     public DataComponent(String label) {
-        setLabel(label);
+        setLabel(label != null ? label : "");
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof DataComponent) {
+            DataComponent other = (DataComponent) object;
+            if (! this.getLabel().equals(other.getLabel())) {
+                return false;
+            }
+            if (this.isSelected() && !other.isSelected()
+                || !this.isSelected() && other.isSelected()) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public String toString() {

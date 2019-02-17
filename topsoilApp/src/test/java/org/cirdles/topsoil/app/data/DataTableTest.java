@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.data;
 
-import org.cirdles.topsoil.app.util.file.parser.Squid3FileParser;
+import org.cirdles.topsoil.app.util.file.parser.Squid3DataParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class DataTableTest {
 
     @BeforeClass
     public static void setup() {
-        oracle = new Squid3FileParser().parseDataTable(CONTENT, ",", "CONTENT");
+        oracle = new Squid3DataParser().parseDataTable(CONTENT, ",", "CONTENT");
     }
 
     @Test

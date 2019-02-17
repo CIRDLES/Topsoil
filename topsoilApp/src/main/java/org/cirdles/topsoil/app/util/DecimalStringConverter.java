@@ -17,7 +17,7 @@ import java.text.DecimalFormat;
  */
 public class DecimalStringConverter extends StringConverter<Double> {
 
-    private static String DEFAULT_PATTERN = "0.0#";
+    private static String DEFAULT_PATTERN = "#0.0########";
 
     //**********************************************//
     //                  ATTRIBUTES                  //

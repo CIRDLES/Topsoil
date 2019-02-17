@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
+import org.cirdles.topsoil.constant.Lambda;
 import org.cirdles.topsoil.plot.PlotType;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class TopsoilProject implements Serializable {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = 4647274955420518003L;
+    private static final long serialVersionUID = -3769935813685997131L;
 
     //**********************************************//
     //                  PROPERTIES                  //
@@ -83,6 +84,23 @@ public class TopsoilProject implements Serializable {
         openPlots.remove(plotType, dataTable);
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof TopsoilProject) {
+            TopsoilProject other = (TopsoilProject) object;
+            if (dataTableList.size() != other.getDataTableList().size()) {
+                return false;
+            }
+            for (int i = 0; i < dataTableList.size(); i++) {
+                if (! dataTableList.get(i).equals(other.getDataTableList().get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
@@ -90,11 +108,17 @@ public class TopsoilProject implements Serializable {
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         out.writeObject(new ArrayList<>(getDataTableList()));
+        for (Lambda lambda : Lambda.values()) {
+            out.writeDouble(lambda.getValue());
+        }
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         getDataTableList().addAll((List<DataTable>) in.readObject());
+        for (Lambda lambda : Lambda.values()) {
+            lambda.setValue(in.readDouble());
+        }
     }
 
 }

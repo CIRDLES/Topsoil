@@ -1,6 +1,8 @@
-package org.cirdles.topsoil.app.util.file;
+package org.cirdles.topsoil.app.util.file.writer;
 
 import org.cirdles.topsoil.app.util.file.parser.Delimiter;
+
+import java.nio.file.Path;
 
 /**
  * Supported file extensions for model files.
@@ -11,7 +13,7 @@ public enum TableFileExtension {
 
     CSV("csv", Delimiter.COMMA),
     TSV("tsv", Delimiter.TAB),
-    TXT("txt", null);
+    TXT("txt", Delimiter.COMMA);
 
     private String extension;
     private Delimiter delim;
@@ -32,5 +34,14 @@ public enum TableFileExtension {
 
     public Delimiter getDelimiter() {
         return delim;
+    }
+
+    public static TableFileExtension getExtensionFromPath(Path path) {
+        for (TableFileExtension ext : TableFileExtension.values()) {
+            if (path.toString().endsWith("." + ext.extension)) {
+                return ext;
+            }
+        }
+        return null;
     }
 }

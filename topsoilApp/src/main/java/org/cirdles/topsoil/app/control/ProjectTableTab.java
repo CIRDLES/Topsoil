@@ -5,7 +5,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.tree.TopsoilTreeTableView;
-import org.cirdles.topsoil.app.util.FXMLUtils;
 
 import java.io.IOException;
 

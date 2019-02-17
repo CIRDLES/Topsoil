@@ -39,7 +39,7 @@ public class DataTable extends DataComposite<DataSegment> {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = 2353637336965993167L;
+    private static final long serialVersionUID = -2011274290514367222L;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -50,6 +50,7 @@ public class DataTable extends DataComposite<DataSegment> {
      */
     private HashBiMap<Variable<?>, DataColumn<?>> varMap = HashBiMap.create();
     private ColumnTree columnTree;
+    private DataTemplate template;
 
     //**********************************************//
     //                  PROPERTIES                  //
@@ -87,15 +88,17 @@ public class DataTable extends DataComposite<DataSegment> {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public DataTable(String label, ColumnTree columnTree, List<DataSegment> dataSegments) {
-        this(label, columnTree, dataSegments, IsotopeSystem.GENERIC, Uncertainty.ONE_SIGMA_ABSOLUTE);
+    public DataTable(DataTemplate template, String label, ColumnTree columnTree, List<DataSegment> dataSegments) {
+        this(template, label, columnTree, dataSegments, IsotopeSystem.GENERIC, Uncertainty.ONE_SIGMA_ABSOLUTE);
     }
 
-    public DataTable(String label, ColumnTree columnTree, List<DataSegment> dataSegments,
+    public DataTable(DataTemplate template, String label, ColumnTree columnTree, List<DataSegment> dataSegments,
                      IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
         super(label);
+        this.template = template;
         setIsotopeSystem(isotopeSystem);
         setUnctFormat(unctFormat);
+        // TODO Check that columnTree and dataSegments match columns
         this.columnTree = columnTree;
         this.children.addAll(dataSegments);
     }
@@ -106,6 +109,10 @@ public class DataTable extends DataComposite<DataSegment> {
 
     public ColumnTree getColumnTree() {
         return columnTree;
+    }
+
+    public DataTemplate getTemplate() {
+        return template;
     }
 
     public BiMap<Variable<?>, DataColumn<?>> getVariableColumnMap() {
@@ -139,6 +146,14 @@ public class DataTable extends DataComposite<DataSegment> {
             rowCount += segment.getChildren().size();
         }
         return null;
+    }
+
+    public List<DataRow> getDataRows() {
+        List<DataRow> rows = new ArrayList<>();
+        for (DataSegment segment : getChildren()) {
+            rows.addAll(segment.getChildren());
+        }
+        return rows;
     }
 
     @Override
@@ -184,6 +199,26 @@ public class DataTable extends DataComposite<DataSegment> {
         columnTree = (ColumnTree) in.readObject();
         setIsotopeSystem((IsotopeSystem) in.readObject());
         setUnctFormat((Uncertainty) in.readObject());
+    }
+
+    /**
+     * Helper method to capture wildcards from getLeafNodes().
+     *
+     * @param leaves    List of leaves in this tree
+     * @param <T>       the type of the leaves in this tree
+     * @return          List o
+     */
+    private <T> List<DataRow> leafHelper(List<T> leaves) {
+        List<DataRow> rows = new ArrayList<>();
+        for (T leaf : leaves) {
+            if (leaf instanceof DataRow) {
+                rows.add((DataRow) leaf);
+            } else {
+                // @TODO Probably better to throw an exception here
+                return null;
+            }
+        }
+        return rows;
     }
 
 }

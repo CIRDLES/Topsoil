@@ -13,7 +13,6 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.util.FXMLUtils;
 
 import java.awt.*;
 import java.io.IOException;
