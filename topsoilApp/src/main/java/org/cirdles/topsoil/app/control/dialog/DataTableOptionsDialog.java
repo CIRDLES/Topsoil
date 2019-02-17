@@ -19,10 +19,24 @@ import org.cirdles.topsoil.uncertainty.Uncertainty;
 
 import java.io.IOException;
 
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_HEIGHT;
+import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_WIDTH;
+
 /**
  * @author marottajb
  */
 public class DataTableOptionsDialog extends Dialog<Boolean> {
+
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    public static final double INIT_WIDTH = 600.0;
+    public static final double INIT_HEIGHT = 550.0;
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     private DataTableOptionsDialog(DataTable table, Stage owner) {
         this.setTitle("Options: " + table.getLabel());
@@ -46,6 +60,10 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
 
     }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
 
     public static Boolean showDialog(DataTable table, Stage owner) {
         return new DataTableOptionsDialog(table, owner).showAndWait().orElse(null);
@@ -105,6 +123,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
         }
 
         @FXML

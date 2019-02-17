@@ -144,7 +144,7 @@ public class FileMenu extends Menu {
         fromFileItem = new MenuItem("From File");
         fromFileItem.setOnAction(event -> {
             File file = TopsoilFileChooser.openTableFile().showOpenDialog(Main.getController().getPrimaryStage());
-            if (file.exists()) {
+            if (file != null && file.exists()) {
                 Path path = Paths.get(file.toURI());
                 try {
                     Delimiter delimiter = DataParser.guessDelimiter(path);
@@ -176,12 +176,20 @@ public class FileMenu extends Menu {
             String content = Clipboard.getSystemClipboard().getString();
             Delimiter delimiter = DataParser.guessDelimiter(content);
             Map<DataImportDialog.Key, Object> settings = DataImportDialog.showDialog("Clipboard", delimiter);
-            delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);
-            DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
+            if (settings != null) {
+                delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);
+                DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
 
-            if (delimiter != null && template != null) {
-                DataTable table = FileMenuHelper.importTableFromString(content, delimiter, template);
-                MenuUtils.getProjectView().getProject().addDataTable(table);
+                if (delimiter != null && template != null) {
+                    DataTable table = FileMenuHelper.importTableFromString(content, delimiter, template);
+                    if (DataTableOptionsDialog.showDialog(table, Main.getController().getPrimaryStage())) {
+                        if (MenuUtils.isDataOpen()) {
+                            MenuUtils.getProjectView().getProject().addDataTable(table);
+                        } else {
+                            Main.getController().setProjectView(new ProjectView(new TopsoilProject(table)));
+                        }
+                    }
+                }
             }
         });
         importTableMenu = new Menu("Import Table", null,

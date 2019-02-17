@@ -18,7 +18,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </Label>
-      <ScrollPane fitToHeight="true" hbarPolicy="ALWAYS" maxWidth="500.0" vbarPolicy="NEVER">
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" maxWidth="500.0" vbarPolicy="NEVER">
         <content>
           <AnchorPane fx:id="columnViewPane" />
         </content>
