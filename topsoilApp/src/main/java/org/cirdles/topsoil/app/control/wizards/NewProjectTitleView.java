@@ -6,14 +6,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -80,16 +79,10 @@ class NewProjectTitleView extends WizardPane {
 
     NewProjectTitleView() {
         this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
-
-        final ResourceExtractor re = new ResourceExtractor(NewProjectTitleView.class);
-        FXMLLoader loader;
         try {
-            loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
+            FXMLUtils.loadController(CONTROLLER_FXML, NewProjectTitleView.class, this);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+            throw new RuntimeException(e);
         }
     }
 

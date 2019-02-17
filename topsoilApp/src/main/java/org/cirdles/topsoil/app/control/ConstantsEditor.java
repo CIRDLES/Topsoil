@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.cirdles.topsoil.constant.Lambda;
 import org.controlsfx.control.PopOver;
 
@@ -27,13 +28,9 @@ public class ConstantsEditor extends VBox {
 
     public ConstantsEditor() {
         try {
-            final ResourceExtractor re = new ResourceExtractor(ConstantsEditor.class);
-            final FXMLLoader loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
+            FXMLUtils.loadController(CONTROLLER_FXML, ConstantsEditor.class, this);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+            throw new RuntimeException(e);
         }
     }
 

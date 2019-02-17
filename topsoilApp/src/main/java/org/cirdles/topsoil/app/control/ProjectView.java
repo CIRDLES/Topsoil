@@ -2,14 +2,13 @@ package org.cirdles.topsoil.app.control;
 
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 
 import java.io.IOException;
 
@@ -49,15 +48,10 @@ public class ProjectView extends SplitPane {
 
     public ProjectView(TopsoilProject project) {
         this.project = project;
-
         try {
-            final ResourceExtractor re = new ResourceExtractor(ProjectView.class);
-            final FXMLLoader loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
+            FXMLUtils.loadController(CONTROLLER_FXML, ProjectView.class, this);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+            throw new RuntimeException(e);
         }
     }
 

@@ -8,22 +8,20 @@ import org.cirdles.topsoil.app.control.wizards.NewProjectWizard;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.util.file.parser.FileParser;
+import org.cirdles.topsoil.app.util.file.parser.Delimiter;
 import org.cirdles.topsoil.app.util.file.DataWriter;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.app.util.SampleData;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
-import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
+import org.cirdles.topsoil.app.util.file.ProjectSerializer;
 import org.cirdles.topsoil.app.control.ProjectView;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -39,17 +37,30 @@ public class FileMenuHelper {
     //**********************************************//
 
     public static TopsoilProject newProject() {
+        if (isDataOpen()) {
+            if (! handleOverwrite()) {
+                return null;
+            } else {
+                closeProject();
+            }
+        }
         TopsoilProject project = null;
-        if (! isDataOpen() || shouldOverwriteData("New Project")) {
-            Map<String, Object> settings = NewProjectWizard.startWizard();
-            if (settings != null) {
-                String title = String.valueOf(settings.get(NewProjectWizard.Key.TITLE));
-                Path location = (Path) settings.get(NewProjectWizard.Key.LOCATION);
-                List<DataTable> tables = (List<DataTable>) settings.get(NewProjectWizard.Key.TABLES);
+        Map<String, Object> settings = NewProjectWizard.startWizard();
+        if (settings != null) {
+            String title = String.valueOf(settings.get(NewProjectWizard.Key.TITLE));
+            Path location = (Path) settings.get(NewProjectWizard.Key.LOCATION);
+            List<DataTable> tables = (List<DataTable>) settings.get(NewProjectWizard.Key.TABLES);
+            try {
                 project = new TopsoilProject(tables.toArray(new DataTable[]{}));
-
                 File newFile = new File(location.toFile(), title + ".topsoil");
                 ProjectSerializer.serialize(newFile.toPath(), project);
+            } catch (IOException e) {
+                e.printStackTrace();
+                TopsoilNotification.showNotification(
+                        TopsoilNotification.NotificationType.ERROR,
+                        "Error",
+                        "Unable to create project file: " + title + ".topsoil"
+                );
             }
         }
         return project;
@@ -61,19 +72,11 @@ public class FileMenuHelper {
             return null;    // project already open
         }
 
-        // handle overwriting project
         if (isDataOpen()) {
-            TopsoilProject currentProject = getCurrentProject();
-            ButtonType shouldSave = showOverwriteDialog();
-            if (shouldSave.equals(ButtonType.YES)) {
-                if (ProjectSerializer.getCurrentProjectPath() == null) {
-                    saveProjectAs(currentProject);
-                } else {
-                    serializeProject(currentProject, ProjectSerializer.getCurrentProjectPath());
-                }
-            }
-            if (shouldSave.equals(ButtonType.CANCEL)) {
+            if (! handleOverwrite()) {
                 return null;
+            } else {
+                closeProject();
             }
         }
 
@@ -85,9 +88,20 @@ public class FileMenuHelper {
     }
 
     public static boolean saveProject(TopsoilProject project) {
-        boolean completed;
-        if (ProjectSerializer.getCurrentProjectPath() != null) {
-            completed = serializeProject(project, ProjectSerializer.getCurrentProjectPath());
+        boolean completed = false;
+        Path path = ProjectSerializer.getCurrentProjectPath();
+        // TODO Check that path is valid
+        if (path != null) {
+            try {
+                completed = ProjectSerializer.serialize(path, project);
+            } catch (IOException e) {
+                e.printStackTrace();
+                TopsoilNotification.showNotification(
+                        TopsoilNotification.NotificationType.ERROR,
+                        "Error",
+                        "Unable to save project: " + path.getFileName().toString()
+                );
+            }
         } else {
             completed = saveProjectAs(project);
         }
@@ -98,7 +112,16 @@ public class FileMenuHelper {
         boolean completed = false;
         File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
         if (file.exists()) {
-            completed = serializeProject(project, Paths.get(file.toURI()));
+            try {
+                completed = ProjectSerializer.serialize(file.toPath(), project);
+            } catch (IOException e) {
+                e.printStackTrace();
+                TopsoilNotification.showNotification(
+                        TopsoilNotification.NotificationType.ERROR,
+                        "Error",
+                        "Unable to save project: " + file.getName()
+                );
+            }
         }
         return completed;
     }
@@ -112,28 +135,15 @@ public class FileMenuHelper {
             ProjectSerializer.setCurrentProjectPath(null);
             completed = true;
         }
-
         return completed;
     }
 
-    public static DataTable importTableFromFile(Path path, DataTemplate template,
-                                                IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
-//        DataParserBase parser = template.getDataParser(path);
-//        if (parser == null) {
-//            return null;
-//        }
-//        return importTable(path.getFileName().toString(), parser, isotopeSystem, unctFormat);
-        return null;
+    public static DataTable importTableFromFile(Path path, Delimiter delimiter, DataTemplate template) throws IOException {
+        return template.getDataParser().parseDataTable(path, delimiter.getValue(), path.getFileName().toString());
     }
 
-    public static DataTable importTableFromString(String content, DataTemplate template, IsotopeSystem isotopeSystem,
-                                                     Uncertainty unctFormat) {
-//        DataParserBase parser = template.getDataParser(content);
-//        if (parser == null) {
-//            return null;
-//        }
-//        return importTable("clipboard-content", parser, isotopeSystem, unctFormat);
-        return null;
+    public static DataTable importTableFromString(String content, Delimiter delimiter, DataTemplate template) {
+        return template.getDataParser().parseDataTable(content, delimiter.getValue(), "clipboard-content");
     }
 
     public static boolean exportTableAs(DataTable table) {
@@ -160,7 +170,16 @@ public class FileMenuHelper {
                     } else {
                         File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
                         if (file != null) {
-                            saved = FileMenuHelper.serializeProject(project, file.toPath());
+                            try {
+                                saved = ProjectSerializer.serialize(file.toPath(), project);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                TopsoilNotification.showNotification(
+                                        TopsoilNotification.NotificationType.ERROR,
+                                        "Error",
+                                        "Unable to save project: " + file.getName()
+                                );
+                            }
                         }
                     }
                     // If file was successfully saved
@@ -209,14 +228,22 @@ public class FileMenuHelper {
         return Main.getController().getMainContent() instanceof ProjectView;
     }
 
-    private static boolean shouldOverwriteData(String windowTitle) {
-        Optional<ButtonType> response = TopsoilNotification.showNotification(
-                TopsoilNotification.NotificationType.YES_NO,
-                windowTitle,
-                "This will close your current model tables. Do you want to continue?"
-        );
-        return (response.isPresent() && response.get().equals(ButtonType.YES));
+    private static boolean handleOverwrite() {
+        TopsoilProject currentProject = getCurrentProject();
+        ButtonType shouldSave = showOverwriteDialog();
+        if (shouldSave.equals(ButtonType.YES)) {
+            if (ProjectSerializer.getCurrentProjectPath() == null) {
+                saveProjectAs(currentProject);
+            } else {
+                saveProject(currentProject);
+            }
+        }
+        if (shouldSave.equals(ButtonType.CANCEL)) {
+            return false;
+        }
+        return true;
     }
+
 
     private static ButtonType showOverwriteDialog() {
         return TopsoilNotification.showNotification(TopsoilNotification.NotificationType.YES_NO,
@@ -225,22 +252,16 @@ public class FileMenuHelper {
     }
 
     private static TopsoilProject openProject(Path projectPath) {
-        return ProjectSerializer.deserialize(projectPath);
-    }
-
-    private static boolean serializeProject(TopsoilProject project, Path path) {
-        boolean completed;
-        ProjectSerializer.serialize(path, project);
-        completed = true;
-        return completed;
-    }
-
-    private static DataTable importTable(String title, FileParser parser, IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
-//        DataTable table = parser.parseDataTable(title);
-//        if (table != null) {
-//            table.setIsotopeSystem(isotopeSystem);
-//            table.setUnctFormat(unctFormat);
-//        }
+        try {
+            return ProjectSerializer.deserialize(projectPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            TopsoilNotification.showNotification(
+                    TopsoilNotification.NotificationType.ERROR,
+                    "Error",
+                    "Could not open project file: " + projectPath.getFileName().toString()
+            );
+        }
         return null;
     }
 

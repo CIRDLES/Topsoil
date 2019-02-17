@@ -1,11 +1,11 @@
 package org.cirdles.topsoil.app.control.wizards;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -34,16 +34,10 @@ class NewProjectPreView extends WizardPane {
 
     NewProjectPreView() {
         this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
-
-        final ResourceExtractor re = new ResourceExtractor(NewProjectPreView.class);
-        FXMLLoader loader;
         try {
-            loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
+            FXMLUtils.loadController(CONTROLLER_FXML, NewProjectPreView.class, this);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -70,6 +64,8 @@ class NewProjectPreView extends WizardPane {
         List<DataTable> tables = new ArrayList<>();
         for (Tab tab : fileTabs.getTabs()) {
             preViewTab = (PreViewTab) tab;
+            preViewTab.getTable().setIsotopeSystem(preViewTab.getController().getIsotopeSystem());
+            preViewTab.getTable().setUnctFormat(preViewTab.getController().getUncertainty());
             tables.add(preViewTab.getTable());
         }
         wizard.getSettings().put(TABLES, tables);
@@ -89,12 +85,7 @@ class NewProjectPreView extends WizardPane {
         for (DataTable table : tableList) {
             if (! hasTabForTable(table)) {
                 PreViewTab tab = new PreViewTab(table);
-                tab.controller.isoComboBox.getSelectionModel().selectedItemProperty()
-                                          .addListener(((observable, oldValue, newValue) -> {
-                    wizard.setInvalid(! requiredFieldsFilled());
-                }));
-                tab.controller.unctComboBox.getSelectionModel().selectedItemProperty()
-                                           .addListener(((observable, oldValue, newValue) -> {
+                tab.controller.invalidProperty().addListener(((observable, oldValue, newValue) -> {
                     wizard.setInvalid(! requiredFieldsFilled());
                 }));
                 fileTabs.getTabs().add(tab);
@@ -114,7 +105,7 @@ class NewProjectPreView extends WizardPane {
     private boolean requiredFieldsFilled() {
         for (Tab t : fileTabs.getTabs()) {
             PreViewTab tab = (PreViewTab) t;
-            if (tab.controller.isoComboBox.getValue() == null || tab.controller.unctComboBox.getValue() == null) {
+            if (tab.controller.isInvalid()) {
                 return false;
             }
         }
@@ -127,14 +118,14 @@ class NewProjectPreView extends WizardPane {
 
     class PreViewTab extends Tab {
 
-        private DataTableOptionsView controller;
+        private DataTableOptionsDialog.DataTableOptionsView controller;
         private DataTable table;
 
         PreViewTab(DataTable table) {
             super(table.getLabel());
             this.table = table;
             // TODO if table == null
-            controller = new DataTableOptionsView(table);
+            controller = new DataTableOptionsDialog.DataTableOptionsView(table);
 
             this.setContent(controller);
         }
@@ -143,7 +134,7 @@ class NewProjectPreView extends WizardPane {
             return table;
         }
 
-        private DataTableOptionsView getController() {
+        private DataTableOptionsDialog.DataTableOptionsView getController() {
             return controller;
         }
     }

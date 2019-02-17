@@ -7,6 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.MainController;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.plot.Plot;
@@ -367,11 +369,6 @@ public class PlotPropertiesPanel extends Accordion {
     	wetherillEnvelopeFillProperty().set(c);
     }
 
-
-
-
-
-
 	private BooleanProperty wasserburgLine;
 	public BooleanProperty wasserburgLineProperty() {
 		if ( wasserburgLine == null) {
@@ -432,14 +429,6 @@ public class PlotPropertiesPanel extends Accordion {
 		wasserburgEnvelopeFillProperty().set(c);
 	}
 
-
-
-
-
-
-
-
-
     private BooleanProperty evolutionMatrix;
     public BooleanProperty evolutionMatrixProperty() {
         if (evolutionMatrix == null) {
@@ -464,16 +453,11 @@ public class PlotPropertiesPanel extends Accordion {
         if (plot.getProperties() == null) {
         	plot.setProperties(new DefaultProperties());
         }
-	    try {
-            FXMLLoader loader = new FXMLLoader(
-                    new ResourceExtractor(PlotPropertiesPanel.class).extractResourceAsPath(CONTROLLER_FXML).toUri().toURL()
-            );
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		try {
+			FXMLUtils.loadController(CONTROLLER_FXML, PlotPropertiesPanel.class, this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @FXML protected void initialize() {

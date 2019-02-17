@@ -4,15 +4,21 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
+import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
+import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.util.SampleData;
 import org.cirdles.topsoil.app.control.dialog.VariableChooserDialog;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
-import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
+import org.cirdles.topsoil.app.util.file.parser.Delimiter;
+import org.cirdles.topsoil.app.util.file.parser.FileParser;
+import org.cirdles.topsoil.app.util.file.ProjectSerializer;
 import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
@@ -23,6 +29,7 @@ import org.cirdles.topsoil.variable.IndependentVariable;
 import org.cirdles.topsoil.variable.Variable;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -176,13 +183,44 @@ public class TopsoilMenuBar extends MenuBar {
             File file = TopsoilFileChooser.openTableFile().showOpenDialog(Main.getController().getPrimaryStage());
             if (file.exists()) {
                 Path path = Paths.get(file.toURI());
-                // TODO Show dialog for DataTemplate/IsotopeSystem/Uncertainty
+                try {
+                    Delimiter delimiter = FileParser.guessDelimiter(path);
+                    Map<DataImportDialog.Key, Object> settings =
+                            DataImportDialog.showDialog(path.getFileName().toString(), delimiter);
+                    delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);
+                    DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
+
+                    if (delimiter != null && template != null) {
+                        DataTable table = FileMenuHelper.importTableFromFile(path, delimiter, template);
+                        if (DataTableOptionsDialog.showDialog(table, (Stage) getScene().getWindow())) {
+                            if (isProjectOpen()) {
+                                getCurrentProjectView().getProject().addDataTable(table);
+                            } else {
+                                Main.getController().setProjectView(new ProjectView(new TopsoilProject(table)));
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
+                                                         "Error",
+                                                         "Unable to read file: " + path.getFileName().toString());
+                }
             }
         });
         MenuItem fromClipboardItem = new MenuItem("From Clipboard");
         fromClipboardItem.disableProperty().bind(new ReadOnlyBooleanWrapper(Clipboard.getSystemClipboard().hasString()));
         fromClipboardItem.setOnAction(event -> {
-            // @TODO
+            String content = Clipboard.getSystemClipboard().getString();
+            Delimiter delimiter = FileParser.guessDelimiter(content);
+            Map<DataImportDialog.Key, Object> settings = DataImportDialog.showDialog("Clipboard", delimiter);
+            delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);
+            DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
+
+            if (delimiter != null && template != null) {
+                DataTable table = FileMenuHelper.importTableFromString(content, delimiter, template);
+                getCurrentProjectView().getProject().addDataTable(table);
+            }
         });
 
         Menu importTableMenu =  new Menu("Import Table", null,

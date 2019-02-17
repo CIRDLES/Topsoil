@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.control;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -14,6 +13,7 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -79,16 +79,11 @@ public class AboutView extends VBox {
 
     public AboutView() {
         super();
-
         browser = new DesktopWebBrowser(Desktop.getDesktop());
-
         try {
-            FXMLLoader loader = new FXMLLoader(resourceExtractor.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
+            FXMLUtils.loadController(CONTROLLER_FXML, AboutView.class, this);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+            throw new RuntimeException(e);
         }
     }
 

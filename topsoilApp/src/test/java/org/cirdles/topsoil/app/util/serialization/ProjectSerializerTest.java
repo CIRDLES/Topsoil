@@ -1,15 +1,13 @@
 package org.cirdles.topsoil.app.util.serialization;
 
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.util.file.ProjectSerializer;
 import org.cirdles.topsoil.app.util.file.parser.FileParser;
 import org.cirdles.topsoil.app.util.file.parser.Squid3FileParser;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 

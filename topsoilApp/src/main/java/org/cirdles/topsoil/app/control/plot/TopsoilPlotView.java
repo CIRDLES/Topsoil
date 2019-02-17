@@ -3,7 +3,6 @@ package org.cirdles.topsoil.app.control.plot;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
@@ -12,9 +11,9 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.internal.PDFSaver;
@@ -64,13 +63,9 @@ public class TopsoilPlotView extends VBox {
 		this.table = table;
 		this.propertiesPanel = new PlotPropertiesPanel(plot);
 		try {
-			FXMLLoader loader = new FXMLLoader(new ResourceExtractor(TopsoilPlotView.class).extractResourceAsPath(CONTROLLER_FXML)
-					                                   .toUri().toURL());
-			loader.setRoot(this);
-			loader.setController(this);
-			loader.load();
+			FXMLUtils.loadController(CONTROLLER_FXML, TopsoilPlotView.class, this);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 

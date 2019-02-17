@@ -2,11 +2,10 @@ package org.cirdles.topsoil.app.control.plot.panel;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 
@@ -43,16 +42,11 @@ public class DataOptionsController extends AnchorPane {
     //**********************************************//
 
     public DataOptionsController() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    new ResourceExtractor(DataOptionsController.class).extractResourceAsPath(CONTROLLER_FXML).toUri().toURL()
-            );
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		try {
+			FXMLUtils.loadController(CONTROLLER_FXML, DataOptionsController.class, this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @FXML protected void initialize() {

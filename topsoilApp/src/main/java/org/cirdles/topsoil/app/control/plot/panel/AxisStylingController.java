@@ -1,10 +1,9 @@
 package org.cirdles.topsoil.app.control.plot.panel;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 
 import java.io.IOException;
 
@@ -44,13 +43,7 @@ public class AxisStylingController extends AnchorPane {
 
     public AxisStylingController() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    new ResourceExtractor(AxisStylingController.class).extractResourceAsPath(CONTROLLER_FXML)
-                            .toUri().toURL()
-            );
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
+            FXMLUtils.loadController(CONTROLLER_FXML, AxisStylingController.class, this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

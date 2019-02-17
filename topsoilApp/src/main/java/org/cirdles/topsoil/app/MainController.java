@@ -4,7 +4,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -14,7 +13,8 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
-import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
+import org.cirdles.topsoil.app.util.FXMLUtils;
+import org.cirdles.topsoil.app.util.file.ProjectSerializer;
 
 import java.io.IOException;
 
@@ -76,19 +76,14 @@ public class MainController extends VBox {
 			FileMenuHelper.exitTopsoilSafely();
 		});
 
-		final ResourceExtractor re = new ResourceExtractor(MainController.class);
-		FXMLLoader loader;
-
 		try {
-			loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-			loader.setRoot(this);
-			loader.setController(this);
-			loader.load();
+			FXMLUtils.loadController(CONTROLLER_FXML, MainController.class, this);
 		} catch (IOException e) {
-			throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+			throw new RuntimeException(e);
 		}
 
-		topsoilLogo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+		topsoilLogo =
+				new Image(new ResourceExtractor(MainController.class).extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
 		this.primaryStage.getIcons().add(topsoilLogo);
 	}
 

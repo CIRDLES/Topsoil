@@ -7,16 +7,15 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.cirdles.topsoil.app.util.file.parser.FileParser;
 import org.cirdles.topsoil.app.util.file.parser.Delimiter;
 import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
@@ -56,16 +55,10 @@ class NewProjectSourcesView extends WizardPane {
 
     NewProjectSourcesView() {
         this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
-
-        final ResourceExtractor re = new ResourceExtractor(NewProjectSourcesView.class);
-        FXMLLoader loader;
         try {
-            loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
+            FXMLUtils.loadController(CONTROLLER_FXML, NewProjectSourcesView.class, this);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+            throw new RuntimeException(e);
         }
     }
 

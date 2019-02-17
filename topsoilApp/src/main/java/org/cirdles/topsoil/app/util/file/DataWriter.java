@@ -21,7 +21,7 @@ public class DataWriter {
     public static boolean writeTableToFile(DataTable table, Path path) {
         boolean completed = false;
 
-        try (OutputStreamWriter writer =
+        try (OutputStreamWriter out =
                      new OutputStreamWriter(new FileOutputStream(path.toFile()), StandardCharsets.UTF_8)) {
             // TODO
         } catch (FileNotFoundException e) {

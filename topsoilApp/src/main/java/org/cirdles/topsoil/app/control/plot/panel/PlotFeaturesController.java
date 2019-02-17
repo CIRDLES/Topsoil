@@ -3,12 +3,11 @@ package org.cirdles.topsoil.app.control.plot.panel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 
 import java.io.IOException;
@@ -87,12 +86,7 @@ public class PlotFeaturesController extends AnchorPane {
 
     public PlotFeaturesController() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    new ResourceExtractor(PlotFeaturesController.class).extractResourceAsPath(CONTROLLER_FXML).toUri().toURL()
-            );
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
+            FXMLUtils.loadController(CONTROLLER_FXML, PlotFeaturesController.class, this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

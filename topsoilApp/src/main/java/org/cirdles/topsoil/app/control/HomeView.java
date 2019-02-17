@@ -4,13 +4,13 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -61,17 +61,12 @@ public class HomeView extends VBox {
     //**********************************************//
 
     public HomeView(Path... recentFiles) {
-        FXMLLoader loader;
         try {
-            loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-            loader.setRoot(this);
-            loader.setController(this);
-            loader.load();
-
-            this.recentFilesList.addAll(recentFiles);
+            FXMLUtils.loadController(CONTROLLER_FXML, HomeView.class, this);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+            throw new RuntimeException(e);
         }
+        this.recentFilesList.addAll(recentFiles);
     }
 
     @FXML

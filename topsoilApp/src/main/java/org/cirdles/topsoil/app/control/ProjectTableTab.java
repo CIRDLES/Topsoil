@@ -1,18 +1,13 @@
 package org.cirdles.topsoil.app.control;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
-import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.control.tree.TopsoilTreeTableView;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A custom {@code Tab} associated with a particular {@code DataTable}.
@@ -82,13 +77,9 @@ public class ProjectTableTab extends Tab {
         TabView(DataTable table) {
             this.table = table;
             try {
-                final ResourceExtractor re = new ResourceExtractor(TabView.class);
-                final FXMLLoader loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-                loader.setRoot(this);
-                loader.setController(this);
-                loader.load();
+                FXMLUtils.loadController(CONTROLLER_FXML, TabView.class, this);
             } catch (IOException e) {
-                throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+                throw new RuntimeException(e);
             }
         }
 

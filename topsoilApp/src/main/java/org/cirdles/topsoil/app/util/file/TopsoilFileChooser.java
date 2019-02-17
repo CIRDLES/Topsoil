@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.util.file;
 
 import javafx.stage.FileChooser;
-import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

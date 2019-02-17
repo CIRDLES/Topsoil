@@ -2,15 +2,14 @@ package org.cirdles.topsoil.app.control.dialog;
 
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.data.DataTemplate;
+import org.cirdles.topsoil.app.util.FXMLUtils;
 import org.cirdles.topsoil.app.util.file.parser.Delimiter;
 
 import java.io.IOException;
@@ -32,7 +31,6 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.getIcons().addAll(Main.getController().getTopsoilLogo());
-        stage.setResizable(false);
 
         DataImportDialogController controller = new DataImportDialogController(initial);
         this.getDialogPane().setContent(controller);
@@ -84,16 +82,10 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
 
         DataImportDialogController(Delimiter initial) {
             delimiter = initial;
-            final ResourceExtractor re = new ResourceExtractor(DataImportDialogController.class);
-
-            FXMLLoader loader;
             try {
-                loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
-                loader.setRoot(this);
-                loader.setController(this);
-                loader.load();
+                FXMLUtils.loadController(CONTROLLER_FXML, DataImportDialogController.class, this);
             } catch (IOException e) {
-                throw new RuntimeException("Could not load " + CONTROLLER_FXML, e);
+                throw new RuntimeException(e);
             }
         }
 

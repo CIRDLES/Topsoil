@@ -4,20 +4,14 @@ import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.stage.StageHelper;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.style.StyleLoader;
-import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.util.serialization.ProjectSerializer;
-import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @see Application

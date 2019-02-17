@@ -53,7 +53,7 @@ public interface FileParser {
             List<String> content = new ArrayList<>();
             reader.lines().forEach(content::add);
 
-            return content.toArray(new String[content.size()]);
+            return content.toArray(new String[]{});
         } catch (IOException e) {
             throw new IOException("Unable to read file at path: " + path.toString() + ".", e);
         }
