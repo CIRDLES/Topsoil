@@ -75,7 +75,7 @@ public class Squid3DataParserTest {
 
     @Test
     public void parseColumnTree_test() {
-        ColumnTree cT = new Squid3DataParser().parseColumnTree(CONTENT, ",");
+        ColumnTree cT = new Squid3DataParser().parseColumnTree(CONTENT, Delimiter.COMMA.getValue());
         assertEquals(columnTreeOracle, cT);
     }
 

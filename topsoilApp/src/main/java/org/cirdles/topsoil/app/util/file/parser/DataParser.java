@@ -144,11 +144,20 @@ public interface DataParser {
     static Class getColumnDataType(String[][] rows, int colIndex, int numHeaderRows) {
         final int SAMPLE_SIZE = Math.min(5, rows.length - numHeaderRows);
         boolean isDouble = true;
-        for (int i = numHeaderRows; i < numHeaderRows + SAMPLE_SIZE - 1; i++) {
-            if (! isDouble(rows[i][colIndex])) {
-                isDouble = false;
-                break;
+        int i = numHeaderRows;
+        int sampled = 0;
+        String value;
+        while (i < rows.length && sampled < SAMPLE_SIZE) {
+            value = rows[i][colIndex].trim();
+            if (! value.isEmpty()) {
+                if (! isDouble(value)) {
+                    isDouble = false;
+                    break;
+                } else {
+                    sampled++;
+                }
             }
+            i++;
         }
         return isDouble ? Double.class : String.class;
     }

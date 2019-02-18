@@ -50,7 +50,9 @@ public class ColumnTree extends DataComposite<DataComponent> {
             }
 
             for (int i = 0; i < this.getChildren().size(); i++) {
-                if (! this.getChildren().get(i).equals(other.getChildren().get(i))) {
+                DataComponent thisChild = this.getChildren().get(i);
+                DataComponent otherChild = other.getChildren().get(i);
+                if (! thisChild.equals(otherChild)) {
                     return false;
                 }
             }
