@@ -21,12 +21,9 @@ public class DefaultDataWriter implements DataWriter {
 
     @Override
     public boolean writeTableToFile(Path path, DataTable table) throws IOException {
-        int columnDepth = 1;
-        List<DataColumn<?>> columns = table.getColumnTree().getLeafNodes();
-        for (DataColumn<?> column : columns) {
-            columnDepth = Math.max(columnDepth, StringUtils.countOccurrencesOf(column.getLabel(), "\n"));
-        }
+        int columnDepth = table.getColumnTree().getDepth();
         List<DataRow> dataRows = table.getDataRows();
+        List<DataColumn<?>> columns = table.getColumnTree().getLeafNodes();
         String[][] rows = new String[dataRows.size() + columnDepth][columns.size()];
 
         // Get columns

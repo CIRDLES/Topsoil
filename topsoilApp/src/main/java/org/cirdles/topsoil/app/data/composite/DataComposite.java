@@ -88,16 +88,28 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
 
     public List<? extends DataLeaf> getLeafNodes() {
         List<DataLeaf> leafNodes = new ArrayList<>();
-        DataComposite<DataComponent> branch;
         for (DataComponent child : children) {
             if (child instanceof DataComposite) {
-                branch = (DataComposite<DataComponent>) child;
-                leafNodes.addAll(branch.getLeafNodes());
+                leafNodes.addAll(((DataComposite<DataComponent>) child).getLeafNodes());
             } else {
                 leafNodes.add((DataLeaf) child);
             }
         }
         return leafNodes;
+    }
+
+    public int getDepth() {
+        if (children.isEmpty()) {
+            return 0;
+        }
+
+        int maxDepth = 0;
+        for (DataComponent child : children) {
+            if (child instanceof DataComposite) {
+                maxDepth = Math.max(maxDepth, ((DataComposite<DataComponent>) child).getDepth());
+            }
+        }
+        return maxDepth + 1;
     }
 
     @Override
