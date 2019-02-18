@@ -155,7 +155,7 @@ public class FileMenu extends Menu {
 
                     if (delimiter != null && template != null) {
                         DataTable table = FileMenuHelper.importTableFromFile(path, delimiter, template);
-                        if (DataTableOptionsDialog.showDialog(table, (Stage) fromFileItem.getGraphic().getScene().getWindow())) {
+                        if (DataTableOptionsDialog.showDialog(table, Main.getController().getPrimaryStage())) {
                             if (MenuUtils.isDataOpen()) {
                                 MenuUtils.getProjectView().getProject().addDataTable(table);
                             } else {

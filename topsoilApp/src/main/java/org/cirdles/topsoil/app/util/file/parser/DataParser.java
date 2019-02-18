@@ -146,11 +146,9 @@ public interface DataParser {
         boolean isDouble = true;
         int i = numHeaderRows;
         int sampled = 0;
-        String value;
         while (i < rows.length && sampled < SAMPLE_SIZE) {
-            value = rows[i][colIndex].trim();
-            if (! value.isEmpty()) {
-                if (! isDouble(value)) {
+            if (colIndex < rows[i].length && !rows[i][colIndex].trim().isEmpty()) {
+                if (! isDouble(rows[i][colIndex])) {
                     isDouble = false;
                     break;
                 } else {

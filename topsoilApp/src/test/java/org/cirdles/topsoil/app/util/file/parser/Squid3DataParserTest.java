@@ -12,6 +12,9 @@ import org.cirdles.topsoil.app.util.file.parser.Squid3DataParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -20,6 +23,8 @@ import static org.junit.Assert.*;
  * @author marottajb
  */
 public class Squid3DataParserTest {
+
+    private static String TEST_FILE = "Z626611pkPerm1_UnknownsBySampleReportTableForET_Redux.csv";
 
     private static String CONTENT = (
             ",Cat1,,,Cat2,,Cat3\n" +
@@ -33,6 +38,7 @@ public class Squid3DataParserTest {
             "Seg2:Row1,2.0,three,4.0,five,6.0,\n"
     );
 
+    static DataParser dataParser = new Squid3DataParser();
     static ColumnTree columnTreeOracle;
     static DataTable dataTableOracle;
 
@@ -75,14 +81,25 @@ public class Squid3DataParserTest {
 
     @Test
     public void parseColumnTree_test() {
-        ColumnTree cT = new Squid3DataParser().parseColumnTree(CONTENT, Delimiter.COMMA.getValue());
+        ColumnTree cT = dataParser.parseColumnTree(CONTENT, Delimiter.COMMA.getValue());
         assertEquals(columnTreeOracle, cT);
     }
 
     @Test
     public void parseDataTable_test() {
-        DataTable table = new Squid3DataParser().parseDataTable(CONTENT, ",", "CONTENT");
+        DataTable table = dataParser.parseDataTable(CONTENT, ",", "CONTENT");
         assertEquals(dataTableOracle, table);
+    }
+
+    @Test
+    public void parseFullDataset_test() {
+        Path path = Paths.get(getClass().getResource(TEST_FILE).getPath());
+        try {
+            DataTable table = dataParser.parseDataTable(path, Delimiter.COMMA.getValue(), "TEST_FILE");
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
 }

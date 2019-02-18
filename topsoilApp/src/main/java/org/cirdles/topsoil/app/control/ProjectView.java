@@ -4,6 +4,7 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -107,7 +108,7 @@ public class ProjectView extends SplitPane {
         ProjectTableTab tableTab = new ProjectTableTab(table);
         tableTab.setOnClosed(event -> {
             if (tabPane.getTabs().isEmpty()) {
-                FileMenuHelper.closeProject();
+                Main.getController().closeProjectView();
             }
         });
         tableTab.textProperty().bindBidirectional(table.labelProperty());
