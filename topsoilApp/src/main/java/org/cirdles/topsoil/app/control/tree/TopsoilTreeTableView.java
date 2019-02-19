@@ -43,12 +43,12 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
     public TopsoilTreeTableView() {
         super();
+        this.setEditable(true);
+        this.setSortMode(TreeSortMode.ONLY_FIRST_LEVEL);
     }
 
     public TopsoilTreeTableView(DataTable table) {
         this();
-        this.setEditable(true);
-        this.setSortMode(TreeSortMode.ONLY_FIRST_LEVEL);
         setDataTable(table);
     }
     //**********************************************//
@@ -93,6 +93,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         column.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
             cell.setTextAlignment(TextAlignment.LEFT);
+            cell.setEditable(false);
             return cell;
         });
         column.setCellValueFactory(param -> {
@@ -100,7 +101,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             return component.labelProperty();
         });
         column.setPrefWidth(150);
-        column.setEditable(true);
         return column;
     }
 
@@ -157,6 +157,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         newColumn.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
             cell.setAlignment(Pos.CENTER_RIGHT);
+            cell.setEditable(false);
             return cell;
         });
         newColumn.setCellValueFactory(param -> {

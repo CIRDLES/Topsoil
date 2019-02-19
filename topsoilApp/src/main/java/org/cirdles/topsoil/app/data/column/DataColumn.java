@@ -2,9 +2,6 @@ package org.cirdles.topsoil.app.data.column;
 
 import org.cirdles.topsoil.app.data.composite.DataLeaf;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
