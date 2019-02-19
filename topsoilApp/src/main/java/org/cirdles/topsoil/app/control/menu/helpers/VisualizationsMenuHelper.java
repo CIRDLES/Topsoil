@@ -45,6 +45,16 @@ public class VisualizationsMenuHelper {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Generates and displays a plot.
+     *
+     * @param plotType      PlotType
+     * @param table         DataTable
+     * @param project       TopsoilProject that the table belongs to
+     * @param properties    plot properties
+     *
+     * @return              true if successful
+     */
     public static boolean generatePlot(PlotType plotType, DataTable table, TopsoilProject project,
                                        Map<PlotProperty, Object> properties) {
         List<List<Map<String, Object>>> data = getPlotDataFromTable(table);
@@ -90,11 +100,27 @@ public class VisualizationsMenuHelper {
         return true;
     }
 
+    /**
+     * Closes a particular plot.
+     *
+     * @param plotType  PlotType
+     * @param table     DataTable
+     * @param project   TopsoilProject that table belongs to
+     *
+     * @return          true if successful
+     */
     public static boolean closePlot(PlotType plotType, DataTable table, TopsoilProject project) {
         project.removeOpenPlot(plotType, table);
         return true;
     }
 
+    /**
+     * Extracts and returns the relevant plot data from a {@code DataTable} in a format that a {@link Plot} expects.
+     *
+     * @param table     DataTable
+     *
+     * @return          plot data
+     */
     public static List<List<Map<String, Object>>> getPlotDataFromTable(DataTable table) {
         List<List<Map<String, Object>>> plotData = new ArrayList<>();
         List<DataSegment> tableAliquots = table.getChildren();

@@ -22,11 +22,18 @@ public class HelpMenuHelper {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Opens the system default browser to the Topsoil help page.
+     */
     public static void openOnlineHelp() {
         String TOPSOIL_URL = "http://cirdles.org/projects/topsoil/";
         new DesktopWebBrowser(Desktop.getDesktop()).browse(TOPSOIL_URL);
     }
 
+    /**
+     * Opens the system default browser to the "New Issue" form for Topsoil on GitHub, and loads relevant information
+     * into the issue body.
+     */
     public static void openIssueReporter() {
         IssueCreator issueCreator = new StandardGitHubIssueCreator(
                 new TopsoilMetadata(),
@@ -37,6 +44,11 @@ public class HelpMenuHelper {
         issueCreator.create();
     }
 
+    /**
+     * Opens a floating stage containing About information.
+     *
+     * @param owner Stage
+     */
     public static void openAboutScreen(Stage owner) {
         Stage aboutWindow = AboutView.getFloatingStage();
 

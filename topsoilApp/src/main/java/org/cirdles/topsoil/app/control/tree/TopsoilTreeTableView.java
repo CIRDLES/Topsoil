@@ -156,7 +156,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         TreeTableColumn<DataComponent, String> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
         newColumn.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
-            cell.setTextAlignment(TextAlignment.RIGHT);
+            cell.setAlignment(Pos.CENTER_RIGHT);
             return cell;
         });
         newColumn.setCellValueFactory(param -> {

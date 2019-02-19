@@ -19,10 +19,6 @@ public class FXMLUtils {
         AnchorPane.setLeftAnchor(child, left);
     }
 
-    public static void setAnchorPaneZeroBounds(Node child) {
-        setAnchorPaneBounds(child, 0.0, 0.0, 0.0, 0.0);
-    }
-
     public static <T> void loadController(String fileName, Class<T> clazz, T controller) throws IOException {
         try {
             final ResourceExtractor re = new ResourceExtractor(clazz);

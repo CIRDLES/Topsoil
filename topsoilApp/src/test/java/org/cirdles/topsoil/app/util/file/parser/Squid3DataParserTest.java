@@ -91,15 +91,4 @@ public class Squid3DataParserTest {
         assertEquals(dataTableOracle, table);
     }
 
-    @Test
-    public void parseFullDataset_test() {
-        Path path = Paths.get(getClass().getResource(TEST_FILE).getPath());
-        try {
-            DataTable table = dataParser.parseDataTable(path, Delimiter.COMMA.getValue(), "TEST_FILE");
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
-
 }

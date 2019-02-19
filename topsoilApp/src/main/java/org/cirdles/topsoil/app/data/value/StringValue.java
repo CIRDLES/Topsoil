@@ -11,12 +11,6 @@ import org.cirdles.topsoil.app.data.column.DataColumn;
 public class StringValue extends DataValue<String> {
 
     //**********************************************//
-    //                  CONSTANTS                   //
-    //**********************************************//
-
-    private static final long serialVersionUID = -6356599026765983636L;
-
-    //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
