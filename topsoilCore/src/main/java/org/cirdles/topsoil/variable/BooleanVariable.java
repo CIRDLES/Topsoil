@@ -14,7 +14,7 @@ import java.io.ObjectOutputStream;
  */
 public enum BooleanVariable implements Variable<Boolean> {
 
-    SELECTED("Selected", "selected");
+    SELECTED("selected", "selected");
 
     private String name;
     private String abbr;

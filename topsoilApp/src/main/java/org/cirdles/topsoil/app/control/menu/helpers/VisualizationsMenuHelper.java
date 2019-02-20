@@ -57,7 +57,7 @@ public class VisualizationsMenuHelper {
      */
     public static boolean generatePlot(PlotType plotType, DataTable table, TopsoilProject project,
                                        Map<PlotProperty, Object> properties) {
-        List<List<Map<String, Object>>> data = getPlotDataFromTable(table);
+        List<Map<String, Object>> data = getPlotDataFromTable(table);
 
         Plot plot = plotType.getPlot();
         plot.setData(data);
@@ -121,19 +121,17 @@ public class VisualizationsMenuHelper {
      *
      * @return          plot data
      */
-    public static List<List<Map<String, Object>>> getPlotDataFromTable(DataTable table) {
-        List<List<Map<String, Object>>> plotData = new ArrayList<>();
+    public static List<Map<String, Object>> getPlotDataFromTable(DataTable table) {
+        List<Map<String, Object>> plotData = new ArrayList<>();
         List<DataSegment> tableAliquots = table.getChildren();
         BiMap<Variable<?>, DataColumn<?>> varMap = table.getVariableColumnMap();
 
         List<DataRow> rows;
         DataColumn column;
-        List<Map<String, Object>> plotAliquot;
         Map<String, Object> entry;
 
         for (DataSegment aliquot : tableAliquots) {
             rows = aliquot.getChildren();
-            plotAliquot = new ArrayList<>();
             for (DataRow row : rows) {
                 entry = new HashMap<>();
 
@@ -166,11 +164,9 @@ public class VisualizationsMenuHelper {
                     }
                     entry.put(var.getName(), value);
                 }
-                plotAliquot.add(entry);
+                plotData.add(entry);
             }
-            plotData.add(plotAliquot);
         }
         return plotData;
     }
-
 }

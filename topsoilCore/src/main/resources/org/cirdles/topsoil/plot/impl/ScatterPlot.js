@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'Selected'];
+plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'selected', 'aliquot', 'label'];
 plot.propertiesKeys = [
     'Title',
 

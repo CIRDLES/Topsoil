@@ -27,9 +27,9 @@ public interface Plot extends Displayable {
 
     PlotType getPlotType();
 
-    List<List<Map<String, Object>>> getData();
+    List<Map<String, Object>> getData();
 
-    void setData(List<List<Map<String, Object>>> data);
+    void setData(List<Map<String, Object>> data);
 
     /**
      * Gets the properties for the {@code Plot}.

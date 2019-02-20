@@ -34,7 +34,6 @@ public final class Variables {
     public static final List<Variable<?>> ALL;
     static {
         ALL = Collections.unmodifiableList(asList(
-                DateVariable.TIMESTAMP,
                 IndependentVariable.X,
                 DependentVariable.SIGMA_X,
                 IndependentVariable.Y,

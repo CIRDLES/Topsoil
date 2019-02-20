@@ -17,7 +17,7 @@ public class DataOptionsController extends AnchorPane {
 	//                  CONSTANTS                   //
 	//**********************************************//
 
-    private static final String CONTROLLER_FXML = "model-options-menu.fxml";
+    private static final String CONTROLLER_FXML = "data-options-menu.fxml";
 
     //**********************************************//
     //                   CONTROLS                   //

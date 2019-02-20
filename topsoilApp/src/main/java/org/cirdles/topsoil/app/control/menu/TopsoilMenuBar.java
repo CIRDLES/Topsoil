@@ -72,7 +72,9 @@ public class TopsoilMenuBar extends MenuBar {
             Map<Variable<?>, DataColumn<?>> selections = VariableChooserDialog.showDialog(getCurrentDataTable(),
                                                                                     Arrays.asList(IndependentVariable.X,
                                                                                                 IndependentVariable.Y));
-            getCurrentDataTable().setColumnsForAllVariables(selections);
+            if (selections != null) {
+                getCurrentDataTable().setColumnsForAllVariables(selections);
+            }
         });
 
         MenuItem generatePlotItem = new MenuItem("Generate Plot...");

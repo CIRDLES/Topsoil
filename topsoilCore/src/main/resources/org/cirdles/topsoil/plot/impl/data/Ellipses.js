@@ -105,7 +105,7 @@ plot.updateEllipses = function() {
             .attr("fill", function(d) {
                 var fill;
 
-                if (!d['Selected']) {
+                if (!d['selected']) {
                     fill = 'gray';
                 } else {
                     fill = plot.getProperty('Ellipses Fill');

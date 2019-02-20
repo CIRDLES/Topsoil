@@ -29,7 +29,7 @@ import java.io.IOException;
  */
 public class TopsoilPlotView extends VBox {
 
-	private static final String CONTROLLER_FXML = "plot-control.fxml";
+	private static final String CONTROLLER_FXML = "plot-view.fxml";
 
 	//**********************************************//
 	//                   CONTROLS                   //

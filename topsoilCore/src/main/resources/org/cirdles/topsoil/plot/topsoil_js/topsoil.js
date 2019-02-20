@@ -26,17 +26,15 @@
 
     topsoil.setData = function (data) {
         topsoil.data = [];
-
         for (var index = 0; index < data.size(); index++) {
-            var d = {};
-
+            var entry = {};
             plot.dataKeys.forEach(function(key) {
-                d[key] = data.get(index).get(key);
+                if (data.get(index).get(key) != null) {
+                    entry[key] = data.get(index).get(key);
+                }
             });
-
-            topsoil.data.push(d);
+            topsoil.data.push(entry);
         }
-
         plot.setData(topsoil.data);
     };
 

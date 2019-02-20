@@ -24,8 +24,6 @@ import static org.junit.Assert.*;
  */
 public class Squid3DataParserTest {
 
-    private static String TEST_FILE = "Z626611pkPerm1_UnknownsBySampleReportTableForET_Redux.csv";
-
     private static String CONTENT = (
             ",Cat1,,,Cat2,,Cat3\n" +
             ",,Col2,,,,\n" +

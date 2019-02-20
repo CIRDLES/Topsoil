@@ -32,7 +32,7 @@ public abstract class AbstractPlot implements Plot {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private List<List<Map<String, Object>>> data;
+    private List<Map<String, Object>> data;
     private PlotType plotType;
     private Map<PlotProperty, Object> properties;
 
@@ -66,13 +66,13 @@ public abstract class AbstractPlot implements Plot {
 
     /**{@inheritDoc}*/
     @Override
-    public List<List<Map<String, Object>>> getData() {
+    public List<Map<String, Object>> getData() {
         return data;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setData(List<List<Map<String, Object>>> data) {
+    public void setData(List<Map<String, Object>> data) {
         this.data = data;
     }
 

@@ -63,11 +63,6 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     private static final Logger LOGGER
             = LoggerFactory.getLogger(JavaScriptPlot.class);
 
-    // When loaded into the WebEngine, it seems to significantly decrease the time it takes for the WebEngine to stop
-    // running JavaScript. The message itself is inconsequential.
-    private static final String HALT_MESSAGE = "This message will be loaded into the WebEngine to attempt to stop it " +
-                                               "from running JavaScript.";
-
     private String HTML_TEMPLATE;
 
     public final ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(JavaScriptPlot.class);
@@ -180,15 +175,15 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
         ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(JavaScriptPlot.class);
 
-        final URI POINTS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/model/Points.js").toUri();
-        final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/model/Ellipses.js").toUri();
-        final URI CROSSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/model/UncertaintyBars.js").toUri();
-        final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Concordia.js").toUri();
-        final URI TWCONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/TWConcordia.js").toUri();
-        final URI REGRESSION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Regression.js").toUri();
-        final URI EVOLUTION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/feature/Evolution.js").toUri();
-        final URI LAMBDA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/DefaultLambda.js").toUri();
-        final URI UTILS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("base/Utils.js").toUri();
+        final URI POINTS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/data/Points.js").toUri();
+        final URI ELLIPSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/data/Ellipses.js").toUri();
+        final URI CROSSES_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/data/UncertaintyBars.js").toUri();
+        final URI CONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/feature/Concordia.js").toUri();
+        final URI TWCONCORDIA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/feature/TWConcordia.js").toUri();
+        final URI REGRESSION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/feature/Regression.js").toUri();
+        final URI EVOLUTION_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/feature/Evolution.js").toUri();
+        final URI LAMBDA_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/DefaultLambda.js").toUri();
+        final URI UTILS_URI = RESOURCE_EXTRACTOR.extractResourceAsPath("impl/Utils.js").toUri();
 
         return String.format(HTML_TEMPLATE, sourcePath.toUri()).concat(
                 "<script src=\"" + POINTS_URI + "\"></script>\n" +
@@ -366,7 +361,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
 
     /**{@inheritDoc}*/
     @Override
-    public void setData(List<List<Map<String, Object>>> data) {
+    public void setData(List<Map<String, Object>> data) {
         super.setData(data);
 
         if (topsoil != null) {
@@ -420,11 +415,6 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
             super.setProperty(entry.getKey(), entry.getValue());
         }
     }
-
-//    @Override
-//    public void stop() {
-//        getWebEngine().loadContent(HALT_MESSAGE);
-//    }
 
     private Map<String, Object> convertProperties(Map<PlotProperty, Object> properties) {
         Map<String, Object> newProperties = new HashMap<>(properties.size());
