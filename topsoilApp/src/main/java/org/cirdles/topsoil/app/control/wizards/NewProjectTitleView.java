@@ -121,7 +121,7 @@ class NewProjectTitleView extends WizardPane {
 
     public void onExitingPage(Wizard wizard) {
         wizard.invalidProperty().unbind();
-        wizard.getSettings().put(TITLE, title.get());
+        wizard.getSettings().put(TITLE, titleTextField.getText());
         wizard.getSettings().put(LOCATION, projectLocation.get());
     }
 

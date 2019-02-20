@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.control.tree;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -170,6 +171,10 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             }
             return null;
         });
+        newColumn.setVisible(dataColumn.isSelected());
+        dataColumn.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            newColumn.setVisible(newValue);
+        }));
         return newColumn;
     }
 

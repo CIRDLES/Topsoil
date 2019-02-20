@@ -45,6 +45,10 @@ public class NewProjectWizard extends Wizard {
     public static Map<String, Object> startWizard() {
         NewProjectWizard wizard = new NewProjectWizard();
         ButtonType response = wizard.showAndWait().orElse(null);
+
+        wizard.preView.onExitingPage(wizard);       // This is necessary because of a bug where this is not called
+                                                    // when the wizard is finished. Should be removed when fixed.
+
         if (response == null || response.equals(ButtonType.CANCEL)) {
             return null;
         } else {

@@ -1,12 +1,7 @@
 package org.cirdles.topsoil.app.control.dialog;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -14,13 +9,12 @@ import org.cirdles.topsoil.app.Main;
 import org.cirdles.topsoil.app.control.tree.ColumnTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 
 import java.io.IOException;
-
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_HEIGHT;
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_WIDTH;
+import java.util.Map;
 
 /**
  * @author marottajb
@@ -51,14 +45,15 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         this.setResultConverter(value -> {
             if (value == ButtonType.OK) {
+                for (Map.Entry<DataColumn<?>, Boolean> entry : controller.getColumnSelections().entrySet()) {
+                    entry.getKey().setSelected(entry.getValue());
+                }
                 table.setIsotopeSystem(controller.isoComboBox.getValue());
                 table.setUnctFormat(controller.unctComboBox.getValue());
                 return true;
             }
             return false;
         });
-
-
     }
 
     //**********************************************//
@@ -87,23 +82,12 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         //                   CONTROLS                   //
         //**********************************************//
 
-        @FXML
-        private AnchorPane columnViewPane;
+        @FXML private AnchorPane columnViewPane;
+        ColumnTreeView columnTreeView;
         @FXML private Label uncLabel;
         @FXML
         ComboBox<Uncertainty> unctComboBox;
         @FXML ComboBox<IsotopeSystem> isoComboBox;
-
-        private BooleanProperty invalid;
-        public BooleanProperty invalidProperty() {
-            if (invalid == null) {
-                invalid = new SimpleBooleanProperty(unctComboBox.getValue() == null || isoComboBox.getValue() == null);
-            }
-            return invalid;
-        }
-        public final Boolean isInvalid() {
-            return invalidProperty().get();
-        }
 
         //**********************************************//
         //                  ATTRIBUTES                  //
@@ -128,9 +112,9 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         @FXML
         protected void initialize() {
-            ColumnTreeView treeView = new ColumnTreeView(table.getColumnTree());
-            columnViewPane.getChildren().add(treeView);
-            FXMLUtils.setAnchorPaneBounds(treeView, 0.0, 0.0, 0.0, 0.0);
+            this.columnTreeView = new ColumnTreeView(table.getColumnTree());
+            columnViewPane.getChildren().add(columnTreeView);
+            FXMLUtils.setAnchorPaneBounds(columnTreeView, 0.0, 0.0, 0.0, 0.0);
 
             unctComboBox.getItems().addAll(Uncertainty.values());
             unctComboBox.getSelectionModel().select(table.getUnctFormat());
@@ -142,6 +126,10 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         //                PUBLIC METHODS                //
         //**********************************************//
 
+        public Map<DataColumn<?>, Boolean> getColumnSelections() {
+            return columnTreeView.getColumnSelections();
+        }
+
         public IsotopeSystem getIsotopeSystem() {
             return isoComboBox.getValue();
         }
@@ -149,5 +137,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         public Uncertainty getUncertainty() {
             return unctComboBox.getValue();
         }
+
     }
 }

@@ -7,8 +7,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <?import org.cirdles.topsoil.app.control.AboutView?>
+
 <fx:root alignment="CENTER_LEFT" spacing="10.0" type="VBox" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
     <children>
       <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
@@ -22,7 +22,7 @@
                   <children>
                       <Label text="Recent Files">
                           <font>
-                              <Font name="Lucida Sans Demibold" size="22.0" />
+                              <Font name="System Bold" size="22.0" />
                           </font>
                           <VBox.margin>
                               <Insets />
@@ -48,7 +48,7 @@
                 </ImageView>
                 <Label text="Powered by CIRDLES" textFill="#949494">
                     <font>
-                        <Font name="Lucida Sans Regular" size="10.0" />
+                        <Font size="10.0" />
                     </font>
                     <HBox.margin>
                         <Insets left="10.0" />

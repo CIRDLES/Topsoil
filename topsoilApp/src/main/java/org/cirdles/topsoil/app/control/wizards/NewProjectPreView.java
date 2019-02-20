@@ -1,11 +1,14 @@
 package org.cirdles.topsoil.app.control.wizards;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.app.data.column.DataColumn;
+import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -54,16 +57,20 @@ class NewProjectPreView extends WizardPane {
     public void onEnteringPage(Wizard wizard) {
         wizard.setTitle("New Project: Preview");
         List<DataTable> newTables = (List<DataTable>) wizard.getSettings().get(TABLES);
-        wizard.setInvalid(true);
-        updateTabs(newTables, wizard);
+        updateTabs(newTables);
     }
 
     @Override
     public void onExitingPage(Wizard wizard) {
+        wizard.invalidProperty().unbind();
         PreViewTab preViewTab;
         List<DataTable> tables = new ArrayList<>();
         for (Tab tab : fileTabs.getTabs()) {
             preViewTab = (PreViewTab) tab;
+            Map<DataColumn<?>, Boolean> selections = ((PreViewTab) tab).controller.getColumnSelections();
+            for (Map.Entry<DataColumn<?>, Boolean> entry : selections.entrySet()) {
+                entry.getKey().setSelected(entry.getValue());
+            }
             preViewTab.getTable().setIsotopeSystem(preViewTab.getController().getIsotopeSystem());
             preViewTab.getTable().setUnctFormat(preViewTab.getController().getUncertainty());
             tables.add(preViewTab.getTable());
@@ -75,7 +82,7 @@ class NewProjectPreView extends WizardPane {
     //               PRIVATE METHODS                //
     //**********************************************//
 
-    private void updateTabs(List<DataTable> tableList, Wizard wizard) {
+    private void updateTabs(List<DataTable> tableList) {
         for (Tab tab : fileTabs.getTabs()) {
             DataTable table = ((PreViewTab) tab).getTable();
             if (! tableList.contains(table)) {
@@ -85,9 +92,6 @@ class NewProjectPreView extends WizardPane {
         for (DataTable table : tableList) {
             if (! hasTabForTable(table)) {
                 PreViewTab tab = new PreViewTab(table);
-                tab.controller.invalidProperty().addListener(((observable, oldValue, newValue) -> {
-                    wizard.setInvalid(! requiredFieldsFilled());
-                }));
                 fileTabs.getTabs().add(tab);
             }
         }
@@ -100,16 +104,6 @@ class NewProjectPreView extends WizardPane {
             }
         }
         return false;
-    }
-
-    private boolean requiredFieldsFilled() {
-        for (Tab t : fileTabs.getTabs()) {
-            PreViewTab tab = (PreViewTab) t;
-            if (tab.controller.isInvalid()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     //**********************************************//

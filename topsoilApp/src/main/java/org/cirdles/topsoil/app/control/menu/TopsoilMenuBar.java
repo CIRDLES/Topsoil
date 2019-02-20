@@ -2,13 +2,12 @@ package org.cirdles.topsoil.app.control.menu;
 
 import javafx.scene.control.*;
 import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.dialog.VariableChooserDialog;
 import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
-import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.plot.PlotType;
 import org.cirdles.topsoil.variable.IndependentVariable;
 import org.cirdles.topsoil.variable.Variable;
@@ -39,9 +38,19 @@ public class TopsoilMenuBar extends MenuBar {
         MenuItem preferencesItem = new MenuItem("Preferences...");
         preferencesItem.setDisable(true);
 
+        MenuItem tableOptionsItem = new MenuItem("Table Options...");
+        tableOptionsItem.setOnAction(event -> {
+            DataTableOptionsDialog.showDialog(MenuUtils.getCurrentTable(), Main.getController().getPrimaryStage());
+        });
+
         Menu editMenu = new Menu("Edit", null,
-                        preferencesItem
+                                 preferencesItem,
+                                 new SeparatorMenuItem(),
+                                 tableOptionsItem
         );
+        editMenu.setOnShown(event -> {
+            tableOptionsItem.setDisable(! MenuUtils.isDataOpen());
+        });
 
         return editMenu;
     }
@@ -69,20 +78,20 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getVisualizationsMenu() {
         MenuItem assignVarsItem = new MenuItem("Assign Variables...");
         assignVarsItem.setOnAction(event -> {
-            Map<Variable<?>, DataColumn<?>> selections = VariableChooserDialog.showDialog(getCurrentDataTable(),
+            Map<Variable<?>, DataColumn<?>> selections = VariableChooserDialog.showDialog(MenuUtils.getCurrentTable(),
                                                                                     Arrays.asList(IndependentVariable.X,
                                                                                                 IndependentVariable.Y));
             if (selections != null) {
-                getCurrentDataTable().setColumnsForAllVariables(selections);
+                MenuUtils.getCurrentTable().setColumnsForAllVariables(selections);
             }
         });
 
         MenuItem generatePlotItem = new MenuItem("Generate Plot...");
         generatePlotItem.setOnAction(event -> {
             // @TODO Check to make sure proper variables are assigned
-            ProjectTableTab projectTab = (ProjectTableTab) getCurrentProjectView().getTabPane().getSelectionModel().getSelectedItem();
+            ProjectTableTab projectTab = MenuUtils.getSelectedTableTab();
             VisualizationsMenuHelper.generatePlot(PlotType.SCATTER, projectTab.getDataTable(),
-                                                  getCurrentProjectView().getProject(), null);
+                                                  MenuUtils.getProjectView().getProject(), null);
         });
 
         Menu visualizationsMenu = new Menu("Visualizations", null,
@@ -91,8 +100,8 @@ public class TopsoilMenuBar extends MenuBar {
                                            generatePlotItem
         );
         visualizationsMenu.setOnShown(event -> {
-            assignVarsItem.setDisable(! isProjectOpen());
-            generatePlotItem.setDisable(! isProjectOpen());
+            assignVarsItem.setDisable(! MenuUtils.isDataOpen());
+            generatePlotItem.setDisable(! MenuUtils.isDataOpen());
         });
         return visualizationsMenu;
     }
@@ -112,18 +121,6 @@ public class TopsoilMenuBar extends MenuBar {
                         reportIssueItem,
                         aboutItem
         );
-    }
-
-    private ProjectView getCurrentProjectView() {
-        return isProjectOpen() ? (ProjectView) Main.getController().getMainContent() : null;
-    }
-
-    private DataTable getCurrentDataTable() {
-        return ((ProjectTableTab) getCurrentProjectView().getTabPane().getSelectionModel().getSelectedItem()).getDataTable();
-    }
-
-    private boolean isProjectOpen() {
-        return Main.getController().getMainContent() instanceof ProjectView;
     }
 
 }
