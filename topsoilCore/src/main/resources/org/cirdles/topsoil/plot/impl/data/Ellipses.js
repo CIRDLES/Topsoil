@@ -42,7 +42,7 @@ plot.calcEllipses = function(data) {
             numeric.dot(controlPointsBase, r))
             .map(shift(d.x, d.y));
 
-        points.Selected = d.Selected;
+        points.selected = d.selected;
 
         return points;
     });
@@ -105,7 +105,7 @@ plot.updateEllipses = function() {
             .attr("fill", function(d) {
                 var fill;
 
-                if (!d['selected']) {
+                if (! d.selected) {
                     fill = 'gray';
                 } else {
                     fill = plot.getProperty('Ellipses Fill');
@@ -113,7 +113,7 @@ plot.updateEllipses = function() {
 
                 return fill;
             })
-            .attr("fill-opacity", plot.getProperty("Ellipses Opacity") * 0.3)
+            .attr("fill-opacity", plot.getProperty("Ellipses Opacity") * 0.2)
             .attr("stroke", "black");
     }
 };

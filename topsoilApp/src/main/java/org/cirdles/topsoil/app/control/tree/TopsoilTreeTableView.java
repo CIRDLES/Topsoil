@@ -33,6 +33,8 @@ import java.util.List;
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
+    private static final String CELL_BORDER_COLOR = "#cccccc";
+
     private DataTable table;
 
     //**********************************************//
@@ -209,17 +211,13 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     }
 
     private void addBorderToCell(TreeTableCell<?, ?> cell) {
-        cell.setBorder(
-                new Border(
-                        new BorderStroke(
-                                null, Paint.valueOf("#cccccc"), Paint.valueOf("#cccccc"), null,
+        cell.setBorder(new Border(new BorderStroke(
+                                null, Paint.valueOf(CELL_BORDER_COLOR), Paint.valueOf(CELL_BORDER_COLOR), null,
                                 null, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, null,
                                 null,
                                 new BorderWidths(1.0),
                                 null
-                        )
-                )
-        );
+        )));
     }
 
 }

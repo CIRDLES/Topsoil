@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.util.file;
 
 import javafx.stage.FileChooser;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -76,6 +77,7 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("Data Table Files (.csv, .tsv, .txt)", "*.tsv", "*.csv", "*.txt"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
+        fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
         return fileChooser;
     }
 
@@ -92,6 +94,7 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("tsv File (.tsv)", "*.tsv"),
                 new FileChooser.ExtensionFilter("txt File (.txt)", "*.txt")
         );
+        fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
         return fileChooser;
     }
 

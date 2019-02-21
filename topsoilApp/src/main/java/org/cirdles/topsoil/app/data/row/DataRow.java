@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.data.row;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.value.DataValue;
