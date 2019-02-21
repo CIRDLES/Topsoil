@@ -1,20 +1,18 @@
 package org.cirdles.topsoil.app.control.tree;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.CheckBoxTreeItem;
-import javafx.scene.control.TreeSortMode;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
-import javafx.scene.text.Font;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -27,7 +25,6 @@ import org.cirdles.topsoil.app.data.value.DataValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -94,6 +91,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         column.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
             cell.setTextAlignment(TextAlignment.LEFT);
+            addBorderToCell(cell);
             cell.setEditable(false);
             return cell;
         });
@@ -115,6 +113,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         column.setCellFactory(param -> {
             CheckBoxTreeTableCell<DataComponent, Boolean> cell = new CheckBoxTreeTableCell<>();
             cell.setAlignment(Pos.CENTER);
+            addBorderToCell(cell);
             cell.setEditable(true);
             return cell;
         });
@@ -159,6 +158,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
             cell.setAlignment(Pos.CENTER_RIGHT);
             cell.setEditable(false);
+            addBorderToCell(cell);
             return cell;
         });
         newColumn.setCellValueFactory(param -> {
@@ -206,6 +206,20 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      */
     private CheckBoxTreeItem<DataComponent> makeTreeItemForDataRow(DataRow row) {
         return new CheckBoxTreeItem<>(row);
+    }
+
+    private void addBorderToCell(TreeTableCell<?, ?> cell) {
+        cell.setBorder(
+                new Border(
+                        new BorderStroke(
+                                null, Paint.valueOf("#cccccc"), Paint.valueOf("#cccccc"), null,
+                                null, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, null,
+                                null,
+                                new BorderWidths(1.0),
+                                null
+                        )
+                )
+        );
     }
 
 }
