@@ -59,8 +59,17 @@ public class VisualizationsMenuHelper {
                                        Map<PlotProperty, Object> properties) {
         List<Map<String, Object>> data = getPlotDataFromTable(table);
 
+        if (data == null) {
+            return false;
+        }
+
         Plot plot = plotType.getPlot();
         plot.setData(data);
+        for (DataRow dataRow : table.getDataRows()) {
+            dataRow.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+                plot.setData(getPlotDataFromTable(table));
+            }));
+        }
 
         // @TODO Update plot on model changes
 
