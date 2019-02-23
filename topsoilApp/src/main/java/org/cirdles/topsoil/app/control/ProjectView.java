@@ -107,6 +107,7 @@ public class ProjectView extends SplitPane {
     private void addTabForTable(DataTable table) {
         ProjectTableTab tableTab = new ProjectTableTab(table);
         tableTab.setOnClosed(event -> {
+            project.removeDataTable(tableTab.getDataTable());
             if (tabPane.getTabs().isEmpty()) {
                 Main.getController().closeProjectView();
             }
@@ -123,7 +124,7 @@ public class ProjectView extends SplitPane {
      */
     private void removeTabForTable(DataTable table) {
         for (Tab tab : tabPane.getTabs()) {
-            if (tab instanceof  ProjectTableTab) {
+            if (tab instanceof ProjectTableTab) {
                 if (((ProjectTableTab) tab).getDataTable().equals(table)) {
                     tabPane.getTabs().remove(tab);
                     break;

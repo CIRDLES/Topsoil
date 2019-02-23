@@ -52,14 +52,14 @@ public class ProjectTreeView extends TreeView<DataComponent> {
 
     private void addDataTable(DataTable table) {
         CheckBoxTreeItem<DataComponent> tableItem, segmentItem, rowItem;
-        tableItem = new CheckBoxTreeItem<>(new DataComposite<>(table.getLabel()));
+        tableItem = new CheckBoxTreeItem<>(table);
         tableItem.selectedProperty().bindBidirectional(table.selectedProperty());
         tableItem.setExpanded(true);
         for (DataSegment segment : table.getChildren()) {
-            segmentItem = new CheckBoxTreeItem<>(new DataComposite(segment.getLabel()));
+            segmentItem = new CheckBoxTreeItem<>(segment);
             segmentItem.selectedProperty().bindBidirectional(segment.selectedProperty());
             for (DataRow row : segment.getChildren()) {
-                rowItem = new CheckBoxTreeItem<>(new DataLeaf(row.getLabel()));
+                rowItem = new CheckBoxTreeItem<>(row);
                 rowItem.selectedProperty().bindBidirectional(row.selectedProperty());
                 segmentItem.getChildren().add(rowItem);
             }
@@ -69,9 +69,14 @@ public class ProjectTreeView extends TreeView<DataComponent> {
     }
 
     private void removeDataTable(DataTable table) {
+        DataTable t;
         for (TreeItem<DataComponent> item : getRoot().getChildren()) {
-            if (item.getValue().equals(table)) {
-                this.getRoot().getChildren().remove(item);
+            boolean isDataTable = item.getValue() instanceof DataTable;
+            if (isDataTable) {
+                t = (DataTable) item.getValue();
+                if (t.equals(table)) {
+                    System.out.println(this.getRoot().getChildren().remove(item));
+                }
             }
         }
     }
