@@ -200,8 +200,15 @@ public class FileMenuHelper {
      */
     public static boolean exportTableAs(DataTable table) {
         boolean completed = false;
-        File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Main.getController().getPrimaryStage());
-        completed = exportTableAs(file.toPath(), table);
+        if (table.getTemplate() != DataTemplate.DEFAULT) {
+            File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Main.getController().getPrimaryStage());
+            completed = exportTableAs(file.toPath(), table);
+        } else {
+            TopsoilNotification.showNotification(TopsoilNotification.NotificationType.INFORMATION,
+                    "Unsupported Operation",
+                    "Custom table exporting is currently unsupported."
+            );
+        }
         return completed;
     }
 
