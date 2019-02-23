@@ -21,7 +21,7 @@ import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.style.StyleLoader;
-import org.cirdles.topsoil.app.util.file.ProjectSerializer;
+import org.cirdles.topsoil.app.file.ProjectSerializer;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

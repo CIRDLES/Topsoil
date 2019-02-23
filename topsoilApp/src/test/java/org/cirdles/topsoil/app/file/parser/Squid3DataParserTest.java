@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.file.parser;
+package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
@@ -8,13 +8,9 @@ import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.*;
 import org.cirdles.topsoil.app.data.value.DoubleValue;
 import org.cirdles.topsoil.app.data.value.StringValue;
-import org.cirdles.topsoil.app.util.file.parser.Squid3DataParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.file.writer;
+package org.cirdles.topsoil.app.file.writer;
 
 /**
  * @author marottajb

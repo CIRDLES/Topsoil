@@ -1,10 +1,9 @@
-package org.cirdles.topsoil.app.util.file.writer;
+package org.cirdles.topsoil.app.file.writer;
 
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.value.DataValue;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;

@@ -1,9 +1,6 @@
-package org.cirdles.topsoil.app.util.file.parser;
+package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.util.file.parser.DataParser;
-import org.cirdles.topsoil.app.util.file.parser.DefaultDataParser;
-import org.cirdles.topsoil.app.util.file.parser.Delimiter;
 import org.junit.Test;
 
 import java.util.List;

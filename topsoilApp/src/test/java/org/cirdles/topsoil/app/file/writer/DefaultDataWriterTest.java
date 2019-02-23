@@ -1,11 +1,11 @@
-package org.cirdles.topsoil.app.util.file.writer;
+package org.cirdles.topsoil.app.file.writer;
 
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.util.SampleData;
-import org.cirdles.topsoil.app.util.file.parser.DataParser;
-import org.cirdles.topsoil.app.util.file.parser.DefaultDataParser;
-import org.cirdles.topsoil.app.util.file.parser.Delimiter;
+import org.cirdles.topsoil.app.file.parser.DataParser;
+import org.cirdles.topsoil.app.file.parser.DefaultDataParser;
+import org.cirdles.topsoil.app.file.parser.Delimiter;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.variable.DependentVariable;

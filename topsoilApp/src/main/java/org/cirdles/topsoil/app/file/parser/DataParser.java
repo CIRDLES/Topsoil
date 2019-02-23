@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.file.parser;
+package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.column.ColumnTree;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -6,8 +6,8 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.value.DataValue;
 import org.cirdles.topsoil.app.data.value.DoubleValue;
 import org.cirdles.topsoil.app.data.value.StringValue;
-import org.cirdles.topsoil.app.util.file.writer.TableFileExtension;
-import org.cirdles.topsoil.app.util.file.UnicodeBOMInputStream;
+import org.cirdles.topsoil.app.file.writer.TableFileExtension;
+import org.cirdles.topsoil.app.file.UnicodeBOMInputStream;
 import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;

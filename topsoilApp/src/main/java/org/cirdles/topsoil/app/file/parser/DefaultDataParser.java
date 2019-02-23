@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.file.parser;
+package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.ColumnTree;

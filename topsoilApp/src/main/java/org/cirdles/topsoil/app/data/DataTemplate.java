@@ -1,11 +1,11 @@
 package org.cirdles.topsoil.app.data;
 
-import org.cirdles.topsoil.app.util.file.parser.DataParser;
-import org.cirdles.topsoil.app.util.file.parser.DefaultDataParser;
-import org.cirdles.topsoil.app.util.file.parser.Squid3DataParser;
-import org.cirdles.topsoil.app.util.file.writer.DefaultDataWriter;
-import org.cirdles.topsoil.app.util.file.writer.DataWriter;
-import org.cirdles.topsoil.app.util.file.writer.Squid3DataWriter;
+import org.cirdles.topsoil.app.file.parser.DataParser;
+import org.cirdles.topsoil.app.file.parser.DefaultDataParser;
+import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
+import org.cirdles.topsoil.app.file.writer.DefaultDataWriter;
+import org.cirdles.topsoil.app.file.writer.DataWriter;
+import org.cirdles.topsoil.app.file.writer.Squid3DataWriter;
 
 /**
  * Each template represents a possible format for imported data, and has a {@code DataParserBase} associated with it.

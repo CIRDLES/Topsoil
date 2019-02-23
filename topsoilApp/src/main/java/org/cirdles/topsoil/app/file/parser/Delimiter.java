@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.file.parser;
+package org.cirdles.topsoil.app.file.parser;
 
 /**
  * Common delimiters used to separate model values. This is used when attempting to determine the delimiter of a

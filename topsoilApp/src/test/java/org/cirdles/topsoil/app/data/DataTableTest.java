@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.data;
 
-import org.cirdles.topsoil.app.util.file.parser.Squid3DataParser;
+import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

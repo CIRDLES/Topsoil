@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.file.parser;
+package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
@@ -6,7 +6,6 @@ import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.*;
 import org.cirdles.topsoil.app.data.value.DoubleValue;
 import org.cirdles.topsoil.app.data.value.StringValue;
-import org.cirdles.topsoil.app.util.file.parser.DefaultDataParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

@@ -14,10 +14,10 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.util.SampleData;
-import org.cirdles.topsoil.app.util.file.ProjectSerializer;
-import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
-import org.cirdles.topsoil.app.util.file.parser.DataParser;
-import org.cirdles.topsoil.app.util.file.parser.Delimiter;
+import org.cirdles.topsoil.app.file.ProjectSerializer;
+import org.cirdles.topsoil.app.file.TopsoilFileChooser;
+import org.cirdles.topsoil.app.file.parser.DataParser;
+import org.cirdles.topsoil.app.file.parser.Delimiter;
 
 import java.io.File;
 import java.io.IOException;

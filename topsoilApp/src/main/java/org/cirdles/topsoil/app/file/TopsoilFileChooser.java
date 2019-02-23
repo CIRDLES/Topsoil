@@ -1,8 +1,7 @@
-package org.cirdles.topsoil.app.util.file;
+package org.cirdles.topsoil.app.file;
 
 import javafx.stage.FileChooser;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 

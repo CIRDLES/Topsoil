@@ -16,9 +16,9 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.FXMLUtils;
-import org.cirdles.topsoil.app.util.file.parser.DataParser;
-import org.cirdles.topsoil.app.util.file.parser.Delimiter;
-import org.cirdles.topsoil.app.util.file.TopsoilFileChooser;
+import org.cirdles.topsoil.app.file.parser.DataParser;
+import org.cirdles.topsoil.app.file.parser.Delimiter;
+import org.cirdles.topsoil.app.file.TopsoilFileChooser;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 

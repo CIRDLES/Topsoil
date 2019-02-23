@@ -1,6 +1,6 @@
 // released under the WTFPL v2 license, by Gregory Pakosz (@gpakosz)
 
-package org.cirdles.topsoil.app.util.file;  // modified by CIRDLES
+package org.cirdles.topsoil.app.file;  // modified by CIRDLES
 
 import java.io.IOException;
 import java.io.InputStream;
