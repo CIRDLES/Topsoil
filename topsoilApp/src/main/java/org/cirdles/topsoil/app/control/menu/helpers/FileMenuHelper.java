@@ -80,6 +80,10 @@ public class FileMenuHelper {
             return null;    // project already open
         }
 
+        return openProject(path);
+    }
+
+    public static TopsoilProject openProject(Path path) {
         if (MenuUtils.isDataOpen()) {
             if (! handleOverwrite()) {
                 return null;
@@ -88,7 +92,7 @@ public class FileMenuHelper {
             }
         }
 
-        return openProject(path);
+        return openProjectPrivate(path);
     }
 
     /**
@@ -141,6 +145,7 @@ public class FileMenuHelper {
         File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
         try {
             completed = ProjectSerializer.serialize(file.toPath(), project);
+            Main.getController().addRecentFile(file.toPath());
         } catch (IOException e) {
             e.printStackTrace();
             TopsoilNotification.showNotification(
@@ -298,6 +303,22 @@ public class FileMenuHelper {
         return false;
     }
 
+    private static TopsoilProject openProjectPrivate(Path projectPath) {
+        try {
+            TopsoilProject project = ProjectSerializer.deserialize(projectPath);
+            Main.getController().addRecentFile(projectPath);
+            return project;
+        } catch (IOException e) {
+            e.printStackTrace();
+            TopsoilNotification.showNotification(
+                    TopsoilNotification.NotificationType.ERROR,
+                    "Error",
+                    "Could not open project file: " + projectPath.getFileName().toString()
+            );
+        }
+        return null;
+    }
+
     /**
      * Presents the user with a {@link javafx.scene.control.Dialog} warning the user that their current data may be
      * overwritten, and asking whether to save said data.
@@ -308,20 +329,6 @@ public class FileMenuHelper {
         return TopsoilNotification.showNotification(TopsoilNotification.NotificationType.YES_NO,
                                                     "Overwrite",
                                                     "This will overwrite your current data. Save?").orElse(null);
-    }
-
-    private static TopsoilProject openProject(Path projectPath) {
-        try {
-            return ProjectSerializer.deserialize(projectPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-            TopsoilNotification.showNotification(
-                    TopsoilNotification.NotificationType.ERROR,
-                    "Error",
-                    "Could not open project file: " + projectPath.getFileName().toString()
-            );
-        }
-        return null;
     }
 
     private static boolean exportTableAs(Path path, DataTable table) {

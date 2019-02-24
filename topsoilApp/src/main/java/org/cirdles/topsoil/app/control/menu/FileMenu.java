@@ -70,10 +70,28 @@ public class FileMenu extends Menu {
                 Main.getController().setProjectView(projectView);
             }
         });
-        openRecentProjectMenu = new Menu("Open Recent");
-        openRecentProjectMenu.setDisable(true);
-        openRecentProjectMenu.setOnShown(event -> {
-            // @TODO
+        MenuItem placeholder = new MenuItem("No recent projects.");
+        placeholder.setDisable(true);
+        openRecentProjectMenu = new Menu("Open Recent", null, placeholder);
+        openRecentProjectMenu.setOnShowing(event -> {
+            Path[] paths = Main.getController().getRecentFiles();
+            if (paths.length != 0) {
+                openRecentProjectMenu.getItems().remove(placeholder);
+                for (Path path : Main.getController().getRecentFiles()) {
+                    MenuItem item = new MenuItem(path.getFileName().toString());
+                    item.setOnAction(event1 -> {
+                        TopsoilProject project = FileMenuHelper.openProject(path);
+                        if (project != null) {
+                            Main.getController().setProjectView(new ProjectView(project));
+                        }
+                    });
+                    openRecentProjectMenu.getItems().add(item);
+                }
+            }
+        });
+        openRecentProjectMenu.setOnHidden(event -> {
+            openRecentProjectMenu.getItems().clear();
+            openRecentProjectMenu.getItems().add(placeholder);
         });
 
         openUPbSampleItem = new MenuItem("Uranium-Lead");
@@ -107,9 +125,9 @@ public class FileMenu extends Menu {
             }
         });
         openSampleMenu = new Menu("Open Sample", null,
-                                                                                 openUPbSampleItem,
-                                                                                 openUThSampleItem,
-                                                                                 openSquid3SampleItem
+                openUPbSampleItem,
+                openUThSampleItem,
+                openSquid3SampleItem
         );
 
         saveProjectItem = new MenuItem("Save");

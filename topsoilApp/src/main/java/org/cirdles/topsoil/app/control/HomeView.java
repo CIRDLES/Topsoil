@@ -1,8 +1,5 @@
 package org.cirdles.topsoil.app.control;
 
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -10,9 +7,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,21 +35,15 @@ public class HomeView extends VBox {
     //**********************************************//
 
     @FXML private ImageView cirdlesLogo;
-
     @FXML private VBox recentFilesLinkBox;
+
     private Label noRecentFilesLabel = new Label("No recent files.");
 
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private ListProperty<Path> recentFilesList = new SimpleListProperty<>(FXCollections.observableArrayList());
-    public ListProperty<Path> recentFilesListProperty() {
-        return recentFilesList;
-    }
-    public final List<Path> getRecentFilesList() {
-        return recentFilesList.get();
-    }
+    private List<Path> recentFilesList = new ArrayList<>();
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -59,18 +55,18 @@ public class HomeView extends VBox {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public HomeView(Path... recentFiles) {
+    public HomeView() {
         try {
             FXMLUtils.loadController(CONTROLLER_FXML, HomeView.class, this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.recentFilesList.addAll(recentFiles);
     }
 
     @FXML
     protected void initialize() {
         cirdlesLogo.setImage(new Image(re.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
+        Collections.addAll(recentFilesList, Main.getController().getRecentFiles());
         if (recentFilesList.isEmpty()) {
             noRecentFilesLabel.setStyle("-fx-font-style: italic;");
             recentFilesLinkBox.getChildren().add(noRecentFilesLabel);
@@ -79,7 +75,11 @@ public class HomeView extends VBox {
             for (Path path : recentFilesList) {
                 link = new Hyperlink(path.getFileName().toString());
                 link.setOnAction(event -> {
-                    // TODO Open recent file
+                    TopsoilProject project = FileMenuHelper.openProject(path);
+                    if (project != null) {
+                        ProjectView projectView = new ProjectView(project);
+                        Main.getController().setProjectView(projectView);
+                    }
                 });
                 recentFilesLinkBox.getChildren().add(link);
             }

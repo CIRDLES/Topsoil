@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.serialization;
+package org.cirdles.topsoil.app.file;
 
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.data.*;

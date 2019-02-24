@@ -20,11 +20,13 @@ import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.style.StyleLoader;
 import org.cirdles.topsoil.app.file.ProjectSerializer;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -56,6 +58,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.controller = new MainController(primaryStage);
+        Main.controller.closeProjectView();
+
         Scene scene = new Scene(controller, 1200, 750);
 
         ResourceExtractor resourceExtractor = new ResourceExtractor(Main.class);
@@ -111,13 +115,13 @@ public class Main extends Application {
         @FXML
         private AnchorPane mainContentPane;
         private Image topsoilLogo;
-        private HomeView homeView;
 
         //**********************************************//
         //                  ATTRIBUTES                  //
         //**********************************************//
 
         private Stage primaryStage;
+        private RecentFiles recentFiles = new RecentFiles();
 
         //**********************************************//
         //                  PROPERTIES                  //
@@ -149,20 +153,18 @@ public class Main extends Application {
             });
 
             try {
+                final ResourceExtractor re = new ResourceExtractor(MainController.class);
                 FXMLUtils.loadController(CONTROLLER_FXML, MainController.class, this);
+                topsoilLogo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+                this.primaryStage.getIcons().add(topsoilLogo);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-            topsoilLogo =
-                    new Image(new ResourceExtractor(MainController.class).extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
-            this.primaryStage.getIcons().add(topsoilLogo);
         }
 
         @FXML
         protected void initialize() {
-            homeView = new HomeView();
-            replaceMainContent(homeView);
+
         }
 
         //**********************************************//
@@ -186,11 +188,23 @@ public class Main extends Application {
         }
 
         public void closeProjectView() {
-            replaceMainContent(homeView);
+            replaceMainContent(new HomeView());
         }
 
         public Image getTopsoilLogo() {
             return topsoilLogo;
+        }
+
+        public Path[] getRecentFiles() {
+            return recentFiles.getRecentFiles();
+        }
+
+        public void addRecentFile(Path path) {
+            recentFiles.addRecentFile(path);
+        }
+
+        public void clearRecentFiles() {
+            recentFiles.clearRecentFiles();
         }
 
         //**********************************************//
