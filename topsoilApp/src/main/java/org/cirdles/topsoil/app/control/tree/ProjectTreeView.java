@@ -1,5 +1,8 @@
 package org.cirdles.topsoil.app.control.tree;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
@@ -18,6 +21,8 @@ import org.cirdles.topsoil.app.data.composite.DataLeaf;
  */
 public class ProjectTreeView extends TreeView<DataComponent> {
 
+    private ListProperty<DataTable> dataTableList = new SimpleListProperty<>(FXCollections.observableArrayList());
+
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
@@ -28,10 +33,7 @@ public class ProjectTreeView extends TreeView<DataComponent> {
         this.setRoot(rootItem);
         this.setShowRoot(false);
 
-        for (DataTable table : project.getDataTableList()) {
-            addDataTable(table);
-        }
-        project.dataTableListProperty().addListener((ListChangeListener<? super DataTable>) c -> {
+        dataTableList.addListener((ListChangeListener<? super DataTable>) c -> {
             c.next();
             if (c.wasAdded()) {
                 for (DataTable table : c.getAddedSubList()) {
@@ -44,6 +46,7 @@ public class ProjectTreeView extends TreeView<DataComponent> {
                 }
             }
         });
+        dataTableList.bind(project.dataTableListProperty());
     }
 
     //**********************************************//
