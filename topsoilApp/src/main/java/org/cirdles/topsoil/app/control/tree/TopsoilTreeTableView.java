@@ -2,8 +2,6 @@ package org.cirdles.topsoil.app.control.tree;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
@@ -13,16 +11,16 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import org.cirdles.topsoil.app.data.column.DataCategory;
-import org.cirdles.topsoil.app.data.column.DataColumn;
+import org.cirdles.topsoil.app.data.column.*;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.value.DataValue;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +91,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         column.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
             cell.setTextAlignment(TextAlignment.LEFT);
-            addBorderToCell(cell);
             cell.setEditable(false);
             return cell;
         });
@@ -115,7 +112,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         column.setCellFactory(param -> {
             CheckBoxTreeTableCell<DataComponent, Boolean> cell = new CheckBoxTreeTableCell<>();
             cell.setAlignment(Pos.CENTER);
-            addBorderToCell(cell);
             cell.setEditable(true);
             return cell;
         });
@@ -135,41 +131,51 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      * @param composite     DataComposite
      * @return                  List of new TreeTableColumns
      */
-    private List<TreeTableColumn<DataComponent, String>> makeTableColumnsForComposite(DataComposite<DataComponent> composite) {
-        List<TreeTableColumn<DataComponent, String>> tableColumns = new ArrayList<>();
+    private List<TreeTableColumn<DataComponent, ?>> makeTableColumnsForComposite(DataComposite<DataComponent> composite) {
+        List<TreeTableColumn<DataComponent, ?>> tableColumns = new ArrayList<>();
         for (DataComponent node : composite.getChildren()) {
-            TreeTableColumn<DataComponent, String> newColumn;
+            TreeTableColumn<DataComponent, ?> newColumn;
             if (node instanceof DataColumn) {
-                if (((DataColumn) node).getType().equals(Double.class)) {
-                    newColumn = makeTreeTableColumn((DataColumn<Double>) node);
+                if (((DataColumn) node).getType().equals(Number.class)) {
+                    newColumn = makeTreeTableColumn((NumberColumn) node);
                 } else {
-                    newColumn = makeTreeTableColumn((DataColumn<String>) node);
+                    newColumn = makeTreeTableColumn((StringColumn) node);
                 }
             } else {
                 newColumn = makeTreeTableColumn((DataCategory) node);
             }
-            newColumn.setPrefWidth(100.0);
+            newColumn.setPrefWidth(150.0);
             tableColumns.add(newColumn);
         }
         return tableColumns;
     }
 
-    private <T extends Serializable> TreeTableColumn<DataComponent, String> makeTreeTableColumn(DataColumn<T> dataColumn) {
-        TreeTableColumn<DataComponent, String> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
+    private <T extends Serializable> TreeTableColumn<DataComponent, T> makeTreeTableColumn(DataColumn<T> dataColumn) {
+        TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
+
+        if (dataColumn instanceof NumberColumn) {
+            NumberColumn nCol = (NumberColumn) dataColumn;
+            int maxFractionDigits = 0;
+            for (Number n : table.getValuesForColumn(nCol)) {
+                if (n != null) {
+                    maxFractionDigits = Math.max(maxFractionDigits, NumberColumnStringConverter.countFractionDigits(n));
+                }
+            }
+            nCol.getStringConverter().setNumFractionDigits(maxFractionDigits);
+        }
+
         newColumn.setCellFactory(param -> {
-            TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
+            TextFieldTreeTableCell<DataComponent, T> cell = new TextFieldTreeTableCell<>(dataColumn.getStringConverter());
             cell.setAlignment(Pos.CENTER_RIGHT);
             cell.setEditable(false);
-            addBorderToCell(cell);
             return cell;
         });
         newColumn.setCellValueFactory(param -> {
             if (param.getValue().getValue() instanceof DataSegment) {
-                return new SimpleStringProperty("");
+                return null;
             }
             if (param.getValue().getValue() instanceof DataRow) {
-                DataValue<T> dataValue = ((DataRow) param.getValue().getValue()).getValueForColumn(dataColumn);
-                return dataValue.labelProperty();
+                return ((DataRow) param.getValue().getValue()).getPropertyForColumn(dataColumn);
             }
             return null;
         });
@@ -208,16 +214,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      */
     private CheckBoxTreeItem<DataComponent> makeTreeItemForDataRow(DataRow row) {
         return new CheckBoxTreeItem<>(row);
-    }
-
-    private void addBorderToCell(TreeTableCell<?, ?> cell) {
-        cell.setBorder(new Border(new BorderStroke(
-                                null, Paint.valueOf(CELL_BORDER_COLOR), Paint.valueOf(CELL_BORDER_COLOR), null,
-                                null, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, null,
-                                null,
-                                new BorderWidths(1.0),
-                                null
-        )));
     }
 
 }

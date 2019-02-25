@@ -42,6 +42,8 @@ public abstract class AbstractPlot implements Plot {
 
     /**
      * Constructs a new {@code AbstractPlot}. No properties are set by default.
+     *
+     * @param plotType  PloType
      */
     public AbstractPlot(PlotType plotType) {
         this(plotType, new HashMap<>());
@@ -50,6 +52,7 @@ public abstract class AbstractPlot implements Plot {
     /**
      * Constructs a new {@code AbstractPlot} with the specified properties.
      *
+     * @param plotType   PlotType
      * @param properties a Map of PlotProperty keys to Object values
      */
     public AbstractPlot(PlotType plotType, Map<PlotProperty, Object> properties) {

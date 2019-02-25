@@ -22,7 +22,7 @@ public class DataParserTest {
     @Test
     public void getDataColumnType_test() {
         String[][] rows = DataParser.readCells(DataParser.readLines(CONTENT), ",");
-        assertEquals(Double.class, DataParser.getColumnDataType(rows, 0, 1));
+        assertEquals(Number.class, DataParser.getColumnDataType(rows, 0, 1));
         assertEquals(String.class, DataParser.getColumnDataType(rows, 1, 1));
     }
 

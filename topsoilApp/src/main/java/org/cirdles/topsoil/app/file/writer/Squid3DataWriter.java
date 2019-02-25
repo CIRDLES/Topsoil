@@ -38,7 +38,7 @@ public class Squid3DataWriter implements DataWriter {
 //        for (DataRow row : table.getDataRows()) {
 //            c = 0;
 //            for (DataColumn<?> col : columns) {
-//                DataValue<?> value = row.getValueForColumn(col);
+//                DataValue<?> value = row.getPropertyForColumn(col);
 //                rows[r][c] = value.getLabel();
 //                c++;
 //            }

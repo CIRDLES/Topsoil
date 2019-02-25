@@ -3,6 +3,8 @@ package org.cirdles.topsoil.app.file.parser;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
 import org.cirdles.topsoil.app.data.column.DataColumn;
+import org.cirdles.topsoil.app.data.column.NumberColumn;
+import org.cirdles.topsoil.app.data.column.StringColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -57,6 +59,7 @@ public class DefaultDataParser implements DataParser {
         List<DataColumn<?>> columns = new ArrayList<>();
         int numHeaderRows = countHeaderRows(rows);
         StringJoiner joiner;
+        Class clazz;
         for (int i = 0; i < rows[0].length; i++) {
             joiner = new StringJoiner("\n");
             for (int j = 0; j < numHeaderRows; j++) {
@@ -64,7 +67,12 @@ public class DefaultDataParser implements DataParser {
                     joiner.add(rows[j][i]);
                 }
             }
-            columns.add(new DataColumn<>(joiner.toString(), DataParser.getColumnDataType(rows, i, numHeaderRows)));
+            clazz = DataParser.getColumnDataType(rows, i, numHeaderRows);
+            if (clazz == Number.class) {
+                columns.add(new NumberColumn(joiner.toString()));
+            } else {
+                columns.add(new StringColumn(joiner.toString()));
+            }
         }
         return new ColumnTree(columns.toArray(new DataColumn[]{}));
     }
@@ -75,9 +83,10 @@ public class DefaultDataParser implements DataParser {
         int startIndex = countHeaderRows(rows);
         List<DataRow> dataRows = new ArrayList<>();
         for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
-            dataRows.add(new DataRow(
+            dataRows.add(DataParser.getDataRow(
                     "row" + (rowIndex - startIndex + 1),
-                    DataParser.getValuesForRow(rows[rowIndex], columns)
+                    rows[rowIndex],
+                    columns
             ));
         }
 

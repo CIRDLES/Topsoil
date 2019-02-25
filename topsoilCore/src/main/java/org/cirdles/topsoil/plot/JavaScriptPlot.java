@@ -79,6 +79,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     /**
      * Creates a new {@link JavaScriptPlot} using the specified source file. No properties are set by default.
      *
+     * @param plotType  PlotType
      * @param sourcePath the path to a valid JavaScript file
      */
     public JavaScriptPlot(PlotType plotType, Path sourcePath) {
@@ -88,6 +89,7 @@ public abstract class JavaScriptPlot extends AbstractPlot implements JavaFXDispl
     /**
      * Creates a new {@link JavaScriptPlot} using the specified source file and properties.
      *
+     * @param plotType  PlotType
      * @param sourcePath the path to a valid JavaScript file
      * @param properties a Map containing properties for the plot
      */

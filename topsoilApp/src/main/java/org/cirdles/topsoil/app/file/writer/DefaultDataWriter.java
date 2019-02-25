@@ -3,7 +3,6 @@ package org.cirdles.topsoil.app.file.writer;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
-import org.cirdles.topsoil.app.data.value.DataValue;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,7 +20,7 @@ public class DefaultDataWriter implements DataWriter {
     @Override
     public boolean writeTableToFile(Path path, DataTable table) throws IOException {
         int columnDepth = table.getColumnTree().getDepth();
-        List<DataRow> dataRows = table.getDataRows();
+        List<DataRow> dataRows = table.getLeafNodes();
         List<DataColumn<?>> columns = table.getColumnTree().getLeafNodes();
         String[][] rows = new String[dataRows.size() + columnDepth][columns.size()];
 
@@ -39,11 +38,10 @@ public class DefaultDataWriter implements DataWriter {
         // Get data
         int r = columnDepth;
         int c;
-        for (DataRow row : table.getDataRows()) {
+        for (DataRow row : table.getLeafNodes()) {
             c = 0;
             for (DataColumn<?> col : columns) {
-                DataValue<?> value = row.getValueForColumn(col);
-                rows[r][c] = value.getLabel();
+                rows[r][c] = row.getPropertyForColumn(col).getValue().toString();
                 c++;
             }
             r++;

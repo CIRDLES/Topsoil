@@ -1,27 +1,30 @@
 package org.cirdles.topsoil.app.data.row;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.Property;
 import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.data.composite.DataComposite;
-import org.cirdles.topsoil.app.data.value.DataValue;
+import org.cirdles.topsoil.app.data.composite.DataLeaf;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.HashMap;
 
 /**
  * Represents a single entry of data as a set of column/value mappings.
  *
  * @author marottajb
  */
-public class DataRow extends DataComposite<DataValue<?>> {
+public class DataRow extends DataLeaf {
 
     //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
 
     private static final long serialVersionUID = -8788288059689780519L;
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
+    private HashMap<DataColumn<?>, Property<?>> properties = new HashMap<>();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -31,38 +34,28 @@ public class DataRow extends DataComposite<DataValue<?>> {
         super(label);
     }
 
-    public DataRow(String label, List<DataValue<?>> values) {
-        this(label);
-        this.getChildren().addAll(values);
-    }
-
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
     /**
-     * Returns the value for the provided {@code DataColumn}.
+     * Returns the property for the provided {@code DataColumn}.
      *
      * @param column    DataColumn
      * @param <T>       the type of the data for the DataColumn
-     * @return          the row's value for column
+     * @return          the row's property for column
      */
-    public <T extends Serializable> DataValue<T> getValueForColumn(DataColumn<T> column) {
-        for (DataValue<?> val : this.getChildren()) {
-            if (val.getColumn().equals(column)) {
-                return (DataValue<T>) val;
-            }
-        }
-        return null;
+    public <T extends Serializable> Property<T> getPropertyForColumn(DataColumn<T> column) {
+        return (Property<T>) properties.get(column);
+    }
+
+    public <T extends Serializable> Property<T> setPropertyForColumn(DataColumn<T> column, Property<T> property) {
+        return (Property<T>) properties.put(column, property);
     }
 
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (DataValue<?> value : this.getChildren()) {
-            joiner.add("\"" + value.getColumn().getLabel() + "\" => " + value.getLabel());
-        }
-        return "DataRow(\"" + this.label.get() + "\"){ " + joiner.toString() + " }";
+        return "DataRow(\"" + this.label.get() + "\")" + properties.toString();
     }
 
 }

@@ -65,7 +65,7 @@ public class VisualizationsMenuHelper {
 
         Plot plot = plotType.getPlot();
         plot.setData(data);
-        for (DataRow dataRow : table.getDataRows()) {
+        for (DataRow dataRow : table.getLeafNodes()) {
             dataRow.selectedProperty().addListener(((observable, oldValue, newValue) -> {
                 plot.setData(getPlotDataFromTable(table));
             }));
@@ -153,7 +153,7 @@ public class VisualizationsMenuHelper {
                     column = varMap.get(var);
                     if (column != null) {
                         column = varMap.get(var);
-                        value = row.getValueForColumn(column).getValue();
+                        value = row.getPropertyForColumn(column).getValue();
                         if (var instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(table.getUnctFormat())) {
                             // @TODO The code below assumes that a dep-variable is always dependent on an ind-variable
                             double doubleVal = (double) value;
@@ -161,7 +161,7 @@ public class VisualizationsMenuHelper {
                             IndependentVariable dependency = (IndependentVariable) dependentVariable.getDependency();
                             DataColumn dependentColumn = varMap.get(dependency);
                             doubleVal /= 100;
-                            doubleVal *= (Double) row.getValueForColumn(dependentColumn).getValue();
+                            doubleVal *= (Double) row.getPropertyForColumn(dependentColumn).getValue();
                             value = doubleVal;
                         }
                     } else {

@@ -78,6 +78,11 @@ public interface Plot extends Displayable {
 
     /**
      * Allows the user to set the X and Y axis extents.
+     *
+     * @param xMin as String
+     * @param xMax as String
+     * @param yMin as String
+     * @param yMax as String
      */
     void setAxes(String xMin, String xMax, String yMin, String yMax);
     

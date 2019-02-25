@@ -6,9 +6,15 @@
 }
 
 .root {
-    -fx-background-color: f4f4f4;
+    -fx-background-color: #f4f4f4;
 }
 
 .hyperlink {
     -fx-font-size: 14;
+}
+
+.tree-table-cell {
+    -fx-border-color: #ccc;
+    -fx-border-style: solid;
+    -fx-font-family: Monospaced;
 }

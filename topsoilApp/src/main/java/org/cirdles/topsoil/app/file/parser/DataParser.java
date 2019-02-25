@@ -1,11 +1,13 @@
 package org.cirdles.topsoil.app.file.parser;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.value.DataValue;
-import org.cirdles.topsoil.app.data.value.DoubleValue;
-import org.cirdles.topsoil.app.data.value.StringValue;
+import org.cirdles.topsoil.app.data.column.NumberColumn;
+import org.cirdles.topsoil.app.data.column.StringColumn;
+import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.file.writer.TableFileExtension;
 import org.cirdles.topsoil.app.file.UnicodeBOMInputStream;
 import org.springframework.util.StringUtils;
@@ -157,21 +159,24 @@ public interface DataParser {
             }
             i++;
         }
-        return isDouble ? Double.class : String.class;
+        return isDouble ? Number.class : String.class;
     }
 
-    static List<DataValue<?>> getValuesForRow(String[] row, List<DataColumn<?>> columns) {
-        List<DataValue<?>> values = new ArrayList<>();
+    static DataRow getDataRow(String label, String[] row, List<DataColumn<?>> columns) {
+        DataRow newRow = new DataRow(label);
+        String str;
         for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
-            if (columns.get(colIndex).getType() == Double.class && isDouble(row[colIndex])) {
-                DataColumn<Double> doubleCol = (DataColumn<Double>) columns.get(colIndex);
-                values.add(new DoubleValue(doubleCol, Double.parseDouble(row[colIndex])));
+            str = row[colIndex];
+            if (columns.get(colIndex) instanceof NumberColumn) {
+                NumberColumn doubleCol = (NumberColumn) columns.get(colIndex);
+                newRow.setPropertyForColumn(doubleCol,
+                        new SimpleObjectProperty<>(!str.isEmpty() ? Double.parseDouble(str) : null));
             } else {
-                DataColumn<String> stringCol = (DataColumn<String>) columns.get(colIndex);
-                values.add(new StringValue(stringCol, row[colIndex]));
+                StringColumn stringCol = (StringColumn) columns.get(colIndex);
+                newRow.setPropertyForColumn(stringCol, new SimpleStringProperty(row[colIndex]));
             }
         }
-        return values;
+        return newRow;
     }
 
     /**

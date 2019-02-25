@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.data.composite;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
+import org.cirdles.topsoil.app.data.column.StringColumn;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,10 +13,10 @@ import static org.junit.Assert.assertSame;
 
 public class DataCompositeTest {
 
-    static DataColumn col1 = new DataColumn<>("col1", String.class);
-    static DataColumn col2 = new DataColumn<>("col2", String.class);
-    static DataColumn col3 = new DataColumn<>("col3", String.class);
-    static DataColumn col4 = new DataColumn<>("col4", String.class);
+    static DataColumn col1 = new StringColumn("col1");
+    static DataColumn col2 = new StringColumn("col2");
+    static DataColumn col3 = new StringColumn("col3");
+    static DataColumn col4 = new StringColumn("col4");
 
     static DataCategory cat1 = new DataCategory("cat1", col1, col3);
     static DataCategory cat2 = new DataCategory("cat2", col2);

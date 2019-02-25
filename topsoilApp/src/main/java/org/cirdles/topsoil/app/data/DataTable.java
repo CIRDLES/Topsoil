@@ -9,7 +9,6 @@ import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
-import org.cirdles.topsoil.app.data.value.DataValue;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
@@ -17,6 +16,7 @@ import org.cirdles.topsoil.variable.Variable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -31,7 +31,6 @@ import java.util.*;
  * @see DataComposite
  * @see DataRow
  * @see DataSegment
- * @see DataValue
  */
 public class DataTable extends DataComposite<DataSegment> {
 
@@ -148,12 +147,17 @@ public class DataTable extends DataComposite<DataSegment> {
         return null;
     }
 
-    public List<DataRow> getDataRows() {
-        List<DataRow> rows = new ArrayList<>();
-        for (DataSegment segment : getChildren()) {
-            rows.addAll(segment.getChildren());
+    public <T extends Serializable> List<T> getValuesForColumn(DataColumn<T> column) {
+        List<T> values = new ArrayList<>();
+        for (DataRow row : this.getLeafNodes()) {
+            values.add(row.getPropertyForColumn(column).getValue());
         }
-        return rows;
+        return values;
+    }
+
+    @Override
+    public List<DataRow> getLeafNodes() {
+        return leafHelper(super.getLeafNodes());
     }
 
     @Override

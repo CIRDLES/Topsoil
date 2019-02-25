@@ -1,9 +1,7 @@
 package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTemplate;
-import org.cirdles.topsoil.app.data.column.ColumnTree;
-import org.cirdles.topsoil.app.data.column.DataCategory;
-import org.cirdles.topsoil.app.data.column.DataColumn;
+import org.cirdles.topsoil.app.data.column.*;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
@@ -113,10 +111,10 @@ public class Squid3DataParser implements DataParser {
             str = joiner.toString().trim();
             if (! str.equals("")) {
                 Class<?> clazz = DataParser.getColumnDataType(rows, colIndex, 5);
-                if (clazz == Double.class) {
-                    columns.add(new DataColumn<>(joiner.toString(), (Class<Double>) clazz));
+                if (clazz == Number.class) {
+                    columns.add(new NumberColumn(joiner.toString()));
                 } else {
-                    columns.add(new DataColumn<>(joiner.toString(), (Class<String>) clazz));
+                    columns.add(new StringColumn(joiner.toString()));
                 }
             }
         }
@@ -143,8 +141,11 @@ public class Squid3DataParser implements DataParser {
         }
         for (int rowIndex = segIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
             rowLabel = rows[rowIndex][0];
-            dataRows.add(new DataRow(rowLabel, DataParser.getValuesForRow(Arrays.copyOfRange(rows[rowIndex], 1,
-                                                                                             rows[rowIndex].length, String[].class), columns)));
+            dataRows.add(DataParser.getDataRow(
+                    rowLabel,
+                    Arrays.copyOfRange(rows[rowIndex], 1, rows[rowIndex].length),
+                    columns
+            ));
         }
         return new DataSegment(segmentLabel, dataRows.toArray(new DataRow[]{}));
     }

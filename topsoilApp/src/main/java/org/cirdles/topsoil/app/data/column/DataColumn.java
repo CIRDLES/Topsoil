@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.data.column;
 
+import javafx.util.StringConverter;
 import org.cirdles.topsoil.app.data.composite.DataLeaf;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.io.Serializable;
  *
  * @see org.cirdles.topsoil.app.data.composite.DataComponent
  */
-public class DataColumn<T extends Serializable> extends DataLeaf {
+public abstract class DataColumn<T extends Serializable> extends DataLeaf {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -25,15 +26,17 @@ public class DataColumn<T extends Serializable> extends DataLeaf {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private Class<T> type;
+    protected Class<T> type;
+    protected StringConverter<T> converter;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public DataColumn(String label, Class<T> type) {
+    public DataColumn(String label, Class<T> type, StringConverter<T> converter) {
         super(label);
         this.type = type;
+        this.converter = converter;
     }
 
     //**********************************************//
@@ -42,6 +45,10 @@ public class DataColumn<T extends Serializable> extends DataLeaf {
 
     public Class<T> getType() {
         return type;
+    }
+
+    public StringConverter<T> getStringConverter() {
+        return converter;
     }
 
     @Override
