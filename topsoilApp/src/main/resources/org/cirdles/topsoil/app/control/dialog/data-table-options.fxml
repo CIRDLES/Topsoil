@@ -3,58 +3,34 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<fx:root alignment="TOP_CENTER" type="VBox" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
+<fx:root hgap="10.0" type="GridPane" vgap="10.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <columnConstraints>
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints vgrow="NEVER" />
+      <RowConstraints valignment="TOP" vgrow="ALWAYS" />
+      <RowConstraints valignment="TOP" vgrow="NEVER" />
+      <RowConstraints valignment="TOP" vgrow="NEVER" />
+   </rowConstraints>
    <children>
-      <Label text="Select which columns you'd like to see:">
-         <VBox.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </VBox.margin>
-      </Label>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" maxWidth="500.0" vbarPolicy="NEVER">
-        <content>
-          <AnchorPane fx:id="columnViewPane" />
-        </content>
-      </ScrollPane>
-      <VBox alignment="TOP_CENTER" fillWidth="false">
-         <children>
-            <VBox alignment="TOP_CENTER" maxWidth="500.0">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-               <children>
-                  <HBox alignment="CENTER_RIGHT" spacing="5.0">
-                     <children>
-                        <Label fx:id="uncLabel" text="Uncertainty Format:" />
-                        <ComboBox fx:id="unctComboBox" prefWidth="150.0" promptText="Select...">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </ComboBox>
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </HBox>
-                  <HBox alignment="CENTER_RIGHT" spacing="5.0">
-                     <children>
-                        <Label text="Isotope System:" />
-                        <ComboBox fx:id="isoComboBox" prefWidth="150.0" promptText="Select..." />
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </HBox>
-               </children>
-            </VBox>
-         </children>
-      </VBox>
+      <Label text="Select which columns you'd like to see:" />
+    <AnchorPane fx:id="columnViewPane" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" GridPane.vgrow="ALWAYS" />
+      <Label text="Assign variables to columns:" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" />
+      <AnchorPane fx:id="variableChooserPane" minHeight="20.0" minWidth="20.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+      <Label fx:id="uncLabel" text="Uncertainty Format:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <Label text="Isotope System:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+      <ComboBox fx:id="unctComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <ComboBox fx:id="isoComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
    </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
 </fx:root>

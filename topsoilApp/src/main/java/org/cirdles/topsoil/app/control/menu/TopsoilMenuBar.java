@@ -27,7 +27,7 @@ public class TopsoilMenuBar extends MenuBar {
         this.getMenus().addAll(
                 new FileMenu(),
                 getEditMenu(),
-                getViewMenu(),
+//                getViewMenu(),
                 getVisualizationsMenu(),
                 getHelpMenu()
         );
@@ -44,8 +44,8 @@ public class TopsoilMenuBar extends MenuBar {
         });
 
         Menu editMenu = new Menu("Edit", null,
-                                 preferencesItem,
-                                 new SeparatorMenuItem(),
+//                                 preferencesItem,
+//                                 new SeparatorMenuItem(),
                                  tableOptionsItem
         );
         editMenu.setOnShown(event -> {
@@ -76,16 +76,6 @@ public class TopsoilMenuBar extends MenuBar {
     }
 
     private Menu getVisualizationsMenu() {
-        MenuItem assignVarsItem = new MenuItem("Assign Variables...");
-        assignVarsItem.setOnAction(event -> {
-            Map<Variable<?>, DataColumn<?>> selections = VariableChooserDialog.showDialog(MenuUtils.getCurrentTable(),
-                                                                                    Arrays.asList(IndependentVariable.X,
-                                                                                                IndependentVariable.Y));
-            if (selections != null) {
-                MenuUtils.getCurrentTable().setColumnsForAllVariables(selections);
-            }
-        });
-
         MenuItem generatePlotItem = new MenuItem("Generate Plot...");
         generatePlotItem.setOnAction(event -> {
             // @TODO Check to make sure proper variables are assigned
@@ -95,12 +85,9 @@ public class TopsoilMenuBar extends MenuBar {
         });
 
         Menu visualizationsMenu = new Menu("Visualizations", null,
-                                           assignVarsItem,
-                                           new SeparatorMenuItem(),
                                            generatePlotItem
         );
         visualizationsMenu.setOnShown(event -> {
-            assignVarsItem.setDisable(! MenuUtils.isDataOpen());
             generatePlotItem.setDisable(! MenuUtils.isDataOpen());
         });
         return visualizationsMenu;

@@ -6,12 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import org.cirdles.topsoil.app.data.column.*;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
@@ -20,7 +14,6 @@ import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
 
-import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +23,6 @@ import java.util.List;
  * @author marottajb
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
-
-    private static final String CELL_BORDER_COLOR = "#cccccc";
 
     private DataTable table;
 
@@ -180,15 +171,14 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             return null;
         });
         newColumn.setVisible(dataColumn.isSelected());
-        dataColumn.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            newColumn.setVisible(newValue);
-        }));
+        dataColumn.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
         return newColumn;
     }
 
     private TreeTableColumn<DataComponent, String> makeTreeTableColumn(DataCategory dataCategory) {
         TreeTableColumn<DataComponent, String> newColumn = new TreeTableColumn<>(dataCategory.getLabel());
         newColumn.getColumns().addAll(makeTableColumnsForComposite(dataCategory));
+        dataCategory.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
         return newColumn;
     }
 

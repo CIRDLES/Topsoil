@@ -6,10 +6,8 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import org.cirdles.topsoil.app.data.column.ColumnTree;
 import org.cirdles.topsoil.app.data.column.DataCategory;
-import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
-import org.cirdles.topsoil.app.data.composite.DataLeaf;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +26,6 @@ public class ColumnTreeView extends TreeView<DataComponent> {
         final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataComposite<>("dummy"));
         this.setRoot(rootItem);
         this.setShowRoot(false);
-
         for (DataComponent component : columnTree.getChildren()) {
             addTreeItem(component, getRoot());
         }
@@ -38,7 +35,7 @@ public class ColumnTreeView extends TreeView<DataComponent> {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public Map<DataColumn<?>, Boolean> getColumnSelections() {
+    public Map<DataComponent, Boolean> getColumnSelections() {
         return getColumnSelections((CheckBoxTreeItem<DataComponent>) getRoot());
     }
 
@@ -47,24 +44,46 @@ public class ColumnTreeView extends TreeView<DataComponent> {
     //**********************************************//
 
     private void addTreeItem(DataComponent component, TreeItem<DataComponent> parent) {
-        CheckBoxTreeItem<DataComponent> item = new CheckBoxTreeItem<>(component);
+        CheckBoxTreeItem<DataComponent> item = new CheckBoxTreeItem<>(component, null, component.isSelected());
         if (component instanceof DataComposite) {
             for (DataComponent child : ((DataComposite<DataComponent>) component).getChildren()) {
+                if (! child.isSelected() && item.isSelected()) {
+//                    item.setSelected(false);
+                    item.setIndeterminate(true);
+                }
                 addTreeItem(child, item);
             }
+            item.setIndeterminate(shouldBeIndeterminate(item));
         }
-        item.setSelected(component.isSelected());
         parent.getChildren().add(item);
     }
 
-    private Map<DataColumn<?>, Boolean> getColumnSelections(CheckBoxTreeItem<DataComponent> root) {
-        Map<DataColumn<?>, Boolean> selections = new HashMap<>();
+    private boolean shouldBeIndeterminate(CheckBoxTreeItem<DataComponent> item) {
+        boolean allTrue = true;
+        boolean allFalse = true;
+        for (TreeItem<DataComponent> child : item.getChildren()) {
+            CheckBoxTreeItem<DataComponent> cBChild = (CheckBoxTreeItem<DataComponent>) child;
+            if (cBChild.isIndeterminate()) {
+                allTrue = false;
+                allFalse = false;
+                break;
+            }
+            if (cBChild.isSelected()) {
+                allFalse = false;
+            } else {
+                allTrue = false;
+            }
+        }
+        return (! allTrue) && (! allFalse);
+    }
+
+    private Map<DataComponent, Boolean> getColumnSelections(CheckBoxTreeItem<DataComponent> root) {
+        Map<DataComponent, Boolean> selections = new HashMap<>();
         for (TreeItem<DataComponent> item : root.getChildren()) {
             CheckBoxTreeItem<DataComponent> child = (CheckBoxTreeItem<DataComponent>) item;
+            selections.put(child.getValue(), child.isSelected());
             if (child.getValue() instanceof DataCategory) {
                 selections.putAll(getColumnSelections(child));
-            } else if (child.getValue() instanceof DataColumn) {
-                selections.put((DataColumn<?>) child.getValue(), child.isSelected());
             }
         }
         return selections;

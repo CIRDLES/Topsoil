@@ -143,16 +143,18 @@ public class FileMenuHelper {
     public static boolean saveProjectAs(TopsoilProject project) {
         boolean completed = false;
         File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
-        try {
-            completed = ProjectSerializer.serialize(file.toPath(), project);
-            Main.getController().addRecentFile(file.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-            TopsoilNotification.showNotification(
-                    TopsoilNotification.NotificationType.ERROR,
-                    "Error",
-                    "Unable to save project: " + file.getName()
-            );
+        if (file != null) {
+            try {
+                completed = ProjectSerializer.serialize(file.toPath(), project);
+                Main.getController().addRecentFile(file.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+                TopsoilNotification.showNotification(
+                        TopsoilNotification.NotificationType.ERROR,
+                        "Error",
+                        "Unable to save project: " + file.getName()
+                );
+            }
         }
         return completed;
     }

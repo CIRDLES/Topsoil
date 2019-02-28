@@ -41,7 +41,8 @@ class NewProjectPreView extends WizardPane {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
+        this.setPrefHeight(INIT_HEIGHT);
+//        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
     }
 
     @FXML
@@ -67,8 +68,8 @@ class NewProjectPreView extends WizardPane {
         List<DataTable> tables = new ArrayList<>();
         for (Tab tab : fileTabs.getTabs()) {
             preViewTab = (PreViewTab) tab;
-            Map<DataColumn<?>, Boolean> selections = ((PreViewTab) tab).controller.getColumnSelections();
-            for (Map.Entry<DataColumn<?>, Boolean> entry : selections.entrySet()) {
+            Map<DataComponent, Boolean> selections = ((PreViewTab) tab).controller.getColumnSelections();
+            for (Map.Entry<DataComponent, Boolean> entry : selections.entrySet()) {
                 entry.getKey().setSelected(entry.getValue());
             }
             preViewTab.getTable().setIsotopeSystem(preViewTab.getController().getIsotopeSystem());
