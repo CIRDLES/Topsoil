@@ -1,6 +1,11 @@
 package org.cirdles.topsoil.app.control;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -41,6 +46,7 @@ public class ProjectView extends SplitPane {
     //**********************************************//
 
     private TopsoilProject project;
+    private ObservableList<DataTable> dataTableList = FXCollections.observableArrayList();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -65,22 +71,17 @@ public class ProjectView extends SplitPane {
         FXMLUtils.setAnchorPaneBounds(constantsEditor, 0.0, 0.0, 0.0, 0.0);
         constantsEditorPane.getChildren().add(constantsEditor);
 
-        for (DataTable table : project.getDataTableList()) {
+        for (DataTable table : project.getDataTables()) {
             addTabForTable(table);
         }
-        project.dataTableListProperty().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
-            c.next();
-            if (c.wasAdded()) {
+        project.getDataTables().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
+            while (c.next()) {
                 for (DataTable table : c.getAddedSubList()) {
                     addTabForTable(table);
                 }
             }
-            if (c.wasRemoved()) {
-                for (DataTable table : c.getRemoved()) {
-                    removeTabForTable(table);
-                }
-            }
         });
+//        Bindings.bindContent(dataTableList, project.getDataTables());
     }
 
     //**********************************************//
@@ -107,7 +108,7 @@ public class ProjectView extends SplitPane {
     private void addTabForTable(DataTable table) {
         ProjectTableTab tableTab = new ProjectTableTab(table);
         tableTab.setOnClosed(event -> {
-            project.removeDataTable(tableTab.getDataTable());
+            project.removeDataTable(table);
             if (tabPane.getTabs().isEmpty()) {
                 Main.getController().closeProjectView();
             }

@@ -1,9 +1,11 @@
 package org.cirdles.topsoil.app.control.tree;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -14,14 +16,17 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
-import org.cirdles.topsoil.app.data.composite.DataLeaf;
 
 /**
  * @author marottajb
  */
 public class ProjectTreeView extends TreeView<DataComponent> {
 
-    private ListProperty<DataTable> dataTableList = new SimpleListProperty<>(FXCollections.observableArrayList());
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
+    private ObservableList<DataTable> dataTableList = FXCollections.observableArrayList();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -33,20 +38,19 @@ public class ProjectTreeView extends TreeView<DataComponent> {
         this.setRoot(rootItem);
         this.setShowRoot(false);
 
-        dataTableList.addListener((ListChangeListener<? super DataTable>) c -> {
-            c.next();
-            if (c.wasAdded()) {
+        for (DataTable table : project.getDataTables()) {
+            addDataTable(table);
+        }
+        project.getDataTables().addListener((ListChangeListener<? super DataTable>) c -> {
+            while(c.next()) {
+                for (DataTable table : c.getRemoved()) {
+                    removeDataTable(table);
+                }
                 for (DataTable table : c.getAddedSubList()) {
                     addDataTable(table);
                 }
             }
-            if (c.wasRemoved()) {
-                for (DataTable table : c.getRemoved()) {
-                    removeDataTable(table);
-                }
-            }
         });
-        dataTableList.bind(project.dataTableListProperty());
     }
 
     //**********************************************//
@@ -71,17 +75,15 @@ public class ProjectTreeView extends TreeView<DataComponent> {
         this.getRoot().getChildren().add(tableItem);
     }
 
-    private void removeDataTable(DataTable table) {
-        DataTable t;
+    private boolean removeDataTable(DataTable table) {
         for (TreeItem<DataComponent> item : getRoot().getChildren()) {
-            boolean isDataTable = item.getValue() instanceof DataTable;
-            if (isDataTable) {
-                t = (DataTable) item.getValue();
-                if (t.equals(table)) {
-                    System.out.println(this.getRoot().getChildren().remove(item));
+            if (item.getValue() instanceof DataTable) {
+                if (table.equals(item.getValue())) {
+                    return this.getRoot().getChildren().remove(item);
                 }
             }
         }
+        return false;
     }
 
 }

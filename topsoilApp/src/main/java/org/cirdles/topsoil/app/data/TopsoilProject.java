@@ -2,8 +2,6 @@ package org.cirdles.topsoil.app.data;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
@@ -35,16 +33,7 @@ public class TopsoilProject implements Serializable {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private transient ListProperty<DataTable> dataTableList;
-    public ListProperty<DataTable> dataTableListProperty() {
-        if (dataTableList == null) {
-            dataTableList = new SimpleListProperty<>(FXCollections.observableArrayList());
-        }
-        return dataTableList;
-    }
-    public final ObservableList<DataTable> getDataTableList() {
-        return dataTableListProperty().get();
-    }
+    private transient ObservableList<DataTable> dataTables = FXCollections.observableArrayList();
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -57,19 +46,23 @@ public class TopsoilProject implements Serializable {
     //**********************************************//
 
     public TopsoilProject(DataTable... tables) {
-        getDataTableList().addAll(tables);
+        dataTables.addAll(tables);
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public void addDataTable(DataTable table) {
-        getDataTableList().add(table);
+    public ObservableList<DataTable> getDataTables() {
+        return dataTables;
     }
 
-    public boolean removeDataTable(DataTable table) {
-        return getDataTableList().remove(table);
+    public void addDataTable(DataTable table) {
+        dataTables.add(table);
+    }
+
+    public void removeDataTable(DataTable table) {
+        dataTables.remove(table);
     }
 
     public Table<PlotType, DataTable, TopsoilPlotView> getOpenPlots() {
@@ -88,11 +81,11 @@ public class TopsoilProject implements Serializable {
     public boolean equals(Object object) {
         if (object instanceof TopsoilProject) {
             TopsoilProject other = (TopsoilProject) object;
-            if (dataTableList.size() != other.getDataTableList().size()) {
+            if (dataTables.size() != other.getDataTables().size()) {
                 return false;
             }
-            for (int i = 0; i < dataTableList.size(); i++) {
-                if (! dataTableList.get(i).equals(other.getDataTableList().get(i))) {
+            for (int i = 0; i < dataTables.size(); i++) {
+                if (! dataTables.get(i).equals(other.getDataTables().get(i))) {
                     return false;
                 }
             }
@@ -107,7 +100,7 @@ public class TopsoilProject implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
-        out.writeObject(new ArrayList<>(getDataTableList()));
+        out.writeObject(new ArrayList<>(dataTables));
         for (Lambda lambda : Lambda.values()) {
             out.writeDouble(lambda.getValue());
         }
@@ -115,7 +108,8 @@ public class TopsoilProject implements Serializable {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        getDataTableList().addAll((List<DataTable>) in.readObject());
+        dataTables = FXCollections.observableArrayList();
+        dataTables.addAll((List<DataTable>) in.readObject());
         for (Lambda lambda : Lambda.values()) {
             lambda.setValue(in.readDouble());
         }

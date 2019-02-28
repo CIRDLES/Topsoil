@@ -164,9 +164,6 @@ public class DataTable extends DataComposite<DataSegment> {
     public boolean equals(Object object) {
         if (object instanceof DataTable) {
             DataTable other = (DataTable) object;
-            if (! super.equals(object)) {
-                return false;
-            }
             if (this.getIsotopeSystem() != other.getIsotopeSystem()) {
                 return false;
             }

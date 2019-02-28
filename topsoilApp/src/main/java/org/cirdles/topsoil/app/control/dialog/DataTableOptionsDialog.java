@@ -58,6 +58,8 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.getIcons().addAll(Main.getController().getTopsoilLogo());
+        stage.setWidth(INIT_WIDTH);
+        stage.setHeight(INIT_HEIGHT);
         stage.setResizable(true);
 
         DataTableOptionsView controller = new DataTableOptionsView(table);

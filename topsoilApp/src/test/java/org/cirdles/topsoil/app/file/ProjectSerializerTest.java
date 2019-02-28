@@ -3,7 +3,6 @@ package org.cirdles.topsoil.app.file;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.file.ProjectSerializer;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
 import org.junit.Assert;
@@ -52,7 +51,7 @@ public class ProjectSerializerTest extends ApplicationTest {
             Path tempPath = Files.createTempFile(null, ".topsoil");
             ProjectSerializer.serialize(tempPath, project);
             TopsoilProject tP = ProjectSerializer.deserialize(tempPath);
-            DataTable after = tP.getDataTableList().get(0);
+            DataTable after = tP.getDataTables().get(0);
 
             Assert.assertEquals(table, after);
         } catch (IOException e) {
