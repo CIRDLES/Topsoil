@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.control.menu.helpers;
 
 import javafx.scene.control.ButtonType;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.menu.MenuUtils;
 import org.cirdles.topsoil.app.control.wizards.NewProjectWizard;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -75,7 +75,7 @@ public class FileMenuHelper {
      * @return  deserialized TopsoilProject
      */
     public static TopsoilProject openProject() {
-        Path path = Paths.get(TopsoilFileChooser.openTopsoilFile().showOpenDialog(Main.getController().getPrimaryStage()).toURI());
+        Path path = Paths.get(TopsoilFileChooser.openTopsoilFile().showOpenDialog(Topsoil.getController().getPrimaryStage()).toURI());
         if (path != null && path.equals(ProjectSerializer.getCurrentProjectPath())) {
             return null;    // project already open
         }
@@ -142,11 +142,11 @@ public class FileMenuHelper {
      */
     public static boolean saveProjectAs(TopsoilProject project) {
         boolean completed = false;
-        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
+        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Topsoil.getController().getPrimaryStage());
         if (file != null) {
             try {
                 completed = ProjectSerializer.serialize(file.toPath(), project);
-                Main.getController().addRecentFile(file.toPath());
+                Topsoil.getController().addRecentFile(file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
                 TopsoilNotification.showNotification(
@@ -166,7 +166,7 @@ public class FileMenuHelper {
      */
     public static boolean closeProject() {
         if (ProjectSerializer.getCurrentProjectPath() != null) {
-            Main.getController().closeProjectView();
+            Topsoil.getController().closeProjectView();
             ProjectSerializer.setCurrentProjectPath(null);
         }
         return true;
@@ -208,7 +208,7 @@ public class FileMenuHelper {
     public static boolean exportTableAs(DataTable table) {
         boolean completed = false;
         if (table.getTemplate() != DataTemplate.DEFAULT) {
-            File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Main.getController().getPrimaryStage());
+            File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Topsoil.getController().getPrimaryStage());
             completed = exportTableAs(file.toPath(), table);
         } else {
             TopsoilNotification.showNotification(TopsoilNotification.NotificationType.INFORMATION,
@@ -225,7 +225,7 @@ public class FileMenuHelper {
      * @return  true if successful
      */
     public static boolean exitTopsoilSafely() {
-        Main.MainController mainController = Main.getController();
+        Topsoil.MainController mainController = Topsoil.getController();
         // If something is open
         if (mainController.isDataShowing()) {
             TopsoilProject project = MenuUtils.getProjectView().getProject();
@@ -239,7 +239,7 @@ public class FileMenuHelper {
                     if (ProjectSerializer.getCurrentProjectPath() != null) {
                         saved = FileMenuHelper.saveProject(project);
                     } else {
-                        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Main.getController().getPrimaryStage());
+                        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Topsoil.getController().getPrimaryStage());
                         if (file != null) {
                             try {
                                 saved = ProjectSerializer.serialize(file.toPath(), project);
@@ -255,16 +255,16 @@ public class FileMenuHelper {
                     }
                     // If file was successfully saved
                     if (saved) {
-                        Main.shutdown();
+                        Topsoil.shutdown();
                     }
                 // If user doesn't want to save
                 } else {
-                    Main.shutdown();
+                    Topsoil.shutdown();
                 }
             }
         // If nothing is open
         } else {
-            Main.shutdown();
+            Topsoil.shutdown();
         }
         return false;
     }
@@ -308,7 +308,7 @@ public class FileMenuHelper {
     private static TopsoilProject openProjectPrivate(Path projectPath) {
         try {
             TopsoilProject project = ProjectSerializer.deserialize(projectPath);
-            Main.getController().addRecentFile(projectPath);
+            Topsoil.getController().addRecentFile(projectPath);
             return project;
         } catch (IOException e) {
             e.printStackTrace();

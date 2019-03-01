@@ -4,7 +4,7 @@ import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.variable.Variable;
@@ -24,8 +24,8 @@ public class VariableChooserDialog extends Dialog<Map<Variable<?>, DataColumn<?>
         super();
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(Main.getController().getTopsoilLogo());
-        stage.initOwner(Main.getController().getPrimaryStage());
+        stage.getIcons().add(Topsoil.getController().getTopsoilLogo());
+        stage.initOwner(Topsoil.getController().getPrimaryStage());
         stage.setTitle("Variable Chooser");
         stage.setResizable(true);
         this.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);

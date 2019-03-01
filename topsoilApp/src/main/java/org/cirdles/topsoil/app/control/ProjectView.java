@@ -1,16 +1,12 @@
 package org.cirdles.topsoil.app.control;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import org.cirdles.topsoil.app.Main;
-import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
@@ -110,7 +106,7 @@ public class ProjectView extends SplitPane {
         tableTab.setOnClosed(event -> {
             project.removeDataTable(table);
             if (tabPane.getTabs().isEmpty()) {
-                Main.getController().closeProjectView();
+                Topsoil.getController().closeProjectView();
             }
         });
         tableTab.textProperty().bindBidirectional(table.labelProperty());

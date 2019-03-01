@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
@@ -30,7 +30,7 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
         this.initOwner(owner);
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
-        stage.getIcons().addAll(Main.getController().getTopsoilLogo());
+        stage.getIcons().addAll(Topsoil.getController().getTopsoilLogo());
 
         DataImportDialogController controller = new DataImportDialogController(initial);
         this.getDialogPane().setContent(controller);
@@ -59,7 +59,7 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
     }
 
     public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter initial) {
-        return showDialog(sourceName, initial, Main.getController().getPrimaryStage());
+        return showDialog(sourceName, initial, Topsoil.getController().getPrimaryStage());
     }
 
     public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter initial,

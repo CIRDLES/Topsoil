@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 
@@ -66,7 +66,7 @@ public class HomeView extends VBox {
     @FXML
     protected void initialize() {
         cirdlesLogo.setImage(new Image(re.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
-        Collections.addAll(recentFilesList, Main.getController().getRecentFiles());
+        Collections.addAll(recentFilesList, Topsoil.getController().getRecentFiles());
         if (recentFilesList.isEmpty()) {
             noRecentFilesLabel.setStyle("-fx-font-style: italic;");
             recentFilesLinkBox.getChildren().add(noRecentFilesLabel);
@@ -78,7 +78,7 @@ public class HomeView extends VBox {
                     TopsoilProject project = FileMenuHelper.openProject(path);
                     if (project != null) {
                         ProjectView projectView = new ProjectView(project);
-                        Main.getController().setProjectView(projectView);
+                        Topsoil.getController().setProjectView(projectView);
                     }
                 });
                 recentFilesLinkBox.getChildren().add(link);

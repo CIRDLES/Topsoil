@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.control.menu;
 
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -22,12 +22,12 @@ public class MenuUtils {
 
     /**
      * Returns true if there is data showing; in this case, if there is a {@link ProjectView} set as the main content
-     * in {@link org.cirdles.topsoil.app.Main.MainController}.
+     * in {@link Topsoil.MainController}.
      *
      * @return  true if some data is showing
      */
     public static boolean isDataOpen() {
-        return Main.getController().getMainContent() instanceof ProjectView;
+        return Topsoil.getController().getMainContent() instanceof ProjectView;
     }
 
     /**
@@ -37,7 +37,7 @@ public class MenuUtils {
      */
     public static ProjectView getProjectView() {
         if (isDataOpen()) {
-            return (ProjectView) Main.getController().getMainContent();
+            return (ProjectView) Topsoil.getController().getMainContent();
         }
         return null;
     }

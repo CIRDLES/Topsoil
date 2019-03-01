@@ -29,14 +29,14 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'checkstyle'
+//    apply plugin: 'checkstyle'
 //    apply plugin: 'findbugs'
     apply plugin: 'maven'
 
-    checkstyle {
-        configFile file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
-        toolVersion = '6.11.2'
-    }
+//    checkstyle {
+//        configFile file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+//        toolVersion = '6.11.2'
+//    }
 
 //    findbugsTest {
 //        excludeFilterConfig = resources.text.fromString '''

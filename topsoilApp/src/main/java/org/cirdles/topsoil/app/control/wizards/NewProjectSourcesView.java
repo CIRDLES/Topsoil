@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
@@ -109,7 +109,7 @@ class NewProjectSourcesView extends WizardPane {
      */
     @FXML
     private void addFilesButtonAction() {
-        List<File> files = TopsoilFileChooser.openTableFile().showOpenMultipleDialog(Main.getController().getPrimaryStage());
+        List<File> files = TopsoilFileChooser.openTableFile().showOpenMultipleDialog(Topsoil.getController().getPrimaryStage());
         if ( files != null && !files.isEmpty() ) {
             List<File> selectedFiles = new ArrayList<>(files);
             List<File> rejectedFiles = new ArrayList<>();

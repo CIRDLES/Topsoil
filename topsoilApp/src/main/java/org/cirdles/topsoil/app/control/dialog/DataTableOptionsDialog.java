@@ -10,13 +10,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.DeselectableRadioButton;
 import org.cirdles.topsoil.app.control.tree.ColumnTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -57,7 +56,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         this.initOwner(owner);
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
-        stage.getIcons().addAll(Main.getController().getTopsoilLogo());
+        stage.getIcons().addAll(Topsoil.getController().getTopsoilLogo());
         stage.setWidth(INIT_WIDTH);
         stage.setHeight(INIT_HEIGHT);
         stage.setResizable(true);

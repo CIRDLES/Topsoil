@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.internal.storage.file.FileRepository
 
-def mainClass = 'org.cirdles.topsoil.app.Main'
+def mainClass = 'org.cirdles.topsoil.app.Topsoil'
 
 def getVersionName = { ->
     def repo = new FileRepository("$rootDir/.git")

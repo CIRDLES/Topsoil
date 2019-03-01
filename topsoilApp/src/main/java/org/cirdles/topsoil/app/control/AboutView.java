@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
 
@@ -101,8 +101,8 @@ public class AboutView extends VBox {
         AboutView aboutView = new AboutView();
         aboutView.setStyle("-fx-border-color: #67ccff; -fx-border-width: 0.5em;");
 //        aboutView.setOnMousePressed(event -> {
-//            aboutView.xOffset = Main.getPrimaryStage().getX() - event.getScreenX();
-//            aboutView.yOffset = Main.getPrimaryStage().getScene().getWindow().getY() - event.getScreenY();
+//            aboutView.xOffset = Topsoil.getPrimaryStage().getX() - event.getScreenX();
+//            aboutView.yOffset = Topsoil.getPrimaryStage().getScene().getWindow().getY() - event.getScreenY();
 //        });
 //        aboutView.setOnMouseDragged(event -> {
 //            aboutView.getScene().getWindow().setX(event.getScreenX() + aboutView.xOffset);
@@ -114,7 +114,7 @@ public class AboutView extends VBox {
         stage.setScene(scene);
         stage.setResizable(false);
 
-        Stage primaryStage = Main.getController().getPrimaryStage();
+        Stage primaryStage = Topsoil.getController().getPrimaryStage();
 
         double newX = primaryStage.getX() + (primaryStage.getWidth() / 2) -
                       (DEFAULT_WIDTH / 2);

@@ -1,19 +1,12 @@
 package org.cirdles.topsoil.app.control.menu;
 
 import javafx.scene.control.*;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
-import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.control.dialog.VariableChooserDialog;
 import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.plot.PlotType;
-import org.cirdles.topsoil.variable.IndependentVariable;
-import org.cirdles.topsoil.variable.Variable;
-
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * The main {@code MenuBar} for the application.
@@ -40,7 +33,7 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem tableOptionsItem = new MenuItem("Table Options...");
         tableOptionsItem.setOnAction(event -> {
-            DataTableOptionsDialog.showDialog(MenuUtils.getCurrentTable(), Main.getController().getPrimaryStage());
+            DataTableOptionsDialog.showDialog(MenuUtils.getCurrentTable(), Topsoil.getController().getPrimaryStage());
         });
 
         Menu editMenu = new Menu("Edit", null,
@@ -101,7 +94,7 @@ public class TopsoilMenuBar extends MenuBar {
         reportIssueItem.setOnAction(event -> HelpMenuHelper.openIssueReporter());
 
         MenuItem aboutItem = new MenuItem("About...");
-        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Main.getController().getPrimaryStage()));
+        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Topsoil.getController().getPrimaryStage()));
 
         return new Menu("Help", null,
                         onlineHelpItem,

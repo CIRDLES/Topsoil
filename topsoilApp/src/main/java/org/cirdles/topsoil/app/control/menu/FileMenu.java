@@ -4,7 +4,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
-import org.cirdles.topsoil.app.Main;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
@@ -55,7 +55,7 @@ public class FileMenu extends Menu {
             TopsoilProject project = FileMenuHelper.newProject();
             if (project != null) {
                 ProjectView projectView = new ProjectView(project);
-                Main.getController().setProjectView(projectView);
+                Topsoil.getController().setProjectView(projectView);
             }
         });
         newMenu = new Menu("New", null,
@@ -67,22 +67,22 @@ public class FileMenu extends Menu {
             TopsoilProject project = FileMenuHelper.openProject();
             if (project != null) {
                 ProjectView projectView = new ProjectView(project);
-                Main.getController().setProjectView(projectView);
+                Topsoil.getController().setProjectView(projectView);
             }
         });
         MenuItem placeholder = new MenuItem("No recent projects.");
         placeholder.setDisable(true);
         openRecentProjectMenu = new Menu("Open Recent", null, placeholder);
         openRecentProjectMenu.setOnShowing(event -> {
-            Path[] paths = Main.getController().getRecentFiles();
+            Path[] paths = Topsoil.getController().getRecentFiles();
             if (paths.length != 0) {
                 openRecentProjectMenu.getItems().remove(placeholder);
-                for (Path path : Main.getController().getRecentFiles()) {
+                for (Path path : Topsoil.getController().getRecentFiles()) {
                     MenuItem item = new MenuItem(path.getFileName().toString());
                     item.setOnAction(event1 -> {
                         TopsoilProject project = FileMenuHelper.openProject(path);
                         if (project != null) {
-                            Main.getController().setProjectView(new ProjectView(project));
+                            Topsoil.getController().setProjectView(new ProjectView(project));
                         }
                     });
                     openRecentProjectMenu.getItems().add(item);
@@ -99,7 +99,7 @@ public class FileMenu extends Menu {
             if (MenuUtils.isDataOpen()) {
                 MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.UPB));
             } else {
-                Main.getController().setProjectView(new ProjectView(new TopsoilProject(
+                Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
                         FileMenuHelper.openSampleData(SampleData.UPB)))
                 );
             }
@@ -109,7 +109,7 @@ public class FileMenu extends Menu {
             if (MenuUtils.isDataOpen()) {
                 MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.UTH));
             } else {
-                Main.getController().setProjectView(new ProjectView(new TopsoilProject(
+                Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
                         FileMenuHelper.openSampleData(SampleData.UTH)))
                 );
             }
@@ -119,7 +119,7 @@ public class FileMenu extends Menu {
             if (MenuUtils.isDataOpen()) {
                 MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.SQUID_3));
             } else {
-                Main.getController().setProjectView(new ProjectView(new TopsoilProject(
+                Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
                         FileMenuHelper.openSampleData(SampleData.SQUID_3)))
                 );
             }
@@ -157,7 +157,7 @@ public class FileMenu extends Menu {
 
         fromFileItem = new MenuItem("From File");
         fromFileItem.setOnAction(event -> {
-            File file = TopsoilFileChooser.openTableFile().showOpenDialog(Main.getController().getPrimaryStage());
+            File file = TopsoilFileChooser.openTableFile().showOpenDialog(Topsoil.getController().getPrimaryStage());
             if (file != null && file.exists()) {
                 Path path = Paths.get(file.toURI());
                 try {
@@ -169,11 +169,11 @@ public class FileMenu extends Menu {
 
                     if (delimiter != null && template != null) {
                         DataTable table = FileMenuHelper.importTableFromFile(path, delimiter, template);
-                        if (DataTableOptionsDialog.showDialog(table, Main.getController().getPrimaryStage())) {
+                        if (DataTableOptionsDialog.showDialog(table, Topsoil.getController().getPrimaryStage())) {
                             if (MenuUtils.isDataOpen()) {
                                 MenuUtils.getProjectView().getProject().addDataTable(table);
                             } else {
-                                Main.getController().setProjectView(new ProjectView(new TopsoilProject(table)));
+                                Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(table)));
                             }
                         }
                     }
@@ -196,11 +196,11 @@ public class FileMenu extends Menu {
 
                 if (delimiter != null && template != null) {
                     DataTable table = FileMenuHelper.importTableFromString(content, delimiter, template);
-                    if (DataTableOptionsDialog.showDialog(table, Main.getController().getPrimaryStage())) {
+                    if (DataTableOptionsDialog.showDialog(table, Topsoil.getController().getPrimaryStage())) {
                         if (MenuUtils.isDataOpen()) {
                             MenuUtils.getProjectView().getProject().addDataTable(table);
                         } else {
-                            Main.getController().setProjectView(new ProjectView(new TopsoilProject(table)));
+                            Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(table)));
                         }
                     }
                 }

@@ -33,7 +33,7 @@ import java.util.List;
  * @see Application
  * @see MainController
  */
-public class Main extends Application {
+public class Topsoil extends Application {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -57,12 +57,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Main.controller = new MainController(primaryStage);
-        Main.controller.closeProjectView();
+        Topsoil.controller = new MainController(primaryStage);
+        Topsoil.controller.closeProjectView();
 
         Scene scene = new Scene(controller, 1200, 750);
 
-        ResourceExtractor resourceExtractor = new ResourceExtractor(Main.class);
+        ResourceExtractor resourceExtractor = new ResourceExtractor(Topsoil.class);
         // Load font
         try {
             Font.loadFont(resourceExtractor.extractResourceAsFile(ARIMO_FONT).toURI().toURL().toExternalForm(), 14);
@@ -93,12 +93,6 @@ public class Main extends Application {
         Platform.exit();
     }
 
-    /**
-     * A controller class for Topsoil's {@link Main}.
-     *
-     * @author Jake Marotta
-     * @see Main
-     */
     public static class MainController extends VBox {
 
         //**********************************************//
