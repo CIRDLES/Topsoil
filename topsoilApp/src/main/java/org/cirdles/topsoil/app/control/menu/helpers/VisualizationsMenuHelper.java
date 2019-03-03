@@ -13,6 +13,7 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.util.PlotObservationThread;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
+import org.cirdles.topsoil.app.util.TableObserver;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.plot.*;
 import org.cirdles.topsoil.variable.*;
@@ -65,11 +66,8 @@ public class VisualizationsMenuHelper {
 
         Plot plot = plotType.getPlot();
         plot.setData(data);
-        for (DataRow dataRow : table.getDataRoot().getLeafNodes()) {
-            dataRow.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-                plot.setData(getPlotDataFromTable(table));
-            }));
-        }
+        TableObserver tableObserver = new TableObserver(table, plot);
+        table.addObserver(tableObserver);
 
         // @TODO Update plot on model changes
 
@@ -80,6 +78,7 @@ public class VisualizationsMenuHelper {
         properties.put(TITLE, table.getLabel());
         // @TODO assign X and Y axis labels
         properties.put(UNCERTAINTY, table.getUnctFormat().getMultiplier());
+        plot.setProperties(properties);
         TopsoilPlotView plotView = new TopsoilPlotView(plot, table);
 
         // Connect table model to properties panel
@@ -98,6 +97,7 @@ public class VisualizationsMenuHelper {
                 () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
         plotStage.setOnCloseRequest(closeEvent -> {
             observer.shutdown();
+            table.deleteObserver(tableObserver);
 //            plot.stop();
             VisualizationsMenuHelper.closePlot(plotType, table, project);
         });

@@ -35,7 +35,7 @@ import java.util.*;
  * @see DataRow
  * @see DataSegment
  */
-public class DataTable implements Serializable {
+public class DataTable extends Observable implements Serializable {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -108,6 +108,12 @@ public class DataTable implements Serializable {
         this.columnRoot = columnRoot;
         this.dataRoot = dataRoot;
         this.dataRoot.labelProperty().bind(labelProperty());
+        for (DataRow row : this.dataRoot.getLeafNodes()) {
+            row.selectedProperty().addListener(c -> {
+                setChanged();
+                notifyObservers();
+            });
+        }
     }
 
     //**********************************************//
