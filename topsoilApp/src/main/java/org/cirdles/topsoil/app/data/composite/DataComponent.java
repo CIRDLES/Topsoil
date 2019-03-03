@@ -37,12 +37,8 @@ public abstract class DataComponent implements Serializable {
         }
         return label;
     }
-    public String getLabel() {
-        return labelProperty().get();
-    }
-    public void setLabel(String label) {
-        labelProperty().set(label);
-    }
+    public String getLabel() { return labelProperty().get(); }
+    public void setLabel(String label) { labelProperty().set(label); }
 
     protected transient BooleanProperty selected;
     public BooleanProperty selectedProperty() {

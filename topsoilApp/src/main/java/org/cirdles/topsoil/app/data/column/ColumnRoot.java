@@ -14,11 +14,7 @@ import java.util.List;
  *
  * @author marottajb
  */
-public class ColumnTree extends DataComposite<DataComponent> {
-
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
+public class ColumnRoot extends DataComposite<DataComponent> {
 
     private static final long serialVersionUID = -3676485771872253255L;
 
@@ -26,10 +22,8 @@ public class ColumnTree extends DataComposite<DataComponent> {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public ColumnTree(DataComponent... topLevel) {
-        for (DataComponent component : topLevel) {
-            this.getChildren().add(component);
-        }
+    public ColumnRoot(DataComponent... topLevel) {
+        super("root", topLevel);
     }
 
     //**********************************************//
@@ -43,8 +37,8 @@ public class ColumnTree extends DataComposite<DataComponent> {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof ColumnTree) {
-            ColumnTree other = (ColumnTree) object;
+        if (object instanceof ColumnRoot) {
+            ColumnRoot other = (ColumnRoot) object;
             if (! this.getLabel().equals(other.getLabel())) {
                 return false;
             }
@@ -63,7 +57,7 @@ public class ColumnTree extends DataComposite<DataComponent> {
 
     @Override
     public String toString() {
-        return "ColumnTree" + Arrays.toString(children.toArray());
+        return "ColumnRoot" + Arrays.toString(children.toArray());
     }
 
     //**********************************************//

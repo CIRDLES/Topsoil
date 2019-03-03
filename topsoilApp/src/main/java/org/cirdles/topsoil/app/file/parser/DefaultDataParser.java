@@ -1,10 +1,11 @@
 package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTemplate;
-import org.cirdles.topsoil.app.data.column.ColumnTree;
+import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.column.NumberColumn;
 import org.cirdles.topsoil.app.data.column.StringColumn;
+import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -24,14 +25,14 @@ public class DefaultDataParser implements DataParser {
 
     /** {@inheritDoc} */
     @Override
-    public ColumnTree parseColumnTree(Path path, String delimiter) throws IOException {
+    public ColumnRoot parseColumnTree(Path path, String delimiter) throws IOException {
         String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
         return parseColumnTree(rows);
     }
 
     /** {@inheritDoc} */
     @Override
-    public ColumnTree parseColumnTree(String content, String delimiter) {
+    public ColumnRoot parseColumnTree(String content, String delimiter) {
         String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
         return parseColumnTree(rows);
     }
@@ -55,7 +56,7 @@ public class DefaultDataParser implements DataParser {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private ColumnTree parseColumnTree(String[][] rows) {
+    private ColumnRoot parseColumnTree(String[][] rows) {
         List<DataColumn<?>> columns = new ArrayList<>();
         int numHeaderRows = countHeaderRows(rows);
         StringJoiner joiner;
@@ -74,12 +75,12 @@ public class DefaultDataParser implements DataParser {
                 columns.add(new StringColumn(joiner.toString()));
             }
         }
-        return new ColumnTree(columns.toArray(new DataColumn[]{}));
+        return new ColumnRoot(columns.toArray(new DataColumn[]{}));
     }
 
     private DataTable parseDataTable(String[][] rows, String label) {
-        ColumnTree columnTree = parseColumnTree(rows);
-        List<DataColumn<?>> columns = columnTree.getLeafNodes();
+        ColumnRoot columnRoot = parseColumnTree(rows);
+        List<DataColumn<?>> columns = columnRoot.getLeafNodes();
         int startIndex = countHeaderRows(rows);
         List<DataRow> dataRows = new ArrayList<>();
         for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
@@ -89,11 +90,9 @@ public class DefaultDataParser implements DataParser {
                     columns
             ));
         }
+        DataRoot dataRoot = new DataRoot(new DataSegment("model", dataRows.toArray(new DataRow[]{})));
 
-        List<DataSegment> segments = new ArrayList<>();
-        segments.add(new DataSegment("model", dataRows.toArray(new DataRow[]{})));
-
-        return new DataTable(DataTemplate.DEFAULT, label, columnTree, segments);
+        return new DataTable(DataTemplate.DEFAULT, label, columnRoot, dataRoot);
     }
 
     private int countHeaderRows(String[][] rows) {

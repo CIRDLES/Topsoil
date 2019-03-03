@@ -1,9 +1,10 @@
 package org.cirdles.topsoil.app.data;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import org.cirdles.topsoil.app.data.column.ColumnTree;
+import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.NumberColumn;
+import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
@@ -46,7 +47,7 @@ public class DataTableTest {
         NumberColumn col1, col2, col3, col4, col5;
         DataRow row1, row2;
         DataTable table = new DataTable(DataTemplate.SQUID_3, "CONTENT",
-                new ColumnTree(
+                new ColumnRoot(
                         new DataCategory("Cat1",
                                 col1 = new NumberColumn("Col1 Col1 Col1"),
                                 col2 = new NumberColumn("Col2 Col2 Col2 Col2"),
@@ -58,7 +59,7 @@ public class DataTableTest {
                         ),
                         new DataCategory("Cat3")
                 ),
-                Arrays.asList(
+               new DataRoot(
                         new DataSegment("Seg1",
                                 row1 = new DataRow("Seg1:Row1")
                         ),

@@ -50,7 +50,7 @@ public enum SampleData {
             table.setIsotopeSystem(isotopeSystem);
             table.setUnctFormat(unctFormat);
             if (this == UPB || this == UTH) {
-                List<DataColumn<?>> columns = table.getColumnTree().getLeafNodes();
+                List<DataColumn<?>> columns = table.getColumnRoot().getLeafNodes();
                 table.setColumnForVariable(IndependentVariable.X, columns.get(0));
                 table.setColumnForVariable(DependentVariable.SIGMA_X, columns.get(1));
                 table.setColumnForVariable(IndependentVariable.Y, columns.get(2));
@@ -58,7 +58,7 @@ public enum SampleData {
                 table.setColumnForVariable(IndependentVariable.RHO, columns.get(4));
             } else if (this == SQUID_3) {
                 List<DataColumn<?>> columns =
-                        ((DataComposite) table.getColumnTree().find("204Pb-Corrected")).getLeafNodes();
+                        ((DataComposite) table.getColumnRoot().find("204Pb-Corrected")).getLeafNodes();
                 table.setColumnForVariable(IndependentVariable.X, columns.get(columns.size() - 5));
                 table.setColumnForVariable(DependentVariable.SIGMA_X, columns.get(columns.size() - 4));
                 table.setColumnForVariable(IndependentVariable.Y, columns.get(columns.size() - 3));

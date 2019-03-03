@@ -135,7 +135,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         @FXML
         protected void initialize() {
-            this.columnTreeView = new ColumnTreeView(table.getColumnTree());
+            this.columnTreeView = new ColumnTreeView(table.getColumnRoot());
 //            columnTreeView.setPrefHeight(250.0);
             columnViewPane.getChildren().add(columnTreeView);
             FXMLUtils.setAnchorPaneBounds(columnTreeView, 0.0, 0.0, 0.0, 0.0);
@@ -222,14 +222,14 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             }
 
             tableView.setItems(makeTableRows(table));
-            tableView.getColumns().addAll(makeTableColumns(table.getColumnTree()));
+            tableView.getColumns().addAll(makeTableColumns(table.getColumnRoot()));
 
             // Forces the TableView to resize based on the number of rows
             tableView.setFixedCellSize(ROW_HEIGHT);
             tableView.prefHeightProperty().bind(
                     tableView.fixedCellSizeProperty()
                             .multiply(Bindings.size(tableView.getItems())
-                                    .add((table.getColumnTree().getDepth()))));
+                                    .add((table.getColumnRoot().getDepth()))));
 
             // Prevents the user from re-ordering columns.
             tableView.widthProperty().addListener(new ChangeListener<Number>() {
@@ -264,7 +264,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             VariableRow<?> row;
             for (Variable<?> variable : Variables.ALL) {
                 row = new VariableRow<>(variable);
-                for (DataColumn<?> column : table.getColumnTree().getLeafNodes()) {
+                for (DataColumn<?> column : table.getColumnRoot().getLeafNodes()) {
                     BooleanProperty property = new SimpleBooleanProperty(table.getVariableColumnMap().get(variable) == column);
                     row.put(column, property);
     //                selectionProperties.put(column, variable, property);

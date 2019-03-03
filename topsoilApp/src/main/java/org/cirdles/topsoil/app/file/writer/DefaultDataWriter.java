@@ -19,9 +19,9 @@ public class DefaultDataWriter implements DataWriter {
 
     @Override
     public boolean writeTableToFile(Path path, DataTable table) throws IOException {
-        int columnDepth = table.getColumnTree().getDepth();
-        List<DataRow> dataRows = table.getLeafNodes();
-        List<DataColumn<?>> columns = table.getColumnTree().getLeafNodes();
+        int columnDepth = table.getColumnRoot().getDepth();
+        List<DataRow> dataRows = table.getDataRoot().getLeafNodes();
+        List<DataColumn<?>> columns = table.getColumnRoot().getLeafNodes();
         String[][] rows = new String[dataRows.size() + columnDepth][columns.size()];
 
         // Get columns
@@ -38,7 +38,7 @@ public class DefaultDataWriter implements DataWriter {
         // Get data
         int r = columnDepth;
         int c;
-        for (DataRow row : table.getLeafNodes()) {
+        for (DataRow row : dataRows) {
             c = 0;
             for (DataColumn<?> col : columns) {
                 rows[r][c] = row.getPropertyForColumn(col).getValue().toString();

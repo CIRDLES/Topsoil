@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.data.composite;
 
-import org.cirdles.topsoil.app.data.column.ColumnTree;
+import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.column.StringColumn;
@@ -21,11 +21,11 @@ public class DataCompositeTest {
     static DataCategory cat1 = new DataCategory("cat1", col1, col3);
     static DataCategory cat2 = new DataCategory("cat2", col2);
 
-    static ColumnTree columnTree = new ColumnTree(col4, cat1, cat2);
+    static ColumnRoot columnRoot = new ColumnRoot(col4, cat1, cat2);
 
     @Test
     public void order_test() {
-        List<DataColumn<?>> columns = columnTree.getLeafNodes();
+        List<DataColumn<?>> columns = columnRoot.getLeafNodes();
         assertSame(columns.get(0), col4);
         assertSame(columns.get(1), col1);
         assertSame(columns.get(2), col3);
@@ -34,18 +34,18 @@ public class DataCompositeTest {
 
     @Test
     public void findIn_test() {
-        assertSame(col1, ColumnTree.findIn("col1", columnTree));
-        assertSame(cat2, ColumnTree.findIn("cat2", columnTree));
+        assertSame(col1, ColumnRoot.findIn("col1", columnRoot));
+        assertSame(cat2, ColumnRoot.findIn("cat2", columnRoot));
     }
 
     @Test
     public void countLeafNodes_test() {
-        assertEquals(4, columnTree.countLeafNodes());
+        assertEquals(4, columnRoot.countLeafNodes());
     }
 
     @Test
     public void getDepth_test() {
-        assertEquals(2, columnTree.getDepth());
+        assertEquals(2, columnRoot.getDepth());
     }
 
 }

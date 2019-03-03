@@ -64,7 +64,7 @@ public class DataRow extends DataLeaf {
 
     @Override
     public String toString() {
-        return "DataRow(\"" + this.label.get() + "\")" + properties.toString();
+        return getLabel();
     }
 
     @Override

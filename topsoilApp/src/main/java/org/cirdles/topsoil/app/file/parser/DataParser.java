@@ -2,7 +2,7 @@ package org.cirdles.topsoil.app.file.parser;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import org.cirdles.topsoil.app.data.column.ColumnTree;
+import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.NumberColumn;
@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
  */
 public interface DataParser {
 
-    ColumnTree parseColumnTree(Path path, String delimiter) throws IOException;
-    ColumnTree parseColumnTree(String content, String delimiter);
+    ColumnRoot parseColumnTree(Path path, String delimiter) throws IOException;
+    ColumnRoot parseColumnTree(String content, String delimiter);
 
     DataTable parseDataTable(Path path, String delimiter, String label) throws IOException;
     DataTable parseDataTable(String content, String delimiter, String label);

@@ -38,7 +38,7 @@ public class DefaultDataWriterTest {
             DataTable after = dataParser.parseDataTable(path, Delimiter.COMMA.getValue(), "upb-sample.csv");
             after.setIsotopeSystem(IsotopeSystem.UPB);
             after.setUnctFormat(Uncertainty.TWO_SIGMA_PERCENT);
-            List<DataColumn<?>> columns = after.getColumnTree().getLeafNodes();
+            List<DataColumn<?>> columns = after.getColumnRoot().getLeafNodes();
             after.setColumnForVariable(IndependentVariable.X, columns.get(0));
             after.setColumnForVariable(DependentVariable.SIGMA_X, columns.get(1));
             after.setColumnForVariable(IndependentVariable.Y, columns.get(2));

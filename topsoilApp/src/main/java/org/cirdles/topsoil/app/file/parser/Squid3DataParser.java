@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.file.parser;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.*;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
+import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -22,14 +23,14 @@ public class Squid3DataParser implements DataParser {
 
     /** {@inheritDoc} */
     @Override
-    public ColumnTree parseColumnTree(Path path, String delimiter) throws IOException {
+    public ColumnRoot parseColumnTree(Path path, String delimiter) throws IOException {
         String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
         return parseColumnTree(rows);
     }
 
     /** {@inheritDoc} */
     @Override
-    public ColumnTree parseColumnTree(String content, String delimiter) {
+    public ColumnRoot parseColumnTree(String content, String delimiter) {
         String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
         return parseColumnTree(rows);
     }
@@ -52,7 +53,7 @@ public class Squid3DataParser implements DataParser {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private ColumnTree parseColumnTree(String[][] rows) {
+    private ColumnRoot parseColumnTree(String[][] rows) {
         List<DataComponent> topLevel = new ArrayList<>();
         int[] categoryIndices = readCategories(rows[0]);
         for (int i = 0; i < categoryIndices.length; i++) {
@@ -62,12 +63,12 @@ public class Squid3DataParser implements DataParser {
                     (i == (categoryIndices.length - 1) ? -1 : categoryIndices[i + 1])
             ));
         }
-        return new ColumnTree(topLevel.toArray(new DataComponent[]{}));
+        return new ColumnRoot(topLevel.toArray(new DataComponent[]{}));
     }
 
     private DataTable parseDataTable(String[][] rows, String label) {
-        ColumnTree columnTree = parseColumnTree(rows);
-        List<DataColumn<?>> columns = columnTree.getLeafNodes();
+        ColumnRoot columnRoot = parseColumnTree(rows);
+        List<DataColumn<?>> columns = columnRoot.getLeafNodes();
 
         int[] segIndices = readDataSegments(rows);
         List<DataSegment> segments = new ArrayList<>();
@@ -79,7 +80,8 @@ public class Squid3DataParser implements DataParser {
                     columns
             ));
         }
-        return new DataTable(DataTemplate.SQUID_3, label, columnTree, segments);
+        DataRoot dataRoot = new DataRoot(segments.toArray(new DataSegment[]{}));
+        return new DataTable(DataTemplate.SQUID_3, label, columnRoot, dataRoot);
     }
 
     /**

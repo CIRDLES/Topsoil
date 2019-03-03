@@ -65,7 +65,7 @@ public class VisualizationsMenuHelper {
 
         Plot plot = plotType.getPlot();
         plot.setData(data);
-        for (DataRow dataRow : table.getLeafNodes()) {
+        for (DataRow dataRow : table.getDataRoot().getLeafNodes()) {
             dataRow.selectedProperty().addListener(((observable, oldValue, newValue) -> {
                 plot.setData(getPlotDataFromTable(table));
             }));
@@ -132,7 +132,7 @@ public class VisualizationsMenuHelper {
      */
     public static List<Map<String, Object>> getPlotDataFromTable(DataTable table) {
         List<Map<String, Object>> plotData = new ArrayList<>();
-        List<DataSegment> tableAliquots = table.getChildren();
+        List<DataSegment> tableAliquots = table.getDataRoot().getChildren();
         BiMap<Variable<?>, DataColumn<?>> varMap = table.getVariableColumnMap();
 
         List<DataRow> rows;

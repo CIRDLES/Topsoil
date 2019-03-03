@@ -16,8 +16,8 @@ public class Squid3DataWriter implements DataWriter {
 
     @Override
     public boolean writeTableToFile(Path path, DataTable table) throws IOException {
-//        int columnDepth = table.getColumnTree().getDepth();
-//        List<DataColumn<?>> columns = table.getColumnTree().getLeafNodes();
+//        int columnDepth = table.getColumnRoot().getDepth();
+//        List<DataColumn<?>> columns = table.getColumnRoot().getLeafNodes();
 //        List<DataRow> dataRows = table.getDataRows();
 //        String[][] rows = new String[dataRows.size() + columnDepth][columns.size()];
 //

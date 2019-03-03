@@ -1,19 +1,19 @@
 package org.cirdles.topsoil.app.data.row;
 
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.column.ColumnTree;
+import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 
 import static java.util.Arrays.asList;
 
 /**
  * Represents a sub-dataset within a {@link DataTable}. All rows in each {@code DataSegment} in a table map to the same
- * {@code ColumnTree}.
+ * {@code ColumnRoot}.
  *
  * @author marottajb
  *
  * @see DataTable
- * @see ColumnTree
+ * @see ColumnRoot
  */
 public class DataSegment extends DataComposite<DataRow> {
 

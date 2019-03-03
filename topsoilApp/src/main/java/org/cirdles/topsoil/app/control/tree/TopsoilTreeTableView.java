@@ -48,23 +48,22 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         this.table = table;
         this.getChildren().clear();
 
-        CheckBoxTreeItem<DataComponent> tableItem;
-        tableItem = new CheckBoxTreeItem<>(table);
-
+        CheckBoxTreeItem<DataComponent> rootItem;
+        rootItem = new CheckBoxTreeItem<>(table.getDataRoot());
         // Add TreeItems for model
-        for (DataSegment segment : table.getChildren()) {
-            tableItem.getChildren().add(makeTreeItemForDataSegment(segment));
+        for (DataSegment segment : table.getDataRoot().getChildren()) {
+            rootItem.getChildren().add(makeTreeItemForDataSegment(segment));
         }
-        if (tableItem.getChildren().size() == 1) {
-            tableItem.getChildren().get(0).setExpanded(true);
+        if (rootItem.getChildren().size() == 1) {
+            rootItem.getChildren().get(0).setExpanded(true);
         }
 
         // Add columns
         this.getColumns().add(makeLabelColumn());
         this.getColumns().add(makeCheckBoxColumn());
-        this.getColumns().addAll(makeTableColumnsForComposite(table.getColumnTree()));
+        this.getColumns().addAll(makeTableColumnsForComposite(table.getColumnRoot()));
 
-        this.setRoot(tableItem);
+        this.setRoot(rootItem);
         this.setShowRoot(false);
     }
 

@@ -4,9 +4,12 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import org.cirdles.topsoil.app.data.column.ColumnTree;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
+import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
@@ -22,23 +25,24 @@ import java.util.*;
 /**
  * Represents a table of column-based data. Each {@code DataTable} is composed of one or more {@code DataSegment}s,
  * which contain {@link DataRow}s representing single entries of data. A data table has a corresponding
- * {@link ColumnTree}, which defines the structure of the table's columns. Each {@code DataRow} contains {@code
+ * {@link ColumnRoot}, which defines the structure of the table's columns. Each {@code DataRow} contains {@code
  * DataValue}s which map {@code DataColumn}s to the row's values.
  *
  * @author marottajb
  *
- * @see ColumnTree
+ * @see ColumnRoot
  * @see DataComposite
  * @see DataRow
  * @see DataSegment
  */
-public class DataTable extends DataComposite<DataSegment> {
+public class DataTable implements Serializable {
 
     //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
 
     private static final long serialVersionUID = -2011274290514367222L;
+    private static final String DEFAULT_LABEL = "NewTable";
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -48,12 +52,23 @@ public class DataTable extends DataComposite<DataSegment> {
      * A bi-directional map of {@code Variable}s to the columns that are assigned to them for the table.
      */
     private HashBiMap<Variable<?>, DataColumn<?>> varMap = HashBiMap.create();
-    private ColumnTree columnTree;
+    private ColumnRoot columnRoot;
+    private DataRoot dataRoot;
     private DataTemplate template;
 
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
+
+    protected transient StringProperty label;
+    public StringProperty labelProperty() {
+        if (label == null) {
+            label = new SimpleStringProperty(DEFAULT_LABEL);
+        }
+        return label;
+    }
+    public String getLabel() { return labelProperty().get(); }
+    public void setLabel(String label) { labelProperty().set(label); }
 
     private transient ObjectProperty<IsotopeSystem> isotopeSystem;
     public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
@@ -62,12 +77,8 @@ public class DataTable extends DataComposite<DataSegment> {
         }
         return isotopeSystem;
     }
-    public final IsotopeSystem getIsotopeSystem() {
-        return isotopeSystemProperty().get();
-    }
-    public final void setIsotopeSystem(IsotopeSystem type ) {
-        isotopeSystemProperty().set(type);
-    }
+    public final IsotopeSystem getIsotopeSystem() { return isotopeSystemProperty().get(); }
+    public final void setIsotopeSystem(IsotopeSystem type ) { isotopeSystemProperty().set(type); }
 
     private transient ObjectProperty<Uncertainty> unctFormat;
     public ObjectProperty<Uncertainty> unctFormatProperty() {
@@ -76,38 +87,39 @@ public class DataTable extends DataComposite<DataSegment> {
         }
         return unctFormat;
     }
-    public final Uncertainty getUnctFormat() {
-        return unctFormatProperty().get();
-    }
-    public final void setUnctFormat(Uncertainty format) {
-        unctFormatProperty().set(format);
-    }
+    public final Uncertainty getUnctFormat() { return unctFormatProperty().get(); }
+    public final void setUnctFormat(Uncertainty format) { unctFormatProperty().set(format); }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public DataTable(DataTemplate template, String label, ColumnTree columnTree, List<DataSegment> dataSegments) {
-        this(template, label, columnTree, dataSegments, IsotopeSystem.GENERIC, Uncertainty.ONE_SIGMA_ABSOLUTE);
+    public DataTable(DataTemplate template, String label, ColumnRoot columnRoot, DataRoot dataRoot) {
+        this(template, label, columnRoot, dataRoot, IsotopeSystem.GENERIC, Uncertainty.ONE_SIGMA_ABSOLUTE);
     }
 
-    public DataTable(DataTemplate template, String label, ColumnTree columnTree, List<DataSegment> dataSegments,
+    public DataTable(DataTemplate template, String label, ColumnRoot columnRoot, DataRoot dataRoot,
                      IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
-        super(label);
+        setLabel(label);
         this.template = template;
         setIsotopeSystem(isotopeSystem);
         setUnctFormat(unctFormat);
-        // TODO Check that columnTree and dataSegments match columns
-        this.columnTree = columnTree;
-        this.children.addAll(dataSegments);
+        // TODO Check that columnRoot and dataSegments match columns
+        this.columnRoot = columnRoot;
+        this.dataRoot = dataRoot;
+        this.dataRoot.labelProperty().bind(labelProperty());
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public ColumnTree getColumnTree() {
-        return columnTree;
+    public ColumnRoot getColumnRoot() {
+        return columnRoot;
+    }
+
+    public DataRoot getDataRoot() {
+        return dataRoot;
     }
 
     public DataTemplate getTemplate() {
@@ -137,8 +149,8 @@ public class DataTable extends DataComposite<DataSegment> {
     public DataRow getRowByIndex(int index) {
         DataSegment segment;
         int rowCount = 0;
-        for (int segIndex = 0; segIndex < this.getChildren().size(); segIndex++) {
-            segment = getChildren().get(segIndex);
+        for (int segIndex = 0; segIndex < getDataRoot().getChildren().size(); segIndex++) {
+            segment = getDataRoot().getChildren().get(segIndex);
             if (index < rowCount + segment.getChildren().size()) {
                 return segment.getChildren().get(index - rowCount);
             }
@@ -149,15 +161,10 @@ public class DataTable extends DataComposite<DataSegment> {
 
     public <T extends Serializable> List<T> getValuesForColumn(DataColumn<T> column) {
         List<T> values = new ArrayList<>();
-        for (DataRow row : this.getLeafNodes()) {
+        for (DataRow row : this.getDataRoot().getLeafNodes()) {
             values.add(row.getPropertyForColumn(column).getValue());
         }
         return values;
-    }
-
-    @Override
-    public List<DataRow> getLeafNodes() {
-        return leafHelper(super.getLeafNodes());
     }
 
     @Override
@@ -170,7 +177,7 @@ public class DataTable extends DataComposite<DataSegment> {
             if (this.getUnctFormat() != other.getUnctFormat()) {
                 return false;
             }
-            if (! this.getColumnTree().equals(other.getColumnTree())) {
+            if (! this.getColumnRoot().equals(other.getColumnRoot())) {
                 return false;
             }
             if (! this.getVariableColumnMap().equals(other.getVariableColumnMap())) {
@@ -188,38 +195,20 @@ public class DataTable extends DataComposite<DataSegment> {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
+        out.writeUTF(getLabel());
         out.writeObject(varMap);
-        out.writeObject(columnTree);
+        out.writeObject(columnRoot);
         out.writeObject(getIsotopeSystem());
         out.writeObject(getUnctFormat());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+        setLabel(in.readUTF());
         varMap = (HashBiMap<Variable<?>, DataColumn<?>>) in.readObject();
-        columnTree = (ColumnTree) in.readObject();
+        columnRoot = (ColumnRoot) in.readObject();
         setIsotopeSystem((IsotopeSystem) in.readObject());
         setUnctFormat((Uncertainty) in.readObject());
-    }
-
-    /**
-     * Helper method to capture wildcards from getLeafNodes().
-     *
-     * @param leaves    List of leaves in this tree
-     * @param <T>       the type of the leaves in this tree
-     * @return          List o
-     */
-    private <T> List<DataRow> leafHelper(List<T> leaves) {
-        List<DataRow> rows = new ArrayList<>();
-        for (T leaf : leaves) {
-            if (leaf instanceof DataRow) {
-                rows.add((DataRow) leaf);
-            } else {
-                // @TODO Probably better to throw an exception here
-                return null;
-            }
-        }
-        return rows;
     }
 
 }

@@ -6,7 +6,7 @@ import org.cirdles.topsoil.app.data.composite.DataLeaf;
 import java.io.Serializable;
 
 /**
- * Represents a column of data, and acts as a leaf in a {@link ColumnTree}.
+ * Represents a column of data, and acts as a leaf in a {@link ColumnRoot}.
  *
  * @param <T>   the type of data for this DataColumn
  *
