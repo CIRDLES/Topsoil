@@ -3,8 +3,6 @@ package org.cirdles.topsoil.app.file.parser;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.data.column.NumberColumn;
-import org.cirdles.topsoil.app.data.column.StringColumn;
 import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
@@ -70,9 +68,9 @@ public class DefaultDataParser implements DataParser {
             }
             clazz = DataParser.getColumnDataType(rows, i, numHeaderRows);
             if (clazz == Number.class) {
-                columns.add(new NumberColumn(joiner.toString()));
+                columns.add(DataColumn.numberColumn(joiner.toString()));
             } else {
-                columns.add(new StringColumn(joiner.toString()));
+                columns.add(DataColumn.stringColumn(joiner.toString()));
             }
         }
         return new ColumnRoot(columns.toArray(new DataColumn[]{}));

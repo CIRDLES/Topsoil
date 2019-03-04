@@ -32,7 +32,7 @@ public class ColumnRoot extends DataComposite<DataComponent> {
 
     @Override
     public List<DataColumn<?>> getLeafNodes() {
-        return leafHelper(super.getLeafNodes());
+        return leavesAsDataColumns(super.getLeafNodes());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ColumnRoot extends DataComposite<DataComponent> {
      * @param <T>       the type of the leaves in this tree
      * @return          List o
      */
-    private <T> List<DataColumn<?>> leafHelper(List<T> leaves) {
+    private <T> List<DataColumn<?>> leavesAsDataColumns(List<T> leaves) {
         List<DataColumn<?>> columns = new ArrayList<>();
         for (T leaf : leaves) {
             if (leaf instanceof DataColumn) {

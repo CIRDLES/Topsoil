@@ -4,19 +4,19 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import org.cirdles.topsoil.app.data.column.NumberColumn;
-import org.cirdles.topsoil.app.data.column.StringColumn;
+import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.cirdles.topsoil.app.data.column.DataColumn.*;
 
 public class DataRowTest {
 
     @Test
     public void equals_test() {
 
-        NumberColumn col1 = new NumberColumn("firstCol");
-        StringColumn col2 = new StringColumn("secondCol");
+        DataColumn<Number> col1 = numberColumn("firstCol");
+        DataColumn<String> col2 = stringColumn("secondCol");
 
         DoubleProperty row1prop1 = new SimpleDoubleProperty(1.0);
         StringProperty row1prop2 = new SimpleStringProperty("2.0");

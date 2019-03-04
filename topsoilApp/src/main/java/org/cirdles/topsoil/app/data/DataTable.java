@@ -23,10 +23,6 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Represents a table of column-based data. Each {@code DataTable} is composed of one or more {@code DataSegment}s,
- * which contain {@link DataRow}s representing single entries of data. A data table has a corresponding
- * {@link ColumnRoot}, which defines the structure of the table's columns. Each {@code DataRow} contains {@code
- * DataValue}s which map {@code DataColumn}s to the row's values.
  *
  * @author marottajb
  *
@@ -48,9 +44,6 @@ public class DataTable extends Observable implements Serializable {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    /**
-     * A bi-directional map of {@code Variable}s to the columns that are assigned to them for the table.
-     */
     private HashBiMap<Variable<?>, DataColumn<?>> varMap = HashBiMap.create();
     private ColumnRoot columnRoot;
     private DataRoot dataRoot;
@@ -104,7 +97,6 @@ public class DataTable extends Observable implements Serializable {
         this.template = template;
         setIsotopeSystem(isotopeSystem);
         setUnctFormat(unctFormat);
-        // TODO Check that columnRoot and dataSegments match columns
         this.columnRoot = columnRoot;
         this.dataRoot = dataRoot;
         this.dataRoot.labelProperty().bind(labelProperty());
@@ -124,8 +116,16 @@ public class DataTable extends Observable implements Serializable {
         return columnRoot;
     }
 
+    public List<DataColumn<?>> getDataColumns() {
+        return columnRoot.getLeafNodes();
+    }
+
     public DataRoot getDataRoot() {
         return dataRoot;
+    }
+
+    public List<DataRow> getDataRows() {
+        return dataRoot.getLeafNodes();
     }
 
     public DataTemplate getTemplate() {
@@ -167,7 +167,7 @@ public class DataTable extends Observable implements Serializable {
 
     public <T extends Serializable> List<T> getValuesForColumn(DataColumn<T> column) {
         List<T> values = new ArrayList<>();
-        for (DataRow row : this.getDataRoot().getLeafNodes()) {
+        for (DataRow row : this.getDataRows()) {
             values.add(row.getPropertyForColumn(column).getValue());
         }
         return values;

@@ -114,9 +114,9 @@ public class Squid3DataParser implements DataParser {
             if (! str.equals("")) {
                 Class<?> clazz = DataParser.getColumnDataType(rows, colIndex, 5);
                 if (clazz == Number.class) {
-                    columns.add(new NumberColumn(joiner.toString()));
+                    columns.add(DataColumn.numberColumn(joiner.toString()));
                 } else {
-                    columns.add(new StringColumn(joiner.toString()));
+                    columns.add(DataColumn.stringColumn(joiner.toString()));
                 }
             }
         }

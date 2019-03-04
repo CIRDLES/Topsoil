@@ -5,8 +5,6 @@ import javafx.beans.property.SimpleStringProperty;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.column.NumberColumn;
-import org.cirdles.topsoil.app.data.column.StringColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.file.writer.TableFileExtension;
 import org.cirdles.topsoil.app.file.UnicodeBOMInputStream;
@@ -167,12 +165,12 @@ public interface DataParser {
         String str;
         for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
             str = row[colIndex];
-            if (columns.get(colIndex) instanceof NumberColumn) {
-                NumberColumn doubleCol = (NumberColumn) columns.get(colIndex);
+            if (columns.get(colIndex).getType() == Number.class) {
+                DataColumn<Number> doubleCol = (DataColumn<Number>) columns.get(colIndex);
                 newRow.setPropertyForColumn(doubleCol,
                         new SimpleObjectProperty<>(!str.isEmpty() ? Double.parseDouble(str) : null));
             } else {
-                StringColumn stringCol = (StringColumn) columns.get(colIndex);
+                DataColumn<String> stringCol = (DataColumn<String>) columns.get(colIndex);
                 newRow.setPropertyForColumn(stringCol, new SimpleStringProperty(row[colIndex]));
             }
         }

@@ -21,7 +21,7 @@ public class DataRoot extends DataComposite<DataSegment> {
 
     @Override
     public List<DataRow> getLeafNodes() {
-        return leafHelper(super.getLeafNodes());
+        return leavesAsDataRows(super.getLeafNodes());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class DataRoot extends DataComposite<DataSegment> {
      * @param <T>       the type of the leaves in this tree
      * @return          List o
      */
-    private <T> List<DataRow> leafHelper(List<T> leaves) {
+    private <T> List<DataRow> leavesAsDataRows(List<T> leaves) {
         List<DataRow> rows = new ArrayList<>();
         for (T leaf : leaves) {
             if (leaf instanceof DataRow) {

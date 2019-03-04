@@ -20,8 +20,8 @@ public class DefaultDataWriter implements DataWriter {
     @Override
     public boolean writeTableToFile(Path path, DataTable table) throws IOException {
         int columnDepth = table.getColumnRoot().getDepth();
-        List<DataRow> dataRows = table.getDataRoot().getLeafNodes();
-        List<DataColumn<?>> columns = table.getColumnRoot().getLeafNodes();
+        List<DataRow> dataRows = table.getDataRows();
+        List<DataColumn<?>> columns = table.getDataColumns();
         String[][] rows = new String[dataRows.size() + columnDepth][columns.size()];
 
         // Get columns

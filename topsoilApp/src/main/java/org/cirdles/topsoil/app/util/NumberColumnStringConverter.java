@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.data.column;
+package org.cirdles.topsoil.app.util;
 
 import javafx.util.StringConverter;
 
@@ -8,9 +8,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 
-public class NumberColumnStringConverter extends StringConverter<Number> implements Serializable {
+public class NumberColumnStringConverter extends StringConverter<Number> {
 
-    private static final long serialVersionUID = -1906996296754218388L;
     private static final String PATTERN_BASE = "0.0";
 
     //**********************************************//
@@ -63,28 +62,15 @@ public class NumberColumnStringConverter extends StringConverter<Number> impleme
     }
 
     public static int countFractionDigits(Number number) {
-        String str = Double.toString((double) number).toLowerCase();
-        if (str.contains("e")) {
-            return str.substring(str.indexOf(".") + 1, str.indexOf("e")).length();
-        } else {
-            return str.substring(str.indexOf(".") + 1).length();
+        if (number != null) {
+            String str = Double.toString((double) number).toLowerCase();
+            if (str.contains("e")) {
+                return str.substring(str.indexOf(".") + 1, str.indexOf("e")).length();
+            } else {
+                return str.substring(str.indexOf(".") + 1).length();
+            }
         }
-    }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeInt(numFractionDigits);
-        out.writeBoolean(isScientificNotation);
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        numFractionDigits = in.readInt();
-        isScientificNotation = in.readBoolean();
+        return -1;
     }
 
 }

@@ -50,7 +50,7 @@ public enum SampleData {
             table.setIsotopeSystem(isotopeSystem);
             table.setUnctFormat(unctFormat);
             if (this == UPB || this == UTH) {
-                List<DataColumn<?>> columns = table.getColumnRoot().getLeafNodes();
+                List<DataColumn<?>> columns = table.getDataColumns();
                 table.setColumnForVariable(IndependentVariable.X, columns.get(0));
                 table.setColumnForVariable(DependentVariable.SIGMA_X, columns.get(1));
                 table.setColumnForVariable(IndependentVariable.Y, columns.get(2));

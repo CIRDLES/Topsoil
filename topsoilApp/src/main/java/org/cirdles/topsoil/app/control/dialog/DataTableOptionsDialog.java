@@ -264,7 +264,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             VariableRow<?> row;
             for (Variable<?> variable : Variables.ALL) {
                 row = new VariableRow<>(variable);
-                for (DataColumn<?> column : table.getColumnRoot().getLeafNodes()) {
+                for (DataColumn<?> column : table.getDataColumns()) {
                     BooleanProperty property = new SimpleBooleanProperty(table.getVariableColumnMap().get(variable) == column);
                     row.put(column, property);
     //                selectionProperties.put(column, variable, property);

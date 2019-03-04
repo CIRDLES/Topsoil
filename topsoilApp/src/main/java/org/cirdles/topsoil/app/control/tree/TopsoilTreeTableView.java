@@ -7,17 +7,19 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.text.TextAlignment;
+import javafx.util.StringConverter;
+import org.cirdles.topsoil.app.data.DataUtils;
 import org.cirdles.topsoil.app.data.column.*;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * @author marottajb
@@ -127,9 +129,9 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             TreeTableColumn<DataComponent, ?> newColumn;
             if (node instanceof DataColumn) {
                 if (((DataColumn) node).getType().equals(Number.class)) {
-                    newColumn = makeTreeTableColumn((NumberColumn) node);
+                    newColumn = makeTreeTableColumn((DataColumn<Number>) node);
                 } else {
-                    newColumn = makeTreeTableColumn((StringColumn) node);
+                    newColumn = makeTreeTableColumn((DataColumn<String>) node);
                 }
             } else {
                 newColumn = makeTreeTableColumn((DataCategory) node);
@@ -143,19 +145,20 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     private <T extends Serializable> TreeTableColumn<DataComponent, T> makeTreeTableColumn(DataColumn<T> dataColumn) {
         TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
 
-        if (dataColumn instanceof NumberColumn) {
-            NumberColumn nCol = (NumberColumn) dataColumn;
+        if (dataColumn.getType() == Number.class) {
+            DataColumn<Number> nCol = (DataColumn<Number>) dataColumn;
             int maxFractionDigits = 0;
             for (Number n : table.getValuesForColumn(nCol)) {
                 if (n != null) {
                     maxFractionDigits = Math.max(maxFractionDigits, NumberColumnStringConverter.countFractionDigits(n));
                 }
             }
-            nCol.getStringConverter().setNumFractionDigits(maxFractionDigits);
+//            nCol.getStringConverter().setNumFractionDigits(maxFractionDigits);
         }
 
         newColumn.setCellFactory(param -> {
-            TextFieldTreeTableCell<DataComponent, T> cell = new TextFieldTreeTableCell<>(dataColumn.getStringConverter());
+            TextFieldTreeTableCell<DataComponent, T> cell =
+                    new TextFieldTreeTableCell<>((StringConverter<T>) DataUtils.stringConverterForDataColumn(table, dataColumn));
             cell.setAlignment(Pos.CENTER_RIGHT);
             cell.setEditable(false);
             return cell;
