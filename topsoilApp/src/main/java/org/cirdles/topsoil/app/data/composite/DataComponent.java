@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A {@code DataComponent} is the basic building block for reading in structured model. When parsing delimited model
@@ -17,13 +18,12 @@ import java.io.Serializable;
  *
  * @author marottajb
  */
-public abstract class DataComponent implements Serializable {
+public abstract class DataComponent {
 
     //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = -5314772239757317389L;
     protected static String DEFAULT_LABEL = "";
 
     //**********************************************//
@@ -71,40 +71,8 @@ public abstract class DataComponent implements Serializable {
     //**********************************************//
 
     @Override
-    public boolean equals(Object object) {
-        if (object instanceof DataComponent) {
-            DataComponent other = (DataComponent) object;
-            if (! this.getLabel().equals(other.getLabel())) {
-                return false;
-            }
-            if (this.isSelected() && !other.isSelected()
-                || !this.isSelected() && other.isSelected()) {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public String toString() {
         return label.get();
-    }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeUTF(getLabel());
-        out.writeBoolean(isSelected());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        setLabel(in.readUTF());
-        setSelected(in.readBoolean());
     }
 
 }

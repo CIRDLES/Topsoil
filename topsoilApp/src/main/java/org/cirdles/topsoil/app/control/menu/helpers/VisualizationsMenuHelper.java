@@ -133,7 +133,7 @@ public class VisualizationsMenuHelper {
     public static List<Map<String, Object>> getPlotDataFromTable(DataTable table) {
         List<Map<String, Object>> plotData = new ArrayList<>();
         List<DataSegment> tableAliquots = table.getDataRoot().getChildren();
-        BiMap<Variable<?>, DataColumn<?>> varMap = table.getVariableColumnMap();
+        Map<Variable<?>, DataColumn<?>> varMap = table.getVariableColumnMap();
 
         List<DataRow> rows;
         DataColumn column;

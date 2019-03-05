@@ -145,17 +145,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     private <T extends Serializable> TreeTableColumn<DataComponent, T> makeTreeTableColumn(DataColumn<T> dataColumn) {
         TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
 
-        if (dataColumn.getType() == Number.class) {
-            DataColumn<Number> nCol = (DataColumn<Number>) dataColumn;
-            int maxFractionDigits = 0;
-            for (Number n : table.getValuesForColumn(nCol)) {
-                if (n != null) {
-                    maxFractionDigits = Math.max(maxFractionDigits, NumberColumnStringConverter.countFractionDigits(n));
-                }
-            }
-//            nCol.getStringConverter().setNumFractionDigits(maxFractionDigits);
-        }
-
         newColumn.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, T> cell =
                     new TextFieldTreeTableCell<>((StringConverter<T>) DataUtils.stringConverterForDataColumn(table, dataColumn));

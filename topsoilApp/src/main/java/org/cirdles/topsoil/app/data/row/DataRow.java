@@ -21,12 +21,6 @@ import java.util.Map;
 public class DataRow extends DataLeaf {
 
     //**********************************************//
-    //                  CONSTANTS                   //
-    //**********************************************//
-
-    private static final long serialVersionUID = -8788288059689780519L;
-
-    //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
@@ -43,6 +37,10 @@ public class DataRow extends DataLeaf {
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
+    public Map<DataColumn<?>, Property<?>> getProperties() {
+        return properties;
+    }
 
     /**
      * Returns the property for the provided {@code DataColumn}.
@@ -76,77 +74,6 @@ public class DataRow extends DataLeaf {
             return true;
         }
         return false;
-    }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-
-        SerializableValue<?> sValue;
-        // TODO Ennsure that column and property have same parameterized type
-        out.writeInt(properties.size());
-        for (Map.Entry<DataColumn<?>, Property<?>> entry : properties.entrySet()) {
-            if (entry.getKey().getType() == Number.class) {
-                sValue = newSerializableValue((DataColumn<Number>) entry.getKey(), (Property<Number>) entry.getValue());
-            } else {
-                sValue = newSerializableValue((DataColumn<String>) entry.getKey(), (Property<String>) entry.getValue());
-            }
-            out.writeObject(sValue);
-        }
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        properties = new HashMap<>();
-
-        SerializableValue<?> sValue;
-        int numValues = in.readInt();
-        for (int i = 0; i < numValues; i++) {
-            sValue = (SerializableValue<?>) in.readObject();
-            properties.put(sValue.getColumn(), sValue.getProperty());
-        }
-    }
-
-    private <T extends Serializable> SerializableValue<T> newSerializableValue(DataColumn<T> column, Property<T> property) {
-        return new SerializableValue<>(column, property);
-    }
-
-    //**********************************************//
-    //                INNER CLASSES                 //
-    //**********************************************//
-
-    class SerializableValue<T extends Serializable> implements Serializable {
-
-        private DataColumn<T> column;
-        private T value;
-        private Class<? extends Property> propertyClass;
-
-        SerializableValue(DataColumn<T> column, Property<T> property) {
-            this.column = column;
-            this.value = property.getValue();
-            this.propertyClass = property.getClass();
-        }
-
-        DataColumn<T> getColumn() {
-            return column;
-        }
-
-        Property<T> getProperty() {
-            try {
-                if (propertyClass == SimpleObjectProperty.class) {
-                    return propertyClass.getConstructor(Object.class).newInstance(value);
-                } else {
-                    return propertyClass.getConstructor(value.getClass()).newInstance(value);
-                }
-            } catch (NoSuchMethodException|IllegalAccessException|InstantiationException|InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
     }
 
 }

@@ -18,12 +18,6 @@ import static java.util.Arrays.asList;
 public class DataSegment extends DataComposite<DataRow> {
 
     //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
-
-    private static final long serialVersionUID = -8761683538568385682L;
-
-    //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 

@@ -31,20 +31,19 @@ import java.util.*;
  * @see DataRow
  * @see DataSegment
  */
-public class DataTable extends Observable implements Serializable {
+public class DataTable extends Observable {
 
     //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final long serialVersionUID = -2011274290514367222L;
     private static final String DEFAULT_LABEL = "NewTable";
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private HashBiMap<Variable<?>, DataColumn<?>> varMap = HashBiMap.create();
+    private Map<Variable<?>, DataColumn<?>> varMap = new HashMap<>();
     private ColumnRoot columnRoot;
     private DataRoot dataRoot;
     private DataTemplate template;
@@ -132,7 +131,7 @@ public class DataTable extends Observable implements Serializable {
         return template;
     }
 
-    public BiMap<Variable<?>, DataColumn<?>> getVariableColumnMap() {
+    public Map<Variable<?>, DataColumn<?>> getVariableColumnMap() {
         return HashBiMap.create(varMap);
     }
 
@@ -168,53 +167,13 @@ public class DataTable extends Observable implements Serializable {
     public <T extends Serializable> List<T> getValuesForColumn(DataColumn<T> column) {
         List<T> values = new ArrayList<>();
         for (DataRow row : this.getDataRows()) {
-            values.add(row.getPropertyForColumn(column).getValue());
+            if (row.getPropertyForColumn(column) == null) {
+                values.add(null);
+            } else {
+                values.add(row.getPropertyForColumn(column).getValue());
+            }
         }
         return values;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof DataTable) {
-            DataTable other = (DataTable) object;
-            if (this.getIsotopeSystem() != other.getIsotopeSystem()) {
-                return false;
-            }
-            if (this.getUnctFormat() != other.getUnctFormat()) {
-                return false;
-            }
-            if (! this.getColumnRoot().equals(other.getColumnRoot())) {
-                return false;
-            }
-            if (! this.getVariableColumnMap().equals(other.getVariableColumnMap())) {
-                return false;
-            }
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeUTF(getLabel());
-        out.writeObject(varMap);
-        out.writeObject(columnRoot);
-        out.writeObject(getIsotopeSystem());
-        out.writeObject(getUnctFormat());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        setLabel(in.readUTF());
-        varMap = (HashBiMap<Variable<?>, DataColumn<?>>) in.readObject();
-        columnRoot = (ColumnRoot) in.readObject();
-        setIsotopeSystem((IsotopeSystem) in.readObject());
-        setUnctFormat((Uncertainty) in.readObject());
     }
 
 }

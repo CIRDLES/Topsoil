@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.file;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import org.cirdles.topsoil.app.data.SerializableProject;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.io.*;
@@ -36,7 +37,7 @@ public class ProjectSerializer {
     public static boolean serialize(Path projectPath, TopsoilProject project) throws IOException {
         OutputStream out = Files.newOutputStream(projectPath);
         ObjectOutputStream oos = new ObjectOutputStream(out);
-        oos.writeObject(project);
+        oos.writeObject(new SerializableProject(project));
         oos.close();
         out.close();
         currentProjectPath.set(projectPath);
@@ -45,7 +46,7 @@ public class ProjectSerializer {
 
     public static TopsoilProject deserialize(Path projectPath) throws IOException {
         try (InputStream in = Files.newInputStream(projectPath); ObjectInputStream ois = new ObjectInputStream(in)) {
-            TopsoilProject project = (TopsoilProject) ois.readObject();
+            TopsoilProject project = ((SerializableProject) ois.readObject()).reconstruct();
             currentProjectPath.set(projectPath);
             return project;
         } catch (InvalidClassException | ClassNotFoundException e) {

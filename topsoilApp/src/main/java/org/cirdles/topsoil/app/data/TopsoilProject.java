@@ -21,13 +21,7 @@ import java.util.List;
  *
  * @author marottajb
  */
-public class TopsoilProject implements Serializable {
-
-    //**********************************************//
-    //                  CONSTANTS                   //
-    //**********************************************//
-
-    private static final long serialVersionUID = -3769935813685997131L;
+public class TopsoilProject {
 
     //**********************************************//
     //                  PROPERTIES                  //
@@ -75,44 +69,6 @@ public class TopsoilProject implements Serializable {
 
     public void removeOpenPlot(PlotType plotType, DataTable dataTable) {
         openPlots.remove(plotType, dataTable);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof TopsoilProject) {
-            TopsoilProject other = (TopsoilProject) object;
-            if (dataTables.size() != other.getDataTables().size()) {
-                return false;
-            }
-            for (int i = 0; i < dataTables.size(); i++) {
-                if (! dataTables.get(i).equals(other.getDataTables().get(i))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeObject(new ArrayList<>(dataTables));
-        for (Lambda lambda : Lambda.values()) {
-            out.writeDouble(lambda.getValue());
-        }
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        dataTables = FXCollections.observableArrayList();
-        dataTables.addAll((List<DataTable>) in.readObject());
-        for (Lambda lambda : Lambda.values()) {
-            lambda.setValue(in.readDouble());
-        }
     }
 
 }

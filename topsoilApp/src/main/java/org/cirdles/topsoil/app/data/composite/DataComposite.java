@@ -11,12 +11,6 @@ import static java.util.Arrays.asList;
 public class DataComposite<T extends DataComponent> extends DataComponent {
 
     //**********************************************//
-    //                  CONSTANTS                   //
-    //**********************************************//
-
-    private static final long serialVersionUID = -7225522174882434258L;
-
-    //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
@@ -144,24 +138,4 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
         return maxDepth + 1;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof DataComposite<?>) {
-            DataComposite<?> other = (DataComposite<?>) object;
-            if (! super.equals(other)) {
-                return false;
-            }
-            if (this.getChildren().size() != other.getChildren().size()) {
-                return false;
-            }
-            for (int i = 0; i < this.getChildren().size(); i++) {
-                if (! this.getChildren().get(i).equals(other.getChildren().get(i))) {
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
-        return true;
-    }
 }

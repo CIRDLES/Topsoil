@@ -16,8 +16,6 @@ import java.util.List;
  */
 public class ColumnRoot extends DataComposite<DataComponent> {
 
-    private static final long serialVersionUID = -3676485771872253255L;
-
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
@@ -33,26 +31,6 @@ public class ColumnRoot extends DataComposite<DataComponent> {
     @Override
     public List<DataColumn<?>> getLeafNodes() {
         return leavesAsDataColumns(super.getLeafNodes());
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof ColumnRoot) {
-            ColumnRoot other = (ColumnRoot) object;
-            if (! this.getLabel().equals(other.getLabel())) {
-                return false;
-            }
-
-            for (int i = 0; i < this.getChildren().size(); i++) {
-                DataComponent thisChild = this.getChildren().get(i);
-                DataComponent otherChild = other.getChildren().get(i);
-                if (! thisChild.equals(otherChild)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
     }
 
     @Override
