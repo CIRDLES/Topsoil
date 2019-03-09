@@ -8,7 +8,7 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
-import org.cirdles.topsoil.app.util.SampleData;
+import org.cirdles.topsoil.app.util.ExampleData;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.file.ProjectSerializer;
@@ -96,12 +96,12 @@ public class FileMenuHelper {
     }
 
     /**
-     * Returns a {@code DataTable} for the provided {@code SampleData}.
+     * Returns a {@code DataTable} for the provided {@code ExampleData}.
      *
-     * @param data  SampleData
+     * @param data  ExampleData
      * @return      DataTable from data
      */
-    public static DataTable openSampleData(SampleData data) {
+    public static DataTable openExampleData(ExampleData data) {
         return data.getDataTable();
     }
 

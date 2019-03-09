@@ -13,7 +13,7 @@ import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.util.SampleData;
+import org.cirdles.topsoil.app.util.ExampleData;
 import org.cirdles.topsoil.app.file.ProjectSerializer;
 import org.cirdles.topsoil.app.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.file.parser.DataParser;
@@ -34,10 +34,10 @@ public class FileMenu extends Menu {
     private MenuItem newProjectItem;
     private MenuItem openProjectItem;
     private Menu openRecentProjectMenu;
-    private Menu openSampleMenu;
-    private MenuItem openUPbSampleItem;
-    private MenuItem openUThSampleItem;
-    private MenuItem openSquid3SampleItem;
+    private Menu openExampleMenu;
+    private MenuItem openUPbExampleItem;
+    private MenuItem openUThExampleItem;
+    private MenuItem openSquid3ExampleItem;
     private MenuItem saveProjectItem;
     private MenuItem saveProjectAsItem;
     private MenuItem closeProjectItem;
@@ -94,40 +94,40 @@ public class FileMenu extends Menu {
             openRecentProjectMenu.getItems().add(placeholder);
         });
 
-        openUPbSampleItem = new MenuItem("Uranium-Lead");
-        openUPbSampleItem.setOnAction(event -> {
+        openUPbExampleItem = new MenuItem("Uranium-Lead");
+        openUPbExampleItem.setOnAction(event -> {
             if (MenuUtils.isDataOpen()) {
-                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.UPB));
+                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openExampleData(ExampleData.UPB));
             } else {
                 Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
-                        FileMenuHelper.openSampleData(SampleData.UPB)))
+                        FileMenuHelper.openExampleData(ExampleData.UPB)))
                 );
             }
         });
-        openUThSampleItem = new MenuItem("Uranium-Thorium");
-        openUThSampleItem.setOnAction(event -> {
+        openUThExampleItem = new MenuItem("Uranium-Thorium");
+        openUThExampleItem.setOnAction(event -> {
             if (MenuUtils.isDataOpen()) {
-                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.UTH));
+                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openExampleData(ExampleData.UTH));
             } else {
                 Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
-                        FileMenuHelper.openSampleData(SampleData.UTH)))
+                        FileMenuHelper.openExampleData(ExampleData.UTH)))
                 );
             }
         });
-        openSquid3SampleItem = new MenuItem("Squid 3 Data");
-        openSquid3SampleItem.setOnAction(event -> {
+        openSquid3ExampleItem = new MenuItem("Squid 3 Data");
+        openSquid3ExampleItem.setOnAction(event -> {
             if (MenuUtils.isDataOpen()) {
-                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openSampleData(SampleData.SQUID_3));
+                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openExampleData(ExampleData.SQUID_3));
             } else {
                 Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
-                        FileMenuHelper.openSampleData(SampleData.SQUID_3)))
+                        FileMenuHelper.openExampleData(ExampleData.SQUID_3)))
                 );
             }
         });
-        openSampleMenu = new Menu("Open Sample", null,
-                openUPbSampleItem,
-                openUThSampleItem,
-                openSquid3SampleItem
+        openExampleMenu = new Menu("Open Example", null,
+                openUPbExampleItem,
+                openUThExampleItem,
+                openSquid3ExampleItem
         );
 
         saveProjectItem = new MenuItem("Save");
@@ -240,7 +240,7 @@ public class FileMenu extends Menu {
                 newMenu,
                 openProjectItem,
                 openRecentProjectMenu,
-                openSampleMenu,
+                openExampleMenu,
                 saveProjectItem,
                 saveProjectAsItem,
                 closeProjectItem,
