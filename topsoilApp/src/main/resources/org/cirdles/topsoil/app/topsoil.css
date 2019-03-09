@@ -1,7 +1,6 @@
 
-.root, .hyperlink {
-    -fx-font-family: "Arimo";
-    /*-fx-font-family: "Lucida Sans";*/
+.root {
+    -fx-font-family: SansSerif;
     -fx-font-smoothing-type: lcd;
 }
 

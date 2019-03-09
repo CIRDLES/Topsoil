@@ -13,7 +13,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.FXMLUtils;
@@ -21,7 +20,6 @@ import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.file.RecentFiles;
-import org.cirdles.topsoil.app.style.StyleLoader;
 import org.cirdles.topsoil.app.file.ProjectSerializer;
 
 import java.io.IOException;
@@ -39,7 +37,7 @@ public class Topsoil extends Application {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final String ARIMO_FONT = "style/font/arimo/Arimo-Regular.ttf";
+    private static final String STYLESHEET = "topsoil.css";
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -62,17 +60,14 @@ public class Topsoil extends Application {
 
         Scene scene = new Scene(controller, 1200, 750);
 
-        ResourceExtractor resourceExtractor = new ResourceExtractor(Topsoil.class);
-        // Load font
         try {
-            Font.loadFont(resourceExtractor.extractResourceAsFile(ARIMO_FONT).toURI().toURL().toExternalForm(), 14);
+            ResourceExtractor re = new ResourceExtractor(Topsoil.class);
+            String stylesheet = re.extractResourceAsPath(STYLESHEET).toUri().toURL().toExternalForm();
+            scene.getStylesheets().add(stylesheet);
+            StyleManager.getInstance().setDefaultUserAgentStylesheet(stylesheet);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot load stylesheet: " + STYLESHEET, e);
         }
-
-        StyleLoader styleLoader = new StyleLoader();
-        scene.getStylesheets().addAll(styleLoader.getStylesheets());
-        StyleManager.getInstance().setUserAgentStylesheets(styleLoader.getStylesheets());
 
         primaryStage.setScene(scene);
         primaryStage.show();
