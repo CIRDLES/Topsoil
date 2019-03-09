@@ -35,7 +35,7 @@ public class ColumnRoot extends DataComposite<DataComponent> {
 
     @Override
     public String toString() {
-        return "ColumnRoot" + Arrays.toString(children.toArray());
+        return getLabel();
     }
 
     //**********************************************//

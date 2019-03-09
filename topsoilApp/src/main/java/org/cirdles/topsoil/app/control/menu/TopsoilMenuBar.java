@@ -6,6 +6,7 @@ import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
+import org.cirdles.topsoil.app.file.ProjectSerializer;
 import org.cirdles.topsoil.plot.PlotType;
 
 /**
@@ -42,7 +43,7 @@ public class TopsoilMenuBar extends MenuBar {
                                  tableOptionsItem
         );
         editMenu.setOnShown(event -> {
-            tableOptionsItem.setDisable(! MenuUtils.isDataOpen());
+            tableOptionsItem.setDisable(ProjectSerializer.getCurrentProject() == null);
         });
 
         return editMenu;
@@ -81,7 +82,7 @@ public class TopsoilMenuBar extends MenuBar {
                                            generatePlotItem
         );
         visualizationsMenu.setOnShown(event -> {
-            generatePlotItem.setDisable(! MenuUtils.isDataOpen());
+            generatePlotItem.setDisable(ProjectSerializer.getCurrentProject() == null);
         });
         return visualizationsMenu;
     }

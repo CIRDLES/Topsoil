@@ -7,7 +7,6 @@ import javafx.scene.control.cell.CheckBoxTreeCell;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
-import org.cirdles.topsoil.app.data.composite.DataComposite;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +22,10 @@ public class ColumnTreeView extends TreeView<DataComponent> {
 
     public ColumnTreeView(ColumnRoot columnRoot) {
         this.setCellFactory(CheckBoxTreeCell.forTreeView());
-        final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataComposite<>("dummy"));
+        final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataCategory("(all columns)"));
+        rootItem.setSelected(true);
+        rootItem.setExpanded(true);
         this.setRoot(rootItem);
-        this.setShowRoot(false);
         for (DataComponent component : columnRoot.getChildren()) {
             addTreeItem(component, getRoot());
         }
@@ -45,10 +45,9 @@ public class ColumnTreeView extends TreeView<DataComponent> {
 
     private void addTreeItem(DataComponent component, TreeItem<DataComponent> parent) {
         CheckBoxTreeItem<DataComponent> item = new CheckBoxTreeItem<>(component, null, component.isSelected());
-        if (component instanceof DataComposite) {
-            for (DataComponent child : ((DataComposite<DataComponent>) component).getChildren()) {
+        if (component instanceof DataCategory) {
+            for (DataComponent child : ((DataCategory) component).getChildren()) {
                 if (! child.isSelected() && item.isSelected()) {
-//                    item.setSelected(false);
                     item.setIndeterminate(true);
                 }
                 addTreeItem(child, item);

@@ -2,6 +2,10 @@ package org.cirdles.topsoil.app.data;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
@@ -12,6 +16,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +32,27 @@ public class TopsoilProject {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private transient ObservableList<DataTable> dataTables = FXCollections.observableArrayList();
+    private ObservableList<DataTable> dataTables = FXCollections.observableArrayList();
+    public ObservableList<DataTable> getDataTables() {
+        return dataTables;
+    }
+
+    private ObjectProperty<Path> path = new SimpleObjectProperty<>();
+    public ObjectProperty<Path> pathProperty() {
+        return path;
+    }
+    public Path getPath() {
+        return path.get();
+    }
+    public void setPath(Path path) {
+        this.path.set(path);
+    }
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private transient Table<PlotType, DataTable, TopsoilPlotView> openPlots = HashBasedTable.create();
+    private Table<PlotType, DataTable, TopsoilPlotView> openPlots = HashBasedTable.create();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -46,10 +65,6 @@ public class TopsoilProject {
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
-
-    public ObservableList<DataTable> getDataTables() {
-        return dataTables;
-    }
 
     public void addDataTable(DataTable table) {
         dataTables.add(table);

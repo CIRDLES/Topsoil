@@ -176,4 +176,9 @@ public class DataTable extends Observable {
         return values;
     }
 
+    @Override
+    public String toString() {
+        return getLabel();
+    }
+
 }

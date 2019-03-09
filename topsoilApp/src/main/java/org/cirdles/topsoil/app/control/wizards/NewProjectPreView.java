@@ -9,6 +9,7 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
+import org.cirdles.topsoil.variable.Variable;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -72,6 +73,7 @@ class NewProjectPreView extends WizardPane {
             for (Map.Entry<DataComponent, Boolean> entry : selections.entrySet()) {
                 entry.getKey().setSelected(entry.getValue());
             }
+            preViewTab.getTable().setColumnsForAllVariables(((PreViewTab) tab).controller.getVariableAssignments());
             preViewTab.getTable().setIsotopeSystem(preViewTab.getController().getIsotopeSystem());
             preViewTab.getTable().setUnctFormat(preViewTab.getController().getUncertainty());
             tables.add(preViewTab.getTable());

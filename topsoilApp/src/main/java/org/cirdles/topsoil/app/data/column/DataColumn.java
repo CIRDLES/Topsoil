@@ -47,4 +47,9 @@ public class DataColumn<T extends Serializable> extends DataLeaf {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return getLabel();
+    }
+
 }

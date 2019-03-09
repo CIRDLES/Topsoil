@@ -16,18 +16,15 @@ import java.nio.file.Path;
  */
 public class ProjectSerializer {
 
-    /**
-     * An {@code ObjectProperty} containing the open .topsoil project {@code File}, if it exists.
-     */
-    private static ObjectProperty<Path> currentProjectPath = new SimpleObjectProperty<>(null);
-    public static ObjectProperty<Path> currentProjectPathProperty() {
-        return currentProjectPath;
+    private static ObjectProperty<TopsoilProject> currentProject = new SimpleObjectProperty<>(null);
+    public static ObjectProperty<TopsoilProject> currentProjectProperty() {
+        return currentProject;
     }
-    public static Path getCurrentProjectPath() {
-        return currentProjectPathProperty().get();
+    public static TopsoilProject getCurrentProject() {
+        return currentProject.get();
     }
-    public static void setCurrentProjectPath(Path path) {
-        currentProjectPathProperty().set(path);
+    public static void setCurrentProject(TopsoilProject project) {
+        currentProject.set(project);
     }
 
     //**********************************************//
@@ -38,19 +35,20 @@ public class ProjectSerializer {
         OutputStream out = Files.newOutputStream(projectPath);
         ObjectOutputStream oos = new ObjectOutputStream(out);
         oos.writeObject(new SerializableProject(project));
+        project.setPath(projectPath);
         oos.close();
         out.close();
-        currentProjectPath.set(projectPath);
         return true;
     }
 
     public static TopsoilProject deserialize(Path projectPath) throws IOException {
         try (InputStream in = Files.newInputStream(projectPath); ObjectInputStream ois = new ObjectInputStream(in)) {
             TopsoilProject project = ((SerializableProject) ois.readObject()).reconstruct();
-            currentProjectPath.set(projectPath);
+            project.setPath(projectPath);
             return project;
         } catch (InvalidClassException | ClassNotFoundException e) {
             throw new IOException(e);
         }
     }
+
 }

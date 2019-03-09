@@ -21,7 +21,6 @@ public class NewProjectWizard extends Wizard {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private final NewProjectTitleView titleView = new NewProjectTitleView();
     private final NewProjectSourcesView sourcesView = new NewProjectSourcesView();
     private final NewProjectPreView preView = new NewProjectPreView();
 
@@ -31,7 +30,6 @@ public class NewProjectWizard extends Wizard {
 
     private NewProjectWizard() {
         LinearFlow pageOrder = new Wizard.LinearFlow(
-                titleView,
                 sourcesView,
                 preView
         );
@@ -64,8 +62,6 @@ public class NewProjectWizard extends Wizard {
     //**********************************************//
 
     public class Key {
-        public static final String TITLE = "TITLE";
-        public static final String LOCATION = "LOCATION";
         public static final String TABLES = "TABLES";
     }
 

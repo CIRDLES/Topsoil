@@ -18,9 +18,4 @@ public class DataLeaf extends DataComponent {
         setLabel(title);
     }
 
-    @Override
-    public String toString() {
-        return "[" + getLabel() + "]";
-    }
-
 }

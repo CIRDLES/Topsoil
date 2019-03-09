@@ -117,12 +117,6 @@ public class Topsoil extends Application {
         //**********************************************//
 
         private BooleanProperty dataShowing = new SimpleBooleanProperty(false);
-        public BooleanProperty dataShowingProperty() {
-            return dataShowing;
-        }
-        public boolean isDataShowing() {
-            return (mainContentPane.getChildren().get(0) instanceof ProjectView);
-        }
 
         //**********************************************//
         //                 CONSTRUCTORS                 //
@@ -132,10 +126,14 @@ public class Topsoil extends Application {
             this.primaryStage = primaryStage;
             // If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
             this.primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
-                return ProjectSerializer.getCurrentProjectPath() != null
-                        ? "Topsoil - " + ProjectSerializer.getCurrentProjectPath().getFileName().toString()
-                        : "Topsoil";
-            }, ProjectSerializer.currentProjectPathProperty()));
+                if (ProjectSerializer.getCurrentProject() != null) {
+                    Path path = ProjectSerializer.getCurrentProject().getPath();
+                    if (path != null) {
+                        return "Topsoil - " + path.getFileName().toString();
+                    }
+                }
+                return "Topsoil";
+            }, ProjectSerializer.currentProjectProperty()));
             this.primaryStage.setOnCloseRequest(event -> {
                 event.consume();
                 FileMenuHelper.exitTopsoilSafely();

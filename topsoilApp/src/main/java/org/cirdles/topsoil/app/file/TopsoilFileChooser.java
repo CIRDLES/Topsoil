@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.app.file;
 
 import javafx.stage.FileChooser;
+import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,12 +31,14 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
 
-        Path path = ProjectSerializer.getCurrentProjectPath();
-        if (path != null) {
-
-            if (path.getParent() == null) {
-                path = Paths.get(System.getProperty("user.home"));
-                fileChooser.setInitialDirectory(path.toFile());
+        TopsoilProject project = ProjectSerializer.getCurrentProject();
+        if (project != null) {
+            Path path = project.getPath();
+            if (path != null) {
+                if (path.getParent() == null) {
+                    path = Paths.get(System.getProperty("user.home"));
+                    fileChooser.setInitialDirectory(path.toFile());
+                }
             }
         }
         return fileChooser;
@@ -53,12 +56,15 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil")
         );
 
-        Path path = ProjectSerializer.getCurrentProjectPath();
-        if (path != null) {
-            if (path.getParent() == null) {
-                path = Paths.get(System.getProperty("user.home"));
-                fileChooser.setInitialDirectory(path.toFile());
-                fileChooser.setInitialFileName(path.getFileName().toString());
+        TopsoilProject project = ProjectSerializer.getCurrentProject();
+        if (project != null) {
+            Path path = project.getPath();
+            if (path != null) {
+                if (path.getParent() == null) {
+                    path = Paths.get(System.getProperty("user.home"));
+                    fileChooser.setInitialDirectory(path.toFile());
+                    fileChooser.setInitialFileName(path.getFileName().toString());
+                }
             }
         }
         return fileChooser;

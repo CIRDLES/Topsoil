@@ -4,6 +4,7 @@ import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.file.ProjectSerializer;
 
 /**
  * Utility methods for menu actions in {@link TopsoilMenuBar} and its associated helpers.
@@ -21,22 +22,12 @@ import org.cirdles.topsoil.app.data.DataTable;
 public class MenuUtils {
 
     /**
-     * Returns true if there is data showing; in this case, if there is a {@link ProjectView} set as the main content
-     * in {@link Topsoil.MainController}.
-     *
-     * @return  true if some data is showing
-     */
-    public static boolean isDataOpen() {
-        return Topsoil.getController().getMainContent() instanceof ProjectView;
-    }
-
-    /**
      * Returns the currently displayed {@code ProjectView}, if there is one. Otherwise, returns null.
      *
      * @return  current ProjectView; else null
      */
     public static ProjectView getProjectView() {
-        if (isDataOpen()) {
+        if (ProjectSerializer.getCurrentProject() != null) {
             return (ProjectView) Topsoil.getController().getMainContent();
         }
         return null;
@@ -49,7 +40,7 @@ public class MenuUtils {
      * @return  current tab; else null
      */
     public static ProjectTableTab getSelectedTableTab() {
-        if (isDataOpen()) {
+        if (ProjectSerializer.getCurrentProject() != null) {
             ProjectView projectView = getProjectView();
             if (projectView != null) {
                 return (ProjectTableTab) projectView.getTabPane().getSelectionModel().getSelectedItem();
@@ -64,7 +55,7 @@ public class MenuUtils {
      * @return  current DataTable; else null
      */
     public static DataTable getCurrentTable() {
-        if (isDataOpen()) {
+        if (ProjectSerializer.getCurrentProject() != null) {
             ProjectTableTab tab = getSelectedTableTab();
             if (tab != null) {
                 return tab.getDataTable();

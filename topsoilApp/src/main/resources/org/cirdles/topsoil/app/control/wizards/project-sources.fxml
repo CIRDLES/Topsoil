@@ -10,8 +10,12 @@
 
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" type="WizardPane" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
    <content>
-      <VBox spacing="5.0">
+      <VBox alignment="TOP_CENTER" spacing="5.0">
          <children>
+            <Label text="Select source files (.csv, .tsv, .txt).">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></Label>
             <HBox alignment="CENTER" spacing="10.0">
                <VBox.margin>
                   <Insets />
@@ -38,9 +42,6 @@
    </content>
    <header>
       <VBox alignment="TOP_CENTER">
-         <children>
-            <Label text="Select source files (.csv, .tsv, .txt)." />
-         </children>
          <opaqueInsets>
             <Insets />
          </opaqueInsets>

@@ -95,35 +95,11 @@ public class FileMenu extends Menu {
         });
 
         openUPbExampleItem = new MenuItem("Uranium-Lead");
-        openUPbExampleItem.setOnAction(event -> {
-            if (MenuUtils.isDataOpen()) {
-                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openExampleData(ExampleData.UPB));
-            } else {
-                Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
-                        FileMenuHelper.openExampleData(ExampleData.UPB)))
-                );
-            }
-        });
+        openUPbExampleItem.setOnAction(event -> openExampleTable(ExampleData.UPB));
         openUThExampleItem = new MenuItem("Uranium-Thorium");
-        openUThExampleItem.setOnAction(event -> {
-            if (MenuUtils.isDataOpen()) {
-                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openExampleData(ExampleData.UTH));
-            } else {
-                Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
-                        FileMenuHelper.openExampleData(ExampleData.UTH)))
-                );
-            }
-        });
+        openUThExampleItem.setOnAction(event -> openExampleTable(ExampleData.UTH));
         openSquid3ExampleItem = new MenuItem("Squid 3 Data");
-        openSquid3ExampleItem.setOnAction(event -> {
-            if (MenuUtils.isDataOpen()) {
-                MenuUtils.getProjectView().getProject().addDataTable(FileMenuHelper.openExampleData(ExampleData.SQUID_3));
-            } else {
-                Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(
-                        FileMenuHelper.openExampleData(ExampleData.SQUID_3)))
-                );
-            }
-        });
+        openSquid3ExampleItem.setOnAction(event -> openExampleTable(ExampleData.SQUID_3));
         openExampleMenu = new Menu("Open Example", null,
                 openUPbExampleItem,
                 openUThExampleItem,
@@ -132,12 +108,12 @@ public class FileMenu extends Menu {
 
         saveProjectItem = new MenuItem("Save");
         saveProjectItem.setOnAction(event -> {
-            FileMenuHelper.saveProject(MenuUtils.getProjectView().getProject());
+            FileMenuHelper.saveProject(ProjectSerializer.getCurrentProject());
         });
         saveProjectAsItem = new MenuItem("Save As...");
         saveProjectAsItem.setOnAction(event -> {
-            if (MenuUtils.isDataOpen()) {
-                if (! FileMenuHelper.saveProjectAs(MenuUtils.getProjectView().getProject())) {
+            if (ProjectSerializer.getCurrentProject() != null) {
+                if (! FileMenuHelper.saveProjectAs(ProjectSerializer.getCurrentProject())) {
                     TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
                                                          "Error",
                                                          "Could not save project.");
@@ -146,13 +122,7 @@ public class FileMenu extends Menu {
         });
         closeProjectItem = new MenuItem("Close Project");
         closeProjectItem.setOnAction(event -> {
-            if (ProjectSerializer.getCurrentProjectPath() != null) {
-                if (! FileMenuHelper.closeProject()) {
-                    TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
-                                                         "Error",
-                                                         "Could not close project.");
-                }
-            }
+            FileMenuHelper.closeProject();
         });
 
         fromFileItem = new MenuItem("From File");
@@ -170,10 +140,12 @@ public class FileMenu extends Menu {
                     if (delimiter != null && template != null) {
                         DataTable table = FileMenuHelper.importTableFromFile(path, delimiter, template);
                         if (DataTableOptionsDialog.showDialog(table, Topsoil.getController().getPrimaryStage())) {
-                            if (MenuUtils.isDataOpen()) {
-                                MenuUtils.getProjectView().getProject().addDataTable(table);
+                            if (ProjectSerializer.getCurrentProject() != null) {
+                                ProjectSerializer.getCurrentProject().addDataTable(table);
                             } else {
-                                Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(table)));
+                                TopsoilProject project = new TopsoilProject(table);
+                                project.setPath(path);
+                                Topsoil.getController().setProjectView(new ProjectView(project));
                             }
                         }
                     }
@@ -197,8 +169,8 @@ public class FileMenu extends Menu {
                 if (delimiter != null && template != null) {
                     DataTable table = FileMenuHelper.importTableFromString(content, delimiter, template);
                     if (DataTableOptionsDialog.showDialog(table, Topsoil.getController().getPrimaryStage())) {
-                        if (MenuUtils.isDataOpen()) {
-                            MenuUtils.getProjectView().getProject().addDataTable(table);
+                        if (ProjectSerializer.getCurrentProject() != null) {
+                            ProjectSerializer.getCurrentProject().addDataTable(table);
                         } else {
                             Topsoil.getController().setProjectView(new ProjectView(new TopsoilProject(table)));
                         }
@@ -216,7 +188,7 @@ public class FileMenu extends Menu {
 
         exportTableMenuItem = new MenuItem("Export Table...");
         exportTableMenuItem.setOnAction(event -> {
-            if (MenuUtils.isDataOpen()) {
+            if (ProjectSerializer.getCurrentProject() != null) {
                 DataTable table = MenuUtils.getCurrentTable();
                 if (! FileMenuHelper.exportTableAs(table)) {
                     TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
@@ -230,10 +202,20 @@ public class FileMenu extends Menu {
         exitTopsoilItem.setOnAction(event -> FileMenuHelper.exitTopsoilSafely());
 
         this.setOnShown(event -> {
-            saveProjectItem.setDisable(ProjectSerializer.getCurrentProjectPath() == null);
-            saveProjectAsItem.setDisable(! MenuUtils.isDataOpen());
-            closeProjectItem.setDisable(ProjectSerializer.getCurrentProjectPath() == null);
-            exportTableMenuItem.setDisable(! MenuUtils.isDataOpen());
+            TopsoilProject project = ProjectSerializer.getCurrentProject();
+            if (project != null) {
+                exportTableMenuItem.setDisable(false);
+                saveProjectAsItem.setDisable(false);
+                if (project.getPath() != null) {
+                    closeProjectItem.setDisable(false);
+                    saveProjectItem.setDisable(false);
+                }
+            } else {
+                exportTableMenuItem.setDisable(true);
+                saveProjectAsItem.setDisable(true);
+                saveProjectItem.setDisable(true);
+                closeProjectItem.setDisable(true);
+            }
         });
 
         this.getItems().addAll(
@@ -251,5 +233,17 @@ public class FileMenu extends Menu {
                 exitTopsoilItem
         );
     }
+
+    private void openExampleTable(ExampleData example) {
+        if (ProjectSerializer.getCurrentProject() != null) {
+            ProjectSerializer.getCurrentProject().addDataTable(FileMenuHelper.openExampleData(example));
+        } else {
+            TopsoilProject project = new TopsoilProject(FileMenuHelper.openExampleData(example));
+            ProjectSerializer.setCurrentProject(project);
+            Topsoil.getController().setProjectView(new ProjectView(project));
+        }
+    }
     
 }
+
+

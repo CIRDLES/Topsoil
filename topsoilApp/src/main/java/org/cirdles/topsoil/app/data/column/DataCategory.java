@@ -18,4 +18,9 @@ public class DataCategory extends DataComposite<DataComponent> {
         super(label, children);
     }
 
+    @Override
+    public String toString() {
+        return getLabel();
+    }
+
 }

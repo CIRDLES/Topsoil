@@ -10,6 +10,7 @@ import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.file.ProjectSerializer;
 
 import java.io.IOException;
 
@@ -107,6 +108,9 @@ public class ProjectView extends SplitPane {
             project.removeDataTable(table);
             if (tabPane.getTabs().isEmpty()) {
                 Topsoil.getController().closeProjectView();
+                if (ProjectSerializer.getCurrentProject().getPath() == null) {
+                    ProjectSerializer.setCurrentProject(null);
+                }
             }
         });
         tableTab.textProperty().bindBidirectional(table.labelProperty());

@@ -30,4 +30,9 @@ public class DataSegment extends DataComposite<DataRow> {
         children.addAll(asList(rows));
     }
 
+    @Override
+    public String toString() {
+        return getLabel();
+    }
+
 }

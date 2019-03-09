@@ -2,7 +2,6 @@ package org.cirdles.topsoil.app.data;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataCategory;
