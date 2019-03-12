@@ -13,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Topsoil;
@@ -59,7 +60,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         stage.getIcons().addAll(Topsoil.getController().getTopsoilLogo());
         stage.setWidth(INIT_WIDTH);
         stage.setHeight(INIT_HEIGHT);
-        stage.setResizable(true);
+//        stage.setResizable(true);
 
         DataTableOptionsView controller = new DataTableOptionsView(table);
         this.getDialogPane().setContent(controller);
@@ -107,7 +108,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         @FXML private AnchorPane columnViewPane;
         ColumnTreeView columnTreeView;
-        @FXML private AnchorPane variableChooserPane;
+        @FXML private VBox variableChooserPane;
         VariableChooser variableChooser;
         @FXML ComboBox<Uncertainty> unctComboBox;
         @FXML ComboBox<IsotopeSystem> isoComboBox;
@@ -142,7 +143,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
             this.variableChooser = new VariableChooser(table);
             variableChooserPane.getChildren().add(variableChooser);
-            FXMLUtils.setAnchorPaneBounds(variableChooser, 0.0, 0.0, 0.0, 0.0);
+//            FXMLUtils.setAnchorPaneBounds(variableChooser, 0.0, 0.0, 0.0, 0.0);
 
             listenToTreeItemChildren(columnTreeView.getRoot(), variableChooser);
 
@@ -176,12 +177,14 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         //                PRIVATE METHODS               //
         //**********************************************//
 
-        private void listenToTreeItemChildren(TreeItem<DataComponent> treeItem, VariableChooser chooser) {
-            for (TreeItem<DataComponent> tI : treeItem.getChildren()) {
-                CheckBoxTreeItem<DataComponent> cBTreeItem = (CheckBoxTreeItem<DataComponent>) tI;
-                cBTreeItem.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-                    chooser.tableColumnMap.get(cBTreeItem.getValue()).setVisible(newValue);
-                }));
+        private void listenToTreeItemChildren(TreeItem<DataComponent> parent, VariableChooser chooser) {
+            for (TreeItem<DataComponent> treeItem : parent.getChildren()) {
+                CheckBoxTreeItem<DataComponent> cBTreeItem = (CheckBoxTreeItem<DataComponent>) treeItem;
+                cBTreeItem.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), event -> {
+                    if (cBTreeItem.getValue() instanceof DataColumn) {
+                        chooser.tableColumnMap.get(cBTreeItem.getValue()).setVisible(cBTreeItem.isSelected());
+                    }
+                });
                 if (cBTreeItem.getValue() instanceof DataCategory) {
                     listenToTreeItemChildren(cBTreeItem, chooser);
                 }
@@ -190,10 +193,11 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
     }
 
-    public static class VariableChooser extends VBox {
+    public static class VariableChooser extends HBox {
 
         private static final String CONTROLLER_FXML = "variable-chooser.fxml";
-        private static final double ROW_HEIGHT = 26.0;
+        private static final double COL_WIDTH = 70.0;
+        private static final double ROW_HEIGHT = 25.0;
 
         @FXML VBox variableLabelBox;
         @FXML TableView<VariableRow<?>> tableView;
@@ -224,26 +228,34 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             tableView.setItems(makeTableRows(table));
             tableView.getColumns().addAll(makeTableColumns(table.getColumnRoot()));
 
+            int colDepth = table.getColumnRoot().getDepth();
+
             // Forces the TableView to resize based on the number of rows
             tableView.setFixedCellSize(ROW_HEIGHT);
             tableView.prefHeightProperty().bind(
                     tableView.fixedCellSizeProperty()
                             .multiply(Bindings.size(tableView.getItems())
-                                    .add((table.getColumnRoot().getDepth()))));
+                                    .add(colDepth))
+                            .add(1 - (colDepth - 1))
+            );
+            tableView.prefWidthProperty().bind(
+                    Bindings.createDoubleBinding(() -> {
+                        int colCount = tableView.getVisibleLeafColumns().size();
+                        if (colCount == 0) {
+                            return 400.0;
+                        } else {
+                            return (COL_WIDTH * colCount) + 2;
+                        }
+                    }, tableView.getVisibleLeafColumns())
+            );
 
             // Prevents the user from re-ordering columns.
-            tableView.widthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth) {
-                    TableHeaderRow header = (TableHeaderRow) tableView.lookup("TableHeaderRow");
-                    header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            header.setReordering(false);
-                        }
-                    });
-                }
-            });
+            tableView.widthProperty().addListener(((observable, oldValue, newValue) -> {
+                TableHeaderRow header = (TableHeaderRow) tableView.lookup("TableHeaderRow");
+                header.reorderingProperty().addListener(obs -> {
+                    header.setReordering(false);
+                });
+            }));
         }
 
         public Map<Variable<?>, DataColumn<?>> getSelections() {
@@ -267,7 +279,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                 for (DataColumn<?> column : table.getDataColumns()) {
                     BooleanProperty property = new SimpleBooleanProperty(table.getVariableColumnMap().get(variable) == column);
                     row.put(column, property);
-    //                selectionProperties.put(column, variable, property);
                 }
                 rows.add(row);
             }
@@ -332,6 +343,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             });
             newColumn.setCellValueFactory(param -> param.getValue().get(dataColumn));
             newColumn.setVisible(dataColumn.isSelected());
+            newColumn.setPrefWidth(COL_WIDTH);
             newColumn.setResizable(false);
             newColumn.setSortable(false);
             tableColumnMap.put(dataColumn, newColumn);
