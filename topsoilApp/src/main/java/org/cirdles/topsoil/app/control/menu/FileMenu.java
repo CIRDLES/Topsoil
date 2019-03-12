@@ -10,6 +10,7 @@ import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.control.wizards.NewProjectWizard;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
@@ -30,8 +31,8 @@ import java.util.Map;
  */
 public class FileMenu extends Menu {
 
-    private Menu newMenu;
-    private MenuItem newProjectItem;
+//    private Menu newMenu;
+//    private MenuItem newProjectItem;
     private MenuItem openProjectItem;
     private Menu openRecentProjectMenu;
     private Menu openExampleMenu;
@@ -43,6 +44,7 @@ public class FileMenu extends Menu {
     private MenuItem closeProjectItem;
     private Menu importTableMenu;
     private MenuItem fromFileItem;
+    private MenuItem fromMultipleItem;
     private MenuItem fromClipboardItem;
     private MenuItem exportTableMenuItem;
     private MenuItem exitTopsoilItem;
@@ -50,17 +52,17 @@ public class FileMenu extends Menu {
     FileMenu() {
         super("File");
 
-        newProjectItem = new MenuItem("Project from Files");
-        newProjectItem.setOnAction(event -> {
-            TopsoilProject project = FileMenuHelper.newProject();
-            if (project != null) {
-                ProjectView projectView = new ProjectView(project);
-                Topsoil.getController().setProjectView(projectView);
-            }
-        });
-        newMenu = new Menu("New", null,
-                           newProjectItem
-        );
+//        newProjectItem = new MenuItem("Project from Files");
+//        newProjectItem.setOnAction(event -> {
+//            TopsoilProject project = FileMenuHelper.newProject();
+//            if (project != null) {
+//                ProjectView projectView = new ProjectView(project);
+//                Topsoil.getController().setProjectView(projectView);
+//            }
+//        });
+//        newMenu = new Menu("New", null,
+//                           newProjectItem
+//        );
 
         openProjectItem = new MenuItem("Open...");
         openProjectItem.setOnAction(event -> {
@@ -125,7 +127,7 @@ public class FileMenu extends Menu {
             FileMenuHelper.closeProject();
         });
 
-        fromFileItem = new MenuItem("From File");
+        fromFileItem = new MenuItem("From File (csv, tsv, txt)");
         fromFileItem.setOnAction(event -> {
             File file = TopsoilFileChooser.openTableFile().showOpenDialog(Topsoil.getController().getPrimaryStage());
             if (file != null && file.exists()) {
@@ -157,6 +159,14 @@ public class FileMenu extends Menu {
                 }
             }
         });
+        fromMultipleItem = new MenuItem("From Files... (csv, tsv, txt)");
+        fromMultipleItem.setOnAction(event -> {
+            TopsoilProject project = FileMenuHelper.newProject();
+            if (project != null) {
+                ProjectView projectView = new ProjectView(project);
+                Topsoil.getController().setProjectView(projectView);
+            }
+        });
         fromClipboardItem = new MenuItem("From Clipboard");
         fromClipboardItem.setOnAction(event -> {
             String content = Clipboard.getSystemClipboard().getString();
@@ -178,8 +188,9 @@ public class FileMenu extends Menu {
                 }
             }
         });
-        importTableMenu = new Menu("Import Table", null,
+        importTableMenu = new Menu("Import", null,
                                    fromFileItem,
+                                   fromMultipleItem,
                                    fromClipboardItem
         );
         importTableMenu.setOnShown(event -> {
@@ -219,7 +230,7 @@ public class FileMenu extends Menu {
         });
 
         this.getItems().addAll(
-                newMenu,
+//                newMenu,
                 openProjectItem,
                 openRecentProjectMenu,
                 openExampleMenu,

@@ -31,6 +31,7 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.getIcons().addAll(Topsoil.getController().getTopsoilLogo());
+        stage.setOnShown(event -> stage.requestFocus());
 
         DataImportDialogController controller = new DataImportDialogController(initial);
         this.getDialogPane().setContent(controller);
@@ -64,7 +65,8 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
 
     public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter initial,
                                                                Stage owner) {
-        return new DataImportDialog(sourceName, initial, owner).showAndWait().orElse(null);
+        DataImportDialog dialog = new DataImportDialog(sourceName, initial, owner);
+        return dialog.showAndWait().orElse(null);
     }
 
     //**********************************************//

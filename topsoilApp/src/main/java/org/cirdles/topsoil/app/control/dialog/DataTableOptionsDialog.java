@@ -58,6 +58,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.getIcons().addAll(Topsoil.getController().getTopsoilLogo());
+        stage.setOnShown(event -> stage.requestFocus());
         stage.setWidth(INIT_WIDTH);
         stage.setHeight(INIT_HEIGHT);
 //        stage.setResizable(true);

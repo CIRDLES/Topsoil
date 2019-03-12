@@ -49,6 +49,7 @@ public class TopsoilNotification extends Dialog<ButtonType> {
 
         this.setTitle(windowTitle);
         Stage thisStage = (Stage) this.getDialogPane().getScene().getWindow();
+        thisStage.setOnShown(event -> thisStage.requestFocus());
 
         // Set icon
         thisStage.getIcons().add(Topsoil.getController().getTopsoilLogo());
