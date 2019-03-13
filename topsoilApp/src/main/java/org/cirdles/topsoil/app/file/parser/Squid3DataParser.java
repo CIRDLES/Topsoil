@@ -56,11 +56,13 @@ public class Squid3DataParser implements DataParser {
     private ColumnRoot parseColumnTree(String[][] rows) {
         List<DataComponent> topLevel = new ArrayList<>();
         int[] categoryIndices = readCategories(rows[0]);
+        Map<String, Integer> usedColumnLabels = new HashMap<>();
         for (int i = 0; i < categoryIndices.length; i++) {
             topLevel.add(parseCategory(
                     rows,
                     categoryIndices[i],
-                    (i == (categoryIndices.length - 1) ? -1 : categoryIndices[i + 1])
+                    (i == (categoryIndices.length - 1) ? -1 : categoryIndices[i + 1]),
+                    usedColumnLabels
             ));
         }
         return new ColumnRoot(topLevel.toArray(new DataComponent[]{}));
@@ -92,31 +94,40 @@ public class Squid3DataParser implements DataParser {
      * @param nextCatIndex  index of the next category
      * @return              DataCategory
      */
-    private DataCategory parseCategory(String[][] rows, int catIndex, int nextCatIndex) {
+    private DataCategory parseCategory(String[][] rows, int catIndex, int nextCatIndex, Map<String, Integer> usedColumnLabels) {
         String[] catRow = rows[0];
         String catLabel = catRow[catIndex];
+        String colLabel;
+        int labelFreq;
 
         List<DataColumn> columns = new ArrayList<>();
         StringJoiner joiner;
-        String str;
         if (nextCatIndex == -1 || nextCatIndex > catRow.length) {
             nextCatIndex = catRow.length;
         }
         for (int colIndex = catIndex; colIndex < nextCatIndex; colIndex++) {
             joiner = new StringJoiner(" ");
             for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
-                str = rows[rowIndex][colIndex];
-                if (! str.equals("")) {
-                    joiner.add(str);
+                colLabel = rows[rowIndex][colIndex];
+                if (! colLabel.equals("")) {
+                    joiner.add(colLabel);
                 }
             }
-            str = joiner.toString().trim();
-            if (! str.equals("")) {
+            colLabel = joiner.toString().trim();
+            if (! colLabel.equals("")) {
+                if (usedColumnLabels.containsKey(colLabel)) {
+                    labelFreq = usedColumnLabels.get(colLabel);
+                    usedColumnLabels.put(colLabel, labelFreq + 1);
+                    colLabel += ("(" + labelFreq + ")");
+                } else {
+                    usedColumnLabels.put(colLabel, 1);
+                }
+
                 Class<?> clazz = DataParser.getColumnDataType(rows, colIndex, 5);
                 if (clazz == Number.class) {
-                    columns.add(DataColumn.numberColumn(joiner.toString()));
+                    columns.add(DataColumn.numberColumn(colLabel));
                 } else {
-                    columns.add(DataColumn.stringColumn(joiner.toString()));
+                    columns.add(DataColumn.stringColumn(colLabel));
                 }
             }
         }

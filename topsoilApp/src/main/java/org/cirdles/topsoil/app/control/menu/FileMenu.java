@@ -10,7 +10,6 @@ import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
-import org.cirdles.topsoil.app.control.wizards.NewProjectWizard;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;

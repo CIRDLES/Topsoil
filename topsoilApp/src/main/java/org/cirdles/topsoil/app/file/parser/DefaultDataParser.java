@@ -57,20 +57,34 @@ public class DefaultDataParser implements DataParser {
     private ColumnRoot parseColumnTree(String[][] rows) {
         List<DataColumn<?>> columns = new ArrayList<>();
         int numHeaderRows = countHeaderRows(rows);
+        Map<String, Integer> usedColumnLabels = new HashMap<>();
+        String label;
+        int labelFreq;
         StringJoiner joiner;
         Class clazz;
-        for (int i = 0; i < rows[0].length; i++) {
+
+        for (int colIndex = 0; colIndex < rows[0].length; colIndex++) {
             joiner = new StringJoiner("\n");
-            for (int j = 0; j < numHeaderRows; j++) {
-                if (! rows[j][i].isEmpty()) {
-                    joiner.add(rows[j][i]);
+            for (int hRowIndex = 0; hRowIndex < numHeaderRows; hRowIndex++) {
+                if (! rows[hRowIndex][colIndex].isEmpty()) {
+                    joiner.add(rows[hRowIndex][colIndex]);
                 }
             }
-            clazz = DataParser.getColumnDataType(rows, i, numHeaderRows);
-            if (clazz == Number.class) {
-                columns.add(DataColumn.numberColumn(joiner.toString()));
+
+            clazz = DataParser.getColumnDataType(rows, colIndex, numHeaderRows);
+            label = joiner.toString();
+            if (usedColumnLabels.containsKey(label)) {
+                labelFreq = usedColumnLabels.get(label);
+                usedColumnLabels.put(label, labelFreq + 1);
+                label += ("(" + labelFreq + ")");
             } else {
-                columns.add(DataColumn.stringColumn(joiner.toString()));
+                usedColumnLabels.put(label, 1);
+            }
+
+            if (clazz == Number.class) {
+                columns.add(DataColumn.numberColumn(label));
+            } else {
+                columns.add(DataColumn.stringColumn(label));
             }
         }
         return new ColumnRoot(columns.toArray(new DataColumn[]{}));

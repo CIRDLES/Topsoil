@@ -138,13 +138,11 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         @FXML
         protected void initialize() {
             this.columnTreeView = new ColumnTreeView(table.getColumnRoot());
-//            columnTreeView.setPrefHeight(250.0);
             columnViewPane.getChildren().add(columnTreeView);
             FXMLUtils.setAnchorPaneBounds(columnTreeView, 0.0, 0.0, 0.0, 0.0);
 
             this.variableChooser = new VariableChooser(table);
             variableChooserPane.getChildren().add(variableChooser);
-//            FXMLUtils.setAnchorPaneBounds(variableChooser, 0.0, 0.0, 0.0, 0.0);
 
             listenToTreeItemChildren(columnTreeView.getRoot(), variableChooser);
 

@@ -2,8 +2,7 @@ package org.cirdles.topsoil.app.control.menu.helpers;
 
 import javafx.scene.control.ButtonType;
 import org.cirdles.topsoil.app.Topsoil;
-import org.cirdles.topsoil.app.control.menu.MenuUtils;
-import org.cirdles.topsoil.app.control.wizards.NewProjectWizard;
+import org.cirdles.topsoil.app.control.wizards.MultipleImportWizard;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
@@ -34,7 +33,7 @@ public class FileMenuHelper {
 
     /**
      * Creates and returns a new {@code TopsoilProject}. Performs all necessary checks, handles data overwriting, and
-     * calls the {@link NewProjectWizard}.
+     * calls the {@link MultipleImportWizard}.
      *
      * @return  new TopsoilProject
      */
@@ -47,9 +46,9 @@ public class FileMenuHelper {
             }
         }
         TopsoilProject project = null;
-        Map<String, Object> settings = NewProjectWizard.startWizard();
+        Map<String, Object> settings = MultipleImportWizard.startWizard();
         if (settings != null) {
-            List<DataTable> tables = (List<DataTable>) settings.get(NewProjectWizard.Key.TABLES);
+            List<DataTable> tables = (List<DataTable>) settings.get(MultipleImportWizard.Key.TABLES);
             project = new TopsoilProject(tables.toArray(new DataTable[]{}));
         }
         ProjectSerializer.setCurrentProject(project);

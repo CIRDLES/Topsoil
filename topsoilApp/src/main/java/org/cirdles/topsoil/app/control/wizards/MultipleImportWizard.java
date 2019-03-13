@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author marottajb
  */
-public class NewProjectWizard extends Wizard {
+public class MultipleImportWizard extends Wizard {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -21,14 +21,14 @@ public class NewProjectWizard extends Wizard {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private final NewProjectSourcesView sourcesView = new NewProjectSourcesView();
-    private final NewProjectPreView preView = new NewProjectPreView();
+    private final MultipleImportSourcesView sourcesView = new MultipleImportSourcesView();
+    private final MultipleImportPreview preView = new MultipleImportPreview();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    private NewProjectWizard() {
+    private MultipleImportWizard() {
         LinearFlow pageOrder = new Wizard.LinearFlow(
                 sourcesView,
                 preView
@@ -41,7 +41,7 @@ public class NewProjectWizard extends Wizard {
     //**********************************************//
 
     public static Map<String, Object> startWizard() {
-        NewProjectWizard wizard = new NewProjectWizard();
+        MultipleImportWizard wizard = new MultipleImportWizard();
         ButtonType response = wizard.showAndWait().orElse(null);
 
         wizard.preView.onExitingPage(wizard);       // This is necessary because of a bug where this is not called

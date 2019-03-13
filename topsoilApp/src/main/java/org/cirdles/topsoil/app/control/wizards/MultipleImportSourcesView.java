@@ -28,14 +28,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_HEIGHT;
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.INIT_WIDTH;
-import static org.cirdles.topsoil.app.control.wizards.NewProjectWizard.Key.TABLES;
+import static org.cirdles.topsoil.app.control.wizards.MultipleImportWizard.INIT_HEIGHT;
+import static org.cirdles.topsoil.app.control.wizards.MultipleImportWizard.INIT_WIDTH;
+import static org.cirdles.topsoil.app.control.wizards.MultipleImportWizard.Key.TABLES;
 
 /**
  * @author marottajb
  */
-class NewProjectSourcesView extends WizardPane {
+class MultipleImportSourcesView extends WizardPane {
 
     private static final String CONTROLLER_FXML = "project-sources.fxml";
 
@@ -53,9 +53,9 @@ class NewProjectSourcesView extends WizardPane {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    NewProjectSourcesView() {
+    MultipleImportSourcesView() {
         try {
-            FXMLUtils.loadController(CONTROLLER_FXML, NewProjectSourcesView.class, this);
+            FXMLUtils.loadController(CONTROLLER_FXML, MultipleImportSourcesView.class, this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
