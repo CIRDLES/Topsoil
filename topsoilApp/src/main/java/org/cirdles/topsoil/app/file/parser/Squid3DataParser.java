@@ -3,11 +3,15 @@ package org.cirdles.topsoil.app.file.parser;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.column.*;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
+import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.variable.DependentVariable;
+import org.cirdles.topsoil.variable.IndependentVariable;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -39,14 +43,18 @@ public class Squid3DataParser implements DataParser {
     @Override
     public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
         String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
-        return parseDataTable(rows, (label != null) ? label : path.getFileName().toString());
+        DataTable table = parseDataTable(rows, (label != null) ? label : path.getFileName().toString());
+        prepareTable(table);
+        return table;
     }
 
     /** {@inheritDoc} */
     @Override
     public DataTable parseDataTable(String content, String delimiter, String label) {
         String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
-        return parseDataTable(rows, label);
+        DataTable table =parseDataTable(rows, label);
+        prepareTable(table);
+        return table;
     }
 
     //**********************************************//
@@ -209,6 +217,47 @@ public class Squid3DataParser implements DataParser {
             rtnval[index] = integers.get(index);
         }
         return rtnval;
+    }
+
+    private void prepareTable(DataTable table) {
+        DataComponent c = table.getColumnRoot().find("204Pb-Corrected");
+        if (c instanceof DataCategory) {
+            DataCategory category = (DataCategory) c;
+            int colCount = category.getChildren().size();
+            DataColumn<Number> xColumn = (DataColumn<Number>) category.getChildren().get(colCount - 5);
+            DataColumn<Number> sXColumn = (DataColumn<Number>) category.getChildren().get(colCount - 4);
+            DataColumn<Number> yColumn = (DataColumn<Number>) category.getChildren().get(colCount - 3);
+            DataColumn<Number> sYColumn = (DataColumn<Number>) category.getChildren().get(colCount - 2);
+            DataColumn<Number> rhoColumn = (DataColumn<Number>) category.getChildren().get(colCount - 1);
+
+            table.setColumnForVariable(IndependentVariable.X, xColumn);
+            table.setColumnForVariable(DependentVariable.SIGMA_X, sXColumn);
+            table.setColumnForVariable(IndependentVariable.Y, yColumn);
+            table.setColumnForVariable(DependentVariable.SIGMA_Y, sYColumn);
+            table.setColumnForVariable(IndependentVariable.RHO, rhoColumn);
+
+            List<DataColumn<?>> importantColumns = Arrays.asList(xColumn, sXColumn, yColumn, sYColumn, rhoColumn);
+            deselectComponent(table.getColumnRoot(), importantColumns);
+        }
+    }
+
+    private void deselectComponent(DataComponent component, List<DataColumn<?>> importantColumns) {
+        if (component instanceof DataComposite) {
+            boolean shouldDeselectComposite = true;
+            for (DataComponent child : ((DataComposite<DataComponent>) component).getChildren()) {
+                deselectComponent(child, importantColumns);
+                if (child.isSelected()) {
+                    shouldDeselectComposite = false;
+                }
+            }
+            if (shouldDeselectComposite) {
+                component.setSelected(false);
+            }
+        } else if (component instanceof DataColumn) {
+            if (! importantColumns.contains(component)) {
+                component.setSelected(false);
+            }
+        }
     }
 
 }

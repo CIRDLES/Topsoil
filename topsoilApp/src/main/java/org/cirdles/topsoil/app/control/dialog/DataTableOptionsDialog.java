@@ -229,7 +229,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
             int colDepth = table.getColumnRoot().getDepth();
 
-            // Forces the TableView to resize based on the number of rows
+            // Forces the TableView to resize based on the number of rows/columns
             tableView.setFixedCellSize(ROW_HEIGHT);
             tableView.prefHeightProperty().bind(
                     tableView.fixedCellSizeProperty()
