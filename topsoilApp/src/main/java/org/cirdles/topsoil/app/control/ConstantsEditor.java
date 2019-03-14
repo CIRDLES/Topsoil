@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.control;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -19,7 +20,7 @@ import java.io.IOException;
  *
  * @author marottajb
  */
-public class ConstantsEditor extends VBox {
+public class ConstantsEditor extends Accordion {
 
     private static String CONTROLLER_FXML = "constants-editor.fxml";
 
