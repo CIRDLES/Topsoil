@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.data;
 
+import org.cirdles.topsoil.app.file.parser.ClassicDataParser;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.DefaultDataParser;
 import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
@@ -14,13 +15,16 @@ import org.cirdles.topsoil.app.file.writer.Squid3DataWriter;
  */
 public enum DataTemplate {
 
-    DEFAULT(DefaultDataParser.class, DefaultDataWriter.class),
-    SQUID_3(Squid3DataParser.class, Squid3DataWriter.class);
+    DEFAULT("Default", DefaultDataParser.class, DefaultDataWriter.class),
+    CLASSIC("Classic (x, σx, y, σy, rho", ClassicDataParser.class, DefaultDataWriter.class),
+    SQUID_3("Squid 3", Squid3DataParser.class, Squid3DataWriter.class);
 
+    private String name;
     private Class<? extends DataParser> parserClass;
     private Class<? extends DataWriter> writerClass;
 
-    DataTemplate(Class<? extends DataParser> parserClass, Class<? extends DataWriter> writerClass) {
+    DataTemplate(String name, Class<? extends DataParser> parserClass, Class<? extends DataWriter> writerClass) {
+        this.name = name;
         this.parserClass = parserClass;
         this.writerClass = writerClass;
     }
@@ -46,6 +50,11 @@ public enum DataTemplate {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
 }
