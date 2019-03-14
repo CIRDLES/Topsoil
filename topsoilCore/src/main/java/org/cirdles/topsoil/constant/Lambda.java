@@ -7,12 +7,11 @@ import javafx.beans.property.*;
  */
 public enum Lambda implements Constant<Double> {
 
-    U234("Lambda U234", "U234", 2.82206e-6),
-    U235("Lambda U235", "U235", 9.8485e-10),
-    U238("Lambda U238", "U238", 1.55125e-10),
-    R238_235S("Lambda R238_235S", "R238_235S", 137.8),
+    U234("Lambda 234", "234", 2.82206e-6),
+    U235("Lambda 235", "235", 9.8485e-10),
+    U238("Lambda 238", "238", 1.55125e-10),
 
-    Th230("Lambda Th230", "Th230", 9.1705e-6);
+    Th230("Lambda 230", "230", 9.1705e-6);
 
     //**********************************************//
     //                  PROPERTIES                  //
