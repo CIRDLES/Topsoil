@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -23,9 +22,9 @@
    </rowConstraints>
    <children>
       <Label text="Select which columns you'd like to see:" />
-    <AnchorPane fx:id="columnViewPane" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" GridPane.vgrow="ALWAYS" />
-      <Label text="Assign variables to columns:" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" />
-      <VBox fx:id="variableChooserPane" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+      <VBox fx:id="columnViewPane" alignment="TOP_CENTER" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" GridPane.vgrow="ALWAYS" />
+      <Label text="Assign variables to columns:" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
+      <VBox fx:id="variableChooserPane" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
       <Label fx:id="uncLabel" text="Uncertainty Format:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
       <Label text="Isotope System:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
       <ComboBox fx:id="unctComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />

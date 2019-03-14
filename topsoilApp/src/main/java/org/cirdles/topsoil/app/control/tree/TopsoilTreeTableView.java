@@ -137,6 +137,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
                 newColumn = makeTreeTableColumn((DataCategory) node);
             }
             newColumn.setPrefWidth(150.0);
+            node.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
             tableColumns.add(newColumn);
         }
         return tableColumns;
@@ -162,14 +163,12 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             return null;
         });
         newColumn.setVisible(dataColumn.isSelected());
-        dataColumn.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
         return newColumn;
     }
 
     private TreeTableColumn<DataComponent, String> makeTreeTableColumn(DataCategory dataCategory) {
         TreeTableColumn<DataComponent, String> newColumn = new TreeTableColumn<>(dataCategory.getLabel());
         newColumn.getColumns().addAll(makeTableColumnsForComposite(dataCategory));
-        dataCategory.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
         return newColumn;
     }
 

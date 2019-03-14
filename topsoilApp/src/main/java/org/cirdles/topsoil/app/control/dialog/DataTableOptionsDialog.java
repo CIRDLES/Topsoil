@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author marottajb
@@ -61,7 +63,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         stage.setOnShown(event -> stage.requestFocus());
         stage.setWidth(INIT_WIDTH);
         stage.setHeight(INIT_HEIGHT);
-//        stage.setResizable(true);
 
         DataTableOptionsView controller = new DataTableOptionsView(table);
         this.getDialogPane().setContent(controller);
@@ -107,7 +108,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         //                   CONTROLS                   //
         //**********************************************//
 
-        @FXML private AnchorPane columnViewPane;
+        @FXML private VBox columnViewPane;
         ColumnTreeView columnTreeView;
         @FXML private VBox variableChooserPane;
         VariableChooser variableChooser;
@@ -139,7 +140,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         protected void initialize() {
             this.columnTreeView = new ColumnTreeView(table.getColumnRoot());
             columnViewPane.getChildren().add(columnTreeView);
-            FXMLUtils.setAnchorPaneBounds(columnTreeView, 0.0, 0.0, 0.0, 0.0);
 
             this.variableChooser = new VariableChooser(table);
             variableChooserPane.getChildren().add(variableChooser);
@@ -202,7 +202,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         @FXML TableView<VariableRow<?>> tableView;
 
         private DataTable table;
-        private List<ToggleGroup> rowToggleGroups = new ArrayList<>();
         private Map<DataComponent, TableColumn<VariableRow<?>, ?>> tableColumnMap = new HashMap<>();
 
         public VariableChooser(DataTable table) {
@@ -224,6 +223,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                 variableLabelBox.getChildren().add(label);
             }
 
+            tableView.setEditable(true);
             tableView.setItems(makeTableRows(table));
             tableView.getColumns().addAll(makeTableColumns(table.getColumnRoot()));
 
@@ -277,11 +277,30 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                 row = new VariableRow<>(variable);
                 for (DataColumn<?> column : table.getDataColumns()) {
                     BooleanProperty property = new SimpleBooleanProperty(table.getVariableColumnMap().get(variable) == column);
+                    property.addListener(((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            deselectOthers(column, variable);
+                        }
+                    }));
                     row.put(column, property);
                 }
                 rows.add(row);
             }
             return rows;
+        }
+
+        private void deselectOthers(DataColumn<?> column, Variable<?> variable) {
+            for (VariableRow<?> row : tableView.getItems()) {
+                if (row.getVariable() == variable) {
+                    for (Map.Entry<DataColumn<?>, BooleanProperty> entry : row.entrySet()) {
+                        if (entry.getKey() != column) {
+                            entry.getValue().set(false);
+                        }
+                    }
+                } else {
+                    row.get(column).set(false);
+                }
+            }
         }
 
         private ObservableList<TableColumn<VariableRow<?>, Boolean>> makeTableColumns(DataComposite<DataComponent> composite) {
@@ -300,50 +319,11 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         private TableColumn<VariableRow<?>, Boolean> makeTableColumn(DataColumn<?> dataColumn) {
             TableColumn<VariableRow<?>, Boolean> newColumn = new TableColumn<>(dataColumn.getLabel());
-            List<RadioButton> columnButtons = new ArrayList<>();
-            newColumn.setCellFactory(param -> {
-                DeselectableRadioButton button = new DeselectableRadioButton();
-                TableCell<VariableRow<?>, Boolean> cell = new TableCell<VariableRow<?>, Boolean>() {
-                    @Override
-                    public void updateItem(Boolean item, boolean empty) {
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            if (getGraphic() != button) {
-                                setGraphic(button);
-                                if (this.getIndex() >= 0) {
-                                    while (this.getIndex() >= rowToggleGroups.size()) {
-                                        rowToggleGroups.add(new ToggleGroup());
-                                    }
-                                    ToggleGroup group = rowToggleGroups.get(this.getIndex());
-                                    if (! group.getToggles().contains(button)) {
-                                        group.getToggles().add(button);
-                                        VariableRow<?> row = tableView.getItems().get(this.getIndex());
-                                        button.selectedProperty().bindBidirectional(row.get(dataColumn));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                };
-                columnButtons.add(button);
-                button.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-                    if (newValue) {
-                        for (RadioButton other : columnButtons) {
-                            if (other != button) {
-                                other.setSelected(false);
-                            }
-                        }
-                    }
-                }));
-                cell.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                cell.setAlignment(Pos.CENTER);
-                return cell;
-            });
-            newColumn.setCellValueFactory(param -> param.getValue().get(dataColumn));
+            newColumn.setCellFactory(CheckBoxTableCell.forTableColumn(param -> tableView.getItems().get(param).get(dataColumn)));
             newColumn.setVisible(dataColumn.isSelected());
             newColumn.setPrefWidth(COL_WIDTH);
             newColumn.setResizable(false);
+            newColumn.setEditable(true);
             newColumn.setSortable(false);
             tableColumnMap.put(dataColumn, newColumn);
             return newColumn;
@@ -357,9 +337,9 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             return newColumn;
         }
 
-        private class VariableRow<T> extends HashMap<DataColumn<?>, BooleanProperty> {
+        class VariableRow<T> extends HashMap<DataColumn<?>, BooleanProperty> {
 
-            private Variable<T> variable;
+            Variable<T> variable;
 
             VariableRow(Variable<T> variable) {
                 super();
