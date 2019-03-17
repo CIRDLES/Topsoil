@@ -66,4 +66,13 @@ public abstract class DataComponent {
         setLabel(label != null ? label : "");
     }
 
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    @Override
+    public String toString() {
+        return getLabel();
+    }
+
 }
