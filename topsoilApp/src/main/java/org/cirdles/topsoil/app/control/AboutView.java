@@ -81,6 +81,8 @@ public class AboutView extends VBox {
 
     /**
      * Opens an undecorated {@code Stage} containing an {@code AboutView}.
+     *
+     * @param owner     Stage owner
      */
     public static void show(Stage owner) {
         AboutView aboutView = new AboutView();

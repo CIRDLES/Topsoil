@@ -38,20 +38,20 @@ task jarWithDependencies(type: Jar) {
     manifest.attributes(
             'Implementation-Title': 'Topsoil',
             'Implementation-Version': getVersionName(),
-            'Built-JDK': System.getProperty('java.version')
+            'Built-JDK': System.getProperty('java.version'),
+            'Main-Class': mainClass
     )
     baseName = 'topsoil-' + getVersionName().split('-')[0]
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    } with jar
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } } 
+    with jar
 }
 
 dependencies {
-    implementation project(':topsoilCore')
+    compile project(':topsoilCore')
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
-    implementation 'org.controlsfx:controlsfx:8.40.14'
-    implementation 'com.google.inject:guice:4.0'
+    compile 'org.controlsfx:controlsfx:8.40.14'
+    compile 'com.google.inject:guice:4.0'
 
     compile 'org.springframework:spring-jdbc:4.2.0.RELEASE'
 

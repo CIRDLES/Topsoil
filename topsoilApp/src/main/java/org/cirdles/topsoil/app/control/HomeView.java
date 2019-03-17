@@ -42,12 +42,6 @@ public class HomeView extends GridPane {
     private Label noRecentFilesLabel = new Label("No recent files.");
 
     //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
-
-    private final ResourceExtractor re = new ResourceExtractor(HomeView.class);
-
-    //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
@@ -61,6 +55,7 @@ public class HomeView extends GridPane {
 
     @FXML
     protected void initialize() {
+        final ResourceExtractor re = new ResourceExtractor(HomeView.class);
         cirdlesLogo.setImage(new Image(re.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
         noRecentFilesLabel.setStyle("-fx-font-style: italic;");
         refreshRecentFiles();

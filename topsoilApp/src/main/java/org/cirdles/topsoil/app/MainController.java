@@ -31,7 +31,7 @@ public class MainController extends VBox {
     //**********************************************//
 
     @FXML private AnchorPane mainContentPane;
-    private HomeView homeView = new HomeView();
+    private HomeView homeView;
 
     //**********************************************//
     //                  PROPERTIES                  //
@@ -74,6 +74,11 @@ public class MainController extends VBox {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @FXML
+    protected void initialize() {
+        homeView = new HomeView();
     }
 
     //**********************************************//
