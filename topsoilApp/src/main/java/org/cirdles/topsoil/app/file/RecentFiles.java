@@ -20,16 +20,13 @@ public class RecentFiles {
     //**********************************************//
 
     private Preferences prefs;
-    private List<Path> paths;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     public RecentFiles() {
-        this.paths = new ArrayList<>(MAX_SIZE);
         this.prefs = Preferences.userNodeForPackage(RecentFiles.class);
-        loadRecentFiles();
     }
 
     //**********************************************//
@@ -37,38 +34,42 @@ public class RecentFiles {
     //**********************************************//
 
     public Path[] getRecentFiles() {
-        return paths.toArray(new Path[]{});
+        return loadRecentFiles().toArray(new Path[]{});
     }
 
     public void addRecentFile(Path path) {
+        List<Path> paths = loadRecentFiles();
         paths.remove(path);
         if (paths.size() == MAX_SIZE) {
             paths.remove(MAX_SIZE - 1);
         }
         paths.add(0, path);
-        updateRecentFiles();
+        updateRecentFiles(paths);
     }
 
     public void clearRecentFiles() {
-        paths.clear();
-        updateRecentFiles();
+        for (int i = 1; i <= MAX_SIZE; i++) {
+            prefs.remove(RECENT_FILES + i);
+        }
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private void loadRecentFiles() {
+    private List<Path> loadRecentFiles() {
         String str;
+        List<Path> paths = new ArrayList<>(MAX_SIZE);
         for (int i = 1; i <= MAX_SIZE; i++) {
             str = prefs.get(RECENT_FILES + i, null);
             if (str != null) {
                 paths.add(Paths.get(str));
             }
         }
+        return paths;
     }
 
-    private void updateRecentFiles() {
+    private void updateRecentFiles(List<Path> paths) {
         String str;
         for (int i = 1; i <= MAX_SIZE; i++) {
             if (i > paths.size()) {

@@ -64,8 +64,10 @@ public class FileMenuHelper {
      */
     public static TopsoilProject openProject() {
         Path path = Paths.get(TopsoilFileChooser.openTopsoilFile().showOpenDialog(Topsoil.getController().getPrimaryStage()).toURI());
-        if (path != null && path.equals(ProjectSerializer.getCurrentProject().getPath())) {
-            return null;    // project already open
+        if (path != null && ProjectSerializer.getCurrentProject() != null) {
+            if (path.equals(ProjectSerializer.getCurrentProject().getPath())) {
+                return null;    // project already open
+            }
         }
 
         return openProject(path);

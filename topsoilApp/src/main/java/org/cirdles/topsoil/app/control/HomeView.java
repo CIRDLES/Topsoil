@@ -66,9 +66,9 @@ public class HomeView extends VBox {
     @FXML
     protected void initialize() {
         cirdlesLogo.setImage(new Image(re.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
+        noRecentFilesLabel.setStyle("-fx-font-style: italic;");
         Collections.addAll(recentFilesList, Topsoil.getController().getRecentFiles());
         if (recentFilesList.isEmpty()) {
-            noRecentFilesLabel.setStyle("-fx-font-style: italic;");
             recentFilesLinkBox.getChildren().add(noRecentFilesLabel);
         } else {
             Hyperlink link;
@@ -87,6 +87,10 @@ public class HomeView extends VBox {
                 }
             }
         }
+    }
+
+    public void clearRecentFiles() {
+        recentFilesLinkBox.getChildren().setAll(noRecentFilesLabel);
     }
 
 }

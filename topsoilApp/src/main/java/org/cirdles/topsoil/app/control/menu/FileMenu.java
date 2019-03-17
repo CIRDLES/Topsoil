@@ -5,6 +5,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import org.cirdles.topsoil.app.Topsoil;
+import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
@@ -34,6 +35,7 @@ public class FileMenu extends Menu {
 //    private MenuItem newProjectItem;
     private MenuItem openProjectItem;
     private Menu openRecentProjectMenu;
+    private MenuItem clearRecentProjectsItem;
     private Menu openExampleMenu;
     private MenuItem openUPbExampleItem;
     private MenuItem openUThExampleItem;
@@ -73,6 +75,13 @@ public class FileMenu extends Menu {
         });
         MenuItem placeholder = new MenuItem("No recent projects.");
         placeholder.setDisable(true);
+        clearRecentProjectsItem = new MenuItem("Clear recent files");
+        clearRecentProjectsItem.setOnAction(event -> {
+            Topsoil.getController().clearRecentFiles();
+            if (Topsoil.getController().getMainContent() instanceof HomeView) {
+                ((HomeView) Topsoil.getController().getMainContent()).clearRecentFiles();
+            }
+        });
         openRecentProjectMenu = new Menu("Open Recent", null, placeholder);
         openRecentProjectMenu.setOnShowing(event -> {
             Path[] paths = Topsoil.getController().getRecentFiles();
@@ -88,6 +97,8 @@ public class FileMenu extends Menu {
                     });
                     openRecentProjectMenu.getItems().add(item);
                 }
+                openRecentProjectMenu.getItems().add(new SeparatorMenuItem());
+                openRecentProjectMenu.getItems().add(clearRecentProjectsItem);
             }
         });
         openRecentProjectMenu.setOnHidden(event -> {
