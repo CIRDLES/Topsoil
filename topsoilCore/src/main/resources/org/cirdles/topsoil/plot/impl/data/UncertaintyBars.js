@@ -69,7 +69,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
+            .attr("opacity", function (d) {
+                return d.selected ? plot.getProperty("Unct Bars Opacity") : 0.0;
+            })
             .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
@@ -86,7 +88,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x);
             })
-            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
+            .attr("opacity", function (d) {
+                return d.selected ? plot.getProperty("Unct Bars Opacity") : 0.0;
+            })
             .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
@@ -103,7 +107,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + 0.2*(plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
+            .attr("opacity", function (d) {
+                return d.selected ? plot.getProperty("Unct Bars Opacity") : 0.0;
+            })
             .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
@@ -120,7 +126,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x - (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
+            .attr("opacity", function (d) {
+                return d.selected ? plot.getProperty("Unct Bars Opacity") : 0.0;
+            })
             .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
@@ -137,7 +145,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + 0.2*(plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
+            .attr("opacity", function (d) {
+                return d.selected ? plot.getProperty("Unct Bars Opacity") : 0.0;
+            })
             .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Unct Bars Fill"));
 
@@ -154,7 +164,9 @@ plot.updateUncertaintyBars = function () {
             .attr("x2", function (d) {
                 return plot.xAxisScale(d.x + (plot.uncertainty * d.sigma_x));
             })
-            .attr("opacity", plot.getProperty("Unct Bars Opacity"))
+            .attr("opacity", function (d) {
+                return d.selected ? plot.getProperty("Unct Bars Opacity") : 0.0;
+            })
             .attr("stroke-width", strokeWidth)
             .attr("stroke", plot.getProperty("Unct Bars Fill"));
     }

@@ -104,16 +104,17 @@ plot.updateEllipses = function() {
             })
             .attr("fill", function(d) {
                 var fill;
-
                 if (! d.selected) {
                     fill = 'gray';
                 } else {
                     fill = plot.getProperty('Ellipses Fill');
                 }
-
                 return fill;
             })
             .attr("fill-opacity", plot.getProperty("Ellipses Opacity") * 0.2)
+            .attr("opacity", function (d) {
+                return d.selected ? 1.0 : 0.0;
+            })
             .attr("stroke", "black");
     }
 };
