@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.plot.internal;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
@@ -12,6 +11,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.util.Base64;
 import java.util.Optional;
 
 /**
@@ -43,9 +43,9 @@ public class PDFSaver {
         try{
             ImageIO.write(SwingFXUtils.fromFXImage(plotToSave, null), "png", bos);
             bos.flush();
-            String base64String=Base64.encode(bos.toByteArray());
+            String base64String = Base64.getEncoder().encodeToString(bos.toByteArray());
             bos.close();
-            byte[] byteArray = Base64.decode(base64String);
+            byte[] byteArray = Base64.getDecoder().decode(base64String);
 
 
             PDDocument doc = new PDDocument();
