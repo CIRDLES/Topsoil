@@ -35,7 +35,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     public TopsoilTreeTableView() {
         super();
         this.setEditable(true);
-        this.setSortMode(TreeSortMode.ONLY_FIRST_LEVEL);
+        this.setSortMode(TreeSortMode.ALL_DESCENDANTS);
     }
 
     public TopsoilTreeTableView(DataTable table) {
@@ -59,14 +59,16 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         if (rootItem.getChildren().size() == 1) {
             rootItem.getChildren().get(0).setExpanded(true);
         }
+        this.setRoot(rootItem);
+        this.setShowRoot(false);
 
         // Add columns
-        this.getColumns().add(makeLabelColumn());
+        TreeTableColumn<DataComponent, String> labelColumn = makeLabelColumn();
+        this.getColumns().add(labelColumn);
         this.getColumns().add(makeCheckBoxColumn());
         this.getColumns().addAll(makeTableColumnsForComposite(table.getColumnRoot()));
 
-        this.setRoot(rootItem);
-        this.setShowRoot(false);
+        this.getSortOrder().add(labelColumn);
     }
 
     //**********************************************//
