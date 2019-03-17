@@ -40,7 +40,14 @@ public class DefaultDataParser implements DataParser {
     public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
         String[] lines = DataParser.readLines(path);
         String[][] rows = DataParser.readCells(lines, delimiter);
-        return parseDataTable(rows, (label != null) ? label : path.getFileName().toString());
+        if (label == null) {
+            if (path.getFileName() != null) {
+                label = path.getFileName().toString();
+            } else {
+                label = path.toString();
+            }
+        }
+        return parseDataTable(rows, label);
     }
 
     /** {@inheritDoc} */

@@ -57,23 +57,4 @@ public class DataRow extends DataLeaf {
         return (Property<T>) properties.put(column, property);
     }
 
-    @Override
-    public String toString() {
-        return getLabel();
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof DataRow) {
-            DataRow other = (DataRow) object;
-            for (Map.Entry<DataColumn<?>, Property<?>> entry : properties.entrySet()) {
-                if (entry.getValue().equals(other.getPropertyForColumn(entry.getKey()))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
 }

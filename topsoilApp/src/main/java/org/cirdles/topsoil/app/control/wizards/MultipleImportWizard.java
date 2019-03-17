@@ -61,7 +61,7 @@ public class MultipleImportWizard extends Wizard {
     //                INNER CLASSES                 //
     //**********************************************//
 
-    public class Key {
+    public static class Key {
         public static final String TABLES = "TABLES";
     }
 

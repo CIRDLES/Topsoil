@@ -24,7 +24,7 @@ public abstract class DataComponent {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    protected static String DEFAULT_LABEL = "";
+    protected static final String DEFAULT_LABEL = "";
 
     //**********************************************//
     //                  PROPERTIES                  //

@@ -337,7 +337,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             return newColumn;
         }
 
-        class VariableRow<T> extends HashMap<DataColumn<?>, BooleanProperty> {
+        static class VariableRow<T> extends HashMap<DataColumn<?>, BooleanProperty> {
 
             Variable<T> variable;
 

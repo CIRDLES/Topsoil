@@ -11,6 +11,8 @@ public interface Constant<T> {
 
     T getValue();
 
+    void setValue(T value);
+
     void resetToDefault();
 
 }

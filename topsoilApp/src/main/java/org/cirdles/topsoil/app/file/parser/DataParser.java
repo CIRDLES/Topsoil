@@ -261,9 +261,7 @@ public interface DataParser {
     }
 
     static TableFileExtension getExtension(Path path) {
-        String fileName = path.getFileName().toString();
-        String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
-
+        String ext = path.toString().substring(path.toString().lastIndexOf(".") + 1).toUpperCase();
         try {
             return TableFileExtension.valueOf(ext.toUpperCase());
         } catch (IllegalArgumentException e) {

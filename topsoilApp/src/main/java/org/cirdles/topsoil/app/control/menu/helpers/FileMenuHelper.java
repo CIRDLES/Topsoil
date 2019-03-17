@@ -6,6 +6,7 @@ import org.cirdles.topsoil.app.control.wizards.MultipleImportWizard;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
 import org.cirdles.topsoil.app.util.ExampleData;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
@@ -111,7 +112,7 @@ public class FileMenuHelper {
                 TopsoilNotification.showNotification(
                         TopsoilNotification.NotificationType.ERROR,
                         "Error",
-                        "Unable to save project: " + path.getFileName().toString()
+                        "Unable to save project: " + path.toString()
                 );
             }
         } else {
@@ -170,7 +171,13 @@ public class FileMenuHelper {
      * @throws IOException  if unable to read the file
      */
     public static DataTable importTableFromFile(Path path, Delimiter delimiter, DataTemplate template) throws IOException {
-        return template.getParser().parseDataTable(path, delimiter.getValue(), path.getFileName().toString());
+        DataParser parser = template.getParser();
+        if (parser != null) {
+            String label = path.getFileName() != null ? path.getFileName().toString() : path.toString();
+            return template.getParser().parseDataTable(path, delimiter.getValue(), label);
+        }
+        // @TODO Throw exception
+        return null;
     }
 
     /**
@@ -183,7 +190,12 @@ public class FileMenuHelper {
      * @return              parsed DataTable
      */
     public static DataTable importTableFromString(String content, Delimiter delimiter, DataTemplate template) {
-        return template.getParser().parseDataTable(content, delimiter.getValue(), "clipboard-content");
+        DataParser parser = template.getParser();
+        if (parser != null) {
+            return template.getParser().parseDataTable(content, delimiter.getValue(), "clipboard-content");
+        }
+        // @TODO Throw exception
+        return null;
     }
 
     /**
@@ -302,7 +314,7 @@ public class FileMenuHelper {
             TopsoilNotification.showNotification(
                     TopsoilNotification.NotificationType.ERROR,
                     "Error",
-                    "Could not open project file: " + projectPath.getFileName().toString()
+                    "Could not open project file: " + projectPath.toString()
             );
         }
         return null;

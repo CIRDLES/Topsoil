@@ -73,15 +73,18 @@ public class HomeView extends VBox {
         } else {
             Hyperlink link;
             for (Path path : recentFilesList) {
-                link = new Hyperlink(path.getFileName().toString());
-                link.setOnAction(event -> {
-                    TopsoilProject project = FileMenuHelper.openProject(path);
-                    if (project != null) {
-                        ProjectView projectView = new ProjectView(project);
-                        Topsoil.getController().setProjectView(projectView);
-                    }
-                });
-                recentFilesLinkBox.getChildren().add(link);
+                Path fileName = path.getFileName();
+                if (fileName != null) {
+                    link = new Hyperlink(fileName.toString());
+                    link.setOnAction(event -> {
+                        TopsoilProject project = FileMenuHelper.openProject(path);
+                        if (project != null) {
+                            ProjectView projectView = new ProjectView(project);
+                            Topsoil.getController().setProjectView(projectView);
+                        }
+                    });
+                    recentFilesLinkBox.getChildren().add(link);
+                }
             }
         }
     }

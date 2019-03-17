@@ -69,7 +69,7 @@ public class DataOptionsController extends AnchorPane {
 	//                INNER CLASSES                 //
 	//**********************************************//
 
-	private class RadioButtonSelectionHandler {
+	private static class RadioButtonSelectionHandler {
 
     	private RadioButton button;
     	private boolean selected;

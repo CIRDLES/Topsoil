@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.control.menu.helpers;
 
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.control.AboutView;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
@@ -50,17 +49,6 @@ public class HelpMenuHelper {
      * @param owner Stage
      */
     public static void openAboutScreen(Stage owner) {
-        Stage aboutWindow = AboutView.getFloatingStage();
-
-        aboutWindow.requestFocus();
-        aboutWindow.initOwner(owner);
-        aboutWindow.initModality(Modality.NONE);
-        // Close window if main window gains focus.
-        owner.getScene().getWindow().focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                aboutWindow.close();
-            }
-        });
-        aboutWindow.show();
+        AboutView.show(owner);
     }
 }

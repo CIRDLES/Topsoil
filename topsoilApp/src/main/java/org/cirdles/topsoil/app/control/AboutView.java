@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
@@ -53,24 +54,7 @@ public class AboutView extends VBox {
     //**********************************************//
 
     private final ResourceExtractor resourceExtractor = new ResourceExtractor(AboutView.class);
-
-    /**
-     * The system default browser as a {@code DesktopWebBrowser}. This is used to navigate to the addresses for each
-     * {@code Hyperlink}.
-     */
     private DesktopWebBrowser browser;
-
-    /**
-     * A {@code double} value that represents the offset between the x position of the parent {@code Stage} and this
-     * one. Used for programmatically changing the position of this window when it is dragged.
-     */
-    double xOffset;
-
-    /**
-     * A {@code double} value that represents the offset between the y position of the parent {@code Stage} and this
-     * one. Used for programmatically changing the position of this window when it is dragged.
-     */
-    double yOffset;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -86,8 +70,6 @@ public class AboutView extends VBox {
         }
     }
 
-    /** {@inheritDoc}
-     */
     @FXML protected void initialize() {
         topsoilLogo.setImage(new Image(resourceExtractor.extractResourceAsPath(LOGO).toUri().toString()));
         versionLabel.setText("Version " + (new TopsoilMetadata()).getVersion().split("-")[0]);
@@ -97,17 +79,12 @@ public class AboutView extends VBox {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static Stage getFloatingStage() {
+    /**
+     * Opens an undecorated {@code Stage} containing an {@code AboutView}.
+     */
+    public static void show(Stage owner) {
         AboutView aboutView = new AboutView();
         aboutView.setStyle("-fx-border-color: #67ccff; -fx-border-width: 0.5em;");
-//        aboutView.setOnMousePressed(event -> {
-//            aboutView.xOffset = Topsoil.getPrimaryStage().getX() - event.getScreenX();
-//            aboutView.yOffset = Topsoil.getPrimaryStage().getScene().getWindow().getY() - event.getScreenY();
-//        });
-//        aboutView.setOnMouseDragged(event -> {
-//            aboutView.getScene().getWindow().setX(event.getScreenX() + aboutView.xOffset);
-//            aboutView.getScene().getWindow().setY(event.getScreenY() + aboutView.yOffset);
-//        });
         Scene scene = new Scene(aboutView, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
         Stage stage = new Stage(StageStyle.UNDECORATED);
@@ -124,7 +101,17 @@ public class AboutView extends VBox {
         stage.setX(newX);
         stage.setY(newY);
 
-        return stage;
+        stage.initOwner(owner);
+        stage.initModality(Modality.NONE);
+        // Close window if main window gains focus.
+        owner.getScene().getWindow().focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                stage.close();
+            }
+        });
+
+        stage.show();
+        stage.requestFocus();
     }
 
     //**********************************************//
@@ -133,30 +120,18 @@ public class AboutView extends VBox {
 
     @FXML private void openHome() { browser.browse(HOME_URL); }
 
-    /**
-     * Opens the system default browser to Topsoil's GitHub repository.
-     */
     @FXML private void openGitHub() {
         browser.browse(GITHUB_URL);
     }
 
-    /**
-     * Opens the system default browser to CIRDLES' website.
-     */
     @FXML private void openCIRDLES() {
         browser.browse(CIRDLES_URL);
     }
 
-    /**
-     * Opens the system default browser to Topsoil's GitHub Release Log.
-     */
     @FXML private void openReleaseLog() {
         browser.browse(RELEASE_LOG_URL);
     }
 
-    /**
-     * Opens the system default browser to the info page for Apache License 2.0.
-     */
     @FXML private void openLicensePage() {
         browser.browse(LICENSE_URL);
     }

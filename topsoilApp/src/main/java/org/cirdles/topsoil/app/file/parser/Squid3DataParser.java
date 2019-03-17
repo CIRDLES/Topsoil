@@ -43,7 +43,14 @@ public class Squid3DataParser implements DataParser {
     @Override
     public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
         String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
-        DataTable table = parseDataTable(rows, (label != null) ? label : path.getFileName().toString());
+        if (label == null) {
+            if (path.getFileName() != null) {
+                label = path.getFileName().toString();
+            } else {
+                label = path.toString();
+            }
+        }
+        DataTable table = parseDataTable(rows, label);
         prepareTable(table);
         return table;
     }

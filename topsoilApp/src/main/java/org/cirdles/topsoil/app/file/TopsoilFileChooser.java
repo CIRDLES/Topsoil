@@ -63,7 +63,9 @@ public class TopsoilFileChooser {
                 if (path.getParent() == null) {
                     path = Paths.get(System.getProperty("user.home"));
                     fileChooser.setInitialDirectory(path.toFile());
-                    fileChooser.setInitialFileName(path.getFileName().toString());
+                    if (path.getFileName() != null) {
+                        fileChooser.setInitialFileName(path.getFileName().toString());
+                    }
                 }
             }
         }

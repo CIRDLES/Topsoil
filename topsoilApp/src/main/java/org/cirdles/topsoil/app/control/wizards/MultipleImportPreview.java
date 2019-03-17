@@ -109,7 +109,7 @@ class MultipleImportPreview extends WizardPane {
     //                INNER CLASSES                 //
     //**********************************************//
 
-    class PreviewTab extends Tab {
+    static class PreviewTab extends Tab {
 
         private DataTableOptionsDialog.DataTableOptionsView controller;
         private DataTable table;

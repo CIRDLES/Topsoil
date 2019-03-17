@@ -12,7 +12,7 @@ public class DeselectableRadioButton extends RadioButton {
         this.setOnMouseReleased(selectionHandler.getMouseReleased());
     }
 
-    private class SelectionHandler {
+    private static class SelectionHandler {
 
         private RadioButton button;
         private Boolean selected = false;

@@ -60,10 +60,6 @@ public class VisualizationsMenuHelper {
                                        Map<PlotProperty, Object> properties) {
         List<Map<String, Object>> data = getPlotDataFromTable(table);
 
-        if (data == null) {
-            return false;
-        }
-
         Plot plot = plotType.getPlot();
         plot.setData(data);
         TableObserver tableObserver = new TableObserver(table, plot);

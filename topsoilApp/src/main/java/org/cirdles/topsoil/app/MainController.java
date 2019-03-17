@@ -1,0 +1,133 @@
+package org.cirdles.topsoil.app;
+
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.app.control.HomeView;
+import org.cirdles.topsoil.app.control.ProjectView;
+import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.file.ProjectSerializer;
+import org.cirdles.topsoil.app.file.RecentFiles;
+
+import java.io.IOException;
+import java.nio.file.Path;
+
+public class MainController extends VBox {
+
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
+    private static final String CONTROLLER_FXML = "main-window.fxml";
+    private static final String TOPSOIL_LOGO = "topsoil-logo.png";
+
+    //**********************************************//
+    //                   CONTROLS                   //
+    //**********************************************//
+
+    @FXML
+    private AnchorPane mainContentPane;
+    private Image topsoilLogo;
+
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
+    private Stage primaryStage;
+    private RecentFiles recentFiles = new RecentFiles();
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
+
+    MainController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        // If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
+        this.primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
+            if (ProjectSerializer.getCurrentProject() != null) {
+                Path path = ProjectSerializer.getCurrentProject().getPath();
+                if (path != null) {
+                    return "Topsoil - " + path.getFileName().toString();
+                }
+            }
+            return "Topsoil";
+        }, ProjectSerializer.currentProjectProperty()));
+        this.primaryStage.setOnCloseRequest(event -> {
+            event.consume();
+            FileMenuHelper.exitTopsoilSafely();
+        });
+
+        try {
+            final ResourceExtractor re = new ResourceExtractor(MainController.class);
+            FXMLUtils.loadController(CONTROLLER_FXML, MainController.class, this);
+            topsoilLogo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+            this.primaryStage.getIcons().add(topsoilLogo);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    public Node getMainContent() {
+        return mainContentPane.getChildren().get(0);
+    }
+
+    public Node setProjectView(ProjectView projectView) {
+        return replaceMainContent(projectView);
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public void closeProjectView() {
+        replaceMainContent(new HomeView());
+    }
+
+    public Image getTopsoilLogo() {
+        return topsoilLogo;
+    }
+
+    /**
+     * Returns an array of the most recent file project file paths.
+     *
+     * @return  Path[]
+     */
+    public Path[] getRecentFiles() {
+        return recentFiles.getRecentFiles();
+    }
+
+    public void addRecentFile(Path path) {
+        recentFiles.addRecentFile(path);
+    }
+
+    public void clearRecentFiles() {
+        recentFiles.clearRecentFiles();
+    }
+
+    //**********************************************//
+    //               PRIVATE METHODS                //
+    //**********************************************//
+
+    private Node replaceMainContent(Node content) {
+        Node rtnval = mainContentPane.getChildren().isEmpty() ? null : mainContentPane.getChildren().get(0);
+        mainContentPane.getChildren().clear();
+        mainContentPane.getChildren().add(content);
+        AnchorPane.setTopAnchor(content, 0.0);
+        AnchorPane.setRightAnchor(content, 0.0);
+        AnchorPane.setBottomAnchor(content, 0.0);
+        AnchorPane.setLeftAnchor(content, 0.0);
+        return rtnval;
+    }
+}

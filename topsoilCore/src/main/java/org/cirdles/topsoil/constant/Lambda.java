@@ -5,7 +5,7 @@ import javafx.beans.property.*;
 /**
  * @author marottajb
  */
-public enum Lambda implements Constant<Double> {
+public enum Lambda implements Constant<Number> {
 
     U234("Lambda 234", "234", 2.82206e-6),
     U235("Lambda 235", "235", 9.8485e-10),
@@ -33,28 +33,28 @@ public enum Lambda implements Constant<Double> {
         return abbreviation.get();
     }
 
-    private DoubleProperty value = new SimpleDoubleProperty();
-    public DoubleProperty valueProperty() {
+    private ObjectProperty<Number> value = new SimpleObjectProperty<>();
+    public ObjectProperty<Number> valueProperty() {
         return value;
     }
-    public final Double getValue() {
+    public final Number getValue() {
         return value.get();
     }
-    public final void setValue(double d) {
-        value.set(d);
+    public final void setValue(Number n) {
+        value.set(n);
     }
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private final double defaultValue;
+    private final Number defaultValue;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    Lambda(String title, String abbreviation, double defaultValue) {
+    Lambda(String title, String abbreviation, Number defaultValue) {
         this.title.set(title);
         this.abbreviation.set(abbreviation);
         this.defaultValue = defaultValue;
