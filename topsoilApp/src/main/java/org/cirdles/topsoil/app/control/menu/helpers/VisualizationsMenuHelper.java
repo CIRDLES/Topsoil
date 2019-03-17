@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.control.menu.helpers;
 
-import com.google.common.collect.BiMap;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -73,7 +72,7 @@ public class VisualizationsMenuHelper {
 
         properties.put(TITLE, table.getLabel());
         // @TODO assign X and Y axis labels
-        properties.put(UNCERTAINTY, table.getUnctFormat().getMultiplier());
+        properties.put(UNCERTAINTY, table.getUncertainty().getMultiplier());
         plot.setProperties(properties);
         TopsoilPlotView plotView = new TopsoilPlotView(plot, table);
 
@@ -150,7 +149,7 @@ public class VisualizationsMenuHelper {
                     if (column != null) {
                         column = varMap.get(var);
                         value = row.getPropertyForColumn(column).getValue();
-                        if (var instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(table.getUnctFormat())) {
+                        if (var instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(table.getUncertainty())) {
                             // @TODO The code below assumes that a dep-variable is always dependent on an ind-variable
                             double doubleVal = (double) value;
                             DependentVariable dependentVariable = (DependentVariable) var;

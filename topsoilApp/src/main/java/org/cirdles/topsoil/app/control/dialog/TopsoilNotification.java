@@ -18,11 +18,6 @@ import org.cirdles.topsoil.app.Topsoil;
 import java.util.Optional;
 
 /**
- * A custom dialog class that essentially acts the same way that the Java {@link Alert} class does. Having this class
- * allows us to customize different types of notifications (that is, different {@code ButtonType} arrangements) without
- * having to do so wherever they are called. It also makes adding new types of notifications relatively simple. All
- * notifications have the Topsoil logo on the window.
- *
  * @author marottajb
  */
 public class TopsoilNotification extends Dialog<ButtonType> {

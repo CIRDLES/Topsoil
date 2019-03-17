@@ -49,11 +49,11 @@ public class DataRow extends DataLeaf {
      * @param <T>       the type of the data for the DataColumn
      * @return          the row's property for column
      */
-    public <T extends Serializable> Property<T> getPropertyForColumn(DataColumn<T> column) {
+    public <T> Property<T> getPropertyForColumn(DataColumn<T> column) {
         return (Property<T>) properties.get(column);
     }
 
-    public <T extends Serializable> Property<T> setPropertyForColumn(DataColumn<T> column, Property<T> property) {
+    public <T> Property<T> setPropertyForColumn(DataColumn<T> column, Property<T> property) {
         return (Property<T>) properties.put(column, property);
     }
 

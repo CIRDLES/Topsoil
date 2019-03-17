@@ -48,7 +48,7 @@ public enum ExampleData {
         try {
             table = dataParser.parseDataTable(filePath, ",", fileName);
             table.setIsotopeSystem(isotopeSystem);
-            table.setUnctFormat(unctFormat);
+            table.setUncertainty(unctFormat);
             if (this == UPB || this == UTH) {
                 List<DataColumn<?>> columns = table.getDataColumns();
                 table.setColumnForVariable(IndependentVariable.X, columns.get(0));

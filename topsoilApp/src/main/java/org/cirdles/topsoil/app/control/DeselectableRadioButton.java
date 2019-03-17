@@ -30,15 +30,15 @@ public class DeselectableRadioButton extends RadioButton {
             selected = false;
         };
 
-        public SelectionHandler(RadioButton button) {
+        SelectionHandler(RadioButton button) {
             this.button = button;
         }
 
-        public EventHandler<MouseEvent> getMousePressed() {
+        EventHandler<MouseEvent> getMousePressed() {
             return mousePressed;
         }
 
-        public EventHandler<MouseEvent> getMouseReleased() {
+        EventHandler<MouseEvent> getMouseReleased() {
             return mouseReleased;
         }
 

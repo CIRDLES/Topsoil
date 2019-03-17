@@ -55,17 +55,29 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName) {
-        return showDialog(sourceName, null);
+    /**
+     * Displays a dialog prompting the user for information about a table of data that they intend to import.
+     *
+     * @param sourceName    String name of data source
+     * @param delimiter     Delimiter
+     *
+     * @return              Map of input selections
+     */
+    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter delimiter) {
+        return showDialog(sourceName, delimiter, Topsoil.getPrimaryStage());
     }
 
-    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter initial) {
-        return showDialog(sourceName, initial, Topsoil.getPrimaryStage());
-    }
-
-    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter initial,
-                                                               Stage owner) {
-        DataImportDialog dialog = new DataImportDialog(sourceName, initial, owner);
+    /**
+     * Displays a dialog prompting the user for information about a table of data that they intend to import.
+     *
+     * @param sourceName    String name of data source
+     * @param delimiter     Delimiter
+     * @param owner         the Stage owner of this dialog
+     *
+     * @return              Map of input selections
+     */
+    public static Map<DataImportDialog.Key, Object> showDialog(String sourceName, Delimiter delimiter, Stage owner) {
+        DataImportDialog dialog = new DataImportDialog(sourceName, delimiter, owner);
         return dialog.showAndWait().orElse(null);
     }
 

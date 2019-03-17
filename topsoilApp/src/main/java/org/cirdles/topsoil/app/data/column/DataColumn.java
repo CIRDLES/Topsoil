@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * @see org.cirdles.topsoil.app.data.composite.DataComponent
  */
-public class DataColumn<T extends Serializable> extends DataLeaf {
+public class DataColumn<T> extends DataLeaf {
 
     //**********************************************//
     //                  ATTRIBUTES                  //

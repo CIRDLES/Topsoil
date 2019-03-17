@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.data;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -16,10 +15,6 @@ import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -72,15 +67,15 @@ public class DataTable extends Observable {
     public final IsotopeSystem getIsotopeSystem() { return isotopeSystemProperty().get(); }
     public final void setIsotopeSystem(IsotopeSystem type ) { isotopeSystemProperty().set(type); }
 
-    private transient ObjectProperty<Uncertainty> unctFormat;
-    public ObjectProperty<Uncertainty> unctFormatProperty() {
-        if (unctFormat == null) {
-            unctFormat = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
+    private transient ObjectProperty<Uncertainty> uncertainty;
+    public ObjectProperty<Uncertainty> uncertaintyProperty() {
+        if (uncertainty == null) {
+            uncertainty = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
         }
-        return unctFormat;
+        return uncertainty;
     }
-    public final Uncertainty getUnctFormat() { return unctFormatProperty().get(); }
-    public final void setUnctFormat(Uncertainty format) { unctFormatProperty().set(format); }
+    public final Uncertainty getUncertainty() { return uncertaintyProperty().get(); }
+    public final void setUncertainty(Uncertainty unct) { uncertaintyProperty().set(unct); }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -91,11 +86,11 @@ public class DataTable extends Observable {
     }
 
     public DataTable(DataTemplate template, String label, ColumnRoot columnRoot, DataRoot dataRoot,
-                     IsotopeSystem isotopeSystem, Uncertainty unctFormat) {
+                     IsotopeSystem isotopeSystem, Uncertainty uncertainty) {
         setLabel(label);
         this.template = template;
         setIsotopeSystem(isotopeSystem);
-        setUnctFormat(unctFormat);
+        setUncertainty(uncertainty);
         this.columnRoot = columnRoot;
         this.dataRoot = dataRoot;
         this.dataRoot.labelProperty().bind(labelProperty());
@@ -151,7 +146,7 @@ public class DataTable extends Observable {
         }
     }
 
-    public DataRow getRowByIndex(int index) {
+    DataRow getRowByIndex(int index) {
         DataSegment segment;
         int rowCount = 0;
         for (int segIndex = 0; segIndex < getDataRoot().getChildren().size(); segIndex++) {
@@ -164,7 +159,7 @@ public class DataTable extends Observable {
         return null;
     }
 
-    public <T extends Serializable> List<T> getValuesForColumn(DataColumn<T> column) {
+    <T> List<T> getValuesForColumn(DataColumn<T> column) {
         List<T> values = new ArrayList<>();
         for (DataRow row : this.getDataRows()) {
             if (row.getPropertyForColumn(column) == null) {

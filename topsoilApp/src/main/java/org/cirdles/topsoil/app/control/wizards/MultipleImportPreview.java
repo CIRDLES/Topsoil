@@ -71,7 +71,7 @@ class MultipleImportPreview extends WizardPane {
             }
             preViewTab.getTable().setColumnsForAllVariables(((PreviewTab) tab).controller.getVariableAssignments());
             preViewTab.getTable().setIsotopeSystem(preViewTab.getController().getIsotopeSystem());
-            preViewTab.getTable().setUnctFormat(preViewTab.getController().getUncertainty());
+            preViewTab.getTable().setUncertainty(preViewTab.getController().getUncertainty());
             tables.add(preViewTab.getTable());
         }
         wizard.getSettings().put(TABLES, tables);

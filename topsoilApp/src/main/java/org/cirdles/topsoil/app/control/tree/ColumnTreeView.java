@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * A custom control for toggling the selected property of columns.
+ *
  * @author marottajb
  */
 public class ColumnTreeView extends TreeView<DataComponent> {
@@ -35,6 +37,11 @@ public class ColumnTreeView extends TreeView<DataComponent> {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Returns the column visibility selections for the table.
+     *
+     * @return  Map of DataComponent to Boolean values, true if column should be visible
+     */
     public Map<DataComponent, Boolean> getColumnSelections() {
         return getColumnSelections((CheckBoxTreeItem<DataComponent>) getRoot());
     }

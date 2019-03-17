@@ -4,21 +4,16 @@ import com.sun.javafx.scene.control.skin.TableHeaderRow;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Topsoil;
-import org.cirdles.topsoil.app.control.DeselectableRadioButton;
 import org.cirdles.topsoil.app.control.tree.ColumnTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.FXMLUtils;
@@ -32,11 +27,8 @@ import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author marottajb
@@ -47,8 +39,8 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    public static final double INIT_WIDTH = 800.0;
-    public static final double INIT_HEIGHT = 400.0;
+    private static final double INIT_WIDTH = 800.0;
+    private static final double INIT_HEIGHT = 400.0;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -75,7 +67,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                 }
                 table.setColumnsForAllVariables(controller.getVariableAssignments());
                 table.setIsotopeSystem(controller.getIsotopeSystem());
-                table.setUnctFormat(controller.getUncertainty());
+                table.setUncertainty(controller.getUncertainty());
                 return true;
             }
             return false;
@@ -86,6 +78,14 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Displays a dialog with controls for the user to modify current data table settings.
+     *
+     * @param table     DataTable
+     * @param owner     Stage owner of this dialog
+     *
+     * @return          true if changes saved
+     */
     public static Boolean showDialog(DataTable table, Stage owner) {
         return new DataTableOptionsDialog(table, owner).showAndWait().orElse(null);
     }
@@ -147,7 +147,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             listenToTreeItemChildren(columnTreeView.getRoot(), variableChooser);
 
             unctComboBox.getItems().addAll(Uncertainty.values());
-            unctComboBox.getSelectionModel().select(table.getUnctFormat());
+            unctComboBox.getSelectionModel().select(table.getUncertainty());
             isoComboBox.getItems().addAll(IsotopeSystem.values());
             isoComboBox.getSelectionModel().select(table.getIsotopeSystem());
         }
@@ -156,10 +156,20 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         //                PUBLIC METHODS                //
         //**********************************************//
 
+        /**
+         * Returns the column visibility selections for the table.
+         *
+         * @return  Map of DataComponent to Boolean values, true if column should be visible
+         */
         public Map<DataComponent, Boolean> getColumnSelections() {
             return columnTreeView.getColumnSelections();
         }
 
+        /**
+         * Returns the variable/column associations for the table.
+         *
+         * @return  Map of Variable to DataColumn
+         */
         public Map<Variable<?>, DataColumn<?>> getVariableAssignments() {
             return variableChooser.getSelections();
         }
@@ -192,6 +202,9 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
     }
 
+    /**
+     * A custom control for selecting associations between {@link Variable}s and {@link DataColumn}s.
+     */
     public static class VariableChooser extends HBox {
 
         private static final String CONTROLLER_FXML = "variable-chooser.fxml";

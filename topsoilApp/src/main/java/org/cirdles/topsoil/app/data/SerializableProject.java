@@ -47,7 +47,7 @@ public class SerializableProject implements Serializable {
         tableData.put(TableKey.LABEL, table.getLabel());
         tableData.put(TableKey.TEMPLATE, table.getTemplate());
         tableData.put(TableKey.ISO_SYSTEM, table.getIsotopeSystem());
-        tableData.put(TableKey.UNCERTAINTY, table.getUnctFormat());
+        tableData.put(TableKey.UNCERTAINTY, table.getUncertainty());
 
         ArrayList<HashMap<HeaderKey, Serializable>> rootChildData = new ArrayList<>();
         for (DataComponent child : table.getColumnRoot().getChildren()) {
