@@ -107,10 +107,7 @@ public class ProjectView extends SplitPane {
         tableTab.setOnClosed(event -> {
             project.removeDataTable(table);
             if (tabPane.getTabs().isEmpty()) {
-                Topsoil.getController().closeProjectView();
-                if (ProjectSerializer.getCurrentProject().getPath() == null) {
-                    ProjectSerializer.setCurrentProject(null);
-                }
+                Topsoil.getController().setHomeView();
             }
         });
         tableTab.textProperty().bindBidirectional(table.labelProperty());

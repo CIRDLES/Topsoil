@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.app.file;
 
 import javafx.stage.FileChooser;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.nio.file.Path;
@@ -31,14 +32,12 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
 
-        TopsoilProject project = ProjectSerializer.getCurrentProject();
-        if (project != null) {
-            Path path = project.getPath();
-            if (path != null) {
-                if (path.getParent() == null) {
-                    path = Paths.get(System.getProperty("user.home"));
-                    fileChooser.setInitialDirectory(path.toFile());
-                }
+        Path path = ProjectSerializer.getCurrentPath();
+        if (path != null) {
+            if (path.getParent() == null) {
+                fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
+            } else {
+                fileChooser.setInitialDirectory(path.getParent().toFile());
             }
         }
         return fileChooser;
@@ -56,17 +55,15 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil")
         );
 
-        TopsoilProject project = ProjectSerializer.getCurrentProject();
-        if (project != null) {
-            Path path = project.getPath();
-            if (path != null) {
-                if (path.getParent() == null) {
-                    path = Paths.get(System.getProperty("user.home"));
-                    fileChooser.setInitialDirectory(path.toFile());
-                    if (path.getFileName() != null) {
-                        fileChooser.setInitialFileName(path.getFileName().toString());
-                    }
+        Path path = ProjectSerializer.getCurrentPath();
+        if (path != null) {
+            if (path.getParent() == null) {
+                fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
+                if (path.getFileName() != null) {
+                    fileChooser.setInitialFileName(path.getFileName().toString());
                 }
+            } else {
+                fileChooser.setInitialDirectory(path.getParent().toFile());
             }
         }
         return fileChooser;

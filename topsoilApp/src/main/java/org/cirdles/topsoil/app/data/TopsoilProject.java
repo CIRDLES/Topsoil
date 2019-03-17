@@ -37,17 +37,6 @@ public class TopsoilProject {
         return dataTables;
     }
 
-    private ObjectProperty<Path> path = new SimpleObjectProperty<>();
-    public ObjectProperty<Path> pathProperty() {
-        return path;
-    }
-    public Path getPath() {
-        return path.get();
-    }
-    public void setPath(Path path) {
-        this.path.set(path);
-    }
-
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
@@ -68,6 +57,12 @@ public class TopsoilProject {
 
     public void addDataTable(DataTable table) {
         dataTables.add(table);
+    }
+
+    public void addDataTables(DataTable... tables) {
+        for (DataTable table : tables) {
+            addDataTable(table);
+        }
     }
 
     public void removeDataTable(DataTable table) {

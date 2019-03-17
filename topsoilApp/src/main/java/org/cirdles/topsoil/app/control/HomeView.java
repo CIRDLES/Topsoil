@@ -10,6 +10,7 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.file.RecentFiles;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,12 +41,6 @@ public class HomeView extends VBox {
     private Label noRecentFilesLabel = new Label("No recent files.");
 
     //**********************************************//
-    //                  PROPERTIES                  //
-    //**********************************************//
-
-    private List<Path> recentFilesList = new ArrayList<>();
-
-    //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
@@ -67,20 +62,28 @@ public class HomeView extends VBox {
     protected void initialize() {
         cirdlesLogo.setImage(new Image(re.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
         noRecentFilesLabel.setStyle("-fx-font-style: italic;");
-        Collections.addAll(recentFilesList, Topsoil.getController().getRecentFiles());
-        if (recentFilesList.isEmpty()) {
+        refreshRecentFiles();
+    }
+
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    public void refreshRecentFiles() {
+        recentFilesLinkBox.getChildren().clear();
+        Path[] recentFiles = RecentFiles.getPaths();
+        if (recentFiles.length == 0) {
             recentFilesLinkBox.getChildren().add(noRecentFilesLabel);
         } else {
             Hyperlink link;
-            for (Path path : recentFilesList) {
+            for (Path path : recentFiles) {
                 Path fileName = path.getFileName();
                 if (fileName != null) {
                     link = new Hyperlink(fileName.toString());
                     link.setOnAction(event -> {
                         TopsoilProject project = FileMenuHelper.openProject(path);
                         if (project != null) {
-                            ProjectView projectView = new ProjectView(project);
-                            Topsoil.getController().setProjectView(projectView);
+                            Topsoil.getController().setProject(project);
                         }
                     });
                     recentFilesLinkBox.getChildren().add(link);

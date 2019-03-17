@@ -109,7 +109,7 @@ class MultipleImportSourcesView extends WizardPane {
      */
     @FXML
     private void addFilesButtonAction() {
-        List<File> files = TopsoilFileChooser.openTableFile().showOpenMultipleDialog(Topsoil.getController().getPrimaryStage());
+        List<File> files = TopsoilFileChooser.openTableFile().showOpenMultipleDialog(Topsoil.getPrimaryStage());
         if ( files != null && !files.isEmpty() ) {
             List<File> selectedFiles = new ArrayList<>(files);
             List<File> rejectedFiles = new ArrayList<>();

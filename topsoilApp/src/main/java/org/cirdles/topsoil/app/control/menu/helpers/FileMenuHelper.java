@@ -1,11 +1,15 @@
 package org.cirdles.topsoil.app.control.menu.helpers;
 
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.Clipboard;
 import org.cirdles.topsoil.app.Topsoil;
+import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
+import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.wizards.MultipleImportWizard;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
 import org.cirdles.topsoil.app.util.ExampleData;
@@ -33,53 +37,31 @@ public class FileMenuHelper {
     //**********************************************//
 
     /**
-     * Creates and returns a new {@code TopsoilProject}. Performs all necessary checks, handles data overwriting, and
-     * calls the {@link MultipleImportWizard}.
-     *
-     * @return  new TopsoilProject
-     */
-    public static TopsoilProject newProject() {
-        if (ProjectSerializer.getCurrentProject() != null) {
-            if (! handleOverwrite()) {
-                return null;
-            } else {
-                closeProject();
-            }
-        }
-        TopsoilProject project = null;
-        Map<String, Object> settings = MultipleImportWizard.startWizard();
-        if (settings != null) {
-            List<DataTable> tables = (List<DataTable>) settings.get(MultipleImportWizard.Key.TABLES);
-            project = new TopsoilProject(tables.toArray(new DataTable[]{}));
-        }
-        ProjectSerializer.setCurrentProject(project);
-        return project;
-    }
-
-    /**
-     * Handles the opening of a .topsoil file and returns the deserialized {@code TopsoilProject}. Performs all
-     * necessary checks and handles data overwriting;.
+     * Handles the opening of a .topsoil file and returns the deserialized {@code TopsoilProject}.
      *
      * @return  deserialized TopsoilProject
      */
     public static TopsoilProject openProject() {
-        Path path = Paths.get(TopsoilFileChooser.openTopsoilFile().showOpenDialog(Topsoil.getController().getPrimaryStage()).toURI());
-        if (path != null && ProjectSerializer.getCurrentProject() != null) {
-            if (path.equals(ProjectSerializer.getCurrentProject().getPath())) {
-                return null;    // project already open
-            }
-        }
-
+        Path path = Paths.get(TopsoilFileChooser.openTopsoilFile().showOpenDialog(Topsoil.getPrimaryStage()).toURI());
         return openProject(path);
     }
 
+    /**
+     * Handles the opening of a .topsoil file and returns the deserialized {@code TopsoilProject}.
+     *
+     * @param path  project Path
+     * @return      deserialized TopsoilProject
+     */
     public static TopsoilProject openProject(Path path) {
-        if (ProjectSerializer.getCurrentProject() != null) {
-            if (! handleOverwrite()) {
-                return null;
-            } else {
-                closeProject();
+        if (path == null) {
+            throw new IllegalArgumentException("Cannot open a project at path \"null\".");
+        }
+
+        if (Topsoil.getController().getProject() != null) {
+            if (path.equals(ProjectSerializer.getCurrentPath())) {
+                return null;    // project already open
             }
+            handleOverwrite();
         }
 
         return openProjectPrivate(path);
@@ -104,7 +86,7 @@ public class FileMenuHelper {
      */
     public static boolean saveProject(TopsoilProject project) {
         boolean completed = false;
-        Path path = ProjectSerializer.getCurrentProject().getPath();
+        Path path = ProjectSerializer.getCurrentPath();
         // TODO Check that path is valid
         if (path != null) {
             try {
@@ -132,11 +114,13 @@ public class FileMenuHelper {
      */
     public static boolean saveProjectAs(TopsoilProject project) {
         boolean completed = false;
-        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Topsoil.getController().getPrimaryStage());
+        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Topsoil.getPrimaryStage());
         if (file != null) {
             try {
-                completed = ProjectSerializer.serialize(file.toPath(), project);
-                Topsoil.getController().addRecentFile(file.toPath());
+                Path path = file.toPath();
+                completed = ProjectSerializer.serialize(path, project);
+                ProjectSerializer.setCurrentPath(path);
+                RecentFiles.addPath(path);
             } catch (IOException e) {
                 e.printStackTrace();
                 TopsoilNotification.showNotification(
@@ -155,9 +139,12 @@ public class FileMenuHelper {
      * @return  true if successful
      */
     public static boolean closeProject() {
-        if (ProjectSerializer.getCurrentProject() != null) {
-            Topsoil.getController().closeProjectView();
-            ProjectSerializer.setCurrentProject(null);
+        if (Topsoil.getController().getProject() != null) {
+            if (handleDataBeforeClose()) {
+                ProjectSerializer.setCurrentPath(null);
+                Topsoil.getController().setProject(null);
+                Topsoil.getController().setHomeView();
+            }
         }
         return true;
     }
@@ -184,20 +171,44 @@ public class FileMenuHelper {
 
     /**
      * Handles the parsing of a {@code DataTable} from some {@code String} value.
-     *
-     * @param content       the String to parse
-     * @param delimiter     Delimiter for the data
-     * @param template      DataTemplate of the data
-     *
-     * @return              parsed DataTable
      */
-    public static DataTable importTableFromString(String content, Delimiter delimiter, DataTemplate template) {
-        DataParser parser = template.getParser();
-        if (parser != null) {
-            return template.getParser().parseDataTable(content, delimiter.getValue(), "clipboard-content");
+    public static void importTableFromClipboard() {
+        String content = Clipboard.getSystemClipboard().getString();
+        Delimiter delimiter = DataParser.guessDelimiter(content);
+        Map<DataImportDialog.Key, Object> settings = DataImportDialog.showDialog("Clipboard", delimiter);
+        if (settings != null) {
+            delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);
+            DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
+            if (delimiter != null && template != null) {
+                DataParser parser = template.getParser();
+                if (parser != null) {
+                    DataTable table = parser.parseDataTable(content, delimiter.getValue(), "clipboard-content");
+                    if (DataTableOptionsDialog.showDialog(table, Topsoil.getPrimaryStage())) {
+                        if (Topsoil.getController().getProject() == null) {
+                            Topsoil.getController().setProject(new TopsoilProject(table));
+                        } else {
+                            Topsoil.getController().getProject().addDataTable(table);
+                        }
+                    }
+                }
+            }
         }
-        // @TODO Throw exception
-        return null;
+    }
+
+    /**
+     * Handles the parsing of multiple files into tables.
+     */
+    public static void importMultipleFiles() {
+        Map<String, Object> settings = MultipleImportWizard.startWizard();
+        if (settings != null) {
+            List<DataTable> tables = (List<DataTable>) settings.get(MultipleImportWizard.Key.TABLES);
+            if (Topsoil.getController().getProject() != null) {
+                Topsoil.getController().getProject().addDataTables(tables.toArray(new DataTable[]{}));
+            } else {
+                TopsoilProject project = new TopsoilProject(tables.toArray(new DataTable[]{}));
+                Topsoil.getController().setProject(project);
+            }
+        }
     }
 
     /**
@@ -209,7 +220,7 @@ public class FileMenuHelper {
     public static boolean exportTableAs(DataTable table) {
         boolean completed = false;
         if (table.getTemplate() != DataTemplate.DEFAULT) {
-            File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Topsoil.getController().getPrimaryStage());
+            File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Topsoil.getPrimaryStage());
             completed = exportTableAs(file.toPath(), table);
         } else {
             TopsoilNotification.showNotification(TopsoilNotification.NotificationType.INFORMATION,
@@ -225,8 +236,9 @@ public class FileMenuHelper {
      *
      * @return  true if successful
      */
-    public static boolean exitTopsoilSafely() {
-        TopsoilProject project = ProjectSerializer.getCurrentProject();
+    public static boolean handleDataBeforeClose() {
+        boolean completed = false;
+        TopsoilProject project = Topsoil.getController().getProject();
         // If something is open
         if (project != null) {
             ButtonType saveVerification = FileMenuHelper.verifyFinalSave();
@@ -234,15 +246,14 @@ public class FileMenuHelper {
             if (saveVerification != ButtonType.CANCEL || saveVerification != null) {
                 // If user wants to save
                 if (saveVerification == ButtonType.YES) {
-                    boolean saved = false;
                     // If a project path is already defined
-                    if (ProjectSerializer.getCurrentProject().getPath() != null) {
-                        saved = FileMenuHelper.saveProject(project);
+                    if (ProjectSerializer.getCurrentPath() != null) {
+                        completed = FileMenuHelper.saveProject(project);
                     } else {
-                        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Topsoil.getController().getPrimaryStage());
+                        File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Topsoil.getPrimaryStage());
                         if (file != null) {
                             try {
-                                saved = ProjectSerializer.serialize(file.toPath(), project);
+                                completed = ProjectSerializer.serialize(file.toPath(), project);
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 TopsoilNotification.showNotification(
@@ -253,20 +264,15 @@ public class FileMenuHelper {
                             }
                         }
                     }
-                    // If file was successfully saved
-                    if (saved) {
-                        Topsoil.shutdown();
-                    }
-                // If user doesn't want to save
                 } else {
-                    Topsoil.shutdown();
+                    completed = true;
                 }
             }
         // If nothing is open
         } else {
-            Topsoil.shutdown();
+            completed = true;
         }
-        return false;
+        return completed;
     }
 
     /**
@@ -291,25 +297,29 @@ public class FileMenuHelper {
      *
      * @return  true if data is saved; else false
      */
-    private static boolean handleOverwrite() {
-        TopsoilProject currentProject = ProjectSerializer.getCurrentProject();
-        ButtonType shouldSave = showOverwriteDialog();
-        if (shouldSave.equals(ButtonType.YES)) {
-            if (currentProject.getPath() == null) {
-                saveProjectAs(currentProject);
-            } else {
-                saveProject(currentProject);
+    private static void handleOverwrite() {
+        TopsoilProject project = Topsoil.getController().getProject();
+        if (project != null) {
+            ButtonType buttonType = showOverwriteDialog();
+            if (buttonType != null || ! buttonType.equals(ButtonType.CANCEL)) {
+                if (buttonType.equals(ButtonType.YES)) {
+                    if (ProjectSerializer.getCurrentPath() == null) {
+                        saveProjectAs(project);
+                    } else {
+                        saveProject(project);
+                    }
+                }
+                closeProject();
             }
-            return true;
         }
-        return false;
     }
 
     private static TopsoilProject openProjectPrivate(Path projectPath) {
         try {
             TopsoilProject project = ProjectSerializer.deserialize(projectPath);
-            ProjectSerializer.setCurrentProject(project);
-            Topsoil.getController().addRecentFile(projectPath);
+            Topsoil.getController().setProject(project);
+            ProjectSerializer.setCurrentPath(projectPath);
+            RecentFiles.addPath(projectPath);
             return project;
         } catch (IOException e) {
             e.printStackTrace();

@@ -27,7 +27,7 @@ public class MenuUtils {
      * @return  current ProjectView; else null
      */
     public static ProjectView getProjectView() {
-        if (ProjectSerializer.getCurrentProject() != null) {
+        if (Topsoil.getController().getProject() != null) {
             return (ProjectView) Topsoil.getController().getMainContent();
         }
         return null;
@@ -40,7 +40,7 @@ public class MenuUtils {
      * @return  current tab; else null
      */
     public static ProjectTableTab getSelectedTableTab() {
-        if (ProjectSerializer.getCurrentProject() != null) {
+        if (Topsoil.getController().getProject() != null) {
             ProjectView projectView = getProjectView();
             if (projectView != null) {
                 return (ProjectTableTab) projectView.getTabPane().getSelectionModel().getSelectedItem();
@@ -55,7 +55,7 @@ public class MenuUtils {
      * @return  current DataTable; else null
      */
     public static DataTable getCurrentTable() {
-        if (ProjectSerializer.getCurrentProject() != null) {
+        if (Topsoil.getController().getProject() != null) {
             ProjectTableTab tab = getSelectedTableTab();
             if (tab != null) {
                 return tab.getDataTable();

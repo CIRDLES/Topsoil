@@ -19,25 +19,23 @@ public class RecentFiles {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private Preferences prefs;
+    private static Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public RecentFiles() {
-        this.prefs = Preferences.userNodeForPackage(RecentFiles.class);
-    }
+    private RecentFiles() { }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public Path[] getRecentFiles() {
+    public static Path[] getPaths() {
         return loadRecentFiles().toArray(new Path[]{});
     }
 
-    public void addRecentFile(Path path) {
+    public static void addPath(Path path) {
         List<Path> paths = loadRecentFiles();
         paths.remove(path);
         if (paths.size() == MAX_SIZE) {
@@ -47,7 +45,7 @@ public class RecentFiles {
         updateRecentFiles(paths);
     }
 
-    public void clearRecentFiles() {
+    public static void clear() {
         for (int i = 1; i <= MAX_SIZE; i++) {
             prefs.remove(RECENT_FILES + i);
         }
@@ -57,7 +55,7 @@ public class RecentFiles {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private List<Path> loadRecentFiles() {
+    private static List<Path> loadRecentFiles() {
         String str;
         List<Path> paths = new ArrayList<>(MAX_SIZE);
         for (int i = 1; i <= MAX_SIZE; i++) {
@@ -69,7 +67,7 @@ public class RecentFiles {
         return paths;
     }
 
-    private void updateRecentFiles(List<Path> paths) {
+    private static void updateRecentFiles(List<Path> paths) {
         String str;
         for (int i = 1; i <= MAX_SIZE; i++) {
             if (i > paths.size()) {

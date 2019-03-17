@@ -5,8 +5,10 @@ import com.sun.javafx.stage.StageHelper;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -14,10 +16,6 @@ import java.net.MalformedURLException;
 import java.util.List;
 import java.util.StringJoiner;
 
-/**
- * @see Application
- * @see MainController
- */
 public class Topsoil extends Application {
 
     //**********************************************//
@@ -25,16 +23,72 @@ public class Topsoil extends Application {
     //**********************************************//
 
     private static final String STYLESHEET = "topsoil.css";
+    private static final String TOPSOIL_LOGO = "topsoil-logo.png";
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
     private static MainController controller;
+    private static Stage primaryStage;
+    private static Image logo;
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
+    @Override
+    public void start(Stage primaryStage) {
+        Topsoil.primaryStage = primaryStage;
+        Topsoil.controller = new MainController(primaryStage);
+        Topsoil.controller.setHomeView();
+
+        Scene scene = new Scene(controller, 1200, 750);
+
+        try {
+            ResourceExtractor re = new ResourceExtractor(Topsoil.class);
+            logo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+            primaryStage.getIcons().add(logo);
+            String stylesheet = re.extractResourceAsPath(STYLESHEET).toUri().toURL().toExternalForm();
+            scene.getStylesheets().add(stylesheet);
+            StyleManager.getInstance().setDefaultUserAgentStylesheet(stylesheet);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Cannot load stylesheet: " + STYLESHEET, e);
+        }
+
+        primaryStage.setOnCloseRequest(event -> {
+            event.consume();
+            if (FileMenuHelper.handleDataBeforeClose()) {
+                shutdown();
+            }
+        });
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static MainController getController() {
+        return controller;
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public static Image getLogo() {
+        return logo;
+    }
+
+    /**
+     * Exits the application without saving.
+     */
+    public static void shutdown() {
+        List<Stage> stages = StageHelper.getStages();
+        for (int index = stages.size() - 1; index > 0; index--) {
+            stages.get(index).close();
+        }
+        Platform.exit();
+    }
 
     public static void main(String[] args) {
         // arg[0] : -v[erbose]
@@ -89,41 +143,6 @@ public class Topsoil extends Application {
         }
 
         launch(args);
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        Topsoil.controller = new MainController(primaryStage);
-        Topsoil.controller.closeProjectView();
-
-        Scene scene = new Scene(controller, 1200, 750);
-
-        try {
-            ResourceExtractor re = new ResourceExtractor(Topsoil.class);
-            String stylesheet = re.extractResourceAsPath(STYLESHEET).toUri().toURL().toExternalForm();
-            scene.getStylesheets().add(stylesheet);
-            StyleManager.getInstance().setDefaultUserAgentStylesheet(stylesheet);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Cannot load stylesheet: " + STYLESHEET, e);
-        }
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    public static MainController getController() {
-        return controller;
-    }
-
-    /**
-     * Exits the application.
-     */
-    public static void shutdown() {
-        List<Stage> stages = StageHelper.getStages();
-        for (int index = stages.size() - 1; index > 0; index--) {
-            stages.get(index).close();
-        }
-        Platform.exit();
     }
 
 }

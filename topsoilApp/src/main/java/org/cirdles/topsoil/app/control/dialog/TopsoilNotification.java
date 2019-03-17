@@ -52,7 +52,7 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         thisStage.setOnShown(event -> thisStage.requestFocus());
 
         // Set icon
-        thisStage.getIcons().add(Topsoil.getController().getTopsoilLogo());
+        thisStage.getIcons().add(Topsoil.getLogo());
 
         // Build layout
         HBox hBox = new HBox();
@@ -81,7 +81,7 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         this.getDialogPane().setContent(hBox);
 
         // Sets owner (main window)
-        this.initOwner(Topsoil.getController().getPrimaryStage());
+        this.initOwner(Topsoil.getPrimaryStage());
     }
 
 

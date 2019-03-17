@@ -59,7 +59,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         this.initOwner(owner);
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
-        stage.getIcons().addAll(Topsoil.getController().getTopsoilLogo());
+        stage.getIcons().addAll(Topsoil.getLogo());
         stage.setOnShown(event -> stage.requestFocus());
         stage.setWidth(INIT_WIDTH);
         stage.setHeight(INIT_HEIGHT);

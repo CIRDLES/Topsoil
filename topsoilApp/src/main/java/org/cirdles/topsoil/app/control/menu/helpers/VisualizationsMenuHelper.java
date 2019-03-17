@@ -88,7 +88,7 @@ public class VisualizationsMenuHelper {
         Scene scene = new Scene(plotView, DEFAULT_PLOT_WIDTH, DEFAULT_PLOT_HEIGHT);
         Stage plotStage = new Stage();
         plotStage.setScene(scene);
-        plotStage.getIcons().add(Topsoil.getController().getTopsoilLogo());
+        plotStage.getIcons().add(Topsoil.getLogo());
         plotStage.titleProperty().bind(Bindings.createStringBinding(
                 () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
         plotStage.setOnCloseRequest(closeEvent -> {

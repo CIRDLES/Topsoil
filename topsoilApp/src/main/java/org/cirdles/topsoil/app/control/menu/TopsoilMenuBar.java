@@ -34,7 +34,7 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem tableOptionsItem = new MenuItem("Table Options...");
         tableOptionsItem.setOnAction(event -> {
-            DataTableOptionsDialog.showDialog(MenuUtils.getCurrentTable(), Topsoil.getController().getPrimaryStage());
+            DataTableOptionsDialog.showDialog(MenuUtils.getCurrentTable(), Topsoil.getPrimaryStage());
         });
 
         Menu editMenu = new Menu("Edit", null,
@@ -43,7 +43,7 @@ public class TopsoilMenuBar extends MenuBar {
                                  tableOptionsItem
         );
         editMenu.setOnShown(event -> {
-            tableOptionsItem.setDisable(ProjectSerializer.getCurrentProject() == null);
+            tableOptionsItem.setDisable(Topsoil.getController().getProject() == null);
         });
 
         return editMenu;
@@ -82,7 +82,7 @@ public class TopsoilMenuBar extends MenuBar {
                                            generatePlotItem
         );
         visualizationsMenu.setOnShown(event -> {
-            generatePlotItem.setDisable(ProjectSerializer.getCurrentProject() == null);
+            generatePlotItem.setDisable(Topsoil.getController().getProject() == null);
         });
         return visualizationsMenu;
     }
@@ -95,7 +95,7 @@ public class TopsoilMenuBar extends MenuBar {
         reportIssueItem.setOnAction(event -> HelpMenuHelper.openIssueReporter());
 
         MenuItem aboutItem = new MenuItem("About...");
-        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Topsoil.getController().getPrimaryStage()));
+        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Topsoil.getPrimaryStage()));
 
         return new Menu("Help", null,
                         onlineHelpItem,

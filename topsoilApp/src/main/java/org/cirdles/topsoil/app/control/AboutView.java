@@ -91,7 +91,7 @@ public class AboutView extends VBox {
         stage.setScene(scene);
         stage.setResizable(false);
 
-        Stage primaryStage = Topsoil.getController().getPrimaryStage();
+        Stage primaryStage = Topsoil.getPrimaryStage();
 
         double newX = primaryStage.getX() + (primaryStage.getWidth() / 2) -
                       (DEFAULT_WIDTH / 2);

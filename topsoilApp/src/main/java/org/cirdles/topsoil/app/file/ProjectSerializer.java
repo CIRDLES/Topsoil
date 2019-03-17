@@ -16,15 +16,15 @@ import java.nio.file.Path;
  */
 public class ProjectSerializer {
 
-    private static ObjectProperty<TopsoilProject> currentProject = new SimpleObjectProperty<>(null);
-    public static ObjectProperty<TopsoilProject> currentProjectProperty() {
-        return currentProject;
+    private static ObjectProperty<Path> currentPath = new SimpleObjectProperty<>();
+    public static ObjectProperty<Path> currentPathProperty() {
+        return currentPath;
     }
-    public static TopsoilProject getCurrentProject() {
-        return currentProject.get();
+    public static Path getCurrentPath() {
+        return currentPath.get();
     }
-    public static void setCurrentProject(TopsoilProject project) {
-        currentProject.set(project);
+    public static void setCurrentPath(Path path) {
+        currentPath.set(path);
     }
 
     //**********************************************//
@@ -35,7 +35,6 @@ public class ProjectSerializer {
         OutputStream out = Files.newOutputStream(projectPath);
         ObjectOutputStream oos = new ObjectOutputStream(out);
         oos.writeObject(new SerializableProject(project));
-        project.setPath(projectPath);
         oos.close();
         out.close();
         return true;
@@ -43,9 +42,7 @@ public class ProjectSerializer {
 
     public static TopsoilProject deserialize(Path projectPath) throws IOException {
         try (InputStream in = Files.newInputStream(projectPath); ObjectInputStream ois = new ObjectInputStream(in)) {
-            TopsoilProject project = ((SerializableProject) ois.readObject()).reconstruct();
-            project.setPath(projectPath);
-            return project;
+            return ((SerializableProject) ois.readObject()).reconstruct();
         } catch (InvalidClassException | ClassNotFoundException e) {
             throw new IOException(e);
         }
