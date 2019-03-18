@@ -34,10 +34,7 @@ public class TopsoilMenuBar extends MenuBar {
 
     private Menu getEditMenu() {
         MenuItem preferencesItem = new MenuItem(resources.getString("preferences"));
-        preferencesItem.setOnAction(event -> {
-            ChoiceDialog<Locale> localeChoiceDialog = new ChoiceDialog<>(Locale.getDefault(), Locale.getAvailableLocales());
-            localeChoiceDialog.showAndWait();
-        });
+        preferencesItem.setDisable(true);
 
         MenuItem tableOptionsItem = new MenuItem(resources.getString("tableOptions"));
         tableOptionsItem.setOnAction(event -> {
@@ -45,9 +42,9 @@ public class TopsoilMenuBar extends MenuBar {
         });
 
         Menu editMenu = new Menu(resources.getString("editMenu"), null,
-                tableOptionsItem,
-                new SeparatorMenuItem(),
-                preferencesItem
+                tableOptionsItem
+//                new SeparatorMenuItem(),
+//                preferencesItem
         );
         editMenu.setOnShown(event -> {
             tableOptionsItem.setDisable(Topsoil.getController().getProject() == null);
