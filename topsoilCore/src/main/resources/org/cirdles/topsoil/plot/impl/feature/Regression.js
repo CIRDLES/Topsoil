@@ -36,7 +36,7 @@ plot.calculateRegressionLine = function () {
     var rho_list = [];
 
     var fillLists = data.map(function (d) {
-        if(d['Selected']) {
+        if(d['selected']) {
             x_list.push(d.x);
             y_list.push(d.y);
             sigma_x_list.push(d.sigma_x);
