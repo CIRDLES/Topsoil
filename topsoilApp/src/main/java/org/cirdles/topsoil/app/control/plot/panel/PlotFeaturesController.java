@@ -95,6 +95,34 @@ public class PlotFeaturesController extends AnchorPane {
     @FXML protected void initialize() {
         container.getChildren().setAll(mcLeanRegressionControls);
         isotopeSystemProperty();
+        wetherillCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                wasserburgCheckBox.setSelected(false);
+                wetherillEnvelopeCheckBox.setSelected(true);
+            } else {
+                wetherillEnvelopeCheckBox.setSelected(false);
+            }
+        }));
+        wetherillEnvelopeCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                wasserburgCheckBox.setSelected(false);
+                wetherillCheckBox.setSelected(true);
+            }
+        }));
+        wasserburgCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                wetherillCheckBox.setSelected(false);
+                wasserburgEnvelopeCheckBox.setSelected(true);
+            } else {
+                wasserburgEnvelopeCheckBox.setSelected(false);
+            }
+        }));
+        wasserburgEnvelopeCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue) {
+                wetherillCheckBox.setSelected(false);
+                wasserburgCheckBox.setSelected(true);
+            }
+        }));
     }
 
 }
