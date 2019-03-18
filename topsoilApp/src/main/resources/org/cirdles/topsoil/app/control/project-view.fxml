@@ -18,7 +18,7 @@
                      <children>
                         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Label fx:id="projectViewLabel" text="Project Structure">
+                              <Label fx:id="projectTreeViewLabel" text="Project Structure">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -37,7 +37,7 @@
                      <children>
                         <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Label text="Constants Editor">
+                              <Label fx:id="constantsEditorLabel" text="Constants Editor">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

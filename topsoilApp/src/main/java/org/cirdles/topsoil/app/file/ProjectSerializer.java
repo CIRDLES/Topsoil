@@ -32,6 +32,12 @@ public class ProjectSerializer {
     //**********************************************//
 
     public static boolean serialize(Path projectPath, TopsoilProject project) throws IOException {
+        if (projectPath == null) {
+            throw new IllegalArgumentException("projectPath must not be null.");
+        }
+        if (project == null) {
+            throw new IllegalArgumentException("project must not be null.");
+        }
         OutputStream out = Files.newOutputStream(projectPath);
         ObjectOutputStream oos = new ObjectOutputStream(out);
         oos.writeObject(new SerializableProject(project));

@@ -21,9 +21,21 @@ import java.util.Map;
 
 public class SerializableProject implements Serializable {
 
+    //**********************************************//
+    //                  CONSTANTS                   //
+    //**********************************************//
+
     private static final long serialVersionUID = -4335988535761575359L;
 
+    //**********************************************//
+    //                  ATTRIBUTES                  //
+    //**********************************************//
+
     private HashMap<ProjectKey, Serializable> data = new HashMap<>();
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
 
     public SerializableProject(TopsoilProject project) {
         ArrayList<HashMap<TableKey, Serializable>> tables = new ArrayList<>();
@@ -33,6 +45,10 @@ public class SerializableProject implements Serializable {
         data.put(ProjectKey.TABLES, tables);
     }
 
+    //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
     public TopsoilProject reconstruct() {
         List<Map<TableKey, Object>> tableDataList = (List<Map<TableKey, Object>>) data.get(ProjectKey.TABLES);
         List<DataTable> tables = new ArrayList<>();
@@ -41,6 +57,10 @@ public class SerializableProject implements Serializable {
         }
         return new TopsoilProject(tables.toArray(new DataTable[]{}));
     }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
 
     private HashMap<TableKey, Serializable> getTableData(DataTable table) {
         HashMap<TableKey, Serializable> tableData = new HashMap<>();

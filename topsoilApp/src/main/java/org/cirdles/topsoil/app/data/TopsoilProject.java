@@ -18,7 +18,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a working state of Topsoil data. Maintains a list of active {@link DataTable}s, and tracks which plots
@@ -79,6 +81,33 @@ public class TopsoilProject {
 
     public void removeOpenPlot(PlotType plotType, DataTable dataTable) {
         openPlots.remove(plotType, dataTable);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TopsoilProject) {
+            TopsoilProject other = (TopsoilProject) object;
+            if (this.getDataTables().size() != other.getDataTables().size()) {
+                return false;
+            }
+            for (int i = 0; i < this.getDataTables().size(); i++) {
+                if (! this.getDataTables().get(i).equals(other.getDataTables().get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        List<Object> objects = new ArrayList<>();
+        Collections.addAll(objects, dataTables);
+        return Objects.hash(objects.toArray());
     }
 
 }

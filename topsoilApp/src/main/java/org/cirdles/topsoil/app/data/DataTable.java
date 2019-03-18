@@ -147,12 +147,17 @@ public class DataTable extends Observable {
      */
     public void setColumnsForAllVariables(Map<Variable<?>, DataColumn<?>> map) {
         varMap.clear();
-        for (Map.Entry<Variable<?>, DataColumn<?>> entry : map.entrySet()) {
-            varMap.putIfAbsent(entry.getKey(), entry.getValue());
+        if (map != null) {
+            for (Map.Entry<Variable<?>, DataColumn<?>> entry : map.entrySet()) {
+                varMap.putIfAbsent(entry.getKey(), entry.getValue());
+            }
         }
     }
 
     DataRow getRowByIndex(int index) {
+        if (index < 0 || index >= getDataRows().size()) {
+            throw new IndexOutOfBoundsException();
+        }
         DataSegment segment;
         int rowCount = 0;
         for (int segIndex = 0; segIndex < getDataRoot().getChildren().size(); segIndex++) {
@@ -166,6 +171,13 @@ public class DataTable extends Observable {
     }
 
     <T> List<T> getValuesForColumn(DataColumn<T> column) {
+        if (column == null) {
+            throw new IllegalArgumentException("column cannot be null.");
+        }
+        if (! getDataColumns().contains(column)) {
+            throw new IllegalArgumentException("DataColumn not in table.");
+        }
+
         List<T> values = new ArrayList<>();
         for (DataRow row : this.getDataRows()) {
             if (row.getPropertyForColumn(column) == null) {
@@ -180,6 +192,36 @@ public class DataTable extends Observable {
     @Override
     public String toString() {
         return getLabel();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DataTable) {
+            DataTable other = (DataTable) object;
+            if (! getLabel().equals(other.getLabel())) {
+                return false;
+            }
+            if (getTemplate() != other.getTemplate()) {
+                return false;
+            }
+            if (getIsotopeSystem() != other.getIsotopeSystem()) {
+                return false;
+            }
+            if (getUncertainty() != other.getUncertainty()) {
+                return false;
+            }
+            if (! getColumnRoot().equals(other.getColumnRoot())) {
+                return false;
+            }
+            if (! getDataRoot().equals(other.getDataRoot())) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     //**********************************************//

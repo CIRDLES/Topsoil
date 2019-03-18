@@ -29,6 +29,32 @@ public class DataRoot extends DataComposite<DataSegment> {
         return getLabel();
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DataRoot) {
+            DataRoot other = (DataRoot) object;
+            if (! other.getLabel().equals(this.getLabel())) {
+                return false;
+            }
+            if (other.isSelected() != this.isSelected()) {
+                return false;
+            }
+            if (other.getChildren().size() != children.size()) {
+                return false;
+            }
+            for (int i = 0; i < children.size(); i++) {
+                if (! children.get(i).equals(other.getChildren().get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
