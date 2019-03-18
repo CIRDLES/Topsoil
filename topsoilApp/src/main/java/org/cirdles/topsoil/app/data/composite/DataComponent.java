@@ -63,7 +63,9 @@ public abstract class DataComponent {
     }
 
     public DataComponent(String label) {
-        setLabel(label != null ? label : "");
+        if (label != null) {
+            setLabel(label);
+        }
     }
 
     //**********************************************//

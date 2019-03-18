@@ -12,7 +12,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.cirdles.topsoil.app.control.AboutView?>
 
-
 <fx:root type="GridPane" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
@@ -34,7 +33,7 @@
                         <Insets />
                     </HBox.margin>
                 </ImageView>
-                <Label text="Powered by CIRDLES" textFill="#949494">
+                <Label fx:id="cirdlesLabel" text="Powered by CIRDLES" textFill="#949494">
                     <font>
                         <Font size="10.0" />
                     </font>
@@ -47,7 +46,7 @@
       <AboutView fx:id="aboutView" GridPane.columnIndex="1" />
         <VBox alignment="CENTER_RIGHT" GridPane.columnIndex="2">
             <children>
-                <Label text="Recent Files">
+                <Label fx:id="recentFilesLabel" text="Recent Files">
                     <font>
                         <Font name="System Bold" size="22.0" />
                     </font>

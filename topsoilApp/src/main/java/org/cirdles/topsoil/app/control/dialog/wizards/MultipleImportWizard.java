@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control.wizards;
+package org.cirdles.topsoil.app.control.dialog.wizards;
 
 import javafx.scene.control.ButtonType;
 import org.controlsfx.dialog.Wizard;

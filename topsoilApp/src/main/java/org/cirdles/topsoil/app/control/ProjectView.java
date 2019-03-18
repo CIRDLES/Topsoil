@@ -11,8 +11,10 @@ import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.ProjectSerializer;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 /**
  * The main view of Topsoil when there is data showing.
@@ -32,9 +34,12 @@ public class ProjectView extends SplitPane {
     //**********************************************//
 
     @FXML private TabPane tabPane;
-    @FXML private Label projectViewLabel;
+
+    @FXML private Label projectTreeViewLabel;
     @FXML private AnchorPane projectTreeViewPane;
     private ProjectTreeView projectTreeView;
+
+    @FXML private Label constantsEditorLabel;
     @FXML private AnchorPane constantsEditorPane;
     private ConstantsEditor constantsEditor;
 
@@ -44,6 +49,8 @@ public class ProjectView extends SplitPane {
 
     private TopsoilProject project;
     private ObservableList<DataTable> dataTableList = FXCollections.observableArrayList();
+
+    ResourceBundle resources = ResourceBundles.MAIN.getBundle();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -60,6 +67,9 @@ public class ProjectView extends SplitPane {
 
     @FXML
     public void initialize() {
+        projectTreeViewLabel.setText(resources.getString("projectStructure"));
+        constantsEditorLabel.setText(resources.getString("constantsEditor"));
+
         this.projectTreeView = new ProjectTreeView(project);
         FXMLUtils.setAnchorPaneBounds(projectTreeView, 0.0, 0.0, 0.0, 0.0);
         projectTreeViewPane.getChildren().add(projectTreeView);

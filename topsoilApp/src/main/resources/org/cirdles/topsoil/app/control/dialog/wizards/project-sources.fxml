@@ -12,7 +12,7 @@
    <content>
       <VBox alignment="TOP_CENTER" spacing="5.0">
          <children>
-            <Label text="Select source files (.csv, .tsv, .txt).">
+            <Label fx:id="selectFilesLabel" text="selectFilesLabel">
                <VBox.margin>
                   <Insets />
                </VBox.margin></Label>
@@ -21,12 +21,12 @@
                   <Insets />
                </VBox.margin>
                <children>
-                  <Button fx:id="addFilesButton" minWidth="100.0" mnemonicParsing="false" onAction="#addFilesButtonAction" text="Add Files...">
+                  <Button fx:id="addFilesButton" minWidth="100.0" mnemonicParsing="false" onAction="#addFilesButtonAction" text="addFilesButton">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="removeFilesButton" minWidth="100.0" mnemonicParsing="false" onAction="#removeFilesButtonAction" text="Remove File">
+                  <Button fx:id="removeFileButton" minWidth="100.0" mnemonicParsing="false" onAction="#removeFilesButtonAction" text="removeFileButton">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

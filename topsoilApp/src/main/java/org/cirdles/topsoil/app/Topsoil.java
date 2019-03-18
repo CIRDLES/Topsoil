@@ -4,16 +4,20 @@ import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.stage.StageHelper;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.file.ProjectSerializer;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -44,7 +48,7 @@ public class Topsoil extends Application {
     @Override
     public void start(Stage primaryStage) {
         Topsoil.primaryStage = primaryStage;
-        Topsoil.controller = new MainController(primaryStage);
+        Topsoil.controller = new MainController();
         Topsoil.controller.setHomeView();
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -52,6 +56,17 @@ public class Topsoil extends Application {
         primaryStage.setY((screenBounds.getHeight() - INIT_HEIGHT) / 2);
 
         Scene scene = new Scene(controller, INIT_WIDTH, INIT_HEIGHT);
+
+        primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
+            Path path = ProjectSerializer.getCurrentPath();
+            String appName = ResourceBundles.MAIN.getString("appName");
+            if (path != null) {
+                if (path.getFileName() != null) {
+                    appName += (" - " + path.getFileName().toString());
+                }
+            }
+            return appName;
+        }, ProjectSerializer.currentPathProperty()));
 
         try {
             ResourceExtractor re = new ResourceExtractor(Topsoil.class);
@@ -61,7 +76,7 @@ public class Topsoil extends Application {
             scene.getStylesheets().add(stylesheet);
             StyleManager.getInstance().setDefaultUserAgentStylesheet(stylesheet);
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Cannot load stylesheet: " + STYLESHEET, e);
+            throw new RuntimeException(ResourceBundles.MAIN.getString("stylesheetError") + " " + STYLESHEET, e);
         }
 
         primaryStage.setOnCloseRequest(event -> {
@@ -137,7 +152,7 @@ public class Topsoil extends Application {
         if (!verbose && (ClassLoader.getSystemResource("org/cirdles/topsoil/app/Topsoil.class").toExternalForm().startsWith("jar"))) {
             System.out.println(
                     "Running Topsoil from Jar file ... suppressing terminal output.\n"
-                            + "\t use '-verbose' argument after jar file name to enable terminal output.");
+                            + "\t Use '-verbose' argument after jar file name to enable terminal output.");
             System.setOut(new PrintStream(new OutputStream() {
                 public void write(int b) {
                     // NO-OP

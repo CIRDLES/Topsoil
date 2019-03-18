@@ -1,21 +1,17 @@
 package org.cirdles.topsoil.app;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.file.ProjectSerializer;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class MainController extends VBox {
 
@@ -24,7 +20,6 @@ public class MainController extends VBox {
     //**********************************************//
 
     private static final String CONTROLLER_FXML = "main-window.fxml";
-
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -57,18 +52,7 @@ public class MainController extends VBox {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    MainController(Stage primaryStage) {
-        // If a .topsoil file is open, the name of the file is appended to "Topsoil" at the top of the window
-        primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
-            Path path = ProjectSerializer.getCurrentPath();
-            if (path != null) {
-                if (path.getFileName() != null) {
-                    return "Topsoil - " + path.getFileName().toString();
-                }
-            }
-            return "Topsoil";
-        }, ProjectSerializer.currentPathProperty()));
-
+    MainController() {
         try {
             FXMLUtils.loadController(CONTROLLER_FXML, MainController.class, this);
         } catch (IOException e) {

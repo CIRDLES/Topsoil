@@ -21,6 +21,7 @@ import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.variable.Variable;
@@ -29,6 +30,7 @@ import org.cirdles.topsoil.variable.Variables;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * @author marottajb
@@ -47,7 +49,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
     //**********************************************//
 
     private DataTableOptionsDialog(DataTable table, Stage owner) {
-        this.setTitle("Options: " + table.getLabel());
+        this.setTitle(ResourceBundles.DIALOGS.getString("optionsTitle") + " " + table.getLabel());
         this.initOwner(owner);
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
@@ -108,10 +110,15 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         //                   CONTROLS                   //
         //**********************************************//
 
-        @FXML private VBox columnViewPane;
+        @FXML private Label columnTreeViewLabel;
+        @FXML private VBox columnTreeViewPane;
         ColumnTreeView columnTreeView;
+
+        @FXML private Label variableChooserLabel;
         @FXML private VBox variableChooserPane;
         VariableChooser variableChooser;
+
+        @FXML private Label uncertaintyLabel, isotopeSystemLabel;
         @FXML ComboBox<Uncertainty> unctComboBox;
         @FXML ComboBox<IsotopeSystem> isoComboBox;
 
@@ -138,8 +145,14 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         @FXML
         protected void initialize() {
+            ResourceBundle resources = ResourceBundles.DIALOGS.getBundle();
+            columnTreeViewLabel.setText(resources.getString("columnTreeLabel"));
+            variableChooserLabel.setText(resources.getString("variableChooserLabel"));
+            uncertaintyLabel.setText(resources.getString("uncertaintyLabel"));
+            isotopeSystemLabel.setText(resources.getString("isotopeSystemLabel"));
+
             this.columnTreeView = new ColumnTreeView(table.getColumnRoot());
-            columnViewPane.getChildren().add(columnTreeView);
+            columnTreeViewPane.getChildren().add(columnTreeView);
 
             this.variableChooser = new VariableChooser(table);
             variableChooserPane.getChildren().add(variableChooser);

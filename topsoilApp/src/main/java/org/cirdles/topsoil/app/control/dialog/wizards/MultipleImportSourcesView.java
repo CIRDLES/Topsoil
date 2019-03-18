@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control.wizards;
+package org.cirdles.topsoil.app.control.dialog.wizards;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Topsoil;
@@ -19,6 +20,7 @@ import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
 import org.cirdles.topsoil.app.file.TopsoilFileChooser;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -28,9 +30,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static org.cirdles.topsoil.app.control.wizards.MultipleImportWizard.INIT_HEIGHT;
-import static org.cirdles.topsoil.app.control.wizards.MultipleImportWizard.INIT_WIDTH;
-import static org.cirdles.topsoil.app.control.wizards.MultipleImportWizard.Key.TABLES;
+import static org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard.INIT_HEIGHT;
+import static org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard.INIT_WIDTH;
+import static org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard.Key.TABLES;
 
 /**
  * @author marottajb
@@ -39,7 +41,8 @@ class MultipleImportSourcesView extends WizardPane {
 
     private static final String CONTROLLER_FXML = "project-sources.fxml";
 
-    @FXML private Button addFilesButton, removeFilesButton;
+    @FXML private Label selectFilesLabel;
+    @FXML private Button addFilesButton, removeFileButton;
     @FXML private ListView<DataTable> filesListView;
 
     //**********************************************//
@@ -48,6 +51,7 @@ class MultipleImportSourcesView extends WizardPane {
 
     private ListProperty<DataTable> tables = new SimpleListProperty<>(FXCollections.observableArrayList());
     private BiMap<DataTable, Path> tablePathMap = HashBiMap.create();
+    private ResourceBundle resources = ResourceBundles.DIALOGS.getBundle();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -64,8 +68,12 @@ class MultipleImportSourcesView extends WizardPane {
 
     @FXML
     protected void initialize() {
+        selectFilesLabel.setText(resources.getString("selectFilesLabel"));
+        addFilesButton.setText(resources.getString("addFilesButton"));
+        removeFileButton.setText(resources.getString("removeFileButton"));
+
         filesListView.itemsProperty().bind(tables);
-        removeFilesButton.disableProperty().bind(
+        removeFileButton.disableProperty().bind(
                 Bindings.isNull(filesListView.getSelectionModel().selectedItemProperty())
         );
     }
@@ -77,7 +85,7 @@ class MultipleImportSourcesView extends WizardPane {
     @Override
     public void onEnteringPage(Wizard wizard) {
         wizard.invalidProperty().bind(tables.emptyProperty());
-        wizard.setTitle("New Project: Sources");
+        wizard.setTitle(resources.getString("importMultiTitle"));
         if (wizard.getSettings().containsKey(TABLES)) {
             List<DataTable> tableList = (List<DataTable>) wizard.getSettings().get(TABLES);
             updateTables(tableList);
@@ -155,8 +163,8 @@ class MultipleImportSourcesView extends WizardPane {
 
                 TopsoilNotification.showNotification(
                         TopsoilNotification.NotificationType.ERROR,
-                        "Incompatible Files",
-                        "Topsoil could not read the following files: \n\n" + badFileNames.toString()
+                        resources.getString("fileErrorTitle"),
+                        resources.getString("fileErrorMessage") + " \n\n" + badFileNames.toString()
                 );
             }
         }

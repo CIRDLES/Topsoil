@@ -18,12 +18,14 @@ import org.cirdles.topsoil.app.file.ProjectSerializer;
 import org.cirdles.topsoil.app.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * @author marottajb
@@ -48,35 +50,27 @@ public class FileMenu extends Menu {
     private MenuItem exitTopsoilItem;
 
     FileMenu() {
-        super("File");
+        super(ResourceBundles.MENU_BAR.getString("fileMenu"));
 
-        openProjectItem = new MenuItem("Open...");
-        openProjectItem.setOnAction(event -> {
-            TopsoilProject project = FileMenuHelper.openProject();
-            if (project != null) {
-                Topsoil.getController().setProject(project);
-            }
-        });
-        MenuItem placeholder = new MenuItem("No recent projects.");
+        ResourceBundle resources = ResourceBundles.MENU_BAR.getBundle();
+
+        openProjectItem = new MenuItem(resources.getString("openProject"));
+        openProjectItem.setOnAction(event -> FileMenuHelper.openProject());
+        MenuItem placeholder = new MenuItem(resources.getString("recentPlaceholder"));
         placeholder.setDisable(true);
-        clearRecentProjectsItem = new MenuItem("Clear recent files");
+        clearRecentProjectsItem = new MenuItem(resources.getString("clearRecent"));
         clearRecentProjectsItem.setOnAction(event -> {
             RecentFiles.clear();
             Topsoil.getController().getHomeView().clearRecentFiles();
         });
-        openRecentProjectMenu = new Menu("Open Recent", null, placeholder);
+        openRecentProjectMenu = new Menu(resources.getString("openRecent"), null, placeholder);
         openRecentProjectMenu.setOnShowing(event -> {
             Path[] paths = RecentFiles.getPaths();
             if (paths.length != 0) {
                 openRecentProjectMenu.getItems().remove(placeholder);
                 for (Path path : RecentFiles.getPaths()) {
                     MenuItem item = new MenuItem(path.getFileName().toString());
-                    item.setOnAction(event1 -> {
-                        TopsoilProject project = FileMenuHelper.openProject(path);
-                        if (project != null) {
-                            Topsoil.getController().setProject(project);
-                        }
-                    });
+                    item.setOnAction(event1 -> FileMenuHelper.openProject(path));
                     openRecentProjectMenu.getItems().add(item);
                 }
                 openRecentProjectMenu.getItems().add(new SeparatorMenuItem());
@@ -88,19 +82,19 @@ public class FileMenu extends Menu {
             openRecentProjectMenu.getItems().add(placeholder);
         });
 
-        openUPbExampleItem = new MenuItem("Uranium-Lead");
+        openUPbExampleItem = new MenuItem(resources.getString("UPb"));
         openUPbExampleItem.setOnAction(event -> openExampleTable(ExampleData.UPB));
-        openUThExampleItem = new MenuItem("Uranium-Thorium");
+        openUThExampleItem = new MenuItem(resources.getString("UTh"));
         openUThExampleItem.setOnAction(event -> openExampleTable(ExampleData.UTH));
-        openSquid3ExampleItem = new MenuItem("Squid 3 Data");
+        openSquid3ExampleItem = new MenuItem(resources.getString("squid3"));
         openSquid3ExampleItem.setOnAction(event -> openExampleTable(ExampleData.SQUID_3));
-        openExampleMenu = new Menu("Open Example", null,
+        openExampleMenu = new Menu(resources.getString("openExample"), null,
                 openUPbExampleItem,
                 openUThExampleItem,
                 openSquid3ExampleItem
         );
 
-        saveProjectItem = new MenuItem("Save");
+        saveProjectItem = new MenuItem(resources.getString("saveProject"));
         saveProjectItem.setOnAction(event -> {
             TopsoilProject project = Topsoil.getController().getProject();
             if (project != null) {
@@ -109,17 +103,17 @@ public class FileMenu extends Menu {
                 }
             }
         });
-        saveProjectAsItem = new MenuItem("Save As...");
+        saveProjectAsItem = new MenuItem(resources.getString("saveProjectAs"));
         saveProjectAsItem.setOnAction(event -> {
             TopsoilProject project = Topsoil.getController().getProject();
             if (project != null) {
                 FileMenuHelper.saveProjectAs(project);
             }
         });
-        closeProjectItem = new MenuItem("Close Project");
+        closeProjectItem = new MenuItem(resources.getString("closeProject"));
         closeProjectItem.setOnAction(event -> FileMenuHelper.closeProject());
 
-        fromFileItem = new MenuItem("From File (csv, tsv, txt)");
+        fromFileItem = new MenuItem(resources.getString("importFile"));
         fromFileItem.setOnAction(event -> {
             File file = TopsoilFileChooser.openTableFile().showOpenDialog(Topsoil.getPrimaryStage());
             if (file != null && file.exists()) {
@@ -128,52 +122,52 @@ public class FileMenu extends Menu {
                     Delimiter delimiter = DataParser.guessDelimiter(path);
                     Map<DataImportDialog.Key, Object> settings =
                             DataImportDialog.showDialog(path.getFileName().toString(), delimiter);
-                    delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);
-                    DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
+                    if (settings != null) {
+                        delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);
+                        DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
 
-                    if (delimiter != null && template != null) {
-                        DataTable table = FileMenuHelper.importTableFromFile(path, delimiter, template);
-                        if (DataTableOptionsDialog.showDialog(table, Topsoil.getPrimaryStage())) {
-                            TopsoilProject project = Topsoil.getController().getProject();
-                            if (project != null) {
-                                project.addDataTable(table);
-                            } else {
-                                project = new TopsoilProject(table);
-                                Topsoil.getController().setProject(project);
+                        if (delimiter != null && template != null) {
+                            DataTable table = FileMenuHelper.importTableFromFile(path, delimiter, template);
+                            if (DataTableOptionsDialog.showDialog(table, Topsoil.getPrimaryStage())) {
+                                TopsoilProject project = Topsoil.getController().getProject();
+                                if (project != null) {
+                                    project.addDataTable(table);
+                                } else {
+                                    project = new TopsoilProject(table);
+                                    Topsoil.getController().setProject(project);
+                                }
                             }
                         }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                     TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
-                                                         "Error",
-                                                         "Unable to read file: " + path.getFileName().toString());
+                            "Error",
+                            resources.getString("importFileError") + path.getFileName().toString());
                 }
             }
         });
-        fromMultipleItem = new MenuItem("From Files... (csv, tsv, txt)");
+        fromMultipleItem = new MenuItem(resources.getString("importMultiFile"));
         fromMultipleItem.setOnAction(event -> FileMenuHelper.importMultipleFiles());
-        fromClipboardItem = new MenuItem("From Clipboard");
+        fromClipboardItem = new MenuItem(resources.getString("importClipboard"));
         fromClipboardItem.setOnAction(event -> FileMenuHelper.importTableFromClipboard());
 
-        importTableMenu = new Menu("Import", null,
+        importTableMenu = new Menu(resources.getString("importMenu"), null,
                                    fromFileItem,
                                    fromMultipleItem,
                                    fromClipboardItem
         );
         importTableMenu.setOnShown(event -> fromClipboardItem.setDisable(! Clipboard.getSystemClipboard().hasString()));
 
-        exportTableMenuItem = new MenuItem("Export Table...");
+        exportTableMenuItem = new MenuItem(resources.getString("exportTable"));
         exportTableMenuItem.setOnAction(event -> {
             DataTable table = MenuUtils.getCurrentTable();
-            if (table != null && !FileMenuHelper.exportTableAs(table)) {
-                TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
-                                                     "Error",
-                                                     "Could not export table.");
+            if (table != null) {
+                FileMenuHelper.exportTableAs(table);
             }
         });
 
-        exitTopsoilItem = new MenuItem("Exit Topsoil");
+        exitTopsoilItem = new MenuItem(resources.getString("exit"));
         exitTopsoilItem.setOnAction(event -> {
             if (FileMenuHelper.handleDataBeforeClose()) {
                 Topsoil.shutdown();

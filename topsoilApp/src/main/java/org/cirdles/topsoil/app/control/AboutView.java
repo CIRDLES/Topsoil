@@ -14,9 +14,13 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ResourceBundle;
+
+import static org.cirdles.topsoil.app.util.ResourceBundles.MAIN;
 
 /**
  * @author marottajb
@@ -45,7 +49,7 @@ public class AboutView extends VBox {
 
     @FXML private ImageView topsoilLogo, cirdlesLogo;
 
-    @FXML private Label versionLabel, messageLabel;
+    @FXML private Label versionLabel, aboutLabel, messageLabel, subMessageLabel, linksLabel;
 
     @FXML private Hyperlink homePage, license, github, cirdles, releaseLog;
 
@@ -71,8 +75,19 @@ public class AboutView extends VBox {
     }
 
     @FXML protected void initialize() {
+        ResourceBundle bundle = ResourceBundles.MAIN.getBundle();
+        versionLabel.setText(bundle.getString("appVersion"));
+        aboutLabel.setText(bundle.getString("aboutLabel"));
+        messageLabel.setText(bundle.getString("aboutMessage"));
+        subMessageLabel.setText(bundle.getString("aboutSubMessage"));
+        linksLabel.setText(bundle.getString("linksLabel"));
+        homePage.setText(bundle.getString("homePageLink"));
+        license.setText(bundle.getString("licenseLink"));
+        github.setText(bundle.getString("githubLink"));
+        cirdles.setText(bundle.getString("cirdlesLink"));
+        releaseLog.setText(bundle.getString("releaseLogLink"));
+
         topsoilLogo.setImage(new Image(resourceExtractor.extractResourceAsPath(LOGO).toUri().toString()));
-        versionLabel.setText("Version " + (new TopsoilMetadata()).getVersion().split("-")[0]);
     }
 
     //**********************************************//

@@ -7,18 +7,30 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.util.Locale;
 
 public class NumberColumnStringConverter extends StringConverter<Number> {
-
-    private static final String PATTERN_BASE = "0.0";
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private DecimalFormat df = new DecimalFormat(PATTERN_BASE);
+    private String patternBase;
+    private DecimalFormat df = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.getDefault());
     private boolean isScientificNotation = false;
     private int numFractionDigits = 9;
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
+
+    public NumberColumnStringConverter() {
+        super();
+        DecimalFormatSymbols symbols = df.getDecimalFormatSymbols();
+        patternBase = "0" + symbols.getDecimalSeparator() + "0";
+    }
 
     //**********************************************//
     //                PUBLIC METHODS                //
@@ -28,7 +40,7 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
     public String toString(Number number) {
         if (number != null) {
             int valueFractionDigits = countFractionDigits(number);
-            StringBuilder pattern = new StringBuilder(PATTERN_BASE);
+            StringBuilder pattern = new StringBuilder(patternBase);
             for (int i = 1; i < numFractionDigits; i++) {
                 if (i < valueFractionDigits) {
                     pattern.append("0");
@@ -39,7 +51,7 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
             if (isScientificNotation) {
                 pattern.append("e0##");
             }
-            df.applyPattern(pattern.toString());
+            df.applyLocalizedPattern(pattern.toString());
             return df.format((double) number);
         }
         return "";
@@ -48,7 +60,12 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
     @Override
     public Number fromString(String str) {
         if (! str.isEmpty()) {
-            return Double.parseDouble(str);
+            try {
+                return df.parse(str);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return Double.NaN;
+            }
         }
         return null;
     }

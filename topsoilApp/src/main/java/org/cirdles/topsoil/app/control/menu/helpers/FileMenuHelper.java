@@ -5,7 +5,7 @@ import javafx.scene.input.Clipboard;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
-import org.cirdles.topsoil.app.control.wizards.MultipleImportWizard;
+import org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
@@ -41,9 +41,9 @@ public class FileMenuHelper {
      *
      * @return  deserialized TopsoilProject
      */
-    public static TopsoilProject openProject() {
+    public static void openProject() {
         Path path = Paths.get(TopsoilFileChooser.openTopsoilFile().showOpenDialog(Topsoil.getPrimaryStage()).toURI());
-        return openProject(path);
+        openProject(path);
     }
 
     /**
@@ -52,19 +52,19 @@ public class FileMenuHelper {
      * @param path  project Path
      * @return      deserialized TopsoilProject
      */
-    public static TopsoilProject openProject(Path path) {
+    public static void openProject(Path path) {
         if (path == null) {
             throw new IllegalArgumentException("Cannot open a project at path \"null\".");
         }
 
         if (Topsoil.getController().getProject() != null) {
             if (path.equals(ProjectSerializer.getCurrentPath())) {
-                return null;    // project already open
+                return;    // project already open
             }
             handleOverwrite();
         }
 
-        return openProjectPrivate(path);
+        openProjectPrivate(path);
     }
 
     /**
@@ -219,14 +219,16 @@ public class FileMenuHelper {
      */
     public static boolean exportTableAs(DataTable table) {
         boolean completed = false;
-        if (table.getTemplate() != DataTemplate.DEFAULT) {
-            File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Topsoil.getPrimaryStage());
-            completed = exportTableAs(file.toPath(), table);
-        } else {
+        if (table.getTemplate() == DataTemplate.SQUID_3) {
             TopsoilNotification.showNotification(TopsoilNotification.NotificationType.INFORMATION,
                     "Unsupported Operation",
-                    "Custom table exporting is currently unsupported."
+                    "Squid 3 table exporting is currently unsupported."
             );
+        } else {
+            File file = TopsoilFileChooser.exportTableFile().showSaveDialog(Topsoil.getPrimaryStage());
+            if (file != null) {
+                completed = exportTableAs(file.toPath(), table);
+            }
         }
         return completed;
     }
@@ -314,13 +316,15 @@ public class FileMenuHelper {
         }
     }
 
-    private static TopsoilProject openProjectPrivate(Path projectPath) {
+    private static void openProjectPrivate(Path projectPath) {
         try {
             TopsoilProject project = ProjectSerializer.deserialize(projectPath);
-            Topsoil.getController().setProject(project);
-            ProjectSerializer.setCurrentPath(projectPath);
-            RecentFiles.addPath(projectPath);
-            return project;
+            if (project != null) {
+                Topsoil.getController().setProject(project);
+                ProjectSerializer.setCurrentPath(projectPath);
+                RecentFiles.addPath(projectPath);
+                Topsoil.getController().setProject(project);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             TopsoilNotification.showNotification(
@@ -329,7 +333,6 @@ public class FileMenuHelper {
                     "Could not open project file: " + projectPath.toString()
             );
         }
-        return null;
     }
 
     /**

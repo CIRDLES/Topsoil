@@ -20,12 +20,12 @@
           <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Data template:" GridPane.rowIndex="1">
+            <Label fx:id="templateLabel" text="Data template:" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Data separator/delimiter:">
+            <Label fx:id="delimiterLabel" text="Data separator/delimiter:">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>

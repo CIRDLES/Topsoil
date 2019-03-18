@@ -6,8 +6,11 @@ import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
-import org.cirdles.topsoil.app.file.ProjectSerializer;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 import org.cirdles.topsoil.plot.PlotType;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * The main {@code MenuBar} for the application.
@@ -15,6 +18,8 @@ import org.cirdles.topsoil.plot.PlotType;
  * @author marottajb
  */
 public class TopsoilMenuBar extends MenuBar {
+
+    private ResourceBundle resources = ResourceBundles.MENU_BAR.getBundle();
 
     public TopsoilMenuBar() {
         super();
@@ -27,20 +32,22 @@ public class TopsoilMenuBar extends MenuBar {
         );
     }
 
-
     private Menu getEditMenu() {
-        MenuItem preferencesItem = new MenuItem("Preferences...");
-        preferencesItem.setDisable(true);
+        MenuItem preferencesItem = new MenuItem(resources.getString("preferences"));
+        preferencesItem.setOnAction(event -> {
+            ChoiceDialog<Locale> localeChoiceDialog = new ChoiceDialog<>(Locale.getDefault(), Locale.getAvailableLocales());
+            localeChoiceDialog.showAndWait();
+        });
 
-        MenuItem tableOptionsItem = new MenuItem("Table Options...");
+        MenuItem tableOptionsItem = new MenuItem(resources.getString("tableOptions"));
         tableOptionsItem.setOnAction(event -> {
             DataTableOptionsDialog.showDialog(MenuUtils.getCurrentTable(), Topsoil.getPrimaryStage());
         });
 
-        Menu editMenu = new Menu("Edit", null,
-//                                 preferencesItem,
-//                                 new SeparatorMenuItem(),
-                                 tableOptionsItem
+        Menu editMenu = new Menu(resources.getString("editMenu"), null,
+                tableOptionsItem,
+                new SeparatorMenuItem(),
+                preferencesItem
         );
         editMenu.setOnShown(event -> {
             tableOptionsItem.setDisable(Topsoil.getController().getProject() == null);
@@ -50,27 +57,12 @@ public class TopsoilMenuBar extends MenuBar {
     }
 
     private Menu getViewMenu() {
-        Menu dataFormatMenu = new Menu("Set Data Format");
-        MenuItem formatTextItem = new MenuItem("Text...");
-        formatTextItem.setDisable(true);
-        formatTextItem.setOnAction(event -> {
-            // @TODO
-        });
-        MenuItem formatNumberItem = new MenuItem("Numbers...");
-        formatNumberItem.setDisable(true);
-        formatNumberItem.setOnAction(event -> {
-            // @TODO
-        });
-        dataFormatMenu.getItems().addAll(formatNumberItem);
-
-        Menu viewMenu = new Menu("View", null,
-                        dataFormatMenu
-        );
+        Menu viewMenu = new Menu(resources.getString("viewMenu"), null);
         return viewMenu;
     }
 
     private Menu getVisualizationsMenu() {
-        MenuItem generatePlotItem = new MenuItem("Generate Plot...");
+        MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
         generatePlotItem.setOnAction(event -> {
             // @TODO Check to make sure proper variables are assigned
             ProjectTableTab projectTab = MenuUtils.getSelectedTableTab();
@@ -78,7 +70,7 @@ public class TopsoilMenuBar extends MenuBar {
                                                   MenuUtils.getProjectView().getProject(), null);
         });
 
-        Menu visualizationsMenu = new Menu("Visualizations", null,
+        Menu visualizationsMenu = new Menu(resources.getString("visualizationsMenu"), null,
                                            generatePlotItem
         );
         visualizationsMenu.setOnShown(event -> {
@@ -88,16 +80,16 @@ public class TopsoilMenuBar extends MenuBar {
     }
 
     private Menu getHelpMenu() {
-        MenuItem onlineHelpItem = new MenuItem("Online Help");
+        MenuItem onlineHelpItem = new MenuItem(resources.getString("onlineHelp"));
         onlineHelpItem.setOnAction(event -> HelpMenuHelper.openOnlineHelp());
 
-        MenuItem reportIssueItem = new MenuItem("Report Issue");
+        MenuItem reportIssueItem = new MenuItem(resources.getString("reportIssue"));
         reportIssueItem.setOnAction(event -> HelpMenuHelper.openIssueReporter());
 
-        MenuItem aboutItem = new MenuItem("About...");
+        MenuItem aboutItem = new MenuItem(resources.getString("about"));
         aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Topsoil.getPrimaryStage()));
 
-        return new Menu("Help", null,
+        return new Menu(resources.getString("helpMenu"), null,
                         onlineHelpItem,
                         reportIssueItem,
                         aboutItem

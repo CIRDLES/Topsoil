@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control.wizards;
+package org.cirdles.topsoil.app.control.dialog.wizards;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
@@ -7,14 +7,15 @@ import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
 import java.io.IOException;
 import java.util.*;
 
-import static org.cirdles.topsoil.app.control.wizards.MultipleImportWizard.INIT_HEIGHT;
-import static org.cirdles.topsoil.app.control.wizards.MultipleImportWizard.Key.TABLES;
+import static org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard.INIT_HEIGHT;
+import static org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard.Key.TABLES;
 
 /**
  * @author marottajb
@@ -53,7 +54,7 @@ class MultipleImportPreview extends WizardPane {
 
     @Override
     public void onEnteringPage(Wizard wizard) {
-        wizard.setTitle("New Project: Preview");
+        wizard.setTitle(ResourceBundles.DIALOGS.getString("importPreviewTitle"));
         List<DataTable> newTables = (List<DataTable>) wizard.getSettings().get(TABLES);
         updateTabs(newTables);
     }

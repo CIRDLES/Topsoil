@@ -5,12 +5,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,7 +28,7 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
     //**********************************************//
 
     private DataImportDialog(String sourceName, Delimiter initial, Stage owner) {
-        this.setTitle("Importing: " + sourceName);
+        this.setTitle(ResourceBundles.DIALOGS.getString("importingData") + " " + sourceName);
         this.initOwner(owner);
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
@@ -89,6 +91,7 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
 
         private static final String CONTROLLER_FXML = "data-import-dialog.fxml";
 
+        @FXML private Label delimiterLabel, templateLabel;
         @FXML private ComboBox<Delimiter> delimiterComboBox;
         @FXML private ComboBox<DataTemplate> templateComboBox;
 
@@ -105,6 +108,9 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
 
         @FXML
         protected void initialize() {
+            delimiterLabel.setText(ResourceBundles.DIALOGS.getString("delimiterLabel"));
+            templateLabel.setText(ResourceBundles.DIALOGS.getString("templateLabel"));
+
             delimiterComboBox.getItems().addAll(Delimiter.values());
             if (delimiter != null) {
                 delimiterComboBox.getSelectionModel().select(delimiter);

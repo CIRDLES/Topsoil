@@ -1,9 +1,9 @@
 package org.cirdles.topsoil.app.data.column;
 
+import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
 import org.cirdles.topsoil.app.data.composite.DataLeaf;
-
-import java.io.Serializable;
-import java.util.Objects;
+import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
 
 /**
  * Represents a column of data, and acts as a leaf in a {@link ColumnRoot}.
@@ -21,22 +21,24 @@ public class DataColumn<T> extends DataLeaf {
     //**********************************************//
 
     protected Class<T> type;
+    private StringConverter<T> converter;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    private DataColumn(String label, Class<T> type) {
+    private DataColumn(String label, Class<T> type, StringConverter<T> converter) {
         super(label);
         this.type = type;
+        this.converter = converter;
     }
 
     public static DataColumn<String> stringColumn(String label) {
-        return new DataColumn<>(label, String.class);
+        return new DataColumn<>(label, String.class, new DefaultStringConverter());
     }
 
     public static DataColumn<Number> numberColumn(String label) {
-        return new DataColumn<>(label, Number.class);
+        return new DataColumn<>(label, Number.class, new NumberColumnStringConverter());
     }
 
     //**********************************************//
@@ -47,9 +49,8 @@ public class DataColumn<T> extends DataLeaf {
         return type;
     }
 
-    @Override
-    public String toString() {
-        return getLabel();
+    public StringConverter<T> getStringConverter() {
+        return converter;
     }
 
 }

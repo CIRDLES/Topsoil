@@ -7,15 +7,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.text.TextAlignment;
-import javafx.util.StringConverter;
-import org.cirdles.topsoil.app.data.DataUtils;
 import org.cirdles.topsoil.app.data.column.*;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -149,8 +146,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
 
         newColumn.setCellFactory(param -> {
-            TextFieldTreeTableCell<DataComponent, T> cell =
-                    new TextFieldTreeTableCell<>((StringConverter<T>) DataUtils.stringConverterForDataColumn(table, dataColumn));
+            TextFieldTreeTableCell<DataComponent, T> cell = new TextFieldTreeTableCell<>(dataColumn.getStringConverter());
             cell.setAlignment(Pos.CENTER_RIGHT);
             cell.setEditable(false);
             return cell;

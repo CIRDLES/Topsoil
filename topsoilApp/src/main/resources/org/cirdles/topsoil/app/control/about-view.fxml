@@ -19,7 +19,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </ImageView>
-      <Label fx:id="versionLabel" text="Version X.Y.Z">
+      <Label fx:id="versionLabel" text="versionLabel">
          <VBox.margin>
             <Insets />
          </VBox.margin>
@@ -30,12 +30,12 @@
                <children>
                   <VBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label text="About">
+                        <Label fx:id="aboutLabel" text="About">
                            <font>
                               <Font name="System Bold" size="22.0" />
                            </font>
                         </Label>
-                        <Label fx:id="messageLabel" text="Topsoil is a desktop application and Java library that creates data visualizations for geochronologists and other earth scientists. ”Topsoil” is an anagram of “Isoplot”, the name of an enormously successful Microsoft Excel Add-In with similar capabilities developed by Kenneth Ludwig, which now works only in older versions of Excel." wrapText="true" VBox.vgrow="NEVER">
+                        <Label fx:id="messageLabel" text="messageLabel" wrapText="true" VBox.vgrow="NEVER">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -45,7 +45,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT">
                            <children>
-                              <Label text="For more information about Topsoil, visit our">
+                              <Label fx:id="subMessageLabel" text="subMessageLabel">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" top="5.0" />
                                  </HBox.margin>
@@ -53,7 +53,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Hyperlink fx:id="homePage" onAction="#openHome" text="home page.">
+                              <Hyperlink fx:id="homePage" onAction="#openHome" text="homePage">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -63,7 +63,7 @@
                               <Insets />
                            </VBox.margin>
                         </HBox>
-                        <Hyperlink fx:id="license" onAction="#openLicensePage" text="Licensed under the Apache License, Version 2.0">
+                        <Hyperlink fx:id="license" onAction="#openLicensePage" text="license">
                            <VBox.margin>
                               <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
                            </VBox.margin>
@@ -88,7 +88,7 @@
       </HBox>
       <VBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
          <children>
-            <Label text="Links">
+            <Label fx:id="linksLabel" text="Links">
                <font>
                   <Font name="System Bold" size="22.0" />
                </font>
@@ -98,17 +98,17 @@
             </Label>
             <VBox alignment="TOP_CENTER">
                <children>
-                  <Hyperlink fx:id="github" onAction="#openGitHub" text="GitHub Repository">
+                  <Hyperlink fx:id="github" onAction="#openGitHub" text="github">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Hyperlink>
-                  <Hyperlink fx:id="cirdles" onAction="#openCIRDLES" text="CIRDLES.org">
+                  <Hyperlink fx:id="cirdles" onAction="#openCIRDLES" text="cirdles">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Hyperlink>
-                  <Hyperlink fx:id="releaseLog" onAction="#openReleaseLog" text="Release Log">
+                  <Hyperlink fx:id="releaseLog" onAction="#openReleaseLog" text="releaseLog">
                      <font>
                         <Font size="14.0" />
                      </font>

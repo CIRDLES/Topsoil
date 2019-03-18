@@ -13,9 +13,8 @@ public class DataLeaf extends DataComponent {
         this(DEFAULT_LABEL);
     }
 
-    public DataLeaf(String title) {
-        super();
-        setLabel(title);
+    public DataLeaf(String label) {
+        super(label);
     }
 
 }

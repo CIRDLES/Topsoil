@@ -11,6 +11,7 @@ import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
+import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
@@ -100,6 +101,11 @@ public class DataTable extends Observable {
                 notifyObservers();
             });
         }
+        for (DataColumn<?> column : this.columnRoot.getLeafNodes()) {
+            if (column.getType() == Number.class) {
+                setFractionDigitsForNumberColumn((DataColumn<Number>) column);
+            }
+        }
     }
 
     //**********************************************//
@@ -174,6 +180,18 @@ public class DataTable extends Observable {
     @Override
     public String toString() {
         return getLabel();
+    }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
+
+    private void setFractionDigitsForNumberColumn(DataColumn<Number> column) {
+        int maxFractionDigits = 0;
+        for (Number n : getValuesForColumn(column)) {
+            maxFractionDigits = Math.max(maxFractionDigits, NumberColumnStringConverter.countFractionDigits(n));
+        }
+        ((NumberColumnStringConverter) column.getStringConverter()).setNumFractionDigits(maxFractionDigits);
     }
 
 }

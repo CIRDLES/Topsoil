@@ -21,12 +21,12 @@
       <RowConstraints valignment="TOP" vgrow="NEVER" />
    </rowConstraints>
    <children>
-      <Label text="Select which columns you'd like to see:" />
-      <VBox fx:id="columnViewPane" alignment="TOP_CENTER" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" GridPane.vgrow="ALWAYS" />
-      <Label text="Assign variables to columns:" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
+      <Label fx:id="columnTreeViewLabel" text="columnTreeViewLabel" />
+      <VBox fx:id="columnTreeViewPane" alignment="TOP_CENTER" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" GridPane.vgrow="ALWAYS" />
+      <Label fx:id="variableChooserLabel" text="variableChooserLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
       <VBox fx:id="variableChooserPane" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
-      <Label fx:id="uncLabel" text="Uncertainty Format:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-      <Label text="Isotope System:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+      <Label fx:id="uncertaintyLabel" text="uncertaintyLabel" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <Label fx:id="isotopeSystemLabel" text="isotopeSystemLabel" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
       <ComboBox fx:id="unctComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
       <ComboBox fx:id="isoComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
    </children>

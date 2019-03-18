@@ -12,12 +12,14 @@ import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.RecentFiles;
+import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * The main view of Topsoil when no data is showing.
@@ -36,6 +38,7 @@ public class HomeView extends GridPane {
     //                   CONTROLS                   //
     //**********************************************//
 
+    @FXML private Label recentFilesLabel, cirdlesLabel;
     @FXML private ImageView cirdlesLogo;
     @FXML private VBox recentFilesLinkBox;
 
@@ -55,6 +58,10 @@ public class HomeView extends GridPane {
 
     @FXML
     protected void initialize() {
+        ResourceBundle resources = ResourceBundles.MAIN.getBundle();
+        recentFilesLabel.setText(resources.getString("recentFiles"));
+        cirdlesLabel.setText(resources.getString("cirdlesLabel"));
+
         final ResourceExtractor re = new ResourceExtractor(HomeView.class);
         cirdlesLogo.setImage(new Image(re.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
         noRecentFilesLabel.setStyle("-fx-font-style: italic;");
@@ -76,12 +83,7 @@ public class HomeView extends GridPane {
                 Path fileName = path.getFileName();
                 if (fileName != null) {
                     link = new Hyperlink(fileName.toString());
-                    link.setOnAction(event -> {
-                        TopsoilProject project = FileMenuHelper.openProject(path);
-                        if (project != null) {
-                            Topsoil.getController().setProject(project);
-                        }
-                    });
+                    link.setOnAction(event -> FileMenuHelper.openProject(path));
                     recentFilesLinkBox.getChildren().add(link);
                 }
             }
