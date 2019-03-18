@@ -17,7 +17,7 @@
             <Insets bottom="15.0" left="5.0" right="5.0" />
          </padding>
       </VBox>
-      <ScrollPane style="-fx-background-color: transparent;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+      <ScrollPane fx:id="scrollPane" style="-fx-background-color: transparent;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
          <content>
             <AnchorPane>
                <children>

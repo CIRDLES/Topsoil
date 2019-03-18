@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -221,11 +222,13 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
     public static class VariableChooser extends HBox {
 
         private static final String CONTROLLER_FXML = "variable-chooser.fxml";
-        private static final double COL_WIDTH = 70.0;
-        private static final double ROW_HEIGHT = 25.0;
+        private static final double COL_WIDTH = 100.0;
+        private static final double ROW_HEIGHT = 30.0;
+        private static final double HEADER_ROW_HEIGHT = 25.01;  // .01 prevents tableView's vertical scrollbar from showing
 
         @FXML VBox variableLabelBox;
         @FXML TableView<VariableRow<?>> tableView;
+        @FXML ScrollPane scrollPane;
 
         private DataTable table;
         private Map<DataComponent, TableColumn<VariableRow<?>, ?>> tableColumnMap = new HashMap<>();
@@ -259,9 +262,8 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             tableView.setFixedCellSize(ROW_HEIGHT);
             tableView.prefHeightProperty().bind(
                     tableView.fixedCellSizeProperty()
-                            .multiply(Bindings.size(tableView.getItems())
-                                    .add(colDepth))
-                            .add(1 - (colDepth - 1))
+                            .multiply(Bindings.size(tableView.getItems()))
+                            .add(colDepth * HEADER_ROW_HEIGHT)
             );
             tableView.prefWidthProperty().bind(
                     Bindings.createDoubleBinding(() -> {
@@ -281,6 +283,11 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                     header.setReordering(false);
                 });
             }));
+
+            // Prevents mouse-wheel scrolling
+            scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+                event.consume();
+            });
         }
 
         public Map<Variable<?>, DataColumn<?>> getSelections() {
