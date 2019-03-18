@@ -38,8 +38,6 @@ public class FileMenuHelper {
 
     /**
      * Handles the opening of a .topsoil file and returns the deserialized {@code TopsoilProject}.
-     *
-     * @return  deserialized TopsoilProject
      */
     public static void openProject() {
         Path path = Paths.get(TopsoilFileChooser.openTopsoilFile().showOpenDialog(Topsoil.getPrimaryStage()).toURI());
@@ -50,7 +48,6 @@ public class FileMenuHelper {
      * Handles the opening of a .topsoil file and returns the deserialized {@code TopsoilProject}.
      *
      * @param path  project Path
-     * @return      deserialized TopsoilProject
      */
     public static void openProject(Path path) {
         if (path == null) {
