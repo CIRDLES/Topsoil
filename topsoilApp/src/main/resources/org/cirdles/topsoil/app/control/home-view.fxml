@@ -48,7 +48,7 @@
             <children>
                 <Label fx:id="recentFilesLabel" text="Recent Files">
                     <font>
-                        <Font name="System Bold" size="22.0" />
+                        <Font size="22.0" />
                     </font>
                     <VBox.margin>
                         <Insets />

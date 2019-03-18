@@ -8,6 +8,7 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
@@ -27,8 +28,12 @@ public class Topsoil extends Application {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final String STYLESHEET = "topsoil.css";
     private static final String TOPSOIL_LOGO = "topsoil-logo.png";
+    private static final String STYLESHEET = "style/topsoil.css";
+    private static final String ARIMO_REGULAR = "style/fonts/Arimo/Arimo-Regular.ttf";
+    private static final String ARIMO_BOLD = "style/fonts/Arimo/Arimo-Bold.ttf";
+    private static final String ARIMO_ITALIC = "style/fonts/Arimo/Arimo-Italic.ttf";
+    private static final String ARIMO_BOLDITALIC = "style/fonts/Arimo/Arimo-BoldItalic.ttf";
 
     private static final double INIT_WIDTH = 1200.0;
     private static final double INIT_HEIGHT = 750.0;
@@ -72,6 +77,12 @@ public class Topsoil extends Application {
             ResourceExtractor re = new ResourceExtractor(Topsoil.class);
             logo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
             primaryStage.getIcons().add(logo);
+
+            Font.loadFont(re.extractResourceAsFile(ARIMO_REGULAR).toURI().toURL().toExternalForm(), 14.0);
+            Font.loadFont(re.extractResourceAsFile(ARIMO_BOLD).toURI().toURL().toExternalForm(), 14.0);
+            Font.loadFont(re.extractResourceAsFile(ARIMO_ITALIC).toURI().toURL().toExternalForm(), 14.0);
+            Font.loadFont(re.extractResourceAsFile(ARIMO_BOLDITALIC).toURI().toURL().toExternalForm(), 14.0);
+
             String stylesheet = re.extractResourceAsPath(STYLESHEET).toUri().toURL().toExternalForm();
             scene.getStylesheets().add(stylesheet);
             StyleManager.getInstance().setDefaultUserAgentStylesheet(stylesheet);

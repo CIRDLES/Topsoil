@@ -32,7 +32,7 @@
                      <children>
                         <Label fx:id="aboutLabel" text="About">
                            <font>
-                              <Font name="System Bold" size="22.0" />
+                              <Font size="22.0" />
                            </font>
                         </Label>
                         <Label fx:id="messageLabel" text="messageLabel" wrapText="true" VBox.vgrow="NEVER">
@@ -90,7 +90,7 @@
          <children>
             <Label fx:id="linksLabel" text="Links">
                <font>
-                  <Font name="System Bold" size="22.0" />
+                  <Font size="22.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="5.0" />
