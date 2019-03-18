@@ -4,6 +4,7 @@ import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.stage.StageHelper;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.*;
@@ -25,6 +26,9 @@ public class Topsoil extends Application {
     private static final String STYLESHEET = "topsoil.css";
     private static final String TOPSOIL_LOGO = "topsoil-logo.png";
 
+    private static final double INIT_WIDTH = 1200.0;
+    private static final double INIT_HEIGHT = 750.0;
+
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
@@ -43,7 +47,11 @@ public class Topsoil extends Application {
         Topsoil.controller = new MainController(primaryStage);
         Topsoil.controller.setHomeView();
 
-        Scene scene = new Scene(controller, 1200, 750);
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        primaryStage.setX((screenBounds.getWidth() - INIT_WIDTH) / 2);
+        primaryStage.setY((screenBounds.getHeight() - INIT_HEIGHT) / 2);
+
+        Scene scene = new Scene(controller, INIT_WIDTH, INIT_HEIGHT);
 
         try {
             ResourceExtractor re = new ResourceExtractor(Topsoil.class);
