@@ -137,7 +137,6 @@ public class SerializableProject implements Serializable {
             } else {
                 DataColumn<?> col = makeDataColumn(childData);
                 if (category.getChildren().contains(col)) {
-                    System.out.println("shit");
                 }
                 category.getChildren().add(makeDataColumn(childData));
             }
@@ -154,6 +153,7 @@ public class SerializableProject implements Serializable {
         } else {
             column = DataColumn.stringColumn(label);
         }
+        column.setSelected((boolean) columnData.get(ComponentKey.SELECTED));
         return column;
     }
 

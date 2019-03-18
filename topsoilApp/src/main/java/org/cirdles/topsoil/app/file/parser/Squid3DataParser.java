@@ -8,6 +8,8 @@ import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.variable.DependentVariable;
 import org.cirdles.topsoil.variable.IndependentVariable;
 
@@ -245,6 +247,9 @@ public class Squid3DataParser implements DataParser {
 
             List<DataColumn<?>> importantColumns = Arrays.asList(xColumn, sXColumn, yColumn, sYColumn, rhoColumn);
             deselectComponent(table.getColumnRoot(), importantColumns);
+
+            table.setIsotopeSystem(IsotopeSystem.UPB);
+            table.setUncertainty(Uncertainty.ONE_SIGMA_PERCENT);
         }
     }
 

@@ -245,7 +245,7 @@ public class FileMenuHelper {
         if (project != null) {
             ButtonType saveVerification = FileMenuHelper.verifyFinalSave();
             // If save verification was not cancelled
-            if (saveVerification != ButtonType.CANCEL || saveVerification != null) {
+            if (saveVerification != null && ! saveVerification.equals(ButtonType.CANCEL)) {
                 // If user wants to save
                 if (saveVerification == ButtonType.YES) {
                     // If a project path is already defined
