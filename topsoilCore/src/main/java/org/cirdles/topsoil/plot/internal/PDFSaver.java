@@ -1,18 +1,15 @@
 package org.cirdles.topsoil.plot.internal;
 
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.batik.transcoder.Transcoder;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.fop.svg.PDFTranscoder;
+import org.cirdles.topsoil.plot.Plot;
 
-import javax.imageio.ImageIO;
 import java.io.*;
-import java.util.Base64;
-import java.util.Optional;
+import java.nio.file.Files;
 
 /**
  * {@code PDFSaver} saves an image of the current javascript plot to a PDF designated file
@@ -21,64 +18,37 @@ import java.util.Optional;
  */
 public class PDFSaver {
 
-    private static final File FILE_CHOOSER_INITIAL_DIRECTORY
-            = new File(System.getProperty("user.home"));
+    public static void save(Plot plot) {
+        File outputFile = getFileChooser().showSaveDialog(null);
+        if (outputFile != null) {
+            try {
+                File tempFile = Files.createTempFile(null, "svg").toFile();
+                new SVGSaver().save(plot.displayAsSVGDocument(), tempFile);
 
+                InputStream in = new FileInputStream(tempFile);
+                OutputStream out = new FileOutputStream(outputFile);
 
-    //***********************
-    // Methods
-    //***********************
+                Transcoder transcoder = new PDFTranscoder();
+                TranscoderInput transIn = new TranscoderInput(in);
+                TranscoderOutput transOut = new TranscoderOutput(out);
+                transcoder.transcode(transIn, transOut);
 
-    public static void saveToPDF(WritableImage plotToSave, String uncertaintyFormat){
-        generateSaveUI().ifPresent(stream -> {
-                writeToPDF(plotToSave, stream, uncertaintyFormat);
-        });
-
-    }
-
-    private static void writeToPDF(WritableImage plotToSave, OutputStream out, String uncertaintyFormat){
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        try{
-            ImageIO.write(SwingFXUtils.fromFXImage(plotToSave, null), "png", bos);
-            bos.flush();
-            String base64String = Base64.getEncoder().encodeToString(bos.toByteArray());
-            bos.close();
-            byte[] byteArray = Base64.getDecoder().decode(base64String);
-
-
-            PDDocument doc = new PDDocument();
-            PDPage page = new PDPage();
-            PDImageXObject pdImage;
-            PDPageContentStream content;
-
-            pdImage = PDImageXObject.createFromByteArray(doc, byteArray, "plotImg");
-            content = new PDPageContentStream(doc, page);
-            content.drawImage(pdImage, 80, 210, 500, 400);
-            content.beginText();
-            content.setFont(PDType1Font.TIMES_ROMAN, 18);
-            content.newLineAtOffset(200, 200);
-            uncertaintyFormat = uncertaintyFormat.replace("σ", "s");
-            content.showText("Uncertainty Format: " + uncertaintyFormat);
-            content.endText();
-
-            content.close();
-            doc.addPage(page);
-            doc.save(out);
-            doc.close();
-
-        }catch(Exception e){
-            e.printStackTrace();
+                out.flush();
+                out.close();
+                in.close();
+            } catch (IOException | TranscoderException e) {
+                e.printStackTrace();
+            }
         }
     }
-
 
     private static FileChooser getFileChooser() {
         FileChooser fileChooser = new FileChooser();
 
         fileChooser.setTitle("Export to PDF");
-        fileChooser.setInitialDirectory(FILE_CHOOSER_INITIAL_DIRECTORY);
+        if (System.getProperty("user.home") != null) {
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
 
         fileChooser.getExtensionFilters().setAll(
                 new FileChooser.ExtensionFilter("PDF Document", "*.pdf"),
@@ -87,15 +57,4 @@ public class PDFSaver {
         return fileChooser;
     }
 
-    private static Optional<OutputStream> generateSaveUI() {
-        return Optional.ofNullable(getFileChooser().showSaveDialog(null))
-                .map(file -> {
-                    try {
-                        return new FileOutputStream(file);
-                    } catch (FileNotFoundException ex) {
-                        ex.printStackTrace();
-                        return null;
-                    }
-                });
-    }
 }

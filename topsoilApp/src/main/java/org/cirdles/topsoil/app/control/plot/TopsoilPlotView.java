@@ -121,9 +121,11 @@ public class TopsoilPlotView extends VBox {
 	 */
 	@FXML private void savePDFButtonAction() {
 
-		WritableImage plotSnap = plotAnchorPane.snapshot(new SnapshotParameters(), null);
-		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
-		PDFSaver.saveToPDF(plotSnap, uncValue);
+//		WritableImage plotSnap = plotAnchorPane.snapshot(new SnapshotParameters(), null);
+//		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
+//		PDFSaver.saveToPDF(plotSnap, uncValue);
+
+		PDFSaver.save(plot);
 
 	}
 

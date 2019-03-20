@@ -96,7 +96,7 @@
             .append("clipPath")
             .attr("id", "clipBox")
             .append("use")
-            .attr("xlink:href", "#" + plot.plotArea.attr("id"));
+            .attr("xlink:xlink:href", "#" + plot.plotArea.attr("id"));
 
     plot.plotBorder = plot.area.append("rect")
         .attr("id", "plotBorder")
