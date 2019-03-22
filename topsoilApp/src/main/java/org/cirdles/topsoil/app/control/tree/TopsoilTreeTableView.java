@@ -23,29 +23,14 @@ import java.util.List;
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
-    private DataTable table;
-
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public TopsoilTreeTableView() {
-        super();
+    public TopsoilTreeTableView(DataTable table) {
         this.setEditable(true);
         this.setSortMode(TreeSortMode.ALL_DESCENDANTS);
-    }
-
-    public TopsoilTreeTableView(DataTable table) {
-        this();
-        setDataTable(table);
-    }
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
-
-    public void setDataTable(DataTable table) {
-        this.table = table;
-        this.getChildren().clear();
+        this.setShowRoot(false);
 
         CheckBoxTreeItem<DataComponent> rootItem;
         rootItem = new CheckBoxTreeItem<>(table.getDataRoot());
@@ -57,7 +42,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             rootItem.getChildren().get(0).setExpanded(true);
         }
         this.setRoot(rootItem);
-        this.setShowRoot(false);
 
         // Add columns
         TreeTableColumn<DataComponent, String> labelColumn = makeLabelColumn();

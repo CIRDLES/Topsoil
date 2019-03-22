@@ -2,10 +2,6 @@ package org.cirdles.topsoil.app.util;
 
 import javafx.util.StringConverter;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;

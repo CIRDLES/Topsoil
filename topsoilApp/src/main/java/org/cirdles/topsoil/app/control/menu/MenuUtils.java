@@ -1,10 +1,8 @@
 package org.cirdles.topsoil.app.control.menu;
 
 import org.cirdles.topsoil.app.Topsoil;
-import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.file.ProjectSerializer;
 
 /**
  * Utility methods for menu actions in {@link TopsoilMenuBar} and its associated helpers.
@@ -19,46 +17,18 @@ import org.cirdles.topsoil.app.file.ProjectSerializer;
  * @see org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper
  * @see org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper
  */
-public class MenuUtils {
-
-    /**
-     * Returns the currently displayed {@code ProjectView}, if there is one. Otherwise, returns null.
-     *
-     * @return  current ProjectView; else null
-     */
-    public static ProjectView getProjectView() {
-        if (Topsoil.getController().getProject() != null) {
-            return (ProjectView) Topsoil.getController().getMainContent();
-        }
-        return null;
-    }
-
-    /**
-     * If there is a {@link ProjectView} open, the currently selected {@code ProjectTableTab} is returned. Otherwise,
-     * null is returned.
-     *
-     * @return  current tab; else null
-     */
-    public static ProjectTableTab getSelectedTableTab() {
-        if (Topsoil.getController().getProject() != null) {
-            ProjectView projectView = getProjectView();
-            if (projectView != null) {
-                return (ProjectTableTab) projectView.getTabPane().getSelectionModel().getSelectedItem();
-            }
-        }
-        return null;
-    }
+class MenuUtils {
 
     /**
      * Returns the {@code DataTable} that is currently being displayed; otherwise, null.
      *
      * @return  current DataTable; else null
      */
-    public static DataTable getCurrentTable() {
+    static DataTable getCurrentDataTable() {
         if (Topsoil.getController().getProject() != null) {
-            ProjectTableTab tab = getSelectedTableTab();
-            if (tab != null) {
-                return tab.getDataTable();
+            ProjectView projectView = (ProjectView) Topsoil.getController().getMainContent();
+            if (projectView != null) {
+                return projectView.getVisibleDataTable();
             }
         }
         return null;

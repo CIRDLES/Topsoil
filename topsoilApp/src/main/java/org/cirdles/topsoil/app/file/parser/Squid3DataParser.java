@@ -29,13 +29,6 @@ public class Squid3DataParser implements DataParser {
 
     /** {@inheritDoc} */
     @Override
-    public ColumnRoot parseColumnTree(Path path, String delimiter) throws IOException {
-        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
-        return parseColumnTree(rows);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public ColumnRoot parseColumnTree(String content, String delimiter) {
         String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
         return parseColumnTree(rows);

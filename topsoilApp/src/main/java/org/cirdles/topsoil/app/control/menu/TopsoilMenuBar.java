@@ -3,13 +3,11 @@ package org.cirdles.topsoil.app.control.menu;
 import javafx.scene.control.*;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
-import org.cirdles.topsoil.app.control.ProjectTableTab;
 import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
 import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 import org.cirdles.topsoil.plot.PlotType;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -38,7 +36,7 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem tableOptionsItem = new MenuItem(resources.getString("tableOptions"));
         tableOptionsItem.setOnAction(event -> {
-            DataTableOptionsDialog.showDialog(MenuUtils.getCurrentTable(), Topsoil.getPrimaryStage());
+            DataTableOptionsDialog.showDialog(MenuUtils.getCurrentDataTable(), Topsoil.getPrimaryStage());
         });
 
         Menu editMenu = new Menu(resources.getString("editMenu"), null,
@@ -62,9 +60,11 @@ public class TopsoilMenuBar extends MenuBar {
         MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
         generatePlotItem.setOnAction(event -> {
             // @TODO Check to make sure proper variables are assigned
-            ProjectTableTab projectTab = MenuUtils.getSelectedTableTab();
-            VisualizationsMenuHelper.generatePlot(PlotType.SCATTER, projectTab.getDataTable(),
-                                                  MenuUtils.getProjectView().getProject(), null);
+            VisualizationsMenuHelper.generatePlot(
+                    PlotType.SCATTER,
+                    MenuUtils.getCurrentDataTable(),
+                    Topsoil.getController().getProject(),
+                    null);
         });
 
         Menu visualizationsMenu = new Menu(resources.getString("visualizationsMenu"), null,

@@ -25,7 +25,7 @@ public class TableObserver implements Observer {
         if (currentUpdate == null) {
             currentUpdate = new Task<Void>() {
                 @Override
-                protected Void call() throws Exception {
+                protected Void call() {
                     try {
                         Thread.sleep(10);
                     } catch (InterruptedException e) {

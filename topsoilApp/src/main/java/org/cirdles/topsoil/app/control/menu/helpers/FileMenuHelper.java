@@ -300,7 +300,7 @@ public class FileMenuHelper {
         TopsoilProject project = Topsoil.getController().getProject();
         if (project != null) {
             ButtonType buttonType = showOverwriteDialog();
-            if (buttonType != null || ! buttonType.equals(ButtonType.CANCEL)) {
+            if (buttonType != null && ! buttonType.equals(ButtonType.CANCEL)) {
                 if (buttonType.equals(ButtonType.YES)) {
                     if (ProjectSerializer.getCurrentPath() == null) {
                         saveProjectAs(project);

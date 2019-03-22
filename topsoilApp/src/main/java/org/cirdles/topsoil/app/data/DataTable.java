@@ -224,6 +224,18 @@ public class DataTable extends Observable {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                getTemplate(),
+                getLabel(),
+                getIsotopeSystem(),
+                getUncertainty(),
+                getColumnRoot(),
+                getDataRoot()
+        );
+    }
+
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//

@@ -161,7 +161,7 @@ public class FileMenu extends Menu {
 
         exportTableMenuItem = new MenuItem(resources.getString("exportTable"));
         exportTableMenuItem.setOnAction(event -> {
-            DataTable table = MenuUtils.getCurrentTable();
+            DataTable table = MenuUtils.getCurrentDataTable();
             if (table != null) {
                 FileMenuHelper.exportTableAs(table);
             }

@@ -5,6 +5,7 @@ import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataLeaf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,8 +97,22 @@ public class DataRow extends DataLeaf {
         List<Object> objects = new ArrayList<>();
         objects.add(getLabel());
         objects.add(isSelected());
-        objects.addAll(properties.entrySet());
+        for (Map.Entry<DataColumn<?>, Property<?>> entry : properties.entrySet()) {
+            objects.add(new Pair(entry.getKey(), entry.getValue()));
+        }
         return Objects.hash(objects.toArray());
+    }
+
+    private class Pair {
+
+        private DataColumn column;
+        private Property property;
+
+        Pair(DataColumn column, Property property) {
+            this.column = column;
+            this.property = property;
+        }
+
     }
 
 }

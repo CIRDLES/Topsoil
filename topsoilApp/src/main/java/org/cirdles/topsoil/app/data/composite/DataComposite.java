@@ -28,7 +28,7 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
         super(title);
     }
 
-    public DataComposite(String title, T... children) {
+    public DataComposite(String title, T[] children) {
         this(title);
         this.children.addAll(asList(children));
     }

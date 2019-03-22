@@ -56,14 +56,6 @@ public enum ExampleData {
                 table.setColumnForVariable(IndependentVariable.Y, columns.get(2));
                 table.setColumnForVariable(DependentVariable.SIGMA_Y, columns.get(3));
                 table.setColumnForVariable(IndependentVariable.RHO, columns.get(4));
-            } else if (this == SQUID_3) {
-                List<DataColumn<?>> columns =
-                        ((DataComposite) table.getColumnRoot().find("204Pb-Corrected")).getLeafNodes();
-                table.setColumnForVariable(IndependentVariable.X, columns.get(columns.size() - 5));
-                table.setColumnForVariable(DependentVariable.SIGMA_X, columns.get(columns.size() - 4));
-                table.setColumnForVariable(IndependentVariable.Y, columns.get(columns.size() - 3));
-                table.setColumnForVariable(DependentVariable.SIGMA_Y, columns.get(columns.size() - 2));
-                table.setColumnForVariable(IndependentVariable.RHO, columns.get(columns.size() - 1));
             }
         } catch (IOException e) {
             e.printStackTrace();

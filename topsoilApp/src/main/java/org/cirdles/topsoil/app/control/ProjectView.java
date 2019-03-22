@@ -88,19 +88,18 @@ public class ProjectView extends SplitPane {
                 }
             }
         });
-//        Bindings.bindContent(dataTableList, project.getDataTables());
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public TabPane getTabPane() {
-        return tabPane;
-    }
-
     public TopsoilProject getProject() {
         return project;
+    }
+
+    public DataTable getVisibleDataTable() {
+        return ((ProjectTableTab) tabPane.getSelectionModel().getSelectedItem()).getDataTable();
     }
 
     //**********************************************//

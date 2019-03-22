@@ -3,7 +3,9 @@ package org.cirdles.topsoil.app.data.row;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class DataRoot extends DataComposite<DataSegment> {
 
@@ -53,6 +55,15 @@ public class DataRoot extends DataComposite<DataSegment> {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        List<Object> objects = new ArrayList<>();
+        objects.add(getLabel());
+        objects.add(isSelected());
+        Collections.addAll(objects, getChildren());
+        return Objects.hash(objects.toArray());
     }
 
     //**********************************************//

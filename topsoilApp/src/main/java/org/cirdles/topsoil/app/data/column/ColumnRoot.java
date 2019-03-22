@@ -4,7 +4,9 @@ import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Uses {@code DataCategory} and {@code DataColumn} objects to model the structure of nested columns. Adheres to the
@@ -61,6 +63,15 @@ public class ColumnRoot extends DataComposite<DataComponent> {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        List<Object> objects = new ArrayList<>();
+        objects.add(getLabel());
+        objects.add(isSelected());
+        Collections.addAll(objects, getChildren());
+        return Objects.hash(objects.toArray());
     }
 
     //**********************************************//

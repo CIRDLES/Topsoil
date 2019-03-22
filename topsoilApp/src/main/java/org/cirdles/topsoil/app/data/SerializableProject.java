@@ -136,9 +136,9 @@ public class SerializableProject implements Serializable {
                 category.getChildren().add(makeDataCategory(childData));
             } else {
                 DataColumn<?> col = makeDataColumn(childData);
-                if (category.getChildren().contains(col)) {
+                if (! category.getChildren().contains(col)) {
+                    category.getChildren().add(col);
                 }
-                category.getChildren().add(makeDataColumn(childData));
             }
         }
         return category;
