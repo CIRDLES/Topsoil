@@ -9,6 +9,7 @@ import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.variable.Variable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -79,6 +80,12 @@ public class SerializableProject implements Serializable {
         }
         tableData.put(TableKey.SEGMENTS, segments);
 
+        HashMap<Variable<?>, Integer> varMap = new HashMap<>();
+        for (Map.Entry<Variable<?>, DataColumn<?>> entry : table.getVariableColumnMap().entrySet()) {
+            varMap.put(entry.getKey(), columns.indexOf(entry.getValue()));
+        }
+        tableData.put(TableKey.VARIABLE_ASSIGNMENTS, varMap);
+
         return tableData;
     }
 
@@ -91,7 +98,15 @@ public class SerializableProject implements Serializable {
         IsotopeSystem isotopeSystem = (IsotopeSystem) tableData.get(TableKey.ISO_SYSTEM);
         Uncertainty uncertainty = (Uncertainty) tableData.get(TableKey.UNCERTAINTY);
 
-        return new DataTable(template, label, columnRoot, dataRoot, isotopeSystem, uncertainty);
+        DataTable table = new DataTable(template, label, columnRoot, dataRoot, isotopeSystem, uncertainty);
+        List<DataColumn<?>> columns = table.getDataColumns();
+        Map<Variable<?>, Integer> varIndices = (Map<Variable<?>, Integer>) tableData.get(TableKey.VARIABLE_ASSIGNMENTS);
+
+        for (Map.Entry<Variable<?>, Integer> entry : varIndices.entrySet()) {
+            table.setColumnForVariable(entry.getKey(), columns.get(entry.getValue()));
+        }
+
+        return table;
     }
 
     private HashMap<HeaderKey, Serializable> getHeaderData(DataComponent header) {
@@ -231,7 +246,8 @@ public class SerializableProject implements Serializable {
         COL_ROOT,
         SEGMENTS,
         ISO_SYSTEM,
-        UNCERTAINTY
+        UNCERTAINTY,
+        VARIABLE_ASSIGNMENTS
     }
 
     enum ComponentKey implements HeaderKey, DataKey {
