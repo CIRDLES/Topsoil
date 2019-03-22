@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.plot.internal;
 
 import javafx.stage.FileChooser;
+import org.apache.batik.bridge.AbstractSVGBridge;
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -29,6 +30,7 @@ public class PDFSaver {
                 OutputStream out = new FileOutputStream(outputFile);
 
                 Transcoder transcoder = new PDFTranscoder();
+                transcoder.addTranscodingHint(PDFTranscoder.KEY_AUTO_FONTS, false);
                 TranscoderInput transIn = new TranscoderInput(in);
                 TranscoderOutput transOut = new TranscoderOutput(out);
                 transcoder.transcode(transIn, transOut);

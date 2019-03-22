@@ -31,12 +31,9 @@ dependencies {
     api "org.apache.commons:commons-math3:3.6.1"
     api 'com.github.CIRDLES:McLeanRegression:-SNAPSHOT'
 
-    // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-all
     compile group: 'org.apache.xmlgraphics', name: 'batik-all', version: '1.11', ext: 'jar'
-    // https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop
     compile group: 'org.apache.xmlgraphics', name: 'fop', version: '2.1'
-
-
+    compile group: 'org.apache.pdfbox', name: 'fontbox', version: '2.0.0'
 }
 
 buster {
