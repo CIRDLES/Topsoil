@@ -148,7 +148,7 @@ public class VisualizationsMenuHelper {
                     column = varMap.get(var);
                     if (column != null) {
                         column = varMap.get(var);
-                        value = row.getPropertyForColumn(column).getValue();
+                        value = row.getValueForColumn(column).getValue();
                         if (var instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(table.getUncertainty())) {
                             // @TODO The code below assumes that a dep-variable is always dependent on an ind-variable
                             double doubleVal = (double) value;
@@ -156,7 +156,7 @@ public class VisualizationsMenuHelper {
                             IndependentVariable dependency = (IndependentVariable) dependentVariable.getDependency();
                             DataColumn dependentColumn = varMap.get(dependency);
                             doubleVal /= 100;
-                            doubleVal *= (Double) row.getPropertyForColumn(dependentColumn).getValue();
+                            doubleVal *= (Double) row.getValueForColumn(dependentColumn).getValue();
                             value = doubleVal;
                         }
                     } else {

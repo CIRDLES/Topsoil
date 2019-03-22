@@ -27,16 +27,16 @@ public class DataSegmentTest {
     @BeforeClass
     public static void setup() {
         rowOne = new DataRow("one");
-        rowOne.setPropertyForColumn(columnOne, propertyOne);
-        rowOne.setPropertyForColumn(columnTwo, propertyThree);
+        rowOne.setValueForColumn(columnOne, propertyOne);
+        rowOne.setValueForColumn(columnTwo, propertyThree);
 
         rowTwo = new DataRow("two");
-        rowTwo.setPropertyForColumn(columnOne, propertyTwo);
-        rowTwo.setPropertyForColumn(columnTwo, propertyFour);
+        rowTwo.setValueForColumn(columnOne, propertyTwo);
+        rowTwo.setValueForColumn(columnTwo, propertyFour);
 
         rowThree = new DataRow("three");
-        rowOne.setPropertyForColumn(columnOne, propertyOne);
-        rowOne.setPropertyForColumn(columnTwo, propertyFour);
+        rowOne.setValueForColumn(columnOne, propertyOne);
+        rowOne.setValueForColumn(columnTwo, propertyFour);
 
         segmentOne = new DataSegment("segment", rowOne, rowTwo);
         segmentOneCopy = new DataSegment(segmentOne.getLabel(), segmentOne.getChildren().toArray(new DataRow[]{}));

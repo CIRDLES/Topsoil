@@ -1,8 +1,5 @@
 package org.cirdles.topsoil.app.data;
 
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -194,13 +191,12 @@ public class SerializableProject implements Serializable {
         rowData.put(ComponentKey.LABEL, row.getLabel());
         rowData.put(ComponentKey.SELECTED, row.isSelected());
 
-        ArrayList<HashMap<PropertyKey, Serializable>> properties = new ArrayList<>();
-        HashMap<PropertyKey, Serializable> propertyData;
-        for (Map.Entry<DataColumn<?>, Property<?>> entry : row.getProperties().entrySet()) {
+        ArrayList<HashMap<ValueKey, Serializable>> properties = new ArrayList<>();
+        HashMap<ValueKey, Serializable> propertyData;
+        for (Map.Entry<DataColumn<?>, DataRow.DataValue<?>> entry : row.getValueMap().entrySet()) {
             propertyData = new HashMap<>();
-            propertyData.put(PropertyKey.COL_INDEX, columns.indexOf(entry.getKey()));
-            propertyData.put(PropertyKey.CLASS, entry.getValue().getClass());
-            propertyData.put(PropertyKey.VALUE, (Serializable) entry.getValue().getValue());
+            propertyData.put(ValueKey.COL_INDEX, columns.indexOf(entry.getKey()));
+            propertyData.put(ValueKey.VALUE, (Serializable) entry.getValue().getValue());
             properties.add(propertyData);
         }
         rowData.put(RowKey.PROPERTIES, properties);
@@ -211,16 +207,14 @@ public class SerializableProject implements Serializable {
     private DataRow makeDataRow(Map<DataKey, Object> data, List<DataColumn<?>> columns) {
         DataRow row = new DataRow(String.valueOf(data.get(ComponentKey.LABEL)));
         row.setSelected((boolean) data.get(ComponentKey.SELECTED));
-        List<Map<PropertyKey, Object>> propertyDataList = (List<Map<PropertyKey, Object>>) data.get(RowKey.PROPERTIES);
+        List<Map<ValueKey, Object>> propertyDataList = (List<Map<ValueKey, Object>>) data.get(RowKey.PROPERTIES);
         DataColumn<?> column;
-        for (Map<PropertyKey, Object> propertyData : propertyDataList) {
-            column = columns.get((int) propertyData.get(PropertyKey.COL_INDEX));
+        for (Map<ValueKey, Object> propertyData : propertyDataList) {
+            column = columns.get((int) propertyData.get(ValueKey.COL_INDEX));
             if (column.getType() == Number.class) {
-                Property<Number> property = new SimpleDoubleProperty((Double) propertyData.get(PropertyKey.VALUE));
-                row.setPropertyForColumn((DataColumn<Number>) column, property);
+                row.setValueForColumn((DataColumn<Number>) column, (Number) propertyData.get(ValueKey.VALUE));
             } else {
-                Property<String> property = new SimpleStringProperty(String.valueOf(propertyData.get(PropertyKey.VALUE)));
-                row.setPropertyForColumn((DataColumn<String>) column, property);
+                row.setValueForColumn((DataColumn<String>) column, String.valueOf(propertyData.get(ValueKey.VALUE)));
             }
         }
         return row;
@@ -267,9 +261,8 @@ public class SerializableProject implements Serializable {
         PROPERTIES
     }
 
-    enum PropertyKey {
+    enum ValueKey {
         COL_INDEX,
-        CLASS,
         VALUE
     }
 }

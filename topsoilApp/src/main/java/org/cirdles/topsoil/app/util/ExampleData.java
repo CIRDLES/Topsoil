@@ -3,7 +3,6 @@ package org.cirdles.topsoil.app.util;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
 import org.cirdles.topsoil.uncertainty.Uncertainty;

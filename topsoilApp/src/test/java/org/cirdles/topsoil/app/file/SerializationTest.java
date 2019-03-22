@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.file;
 
-import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.util.ExampleData;
 import org.junit.Test;

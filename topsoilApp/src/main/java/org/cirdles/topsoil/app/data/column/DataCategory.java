@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.data.column;
 
-import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
+import org.cirdles.topsoil.app.data.composite.DataComposite;
 
 import java.util.ArrayList;
 import java.util.Collections;

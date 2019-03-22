@@ -1,7 +1,9 @@
 package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTemplate;
-import org.cirdles.topsoil.app.data.column.*;
+import org.cirdles.topsoil.app.data.column.ColumnRoot;
+import org.cirdles.topsoil.app.data.column.DataCategory;
+import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.row.DataRoot;
@@ -13,7 +15,6 @@ import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.variable.DependentVariable;
 import org.cirdles.topsoil.variable.IndependentVariable;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;

@@ -3,7 +3,6 @@ package org.cirdles.topsoil.app.control.tree;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import org.cirdles.topsoil.app.data.row.DataRoot;

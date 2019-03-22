@@ -77,11 +77,8 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
     public static int countFractionDigits(Number number) {
         if (number != null) {
             String str = Double.toString((double) number).toLowerCase();
-            if (str.contains("e")) {
-                return str.substring(str.indexOf(".") + 1, str.indexOf("e")).length();
-            } else {
-                return str.substring(str.indexOf(".") + 1).length();
-            }
+            int dotIndex = str.indexOf(".");
+            return str.substring(dotIndex + 1).length();
         }
         return -1;
     }

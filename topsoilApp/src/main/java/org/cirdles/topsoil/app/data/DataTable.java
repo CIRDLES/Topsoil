@@ -2,15 +2,18 @@ package org.cirdles.topsoil.app.data;
 
 import com.google.common.collect.HashBiMap;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
+import org.cirdles.topsoil.app.util.ListUtils;
 import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
@@ -19,13 +22,7 @@ import org.cirdles.topsoil.variable.Variable;
 import java.util.*;
 
 /**
- *
  * @author marottajb
- *
- * @see ColumnRoot
- * @see DataComposite
- * @see DataRow
- * @see DataSegment
  */
 public class DataTable extends Observable {
 
@@ -48,7 +45,7 @@ public class DataTable extends Observable {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    protected transient StringProperty label;
+    protected StringProperty label;
     public StringProperty labelProperty() {
         if (label == null) {
             label = new SimpleStringProperty(DEFAULT_LABEL);
@@ -58,7 +55,7 @@ public class DataTable extends Observable {
     public String getLabel() { return labelProperty().get(); }
     public void setLabel(String label) { labelProperty().set(label); }
 
-    private transient ObjectProperty<IsotopeSystem> isotopeSystem;
+    private ObjectProperty<IsotopeSystem> isotopeSystem;
     public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
         if (isotopeSystem == null) {
             isotopeSystem = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
@@ -68,7 +65,7 @@ public class DataTable extends Observable {
     public final IsotopeSystem getIsotopeSystem() { return isotopeSystemProperty().get(); }
     public final void setIsotopeSystem(IsotopeSystem type ) { isotopeSystemProperty().set(type); }
 
-    private transient ObjectProperty<Uncertainty> uncertainty;
+    private ObjectProperty<Uncertainty> uncertainty;
     public ObjectProperty<Uncertainty> uncertaintyProperty() {
         if (uncertainty == null) {
             uncertainty = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
@@ -77,6 +74,21 @@ public class DataTable extends Observable {
     }
     public final Uncertainty getUncertainty() { return uncertaintyProperty().get(); }
     public final void setUncertainty(Uncertainty unct) { uncertaintyProperty().set(unct); }
+
+    private SetProperty<DataRow> dataRows;
+    public SetProperty<DataRow> dataRowsProperty() {
+        if (dataRows == null) {
+            List<ObservableList<DataRow>> rowLists = new ArrayList<>();
+            for (DataSegment segment : getDataRoot().getChildren()) {
+                rowLists.add(segment.getChildren());
+            }
+            dataRows = new SimpleSetProperty<>(ListUtils.mergeObservableLists(rowLists));
+        }
+        return dataRows;
+    }
+    public final Set<DataRow> getDataRows() {
+        return dataRowsProperty().get();
+    }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -95,7 +107,7 @@ public class DataTable extends Observable {
         this.columnRoot = columnRoot;
         this.dataRoot = dataRoot;
         this.dataRoot.labelProperty().bind(labelProperty());
-        for (DataRow row : this.dataRoot.getLeafNodes()) {
+        for (DataRow row : getDataRows()) {
             row.selectedProperty().addListener(c -> {
                 setChanged();
                 notifyObservers();
@@ -124,10 +136,6 @@ public class DataTable extends Observable {
         return dataRoot;
     }
 
-    public List<DataRow> getDataRows() {
-        return dataRoot.getLeafNodes();
-    }
-
     public DataTemplate getTemplate() {
         return template;
     }
@@ -154,7 +162,7 @@ public class DataTable extends Observable {
         }
     }
 
-    DataRow getRowByIndex(int index) {
+    public DataRow getRowByIndex(int index) {
         if (index < 0 || index >= getDataRows().size()) {
             throw new IndexOutOfBoundsException();
         }
@@ -170,7 +178,7 @@ public class DataTable extends Observable {
         return null;
     }
 
-    <T> List<T> getValuesForColumn(DataColumn<T> column) {
+    public <T> List<T> getValuesForColumn(DataColumn<T> column) {
         if (column == null) {
             throw new IllegalArgumentException("column cannot be null.");
         }
@@ -180,10 +188,10 @@ public class DataTable extends Observable {
 
         List<T> values = new ArrayList<>();
         for (DataRow row : this.getDataRows()) {
-            if (row.getPropertyForColumn(column) == null) {
+            if (row.getValueForColumn(column) == null) {
                 values.add(null);
             } else {
-                values.add(row.getPropertyForColumn(column).getValue());
+                values.add(row.getValueForColumn(column).getValue());
             }
         }
         return values;

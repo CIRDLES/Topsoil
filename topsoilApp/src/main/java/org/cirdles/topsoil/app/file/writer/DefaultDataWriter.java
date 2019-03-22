@@ -7,6 +7,7 @@ import org.cirdles.topsoil.app.data.row.DataRow;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author marottajb
@@ -20,7 +21,7 @@ public class DefaultDataWriter implements DataWriter {
     @Override
     public boolean writeTableToFile(Path path, DataTable table) throws IOException {
         int columnDepth = table.getColumnRoot().getDepth();
-        List<DataRow> dataRows = table.getDataRows();
+        Set<DataRow> dataRows = table.getDataRows();
         List<DataColumn<?>> columns = table.getDataColumns();
         String[][] rows = new String[dataRows.size() + columnDepth][columns.size()];
 
@@ -41,7 +42,7 @@ public class DefaultDataWriter implements DataWriter {
         for (DataRow row : dataRows) {
             c = 0;
             for (DataColumn<?> col : columns) {
-                rows[r][c] = row.getPropertyForColumn(col).getValue().toString();
+                rows[r][c] = row.getValueForColumn(col).getValue().toString();
                 c++;
             }
             r++;

@@ -1,5 +1,9 @@
 package org.cirdles.topsoil.app.data.composite;
 
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +18,12 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    protected ArrayList<T> children = new ArrayList<>();
+    protected ObservableList<T> children = FXCollections.observableList(
+            new ArrayList<>(),
+            (T item) -> new Observable[]{
+                    item.labelProperty(),
+                    item.selectedProperty()
+            });
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -37,7 +46,7 @@ public class DataComposite<T extends DataComponent> extends DataComponent {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public ArrayList<T> getChildren() {
+    public ObservableList<T> getChildren() {
         return children;
     }
 

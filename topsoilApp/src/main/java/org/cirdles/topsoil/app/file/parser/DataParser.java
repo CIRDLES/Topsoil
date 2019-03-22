@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app.file.parser;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -166,10 +164,10 @@ public interface DataParser {
             str = row[colIndex];
             if (columns.get(colIndex).getType() == Number.class) {
                 DataColumn<Number> doubleCol = (DataColumn<Number>) columns.get(colIndex);
-                newRow.setPropertyForColumn(doubleCol, new SimpleDoubleProperty(!str.isEmpty() ? Double.parseDouble(str) : 0.0));
+                newRow.setValueForColumn(doubleCol, (! str.isEmpty()) ? Double.parseDouble(str) : 0.0);
             } else {
                 DataColumn<String> stringCol = (DataColumn<String>) columns.get(colIndex);
-                newRow.setPropertyForColumn(stringCol, new SimpleStringProperty(row[colIndex]));
+                newRow.setValueForColumn(stringCol, row[colIndex]);
             }
         }
         return newRow;

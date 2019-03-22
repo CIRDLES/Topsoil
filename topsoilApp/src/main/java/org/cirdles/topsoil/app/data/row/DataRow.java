@@ -1,12 +1,13 @@
 package org.cirdles.topsoil.app.data.row;
 
-import javafx.beans.property.Property;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataLeaf;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +23,7 @@ public class DataRow extends DataLeaf {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private transient Map<DataColumn<?>, Property<?>> properties = new HashMap<>();
+    private final ObservableMap<DataColumn<?>, DataValue<?>> values = FXCollections.observableHashMap();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -36,8 +37,8 @@ public class DataRow extends DataLeaf {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public Map<DataColumn<?>, Property<?>> getProperties() {
-        return properties;
+    public Map<DataColumn<?>, DataValue<?>> getValueMap() {
+        return values;
     }
 
     /**
@@ -47,12 +48,17 @@ public class DataRow extends DataLeaf {
      * @param <T>       the type of the data for the DataColumn
      * @return          the row's property for column
      */
-    public <T> Property<T> getPropertyForColumn(DataColumn<T> column) {
-        return (Property<T>) properties.get(column);
+    public <T> DataValue<T> getValueForColumn(DataColumn<T> column) {
+        return (DataValue<T>) values.get(column);
     }
 
-    public <T> Property<T> setPropertyForColumn(DataColumn<T> column, Property<T> property) {
-        return (Property<T>) properties.put(column, property);
+    public <T> void setValueForColumn(DataColumn<T> column, T value) {
+        DataValue<T> dataValue = getValueForColumn(column);
+        if (dataValue != null) {
+            dataValue.setValue(value);
+        } else {
+            values.put(column, new DataValue<>(value));
+        }
     }
 
     @Override
@@ -68,18 +74,18 @@ public class DataRow extends DataLeaf {
             if (other.isSelected() != this.isSelected()) {
                 return false;
             }
-            if (other.getProperties().size() != properties.size()) {
+            if (other.getValueMap().size() != this.getValueMap().size()) {
                 return false;
             }
             DataColumn<?> column;
-            Property<?> thisProperty, thatProperty;
-            for (Map.Entry<DataColumn<?>, Property<?>> entry : other.properties.entrySet()) {
+            DataValue<?> thisValue, thatValue;
+            for (Map.Entry<DataColumn<?>, DataValue<?>> entry : other.getValueMap().entrySet()) {
                 column = entry.getKey();
-                thisProperty = properties.get(column);
-                thatProperty = other.properties.get(column);
-                if (thisProperty != thatProperty) {
-                    if (thisProperty != null && thatProperty != null) {
-                        if (! thisProperty.getValue().equals(thatProperty.getValue())) {
+                thisValue = this.getValueMap().get(column);
+                thatValue = other.getValueMap().get(column);
+                if (thisValue != thatValue) {
+                    if (thisValue != null && thatValue != null) {
+                        if (! thisValue.getValue().equals(thatValue.getValue())) {
                             return false;
                         }
                     } else {
@@ -97,22 +103,51 @@ public class DataRow extends DataLeaf {
         List<Object> objects = new ArrayList<>();
         objects.add(getLabel());
         objects.add(isSelected());
-        for (Map.Entry<DataColumn<?>, Property<?>> entry : properties.entrySet()) {
+        for (Map.Entry<DataColumn<?>, DataValue<?>> entry : getValueMap().entrySet()) {
             objects.add(new Pair(entry.getKey(), entry.getValue()));
         }
         return Objects.hash(objects.toArray());
     }
 
-    private class Pair {
+    private static class Pair {
 
         private DataColumn column;
-        private Property property;
+        private DataValue value;
 
-        Pair(DataColumn column, Property property) {
+        Pair(DataColumn column, DataValue value) {
             this.column = column;
-            this.property = property;
+            this.value = value;
         }
 
     }
 
+    public static class DataValue<T> {
+
+        //**********************************************//
+        //                  PROPERTIES                  //
+        //**********************************************//
+
+        private ObjectProperty<T> value;
+        public ObjectProperty<T> valueProperty() {
+            if (value == null) {
+                value = new SimpleObjectProperty<>();
+            }
+            return value;
+        }
+        public final T getValue() {
+            return valueProperty().get();
+        }
+        public final void setValue(T value) {
+            valueProperty().set(value);
+        }
+
+        //**********************************************//
+        //                 CONSTRUCTORS                 //
+        //**********************************************//
+
+        public DataValue(T value) {
+            setValue(value);
+        }
+
+    }
 }

@@ -10,7 +10,6 @@ import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.file.ProjectSerializer;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.IOException;

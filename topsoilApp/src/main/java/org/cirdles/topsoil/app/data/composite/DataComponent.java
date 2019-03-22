@@ -1,15 +1,13 @@
 package org.cirdles.topsoil.app.data.composite;
 
+import com.sun.javafx.binding.ExpressionHelper;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Objects;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  * A {@code DataComponent} is the basic building block for reading in structured model. When parsing delimited model
@@ -18,7 +16,7 @@ import java.util.Objects;
  *
  * @author marottajb
  */
-public abstract class DataComponent {
+public class DataComponent {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -76,5 +74,4 @@ public abstract class DataComponent {
     public String toString() {
         return getLabel();
     }
-
 }

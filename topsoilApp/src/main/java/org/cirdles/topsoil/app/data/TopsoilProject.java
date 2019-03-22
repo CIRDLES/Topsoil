@@ -2,21 +2,11 @@ package org.cirdles.topsoil.app.data;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
-import org.cirdles.topsoil.constant.Lambda;
 import org.cirdles.topsoil.plot.PlotType;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

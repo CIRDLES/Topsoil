@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.data;
 
-import javafx.beans.property.SimpleStringProperty;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -42,11 +41,11 @@ public class DataTableTest {
 
     @BeforeClass
     public static void setup() {
-        rowOne.setPropertyForColumn(columnOne, new SimpleStringProperty("1,1"));
-        rowOne.setPropertyForColumn(columnTwo, new SimpleStringProperty("1,2"));
+        rowOne.setValueForColumn(columnOne, "1,1");
+        rowOne.setValueForColumn(columnTwo, "1,2");
 
-        rowTwo.setPropertyForColumn(columnOne, new SimpleStringProperty("2,1"));
-        rowTwo.setPropertyForColumn(columnTwo, new SimpleStringProperty("2,2"));
+        rowTwo.setValueForColumn(columnOne, "2,1");
+        rowTwo.setValueForColumn(columnTwo, "2,2");
 
         ColumnRoot columnRoot = new ColumnRoot(categoryOne, columnThree);
         DataRoot dataRoot = new DataRoot(segmentOne, segmentTwo);

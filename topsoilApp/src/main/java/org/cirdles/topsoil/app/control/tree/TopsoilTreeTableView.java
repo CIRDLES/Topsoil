@@ -7,7 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.text.TextAlignment;
-import org.cirdles.topsoil.app.data.column.*;
+import org.cirdles.topsoil.app.data.column.DataCategory;
+import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
@@ -140,7 +141,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
                 return null;
             }
             if (param.getValue().getValue() instanceof DataRow) {
-                return ((DataRow) param.getValue().getValue()).getPropertyForColumn(dataColumn);
+                return ((DataRow) param.getValue().getValue()).getValueForColumn(dataColumn).valueProperty();
             }
             return null;
         });
