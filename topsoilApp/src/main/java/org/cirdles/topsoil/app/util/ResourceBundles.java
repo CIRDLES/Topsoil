@@ -4,14 +4,16 @@ import java.util.ResourceBundle;
 
 public enum ResourceBundles {
 
-    MAIN("org/cirdles/topsoil/app/Topsoil"),
-    MENU_BAR("org/cirdles/topsoil/app/control/menu/TopsoilMenuBar"),
-    DIALOGS("org/cirdles/topsoil/app/control/dialog/Dialogs");
+    MAIN("Main"),
+    MENU_BAR("TopsoilMenuBar"),
+    DIALOGS("Dialogs");
+
+    private static final String BUNDLES_DIR = "org/cirdles/topsoil/app/bundles/";
 
     private ResourceBundle bundle;
 
     ResourceBundles(String bundleName) {
-        this.bundle = ResourceBundle.getBundle(bundleName);
+        this.bundle = ResourceBundle.getBundle(BUNDLES_DIR + bundleName);
     }
 
     public ResourceBundle getBundle() {
