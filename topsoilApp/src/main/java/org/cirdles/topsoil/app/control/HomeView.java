@@ -80,12 +80,9 @@ public class HomeView extends GridPane {
         } else {
             Hyperlink link;
             for (Path path : recentFiles) {
-                Path fileName = path.getFileName();
-                if (fileName != null) {
-                    link = new Hyperlink(fileName.toString());
-                    link.setOnAction(event -> FileMenuHelper.openProject(path));
-                    recentFilesLinkBox.getChildren().add(link);
-                }
+                link = new Hyperlink(path.toString());
+                link.setOnAction(event -> FileMenuHelper.openProject(path));
+                recentFilesLinkBox.getChildren().add(link);
             }
         }
     }
