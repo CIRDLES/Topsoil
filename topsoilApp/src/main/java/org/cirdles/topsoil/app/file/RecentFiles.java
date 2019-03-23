@@ -42,12 +42,6 @@ public class RecentFiles {
             paths.remove(MAX_SIZE - 1);
         }
         paths.add(0, path);
-        for (Path p : paths) {
-            boolean exists = p.toFile().exists();
-            if (! p.toFile().exists()) {
-                paths.remove(p);
-            }
-        }
         updateRecentFiles(paths);
     }
 
@@ -67,7 +61,10 @@ public class RecentFiles {
         for (int i = 1; i <= MAX_SIZE; i++) {
             str = prefs.get(RECENT_FILES + i, null);
             if (str != null) {
-                paths.add(Paths.get(str));
+                Path path = Paths.get(str);
+                if (path.toFile().exists()) {
+                    paths.add(path);
+                }
             }
         }
         return paths;
