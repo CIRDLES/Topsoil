@@ -187,7 +187,7 @@ public class DataTable extends Observable {
         }
 
         List<T> values = new ArrayList<>();
-        for (DataRow row : this.getDataRows()) {
+        for (DataRow row : dataRoot.getLeafNodes()) {
             if (row.getValueForColumn(column) == null) {
                 values.add(null);
             } else {
