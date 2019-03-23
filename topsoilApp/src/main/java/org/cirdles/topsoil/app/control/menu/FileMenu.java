@@ -179,8 +179,8 @@ public class FileMenu extends Menu {
             if (project != null) {
                 exportTableMenuItem.setDisable(false);
                 saveProjectAsItem.setDisable(false);
+                closeProjectItem.setDisable(false);
                 if (ProjectSerializer.getCurrentPath() != null) {
-                    closeProjectItem.setDisable(false);
                     saveProjectItem.setDisable(false);
                 }
             } else {
@@ -207,13 +207,7 @@ public class FileMenu extends Menu {
     }
 
     private void openExampleTable(ExampleData example) {
-        TopsoilProject project = Topsoil.getController().getProject();
-        if (project != null) {
-            project.addDataTable(FileMenuHelper.openExampleData(example));
-        } else {
-            project = new TopsoilProject(FileMenuHelper.openExampleData(example));
-            Topsoil.getController().setProject(project);
-        }
+        FileMenuHelper.openExampleData(example);
     }
     
 }

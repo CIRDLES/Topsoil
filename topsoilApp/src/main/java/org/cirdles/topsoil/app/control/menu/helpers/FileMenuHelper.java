@@ -68,10 +68,15 @@ public class FileMenuHelper {
      * Returns a {@code DataTable} for the provided {@code ExampleData}.
      *
      * @param data  ExampleData
-     * @return      DataTable from data
      */
-    public static DataTable openExampleData(ExampleData data) {
-        return data.getDataTable();
+    public static void openExampleData(ExampleData data) {
+        TopsoilProject project = Topsoil.getController().getProject();
+        if (project != null) {
+            project.addDataTable(data.getDataTable());
+        } else {
+            project = new TopsoilProject(data.getDataTable());
+            Topsoil.getController().setProject(project);
+        }
     }
 
     /**
@@ -233,7 +238,7 @@ public class FileMenuHelper {
     /**
      * Exits the application, but not before checking for unsaved data.
      *
-     * @return  true if successful
+     * @return  true if should close
      */
     public static boolean handleDataBeforeClose() {
         boolean completed = false;

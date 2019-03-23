@@ -12,8 +12,8 @@ public class RecentFiles {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    static final String RECENT_FILES = "recent-files";
-    static final int MAX_SIZE = 10;
+    private static final String RECENT_FILES = "recent-files";
+    private static final int MAX_SIZE = 10;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -42,6 +42,12 @@ public class RecentFiles {
             paths.remove(MAX_SIZE - 1);
         }
         paths.add(0, path);
+        for (Path p : paths) {
+            boolean exists = p.toFile().exists();
+            if (! p.toFile().exists()) {
+                paths.remove(p);
+            }
+        }
         updateRecentFiles(paths);
     }
 
@@ -78,5 +84,4 @@ public class RecentFiles {
             }
         }
     }
-
 }

@@ -27,6 +27,7 @@ public class MainController extends VBox {
 
     @FXML private AnchorPane mainContentPane;
     private HomeView homeView;
+    private boolean projectShowing = false;
 
     //**********************************************//
     //                  PROPERTIES                  //
@@ -42,8 +43,10 @@ public class MainController extends VBox {
     public void setProject(TopsoilProject project) {
         if (project == null) {
             replaceMainContent(homeView);
+            projectShowing = false;
         } else {
             replaceMainContent(new ProjectView(project));
+            projectShowing = true;
         }
         this.project.set(project);
     }
@@ -80,6 +83,7 @@ public class MainController extends VBox {
     public void setHomeView() {
         homeView.refreshRecentFiles();
         replaceMainContent(homeView);
+        projectShowing = false;
     }
 
     //**********************************************//

@@ -4,8 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -32,6 +34,7 @@ public class ProjectView extends SplitPane {
     //                   CONTROLS                   //
     //**********************************************//
 
+    @FXML private AnchorPane tabPaneContainer;
     @FXML private TabPane tabPane;
 
     @FXML private Label projectTreeViewLabel;
@@ -42,12 +45,13 @@ public class ProjectView extends SplitPane {
     @FXML private AnchorPane constantsEditorPane;
     private ConstantsEditor constantsEditor;
 
+    private VBox noTables = new VBox(new Label("No tables loaded. Import from the \"File\" menu."));
+
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
     private TopsoilProject project;
-    private ObservableList<DataTable> dataTableList = FXCollections.observableArrayList();
 
     ResourceBundle resources = ResourceBundles.MAIN.getBundle();
 
@@ -87,6 +91,23 @@ public class ProjectView extends SplitPane {
                 }
             }
         });
+
+        noTables.setAlignment(Pos.CENTER);
+        FXMLUtils.setAnchorPaneBounds(noTables, 0.0, 0.0, 0.0, 0.0);
+        tabPane.getTabs().addListener((ListChangeListener.Change<? extends Tab> c) -> {
+            while (c.next()) {
+                if (c.wasRemoved()) {
+                    if (tabPane.getTabs().size() == 0) {
+                        tabPaneContainer.getChildren().setAll(noTables);
+                    }
+                }
+                if (c.wasAdded()) {
+                    if (c.getAddedSize() == tabPane.getTabs().size()) {
+                        tabPaneContainer.getChildren().setAll(tabPane);
+                    }
+                }
+            }
+        });
     }
 
     //**********************************************//
@@ -114,9 +135,9 @@ public class ProjectView extends SplitPane {
         ProjectTableTab tableTab = new ProjectTableTab(table);
         tableTab.setOnClosed(event -> {
             project.removeDataTable(table);
-            if (tabPane.getTabs().isEmpty()) {
-                Topsoil.getController().setHomeView();
-            }
+//            if (tabPane.getTabs().isEmpty()) {
+//                Topsoil.getController().setHomeView();
+//            }
         });
         tableTab.textProperty().bindBidirectional(table.labelProperty());
         tabPane.getTabs().add(tableTab);
