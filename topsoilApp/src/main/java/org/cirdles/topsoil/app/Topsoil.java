@@ -41,7 +41,6 @@ public class Topsoil extends Application {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private static MainController controller;
     private static Stage primaryStage;
     private static Image logo;
 
@@ -52,7 +51,7 @@ public class Topsoil extends Application {
     @Override
     public void start(Stage primaryStage) {
         Topsoil.primaryStage = primaryStage;
-        controller = MainController.getInstance();
+        MainController controller = MainController.getInstance();
 
         // Set the stage to appear at the center of the screen
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -102,10 +101,6 @@ public class Topsoil extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    public static MainController getController() {
-        return controller;
     }
 
     public static Stage getPrimaryStage() {

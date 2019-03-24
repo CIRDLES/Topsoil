@@ -4,6 +4,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
+import org.cirdles.topsoil.app.MainController;
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
@@ -61,7 +62,7 @@ public class FileMenu extends Menu {
         clearRecentProjectsItem = new MenuItem(resources.getString("clearRecent"));
         clearRecentProjectsItem.setOnAction(event -> {
             RecentFiles.clear();
-            Topsoil.getController().getHomeView().clearRecentFiles();
+            MainController.getInstance().getHomeView().refreshRecentFiles();
         });
         openRecentProjectMenu = new Menu(resources.getString("openRecent"), null, placeholder);
         openRecentProjectMenu.setOnShowing(event -> {

@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.menu;
 
+import org.cirdles.topsoil.app.MainController;
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.ProjectView;
@@ -27,7 +28,7 @@ class MenuUtils {
      */
     static DataTable getCurrentDataTable() {
         if (ProjectManager.getProject() != null) {
-            ProjectView projectView = (ProjectView) Topsoil.getController().getMainContent();
+            ProjectView projectView = (ProjectView) MainController.getInstance().getMainContent();
             if (projectView != null) {
                 return projectView.getVisibleDataTable();
             }

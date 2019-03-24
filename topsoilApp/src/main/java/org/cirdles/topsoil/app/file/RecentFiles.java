@@ -1,5 +1,9 @@
 package org.cirdles.topsoil.app.file;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -52,7 +56,7 @@ public class RecentFiles {
             paths.remove(MAX_SIZE - 1);
         }
         paths.add(0, path);
-        updateRecentFiles(paths);
+        saveRecentFiles(paths);
     }
 
     /**
@@ -93,7 +97,7 @@ public class RecentFiles {
      *
      * @param paths List of Paths
      */
-    private static void updateRecentFiles(List<Path> paths) {
+    private static void saveRecentFiles(List<Path> paths) {
         String str;
         for (int i = 1; i <= MAX_SIZE; i++) {
             if (i > paths.size()) {

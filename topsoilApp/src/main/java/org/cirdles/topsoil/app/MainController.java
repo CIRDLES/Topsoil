@@ -49,6 +49,7 @@ public class MainController extends VBox {
         replaceMainContent((project != null) ? new ProjectView(project) : homeView);
         ProjectManager.projectProperty().addListener(c -> {
             if (ProjectManager.getProject() == null) {
+                homeView.refreshRecentFiles();
                 replaceMainContent(homeView);
             } else {
                 replaceMainContent(new ProjectView(ProjectManager.getProject()));
@@ -60,7 +61,7 @@ public class MainController extends VBox {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    static MainController getInstance() {
+    public static MainController getInstance() {
         if (instance == null) {
             instance = new MainController();
         }
