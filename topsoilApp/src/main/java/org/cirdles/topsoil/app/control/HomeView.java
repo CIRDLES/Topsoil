@@ -8,7 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 

@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app.util;
 
 import javafx.concurrent.Task;
-import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
+import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.plot.Plot;
 

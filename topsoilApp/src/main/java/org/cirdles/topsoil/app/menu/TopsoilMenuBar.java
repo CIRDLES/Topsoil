@@ -1,11 +1,11 @@
-package org.cirdles.topsoil.app.control.menu;
+package org.cirdles.topsoil.app.menu;
 
 import javafx.scene.control.*;
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
-import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
-import org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper;
+import org.cirdles.topsoil.app.menu.helpers.HelpMenuHelper;
+import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 import org.cirdles.topsoil.plot.PlotType;
 

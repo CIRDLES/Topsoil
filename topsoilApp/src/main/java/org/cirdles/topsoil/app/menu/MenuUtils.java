@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control.menu;
+package org.cirdles.topsoil.app.menu;
 
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
@@ -12,11 +12,11 @@ import org.cirdles.topsoil.app.data.DataTable;
  *
  * @see TopsoilMenuBar
  * @see FileMenu
- * @see org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper
- * @see org.cirdles.topsoil.app.control.menu.helpers.EditMenuHelper
- * @see org.cirdles.topsoil.app.control.menu.helpers.ViewMenuHelper
- * @see org.cirdles.topsoil.app.control.menu.helpers.VisualizationsMenuHelper
- * @see org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper
+ * @see org.cirdles.topsoil.app.menu.helpers.FileMenuHelper
+ * @see org.cirdles.topsoil.app.menu.helpers.EditMenuHelper
+ * @see org.cirdles.topsoil.app.menu.helpers.ViewMenuHelper
+ * @see org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper
+ * @see org.cirdles.topsoil.app.menu.helpers.HelpMenuHelper
  */
 class MenuUtils {
 

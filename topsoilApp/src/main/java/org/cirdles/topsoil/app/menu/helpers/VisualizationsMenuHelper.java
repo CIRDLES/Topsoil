@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control.menu.helpers;
+package org.cirdles.topsoil.app.menu.helpers;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
@@ -27,8 +27,7 @@ import static org.cirdles.topsoil.plot.PlotProperty.TITLE;
 import static org.cirdles.topsoil.plot.PlotProperty.UNCERTAINTY;
 
 /**
- * A utility class providing helper methods for the logic behind items in
- * {@link org.cirdles.topsoil.app.control.menu.TopsoilMenuBar}.
+ * A utility class providing helper methods for the logic behind items in the menu bar.
  *
  * @author marottajb
  */
@@ -38,8 +37,8 @@ public class VisualizationsMenuHelper {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final double DEFAULT_PLOT_WIDTH = 1000;
-    private static final double DEFAULT_PLOT_HEIGHT = 600;
+    private static final double DEFAULT_PLOT_WIDTH = 1000.0;
+    private static final double DEFAULT_PLOT_HEIGHT = 600.0;
 
     //**********************************************//
     //                PUBLIC METHODS                //
@@ -57,64 +56,60 @@ public class VisualizationsMenuHelper {
      */
     public static boolean generatePlot(PlotType plotType, DataTable table, TopsoilProject project,
                                        Map<PlotProperty, Object> properties) {
-        List<Map<String, Object>> data = getPlotDataFromTable(table);
-
-        Plot plot = plotType.getPlot();
-        plot.setData(data);
-        TableObserver tableObserver = new TableObserver(table, plot);
-        table.addObserver(tableObserver);
-
-        // @TODO Update plot on model changes
-
-        if (properties == null) {
-            properties = new DefaultProperties();
+        TopsoilPlotView openPlotView = null;
+        for (TopsoilPlotView pV : project.getOpenPlots()) {
+            if (pV.getDataTable().equals(table) && pV.getPlot().getPlotType().equals(plotType)) {
+                openPlotView = pV;
+                break;
+            }
         }
 
-        properties.put(TITLE, table.getLabel());
-        // @TODO assign X and Y axis labels
-        properties.put(UNCERTAINTY, table.getUncertainty().getMultiplier());
-        plot.setProperties(properties);
-        TopsoilPlotView plotView = new TopsoilPlotView(plot, table);
+        if (openPlotView != null) {
+            openPlotView.getScene().getWindow().requestFocus();
+        } else {
+            List<Map<String, Object>> data = getPlotDataFromTable(table);
 
-        // Connect table model to properties panel
-        PlotPropertiesPanel panel = plotView.getPropertiesPanel();
-        panel.isotopeSystemProperty().bindBidirectional(table.isotopeSystemProperty());
+            Plot plot = plotType.getPlot();
+            plot.setData(data);
+            TableObserver tableObserver = new TableObserver(table, plot);
+            table.addObserver(tableObserver);
 
-        // Update properties panel with changes in the plot
-        PlotObservationThread observationThread = new PlotObservationThread();
-        ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, panel);
+            // @TODO Update plot on model changes
 
-        Scene scene = new Scene(plotView, DEFAULT_PLOT_WIDTH, DEFAULT_PLOT_HEIGHT);
-        Stage plotStage = new Stage();
-        plotStage.setScene(scene);
-        plotStage.getIcons().add(Topsoil.getLogo());
-        plotStage.titleProperty().bind(Bindings.createStringBinding(
-                () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
-        plotStage.setOnCloseRequest(closeEvent -> {
-            observer.shutdown();
-            table.deleteObserver(tableObserver);
-//            plot.stop();
-            VisualizationsMenuHelper.closePlot(plotType, table, project);
-        });
+            if (properties == null) {
+                properties = new DefaultProperties();
+            }
 
-        // Show Plot
-        plotStage.show();
+            properties.put(TITLE, table.getLabel());
+            // @TODO assign X and Y axis labels
+            properties.put(UNCERTAINTY, table.getUncertainty().getMultiplier());
+            plot.setProperties(properties);
+            TopsoilPlotView plotView = new TopsoilPlotView(plot, table);
 
-        project.addOpenPlot(plotType, table, plotView);
-        return true;
-    }
+            // Connect table model to properties panel
+            PlotPropertiesPanel panel = plotView.getPropertiesPanel();
+            panel.isotopeSystemProperty().bindBidirectional(table.isotopeSystemProperty());
 
-    /**
-     * Closes a particular plot.
-     *
-     * @param plotType  PlotType
-     * @param table     DataTable
-     * @param project   TopsoilProject that table belongs to
-     *
-     * @return          true if successful
-     */
-    public static boolean closePlot(PlotType plotType, DataTable table, TopsoilProject project) {
-        project.removeOpenPlot(plotType, table);
+            // Update properties panel with changes in the plot
+            PlotObservationThread observationThread = new PlotObservationThread();
+            ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, panel);
+
+            Scene scene = new Scene(plotView, DEFAULT_PLOT_WIDTH, DEFAULT_PLOT_HEIGHT);
+            Stage plotStage = new Stage();
+            plotStage.setScene(scene);
+            plotStage.getIcons().add(Topsoil.getLogo());
+            plotStage.titleProperty().bind(Bindings.createStringBinding(
+                    () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
+            plotStage.setOnCloseRequest(closeEvent -> {
+                observer.shutdown();
+                table.deleteObserver(tableObserver);
+                project.removeOpenPlot(plotView);
+            });
+
+            // Show Plot
+            plotStage.show();
+            project.addOpenPlot(plotView);
+        }
         return true;
     }
 

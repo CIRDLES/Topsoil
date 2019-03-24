@@ -11,7 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.OutputStream;

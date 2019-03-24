@@ -1,10 +1,10 @@
-package org.cirdles.topsoil.app.control.menu.helpers;
+package org.cirdles.topsoil.app.menu.helpers;
 
 import org.cirdles.topsoil.app.control.ProjectView;
 
 /**
  * A utility class providing helper methods for the logic behind items in
- * {@link org.cirdles.topsoil.app.control.menu.TopsoilMenuBar}.
+ * {@link org.cirdles.topsoil.app.menu.TopsoilMenuBar}.
  *
  * @author marottajb
  */

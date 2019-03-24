@@ -33,7 +33,7 @@ public class TopsoilProject {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private Table<PlotType, DataTable, TopsoilPlotView> openPlots = HashBasedTable.create();
+    private List<TopsoilPlotView> openPlots = new ArrayList<>();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -61,16 +61,16 @@ public class TopsoilProject {
         dataTables.remove(table);
     }
 
-    public Table<PlotType, DataTable, TopsoilPlotView> getOpenPlots() {
-        return openPlots;
+    public List<TopsoilPlotView> getOpenPlots() {
+        return new ArrayList<>(openPlots);
     }
 
-    public void addOpenPlot(PlotType plotType, DataTable dataTable, TopsoilPlotView plotView) {
-        openPlots.put(plotType, dataTable, plotView);
+    public void addOpenPlot(TopsoilPlotView plotView) {
+        openPlots.add(plotView);
     }
 
-    public void removeOpenPlot(PlotType plotType, DataTable dataTable) {
-        openPlots.remove(plotType, dataTable);
+    public void removeOpenPlot(TopsoilPlotView plotView) {
+        openPlots.remove(plotView);
     }
 
     @Override
