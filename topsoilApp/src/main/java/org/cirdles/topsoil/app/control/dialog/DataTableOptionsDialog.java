@@ -139,7 +139,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
+//            this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
         }
 
         @FXML
@@ -259,7 +259,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             tableView.prefHeightProperty().bind(
                     tableView.fixedCellSizeProperty()
                             .multiply(Bindings.size(tableView.getItems()))
-                            .add(colDepth * HEADER_ROW_HEIGHT)
+                            .add(colDepth * (HEADER_ROW_HEIGHT + 1))
             );
             tableView.prefWidthProperty().bind(
                     Bindings.createDoubleBinding(() -> {
@@ -279,6 +279,10 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                     header.setReordering(false);
                 });
             }));
+
+            if (tableView.getVisibleLeafColumns().size() > 5) {
+                this.setPrefWidth(5 * (COL_WIDTH + 1));
+            }
 
             // Prevents mouse-wheel scrolling
             scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
