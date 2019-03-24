@@ -20,10 +20,15 @@ public enum Delimiter {
         this.value = value;
     }
 
-    public String getName() {
+    public String getReadableName() {
         return name;
     }
 
+    /**
+     * Returns the delimiter {@code String}.
+     *
+     * @return
+     */
     public String getValue() {
         return value;
     }

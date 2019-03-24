@@ -8,6 +8,9 @@ import java.nio.file.Path;
 
 public class ProjectManager {
 
+    /**
+     * Keeps the {@code TopsoilProject} representing the current working state of the application, if one exists.
+     */
     private static ObjectProperty<TopsoilProject> project = new SimpleObjectProperty<>();
     public static ObjectProperty<TopsoilProject> projectProperty() {
         return project;
@@ -19,6 +22,9 @@ public class ProjectManager {
         ProjectManager.project.set(project);
     }
 
+    /**
+     * Keeps the {@code Path} associated with the current working state of the application, if one exists.
+     */
     private static ObjectProperty<Path> projectPath = new SimpleObjectProperty<>();
     public static ObjectProperty<Path> projectPathProperty() {
         return projectPath;
@@ -29,5 +35,7 @@ public class ProjectManager {
     public static void setProjectPath(Path path) {
         ProjectManager.projectPath.set(path);
     }
+
+    private ProjectManager() {}
 
 }

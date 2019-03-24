@@ -14,6 +14,16 @@ import java.nio.file.Path;
  */
 public class ProjectSerializer {
 
+    /**
+     * Writes a {@code TopsoilProject} to the given path.
+     *
+     * @param projectPath   Path to save project to
+     * @param project       TopsoilProject to save
+     *
+     * @return              true, if successful
+     *
+     * @throws IOException  if file error
+     */
     public static boolean serialize(Path projectPath, TopsoilProject project) throws IOException {
         if (projectPath == null) {
             throw new IllegalArgumentException("projectPath must not be null.");
@@ -29,6 +39,15 @@ public class ProjectSerializer {
         return true;
     }
 
+    /**
+     * Reads a {@code TopsoilProject} from the provided .topsoil project path.
+     *
+     * @param projectPath   Path to project file
+     *
+     * @return              deserialized TopsoilProject
+     *
+     * @throws IOException  if file error
+     */
     public static TopsoilProject deserialize(Path projectPath) throws IOException {
         try (InputStream in = Files.newInputStream(projectPath); ObjectInputStream ois = new ObjectInputStream(in)) {
             return ((SerializableProject) ois.readObject()).reconstruct();

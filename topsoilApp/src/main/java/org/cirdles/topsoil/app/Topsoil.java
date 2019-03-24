@@ -12,7 +12,6 @@ import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
-import org.cirdles.topsoil.app.file.ProjectSerializer;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.OutputStream;
@@ -55,12 +54,14 @@ public class Topsoil extends Application {
         Topsoil.primaryStage = primaryStage;
         controller = MainController.getInstance();
 
+        // Set the stage to appear at the center of the screen
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         primaryStage.setX((screenBounds.getWidth() - INIT_WIDTH) / 2);
         primaryStage.setY((screenBounds.getHeight() - INIT_HEIGHT) / 2);
 
         Scene scene = new Scene(controller, INIT_WIDTH, INIT_HEIGHT);
 
+        // Bind the title of the stage to show current project title, if applicable
         primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
             String appName = ResourceBundles.MAIN.getString("appName");
             Path path = ProjectManager.getProjectPath();
@@ -73,10 +74,12 @@ public class Topsoil extends Application {
         }, ProjectManager.projectPathProperty()));
 
         try {
+            // Load logo image
             ResourceExtractor re = new ResourceExtractor(Topsoil.class);
             logo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
             primaryStage.getIcons().add(logo);
 
+            // Load custom font
             Font.loadFont(re.extractResourceAsFile(ARIMO_REGULAR).toURI().toURL().toExternalForm(), 12.0);
             Font.loadFont(re.extractResourceAsFile(ARIMO_BOLD).toURI().toURL().toExternalForm(), 12.0);
             Font.loadFont(re.extractResourceAsFile(ARIMO_ITALIC).toURI().toURL().toExternalForm(), 12.0);
@@ -89,6 +92,7 @@ public class Topsoil extends Application {
             throw new RuntimeException(ResourceBundles.MAIN.getString("stylesheetError") + " " + STYLESHEET, e);
         }
 
+        // Exit platform on window close
         primaryStage.setOnCloseRequest(event -> {
             event.consume();
             if (FileMenuHelper.handleDataBeforeClose()) {

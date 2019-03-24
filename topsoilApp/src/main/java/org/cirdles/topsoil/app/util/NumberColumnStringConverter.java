@@ -7,6 +7,11 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.Locale;
 
+/**
+ * A custom {@code StringConverter} that uses a {@code DecimalFormat} to enforce a specific number of fraction digits on
+ * converted strings. If the number provided has fewer than the set number of fraction digits, the number is padded with
+ * whitespace on the right.
+ */
 public class NumberColumnStringConverter extends StringConverter<Number> {
 
     //**********************************************//
@@ -15,7 +20,6 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
 
     private String patternBase;
     private DecimalFormat df = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.getDefault());
-    private boolean isScientificNotation = false;
     private int numFractionDigits = 9;
 
     //**********************************************//
@@ -41,11 +45,8 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
                 if (i < valueFractionDigits) {
                     pattern.append("0");
                 } else {
-                    pattern.append(" ");
+                    pattern.append(" ");        // Pad extra fraction places with whitespace
                 }
-            }
-            if (isScientificNotation) {
-                pattern.append("e0##");
             }
             df.applyLocalizedPattern(pattern.toString());
             return df.format((double) number);
@@ -64,10 +65,6 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
             }
         }
         return null;
-    }
-
-    public void setScientificNotation(boolean value) {
-        isScientificNotation = value;
     }
 
     public void setNumFractionDigits(int n) {

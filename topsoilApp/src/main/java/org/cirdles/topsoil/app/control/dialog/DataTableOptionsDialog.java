@@ -39,13 +39,6 @@ import java.util.ResourceBundle;
 public class DataTableOptionsDialog extends Dialog<Boolean> {
 
     //**********************************************//
-    //                  CONSTANTS                   //
-    //**********************************************//
-
-    private static final double INIT_WIDTH = 900.0;
-    private static final double INIT_HEIGHT = 400.0;
-
-    //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
@@ -139,7 +132,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-//            this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
         }
 
         @FXML
@@ -169,7 +161,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         //**********************************************//
 
         /**
-         * Returns the column visibility selections for the table.
+         * Returns the column visibility selections in the variable chooser.
          *
          * @return  Map of DataComponent to Boolean values, true if column should be visible
          */
@@ -178,7 +170,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         }
 
         /**
-         * Returns the variable/column associations for the table.
+         * Returns the variable/column associations in the variable chooser.
          *
          * @return  Map of Variable to DataColumn
          */
@@ -240,6 +232,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         @FXML
         protected void initialize() {
+            // Add left-side variable labels
             Label label;
             for (Variable<?> variable : Variables.ALL) {
                 label = new Label(variable.getName());
@@ -280,6 +273,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                 });
             }));
 
+            // Restricts the table size if there are a lot of columns
             if (tableView.getVisibleLeafColumns().size() > 5) {
                 this.setPrefWidth(5 * (COL_WIDTH + 1));
             }

@@ -67,16 +67,6 @@ public class DataTableTest {
         table.setUncertainty(Uncertainty.ONE_SIGMA_ABSOLUTE);
     }
 
-    @Test
-    public void getRowByIndex_test() {
-        assertEquals(rowOne, table.getRowByIndex(0));
-        assertEquals(rowTwo, table.getRowByIndex(1));
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void getRowByIndex_outOfBounds_test() {
-        table.getRowByIndex(2);
-    }
 
     @Test
     public void getValuesForColumn_test() {

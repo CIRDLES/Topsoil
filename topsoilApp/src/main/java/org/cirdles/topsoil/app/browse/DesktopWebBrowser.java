@@ -79,17 +79,11 @@ public class DesktopWebBrowser implements WebBrowser {
             if (desktop.isSupported(Desktop.Action.BROWSE)) {
                 browse(uri);
             } else {
-                TopsoilNotification.showNotification(
-                        TopsoilNotification.NotificationType.ERROR,
-                        "Unsupported",
-                        "Browsing not supported."
+                TopsoilNotification.info("Unsupported", "Browsing not supported."
                 );
             }
         } else {
-            TopsoilNotification.showNotification(
-                    TopsoilNotification.NotificationType.ERROR,
-                    "Unsupported",
-                    "Browsing not supported."
+            TopsoilNotification.info("Unsupported", "Browsing not supported."
             );
         }
     }
@@ -104,8 +98,7 @@ public class DesktopWebBrowser implements WebBrowser {
             desktop.browse(uri);
         } catch (IOException ex) {
             LOGGER.error(null, ex);
-            TopsoilNotification.showNotification(
-                    TopsoilNotification.NotificationType.ERROR,
+            TopsoilNotification.error(
                     "Error",
                     "Unable to open browser."
             );

@@ -45,6 +45,7 @@ public class MainController extends VBox {
         homeView = new HomeView();
         TopsoilProject project = ProjectManager.getProject();
 
+        // Set the main window content appropriately based on whether or not a project is present
         replaceMainContent((project != null) ? new ProjectView(project) : homeView);
         ProjectManager.projectProperty().addListener(c -> {
             if (ProjectManager.getProject() == null) {
@@ -66,10 +67,21 @@ public class MainController extends VBox {
         return instance;
     }
 
+    /**
+     * Returns the main content node of the controller, at time of writing either a {@code HomeView} or a {@code ProjectView},
+     * depending on whether a project is loaded.
+     *
+     * @return  Node
+     */
     public Node getMainContent() {
         return mainContentPane.getChildren().get(0);
     }
 
+    /**
+     * Returns the {@code HomeView} instance used by the controller.
+     *
+     * @return  HomeView
+     */
     public HomeView getHomeView() {
         return homeView;
     }
@@ -81,6 +93,6 @@ public class MainController extends VBox {
     private void replaceMainContent(Node content) {
         mainContentPane.getChildren().clear();
         mainContentPane.getChildren().add(content);
-        FXMLUtils.setAnchorPaneBounds(content, 0.0, 0.0, 0.0, 0.0);
+        FXMLUtils.setAnchorPaneConstraints(content, 0.0, 0.0, 0.0, 0.0);
     }
 }

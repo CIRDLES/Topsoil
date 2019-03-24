@@ -68,6 +68,14 @@ public interface DataParser {
         return content.split("[\\r\\n]+");
     }
 
+    /**
+     * Splits each string line into a {@code String[]} based on the delimiter provided.
+     *
+     * @param lines         String[]
+     * @param delimiter     String delimiter
+     *
+     * @return              String[][] split lines
+     */
     static String[][] readCells(String[] lines, String delimiter) {
         List<List<String>> splits = new ArrayList<>();
         List<String> split;
@@ -93,6 +101,15 @@ public interface DataParser {
         return rtnval;
     }
 
+    /**
+     * Identifies the delimiter of the data file at the specified path, or returns null.
+     *
+     * @param path          data file Path
+     *
+     * @return              Delimiter, or null
+     *
+     * @throws IOException  if file error
+     */
     static Delimiter guessDelimiter(Path path) throws IOException {
         TableFileExtension ext = getExtension(path);
         if (ext == TableFileExtension.CSV || ext == TableFileExtension.TSV) {
@@ -105,6 +122,12 @@ public interface DataParser {
         return guessDelimiter(Arrays.copyOfRange(lines, 0, Math.min(lines.length, NUM_LINES)));
     }
 
+    /**
+     * Identifies the delimiter of the data in the provided string, or returns null.
+     *
+     * @param content       String data
+     * @return              Delimiter, or null
+     */
     static Delimiter guessDelimiter(String content) {
         final int NUM_LINES = 5;
         String[] lines = readLines(content);
@@ -112,6 +135,12 @@ public interface DataParser {
         return guessDelimiter(Arrays.copyOfRange(lines, 0, NUM_LINES));
     }
 
+    /**
+     * Identifies the delimiter of the data in the provided {@code String[]} lines, or returns null.
+     *
+     * @param lines     String[]
+     * @return          Delimiter, or null
+     */
     static Delimiter guessDelimiter(String[] lines) {
         for (Delimiter delim : Delimiter.values()) {
             if (isDelimiter(lines, delim)) {
@@ -121,6 +150,14 @@ public interface DataParser {
         return null;
     }
 
+    /**
+     * Tests whether the provided {@code Delimiter} is a delimiter of the {@code String[]} data.
+     *
+     * @param lines     String[] data lines
+     * @param delim     Delimiter
+     *
+     * @return          true if delim is the delimiter for the data
+     */
     static boolean isDelimiter(String[] lines, Delimiter delim) {
         final int NUM_LINES = 5;
         int numLines = Math.min(NUM_LINES, lines.length);
@@ -138,6 +175,16 @@ public interface DataParser {
         return true;
     }
 
+    /**
+     * Identifies the data type of a column of values in the provided data. Currently, only {@code Number} and
+     * {@code String} columns are supported; this method defaults to {@code String}.
+     *
+     * @param rows          String[][] data
+     * @param colIndex      column index
+     * @param numHeaderRows number of header rows in the data
+     *
+     * @return              Class of column type
+     */
     static Class getColumnDataType(String[][] rows, int colIndex, int numHeaderRows) {
         final int SAMPLE_SIZE = Math.min(5, rows.length - numHeaderRows);
         boolean isDouble = true;
@@ -157,6 +204,15 @@ public interface DataParser {
         return isDouble ? Number.class : String.class;
     }
 
+    /**
+     * Parses a {@code DataRow} from the provided {@code String[]} row, given the provided columns.
+     *
+     * @param label     String row label
+     * @param row       String[] row values
+     * @param columns   List of table columns
+     *
+     * @return          DataRow with assigned values
+     */
     static DataRow getDataRow(String label, String[] row, List<DataColumn<?>> columns) {
         DataRow newRow = new DataRow(label);
         String str;

@@ -34,6 +34,11 @@ public enum ExampleData {
         this.unctFormat = unctFormat;
     }
 
+    /**
+     * Returns a new {@code DataTable} representing the example data.
+     *
+     * @return  DataTable
+     */
     public DataTable getDataTable() {
         final ResourceExtractor re = new ResourceExtractor(ExampleData.class);
         Path filePath = re.extractResourceAsPath(fileName);

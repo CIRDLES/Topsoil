@@ -15,7 +15,6 @@ import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.util.ExampleData;
-import org.cirdles.topsoil.app.file.ProjectSerializer;
 import org.cirdles.topsoil.app.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
@@ -140,7 +139,7 @@ public class FileMenu extends Menu {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    TopsoilNotification.showNotification(TopsoilNotification.NotificationType.ERROR,
+                    TopsoilNotification.error(
                             "Error",
                             resources.getString("importFileError") + path.getFileName().toString());
                 }

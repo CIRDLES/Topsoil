@@ -83,15 +83,59 @@ public class TopsoilNotification extends Dialog<ButtonType> {
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
     /**
-     * Shows a small notification window with the specified title and message. Other attributes, such as the
-     * available {@code ButtonType}s and the graphic are based on the supplied {@code NotificationType}.
+     * Presents a simple information {@link Dialog} with one button, "OK".
      *
-     * @param type  NotificationType
-     * @param windowTitle   the String title of the Stage
-     * @param message   String message
-     * @return  the ButtonType of the button the user pressed in response
+     * @param windowTitle   String title
+     * @param message       String message
+     *
+     * @return              Optional ButtonType pressed
      */
+    public static Optional<ButtonType> info(String windowTitle, String message) {
+        return showNotification(NotificationType.INFORMATION, windowTitle, message);
+    }
+
+    /**
+     * Presents a simple error {@link Dialog} with one button, "OK".
+     *
+     * @param windowTitle   String title
+     * @param message       String message
+     *
+     * @return              Optional ButtonType pressed
+     */
+    public static Optional<ButtonType> error(String windowTitle, String message) {
+        return showNotification(NotificationType.ERROR, windowTitle, message);
+    }
+
+    /**
+     * Presents a simple verification {@link Dialog} with two buttons, "Cancel" and "OK".
+     *
+     * @param windowTitle   String title
+     * @param message       String message
+     *
+     * @return              Optional ButtonType pressed
+     */
+    public static Optional<ButtonType> verify(String windowTitle, String message) {
+        return showNotification(NotificationType.VERIFICATION, windowTitle, message);
+    }
+
+    /**
+     * Presents a simple {@link Dialog} with three buttons, "Yes", "No", and "Cancel".
+     *
+     * @param windowTitle   String title
+     * @param message       String message
+     *
+     * @return              Optional ButtonType pressed
+     */
+    public static Optional<ButtonType> yesNo(String windowTitle, String message) {
+        return showNotification(NotificationType.YES_NO, windowTitle, message);
+    }
+
+    //**********************************************//
+    //                PRIVATE METHODS               //
+    //**********************************************//
+
     public static Optional<ButtonType> showNotification(NotificationType type, String windowTitle, String message) {
         TopsoilNotification notification = new TopsoilNotification(windowTitle, message);
 
@@ -99,10 +143,6 @@ public class TopsoilNotification extends Dialog<ButtonType> {
         notification.getDialogPane().getButtonTypes().addAll(type.getButtonTypes());
         return notification.showAndWait();
     }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
 
     private void setImage(Image image) {
         this.image.setImage(image);

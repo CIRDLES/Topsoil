@@ -1,14 +1,11 @@
 package org.cirdles.topsoil.app.control;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
@@ -74,11 +71,11 @@ public class ProjectView extends SplitPane {
         constantsEditorLabel.setText(resources.getString("constantsEditor"));
 
         this.projectTreeView = new ProjectTreeView(project);
-        FXMLUtils.setAnchorPaneBounds(projectTreeView, 0.0, 0.0, 0.0, 0.0);
+        FXMLUtils.setAnchorPaneConstraints(projectTreeView, 0.0, 0.0, 0.0, 0.0);
         projectTreeViewPane.getChildren().add(projectTreeView);
 
         this.constantsEditor = new ConstantsEditor();
-        FXMLUtils.setAnchorPaneBounds(constantsEditor, 0.0, 0.0, 0.0, 0.0);
+        FXMLUtils.setAnchorPaneConstraints(constantsEditor, 0.0, 0.0, 0.0, 0.0);
         constantsEditorPane.getChildren().add(constantsEditor);
 
         for (DataTable table : project.getDataTables()) {
@@ -93,7 +90,7 @@ public class ProjectView extends SplitPane {
         });
 
         noTables.setAlignment(Pos.CENTER);
-        FXMLUtils.setAnchorPaneBounds(noTables, 0.0, 0.0, 0.0, 0.0);
+        FXMLUtils.setAnchorPaneConstraints(noTables, 0.0, 0.0, 0.0, 0.0);
         if (tabPane.getTabs().size() == 0) {
             tabPaneContainer.getChildren().setAll(noTables);
         }

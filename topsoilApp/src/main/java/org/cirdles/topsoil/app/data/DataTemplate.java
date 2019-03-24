@@ -9,14 +9,14 @@ import org.cirdles.topsoil.app.file.writer.DataWriter;
 import org.cirdles.topsoil.app.file.writer.Squid3DataWriter;
 
 /**
- * Each template represents a possible format for imported data, and has a {@code DataParserBase} associated with it.
+ * Each template represents a possible format for imported data.
  *
  * @author marottajb
  */
 public enum DataTemplate {
 
     DEFAULT("Default", DefaultDataParser.class, DefaultDataWriter.class),
-    CLASSIC("Classic (x, σx, y, σy, rho", ClassicDataParser.class, DefaultDataWriter.class),
+    CLASSIC("Classic (x, σx, y, σy, rho)", ClassicDataParser.class, DefaultDataWriter.class),
     SQUID_3("Squid 3", Squid3DataParser.class, Squid3DataWriter.class);
 
     private String name;
@@ -43,6 +43,11 @@ public enum DataTemplate {
         return null;
     }
 
+    /**
+     * Returns a new instance of the {@code DataWriter} for the template.
+     *
+     * @return          DataWriter
+     */
     public DataWriter getWriter() {
         try {
             return writerClass.newInstance();

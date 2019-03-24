@@ -31,10 +31,20 @@ public class RecentFiles {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Returns an array containing the most recent project file paths.
+     *
+     * @return  Path[]
+     */
     public static Path[] getPaths() {
         return loadRecentFiles().toArray(new Path[]{});
     }
 
+    /**
+     * Adds a path to the list of most recent project files.
+     *
+     * @param path
+     */
     public static void addPath(Path path) {
         List<Path> paths = loadRecentFiles();
         paths.remove(path);
@@ -45,6 +55,9 @@ public class RecentFiles {
         updateRecentFiles(paths);
     }
 
+    /**
+     * Clears the list of most recent files.
+     */
     public static void clear() {
         for (int i = 1; i <= MAX_SIZE; i++) {
             prefs.remove(RECENT_FILES + i);
@@ -55,6 +68,11 @@ public class RecentFiles {
     //                PRIVATE METHODS               //
     //**********************************************//
 
+    /**
+     * Reads a list of most recent paths from the {@code Preferences} node.
+     *
+     * @return  List of Paths
+     */
     private static List<Path> loadRecentFiles() {
         String str;
         List<Path> paths = new ArrayList<>(MAX_SIZE);
@@ -70,6 +88,11 @@ public class RecentFiles {
         return paths;
     }
 
+    /**
+     * Updates the paths stored in the {@code Preferences} node with the provided list of paths.
+     *
+     * @param paths List of Paths
+     */
     private static void updateRecentFiles(List<Path> paths) {
         String str;
         for (int i = 1; i <= MAX_SIZE; i++) {

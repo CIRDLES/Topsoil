@@ -90,14 +90,12 @@ public class FileMenuHelper {
     public static boolean saveProject(TopsoilProject project) {
         boolean completed = false;
         Path path = ProjectManager.getProjectPath();
-        // TODO Check that path is valid
         if (path != null) {
             try {
                 completed = ProjectSerializer.serialize(path, project);
             } catch (IOException e) {
                 e.printStackTrace();
-                TopsoilNotification.showNotification(
-                        TopsoilNotification.NotificationType.ERROR,
+                TopsoilNotification.error(
                         "Error",
                         "Unable to save project: " + path.toString()
                 );
@@ -126,8 +124,7 @@ public class FileMenuHelper {
                 RecentFiles.addPath(path);
             } catch (IOException e) {
                 e.printStackTrace();
-                TopsoilNotification.showNotification(
-                        TopsoilNotification.NotificationType.ERROR,
+                TopsoilNotification.error(
                         "Error",
                         "Unable to save project: " + file.getName()
                 );
@@ -222,7 +219,7 @@ public class FileMenuHelper {
     public static boolean exportTableAs(DataTable table) {
         boolean completed = false;
         if (table.getTemplate() == DataTemplate.SQUID_3) {
-            TopsoilNotification.showNotification(TopsoilNotification.NotificationType.INFORMATION,
+            TopsoilNotification.info(
                     "Unsupported Operation",
                     "Squid 3 table exporting is currently unsupported."
             );
@@ -260,11 +257,7 @@ public class FileMenuHelper {
                                 completed = ProjectSerializer.serialize(file.toPath(), project);
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                TopsoilNotification.showNotification(
-                                        TopsoilNotification.NotificationType.ERROR,
-                                        "Error",
-                                        "Unable to save project: " + file.getName()
-                                );
+                                TopsoilNotification.error("Error", "Unable to save project: " + file.getName());
                             }
                         }
                     }
@@ -285,11 +278,7 @@ public class FileMenuHelper {
      * @return  ButtonType YES, NO, or CANCEL (or null)
      */
     public static ButtonType verifyFinalSave() {
-        return TopsoilNotification.showNotification(
-                TopsoilNotification.NotificationType.YES_NO,
-                "Save Changes",
-                "Would you like to save your work?"
-        ).orElse(null);
+        return TopsoilNotification.yesNo("Save Changes", "Would you like to save your work?").orElse(null);
     }
 
     //**********************************************//
@@ -329,8 +318,7 @@ public class FileMenuHelper {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            TopsoilNotification.showNotification(
-                    TopsoilNotification.NotificationType.ERROR,
+            TopsoilNotification.error(
                     "Error",
                     "Could not open project file: " + projectPath.toString()
             );
@@ -344,9 +332,9 @@ public class FileMenuHelper {
      * @return  ButtonType YES, NO, or CANCEL (or null)
      */
     private static ButtonType showOverwriteDialog() {
-        return TopsoilNotification.showNotification(TopsoilNotification.NotificationType.YES_NO,
-                                                    "Overwrite",
-                                                    "This will overwrite your current data. Save?").orElse(null);
+        return TopsoilNotification.yesNo(
+                "Overwrite",
+                "This will overwrite your current data. Save?").orElse(null);
     }
 
     private static boolean exportTableAs(Path path, DataTable table) {

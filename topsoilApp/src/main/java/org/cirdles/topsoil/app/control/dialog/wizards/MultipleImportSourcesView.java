@@ -161,8 +161,7 @@ class MultipleImportSourcesView extends WizardPane {
                     badFileNames.add(file.getName());
                 }
 
-                TopsoilNotification.showNotification(
-                        TopsoilNotification.NotificationType.ERROR,
+                TopsoilNotification.error(
                         resources.getString("fileErrorTitle"),
                         resources.getString("fileErrorMessage") + " \n\n" + badFileNames.toString()
                 );

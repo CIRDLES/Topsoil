@@ -20,6 +20,13 @@ public enum ResourceBundles {
         return bundle;
     }
 
+    /**
+     * A shortcut for ResourceBundles.BUNDLE.getBundle().getString(String s).
+     *
+     * @param key   String key
+     *
+     * @return      String value
+     */
     public String getString(String key) {
         return bundle.getString(key);
     }

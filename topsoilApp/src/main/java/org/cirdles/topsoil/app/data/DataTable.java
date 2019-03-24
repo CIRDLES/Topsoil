@@ -22,6 +22,8 @@ import org.cirdles.topsoil.variable.Variable;
 import java.util.*;
 
 /**
+ * A full table of data loaded from a single file or string.
+ *
  * @author marottajb
  */
 public class DataTable extends Observable {
@@ -107,12 +109,16 @@ public class DataTable extends Observable {
         this.columnRoot = columnRoot;
         this.dataRoot = dataRoot;
         this.dataRoot.labelProperty().bind(labelProperty());
+
+        // Notify observers on row selection changes
         for (DataRow row : getDataRows()) {
             row.selectedProperty().addListener(c -> {
                 setChanged();
                 notifyObservers();
             });
         }
+
+        // Sets the fraction digits for each column to align values by their decimal separators
         for (DataColumn<?> column : this.columnRoot.getLeafNodes()) {
             if (column.getType() == Number.class) {
                 setFractionDigitsForNumberColumn((DataColumn<Number>) column);
@@ -140,10 +146,23 @@ public class DataTable extends Observable {
         return template;
     }
 
+    /**
+     * Returns a {@code Map} of variable/column associations for the table. The {@code Variable} key is represented by
+     * the corresponding {@code DataColumn} value in the table.
+     *
+     * @return  Map of Variable/DataColumn associations
+     */
     public Map<Variable<?>, DataColumn<?>> getVariableColumnMap() {
         return HashBiMap.create(varMap);
     }
 
+    /**
+     * Assigns a {@code DataColumn} from the table to the provided {@code Variable}.
+     *
+     * @param var   Variable
+     * @param col   DataColumn
+     * @return      the previous DataColumn assignment, if it exists
+     */
     public DataColumn<?> setColumnForVariable(Variable<?> var, DataColumn<?> col) {
         return varMap.putIfAbsent(var, col);
     }
@@ -162,22 +181,14 @@ public class DataTable extends Observable {
         }
     }
 
-    public DataRow getRowByIndex(int index) {
-        if (index < 0 || index >= getDataRows().size()) {
-            throw new IndexOutOfBoundsException();
-        }
-        DataSegment segment;
-        int rowCount = 0;
-        for (int segIndex = 0; segIndex < getDataRoot().getChildren().size(); segIndex++) {
-            segment = getDataRoot().getChildren().get(segIndex);
-            if (index < rowCount + segment.getChildren().size()) {
-                return segment.getChildren().get(index - rowCount);
-            }
-            rowCount += segment.getChildren().size();
-        }
-        return null;
-    }
-
+    /**
+     * Returns a list containing the value contained in each {@code DataRow} for the specified {@code DataColumn}.
+     *
+     * @param column    DataColumn
+     * @param <T>       type of DataColumn
+     *
+     * @return          List of values for column
+     */
     public <T> List<T> getValuesForColumn(DataColumn<T> column) {
         if (column == null) {
             throw new IllegalArgumentException("column cannot be null.");
