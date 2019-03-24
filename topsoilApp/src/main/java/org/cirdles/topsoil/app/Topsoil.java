@@ -53,8 +53,7 @@ public class Topsoil extends Application {
     @Override
     public void start(Stage primaryStage) {
         Topsoil.primaryStage = primaryStage;
-        Topsoil.controller = new MainController();
-        Topsoil.controller.setHomeView();
+        controller = MainController.getInstance();
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         primaryStage.setX((screenBounds.getWidth() - INIT_WIDTH) / 2);
@@ -63,15 +62,15 @@ public class Topsoil extends Application {
         Scene scene = new Scene(controller, INIT_WIDTH, INIT_HEIGHT);
 
         primaryStage.titleProperty().bind(Bindings.createStringBinding(() -> {
-            Path path = ProjectSerializer.getCurrentPath();
             String appName = ResourceBundles.MAIN.getString("appName");
+            Path path = ProjectManager.getProjectPath();
             if (path != null) {
                 if (path.getFileName() != null) {
                     appName += (" - " + path.getFileName().toString());
                 }
             }
             return appName;
-        }, ProjectSerializer.currentPathProperty()));
+        }, ProjectManager.projectPathProperty()));
 
         try {
             ResourceExtractor re = new ResourceExtractor(Topsoil.class);

@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app.control.menu.helpers;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.Clipboard;
+import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
@@ -54,8 +55,8 @@ public class FileMenuHelper {
             throw new IllegalArgumentException("Cannot open a project at path \"null\".");
         }
 
-        if (Topsoil.getController().getProject() != null) {
-            if (path.equals(ProjectSerializer.getCurrentPath())) {
+        if (ProjectManager.getProject() != null) {
+            if (path.equals(ProjectManager.getProjectPath())) {
                 return;    // project already open
             }
             handleOverwrite();
@@ -70,12 +71,12 @@ public class FileMenuHelper {
      * @param data  ExampleData
      */
     public static void openExampleData(ExampleData data) {
-        TopsoilProject project = Topsoil.getController().getProject();
+        TopsoilProject project = ProjectManager.getProject();
         if (project != null) {
             project.addDataTable(data.getDataTable());
         } else {
             project = new TopsoilProject(data.getDataTable());
-            Topsoil.getController().setProject(project);
+            ProjectManager.setProject(project);
         }
     }
 
@@ -88,7 +89,7 @@ public class FileMenuHelper {
      */
     public static boolean saveProject(TopsoilProject project) {
         boolean completed = false;
-        Path path = ProjectSerializer.getCurrentPath();
+        Path path = ProjectManager.getProjectPath();
         // TODO Check that path is valid
         if (path != null) {
             try {
@@ -121,7 +122,7 @@ public class FileMenuHelper {
             try {
                 Path path = file.toPath();
                 completed = ProjectSerializer.serialize(path, project);
-                ProjectSerializer.setCurrentPath(path);
+                ProjectManager.setProjectPath(path);
                 RecentFiles.addPath(path);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -141,11 +142,10 @@ public class FileMenuHelper {
      * @return  true if successful
      */
     public static boolean closeProject() {
-        if (Topsoil.getController().getProject() != null) {
+        if (ProjectManager.getProject() != null) {
             if (handleDataBeforeClose()) {
-                ProjectSerializer.setCurrentPath(null);
-                Topsoil.getController().setProject(null);
-                Topsoil.getController().setHomeView();
+                ProjectManager.setProjectPath(null);
+                ProjectManager.setProject(null);
             }
         }
         return true;
@@ -186,10 +186,10 @@ public class FileMenuHelper {
                 if (parser != null) {
                     DataTable table = parser.parseDataTable(content, delimiter.getValue(), "clipboard-content");
                     if (DataTableOptionsDialog.showDialog(table, Topsoil.getPrimaryStage())) {
-                        if (Topsoil.getController().getProject() == null) {
-                            Topsoil.getController().setProject(new TopsoilProject(table));
+                        if (ProjectManager.getProject() == null) {
+                            ProjectManager.setProject(new TopsoilProject(table));
                         } else {
-                            Topsoil.getController().getProject().addDataTable(table);
+                            ProjectManager.getProject().addDataTable(table);
                         }
                     }
                 }
@@ -204,11 +204,11 @@ public class FileMenuHelper {
         Map<String, Object> settings = MultipleImportWizard.startWizard();
         if (settings != null) {
             List<DataTable> tables = (List<DataTable>) settings.get(MultipleImportWizard.Key.TABLES);
-            if (Topsoil.getController().getProject() != null) {
-                Topsoil.getController().getProject().addDataTables(tables.toArray(new DataTable[]{}));
+            TopsoilProject project = ProjectManager.getProject();
+            if (project != null) {
+                project.addDataTables(tables.toArray(new DataTable[]{}));
             } else {
-                TopsoilProject project = new TopsoilProject(tables.toArray(new DataTable[]{}));
-                Topsoil.getController().setProject(project);
+                ProjectManager.setProject(new TopsoilProject(tables.toArray(new DataTable[]{})));
             }
         }
     }
@@ -242,7 +242,7 @@ public class FileMenuHelper {
      */
     public static boolean handleDataBeforeClose() {
         boolean completed = false;
-        TopsoilProject project = Topsoil.getController().getProject();
+        TopsoilProject project = ProjectManager.getProject();
         // If something is open
         if (project != null) {
             ButtonType saveVerification = FileMenuHelper.verifyFinalSave();
@@ -251,7 +251,7 @@ public class FileMenuHelper {
                 // If user wants to save
                 if (saveVerification == ButtonType.YES) {
                     // If a project path is already defined
-                    if (ProjectSerializer.getCurrentPath() != null) {
+                    if (ProjectManager.getProjectPath() != null) {
                         completed = FileMenuHelper.saveProject(project);
                     } else {
                         File file = TopsoilFileChooser.saveTopsoilFile().showSaveDialog(Topsoil.getPrimaryStage());
@@ -302,12 +302,12 @@ public class FileMenuHelper {
      * @return  true if data is saved; else false
      */
     private static void handleOverwrite() {
-        TopsoilProject project = Topsoil.getController().getProject();
+        TopsoilProject project = ProjectManager.getProject();
         if (project != null) {
             ButtonType buttonType = showOverwriteDialog();
             if (buttonType != null && ! buttonType.equals(ButtonType.CANCEL)) {
                 if (buttonType.equals(ButtonType.YES)) {
-                    if (ProjectSerializer.getCurrentPath() == null) {
+                    if (ProjectManager.getProjectPath() == null) {
                         saveProjectAs(project);
                     } else {
                         saveProject(project);
@@ -322,10 +322,10 @@ public class FileMenuHelper {
         try {
             TopsoilProject project = ProjectSerializer.deserialize(projectPath);
             if (project != null) {
-                Topsoil.getController().setProject(project);
-                ProjectSerializer.setCurrentPath(projectPath);
+                ProjectManager.setProject(project);
+                ProjectManager.setProjectPath(projectPath);
                 RecentFiles.addPath(projectPath);
-                Topsoil.getController().setProject(project);
+                ProjectManager.setProject(project);
             }
         } catch (IOException e) {
             e.printStackTrace();

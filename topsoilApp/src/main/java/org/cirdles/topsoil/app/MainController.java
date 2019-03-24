@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
@@ -15,6 +13,8 @@ import java.io.IOException;
 
 public class MainController extends VBox {
 
+    public static MainController instance;
+
     //**********************************************//
     //                  CONSTANTS                   //
     //**********************************************//
@@ -27,29 +27,6 @@ public class MainController extends VBox {
 
     @FXML private AnchorPane mainContentPane;
     private HomeView homeView;
-    private boolean projectShowing = false;
-
-    //**********************************************//
-    //                  PROPERTIES                  //
-    //**********************************************//
-
-    private ObjectProperty<TopsoilProject> project = new SimpleObjectProperty<>();
-    public ObjectProperty<TopsoilProject> projectProperty() {
-        return project;
-    }
-    public TopsoilProject getProject() {
-        return project.get();
-    }
-    public void setProject(TopsoilProject project) {
-        if (project == null) {
-            replaceMainContent(homeView);
-            projectShowing = false;
-        } else {
-            replaceMainContent(new ProjectView(project));
-            projectShowing = true;
-        }
-        this.project.set(project);
-    }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -66,11 +43,28 @@ public class MainController extends VBox {
     @FXML
     protected void initialize() {
         homeView = new HomeView();
+        TopsoilProject project = ProjectManager.getProject();
+
+        replaceMainContent((project != null) ? new ProjectView(project) : homeView);
+        ProjectManager.projectProperty().addListener(c -> {
+            if (ProjectManager.getProject() == null) {
+                replaceMainContent(homeView);
+            } else {
+                replaceMainContent(new ProjectView(ProjectManager.getProject()));
+            }
+        });
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
+    static MainController getInstance() {
+        if (instance == null) {
+            instance = new MainController();
+        }
+        return instance;
+    }
 
     public Node getMainContent() {
         return mainContentPane.getChildren().get(0);
@@ -78,12 +72,6 @@ public class MainController extends VBox {
 
     public HomeView getHomeView() {
         return homeView;
-    }
-
-    public void setHomeView() {
-        homeView.refreshRecentFiles();
-        replaceMainContent(homeView);
-        projectShowing = false;
     }
 
     //**********************************************//

@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.app.file;
 
 import javafx.stage.FileChooser;
+import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 
@@ -32,7 +33,7 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
 
-        Path path = ProjectSerializer.getCurrentPath();
+        Path path = ProjectManager.getProjectPath();
         if (path != null) {
             if (path.getParent() == null) {
                 fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
@@ -55,7 +56,7 @@ public class TopsoilFileChooser {
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil")
         );
 
-        Path path = ProjectSerializer.getCurrentPath();
+        Path path = ProjectManager.getProjectPath();
         if (path != null) {
             if (path.getParent() == null) {
                 fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());

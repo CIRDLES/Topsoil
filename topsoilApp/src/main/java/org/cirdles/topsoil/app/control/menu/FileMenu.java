@@ -4,6 +4,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
+import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
@@ -96,16 +97,14 @@ public class FileMenu extends Menu {
 
         saveProjectItem = new MenuItem(resources.getString("saveProject"));
         saveProjectItem.setOnAction(event -> {
-            TopsoilProject project = Topsoil.getController().getProject();
+            TopsoilProject project = ProjectManager.getProject();
             if (project != null) {
-                if (ProjectSerializer.getCurrentPath() != null) {
-                    FileMenuHelper.saveProject(project);
-                }
+                FileMenuHelper.saveProject(project);
             }
         });
         saveProjectAsItem = new MenuItem(resources.getString("saveProjectAs"));
         saveProjectAsItem.setOnAction(event -> {
-            TopsoilProject project = Topsoil.getController().getProject();
+            TopsoilProject project = ProjectManager.getProject();
             if (project != null) {
                 FileMenuHelper.saveProjectAs(project);
             }
@@ -129,12 +128,12 @@ public class FileMenu extends Menu {
                         if (delimiter != null && template != null) {
                             DataTable table = FileMenuHelper.importTableFromFile(path, delimiter, template);
                             if (DataTableOptionsDialog.showDialog(table, Topsoil.getPrimaryStage())) {
-                                TopsoilProject project = Topsoil.getController().getProject();
+                                TopsoilProject project = ProjectManager.getProject();
                                 if (project != null) {
                                     project.addDataTable(table);
                                 } else {
                                     project = new TopsoilProject(table);
-                                    Topsoil.getController().setProject(project);
+                                    ProjectManager.setProject(project);
                                 }
                             }
                         }
@@ -175,12 +174,12 @@ public class FileMenu extends Menu {
         });
 
         this.setOnShown(event -> {
-            TopsoilProject project = Topsoil.getController().getProject();
+            TopsoilProject project = ProjectManager.getProject();
             if (project != null) {
                 exportTableMenuItem.setDisable(false);
                 saveProjectAsItem.setDisable(false);
                 closeProjectItem.setDisable(false);
-                if (ProjectSerializer.getCurrentPath() != null) {
+                if (ProjectManager.getProjectPath() != null) {
                     saveProjectItem.setDisable(false);
                 }
             } else {

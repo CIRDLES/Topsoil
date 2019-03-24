@@ -94,6 +94,9 @@ public class ProjectView extends SplitPane {
 
         noTables.setAlignment(Pos.CENTER);
         FXMLUtils.setAnchorPaneBounds(noTables, 0.0, 0.0, 0.0, 0.0);
+        if (tabPane.getTabs().size() == 0) {
+            tabPaneContainer.getChildren().setAll(noTables);
+        }
         tabPane.getTabs().addListener((ListChangeListener.Change<? extends Tab> c) -> {
             while (c.next()) {
                 if (c.wasRemoved()) {

@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.app.control.menu;
 
 import javafx.scene.control.*;
+import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.menu.helpers.HelpMenuHelper;
@@ -45,7 +46,7 @@ public class TopsoilMenuBar extends MenuBar {
 //                preferencesItem
         );
         editMenu.setOnShown(event -> {
-            tableOptionsItem.setDisable(Topsoil.getController().getProject() == null);
+            tableOptionsItem.setDisable(ProjectManager.getProject() == null);
         });
 
         return editMenu;
@@ -63,7 +64,7 @@ public class TopsoilMenuBar extends MenuBar {
             VisualizationsMenuHelper.generatePlot(
                     PlotType.SCATTER,
                     MenuUtils.getCurrentDataTable(),
-                    Topsoil.getController().getProject(),
+                    ProjectManager.getProject(),
                     null);
         });
 
@@ -71,7 +72,7 @@ public class TopsoilMenuBar extends MenuBar {
                                            generatePlotItem
         );
         visualizationsMenu.setOnShown(event -> {
-            generatePlotItem.setDisable(Topsoil.getController().getProject() == null);
+            generatePlotItem.setDisable(ProjectManager.getProject() == null);
         });
         return visualizationsMenu;
     }

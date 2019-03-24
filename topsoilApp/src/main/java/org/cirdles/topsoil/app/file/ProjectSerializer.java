@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app.file;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import org.cirdles.topsoil.app.data.SerializableProject;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 
@@ -15,21 +13,6 @@ import java.nio.file.Path;
  * @author marottajb
  */
 public class ProjectSerializer {
-
-    private static ObjectProperty<Path> currentPath = new SimpleObjectProperty<>();
-    public static ObjectProperty<Path> currentPathProperty() {
-        return currentPath;
-    }
-    public static Path getCurrentPath() {
-        return currentPath.get();
-    }
-    public static void setCurrentPath(Path path) {
-        currentPath.set(path);
-    }
-
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
 
     public static boolean serialize(Path projectPath, TopsoilProject project) throws IOException {
         if (projectPath == null) {

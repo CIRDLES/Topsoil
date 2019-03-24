@@ -8,17 +8,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.menu.helpers.FileMenuHelper;
-import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
