@@ -42,7 +42,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final double INIT_WIDTH = 800.0;
+    private static final double INIT_WIDTH = 900.0;
     private static final double INIT_HEIGHT = 400.0;
 
     //**********************************************//
@@ -56,8 +56,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.getIcons().addAll(Topsoil.getLogo());
         stage.setOnShown(event -> stage.requestFocus());
-        stage.setWidth(INIT_WIDTH);
-        stage.setHeight(INIT_HEIGHT);
 
         DataTableOptionsView controller = new DataTableOptionsView(table);
         this.getDialogPane().setContent(controller);
@@ -141,7 +139,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
         }
 
         @FXML
@@ -283,6 +280,10 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                     header.setReordering(false);
                 });
             }));
+
+            if (tableView.getVisibleLeafColumns().size() > 5) {
+                this.setPrefWidth((COL_WIDTH * 5));
+            }
 
             // Prevents mouse-wheel scrolling
             scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {

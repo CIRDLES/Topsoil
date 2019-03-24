@@ -17,11 +17,11 @@
             <Insets bottom="15.0" left="5.0" right="5.0" />
          </padding>
       </VBox>
-      <ScrollPane fx:id="scrollPane" style="-fx-background-color: transparent;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+      <ScrollPane fx:id="scrollPane" maxHeight="-Infinity" minHeight="-Infinity" style="-fx-background-color: transparent;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
          <content>
             <AnchorPane>
                <children>
-                  <TableView fx:id="tableView" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0" />
+                  <TableView fx:id="tableView" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: transparent;" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </content>
