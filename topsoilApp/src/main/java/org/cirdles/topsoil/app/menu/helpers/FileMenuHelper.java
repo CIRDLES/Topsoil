@@ -2,11 +2,13 @@ package org.cirdles.topsoil.app.menu.helpers;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.Clipboard;
+import javafx.stage.Stage;
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard;
+import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
@@ -26,8 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A utility class providing helper methods for the logic behind items in
- * {@link org.cirdles.topsoil.app.menu.TopsoilMenuBar}.
+ * A utility class providing helper methods for the logic behind items in the menu bar.
  *
  * @author marottajb
  */
@@ -141,6 +142,9 @@ public class FileMenuHelper {
     public static boolean closeProject() {
         if (ProjectManager.getProject() != null) {
             if (handleDataBeforeClose()) {
+                for (TopsoilPlotView openPlot : ProjectManager.getProject().getOpenPlots()) {
+                    ((Stage) openPlot.getScene().getWindow()).close();
+                }
                 ProjectManager.setProjectPath(null);
                 ProjectManager.setProject(null);
             }
