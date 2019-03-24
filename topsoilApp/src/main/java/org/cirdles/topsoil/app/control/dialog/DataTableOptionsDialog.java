@@ -139,6 +139,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
         }
 
         @FXML
@@ -201,9 +202,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             for (TreeItem<DataComponent> treeItem : parent.getChildren()) {
                 CheckBoxTreeItem<DataComponent> cBTreeItem = (CheckBoxTreeItem<DataComponent>) treeItem;
                 cBTreeItem.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), event -> {
-                    if (cBTreeItem.getValue() instanceof DataColumn) {
-                        chooser.tableColumnMap.get(cBTreeItem.getValue()).setVisible(cBTreeItem.isSelected());
-                    }
+                    chooser.tableColumnMap.get(cBTreeItem.getValue()).setVisible(cBTreeItem.isSelected());
                 });
                 if (cBTreeItem.getValue() instanceof DataCategory) {
                     listenToTreeItemChildren(cBTreeItem, chooser);
@@ -280,10 +279,6 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                     header.setReordering(false);
                 });
             }));
-
-            if (tableView.getVisibleLeafColumns().size() > 5) {
-                this.setPrefWidth((COL_WIDTH * 5));
-            }
 
             // Prevents mouse-wheel scrolling
             scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
