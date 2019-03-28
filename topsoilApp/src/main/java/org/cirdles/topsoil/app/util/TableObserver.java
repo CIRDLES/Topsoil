@@ -27,7 +27,7 @@ public class TableObserver implements Observer {
                 @Override
                 protected Void call() {
                     try {
-                        Thread.sleep(10);
+                        Thread.sleep(10);  // Forces a delay in case of many sequential changes ((de)selecting a segment)
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

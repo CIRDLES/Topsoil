@@ -29,6 +29,7 @@ public class HomeView extends GridPane {
     //**********************************************//
 
     private static final String CONTROLLER_FXML = "home-view.fxml";
+    private static final String CIRDLES_LOGO = "cirdles-logo-yellow.png";
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -59,7 +60,7 @@ public class HomeView extends GridPane {
         cirdlesLabel.setText(resources.getString("cirdlesLabel"));
 
         final ResourceExtractor re = new ResourceExtractor(HomeView.class);
-        cirdlesLogo.setImage(new Image(re.extractResourceAsPath("cirdles-logo-yellow.png").toUri().toString()));
+        cirdlesLogo.setImage(new Image(re.extractResourceAsPath(CIRDLES_LOGO).toUri().toString()));
         noRecentFilesLabel.setStyle("-fx-font-style: italic;");
         refreshRecentFiles();
     }

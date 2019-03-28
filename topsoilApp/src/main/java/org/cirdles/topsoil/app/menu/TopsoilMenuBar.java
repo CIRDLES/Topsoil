@@ -64,7 +64,6 @@ public class TopsoilMenuBar extends MenuBar {
             VisualizationsMenuHelper.generatePlot(
                     PlotType.SCATTER,
                     MenuUtils.getCurrentDataTable(),
-                    ProjectManager.getProject(),
                     null);
         });
 

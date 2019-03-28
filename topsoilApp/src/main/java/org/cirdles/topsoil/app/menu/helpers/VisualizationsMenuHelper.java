@@ -1,9 +1,12 @@
 package org.cirdles.topsoil.app.menu.helpers;
 
+import com.sun.javafx.stage.StageHelper;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
+import org.cirdles.topsoil.app.control.plot.PlotStage;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
@@ -18,6 +21,7 @@ import org.cirdles.topsoil.plot.*;
 import org.cirdles.topsoil.variable.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,22 +53,14 @@ public class VisualizationsMenuHelper {
      *
      * @param plotType      PlotType
      * @param table         DataTable
-     * @param project       TopsoilProject that the table belongs to
      * @param properties    plot properties
      *
      * @return              true if successful
      */
-    public static boolean generatePlot(PlotType plotType, DataTable table, TopsoilProject project,
-                                       Map<PlotProperty, Object> properties) {
-        TopsoilPlotView openPlotView = null;
-        for (TopsoilPlotView pV : project.getOpenPlots()) {
-            if (pV.getDataTable().equals(table) && pV.getPlot().getPlotType().equals(plotType)) {
-                openPlotView = pV;
-                break;
-            }
-        }
-
+    public static boolean generatePlot(PlotType plotType, DataTable table, Map<PlotProperty, Object> properties) {
+        TopsoilPlotView openPlotView = ProjectManager.getOpenPlotView(table, plotType);
         if (openPlotView != null) {
+            // Find already-open plot and request focus
             openPlotView.getScene().getWindow().requestFocus();
         } else {
             List<Map<String, Object>> data = getPlotDataFromTable(table);
@@ -84,7 +80,7 @@ public class VisualizationsMenuHelper {
             // @TODO assign X and Y axis labels
             properties.put(UNCERTAINTY, table.getUncertainty().getMultiplier());
             plot.setProperties(properties);
-            TopsoilPlotView plotView = new TopsoilPlotView(plot, table);
+            TopsoilPlotView plotView = new TopsoilPlotView(plot);
 
             // Connect table model to properties panel
             PlotPropertiesPanel panel = plotView.getPropertiesPanel();
@@ -95,7 +91,7 @@ public class VisualizationsMenuHelper {
             ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, panel);
 
             Scene scene = new Scene(plotView, DEFAULT_PLOT_WIDTH, DEFAULT_PLOT_HEIGHT);
-            Stage plotStage = new Stage();
+            Stage plotStage = new PlotStage(plotType);
             plotStage.setScene(scene);
             plotStage.getIcons().add(Topsoil.getLogo());
             plotStage.titleProperty().bind(Bindings.createStringBinding(
@@ -103,12 +99,12 @@ public class VisualizationsMenuHelper {
             plotStage.setOnCloseRequest(closeEvent -> {
                 observer.shutdown();
                 table.deleteObserver(tableObserver);
-                project.removeOpenPlot(plotView);
+                ProjectManager.deregisterOpenPlot(table, plotType);
             });
 
             // Show Plot
             plotStage.show();
-            project.addOpenPlot(plotView);
+            ProjectManager.registerOpenPlot(table, plotView);
         }
         return true;
     }

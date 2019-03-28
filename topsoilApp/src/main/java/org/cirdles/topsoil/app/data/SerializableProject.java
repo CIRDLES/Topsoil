@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.data;
 
+import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataCategory;
@@ -45,19 +46,17 @@ public class SerializableProject implements Serializable {
 
     public SerializableProject(TopsoilProject project) {
         ArrayList<HashMap<TableKey, Serializable>> tables = new ArrayList<>();
+        ArrayList<HashMap<PlotKey, Serializable>> plots = new ArrayList<>();
         for (DataTable table : project.getDataTables()) {
             tables.add(extractTableData(table));
+            for (PlotType plotType : ProjectManager.getOpenPlotTypesForTable(table)) {
+                TopsoilPlotView plotView = ProjectManager.getOpenPlotView(table, plotType);
+                if (plotView != null) {
+                    plots.add(extractPlotData(table, plotView));
+                }
+            }
         }
         data.put(ProjectKey.TABLES, tables);
-
-        ArrayList<HashMap<PlotKey, Serializable>> plots = new ArrayList<>();
-        HashMap<PlotKey, Serializable> plotData;
-        for (TopsoilPlotView plotView : project.getOpenPlots()) {
-            plotData = new HashMap<>();
-            plotData.put(PlotKey.TABLE_LABEL, plotView.getDataTable().getLabel());
-            plotData.put(PlotKey.PLOT_TYPE, plotView.getPlot().getPlotType());
-            plots.add(plotData);
-        }
         data.put(ProjectKey.PLOTS, plots);
 
         HashMap<Lambda, Double> lambdas = new HashMap<>();
@@ -95,7 +94,7 @@ public class SerializableProject implements Serializable {
                 }
             }
             PlotType plotType = (PlotType) plotData.get(PlotKey.PLOT_TYPE);
-            VisualizationsMenuHelper.generatePlot(plotType, table, project, (Map<PlotProperty, Object>) plotData.get(PlotKey.PROPERTIES));
+            VisualizationsMenuHelper.generatePlot(plotType, table, (Map<PlotProperty, Object>) plotData.get(PlotKey.PROPERTIES));
         }
 
         Map<Lambda, Number> lambdaMap = (Map<Lambda, Number>) data.get(ProjectKey.LAMBDAS);
@@ -110,9 +109,9 @@ public class SerializableProject implements Serializable {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private HashMap<PlotKey, Serializable> extractPlotData(TopsoilPlotView plotView) {
+    private HashMap<PlotKey, Serializable> extractPlotData(DataTable table, TopsoilPlotView plotView) {
         HashMap<PlotKey, Serializable> plotData = new HashMap<>();
-        plotData.put(PlotKey.TABLE_LABEL, plotView.getDataTable().getLabel());
+        plotData.put(PlotKey.TABLE_LABEL, table.getLabel());
         plotData.put(PlotKey.PLOT_TYPE, plotView.getPlot().getPlotType());
         plotData.put(PlotKey.PROPERTIES, extractPlotProperties(plotView.getPropertiesPanel().getPlotProperties()));
 

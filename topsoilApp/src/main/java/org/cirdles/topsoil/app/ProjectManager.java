@@ -2,9 +2,14 @@ package org.cirdles.topsoil.app;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.plot.PlotType;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProjectManager {
 
@@ -36,6 +41,53 @@ public class ProjectManager {
         ProjectManager.projectPath.set(path);
     }
 
+    private static List<OpenPlot> openPlots = new ArrayList<>();
+    public static void registerOpenPlot(DataTable table, TopsoilPlotView plotView) {
+        openPlots.add(new OpenPlot(table, plotView));
+    }
+    public static void deregisterOpenPlot(DataTable table, PlotType plotType) {
+        for (OpenPlot openPlot : openPlots) {
+            if (openPlot.getTable().equals(table) && openPlot.getPlotView().getPlot().getPlotType().equals(plotType)) {
+                openPlots.remove(openPlot);
+                break;
+            }
+        }
+    }
+    public static TopsoilPlotView getOpenPlotView(DataTable table, PlotType plotType) {
+        for (OpenPlot openPlot : openPlots) {
+            if (openPlot.getTable().equals(table) && openPlot.getPlotView().getPlot().getPlotType().equals(plotType)) {
+                return openPlot.getPlotView();
+            }
+        }
+        return null;
+    }
+    public static List<PlotType> getOpenPlotTypesForTable(DataTable table) {
+        List<PlotType> plotTypes = new ArrayList<>();
+        for (OpenPlot openPlot : openPlots) {
+            if (openPlot.getTable().equals(table)) {
+                plotTypes.add(openPlot.getPlotView().getPlot().getPlotType());
+            }
+        }
+        return plotTypes;
+    }
+
     private ProjectManager() {}
 
+    public static class OpenPlot {
+        private DataTable table;
+        private TopsoilPlotView plotView;
+
+        OpenPlot(DataTable table, TopsoilPlotView plotView) {
+            this.table = table;
+            this.plotView = plotView;
+        }
+
+        public DataTable getTable() {
+            return table;
+        }
+
+        public TopsoilPlotView getPlotView() {
+            return plotView;
+        }
+    }
 }

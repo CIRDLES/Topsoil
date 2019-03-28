@@ -49,16 +49,14 @@ public class TopsoilPlotView extends VBox {
 	//**********************************************//
 
 	private Plot plot;
-	private DataTable table;
 
 	//**********************************************//
 	//                 CONSTRUCTORS                 //
 	//**********************************************//
 
-	public TopsoilPlotView(Plot plot, DataTable table) {
+	public TopsoilPlotView(Plot plot) {
 		super();
 		this.plot = plot;
-		this.table = table;
 		this.propertiesPanel = new PlotPropertiesPanel(plot);
 		try {
 			FXMLUtils.loadController(CONTROLLER_FXML, TopsoilPlotView.class, this);
@@ -79,10 +77,6 @@ public class TopsoilPlotView extends VBox {
 
 	public Plot getPlot() {
 		return plot;
-	}
-
-	public DataTable getDataTable() {
-		return table;
 	}
 
 	public PlotPropertiesPanel getPropertiesPanel() {
