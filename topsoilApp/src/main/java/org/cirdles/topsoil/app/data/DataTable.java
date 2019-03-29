@@ -213,48 +213,6 @@ public class DataTable extends Observable {
         return getLabel();
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof DataTable) {
-            DataTable other = (DataTable) object;
-            if (! getLabel().equals(other.getLabel())) {
-                return false;
-            }
-            if (getTemplate() != other.getTemplate()) {
-                return false;
-            }
-            if (getIsotopeSystem() != other.getIsotopeSystem()) {
-                return false;
-            }
-            if (getUncertainty() != other.getUncertainty()) {
-                return false;
-            }
-            if (! getColumnRoot().equals(other.getColumnRoot())) {
-                return false;
-            }
-            if (! getDataRoot().equals(other.getDataRoot())) {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(
-                getTemplate(),
-                getLabel(),
-                getIsotopeSystem(),
-                getUncertainty(),
-                getColumnRoot(),
-                getDataRoot()
-        );
-    }
-
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//

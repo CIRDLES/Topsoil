@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.cirdles.topsoil.app.data.SerializableProject.SerializationKey.*;
+import static org.cirdles.topsoil.app.data.SerializableProject.SerializationKey.CATEGORY_SELECTED;
+
 /**
  * A serializable class for storing data from a {@link TopsoilProject}.
  */
@@ -38,15 +41,15 @@ public class SerializableProject implements Serializable {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private HashMap<ProjectKey, Serializable> data = new HashMap<>();
+    private HashMap<SerializationKey, Serializable> data = new HashMap<>();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     public SerializableProject(TopsoilProject project) {
-        ArrayList<HashMap<TableKey, Serializable>> tables = new ArrayList<>();
-        ArrayList<HashMap<PlotKey, Serializable>> plots = new ArrayList<>();
+        ArrayList<HashMap<SerializationKey, Serializable>> tables = new ArrayList<>();
+        ArrayList<HashMap<SerializationKey, Serializable>> plots = new ArrayList<>();
         for (DataTable table : project.getDataTables()) {
             tables.add(extractTableData(table));
             for (PlotType plotType : ProjectManager.getOpenPlotTypesForTable(table)) {
@@ -56,14 +59,14 @@ public class SerializableProject implements Serializable {
                 }
             }
         }
-        data.put(ProjectKey.TABLES, tables);
-        data.put(ProjectKey.PLOTS, plots);
+        data.put(PROJECT_TABLES, tables);
+        data.put(PROJECT_PLOTS, plots);
 
         HashMap<Lambda, Double> lambdas = new HashMap<>();
         for (Lambda l : Lambda.values()) {
             lambdas.put(l, (double) l.getValue());
         }
-        data.put(ProjectKey.LAMBDAS, lambdas);
+        data.put(PROJECT_LAMBDAS, lambdas);
     }
 
     //**********************************************//
@@ -76,28 +79,28 @@ public class SerializableProject implements Serializable {
      * @return  TopsoilProject
      */
     public TopsoilProject reconstruct() {
-        List<Map<TableKey, Object>> tableDataList = (List<Map<TableKey, Object>>) data.get(ProjectKey.TABLES);
+        List<Map<SerializationKey, Object>> tableDataList = (List<Map<SerializationKey, Object>>) data.get(PROJECT_TABLES);
         List<DataTable> tables = new ArrayList<>();
-        for (Map<TableKey, Object> tableData : tableDataList) {
+        for (Map<SerializationKey, Object> tableData : tableDataList) {
             tables.add(createDataTable(tableData));
         }
         TopsoilProject project = new TopsoilProject(tables.toArray(new DataTable[]{}));
 
-        List<Map<PlotKey, Object>> plotDataList = (List<Map<PlotKey, Object>>) data.get(ProjectKey.PLOTS);
-        for (Map<PlotKey, Object> plotData : plotDataList) {
+        List<Map<SerializationKey, Object>> plotDataList = (List<Map<SerializationKey, Object>>) data.get(PROJECT_PLOTS);
+        for (Map<SerializationKey, Object> plotData : plotDataList) {
             DataTable table = null;
-            String tableLabel = String.valueOf(plotData.get(PlotKey.TABLE_LABEL));
+            String tableLabel = String.valueOf(plotData.get(PLOT_TABLE_LABEL));
             for (DataTable t : tables) {
                 if (t.getLabel().equals(tableLabel)) {
                     table = t;
                     break;
                 }
             }
-            PlotType plotType = (PlotType) plotData.get(PlotKey.PLOT_TYPE);
-            VisualizationsMenuHelper.generatePlot(plotType, table, (Map<PlotProperty, Object>) plotData.get(PlotKey.PROPERTIES));
+            PlotType plotType = (PlotType) plotData.get(PLOT_TYPE);
+            VisualizationsMenuHelper.generatePlot(plotType, table, (Map<PlotProperty, Object>) plotData.get(PLOT_PROPERTIES));
         }
 
-        Map<Lambda, Number> lambdaMap = (Map<Lambda, Number>) data.get(ProjectKey.LAMBDAS);
+        Map<Lambda, Number> lambdaMap = (Map<Lambda, Number>) data.get(PROJECT_LAMBDAS);
         for (Map.Entry<Lambda, Number> entry : lambdaMap.entrySet()) {
             entry.getKey().setValue(entry.getValue());
         }
@@ -109,11 +112,11 @@ public class SerializableProject implements Serializable {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private HashMap<PlotKey, Serializable> extractPlotData(DataTable table, TopsoilPlotView plotView) {
-        HashMap<PlotKey, Serializable> plotData = new HashMap<>();
-        plotData.put(PlotKey.TABLE_LABEL, table.getLabel());
-        plotData.put(PlotKey.PLOT_TYPE, plotView.getPlot().getPlotType());
-        plotData.put(PlotKey.PROPERTIES, extractPlotProperties(plotView.getPropertiesPanel().getPlotProperties()));
+    private HashMap<SerializationKey, Serializable> extractPlotData(DataTable table, TopsoilPlotView plotView) {
+        HashMap<SerializationKey, Serializable> plotData = new HashMap<>();
+        plotData.put(PLOT_TABLE_LABEL, table.getLabel());
+        plotData.put(PLOT_TYPE, plotView.getPlot().getPlotType());
+        plotData.put(PLOT_PROPERTIES, extractPlotProperties(plotView.getPropertiesPanel().getPlotProperties()));
 
         return plotData;
     }
@@ -126,47 +129,47 @@ public class SerializableProject implements Serializable {
         return sProperties;
     }
 
-    private HashMap<TableKey, Serializable> extractTableData(DataTable table) {
-        HashMap<TableKey, Serializable> tableData = new HashMap<>();
-        tableData.put(TableKey.LABEL, table.getLabel());
-        tableData.put(TableKey.TEMPLATE, table.getTemplate());
-        tableData.put(TableKey.ISO_SYSTEM, table.getIsotopeSystem());
-        tableData.put(TableKey.UNCERTAINTY, table.getUncertainty());
+    private HashMap<SerializationKey, Serializable> extractTableData(DataTable table) {
+        HashMap<SerializationKey, Serializable> tableData = new HashMap<>();
+        tableData.put(TABLE_LABEL, table.getLabel());
+        tableData.put(TABLE_TEMPLATE, table.getTemplate());
+        tableData.put(TABLE_ISO_SYSTEM, table.getIsotopeSystem());
+        tableData.put(TABLE_UNCERTAINTY, table.getUncertainty());
 
-        ArrayList<HashMap<HeaderKey, Serializable>> rootChildData = new ArrayList<>();
+        ArrayList<HashMap<SerializationKey, Serializable>> rootChildData = new ArrayList<>();
         for (DataComponent child : table.getColumnRoot().getChildren()) {
             rootChildData.add(extractHeaderData(child));
         }
-        tableData.put(TableKey.COL_ROOT, rootChildData);
+        tableData.put(TABLE_COL_ROOT, rootChildData);
 
         List<DataColumn<?>> columns = table.getDataColumns();
-        ArrayList<HashMap<DataKey, Serializable>> segments = new ArrayList<>();
+        ArrayList<HashMap<SerializationKey, Serializable>> segments = new ArrayList<>();
         for (DataSegment segment : table.getDataRoot().getChildren()) {
             segments.add(extractSegmentData(segment, columns));
         }
-        tableData.put(TableKey.SEGMENTS, segments);
+        tableData.put(TABLE_SEGMENTS, segments);
 
         HashMap<Variable<?>, Integer> varMap = new HashMap<>();
         for (Map.Entry<Variable<?>, DataColumn<?>> entry : table.getVariableColumnMap().entrySet()) {
             varMap.put(entry.getKey(), columns.indexOf(entry.getValue()));
         }
-        tableData.put(TableKey.VARIABLE_ASSIGNMENTS, varMap);
+        tableData.put(TABLE_VARIABLES, varMap);
 
         return tableData;
     }
 
-    private DataTable createDataTable(Map<TableKey, Object> tableData) {
-        String label = String.valueOf(tableData.get(TableKey.LABEL));
-        DataTemplate template = (DataTemplate) tableData.get(TableKey.TEMPLATE);
-        List<Map<HeaderKey, Object>> headerData = (List<Map<HeaderKey, Object>>) tableData.get(TableKey.COL_ROOT);
+    private DataTable createDataTable(Map<SerializationKey, Object> tableData) {
+        String label = String.valueOf(tableData.get(TABLE_LABEL));
+        DataTemplate template = (DataTemplate) tableData.get(TABLE_TEMPLATE);
+        List<Map<SerializationKey, Object>> headerData = (List<Map<SerializationKey, Object>>) tableData.get(TABLE_COL_ROOT);
         ColumnRoot columnRoot = createColumnRoot(headerData);
-        DataRoot dataRoot = createDataRoot((List<Map<DataKey, Object>>) tableData.get(TableKey.SEGMENTS) , columnRoot.getLeafNodes());
-        IsotopeSystem isotopeSystem = (IsotopeSystem) tableData.get(TableKey.ISO_SYSTEM);
-        Uncertainty uncertainty = (Uncertainty) tableData.get(TableKey.UNCERTAINTY);
+        DataRoot dataRoot = createDataRoot((List<Map<SerializationKey, Object>>) tableData.get(TABLE_SEGMENTS) , columnRoot.getLeafNodes());
+        IsotopeSystem isotopeSystem = (IsotopeSystem) tableData.get(TABLE_ISO_SYSTEM);
+        Uncertainty uncertainty = (Uncertainty) tableData.get(TABLE_UNCERTAINTY);
 
         DataTable table = new DataTable(template, label, columnRoot, dataRoot, isotopeSystem, uncertainty);
         List<DataColumn<?>> columns = table.getDataColumns();
-        Map<Variable<?>, Integer> varIndices = (Map<Variable<?>, Integer>) tableData.get(TableKey.VARIABLE_ASSIGNMENTS);
+        Map<Variable<?>, Integer> varIndices = (Map<Variable<?>, Integer>) tableData.get(TABLE_VARIABLES);
 
         for (Map.Entry<Variable<?>, Integer> entry : varIndices.entrySet()) {
             table.setColumnForVariable(entry.getKey(), columns.get(entry.getValue()));
@@ -175,28 +178,28 @@ public class SerializableProject implements Serializable {
         return table;
     }
 
-    private HashMap<HeaderKey, Serializable> extractHeaderData(DataComponent header) {
-        HashMap<HeaderKey, Serializable> headerData = new HashMap<>();
-        headerData.put(ComponentKey.LABEL, header.getLabel());
-        headerData.put(ComponentKey.SELECTED, header.isSelected());
-
+    private HashMap<SerializationKey, Serializable> extractHeaderData(DataComponent header) {
+        HashMap<SerializationKey, Serializable> headerData = new HashMap<>();
         if (header instanceof DataCategory) {
-            ArrayList<HashMap<HeaderKey, Serializable>> children = new ArrayList<>();
+            headerData.put(CATEGORY_LABEL, header.getLabel());
+            headerData.put(CATEGORY_SELECTED, header.isSelected());
+            ArrayList<HashMap<SerializationKey, Serializable>> children = new ArrayList<>();
             for (DataComponent child : ((DataCategory) header).getChildren()) {
                 children.add(extractHeaderData(child));
             }
-            headerData.put(CategoryKey.CHILDREN, children);
+            headerData.put(CATEGORY_CHILDREN, children);
         } else if (header instanceof DataColumn) {
-            headerData.put(ColumnKey.TYPE, ((DataColumn) header).getType());
+            headerData.put(COLUMN_LABEL, header.getLabel());
+            headerData.put(COLUMN_SELECTED, header.isSelected());
+            headerData.put(COLUMN_TYPE, ((DataColumn) header).getType());
         }
-
         return headerData;
     }
 
-    private ColumnRoot createColumnRoot(List<Map<HeaderKey, Object>> data) {
+    private ColumnRoot createColumnRoot(List<Map<SerializationKey, Object>> data) {
         ColumnRoot root = new ColumnRoot();
-        for (Map<HeaderKey, Object> childData : data) {
-            if (childData.containsKey(CategoryKey.CHILDREN)) {
+        for (Map<SerializationKey, Object> childData : data) {
+            if (childData.containsKey(CATEGORY_CHILDREN)) {
                 root.getChildren().add(createDataCategory(childData));
             } else {
                 root.getChildren().add(createDataColumn(childData));
@@ -205,12 +208,12 @@ public class SerializableProject implements Serializable {
         return root;
     }
 
-    private DataCategory createDataCategory(Map<HeaderKey, Object> categoryData) {
-        DataCategory category = new DataCategory(String.valueOf(categoryData.get(ComponentKey.LABEL)));
-        category.setSelected((boolean) categoryData.get(ComponentKey.SELECTED));
-        List<Map<HeaderKey, Object>> children = (List<Map<HeaderKey, Object>>) categoryData.get(CategoryKey.CHILDREN);
-        for (Map<HeaderKey, Object> childData : children) {
-            if (childData.containsKey(CategoryKey.CHILDREN)) {
+    private DataCategory createDataCategory(Map<SerializationKey, Object> categoryData) {
+        DataCategory category = new DataCategory(String.valueOf(categoryData.get(CATEGORY_LABEL)));
+        category.setSelected((boolean) categoryData.get(CATEGORY_SELECTED));
+        List<Map<SerializationKey, Object>> children = (List<Map<SerializationKey, Object>>) categoryData.get(CATEGORY_CHILDREN);
+        for (Map<SerializationKey, Object> childData : children) {
+            if (childData.containsKey(CATEGORY_CHILDREN)) {
                 category.getChildren().add(createDataCategory(childData));
             } else {
                 DataColumn<?> col = createDataColumn(childData);
@@ -222,136 +225,119 @@ public class SerializableProject implements Serializable {
         return category;
     }
 
-    private DataColumn<?> createDataColumn(Map<HeaderKey, Object> columnData) {
+    private DataColumn<?> createDataColumn(Map<SerializationKey, Object> columnData) {
         DataColumn<?> column;
-        String label = String.valueOf(columnData.get(ComponentKey.LABEL));
-        Class<?> type = (Class<?>) columnData.get(ColumnKey.TYPE);
+        String label = String.valueOf(columnData.get(COLUMN_LABEL));
+        Class<?> type = (Class<?>) columnData.get(COLUMN_TYPE);
         if (type == Number.class) {
             column = DataColumn.numberColumn(label);
         } else {
             column = DataColumn.stringColumn(label);
         }
-        column.setSelected((boolean) columnData.get(ComponentKey.SELECTED));
+        column.setSelected((boolean) columnData.get(COLUMN_SELECTED));
         return column;
     }
 
-    private DataRoot createDataRoot(List<Map<DataKey, Object>> segmentDataList, List<DataColumn<?>> columns) {
+    private DataRoot createDataRoot(List<Map<SerializationKey, Object>> segmentDataList, List<DataColumn<?>> columns) {
         DataRoot dataRoot = new DataRoot();
-        for (Map<DataKey, Object> segmentData : segmentDataList) {
+        for (Map<SerializationKey, Object> segmentData : segmentDataList) {
             dataRoot.getChildren().add(createDataSegment(segmentData, columns));
         }
         return dataRoot;
     }
 
-    private HashMap<DataKey, Serializable> extractSegmentData(DataSegment segment, List<DataColumn<?>> columns) {
-        HashMap<DataKey, Serializable> segmentData = new HashMap<>();
-        segmentData.put(ComponentKey.LABEL, segment.getLabel());
-        segmentData.put(ComponentKey.SELECTED, segment.isSelected());
+    private HashMap<SerializationKey, Serializable> extractSegmentData(DataSegment segment, List<DataColumn<?>> columns) {
+        HashMap<SerializationKey, Serializable> segmentData = new HashMap<>();
+        segmentData.put(SEGMENT_LABEL, segment.getLabel());
+        segmentData.put(SEGMENT_SELECTED, segment.isSelected());
 
-        ArrayList<HashMap<DataKey, Serializable>> rows = new ArrayList<>();
+        ArrayList<HashMap<SerializationKey, Serializable>> rows = new ArrayList<>();
         for (DataRow row : segment.getChildren()) {
             rows.add(extractRowData(row, columns));
         }
-        segmentData.put(SegmentKey.CHILDREN, rows);
+        segmentData.put(SEGMENT_CHILDREN, rows);
 
         return segmentData;
     }
 
-    private DataSegment createDataSegment(Map<DataKey, Object> data, List<DataColumn<?>> columns) {
-        DataSegment segment = new DataSegment(String.valueOf(data.get(ComponentKey.LABEL)));
-        segment.setSelected((boolean) data.get(ComponentKey.SELECTED));
-        List<Map<DataKey, Object>> rowDataList = (List<Map<DataKey, Object>>) data.get(SegmentKey.CHILDREN);
-        for (Map<DataKey, Object> rowData : rowDataList) {
+    private DataSegment createDataSegment(Map<SerializationKey, Object> data, List<DataColumn<?>> columns) {
+        DataSegment segment = new DataSegment(String.valueOf(data.get(SEGMENT_LABEL)));
+        segment.setSelected((boolean) data.get(SEGMENT_SELECTED));
+        List<Map<SerializationKey, Object>> rowDataList = (List<Map<SerializationKey, Object>>) data.get(SEGMENT_CHILDREN);
+        for (Map<SerializationKey, Object> rowData : rowDataList) {
             segment.getChildren().add(createDataRow(rowData, columns));
         }
         return segment;
     }
 
-    private HashMap<DataKey, Serializable> extractRowData(DataRow row, List<DataColumn<?>> columns) {
-        HashMap<DataKey, Serializable> rowData = new HashMap<>();
-        rowData.put(ComponentKey.LABEL, row.getLabel());
-        rowData.put(ComponentKey.SELECTED, row.isSelected());
+    private HashMap<SerializationKey, Serializable> extractRowData(DataRow row, List<DataColumn<?>> columns) {
+        HashMap<SerializationKey, Serializable> rowData = new HashMap<>();
+        rowData.put(ROW_LABEL, row.getLabel());
+        rowData.put(ROW_SELECTED, row.isSelected());
 
-        ArrayList<HashMap<ValueKey, Serializable>> properties = new ArrayList<>();
-        HashMap<ValueKey, Serializable> propertyData;
+        ArrayList<HashMap<SerializationKey, Serializable>> properties = new ArrayList<>();
+        HashMap<SerializationKey, Serializable> propertyData;
         for (Map.Entry<DataColumn<?>, DataRow.DataValue<?>> entry : row.getValueMap().entrySet()) {
             propertyData = new HashMap<>();
-            propertyData.put(ValueKey.COL_INDEX, columns.indexOf(entry.getKey()));
-            propertyData.put(ValueKey.VALUE, (Serializable) entry.getValue().getValue());
+            propertyData.put(VALUE_COL_INDEX, columns.indexOf(entry.getKey()));
+            propertyData.put(VALUE, (Serializable) entry.getValue().getValue());
             properties.add(propertyData);
         }
-        rowData.put(RowKey.PROPERTIES, properties);
+        rowData.put(ROW_PROPERTIES, properties);
 
         return rowData;
     }
 
-    private DataRow createDataRow(Map<DataKey, Object> data, List<DataColumn<?>> columns) {
-        DataRow row = new DataRow(String.valueOf(data.get(ComponentKey.LABEL)));
-        row.setSelected((boolean) data.get(ComponentKey.SELECTED));
-        List<Map<ValueKey, Object>> propertyDataList = (List<Map<ValueKey, Object>>) data.get(RowKey.PROPERTIES);
+    private DataRow createDataRow(Map<SerializationKey, Object> data, List<DataColumn<?>> columns) {
+        DataRow row = new DataRow(String.valueOf(data.get(ROW_LABEL)));
+        row.setSelected((boolean) data.get(ROW_SELECTED));
+        List<Map<SerializationKey, Object>> propertyDataList = (List<Map<SerializationKey, Object>>) data.get(ROW_PROPERTIES);
         DataColumn<?> column;
-        for (Map<ValueKey, Object> propertyData : propertyDataList) {
-            column = columns.get((int) propertyData.get(ValueKey.COL_INDEX));
+        for (Map<SerializationKey, Object> propertyData : propertyDataList) {
+            column = columns.get((int) propertyData.get(VALUE_COL_INDEX));
             if (column.getType() == Number.class) {
-                row.setValueForColumn((DataColumn<Number>) column, (Number) propertyData.get(ValueKey.VALUE));
+                row.setValueForColumn((DataColumn<Number>) column, (Number) propertyData.get(VALUE));
             } else {
-                row.setValueForColumn((DataColumn<String>) column, String.valueOf(propertyData.get(ValueKey.VALUE)));
+                row.setValueForColumn((DataColumn<String>) column, String.valueOf(propertyData.get(VALUE)));
             }
         }
         return row;
     }
 
-    enum ProjectKey {
-        TABLES,
-        PLOTS,
-        LAMBDAS
-    }
+    enum SerializationKey {
+        PROJECT_TABLES,
+        PROJECT_PLOTS,
+        PROJECT_LAMBDAS,
 
-    enum TableKey {
-        LABEL,
-        TEMPLATE,
-        COL_ROOT,
-        SEGMENTS,
-        ISO_SYSTEM,
-        UNCERTAINTY,
-        VARIABLE_ASSIGNMENTS
-    }
-
-    enum ComponentKey implements HeaderKey, DataKey {
-        LABEL,
-        SELECTED
-    }
-
-    interface HeaderKey {}
-
-    enum CategoryKey implements HeaderKey {
-        CHILDREN
-    }
-
-    enum ColumnKey implements HeaderKey {
-        LABEL,
-        SELECTED,
-        TYPE
-    }
-
-    interface DataKey {}
-
-    enum SegmentKey implements DataKey {
-        CHILDREN
-    }
-
-    enum RowKey implements DataKey {
-        PROPERTIES
-    }
-
-    enum ValueKey {
-        COL_INDEX,
-        VALUE
-    }
-
-    enum PlotKey {
         TABLE_LABEL,
+        TABLE_TEMPLATE,
+        TABLE_COL_ROOT,
+        TABLE_SEGMENTS,
+        TABLE_ISO_SYSTEM,
+        TABLE_UNCERTAINTY,
+        TABLE_VARIABLES,
+
+        CATEGORY_LABEL,
+        CATEGORY_SELECTED,
+        CATEGORY_CHILDREN,
+
+        COLUMN_LABEL,
+        COLUMN_SELECTED,
+        COLUMN_TYPE,
+
+        SEGMENT_LABEL,
+        SEGMENT_SELECTED,
+        SEGMENT_CHILDREN,
+
+        ROW_LABEL,
+        ROW_SELECTED,
+        ROW_PROPERTIES,
+
+        VALUE_COL_INDEX,
+        VALUE,
+
+        PLOT_TABLE_LABEL,
         PLOT_TYPE,
-        PROPERTIES
+        PLOT_PROPERTIES
     }
 }

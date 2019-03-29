@@ -28,39 +28,4 @@ public class DataCategory extends DataComposite<DataComponent> {
         return getLabel();
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof DataCategory) {
-            DataCategory other = (DataCategory) object;
-            if (! other.getLabel().equals(this.getLabel())) {
-                return false;
-            }
-            if (other.isSelected() != this.isSelected()) {
-                return false;
-            }
-            if (other.getChildren().size() != children.size()) {
-                return false;
-            }
-            for (int i = 0; i < children.size(); i++) {
-                if (! children.get(i).equals(other.getChildren().get(i))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        List<Object> objects = new ArrayList<>();
-        objects.add(getLabel());
-        objects.add(isSelected());
-        Collections.addAll(objects, children);
-        return Objects.hash(objects.toArray());
-    }
-
 }

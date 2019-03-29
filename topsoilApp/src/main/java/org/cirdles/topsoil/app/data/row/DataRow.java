@@ -61,66 +61,6 @@ public class DataRow extends DataLeaf {
         }
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof DataRow) {
-            DataRow other = (DataRow) object;
-            if (! other.getLabel().equals(this.getLabel())) {
-                return false;
-            }
-            if (other.isSelected() != this.isSelected()) {
-                return false;
-            }
-            if (other.getValueMap().size() != this.getValueMap().size()) {
-                return false;
-            }
-            DataColumn<?> column;
-            DataValue<?> thisValue, thatValue;
-            for (Map.Entry<DataColumn<?>, DataValue<?>> entry : other.getValueMap().entrySet()) {
-                column = entry.getKey();
-                thisValue = this.getValueMap().get(column);
-                thatValue = other.getValueMap().get(column);
-                if (thisValue != thatValue) {
-                    if (thisValue != null && thatValue != null) {
-                        if (! thisValue.getValue().equals(thatValue.getValue())) {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        List<Object> objects = new ArrayList<>();
-        objects.add(getLabel());
-        objects.add(isSelected());
-        for (Map.Entry<DataColumn<?>, DataValue<?>> entry : getValueMap().entrySet()) {
-            objects.add(new Pair(entry.getKey(), entry.getValue()));
-        }
-        return Objects.hash(objects.toArray());
-    }
-
-    private static class Pair {
-
-        private DataColumn column;
-        private DataValue value;
-
-        Pair(DataColumn column, DataValue value) {
-            this.column = column;
-            this.value = value;
-        }
-
-    }
-
     public static class DataValue<T> {
 
         //**********************************************//
@@ -148,6 +88,5 @@ public class DataRow extends DataLeaf {
         public DataValue(T value) {
             setValue(value);
         }
-
     }
 }

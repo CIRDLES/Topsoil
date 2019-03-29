@@ -36,16 +36,13 @@ import java.util.Map;
 public class VariableChooser extends HBox {
 
     private static final String CONTROLLER_FXML = "variable-chooser.fxml";
-    static final double COL_WIDTH = 100.0;
-    static final double ROW_HEIGHT = 30.0;
-    static final double HEADER_ROW_HEIGHT = 25.01;  // .01 prevents tableView's vertical scrollbar from showing
+    private static final double COL_WIDTH = 100.0;
+    private static final double ROW_HEIGHT = 30.0;
+    private static final double HEADER_ROW_HEIGHT = 25.01;  // .01 prevents tableView's vertical scrollbar from showing
 
-    @FXML
-    VBox variableLabelBox;
-    @FXML
-    TableView<VariableRow<?>> tableView;
-    @FXML
-    ScrollPane scrollPane;
+    @FXML private VBox variableLabelBox;
+    @FXML private TableView<VariableRow<?>> tableView;
+    @FXML private ScrollPane scrollPane;
 
     private DataTable table;
 

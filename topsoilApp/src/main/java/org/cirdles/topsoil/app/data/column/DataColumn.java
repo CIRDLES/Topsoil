@@ -57,34 +57,4 @@ public class DataColumn<T> extends DataLeaf {
         return converter;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof DataColumn) {
-            DataColumn<?> other = (DataColumn<?>) object;
-            if (! other.getLabel().equals(this.getLabel())) {
-                return false;
-            }
-            if (other.isSelected() != this.isSelected()) {
-                return false;
-            }
-            if (! other.getType().equals(this.getType())) {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        List<Object> objects = new ArrayList<>();
-        objects.add(getLabel());
-        objects.add(isSelected());
-        objects.add(getType());
-        return Objects.hash(objects.toArray());
-    }
-
 }

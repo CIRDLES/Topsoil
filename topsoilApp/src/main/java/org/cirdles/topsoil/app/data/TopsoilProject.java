@@ -58,31 +58,4 @@ public class TopsoilProject {
         dataTables.remove(table);
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof TopsoilProject) {
-            TopsoilProject other = (TopsoilProject) object;
-            if (this.getDataTables().size() != other.getDataTables().size()) {
-                return false;
-            }
-            for (int i = 0; i < this.getDataTables().size(); i++) {
-                if (! this.getDataTables().get(i).equals(other.getDataTables().get(i))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        List<Object> objects = new ArrayList<>();
-        Collections.addAll(objects, dataTables);
-        return Objects.hash(objects.toArray());
-    }
-
 }
