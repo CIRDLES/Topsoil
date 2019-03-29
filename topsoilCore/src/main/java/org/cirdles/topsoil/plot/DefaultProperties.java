@@ -33,7 +33,7 @@ public class DefaultProperties extends HashMap<PlotProperty, Object> {
 	    put(UNCTBARS_FILL, "black");
 	    put(UNCTBARS_OPACITY, 1.0);
 
-	    put(WETHERILL_LINE, true);
+	    put(WETHERILL_LINE, false);
 		put(WETHERILL_ENVELOPE, false);
 	    put(WETHERILL_LINE_FILL, "blue");
 	    put(WETHERILL_ENVELOPE_FILL, "lightgray");

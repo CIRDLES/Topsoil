@@ -5,6 +5,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.control.FXMLUtils;
@@ -30,17 +32,14 @@ public class PlotFeaturesController extends AnchorPane {
     @FXML CheckBox mcLeanRegressionCheckBox;
     @FXML CheckBox mcLeanEnvelopeCheckBox;
 
-    @FXML private VBox wetherillControls;
-    @FXML CheckBox wetherillCheckBox;
-    @FXML CheckBox wetherillEnvelopeCheckBox;
-    @FXML ColorPicker wetherillLineFillColorPicker;
-    @FXML ColorPicker wetherillEnvelopeFillColorPicker;
-
-    @FXML private VBox wasserburgControls;
-    @FXML CheckBox wasserburgCheckBox;
-    @FXML CheckBox wasserburgEnvelopeCheckBox;
-    @FXML ColorPicker wasserburgLineFillColorPicker;
-    @FXML ColorPicker wasserburgEnvelopeFillColorPicker;
+    @FXML private VBox concordiaControls;
+    @FXML CheckBox concordiaLineCheckBox;
+    @FXML CheckBox concordiaEnvelopeCheckBox;
+    @FXML RadioButton wetherillRadioButton;
+    @FXML RadioButton wasserburgRadioButton;
+    ToggleGroup concordiaToggleGroup = new ToggleGroup();
+    @FXML ColorPicker concordiaLineColorPicker;
+    @FXML ColorPicker concordiaEnvelopeColorPicker;
 
     @FXML private VBox evolutionControls;
     @FXML CheckBox evolutionCheckBox;
@@ -57,7 +56,7 @@ public class PlotFeaturesController extends AnchorPane {
             	if (isotopeSystem.get() != null) {
 		            switch ( isotopeSystem.get() ) {
 			            case UPB:
-				            container.getChildren().setAll(mcLeanRegressionControls, wetherillControls, wasserburgControls);
+				            container.getChildren().setAll(mcLeanRegressionControls, concordiaControls);
 				            break;
 			            case UTH:
 				            container.getChildren().setAll(mcLeanRegressionControls, evolutionControls);
@@ -95,34 +94,13 @@ public class PlotFeaturesController extends AnchorPane {
     @FXML protected void initialize() {
         container.getChildren().setAll(mcLeanRegressionControls);
         isotopeSystemProperty();
-        wetherillCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            if (newValue) {
-                wasserburgCheckBox.setSelected(false);
-                wetherillEnvelopeCheckBox.setSelected(true);
-            } else {
-                wetherillEnvelopeCheckBox.setSelected(false);
+        concordiaToggleGroup.getToggles().addAll(wetherillRadioButton, wasserburgRadioButton);
+        wetherillRadioButton.setSelected(true);
+        concordiaLineCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue) {
+                concordiaEnvelopeCheckBox.setSelected(false);
             }
-        }));
-        wetherillEnvelopeCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            if (newValue) {
-                wasserburgCheckBox.setSelected(false);
-                wetherillCheckBox.setSelected(true);
-            }
-        }));
-        wasserburgCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            if (newValue) {
-                wetherillCheckBox.setSelected(false);
-                wasserburgEnvelopeCheckBox.setSelected(true);
-            } else {
-                wasserburgEnvelopeCheckBox.setSelected(false);
-            }
-        }));
-        wasserburgEnvelopeCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            if (newValue) {
-                wetherillCheckBox.setSelected(false);
-                wasserburgCheckBox.setSelected(true);
-            }
-        }));
+        });
     }
 
 }

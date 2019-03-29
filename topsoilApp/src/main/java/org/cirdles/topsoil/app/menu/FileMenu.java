@@ -70,7 +70,7 @@ public class FileMenu extends Menu {
             if (paths.length != 0) {
                 openRecentProjectMenu.getItems().remove(placeholder);
                 for (Path path : RecentFiles.getPaths()) {
-                    MenuItem item = new MenuItem(path.getFileName().toString());
+                    MenuItem item = new MenuItem(path.toString());
                     item.setOnAction(event1 -> FileMenuHelper.openProject(path));
                     openRecentProjectMenu.getItems().add(item);
                 }

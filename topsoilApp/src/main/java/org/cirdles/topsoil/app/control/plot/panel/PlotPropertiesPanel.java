@@ -310,7 +310,12 @@ public class PlotPropertiesPanel extends Accordion {
     public BooleanProperty wetherillLineProperty() {
         if ( wetherillLine == null) {
 	        wetherillLine = new SimpleBooleanProperty();
-            wetherillLine.bindBidirectional(plotFeatures.wetherillCheckBox.selectedProperty());
+	        wetherillLine.bind(Bindings.createBooleanBinding(() ->
+							plotFeatures.wetherillRadioButton.equals(plotFeatures.concordiaToggleGroup.getSelectedToggle())
+							&& plotFeatures.concordiaLineCheckBox.isSelected(),
+					plotFeatures.concordiaToggleGroup.selectedToggleProperty(),
+					plotFeatures.concordiaLineCheckBox.selectedProperty()
+			));
         }
         return wetherillLine;
     }
@@ -318,14 +323,22 @@ public class PlotPropertiesPanel extends Accordion {
         return wetherillLine.get();
     }
     public final void setWetherillLine( boolean b ) {
-        wetherillLineProperty().set(b);
+        plotFeatures.concordiaLineCheckBox.setSelected(b);
+        if (b && wasserburgLine()) {
+        	plotFeatures.wetherillRadioButton.setSelected(true);
+		}
     }
 
 	private BooleanProperty wetherillEnvelope;
 	public BooleanProperty wetherillEnvelopeProperty() {
 		if ( wetherillEnvelope == null) {
 			wetherillEnvelope = new SimpleBooleanProperty();
-			wetherillEnvelope.bindBidirectional(plotFeatures.wetherillEnvelopeCheckBox.selectedProperty());
+			wetherillEnvelope.bind(Bindings.createBooleanBinding(() ->
+							plotFeatures.wetherillRadioButton.equals(plotFeatures.concordiaToggleGroup.getSelectedToggle())
+									&& plotFeatures.concordiaEnvelopeCheckBox.isSelected(),
+					plotFeatures.concordiaToggleGroup.selectedToggleProperty(),
+					plotFeatures.concordiaEnvelopeCheckBox.selectedProperty()
+			));
 		}
 		return wetherillEnvelope;
 	}
@@ -333,14 +346,17 @@ public class PlotPropertiesPanel extends Accordion {
 		return wetherillEnvelope.get();
 	}
 	public final void setWetherillEnvelope( boolean b ) {
-		wetherillEnvelopeProperty().set(b);
+		plotFeatures.concordiaEnvelopeCheckBox.setSelected(b);
+		if (b && wasserburgEnvelope()) {
+			plotFeatures.wetherillRadioButton.setSelected(true);
+		}
 	}
 
     private ObjectProperty<Color> wetherillLineFill;
     public ObjectProperty<Color> wetherillLineFillProperty() {
     	if (wetherillLineFill == null) {
     		wetherillLineFill = new SimpleObjectProperty<>();
-    		wetherillLineFill.bindBidirectional(plotFeatures.wetherillLineFillColorPicker.valueProperty());
+    		wetherillLineFill.bindBidirectional(plotFeatures.concordiaLineColorPicker.valueProperty());
 	    }
 	    return wetherillLineFill;
     }
@@ -348,14 +364,14 @@ public class PlotPropertiesPanel extends Accordion {
     	return wetherillLineFillProperty().get();
     }
     public final void setWetherillLineFill(Color c) {
-    	wetherillLineFillProperty().set(c);
+    	plotFeatures.concordiaLineColorPicker.setValue(c);
     }
 
     private ObjectProperty<Color> wetherillEnvelopeFill;
     public ObjectProperty<Color> wetherillEnvelopeFillProperty() {
     	if (wetherillEnvelopeFill == null) {
     		wetherillEnvelopeFill = new SimpleObjectProperty<>();
-    		wetherillEnvelopeFill.bindBidirectional(plotFeatures.wetherillEnvelopeFillColorPicker.valueProperty());
+    		wetherillEnvelopeFill.bindBidirectional(plotFeatures.concordiaEnvelopeColorPicker.valueProperty());
 	    }
 	    return wetherillEnvelopeFill;
     }
@@ -363,14 +379,19 @@ public class PlotPropertiesPanel extends Accordion {
     	return wetherillEnvelopeFillProperty().get();
     }
     public final void setWetherillEnvelopeFill(Color c) {
-    	wetherillEnvelopeFillProperty().set(c);
+    	plotFeatures.concordiaEnvelopeColorPicker.setValue(c);
     }
 
 	private BooleanProperty wasserburgLine;
 	public BooleanProperty wasserburgLineProperty() {
 		if ( wasserburgLine == null) {
 			wasserburgLine = new SimpleBooleanProperty();
-			wasserburgLine.bindBidirectional(plotFeatures.wasserburgCheckBox.selectedProperty());
+			wasserburgLine.bind(Bindings.createBooleanBinding(() ->
+							plotFeatures.wasserburgRadioButton.equals(plotFeatures.concordiaToggleGroup.getSelectedToggle())
+									&& plotFeatures.concordiaLineCheckBox.isSelected(),
+					plotFeatures.concordiaToggleGroup.selectedToggleProperty(),
+					plotFeatures.concordiaLineCheckBox.selectedProperty()
+			));
 		}
 		return wasserburgLine;
 	}
@@ -378,14 +399,22 @@ public class PlotPropertiesPanel extends Accordion {
 		return wasserburgLine.get();
 	}
 	public final void setWasserburgLine( boolean b ) {
-		wasserburgLineProperty().set(b);
+		plotFeatures.concordiaLineCheckBox.setSelected(b);
+		if (b && wetherillLine()) {
+			plotFeatures.wasserburgRadioButton.setSelected(true);
+		}
 	}
 
 	private BooleanProperty wasserburgEnvelope;
 	public BooleanProperty wasserburgEnvelopeProperty() {
 		if ( wasserburgEnvelope == null) {
 			wasserburgEnvelope = new SimpleBooleanProperty();
-			wasserburgEnvelope.bindBidirectional(plotFeatures.wasserburgEnvelopeCheckBox.selectedProperty());
+			wasserburgEnvelope.bind(Bindings.createBooleanBinding(() ->
+							plotFeatures.wasserburgRadioButton.equals(plotFeatures.concordiaToggleGroup.getSelectedToggle())
+									&& plotFeatures.concordiaEnvelopeCheckBox.isSelected(),
+					plotFeatures.concordiaToggleGroup.selectedToggleProperty(),
+					plotFeatures.concordiaEnvelopeCheckBox.selectedProperty()
+			));
 		}
 		return wasserburgEnvelope;
 	}
@@ -393,14 +422,17 @@ public class PlotPropertiesPanel extends Accordion {
 		return wasserburgEnvelope.get();
 	}
 	public final void setWasserburgEnvelope( boolean b ) {
-		wasserburgEnvelopeProperty().set(b);
+		plotFeatures.concordiaEnvelopeCheckBox.setSelected(b);
+		if (b && wetherillEnvelope()) {
+			plotFeatures.wasserburgRadioButton.setSelected(true);
+		}
 	}
 
 	private ObjectProperty<Color> wasserburgLineFill;
 	public ObjectProperty<Color> wasserburgLineFillProperty() {
 		if (wasserburgLineFill == null) {
 			wasserburgLineFill = new SimpleObjectProperty<>();
-			wasserburgLineFill.bindBidirectional(plotFeatures.wasserburgLineFillColorPicker.valueProperty());
+			wasserburgLineFill.bindBidirectional(plotFeatures.concordiaLineColorPicker.valueProperty());
 		}
 		return wasserburgLineFill;
 	}
@@ -408,14 +440,14 @@ public class PlotPropertiesPanel extends Accordion {
 		return wasserburgLineFillProperty().get();
 	}
 	public final void setWasserburgLineFill(Color c) {
-		wasserburgLineFillProperty().set(c);
+		plotFeatures.concordiaLineColorPicker.setValue(c);
 	}
 
 	private ObjectProperty<Color> wasserburgEnvelopeFill;
 	public ObjectProperty<Color> wasserburgEnvelopeFillProperty() {
 		if (wasserburgEnvelopeFill == null) {
 			wasserburgEnvelopeFill = new SimpleObjectProperty<>();
-			wasserburgEnvelopeFill.bindBidirectional(plotFeatures.wasserburgEnvelopeFillColorPicker.valueProperty());
+			wasserburgEnvelopeFill.bindBidirectional(plotFeatures.concordiaEnvelopeColorPicker.valueProperty());
 		}
 		return wasserburgEnvelopeFill;
 	}
@@ -423,7 +455,7 @@ public class PlotPropertiesPanel extends Accordion {
 		return wasserburgEnvelopeFillProperty().get();
 	}
 	public final void setWasserburgEnvelopeFill(Color c) {
-		wasserburgEnvelopeFillProperty().set(c);
+		plotFeatures.concordiaEnvelopeColorPicker.setValue(c);
 	}
 
     private BooleanProperty evolutionMatrix;
