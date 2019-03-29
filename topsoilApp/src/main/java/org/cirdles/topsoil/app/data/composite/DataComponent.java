@@ -1,13 +1,9 @@
 package org.cirdles.topsoil.app.data.composite;
 
-import com.sun.javafx.binding.ExpressionHelper;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 /**
  * A {@code DataComponent} is the basic building block for reading in structured model. When parsing delimited model

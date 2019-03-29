@@ -66,16 +66,15 @@
     plot.width = window.innerWidth - magicNumber - plot.margin.left - plot.margin.right;
     plot.height = window.innerHeight - magicNumber - plot.margin.top - plot.margin.bottom;
 
-    // set up for the plot
-    plot.area = d3.select("body")
-            // create the svg element
-            .append("svg")
-            // somewhat confusing locally, but this element should be considered
-            // to be the plot externally
-            .attr("id", "plot")
-            .attr("width", plot.width + plot.margin.left + plot.margin.right)
-            .attr("height", plot.height + plot.margin.top + plot.margin.bottom)
-            // create a new coordinate space that accounts for the margins
+    // somewhat confusing locally, but this element should be considered
+    // to be the plot externally
+    var svg = d3.select("body").append("svg")
+        .attr("id", "plot")
+        .attr("width", plot.width + plot.margin.left + plot.margin.right)
+        .attr("height", plot.height + plot.margin.top + plot.margin.bottom);
+
+    // create a new coordinate space that accounts for the margins
+    plot.area = svg
             .append("g")
             .attr("transform", "translate(" + plot.margin.left + "," + plot.margin.top + ")");
 
@@ -112,7 +111,7 @@
             plot.width = window.innerWidth - magicNumber - plot.margin.left - plot.margin.right;
             plot.height = window.innerHeight - magicNumber - plot.margin.top - plot.margin.bottom;
 
-            plot.area
+            svg
                 .attr("width", plot.width + plot.margin.left + plot.margin.right)
                 .attr("height", plot.height + plot.margin.top + plot.margin.bottom);
 
