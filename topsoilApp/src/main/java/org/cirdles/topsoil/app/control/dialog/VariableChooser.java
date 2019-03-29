@@ -192,10 +192,11 @@ public class VariableChooser extends HBox {
     private TableColumn<VariableRow<?>, Boolean> makeTableColumn(DataColumn<?> dataColumn) {
         TableColumn<VariableRow<?>, Boolean> newColumn = new TableColumn<>(dataColumn.getLabel());
         newColumn.setCellFactory(CheckBoxTableCell.forTableColumn(param -> tableView.getItems().get(param).get(dataColumn)));
+        newColumn.setCellValueFactory(param -> param.getValue().get(dataColumn));
         newColumn.setVisible(dataColumn.isSelected());
         newColumn.setPrefWidth(COL_WIDTH);
-        newColumn.setResizable(false);
         newColumn.setEditable(true);
+        newColumn.setResizable(false);
         newColumn.setSortable(false);
         return newColumn;
     }
@@ -203,7 +204,6 @@ public class VariableChooser extends HBox {
     private TableColumn<VariableRow<?>, Boolean> makeTableColumn(DataCategory dataCategory) {
         TableColumn<VariableRow<?>, Boolean> newColumn = new TableColumn<>(dataCategory.getLabel());
         newColumn.getColumns().addAll(makeTableColumns(dataCategory));
-        newColumn.setVisible(dataCategory.isSelected());
         return newColumn;
     }
 

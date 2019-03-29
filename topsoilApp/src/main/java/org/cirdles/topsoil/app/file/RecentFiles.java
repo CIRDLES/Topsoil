@@ -47,7 +47,7 @@ public class RecentFiles {
     /**
      * Adds a path to the list of most recent project files.
      *
-     * @param path
+     * @param path  project file Path
      */
     public static void addPath(Path path) {
         List<Path> paths = loadRecentFiles();

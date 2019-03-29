@@ -27,7 +27,7 @@ public enum Delimiter {
     /**
      * Returns the delimiter {@code String}.
      *
-     * @return
+     * @return  String delimiter value
      */
     public String getValue() {
         return value;
