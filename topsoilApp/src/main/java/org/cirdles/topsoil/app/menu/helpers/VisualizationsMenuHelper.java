@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
+import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.plot.PlotStage;
 import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -58,6 +59,18 @@ public class VisualizationsMenuHelper {
      * @return              true if successful
      */
     public static boolean generatePlot(PlotType plotType, DataTable table, Map<PlotProperty, Object> properties) {
+        List<Variable<?>> required = Arrays.asList(IndependentVariable.X, IndependentVariable.Y);
+        List<Variable<?>> missing = new ArrayList<>();
+        for (Variable<?> v : required) {
+            if (table.getVariableColumnMap().get(v) == null) {
+                missing.add(v);
+            }
+        }
+        if (! missing.isEmpty()) {
+            TopsoilNotification.error("Missing Variables", "The following variables must be assigned:\n\n" + missing.toString());
+            return false;
+        }
+
         TopsoilPlotView openPlotView = ProjectManager.getOpenPlotView(table, plotType);
         if (openPlotView != null) {
             // Find already-open plot and request focus

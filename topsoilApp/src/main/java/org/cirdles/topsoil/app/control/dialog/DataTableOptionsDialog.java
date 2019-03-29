@@ -14,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.tree.ColumnTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
@@ -62,6 +63,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
                 table.setColumnsForAllVariables(controller.getVariableAssignments());
                 table.setIsotopeSystem(controller.getIsotopeSystem());
                 table.setUncertainty(controller.getUncertainty());
+                ProjectManager.updatePlotsForTable(table);
                 return true;
             }
             return false;
