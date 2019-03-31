@@ -1,2 +1,2 @@
 rootProject.name = 'topsoil'
-include 'app', 'core'
+include 'topsoilApp', 'topsoilCore'

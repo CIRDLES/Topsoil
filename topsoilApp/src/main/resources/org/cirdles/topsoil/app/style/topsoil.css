@@ -1,0 +1,30 @@
+
+.root {
+    -fx-font-family: Arimo-Regular, SansSerif;
+    -fx-font-smoothing-type: lcd;
+}
+
+.root {
+    -fx-background-color: #f4f4f4;
+}
+
+.hyperlink {
+    -fx-font-size: 14;
+}
+
+.tree-table-cell {
+    -fx-border-color: #ccc;
+    -fx-border-style: solid;
+    -fx-font-family: Monospaced;
+}
+
+.table-view *.scroll-bar:horizontal *.increment-button,
+.table-view *.scroll-bar:horizontal *.decrement-button,
+.table-view *.scroll-bar:horizontal *.increment-arrow,
+.table-view *.scroll-bar:horizontal *.decrement-arrow,
+.table-view *.scroll-bar:vertical *.increment-button,
+.table-view *.scroll-bar:vertical *.decrement-button,
+.table-view *.scroll-bar:vertical *.increment-arrow,
+.table-view *.scroll-bar:vertical *.decrement-arrow{
+    -fx-padding: 0;
+}

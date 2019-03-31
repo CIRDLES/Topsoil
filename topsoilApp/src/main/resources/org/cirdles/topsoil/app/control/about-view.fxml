@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<fx:root alignment="TOP_CENTER" maxWidth="600.0" spacing="10.0" type="VBox" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="topsoilLogo" fitHeight="180.0" fitWidth="206.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@topsoil-logo-text.png" />
+         </image>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+      </ImageView>
+      <Label fx:id="versionLabel" text="versionLabel">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </Label>
+      <HBox alignment="CENTER" prefWidth="525.0">
+         <children>
+            <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="aboutLabel" text="About">
+                           <font>
+                              <Font size="22.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="messageLabel" text="messageLabel" wrapText="true" VBox.vgrow="NEVER">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label fx:id="subMessageLabel" text="subMessageLabel">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" top="5.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Hyperlink fx:id="homePage" onAction="#openHome" text="homePage">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Hyperlink>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <Hyperlink fx:id="license" onAction="#openLicensePage" text="license">
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </Hyperlink>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+      <VBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+         <children>
+            <Label fx:id="linksLabel" text="Links">
+               <font>
+                  <Font size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </Label>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <Hyperlink fx:id="github" onAction="#openGitHub" text="github">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Hyperlink>
+                  <Hyperlink fx:id="cirdles" onAction="#openCIRDLES" text="cirdles">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Hyperlink>
+                  <Hyperlink fx:id="releaseLog" onAction="#openReleaseLog" text="releaseLog">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Hyperlink>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</fx:root>

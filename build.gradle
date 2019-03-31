@@ -29,14 +29,14 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'checkstyle'
+//    apply plugin: 'checkstyle'
 //    apply plugin: 'findbugs'
     apply plugin: 'maven'
 
-    checkstyle {
-        configFile file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
-        toolVersion = '6.11.2'
-    }
+//    checkstyle {
+//        configFile file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+//        toolVersion = '6.11.2'
+//    }
 
 //    findbugsTest {
 //        excludeFilterConfig = resources.text.fromString '''
@@ -71,10 +71,10 @@ subprojects {
     }
 
     dependencies {
-        implementation 'ch.qos.logback:logback-classic:1.1.3'
-        implementation 'com.github.johnzeringue:extendsfx:v1.0.0-alpha.2'
-        implementation 'com.github.cirdles:commons:0f628cc'
-        implementation 'org.apache.pdfbox:pdfbox:2.0.13'
+        compile 'ch.qos.logback:logback-classic:1.1.3'
+        compile 'com.github.johnzeringue:extendsfx:v1.0.0-alpha.2'
+        compile 'com.github.cirdles:commons:0f628cc'
+        compile 'org.apache.pdfbox:pdfbox:2.0.13'
 
         testCompile 'org.hamcrest:hamcrest-all:1.3'
         testCompile 'com.google.code.findbugs:annotations:3.0.0'

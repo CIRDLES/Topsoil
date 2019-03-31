@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.TitledPane?>
+
+<?import org.cirdles.topsoil.app.control.plot.panel.AxisStylingController?>
+<?import org.cirdles.topsoil.app.control.plot.panel.DataOptionsController?>
+<?import org.cirdles.topsoil.app.control.plot.panel.PlotFeaturesController?>
+<fx:root type="Accordion" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+   <panes>
+      <TitledPane text="Axis Styling">
+         <content>
+            <AxisStylingController fx:id="axisStyling" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+         </content>
+      </TitledPane>
+      <TitledPane text="Data Options">
+         <content>
+            <DataOptionsController fx:id="dataOptions" prefHeight="200.0" prefWidth="200.0" />
+         </content>
+      </TitledPane>
+      <TitledPane text="Plot Features">
+         <content>
+            <PlotFeaturesController fx:id="plotFeatures" prefHeight="200.0" prefWidth="200.0" />
+         </content>
+      </TitledPane>
+   </panes>
+</fx:root>

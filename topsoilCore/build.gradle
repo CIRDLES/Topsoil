@@ -1,0 +1,42 @@
+buildscript {
+    dependencies {
+        classpath  'com.github.rundis:gradle-buster-plugin:0.2.4.2'
+    }
+}
+
+plugins {
+    id "com.eriwen.gradle.js" version "2.14.1"
+}
+
+apply plugin: 'java-library'
+apply plugin: 'com.github.rundis.buster'
+
+javascript.source {
+    topsoil {
+        js {
+            srcDir 'src/main/resources/org/cirdles/topsoil/plot/topsoil_js'
+            include '*.js'
+        }
+    }
+}
+
+combineJs {
+    source = javascript.source.topsoil.js.files
+    dest = file("${project.buildDir}/resources/main/org/cirdles/topsoil/plot/topsoil.js")
+}
+
+processResources.dependsOn combineJs
+
+dependencies {
+    api "org.apache.commons:commons-math3:3.6.1"
+    api 'com.github.CIRDLES:McLeanRegression:-SNAPSHOT'
+
+    compile group: 'org.apache.xmlgraphics', name: 'batik-all', version: '1.11', ext: 'jar'
+    compile group: 'org.apache.xmlgraphics', name: 'fop', version: '2.1'
+    compile group: 'org.apache.pdfbox', name: 'fontbox', version: '2.0.0'
+}
+
+buster {
+    configFile = file('config/buster.js')
+}
+
