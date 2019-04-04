@@ -320,12 +320,15 @@ public class PlotPropertiesPanel extends Accordion {
         return wetherillLine;
     }
     public final Boolean wetherillLine() {
-        return wetherillLine.get();
+        return wetherillLineProperty().get();
     }
     public final void setWetherillLine( boolean b ) {
-        plotFeatures.concordiaLineCheckBox.setSelected(b);
-        if (b && wasserburgLine()) {
-        	plotFeatures.wetherillRadioButton.setSelected(true);
+    	if (wasserburgLine()) {
+    		if (b) {
+				plotFeatures.wetherillRadioButton.setSelected(true);
+			}
+		} else {
+			plotFeatures.concordiaLineCheckBox.setSelected(b);
 		}
     }
 
@@ -343,12 +346,15 @@ public class PlotPropertiesPanel extends Accordion {
 		return wetherillEnvelope;
 	}
 	public final Boolean wetherillEnvelope() {
-		return wetherillEnvelope.get();
+		return wetherillEnvelopeProperty().get();
 	}
 	public final void setWetherillEnvelope( boolean b ) {
-		plotFeatures.concordiaEnvelopeCheckBox.setSelected(b);
-		if (b && wasserburgEnvelope()) {
-			plotFeatures.wetherillRadioButton.setSelected(true);
+		if (wasserburgLine()) {
+			if (b) {
+				plotFeatures.wetherillRadioButton.setSelected(true);
+			}
+		} else {
+			plotFeatures.concordiaEnvelopeCheckBox.setSelected(b);
 		}
 	}
 
@@ -396,12 +402,15 @@ public class PlotPropertiesPanel extends Accordion {
 		return wasserburgLine;
 	}
 	public final Boolean wasserburgLine() {
-		return wasserburgLine.get();
+		return wasserburgLineProperty().get();
 	}
 	public final void setWasserburgLine( boolean b ) {
-		plotFeatures.concordiaLineCheckBox.setSelected(b);
-		if (b && wetherillLine()) {
-			plotFeatures.wasserburgRadioButton.setSelected(true);
+		if (wetherillLine()) {
+			if (b) {
+				plotFeatures.wasserburgRadioButton.setSelected(true);
+			}
+		} else {
+			plotFeatures.concordiaLineCheckBox.setSelected(b);
 		}
 	}
 
@@ -419,12 +428,15 @@ public class PlotPropertiesPanel extends Accordion {
 		return wasserburgEnvelope;
 	}
 	public final Boolean wasserburgEnvelope() {
-		return wasserburgEnvelope.get();
+		return wasserburgEnvelopeProperty().get();
 	}
 	public final void setWasserburgEnvelope( boolean b ) {
-		plotFeatures.concordiaEnvelopeCheckBox.setSelected(b);
-		if (b && wetherillEnvelope()) {
-			plotFeatures.wasserburgRadioButton.setSelected(true);
+		if (wetherillLine()) {
+			if (b) {
+				plotFeatures.wasserburgRadioButton.setSelected(true);
+			}
+		} else {
+			plotFeatures.concordiaEnvelopeCheckBox.setSelected(b);
 		}
 	}
 
