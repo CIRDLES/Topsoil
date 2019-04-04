@@ -400,16 +400,16 @@ plot.updateDataExtent = function () {
     //find the extent of the points
     if (plot.data.length > 0) {
         var dataXMin = d3.min(plot.data, function (d) {
-            return d.x - (d.sigma_x * (plot.uncertainty != null ? plot.uncertainty : 2));
+            return (d.selected) ? d.x - (d.sigma_x * (plot.uncertainty != null ? plot.uncertainty : 2)) : 6500.0;
         });
         var dataYMin = d3.min(plot.data, function (d) {
-            return d.y - (d.sigma_y * (plot.uncertainty != null ? plot.uncertainty : 2));
+            return (d.selected) ? d.y - (d.sigma_y * (plot.uncertainty != null ? plot.uncertainty : 2)) : 6500.0;
         });
         var dataXMax = d3.max(plot.data, function (d) {
-            return d.x + (d.sigma_x * (plot.uncertainty != null ? plot.uncertainty : 2));
+            return (d.selected) ? d.x + (d.sigma_x * (plot.uncertainty != null ? plot.uncertainty : 2)) : 0.0;
         });
         var dataYMax = d3.max(plot.data, function (d) {
-            return d.y + (d.sigma_y * (plot.uncertainty != null ? plot.uncertainty : 2));
+            return (d.selected) ? d.y + (d.sigma_y * (plot.uncertainty != null ? plot.uncertainty : 2)) : 0.0;
         });
 
         var xRange = dataXMax - dataXMin;
