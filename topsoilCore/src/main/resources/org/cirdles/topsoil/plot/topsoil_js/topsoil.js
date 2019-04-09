@@ -70,14 +70,11 @@
      * PLOT
      */
 
-    // buffer so jxbrowser scrollbars aren't shown
-    var magicNumber = 10;
-
     plot.margin = {top: 110, right: 75, bottom: 75, left: 75};
-    plot.outerWidth = (window.innerWidth > 0.0) ? window.innerWidth - magicNumber : (plot.margin.left + plot.margin.right);
-    plot.outerHeight = (window.innerHeight > 0.0) ? window.innerHeight - magicNumber : (plot.margin.top + plot.margin.bottom);
-    plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;
-    plot.innerHeight = plot.outerHeight - plot.margin.top - plot.margin.bottom;
+    plot.outerWidth = (plot.margin.left + plot.margin.right);
+    plot.outerHeight = (plot.margin.top + plot.margin.bottom);
+    plot.innerWidth = 0.0;
+    plot.innerHeight = 0.0;
 
     // somewhat confusing locally, but this element should be considered
     // to be the plot externally
@@ -123,8 +120,8 @@
     topsoil.resize = function (width, height) {
         if (plot.initialized) {
 
-            plot.outerWidth = width - magicNumber;
-            plot.outerHeight = height - magicNumber;
+            plot.outerWidth = width;
+            plot.outerHeight = height;
             plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;
             plot.innerHeight = plot.outerHeight - plot.margin.top - plot.margin.bottom;
 

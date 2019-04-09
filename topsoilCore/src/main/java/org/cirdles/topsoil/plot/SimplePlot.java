@@ -281,6 +281,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 + "<style>\n"
                 + "body {\n"
                 + "  margin: 0; padding: 0;\n"
+                + "  overflow: hidden;\n"
                 + "}\n"
                 + "</style>\n"
                 // </head>
@@ -359,6 +360,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         JSFunction resize = getTopsoilFunction("resize");
         if (resize != null) {
             resize.asFunction().invoke(topsoil, width, height);
+            browserView.getBrowser().setSize((int) width, (int) height);
         }
     }
 
