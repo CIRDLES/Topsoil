@@ -14,15 +14,8 @@ import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
 import com.teamdev.jxbrowser.chromium.dom.DOMElement;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
-import com.teamdev.jxbrowser.chromium.events.RenderAdapter;
-import com.teamdev.jxbrowser.chromium.events.RenderEvent;
-import com.teamdev.jxbrowser.chromium.events.StatusEvent;
-import com.teamdev.jxbrowser.chromium.events.StatusListener;
-import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.plot.bridges.JavaScriptBridge;
 import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
 import org.cirdles.topsoil.plot.bridges.Regression;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
@@ -33,6 +26,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -67,10 +61,9 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     private static final Logger LOGGER = LoggerFactory.getLogger(SimplePlot.class);
 
     private final ResourceExtractor resourceExtractor = new ResourceExtractor(SimplePlot.class);
-    private final JavaScriptBridge bridge = new JavaScriptBridge();
     private final PropertiesBridge propertiesBridge = new PropertiesBridge();
     private final Regression regression = new Regression();
-    private BrowserView browserView;
+    private Browser browser;
     private JSObject topsoil;
 
     //**********************************************//
@@ -86,7 +79,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         } catch(IOException e) {
             browserContext = BrowserContext.defaultContext();
         }
-        Browser browser = new Browser(BrowserType.LIGHTWEIGHT, browserContext);
+        this.browser = new Browser(BrowserType.LIGHTWEIGHT, browserContext);
         browser.addLoadListener(new LoadAdapter() {
             @Override
             public void onFinishLoadingFrame(FinishLoadingEvent event) {
@@ -94,7 +87,6 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                     Browser browser = event.getBrowser();
                     topsoil = browser.executeJavaScriptAndReturnValue("topsoil").asObject();
 
-                    topsoil.setProperty("bridge", bridge);
                     topsoil.setProperty("propertiesBridge", propertiesBridge);
                     topsoil.setProperty("regression", regression);
 
@@ -105,8 +97,6 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                     if (properties != null) {
                         setProperties(properties);
                     }
-                    resize();
-                    browserView.setVisible(true);
                 }
             }
         });
@@ -117,11 +107,6 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 LOGGER.info(event.getMessage());
             }
         });
-
-        this.browserView = new BrowserView(browser);
-        browserView.setVisible(false);
-        browserView.widthProperty().addListener(c -> resize());
-        browserView.heightProperty().addListener(c -> resize());
         browser.loadHTML(buildHTML());
     }
 
@@ -131,7 +116,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public void recenter() {
+    public final void recenter() {
         JSFunction recenter = getTopsoilFunction("recenter");
         if (recenter != null) {
             recenter.invoke(topsoil);
@@ -140,7 +125,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public void setAxes(String xMin, String xMax, String yMin, String yMax) {
+    public final void setAxes(String xMin, String xMax, String yMin, String yMax) {
         JSFunction setAxes = getTopsoilFunction("setAxes");
         if (setAxes != null) {
             setAxes.invoke(topsoil, xMin, xMax, yMin, yMax);
@@ -149,7 +134,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public void snapToCorners() {
+    public final void snapToCorners() {
         JSFunction snapToCorners = getTopsoilFunction("snapToCorners");
         if (snapToCorners != null) {
             snapToCorners.invoke(topsoil);
@@ -158,13 +143,23 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public Node displayAsNode() {
+    public final Node displayAsNode() {
+        com.teamdev.jxbrowser.chromium.javafx.BrowserView browserView = new com.teamdev.jxbrowser.chromium.javafx.BrowserView(browser);
+        Runnable resize = () -> resize(browserView.getWidth(), browserView.getHeight());
+        resize.run();
+        browserView.widthProperty().addListener(c -> resize.run());
+        browserView.heightProperty().addListener(c -> resize.run());
         return browserView;
+    }
+
+    @Override
+    public final JComponent displayAsJComponent() {
+        return new com.teamdev.jxbrowser.chromium.swing.BrowserView(this.browser);
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setData(List<Map<String, Object>> data) {
+    public final void setData(List<Map<String, Object>> data) {
         super.setData(data);
         JSFunction setData = getTopsoilFunction("setData");
         if (setData != null) {
@@ -175,7 +170,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperties(Map<PlotProperty, Object> properties) {
+    public final void setProperties(Map<PlotProperty, Object> properties) {
         super.setProperties(properties);
         JSFunction setProperties = getTopsoilFunction("setProperties");
         if (setProperties != null) {
@@ -185,7 +180,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperty(PlotProperty key, Object value) {
+    public final void setProperty(PlotProperty key, Object value) {
         super.setProperty(key, value);
         if (topsoil != null) {
             JSValue setProperties = topsoil.getProperty("setProperty");
@@ -197,19 +192,19 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public boolean getIfUpdated() {
+    public final boolean getIfUpdated() {
         return propertiesBridge.getIfUpdated();
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setIfUpdated(boolean update) {
+    public final void setIfUpdated(boolean update) {
         propertiesBridge.setIfUpdated(update);
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void updateProperties() {
+    public final void updateProperties() {
 
         Map<PlotProperty, Object> properties = propertiesBridge.getProperties();
 
@@ -225,8 +220,8 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      * @return a new {@link Document} with SVG contents
      */
     @Override
-    public Document displayAsSVGDocument() {
-        DOMDocument document = browserView.getBrowser().getDocument();
+    public final Document displayAsSVGDocument() {
+        DOMDocument document = browser.getDocument();
         Document svg = null;
         if (document != null) {
             try {
@@ -247,13 +242,13 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     }
 
     /**{@inheritDoc}*/
-    public void saveAsSVGDocument(File file) {
+    public final void saveAsSVGDocument(File file) {
         new SVGSaver().save(displayAsSVGDocument(), file);
     }
 
-    public void resize() {
-        resize(browserView.getWidth(), browserView.getHeight());
-    }
+//    public final void resize() {
+//        resize(browserView.getWidth(), browserView.getHeight());
+//    }
 
     //**********************************************//
     //                PRIVATE METHODS               //
@@ -310,16 +305,8 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         return String.format(htmlTemplate, plotFile).concat(script.toString());
     }
 
-//    private Map<String, Object> convertProperties(Map<PlotProperty, Object> properties) {
-//        Map<String, Object> newProperties = new HashMap<>(properties.size());
-//        for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
-//            newProperties.put(entry.getKey().toString(), entry.getValue());
-//        }
-//        return newProperties;
-//    }
-
     private JSObject convertProperties(Map<PlotProperty, Object> properties) {
-        JSObject jsProperties = browserView.getBrowser().getJSContext().createObject();
+        JSObject jsProperties = browser.getJSContext().createObject();
         for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
             jsProperties.setProperty(entry.getKey().toString(), entry.getValue());
         }
@@ -332,7 +319,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
             if (i >= javaData.size()) {
                 jsData.set(i, null);
             } else {
-                row = browserView.getBrowser().getJSContext().createObject();
+                row = browser.getJSContext().createObject();
                 for (Map.Entry<String, Object> entry : javaData.get(i).entrySet()) {
                     row.setProperty(entry.getKey(), entry.getValue());
                 }
@@ -353,14 +340,14 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     }
 
     private JSArray emptyJSArray() {
-        return browserView.getBrowser().executeJavaScriptAndReturnValue("topsoil.emptyArray()").asArray();
+        return browser.executeJavaScriptAndReturnValue("topsoil.emptyArray()").asArray();
     }
 
     private void resize(double width, double height) {
         JSFunction resize = getTopsoilFunction("resize");
         if (resize != null) {
             resize.asFunction().invoke(topsoil, width, height);
-            browserView.getBrowser().setSize((int) width, (int) height);
+            browser.setSize((int) width, (int) height);
         }
     }
 
