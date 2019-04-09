@@ -81,17 +81,17 @@ plot.initialize = function (data) {
         .attr("class", "titleText")
         .attr("font-family", "sans-serif")
         .attr("font-size", "20px")
-        .attr("x", plot.width / 2)
+        .attr("x", plot.innerWidth / 2)
         .attr("y", -60);
 
     //create x axis label
     plot.area.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + plot.height + ")")
+        .attr("transform", "translate(0," + plot.innerHeight + ")")
         .append("text")
         .attr("class", "label")
         .style("font-size", "16px")
-        .attr("x", plot.width / 2)
+        .attr("x", plot.innerWidth / 2)
         .attr("y", -10);
 
     //create y axis label
@@ -101,7 +101,7 @@ plot.initialize = function (data) {
         .attr("class", "label")
         .attr("transform", "rotate(-90)")
         .style("font-size", "16px")
-        .attr("x", -plot.height / 2)
+        .attr("x", -plot.innerHeight / 2)
         .attr("y", 15)
         .attr("dy", ".1em");
 
@@ -118,8 +118,12 @@ plot.initialize = function (data) {
     plot.t = d3.scale.linear();
 
     //draw the axes
-    plot.xAxis = d3.svg.axis().orient("bottom");
-    plot.yAxis = d3.svg.axis().orient("left");
+    plot.xAxis = d3.svg.axis()
+        .ticks(Math.floor(plot.innerWidth / 50.0))
+        .orient("bottom");
+    plot.yAxis = d3.svg.axis()
+        .ticks(Math.floor(plot.innerHeight / 50.0))
+        .orient("left");
 
     plot.data = data;
 
@@ -129,10 +133,10 @@ plot.initialize = function (data) {
     // Updates the scales for the x and y axes
     plot.xAxisScale
         .domain([plot.xDataMin, plot.xDataMax])
-        .range([0, plot.width]);
+        .range([0, plot.innerWidth]);
     plot.yAxisScale
         .domain([plot.yDataMin, plot.yDataMax])
-        .range([plot.height, 0]);
+        .range([plot.innerHeight, 0]);
 
     // Applies the scales to the x and y axes.
     plot.xAxis.scale(plot.xAxisScale);
@@ -348,10 +352,10 @@ plot.update = function (data) {
     //draw title and axis labels
     d3.select(".titleText")
         .text(plot.getProperty("Title"))
-        .attr("x", (plot.width / 2) - (d3.select(".titleText").node().getBBox().width) / 2);
+        .attr("x", (plot.innerWidth / 2) - (d3.select(".titleText").node().getBBox().width) / 2);
     d3.select(".x.axis .label")
         .text(plot.getProperty("X Axis"))
-        .attr("x", (plot.width) - (d3.select(".x.axis .label").node().getBBox().width));
+        .attr("x", (plot.innerWidth) - (d3.select(".x.axis .label").node().getBBox().width));
     d3.select(".y.axis .label")
         .text(plot.getProperty("Y Axis"))
         .attr("x",  -(d3.select(".y.axis .label").node().getBBox().width));

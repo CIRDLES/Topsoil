@@ -131,6 +131,7 @@ public class VisualizationsMenuHelper {
 
             // Show Plot
             plotStage.show();
+//            Platform.runLater(() -> ((SimplePlot) plot).resize());
             ProjectManager.registerOpenPlot(table, plotView);
         }
         return true;

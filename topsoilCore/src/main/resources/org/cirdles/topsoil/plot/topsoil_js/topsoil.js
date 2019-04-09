@@ -24,16 +24,28 @@
     // alias topsoil
     window.ts = topsoil;
 
+    topsoil.emptyArray = function () {
+        return [];
+    };
+
+    topsoil.getData = function () {
+        return topsoil.data;
+    };
+
     topsoil.setData = function (data) {
         topsoil.data = [];
-        for (var index = 0; index < data.size(); index++) {
+        for (var index = 0; index < data.length; index++) {
             var entry = {};
-            plot.dataKeys.forEach(function(key) {
-                if (data.get(index).get(key) != null) {
-                    entry[key] = data.get(index).get(key);
-                }
-            });
-            topsoil.data.push(entry);
+            var row = data[index];
+            if (row != null) {
+                plot.dataKeys.forEach(function (key) {
+                    var value = row[key];
+                    if (value != null) {
+                        entry[key] = value;
+                    }
+                });
+                topsoil.data.push(entry);
+            }
         }
         plot.setData(topsoil.data);
     };
@@ -42,7 +54,7 @@
         plot.properties = {};
 
         plot.propertiesKeys.forEach(function (key) {
-            plot.properties[key] = properties.get(key);
+            plot.properties[key] = properties[key];
         });
 
         plot.update(ts.data);
@@ -58,20 +70,23 @@
      * PLOT
      */
 
-    // an acknowledged (seemingly arbitrary) fudge factor for the window dimensions
-    // without this (which has been minimized!) scrollbars show (at least on OS X)
-    var magicNumber = 3.0000375;
+    // buffer so jxbrowser scrollbars aren't shown
+    var magicNumber = 10;
 
     plot.margin = {top: 110, right: 75, bottom: 75, left: 75};
-    plot.width = window.innerWidth - magicNumber - plot.margin.left - plot.margin.right;
-    plot.height = window.innerHeight - magicNumber - plot.margin.top - plot.margin.bottom;
+    plot.outerWidth = (window.innerWidth > 0.0) ? window.innerWidth - magicNumber : (plot.margin.left + plot.margin.right);
+    plot.outerHeight = (window.innerHeight > 0.0) ? window.innerHeight - magicNumber : (plot.margin.top + plot.margin.bottom);
+    plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;
+    plot.innerHeight = plot.outerHeight - plot.margin.top - plot.margin.bottom;
 
     // somewhat confusing locally, but this element should be considered
     // to be the plot externally
-    var svg = d3.select("body").append("svg")
+    var svgContainer = d3.select("body").append("div")
+        .attr("id", "svgContainer");
+    var svg = svgContainer.append("svg")
         .attr("id", "plot")
-        .attr("width", plot.width + plot.margin.left + plot.margin.right)
-        .attr("height", plot.height + plot.margin.top + plot.margin.bottom);
+        .attr("width", plot.outerWidth)
+        .attr("height", plot.outerHeight);
 
     // create a new coordinate space that accounts for the margins
     plot.area = svg
@@ -87,41 +102,43 @@
     // the visible (white) backing is necessary for mouse events
     plot.plotArea = plot.area.clipped.append("rect")
             .attr("id", "plotArea")
-            .attr("width", plot.width)
-            .attr("height", plot.height)
+            .attr("width", plot.innerWidth)
+            .attr("height", plot.innerHeight)
             .attr("fill", "white");
 
     plot.area.append("defs")
             .append("clipPath")
             .attr("id", "clipBox")
             .append("use")
-            .attr("xlink:xlink:href", "#" + plot.plotArea.attr("id"));
+            .attr("xlink:href", "#" + plot.plotArea.attr("id"));
 
     plot.plotBorder = plot.area.append("rect")
         .attr("id", "plotBorder")
-        .attr("width", plot.width)
-        .attr("height", plot.height)
+        .attr("width", plot.innerWidth)
+        .attr("height", plot.innerHeight)
         .attr("fill", "none")
         .attr("stroke", "black")
         .attr("stroke-width", "2px");
 
-    topsoil.resize = function () {
+    topsoil.resize = function (width, height) {
         if (plot.initialized) {
 
-            plot.width = window.innerWidth - magicNumber - plot.margin.left - plot.margin.right;
-            plot.height = window.innerHeight - magicNumber - plot.margin.top - plot.margin.bottom;
+            plot.outerWidth = width - magicNumber;
+            plot.outerHeight = height - magicNumber;
+            plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;
+            plot.innerHeight = plot.outerHeight - plot.margin.top - plot.margin.bottom;
 
             svg
-                .attr("width", plot.width + plot.margin.left + plot.margin.right)
-                .attr("height", plot.height + plot.margin.top + plot.margin.bottom);
+                .attr("width", plot.outerWidth)
+                .attr("height", plot.outerHeight);
 
             plot.plotArea
-                .attr("width", plot.width)
-                .attr("height", plot.height);
+                .attr("width", plot.innerWidth)
+                .attr("height", plot.innerHeight);
 
             plot.plotBorder
-                .attr("width", plot.width)
-                .attr("height", plot.height);
+                .attr("width", plot.innerWidth)
+                .attr("height", plot.innerHeight);
 
             plot.removeAxes();
             plot.initialize(ts.data);

@@ -121,7 +121,7 @@ plot.drawInfoBox = function () {
         .attr("class", "regressionInfo")
         .attr("font-family", "sans-serif")
         .attr("font-size", "12px")
-        .attr("x", plot.width)
+        .attr("x", plot.innerWidth)
         .attr("y", -20)
         .attr("fill", "black");
 };
@@ -132,7 +132,7 @@ plot.drawInfoBox = function () {
 plot.updateInfoBox = function () {
     plot.area.select(".regressionInfo")
         .text("Regression slope: " + plot.regressionSlope)
-        .attr("x", (plot.width - 30) - (plot.area.select(".regressionInfo").node().getBBox().width));
+        .attr("x", (plot.innerWidth - 30) - (plot.area.select(".regressionInfo").node().getBBox().width));
 };
 
 /**

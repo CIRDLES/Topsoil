@@ -474,8 +474,8 @@ plot.drawEvolutionMatrix = function () {
         .append("rect")
         .attr("x", plot.margin.left)
         .attr("y", 0)
-        .attr("width", plot.width + plot.margin.right)
-        .attr("height", plot.height + plot.margin.top);
+        .attr("width", plot.innerWidth + plot.margin.right)
+        .attr("height", plot.innerHeight + plot.margin.top);
 
     plot.area.aroundEdge = plotSVG.append("g")
         .attr("clip-path", "url(#edge-clip)")

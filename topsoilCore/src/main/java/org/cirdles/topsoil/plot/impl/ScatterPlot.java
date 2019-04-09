@@ -15,35 +15,19 @@
  */
 package org.cirdles.topsoil.plot.impl;
 
-import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.DefaultProperties;
-import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.PlotType;
+import org.cirdles.topsoil.plot.SimplePlot;
 
 /**
  * A {@code Plot} which handles features for all isotope systems.
  *
  * @author Emily Coleman
  */
-public class ScatterPlot extends JavaScriptPlot {
-
-    //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
-
-    private static final String RESOURCE_NAME = "ScatterPlot.js";
-    private static final PlotType TYPE = PlotType.SCATTER;
-
-    //**********************************************//
-    //                 CONSTRUCTORS                 //
-    //**********************************************//
+public class ScatterPlot extends SimplePlot {
 
     public ScatterPlot() {
-        super(
-                TYPE,
-                new DefaultProperties(),
-                new ResourceExtractor(ScatterPlot.class).extractResourceAsPath(RESOURCE_NAME)
-        );
+        super(PlotType.SCATTER, new DefaultProperties());
     }
 
 }

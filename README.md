@@ -13,6 +13,8 @@ This material is based upon work supported by the National Science Foundation un
 If you are interested in learning more about Topsoil, please contact
 [Jim Bowring](mailto://bowringj@cofc.edu).
 
+Topsoil uses JxBrowser http://www.teamdev.com/jxbrowser, which is a proprietary software, owned by TeamDev Ltd. The use of JxBrowser is governed by JxBrowser Product Licence Agreement http://www.teamdev.com/jxbrowser-licence-agreement. You may not use JxBrowser separately from the Topsoil project without explicit permission of TeamDev Ltd.
+
 Getting Started
 ---------------
 
