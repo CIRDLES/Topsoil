@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.menu.helpers;
 
-import com.sun.javafx.stage.StageHelper;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -8,7 +7,6 @@ import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.plot.PlotStage;
-import org.cirdles.topsoil.app.data.*;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
@@ -26,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static org.cirdles.topsoil.plot.PlotProperty.TITLE;
@@ -78,12 +77,22 @@ public class VisualizationsMenuHelper {
         } else {
             List<Map<String, Object>> data = getPlotDataFromTable(table);
 
+            StringJoiner invalidRowLabels = new StringJoiner("\n");
+            for (Map<String, Object> row : data) {
+                if (!((boolean) row.get(BooleanVariable.VALID.getName()))) {
+                    invalidRowLabels.add(String.valueOf(row.get(TextVariable.LABEL.getName())));
+                }
+            }
+            // @TODO Encapsulate reasons for invalid rows; right now there's only one:
+            TopsoilNotification.info("Invalid Rows", "The following rows have invalid rho " +
+                    "values, and will be plotted with a rho value of 0: \n\n" + invalidRowLabels.toString());
+
             Plot plot = plotType.getPlot();
             plot.setData(data);
             TableObserver tableObserver = new TableObserver(table, plot);
             table.addObserver(tableObserver);
 
-            // @TODO Update plot on model changes
+            // @TODO Update plot on data changes
 
             if (properties == null) {
                 properties = new DefaultProperties();
@@ -146,6 +155,7 @@ public class VisualizationsMenuHelper {
                 entry.put(TextVariable.LABEL.getName(), row.getLabel());
                 entry.put(TextVariable.ALIQUOT.getName(), aliquot.getLabel());
                 entry.put(BooleanVariable.SELECTED.getName(), row.isSelected());
+                entry.put(BooleanVariable.VALID.getName(), true);
 
                 for (Variable var : Variables.ALL) {
                     Object value;
@@ -154,7 +164,6 @@ public class VisualizationsMenuHelper {
                         column = varMap.get(var);
                         value = row.getValueForColumn(column).getValue();
                         if (var instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(table.getUncertainty())) {
-                            // @TODO The code below assumes that a dep-variable is always dependent on an ind-variable
                             double doubleVal = (double) value;
                             DependentVariable dependentVariable = (DependentVariable) var;
                             IndependentVariable dependency = (IndependentVariable) dependentVariable.getDependency();
@@ -162,6 +171,13 @@ public class VisualizationsMenuHelper {
                             doubleVal /= 100;
                             doubleVal *= (Double) row.getValueForColumn(dependentColumn).getValue();
                             value = doubleVal;
+                        }
+                        if (var == IndependentVariable.RHO) {
+                            double doubleVal = (double) value;
+                            if (doubleVal < -1 || doubleVal > 1) {
+                                value = 0.0;
+                                entry.put(BooleanVariable.VALID.getName(), false);
+                            }
                         }
                     } else {
                         if (var instanceof IndependentVariable || var instanceof DependentVariable) {

@@ -125,21 +125,23 @@ public class Squid3DataParser implements DataParser {
                 }
             }
             colLabel = joiner.toString().trim();
-            if (! colLabel.equals("")) {
-                if (usedColumnLabels.containsKey(colLabel)) {
-                    labelFreq = usedColumnLabels.get(colLabel);
-                    usedColumnLabels.put(colLabel, labelFreq + 1);
-                    colLabel += ("(" + labelFreq + ")");
-                } else {
-                    usedColumnLabels.put(colLabel, 1);
-                }
+            if (colLabel.equals("")) {
+                colLabel = "newColumn";
+            }
 
-                Class<?> clazz = DataParser.getColumnDataType(rows, colIndex, 5);
-                if (clazz == Number.class) {
-                    columns.add(DataColumn.numberColumn(colLabel));
-                } else {
-                    columns.add(DataColumn.stringColumn(colLabel));
-                }
+            if (usedColumnLabels.containsKey(colLabel)) {
+                labelFreq = usedColumnLabels.get(colLabel);
+                usedColumnLabels.put(colLabel, labelFreq + 1);
+                colLabel += ("(" + labelFreq + ")");
+            } else {
+                usedColumnLabels.put(colLabel, 1);
+            }
+
+            Class<?> clazz = DataParser.getColumnDataType(rows, colIndex, 5);
+            if (clazz == Number.class) {
+                columns.add(DataColumn.numberColumn(colLabel));
+            } else {
+                columns.add(DataColumn.stringColumn(colLabel));
             }
         }
 
