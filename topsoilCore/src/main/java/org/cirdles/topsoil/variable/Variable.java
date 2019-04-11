@@ -37,4 +37,6 @@ public interface Variable<T> extends Serializable {
 
     String getAbbreviation();
 
+    T defaultValue();
+
 }

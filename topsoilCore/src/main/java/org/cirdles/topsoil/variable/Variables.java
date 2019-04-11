@@ -31,24 +31,30 @@ public final class Variables {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    public static final List<Variable<?>> ALL;
-    static {
-        ALL = Collections.unmodifiableList(asList(
-                IndependentVariable.X,
-                DependentVariable.SIGMA_X,
-                IndependentVariable.Y,
-                DependentVariable.SIGMA_Y,
-                IndependentVariable.RHO
-        ));
-        Map<String, Variable> abbrs = new HashMap<>();
-        ALL.forEach(v -> abbrs.put(v.getAbbreviation(), v));
-        ABBREVIATIONS = Collections.unmodifiableMap(abbrs);
-    }
+    public static final IndependentVariable X = IndependentVariable.X;
+    public static final DependentVariable SIGMA_X = DependentVariable.SIGMA_X;
+    public static final IndependentVariable Y = IndependentVariable.Y;
+    public static final DependentVariable SIGMA_Y = DependentVariable.SIGMA_Y;
+    public static final IndependentVariable RHO = IndependentVariable.RHO;
 
-    private static final Map<String, Variable> ABBREVIATIONS;
+    public static final TextVariable LABEL = TextVariable.LABEL;
+    public static final TextVariable ALIQUOT = TextVariable.ALIQUOT;
 
-    public static Variable fromAbbreviation(String abbr) {
-        return ABBREVIATIONS.get(abbr);
-    }
+    public static final BooleanVariable SELECTED = BooleanVariable.SELECTED;
+
+    public static final List<Variable<?>> ALL = Collections.unmodifiableList(asList(
+            X,
+            SIGMA_X,
+            Y,
+            SIGMA_Y,
+            RHO,
+            LABEL,
+            ALIQUOT,
+            SELECTED
+    ));
+
+    public static final List<Variable<?>> NUMBER_TYPE = Collections.unmodifiableList(asList(
+            X, SIGMA_X, Y, SIGMA_Y, RHO
+    ));
 
 }

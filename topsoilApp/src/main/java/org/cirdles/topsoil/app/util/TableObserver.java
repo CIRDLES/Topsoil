@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.app.util;
 
 import javafx.concurrent.Task;
+import org.cirdles.topsoil.app.data.DataHandler;
 import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.plot.Plot;
@@ -35,7 +36,7 @@ public class TableObserver implements Observer {
                 }
             };
             currentUpdate.setOnSucceeded(event -> {
-                plot.setData(VisualizationsMenuHelper.getPlotDataFromTable(table));
+                plot.setData(DataHandler.getPlotData(table));
                 currentUpdate = null;
             });
             currentUpdate.setOnCancelled(event -> currentUpdate = null);

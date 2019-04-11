@@ -7,6 +7,7 @@ import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.plot.PlotStage;
+import org.cirdles.topsoil.app.data.DataHandler;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
@@ -58,7 +59,7 @@ public class VisualizationsMenuHelper {
      * @return              true if successful
      */
     public static boolean generatePlot(PlotType plotType, DataTable table, Map<PlotProperty, Object> properties) {
-        List<Variable<?>> required = Arrays.asList(IndependentVariable.X, IndependentVariable.Y);
+        List<Variable<?>> required = Arrays.asList(Variables.X, Variables.Y);
         List<Variable<?>> missing = new ArrayList<>();
         for (Variable<?> v : required) {
             if (table.getVariableColumnMap().get(v) == null) {
@@ -75,17 +76,17 @@ public class VisualizationsMenuHelper {
             // Find already-open plot and request focus
             openPlotView.getScene().getWindow().requestFocus();
         } else {
-            List<Map<String, Object>> data = getPlotDataFromTable(table);
+            List<Map<String, Object>> data = DataHandler.getPlotData(table);
+            List<String> dataErrors = DataHandler.getDataErrors(table);
 
-            StringJoiner invalidRowLabels = new StringJoiner("\n");
-            for (Map<String, Object> row : data) {
-                if (!((boolean) row.get(BooleanVariable.VALID.getName()))) {
-                    invalidRowLabels.add(String.valueOf(row.get(TextVariable.LABEL.getName())));
+            if (dataErrors.size() > 0) {
+                StringJoiner errors = new StringJoiner("\n");
+                for (String err : dataErrors) {
+                    errors.add(err);
                 }
+                // @TODO Encapsulate reasons for invalid rows; right now there's only one:
+                TopsoilNotification.error("Invalid Rows", "The following rows have errors: \n\n" + errors.toString());
             }
-            // @TODO Encapsulate reasons for invalid rows; right now there's only one:
-            TopsoilNotification.info("Invalid Rows", "The following rows have invalid rho " +
-                    "values, and will be plotted with a rho value of 0: \n\n" + invalidRowLabels.toString());
 
             Plot plot = plotType.getPlot();
             plot.setData(data);
@@ -129,68 +130,5 @@ public class VisualizationsMenuHelper {
             ProjectManager.registerOpenPlot(table, plotView);
         }
         return true;
-    }
-
-    /**
-     * Extracts and returns the relevant plot data from a {@code DataTable} in a format that a {@link Plot} expects.
-     *
-     * @param table     DataTable
-     *
-     * @return          plot data
-     */
-    public static List<Map<String, Object>> getPlotDataFromTable(DataTable table) {
-        List<Map<String, Object>> plotData = new ArrayList<>();
-        List<DataSegment> tableAliquots = table.getDataRoot().getChildren();
-        Map<Variable<?>, DataColumn<?>> varMap = table.getVariableColumnMap();
-
-        List<DataRow> rows;
-        DataColumn column;
-        Map<String, Object> entry;
-
-        for (DataSegment aliquot : tableAliquots) {
-            rows = aliquot.getChildren();
-            for (DataRow row : rows) {
-                entry = new HashMap<>();
-
-                entry.put(TextVariable.LABEL.getName(), row.getLabel());
-                entry.put(TextVariable.ALIQUOT.getName(), aliquot.getLabel());
-                entry.put(BooleanVariable.SELECTED.getName(), row.isSelected());
-                entry.put(BooleanVariable.VALID.getName(), true);
-
-                for (Variable var : Variables.ALL) {
-                    Object value;
-                    column = varMap.get(var);
-                    if (column != null) {
-                        column = varMap.get(var);
-                        value = row.getValueForColumn(column).getValue();
-                        if (var instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(table.getUncertainty())) {
-                            double doubleVal = (double) value;
-                            DependentVariable dependentVariable = (DependentVariable) var;
-                            IndependentVariable dependency = (IndependentVariable) dependentVariable.getDependency();
-                            DataColumn dependentColumn = varMap.get(dependency);
-                            doubleVal /= 100;
-                            doubleVal *= (Double) row.getValueForColumn(dependentColumn).getValue();
-                            value = doubleVal;
-                        }
-                        if (var == IndependentVariable.RHO) {
-                            double doubleVal = (double) value;
-                            if (doubleVal < -1 || doubleVal > 1) {
-                                value = 0.0;
-                                entry.put(BooleanVariable.VALID.getName(), false);
-                            }
-                        }
-                    } else {
-                        if (var instanceof IndependentVariable || var instanceof DependentVariable) {
-                            value = 0.0;
-                        } else {
-                            value = "";
-                        }
-                    }
-                    entry.put(var.getName(), value);
-                }
-                plotData.add(entry);
-            }
-        }
-        return plotData;
     }
 }

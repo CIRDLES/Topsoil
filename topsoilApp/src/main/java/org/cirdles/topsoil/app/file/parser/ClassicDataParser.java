@@ -2,13 +2,11 @@ package org.cirdles.topsoil.app.file.parser;
 
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.variable.DependentVariable;
-import org.cirdles.topsoil.variable.IndependentVariable;
 import org.cirdles.topsoil.variable.Variable;
+import org.cirdles.topsoil.variable.Variables;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 
 public class ClassicDataParser extends DefaultDataParser {
@@ -38,13 +36,7 @@ public class ClassicDataParser extends DefaultDataParser {
     //**********************************************//
 
     private void prepareTable(DataTable table) {
-        List<Variable<?>> variables = Arrays.asList(
-                IndependentVariable.X,
-                DependentVariable.SIGMA_X,
-                IndependentVariable.Y,
-                DependentVariable.SIGMA_Y,
-                IndependentVariable.RHO
-        );
+        List<Variable<?>> variables = Variables.ALL;
         List<DataColumn<?>> columns = table.getDataColumns();
 
         for (int i = 0; i < Math.min(variables.size(), table.getColumnRoot().countLeafNodes()); i++) {

@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
+import org.cirdles.topsoil.app.data.DataHandler;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
@@ -11,6 +12,7 @@ import org.cirdles.topsoil.plot.PlotType;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ProjectManager {
 
@@ -48,7 +50,7 @@ public class ProjectManager {
     }
     public static void deregisterOpenPlot(DataTable table, PlotType plotType) {
         for (OpenPlot openPlot : openPlots) {
-            if (openPlot.getTable().equals(table) && openPlot.getPlotView().getPlot().getPlotType().equals(plotType)) {
+            if (openPlot.getTable().equals(table) && openPlot.getPlotType().equals(plotType)) {
                 openPlots.remove(openPlot);
                 break;
             }
@@ -56,7 +58,7 @@ public class ProjectManager {
     }
     public static TopsoilPlotView getOpenPlotView(DataTable table, PlotType plotType) {
         for (OpenPlot openPlot : openPlots) {
-            if (openPlot.getTable().equals(table) && openPlot.getPlotView().getPlot().getPlotType().equals(plotType)) {
+            if (openPlot.getTable().equals(table) && openPlot.getPlotType().equals(plotType)) {
                 return openPlot.getPlotView();
             }
         }
@@ -74,7 +76,7 @@ public class ProjectManager {
     public static void updatePlotsForTable(DataTable table) {
         for (OpenPlot openPlot : openPlots) {
             if (openPlot.getTable().equals(table)) {
-                openPlot.getPlotView().getPlot().setData(VisualizationsMenuHelper.getPlotDataFromTable(table));
+                openPlot.getPlotView().getPlot().setData(DataHandler.getPlotData(table));
             }
         }
     }
@@ -92,6 +94,10 @@ public class ProjectManager {
 
         public DataTable getTable() {
             return table;
+        }
+
+        public PlotType getPlotType() {
+            return plotView.getPlot().getPlotType();
         }
 
         public TopsoilPlotView getPlotView() {

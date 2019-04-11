@@ -7,15 +7,16 @@ package org.cirdles.topsoil.variable;
  */
 public enum BooleanVariable implements Variable<Boolean> {
 
-    SELECTED("selected", "selected"),
-    VALID("valid", "valid");
+    SELECTED("selected", "selected", true);
 
     private String name;
     private String abbr;
+    private boolean defaultValue;
 
-    BooleanVariable(String name, String abbreviation) {
+    BooleanVariable(String name, String abbreviation, boolean defaultValue) {
         this.name = name;
         this.abbr = abbreviation;
+        this.defaultValue = defaultValue;
     }
 
     @Override
@@ -26,6 +27,11 @@ public enum BooleanVariable implements Variable<Boolean> {
     @Override
     public String getAbbreviation() {
         return abbr;
+    }
+
+    @Override
+    public Boolean defaultValue() {
+        return defaultValue;
     }
 
 }

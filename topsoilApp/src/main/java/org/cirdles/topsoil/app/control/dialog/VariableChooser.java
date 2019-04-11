@@ -59,7 +59,7 @@ public class VariableChooser extends HBox {
     protected void initialize() {
         // Add left-side variable labels
         Label label;
-        for (Variable<?> variable : Variables.ALL) {
+        for (Variable<?> variable : Variables.NUMBER_TYPE) {
             label = new Label(variable.getName());
             label.setMinHeight(ROW_HEIGHT);
             label.setMaxHeight(ROW_HEIGHT);
@@ -145,7 +145,7 @@ public class VariableChooser extends HBox {
     private ObservableList<VariableRow<?>> makeTableRows(DataTable table) {
         ObservableList<VariableRow<?>> rows = FXCollections.observableArrayList();
         VariableRow<?> row;
-        for (Variable<?> variable : Variables.ALL) {
+        for (Variable<?> variable : Variables.NUMBER_TYPE) {
             row = new VariableRow<>(variable);
             for (DataColumn<?> column : table.getDataColumns()) {
                 BooleanProperty property = new SimpleBooleanProperty(table.getVariableColumnMap().get(variable) == column);
