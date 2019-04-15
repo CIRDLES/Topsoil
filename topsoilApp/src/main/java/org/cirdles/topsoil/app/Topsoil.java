@@ -2,6 +2,9 @@ package org.cirdles.topsoil.app;
 
 import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.stage.StageHelper;
+import com.teamdev.jxbrowser.chromium.BrowserCore;
+import com.teamdev.jxbrowser.chromium.BrowserPreferences;
+import com.teamdev.jxbrowser.chromium.internal.Environment;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -51,6 +54,25 @@ public class Topsoil extends Application {
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
+
+    @Override
+    public void init() {
+        // JxBrowser; enables lightweight mode, local files, and logging
+        BrowserPreferences.setChromiumSwitches(
+                "--disable-gpu",
+                "--disable-gpu-compositing",
+                "--enable-begin-frame-scheduling",
+                "--software-rendering-fps=60",
+                "--disable-web-security",
+                "-–allow-file-access-from-files",
+                "--enable-logging --v=1"
+        );
+        if (Environment.isMac()) {
+            System.setProperty("jxbrowser.ipc.external", "true");
+            BrowserCore.initialize();   // must be initialized on non-UI thread on Mac
+        }
+    }
 
     @Override
     public void start(Stage primaryStage) {

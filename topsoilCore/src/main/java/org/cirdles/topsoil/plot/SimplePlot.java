@@ -3,7 +3,6 @@ package org.cirdles.topsoil.plot;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserContextParams;
-import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.BrowserType;
 import com.teamdev.jxbrowser.chromium.JSArray;
 import com.teamdev.jxbrowser.chromium.JSFunction;
@@ -14,6 +13,7 @@ import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
 import com.teamdev.jxbrowser.chromium.dom.DOMElement;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
+import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 import javafx.scene.Node;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
@@ -26,7 +26,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,18 +41,6 @@ import java.util.Objects;
 
 public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayable {
 
-    static {
-        BrowserPreferences.setChromiumSwitches(
-                "--disable-gpu",
-                "--disable-gpu-compositing",
-                "--enable-begin-frame-scheduling",
-                "--software-rendering-fps=60",
-                "--disable-web-security",
-                "-–allow-file-access-from-files",
-                "--enable-logging --v=1"
-        );
-    }
-
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
@@ -64,6 +51,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     private final PropertiesBridge propertiesBridge = new PropertiesBridge();
     private final Regression regression = new Regression();
     private Browser browser;
+    private BrowserView browserView;
     private JSObject topsoil;
 
     //**********************************************//
@@ -97,6 +85,8 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                     if (properties != null) {
                         setProperties(properties);
                     }
+
+                    resize();
                 }
             }
         });
@@ -108,6 +98,10 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
             }
         });
         browser.loadHTML(buildHTML());
+
+        browserView = new BrowserView(browser);
+        browserView.widthProperty().addListener(c -> resize());
+        browserView.heightProperty().addListener(c -> resize());
     }
 
     //**********************************************//
@@ -144,17 +138,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     /**{@inheritDoc}*/
     @Override
     public final Node displayAsNode() {
-        com.teamdev.jxbrowser.chromium.javafx.BrowserView browserView = new com.teamdev.jxbrowser.chromium.javafx.BrowserView(browser);
-        Runnable resize = () -> resize(browserView.getWidth(), browserView.getHeight());
-        resize.run();
-        browserView.widthProperty().addListener(c -> resize.run());
-        browserView.heightProperty().addListener(c -> resize.run());
         return browserView;
-    }
-
-    @Override
-    public final JComponent displayAsJComponent() {
-        return new com.teamdev.jxbrowser.chromium.swing.BrowserView(this.browser);
     }
 
     /**{@inheritDoc}*/
@@ -246,9 +230,9 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         new SVGSaver().save(displayAsSVGDocument(), file);
     }
 
-//    public final void resize() {
-//        resize(browserView.getWidth(), browserView.getHeight());
-//    }
+    public final void resize() {
+        resize(browserView.getWidth(), browserView.getHeight());
+    }
 
     //**********************************************//
     //                PRIVATE METHODS               //
