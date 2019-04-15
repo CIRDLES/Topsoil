@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.util;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.StringConverter;
 
 import java.text.DecimalFormat;
@@ -20,7 +22,17 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
 
     private String patternBase;
     private DecimalFormat df = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.getDefault());
-    private int numFractionDigits = 9;
+
+    private IntegerProperty numFractionDigits = new SimpleIntegerProperty(9);
+    public IntegerProperty numFractionDigitsProperty() {
+        return numFractionDigits;
+    }
+    public final int getNumFractionDigits() {
+        return numFractionDigits.get();
+    }
+    public final void setNumFractionDigits(int n) {
+        numFractionDigits.set(n);
+    }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -30,6 +42,7 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
         super();
         DecimalFormatSymbols symbols = df.getDecimalFormatSymbols();
         patternBase = "0" + symbols.getDecimalSeparator() + "0";
+        df.applyPattern(patternBase);
     }
 
     //**********************************************//
@@ -41,7 +54,7 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
         if (number != null) {
             int valueFractionDigits = countFractionDigits(number);
             StringBuilder pattern = new StringBuilder(patternBase);
-            for (int i = 1; i < numFractionDigits; i++) {
+            for (int i = 1; i < numFractionDigits.get(); i++) {
                 if (i < valueFractionDigits) {
                     pattern.append("0");
                 } else {
@@ -49,13 +62,14 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
                 }
             }
             df.applyLocalizedPattern(pattern.toString());
-            return df.format((double) number);
+            return df.format(number);
         }
         return "";
     }
 
     @Override
     public Number fromString(String str) {
+        df.applyPattern(patternBase);
         if (! str.isEmpty()) {
             try {
                 return df.parse(str);
@@ -67,13 +81,9 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
         return null;
     }
 
-    public void setNumFractionDigits(int n) {
-        this.numFractionDigits = n;
-    }
-
     public static int countFractionDigits(Number number) {
         if (number != null) {
-            String str = Double.toString((double) number).toLowerCase();
+            String str = number.toString().toLowerCase();
             int dotIndex = str.indexOf(".");
             return str.substring(dotIndex + 1).length();
         }

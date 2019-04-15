@@ -24,11 +24,15 @@ import java.util.List;
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
+    private DataTable table;
+
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     public TopsoilTreeTableView(DataTable table) {
+        this.table = table;
+
         this.setEditable(true);
         this.setSortMode(TreeSortMode.ALL_DESCENDANTS);
         this.setShowRoot(false);
@@ -124,18 +128,13 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             node.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
             tableColumns.add(newColumn);
         }
+        this.layout();
         return tableColumns;
     }
 
     private <T extends Serializable> TreeTableColumn<DataComponent, T> makeTreeTableColumn(DataColumn<T> dataColumn) {
         TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
-
-        newColumn.setCellFactory(param -> {
-            TextFieldTreeTableCell<DataComponent, T> cell = new TextFieldTreeTableCell<>(dataColumn.getStringConverter());
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.setEditable(false);
-            return cell;
-        });
+        newColumn.setCellFactory(param -> new TopsoilTreeTableCell<>(dataColumn, table));
         newColumn.setCellValueFactory(param -> {
             if (param.getValue().getValue() instanceof DataSegment) {
                 return null;

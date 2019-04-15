@@ -8,8 +8,6 @@ import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.app.file.parser.DefaultDataParser;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.variable.DependentVariable;
-import org.cirdles.topsoil.variable.IndependentVariable;
 import org.cirdles.topsoil.variable.Variables;
 
 import java.io.IOException;

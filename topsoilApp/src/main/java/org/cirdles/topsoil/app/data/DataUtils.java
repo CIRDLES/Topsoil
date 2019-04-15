@@ -15,9 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DataHandler {
+public class DataUtils {
 
-    private DataHandler() {}
+    private DataUtils() {}
 
     public static List<String> getDataErrors(DataTable table) {
         List<String> errors = new ArrayList<>();

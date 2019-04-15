@@ -1,12 +1,16 @@
 package org.cirdles.topsoil.app.data;
 
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SetProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -38,7 +42,6 @@ public class DataTable extends Observable {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private Map<Variable<?>, DataColumn<?>> varMap = new HashMap<>();
     private ColumnRoot columnRoot;
     private DataRoot dataRoot;
     private DataTemplate template;
@@ -90,6 +93,21 @@ public class DataTable extends Observable {
     }
     public final Set<DataRow> getDataRows() {
         return dataRowsProperty().get();
+    }
+
+    private final MapProperty<Variable<?>, DataColumn<?>> variableColumnMap =
+            new SimpleMapProperty<>(FXCollections.observableMap(HashBiMap.create()));
+    public MapProperty<Variable<?>, DataColumn<?>> variableColumnMapProperty() {
+        return variableColumnMap;
+    }
+    /**
+     * Returns a map of variable/column associations for the table. The {@code Variable} key is represented by
+     * the corresponding {@code DataColumn} value in the table.
+     *
+     * @return  Map of Variable/DataColumn associations
+     */
+    public BiMap<Variable<?>, DataColumn<?>> getVariableColumnMap() {
+        return HashBiMap.create(variableColumnMap);
     }
 
     //**********************************************//
@@ -147,16 +165,6 @@ public class DataTable extends Observable {
     }
 
     /**
-     * Returns a {@code Map} of variable/column associations for the table. The {@code Variable} key is represented by
-     * the corresponding {@code DataColumn} value in the table.
-     *
-     * @return  Map of Variable/DataColumn associations
-     */
-    public Map<Variable<?>, DataColumn<?>> getVariableColumnMap() {
-        return HashBiMap.create(varMap);
-    }
-
-    /**
      * Assigns a {@code DataColumn} from the table to the provided {@code Variable}.
      *
      * @param var   Variable
@@ -164,7 +172,7 @@ public class DataTable extends Observable {
      * @return      the previous DataColumn assignment, if it exists
      */
     public DataColumn<?> setColumnForVariable(Variable<?> var, DataColumn<?> col) {
-        return varMap.putIfAbsent(var, col);
+        return variableColumnMap.putIfAbsent(var, col);
     }
 
     /**
@@ -173,10 +181,10 @@ public class DataTable extends Observable {
      * @param map   a Map containing the new mappings
      */
     public void setColumnsForAllVariables(Map<Variable<?>, DataColumn<?>> map) {
-        varMap.clear();
+        variableColumnMap.clear();
         if (map != null) {
             for (Map.Entry<Variable<?>, DataColumn<?>> entry : map.entrySet()) {
-                varMap.putIfAbsent(entry.getKey(), entry.getValue());
+                variableColumnMap.putIfAbsent(entry.getKey(), entry.getValue());
             }
         }
     }

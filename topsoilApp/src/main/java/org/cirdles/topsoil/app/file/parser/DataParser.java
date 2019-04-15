@@ -217,7 +217,8 @@ public interface DataParser {
         DataRow newRow = new DataRow(label);
         String str;
         for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
-            str = row[colIndex];
+            str = (colIndex < row.length) ? row[colIndex] : "";
+
             if (columns.get(colIndex).getType() == Number.class) {
                 DataColumn<Number> doubleCol = (DataColumn<Number>) columns.get(colIndex);
                 newRow.setValueForColumn(doubleCol, (! str.isEmpty()) ? Double.parseDouble(str) : 0.0);

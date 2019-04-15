@@ -7,22 +7,17 @@ import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.plot.PlotStage;
-import org.cirdles.topsoil.app.data.DataHandler;
-import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.data.row.DataRow;
-import org.cirdles.topsoil.app.data.row.DataSegment;
+import org.cirdles.topsoil.app.data.DataUtils;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.util.PlotObservationThread;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
-import org.cirdles.topsoil.app.util.TableObserver;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.app.util.DataChangeObserver;
 import org.cirdles.topsoil.plot.*;
 import org.cirdles.topsoil.variable.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -76,8 +71,8 @@ public class VisualizationsMenuHelper {
             // Find already-open plot and request focus
             openPlotView.getScene().getWindow().requestFocus();
         } else {
-            List<Map<String, Object>> data = DataHandler.getPlotData(table);
-            List<String> dataErrors = DataHandler.getDataErrors(table);
+            List<Map<String, Object>> data = DataUtils.getPlotData(table);
+            List<String> dataErrors = DataUtils.getDataErrors(table);
 
             if (dataErrors.size() > 0) {
                 StringJoiner errors = new StringJoiner("\n");
@@ -90,8 +85,8 @@ public class VisualizationsMenuHelper {
 
             Plot plot = plotType.getPlot();
             plot.setData(data);
-            TableObserver tableObserver = new TableObserver(table, plot);
-            table.addObserver(tableObserver);
+            DataChangeObserver dataChangeObserver = new DataChangeObserver(table, plot);
+            table.addObserver(dataChangeObserver);
 
             // @TODO Update plot on data changes
 
@@ -121,7 +116,7 @@ public class VisualizationsMenuHelper {
                     () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
             plotStage.setOnCloseRequest(closeEvent -> {
                 observer.shutdown();
-                table.deleteObserver(tableObserver);
+                table.deleteObserver(dataChangeObserver);
                 ProjectManager.deregisterOpenPlot(table, plotType);
             });
 
