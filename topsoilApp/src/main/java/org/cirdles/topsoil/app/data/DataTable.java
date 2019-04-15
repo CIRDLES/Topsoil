@@ -134,6 +134,12 @@ public class DataTable extends Observable {
                 setChanged();
                 notifyObservers();
             });
+            for (DataRow.DataValue<?> value : row.getValueMap().values()) {
+                value.valueProperty().addListener(c -> {
+                    setChanged();
+                    notifyObservers();
+                });
+            }
         }
 
         // Sets the fraction digits for each column to align values by their decimal separators

@@ -77,7 +77,7 @@ public class DataUtils {
                             value = doubleVal;
                         }
                         if (var == IndependentVariable.RHO) {
-                            double doubleVal = (double) value;
+                            double doubleVal = ((Number) value).doubleValue();
                             if (doubleVal < -1 || doubleVal > 1) {
                                 value = var.defaultValue();
                             }
