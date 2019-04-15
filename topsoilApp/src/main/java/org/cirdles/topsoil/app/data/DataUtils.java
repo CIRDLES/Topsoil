@@ -21,7 +21,7 @@ public class DataUtils {
 
     public static List<String> getDataErrors(DataTable table) {
         List<String> errors = new ArrayList<>();
-        DataColumn<?> rhoDataColumn = table.getVariableColumnMap().get(Variables.RHO);
+        DataColumn<?> rhoDataColumn = table.getColumnForVariable(Variables.RHO);
         double value;
         if (rhoDataColumn != null && rhoDataColumn.getType().equals(Number.class)) {
             DataColumn<Number> rhoColumn = (DataColumn<Number>) rhoDataColumn;

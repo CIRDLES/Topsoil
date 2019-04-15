@@ -25,6 +25,8 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import static org.cirdles.topsoil.plot.PlotProperty.TITLE;
 import static org.cirdles.topsoil.plot.PlotProperty.UNCERTAINTY;
+import static org.cirdles.topsoil.plot.PlotProperty.X_AXIS;
+import static org.cirdles.topsoil.plot.PlotProperty.Y_AXIS;
 
 /**
  * A utility class providing helper methods for the logic behind items in the menu bar.
@@ -57,7 +59,7 @@ public class VisualizationsMenuHelper {
         List<Variable<?>> required = Arrays.asList(Variables.X, Variables.Y);
         List<Variable<?>> missing = new ArrayList<>();
         for (Variable<?> v : required) {
-            if (table.getVariableColumnMap().get(v) == null) {
+            if (table.getColumnForVariable(v) == null) {
                 missing.add(v);
             }
         }
@@ -97,12 +99,19 @@ public class VisualizationsMenuHelper {
             properties.put(TITLE, table.getLabel());
             // @TODO assign X and Y axis labels
             properties.put(UNCERTAINTY, table.getUncertainty().getMultiplier());
+            if (table.getVariableColumnMap().containsKey(Variables.X)) {
+                properties.put(X_AXIS, table.getColumnForVariable(Variables.X).getLabel());
+            }
+            if (table.getVariableColumnMap().containsKey(Variables.Y)) {
+                properties.put(Y_AXIS, table.getColumnForVariable(Variables.Y).getLabel());
+            }
             plot.setProperties(properties);
             TopsoilPlotView plotView = new TopsoilPlotView(plot);
 
             // Connect table model to properties panel
             PlotPropertiesPanel panel = plotView.getPropertiesPanel();
             panel.isotopeSystemProperty().bindBidirectional(table.isotopeSystemProperty());
+
 
             // Update properties panel with changes in the plot
             PlotObservationThread observationThread = new PlotObservationThread();

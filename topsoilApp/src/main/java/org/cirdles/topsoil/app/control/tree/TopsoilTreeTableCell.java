@@ -9,7 +9,6 @@ import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
-import org.apache.xmlgraphics.io.Resource;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -97,7 +96,7 @@ public class TopsoilTreeTableCell<T> extends TextFieldTreeTableCell<DataComponen
 
     private void updateValidity() {
         if (! isEmpty()) {
-            Variable<?> variable = table.getVariableColumnMap().inverse().get(dataColumn);
+            Variable<?> variable = table.getVariableForColumn(dataColumn);
             if (variable == Variables.RHO) {
                 Number n = (Number) getItem();
                 if (n != null) {

@@ -148,7 +148,7 @@ public class VariableChooser extends HBox {
         for (Variable<?> variable : Variables.NUMBER_TYPE) {
             row = new VariableRow<>(variable);
             for (DataColumn<?> column : table.getDataColumns()) {
-                BooleanProperty property = new SimpleBooleanProperty(table.getVariableColumnMap().get(variable) == column);
+                BooleanProperty property = new SimpleBooleanProperty(table.getColumnForVariable(variable) == column);
                 property.addListener(((observable, oldValue, newValue) -> {
                     if (newValue) {
                         deselectOthers(column, variable);

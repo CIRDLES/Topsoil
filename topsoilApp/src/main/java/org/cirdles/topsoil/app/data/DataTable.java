@@ -95,8 +95,7 @@ public class DataTable extends Observable {
         return dataRowsProperty().get();
     }
 
-    private final MapProperty<Variable<?>, DataColumn<?>> variableColumnMap =
-            new SimpleMapProperty<>(FXCollections.observableMap(HashBiMap.create()));
+    private final MapProperty<Variable<?>, DataColumn<?>> variableColumnMap = new SimpleMapProperty<>(FXCollections.observableMap(HashBiMap.create()));
     public MapProperty<Variable<?>, DataColumn<?>> variableColumnMapProperty() {
         return variableColumnMap;
     }
@@ -168,6 +167,14 @@ public class DataTable extends Observable {
 
     public DataTemplate getTemplate() {
         return template;
+    }
+
+    public DataColumn<?> getColumnForVariable(Variable<?> variable) {
+        return variableColumnMap.get(variable);
+    }
+
+    public Variable<?> getVariableForColumn(DataColumn<?> column) {
+        return HashBiMap.create(variableColumnMap).inverse().get(column);
     }
 
     /**
