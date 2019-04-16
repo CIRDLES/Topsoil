@@ -35,17 +35,41 @@ public class TopsoilMenuBar extends MenuBar {
         MenuItem preferencesItem = new MenuItem(resources.getString("preferences"));
         preferencesItem.setDisable(true);
 
+        MenuItem undoItem = new MenuItem("Undo");
+        undoItem.setOnAction(event -> MenuUtils.undoLastAction());
+
+        MenuItem redoItem = new MenuItem("Redo");
+        redoItem.setOnAction(event -> MenuUtils.redoLastAction());
+
         MenuItem tableOptionsItem = new MenuItem(resources.getString("tableOptions"));
-        tableOptionsItem.setOnAction(event -> {
-            DataTableOptionsDialog.showDialog(MenuUtils.getCurrentDataTable(), Topsoil.getPrimaryStage());
-        });
+        tableOptionsItem.setOnAction(event -> DataTableOptionsDialog.showDialog(
+                MenuUtils.getCurrentDataTable(),
+                Topsoil.getPrimaryStage()
+        ));
 
         Menu editMenu = new Menu(resources.getString("editMenu"), null,
+                undoItem,
+                redoItem,
+                new SeparatorMenuItem(),
                 tableOptionsItem
 //                new SeparatorMenuItem(),
 //                preferencesItem
         );
         editMenu.setOnShown(event -> {
+            if (MenuUtils.lastUndoName() != null) {
+                undoItem.setDisable(false);
+                undoItem.setText(resources.getString("undo") + " \"" + MenuUtils.lastUndoName() + "\"");
+            } else {
+                undoItem.setDisable(true);
+                undoItem.setText(resources.getString("undo"));
+            }
+            if (MenuUtils.lastRedoName() != null) {
+                redoItem.setDisable(false);
+                redoItem.setText(resources.getString("redo") + " \"" + MenuUtils.lastRedoName() + "\"");
+            } else {
+                redoItem.setDisable(true);
+                redoItem.setText(resources.getString("redo"));
+            }
             tableOptionsItem.setDisable(ProjectManager.getProject() == null);
         });
 

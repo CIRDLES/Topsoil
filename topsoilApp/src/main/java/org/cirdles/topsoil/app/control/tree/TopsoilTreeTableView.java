@@ -14,6 +14,7 @@ import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.util.undo.UndoAction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -134,7 +135,29 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
     private <T extends Serializable> TreeTableColumn<DataComponent, T> makeTreeTableColumn(DataColumn<T> dataColumn) {
         TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
-        newColumn.setCellFactory(param -> new TopsoilTreeTableCell<>(dataColumn, table));
+        newColumn.setCellFactory(param -> {
+            TreeTableCell<DataComponent, T> cell = new TopsoilTreeTableCell<>(dataColumn, table);
+            cell.addEventHandler(CellEditEvent.CELL_EDITED, event -> {
+                DataRow.DataValue<T> dataValue = (DataRow.DataValue<T>) event.getDataValue();
+                table.addUndoAction(new UndoAction() {
+                    @Override
+                    public void execute() {
+                        dataValue.setValue((T) event.getNewValue());
+                    }
+
+                    @Override
+                    public void undo() {
+                        dataValue.setValue((T) event.getOldValue());
+                    }
+
+                    @Override
+                    public String getActionName() {
+                        return "Cell Edited";
+                    }
+                });
+            });
+            return cell;
+        });
         newColumn.setCellValueFactory(param -> {
             if (param.getValue().getValue() instanceof DataSegment) {
                 return null;

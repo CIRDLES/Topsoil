@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.app.control.tree;
 
 import javafx.collections.MapChangeListener;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.control.TextField;
@@ -13,6 +14,7 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
+import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 
@@ -86,11 +88,16 @@ public class TopsoilTreeTableCell<T> extends TextFieldTreeTableCell<DataComponen
 
     @Override
     public void commitEdit(T newValue) {
-        if (newValue.equals(Double.NaN)) {
+        if (newValue == null || newValue.equals(Double.NaN)) {
             super.cancelEdit();
             updateValidity();
             return;
         }
+        Event.fireEvent(this, new CellEditEvent(
+                ((DataRow) getTreeTableRow().getTreeItem().getValue()).getValueForColumn(dataColumn),
+                getItem(),
+                newValue
+        ));
         super.commitEdit(newValue);
     }
 

@@ -19,6 +19,8 @@ import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.util.ListUtils;
 import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
+import org.cirdles.topsoil.app.util.undo.UndoAction;
+import org.cirdles.topsoil.app.util.undo.UndoManager;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
@@ -45,6 +47,7 @@ public class DataTable extends Observable {
     private ColumnRoot columnRoot;
     private DataRoot dataRoot;
     private DataTemplate template;
+    private UndoManager undoManager = new UndoManager(50);
 
     //**********************************************//
     //                  PROPERTIES                  //
@@ -127,18 +130,12 @@ public class DataTable extends Observable {
         this.dataRoot = dataRoot;
         this.dataRoot.labelProperty().bind(labelProperty());
 
-        // Notify observers on row selection changes
         for (DataRow row : getDataRows()) {
+            // notify observers of row selection changes
             row.selectedProperty().addListener(c -> {
                 setChanged();
                 notifyObservers();
             });
-            for (DataRow.DataValue<?> value : row.getValueMap().values()) {
-                value.valueProperty().addListener(c -> {
-                    setChanged();
-                    notifyObservers();
-                });
-            }
         }
 
         // Sets the fraction digits for each column to align values by their decimal separators
@@ -229,6 +226,26 @@ public class DataTable extends Observable {
         return values;
     }
 
+    public void addUndoAction(UndoAction action) {
+        undoManager.add(action);
+    }
+
+    public void undoLastAction() {
+        undoManager.undo();
+    }
+
+    public void redoLastAction() {
+        undoManager.redo();
+    }
+
+    public String lastUndoName() {
+        return undoManager.getUndoName();
+    }
+
+    public String lastRedoName(){
+        return undoManager.getRedoName();
+    }
+
     @Override
     public String toString() {
         return getLabel();
@@ -244,6 +261,34 @@ public class DataTable extends Observable {
             maxFractionDigits = Math.max(maxFractionDigits, NumberColumnStringConverter.countFractionDigits(n));
         }
         ((NumberColumnStringConverter) column.getStringConverter()).setNumFractionDigits(maxFractionDigits);
+    }
+
+    public static class ValueChangedAction<T> implements UndoAction {
+
+        private DataRow.DataValue<T> dataValue;
+        private T oldValue;
+        private T newValue;
+
+        ValueChangedAction(DataRow.DataValue<T> dataValue, T oldValue, T newValue) {
+            this.dataValue = dataValue;
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+
+        @Override
+        public void execute() {
+            dataValue.setValue(newValue);
+        }
+
+        @Override
+        public void undo() {
+            dataValue.setValue(oldValue);
+        }
+
+        @Override
+        public String getActionName() {
+            return "Value Changed";
+        }
     }
 
 }
