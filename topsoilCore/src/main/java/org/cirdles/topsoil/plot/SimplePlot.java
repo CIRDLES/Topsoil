@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Base implementation for {@link Plot} subclasses. Controls the JxBrowser {@code BrowserView} used to display JS files.
+ */
 public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayable {
 
     //**********************************************//
@@ -61,20 +64,17 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     public SimplePlot(PlotType plotType, Map<PlotProperty, Object> plotProperties) {
         super(plotType, plotProperties);
 
-        BrowserContext browserContext;
-        try {
-            browserContext = new BrowserContext(new BrowserContextParams(Files.createTempDirectory("tBDir").toString()));
-        } catch(IOException e) {
-            browserContext = BrowserContext.defaultContext();
-        }
-        this.browser = new Browser(BrowserType.LIGHTWEIGHT, browserContext);
+        this.browser = new Browser(BrowserType.LIGHTWEIGHT);
         browser.addLoadListener(new LoadAdapter() {
             @Override
             public void onFinishLoadingFrame(FinishLoadingEvent event) {
                 if (event.isMainFrame()) {
                     Browser browser = event.getBrowser();
+
+                    // Get JSObject for Java-to-JS calls
                     topsoil = browser.executeJavaScriptAndReturnValue("topsoil").asObject();
 
+                    // Add bridges for JS-to-Java calls
                     topsoil.setProperty("propertiesBridge", propertiesBridge);
                     topsoil.setProperty("regression", regression);
 
@@ -90,6 +90,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 }
             }
         });
+        // Listen for logs from JS
         browser.addConsoleListener(event -> {
             if (Objects.equals(event.getLevel().toString(), "ERROR")) {
                 LOGGER.error(event.getMessage());
@@ -97,9 +98,11 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 LOGGER.info(event.getMessage());
             }
         });
+
         browser.loadHTML(buildHTML());
 
         browserView = new BrowserView(browser);
+        // Listen for size changes to Node
         browserView.widthProperty().addListener(c -> resize());
         browserView.heightProperty().addListener(c -> resize());
     }
@@ -147,7 +150,8 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         super.setData(data);
         JSFunction setData = getTopsoilFunction("setData");
         if (setData != null) {
-            JSArray jsData = emptyJSArray();
+            JSArray jsData = emptyJSArray();    // Browser requires a JSArray instead of a Java array, so
+                                                // we get one here, and write to it in convertData()
             setData.invoke(topsoil, convertData(data, jsData));
         }
     }
@@ -189,9 +193,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     /**{@inheritDoc}*/
     @Override
     public final void updateProperties() {
-
         Map<PlotProperty, Object> properties = propertiesBridge.getProperties();
-
         for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
             super.setProperty(entry.getKey(), entry.getValue());
         }
@@ -228,10 +230,6 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     /**{@inheritDoc}*/
     public final void saveAsSVGDocument(File file) {
         new SVGSaver().save(displayAsSVGDocument(), file);
-    }
-
-    public final void resize() {
-        resize(browserView.getWidth(), browserView.getHeight());
     }
 
     //**********************************************//
@@ -275,6 +273,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
         String plotFile = resourceExtractor.extractResourceAsPath(plotType.getPlotFile()).toUri().toString();
 
+        // Append plotType-specific scripts to HTML
         StringBuilder script = new StringBuilder();
         Path path;
         for (String resource : plotType.getResources()) {
@@ -289,6 +288,13 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         return String.format(htmlTemplate, plotFile).concat(script.toString());
     }
 
+    /**
+     * Converts plot properties into a JSObject that can be passed into the Browser.
+     *
+     * @param properties    properties as Java Map
+     *
+     * @return              JSObject
+     */
     private JSObject convertProperties(Map<PlotProperty, Object> properties) {
         JSObject jsProperties = browser.getJSContext().createObject();
         for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
@@ -297,6 +303,14 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         return jsProperties;
     }
 
+    /**
+     * Converts plot data into a JSArray that can be passed into the Browser.
+     *
+     * @param javaData      data as Java List
+     * @param jsData        empty JSArray to write data to
+     *
+     * @return              JSArray
+     */
     private JSArray convertData(List<Map<String, Object>> javaData, JSArray jsData) {
         JSObject row;
         for (int i = 0; i < Math.max(javaData.size(), jsData.length()); i++) {
@@ -313,6 +327,12 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         return jsData;
     }
 
+    /**
+     * Obtains a JSFunction object for the specified function of "topsoil".
+     *
+     * @param functionName      String function name
+     * @return                  JSFunction
+     */
     private JSFunction getTopsoilFunction(String functionName) {
         if (topsoil != null) {
             JSValue function = topsoil.getProperty(functionName);
@@ -327,11 +347,13 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         return browser.executeJavaScriptAndReturnValue("topsoil.emptyArray()").asArray();
     }
 
-    private void resize(double width, double height) {
+    private void resize() {
         JSFunction resize = getTopsoilFunction("resize");
+        double width = browserView.getWidth();
+        double height = browserView.getHeight();
         if (resize != null) {
-            resize.asFunction().invoke(topsoil, width, height);
             browser.setSize((int) width, (int) height);
+            resize.asFunction().invoke(topsoil, width, height);
         }
     }
 

@@ -56,6 +56,7 @@ public class VisualizationsMenuHelper {
      * @return              true if successful
      */
     public static boolean generatePlot(PlotType plotType, DataTable table, Map<PlotProperty, Object> properties) {
+        // Check for required plotting variables
         List<Variable<?>> required = Arrays.asList(Variables.X, Variables.Y);
         List<Variable<?>> missing = new ArrayList<>();
         for (Variable<?> v : required) {
@@ -76,6 +77,7 @@ public class VisualizationsMenuHelper {
             List<Map<String, Object>> data = DataUtils.getPlotData(table);
             List<String> dataErrors = DataUtils.getDataErrors(table);
 
+            // Notify the user of any invalid data values
             if (dataErrors.size() > 0) {
                 StringJoiner errors = new StringJoiner("\n");
                 for (String err : dataErrors) {
@@ -87,15 +89,16 @@ public class VisualizationsMenuHelper {
 
             Plot plot = plotType.getPlot();
             plot.setData(data);
+
+            // Listen for changes in the DataTable @TODO Replace Observer interface in model with events in view
             DataChangeObserver dataChangeObserver = new DataChangeObserver(table, plot);
             table.addObserver(dataChangeObserver);
-
-            // @TODO Update plot on data changes
 
             if (properties == null) {
                 properties = new DefaultProperties();
             }
 
+            // Set data-dependent properties
             properties.put(TITLE, table.getLabel());
             // @TODO assign X and Y axis labels
             properties.put(UNCERTAINTY, table.getUncertainty().getMultiplier());
@@ -108,7 +111,7 @@ public class VisualizationsMenuHelper {
             plot.setProperties(properties);
             TopsoilPlotView plotView = new TopsoilPlotView(plot);
 
-            // Connect table model to properties panel
+            // Update properties panel with changes in the table
             PlotPropertiesPanel panel = plotView.getPropertiesPanel();
             panel.isotopeSystemProperty().bindBidirectional(table.isotopeSystemProperty());
 
@@ -117,6 +120,7 @@ public class VisualizationsMenuHelper {
             PlotObservationThread observationThread = new PlotObservationThread();
             ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, panel);
 
+            // Setup plot Stage
             Scene scene = new Scene(plotView, DEFAULT_PLOT_WIDTH, DEFAULT_PLOT_HEIGHT);
             Stage plotStage = new PlotStage(plotType);
             plotStage.setScene(scene);
@@ -131,7 +135,6 @@ public class VisualizationsMenuHelper {
 
             // Show Plot
             plotStage.show();
-//            Platform.runLater(() -> ((SimplePlot) plot).resize());
             ProjectManager.registerOpenPlot(table, plotView);
         }
         return true;
