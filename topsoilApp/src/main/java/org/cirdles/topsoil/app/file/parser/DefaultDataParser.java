@@ -73,6 +73,11 @@ public class DefaultDataParser implements DataParser {
 
             clazz = DataParser.getColumnDataType(rows, colIndex, numHeaderRows);
             label = joiner.toString();
+
+            if (label.equals("")) {
+                label = "newColumn";
+            }
+
             if (usedColumnLabels.containsKey(label)) {
                 labelFreq = usedColumnLabels.get(label);
                 usedColumnLabels.put(label, labelFreq + 1);

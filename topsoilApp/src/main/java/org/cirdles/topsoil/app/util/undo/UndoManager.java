@@ -3,14 +3,14 @@ package org.cirdles.topsoil.app.util.undo;
 import java.util.ArrayDeque;
 
 /**
- * A container for undoable {@link Command} objects. An {@code UndoManager} stores
- * Command objects and handles undo and redo operations. {@code Command} objects are stored in a pair of
- * {@link ArrayDeque}s, one for executed {@code Command}s, and the other for undone {@code Command}s. Each stores up
- * to maxSize {@code Command}s.
+ * A container for undoable {@link UndoAction} objects. An {@code UndoManager} stores
+ * UndoAction objects and handles undo and redo operations. {@code UndoAction} objects are stored in a pair of
+ * {@link ArrayDeque}s, one for executed {@code UndoAction}s, and the other for undone {@code UndoAction}s. Each stores up
+ * to maxSize {@code UndoAction}s.
  *
  * @author marottajb
  *
- * @see Command
+ * @see UndoAction
  */
 public class UndoManager {
 
@@ -21,16 +21,16 @@ public class UndoManager {
     private int maxSize;
 
     /**
-     * An {@code ArrayDeque} which stores recently executed {@link Command}s in
-     * order. A {@code Command} is popped off of the deque when one needs to be undone.
+     * An {@code ArrayDeque} which stores recently executed {@link UndoAction}s in
+     * order. A {@code UndoAction} is popped off of the deque when one needs to be undone.
      */
-    private ArrayDeque<Command> undo;
+    private ArrayDeque<UndoAction> undo;
 
     /**
-     * An {@code ArrayDeque} which stores recently undone {@link Command}s in order.
-     * A {@code Command} is popped off of the deque when one needs to be re-executed.
+     * An {@code ArrayDeque} which stores recently undone {@link UndoAction}s in order.
+     * A {@code UndoAction} is popped off of the deque when one needs to be re-executed.
      */
-    private ArrayDeque<Command> redo;
+    private ArrayDeque<UndoAction> redo;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -53,65 +53,65 @@ public class UndoManager {
     //**********************************************//
 
     /**
-     * Adds a newly executed {@code Command} to the {@code UndoManager}.
+     * Adds a newly executed {@code UndoAction} to the {@code UndoManager}.
      *
-     * @param command   new Command
+     * @param undoAction   new UndoAction
      */
-    public void add(Command command) {
-        if (command != null && maxSize > 0) {
+    public void add(UndoAction undoAction) {
+        if (undoAction != null && maxSize > 0) {
             if (undo.size() == maxSize) {
                 undo.removeLast();
             }
-            undo.push(command);
+            undo.push(undoAction);
             redo.clear();
         }
     }
 
     /**
-     * Undoes the most recently executed {@link Command}, and moves the Command to
+     * Undoes the most recently executed {@link UndoAction}, and moves the UndoAction to
      * the redo {@code ArrayDeque}.
      */
     public void undo() {
         if (!undo.isEmpty()) {
-            Command command = undo.pop();
-            command.undo();
-            redo.push(command);
+            UndoAction undoAction = undo.pop();
+            undoAction.undo();
+            redo.push(undoAction);
         }
     }
 
     /**
-     * Re-executes the most recently undone {@link Command}, and moves the
-     * {@code Command} to the undo {@code ArrayDeque}.
+     * Re-executes the most recently undone {@link UndoAction}, and moves the
+     * {@code UndoAction} to the undo {@code ArrayDeque}.
      */
     public void redo() {
         if (!redo.isEmpty()) {
-            Command command = redo.pop();
-            command.execute();
-            undo.push(command);
+            UndoAction undoAction = redo.pop();
+            undoAction.execute();
+            undo.push(undoAction);
         }
     }
 
     /**
-     * Returns a short description of the most recently executed {@link Command}.
+     * Returns a short description of the most recently executed {@link UndoAction}.
      *
      * @return the name of the command
      */
     public String getUndoName() {
-        return undo.isEmpty() ? "" : undo.peek().getActionName();
+        return undo.isEmpty() ? null : undo.peek().getActionName();
     }
 
     /**
-     * Returns a short description of the most recently undone {@link Command}.
+     * Returns a short description of the most recently undone {@link UndoAction}.
      *
      * @return the name of the command
      */
     public String getRedoName() {
-        return redo.isEmpty() ? "" : redo.peek().getActionName();
+        return redo.isEmpty() ? null : redo.peek().getActionName();
     }
 
     /**
      * Clears both the undo and redo {@code ArrayDeque}s, effectively erasing
-     * the {@link Command} history.
+     * the {@link UndoAction} history.
      */
     public void clear() {
         undo.clear();

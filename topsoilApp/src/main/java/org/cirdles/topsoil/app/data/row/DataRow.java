@@ -7,10 +7,7 @@ import javafx.collections.ObservableMap;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataLeaf;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Represents a single entry of data as a set of column/value mappings.
@@ -85,7 +82,7 @@ public class DataRow extends DataLeaf {
         //                 CONSTRUCTORS                 //
         //**********************************************//
 
-        public DataValue(T value) {
+        DataValue(T value) {
             setValue(value);
         }
     }

@@ -8,9 +8,13 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.app.menu.MenuUtils;
 import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 
@@ -99,6 +103,8 @@ public class Topsoil extends Application {
             }
         });
 
+        setupKeyboardShortcuts(scene);
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -175,6 +181,17 @@ public class Topsoil extends Application {
         }
 
         launch(args);
+    }
+
+    private static void setupKeyboardShortcuts(Scene scene) {
+        scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN),
+                () -> MenuUtils.undoLastAction()
+        );
+        scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN),
+                () -> MenuUtils.redoLastAction()
+        );
     }
 
 }

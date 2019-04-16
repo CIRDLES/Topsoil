@@ -12,8 +12,7 @@ import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
-import org.cirdles.topsoil.variable.DependentVariable;
-import org.cirdles.topsoil.variable.IndependentVariable;
+import org.cirdles.topsoil.variable.Variables;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -125,21 +124,23 @@ public class Squid3DataParser implements DataParser {
                 }
             }
             colLabel = joiner.toString().trim();
-            if (! colLabel.equals("")) {
-                if (usedColumnLabels.containsKey(colLabel)) {
-                    labelFreq = usedColumnLabels.get(colLabel);
-                    usedColumnLabels.put(colLabel, labelFreq + 1);
-                    colLabel += ("(" + labelFreq + ")");
-                } else {
-                    usedColumnLabels.put(colLabel, 1);
-                }
+            if (colLabel.equals("")) {
+                colLabel = "newColumn";
+            }
 
-                Class<?> clazz = DataParser.getColumnDataType(rows, colIndex, 5);
-                if (clazz == Number.class) {
-                    columns.add(DataColumn.numberColumn(colLabel));
-                } else {
-                    columns.add(DataColumn.stringColumn(colLabel));
-                }
+            if (usedColumnLabels.containsKey(colLabel)) {
+                labelFreq = usedColumnLabels.get(colLabel);
+                usedColumnLabels.put(colLabel, labelFreq + 1);
+                colLabel += ("(" + labelFreq + ")");
+            } else {
+                usedColumnLabels.put(colLabel, 1);
+            }
+
+            Class<?> clazz = DataParser.getColumnDataType(rows, colIndex, 5);
+            if (clazz == Number.class) {
+                columns.add(DataColumn.numberColumn(colLabel));
+            } else {
+                columns.add(DataColumn.stringColumn(colLabel));
             }
         }
 
@@ -233,11 +234,11 @@ public class Squid3DataParser implements DataParser {
             DataColumn<Number> sYColumn = (DataColumn<Number>) category.getChildren().get(colCount - 2);
             DataColumn<Number> rhoColumn = (DataColumn<Number>) category.getChildren().get(colCount - 1);
 
-            table.setColumnForVariable(IndependentVariable.X, xColumn);
-            table.setColumnForVariable(DependentVariable.SIGMA_X, sXColumn);
-            table.setColumnForVariable(IndependentVariable.Y, yColumn);
-            table.setColumnForVariable(DependentVariable.SIGMA_Y, sYColumn);
-            table.setColumnForVariable(IndependentVariable.RHO, rhoColumn);
+            table.setColumnForVariable(Variables.X, xColumn);
+            table.setColumnForVariable(Variables.SIGMA_X, sXColumn);
+            table.setColumnForVariable(Variables.Y, yColumn);
+            table.setColumnForVariable(Variables.SIGMA_Y, sYColumn);
+            table.setColumnForVariable(Variables.RHO, rhoColumn);
 
             List<DataColumn<?>> importantColumns = Arrays.asList(xColumn, sXColumn, yColumn, sYColumn, rhoColumn);
             deselectComponent(table.getColumnRoot(), importantColumns);

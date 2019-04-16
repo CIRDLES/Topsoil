@@ -14,6 +14,7 @@ import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.util.undo.UndoAction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,11 +25,15 @@ import java.util.List;
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
+    private DataTable table;
+
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     public TopsoilTreeTableView(DataTable table) {
+        this.table = table;
+
         this.setEditable(true);
         this.setSortMode(TreeSortMode.ALL_DESCENDANTS);
         this.setShowRoot(false);
@@ -124,16 +129,33 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             node.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
             tableColumns.add(newColumn);
         }
+        this.layout();
         return tableColumns;
     }
 
     private <T extends Serializable> TreeTableColumn<DataComponent, T> makeTreeTableColumn(DataColumn<T> dataColumn) {
         TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
-
         newColumn.setCellFactory(param -> {
-            TextFieldTreeTableCell<DataComponent, T> cell = new TextFieldTreeTableCell<>(dataColumn.getStringConverter());
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.setEditable(false);
+            TreeTableCell<DataComponent, T> cell = new TopsoilTreeTableCell<>(dataColumn, table);
+            cell.addEventHandler(CellEditEvent.CELL_EDITED, event -> {
+                DataRow.DataValue<T> dataValue = (DataRow.DataValue<T>) event.getDataValue();
+                table.addUndoAction(new UndoAction() {
+                    @Override
+                    public void execute() {
+                        dataValue.setValue((T) event.getNewValue());
+                    }
+
+                    @Override
+                    public void undo() {
+                        dataValue.setValue((T) event.getOldValue());
+                    }
+
+                    @Override
+                    public String getActionName() {
+                        return "Cell Edited";
+                    }
+                });
+            });
             return cell;
         });
         newColumn.setCellValueFactory(param -> {

@@ -8,8 +8,7 @@ import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.app.file.parser.DefaultDataParser;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.variable.DependentVariable;
-import org.cirdles.topsoil.variable.IndependentVariable;
+import org.cirdles.topsoil.variable.Variables;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -55,11 +54,11 @@ public enum ExampleData {
             table.setUncertainty(unctFormat);
             if (this == UPB || this == UTH) {
                 List<DataColumn<?>> columns = table.getDataColumns();
-                table.setColumnForVariable(IndependentVariable.X, columns.get(0));
-                table.setColumnForVariable(DependentVariable.SIGMA_X, columns.get(1));
-                table.setColumnForVariable(IndependentVariable.Y, columns.get(2));
-                table.setColumnForVariable(DependentVariable.SIGMA_Y, columns.get(3));
-                table.setColumnForVariable(IndependentVariable.RHO, columns.get(4));
+                table.setColumnForVariable(Variables.X, columns.get(0));
+                table.setColumnForVariable(Variables.SIGMA_X, columns.get(1));
+                table.setColumnForVariable(Variables.Y, columns.get(2));
+                table.setColumnForVariable(Variables.SIGMA_Y, columns.get(3));
+                table.setColumnForVariable(Variables.RHO, columns.get(4));
             }
         } catch (IOException e) {
             e.printStackTrace();

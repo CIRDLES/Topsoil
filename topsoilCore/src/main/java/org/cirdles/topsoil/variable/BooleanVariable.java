@@ -1,12 +1,5 @@
 package org.cirdles.topsoil.variable;
 
-import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 /**
  * A {@code Variable} for a {@code Boolean} data type.
  *
@@ -14,14 +7,16 @@ import java.io.ObjectOutputStream;
  */
 public enum BooleanVariable implements Variable<Boolean> {
 
-    SELECTED("selected", "selected");
+    SELECTED("selected", "selected", true);
 
     private String name;
     private String abbr;
+    private boolean defaultValue;
 
-    BooleanVariable(String name, String abbreviation) {
+    BooleanVariable(String name, String abbreviation, boolean defaultValue) {
         this.name = name;
         this.abbr = abbreviation;
+        this.defaultValue = defaultValue;
     }
 
     @Override
@@ -34,16 +29,9 @@ public enum BooleanVariable implements Variable<Boolean> {
         return abbr;
     }
 
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-//    private void writeObject(ObjectOutputStream out) throws IOException {
-//        out.defaultWriteObject();
-//    }
-//
-//    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-//        in.defaultReadObject();
-//    }
+    @Override
+    public Boolean defaultValue() {
+        return defaultValue;
+    }
 
 }

@@ -70,7 +70,7 @@ public class SerializationTest {
         DataColumn<?> expectedColumn, actualColumn;
         for (Map.Entry<Variable<?>, DataColumn<?>> entry : expected.getVariableColumnMap().entrySet()) {
             expectedColumn = entry.getValue();
-            actualColumn =  actual.getVariableColumnMap().get(entry.getKey());
+            actualColumn =  actual.getColumnForVariable(entry.getKey());
             assertEquals(expectedColumn.getLabel(), actualColumn.getLabel());
             assertEquals(expectedColumn.getType(), actualColumn.getType());
         }
