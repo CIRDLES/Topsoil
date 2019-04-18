@@ -38,8 +38,10 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         this.setSortMode(TreeSortMode.ALL_DESCENDANTS);
         this.setShowRoot(false);
 
+        // Create root item
         CheckBoxTreeItem<DataComponent> rootItem;
         rootItem = new CheckBoxTreeItem<>(table.getDataRoot());
+
         // Add TreeItems for model
         for (DataSegment segment : table.getDataRoot().getChildren()) {
             rootItem.getChildren().add(makeTreeItemForDataSegment(segment));
@@ -49,7 +51,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         }
         this.setRoot(rootItem);
 
-        // Add columns
+        // Add table columns
         TreeTableColumn<DataComponent, String> labelColumn = makeLabelColumn();
         this.getColumns().add(labelColumn);
         this.getColumns().add(makeCheckBoxColumn());

@@ -136,6 +136,13 @@ public class DataTable extends Observable {
                 setChanged();
                 notifyObservers();
             });
+
+            for (DataRow.DataValue<?> value : row.getValueMap().values()) {
+                value.valueProperty().addListener(c -> {
+                    setChanged();
+                    notifyObservers();
+                });
+            }
         }
 
         // Sets the fraction digits for each column to align values by their decimal separators
@@ -261,34 +268,6 @@ public class DataTable extends Observable {
             maxFractionDigits = Math.max(maxFractionDigits, NumberColumnStringConverter.countFractionDigits(n));
         }
         ((NumberColumnStringConverter) column.getStringConverter()).setNumFractionDigits(maxFractionDigits);
-    }
-
-    public static class ValueChangedAction<T> implements UndoAction {
-
-        private DataRow.DataValue<T> dataValue;
-        private T oldValue;
-        private T newValue;
-
-        ValueChangedAction(DataRow.DataValue<T> dataValue, T oldValue, T newValue) {
-            this.dataValue = dataValue;
-            this.oldValue = oldValue;
-            this.newValue = newValue;
-        }
-
-        @Override
-        public void execute() {
-            dataValue.setValue(newValue);
-        }
-
-        @Override
-        public void undo() {
-            dataValue.setValue(oldValue);
-        }
-
-        @Override
-        public String getActionName() {
-            return "Value Changed";
-        }
     }
 
 }

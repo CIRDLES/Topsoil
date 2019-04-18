@@ -32,9 +32,9 @@ public abstract class AbstractPlot implements Plot {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private List<Map<String, Object>> data;
-    private PlotType plotType;
-    private Map<PlotProperty, Object> properties;
+    protected List<Map<String, Object>> data;
+    protected PlotType plotType;
+    protected Map<PlotProperty, Object> properties;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -96,18 +96,5 @@ public abstract class AbstractPlot implements Plot {
     public void setProperty(PlotProperty key, Object value) {
         this.properties.put(key, value);
     }
-
-//    /**
-//     * Attempts to destroy the {@code Plot} object to avoid concurrency problems in the {@code WebEngine}.
-//     *
-//     * @throws Throwable    literally any problem
-//     */
-//    public void killPlot() throws Throwable {
-//        super.finalize();
-//    }
-
-    //**********************************************//
-    //                INNER CLASSES                 //
-    //**********************************************//
 
 }

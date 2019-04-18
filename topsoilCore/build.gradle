@@ -31,6 +31,9 @@ dependencies {
     api "org.apache.commons:commons-math3:3.6.1"
     api 'com.github.CIRDLES:McLeanRegression:-SNAPSHOT'
 
+    compile "com.teamdev.jxbrowser:jxbrowser-cross-platform:6.23.1"
+    compile fileTree(include: ['*.jar'], dir: 'libs/jxbrowser')
+
     compile group: 'org.apache.xmlgraphics', name: 'batik-all', version: '1.11', ext: 'jar'
     compile group: 'org.apache.xmlgraphics', name: 'fop', version: '2.1'
     compile group: 'org.apache.pdfbox', name: 'fontbox', version: '2.0.0'

@@ -1,23 +1,17 @@
 package org.cirdles.topsoil.app.control.plot;
 
-import javafx.application.Platform;
-import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.app.control.FXMLUtils;
-import org.cirdles.topsoil.plot.JavaScriptPlot;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.internal.PDFSaver;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import java.io.IOException;
 
@@ -66,7 +60,6 @@ public class TopsoilPlotView extends VBox {
 	}
 
 	@FXML protected void initialize() {
-		initializeToolbar();
 		initializePlot();
 		initializePropertiesPanel();
 	}
@@ -92,18 +85,18 @@ public class TopsoilPlotView extends VBox {
 	 */
 	@FXML private void saveSVGButtonAction() {
 
-		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
+//		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
 		Document doc = plot.displayAsSVGDocument();
 
-		Element ele = doc.getDocumentElement();
-		Element textNode = doc.createElement("text");
-		textNode.setAttribute("x", "230");
-		textNode.setAttribute("y", "553");
-		textNode.setAttribute("font-family", "sans-serif");
-		textNode.setAttribute("font-size", "18px");
-		textNode.setTextContent("Uncertainty Format: " + uncValue);
-
-		ele.appendChild(textNode);
+//		Element ele = doc.getDocumentElement();
+//		Element textNode = doc.createElement("text");
+//		textNode.setAttribute("x", "230");
+//		textNode.setAttribute("y", "553");
+//		textNode.setAttribute("font-family", "sans-serif");
+//		textNode.setAttribute("font-size", "18px");
+//		textNode.setTextContent("Uncertainty Format: " + uncValue);
+//
+//		ele.appendChild(textNode);
 
 		new SVGSaver().save(doc);
 	}
@@ -135,40 +128,15 @@ public class TopsoilPlotView extends VBox {
 		plot.snapToCorners();
 	}
 
-	private void initializeToolbar() {
-		if (plot instanceof JavaScriptPlot ) {
-			JavaScriptPlot javaScriptPlot = (JavaScriptPlot) plot;
-
-			Text loadingIndicator = new Text("Loading...");
-
-			javaScriptPlot.getLoadFuture().thenRunAsync(() -> {
-				                                            loadingIndicator.visibleProperty().bind(
-						                                            javaScriptPlot.getWebEngine().getLoadWorker()
-								                                            .stateProperty().isEqualTo(Worker.State.RUNNING));
-				                                            propertiesPanel.refreshPlot();
-			                                            },
-			                                            Platform::runLater
-			                                           );
-
-			toolbar.getItems().addAll(loadingIndicator);
-		}
-	}
-
 	private void initializePlot() {
 		Node n = plot.displayAsNode();
 		plotAnchorPane.getChildren().add(n);
-		AnchorPane.setBottomAnchor(n, 0.0);
-		AnchorPane.setLeftAnchor(n, 0.0);
-		AnchorPane.setTopAnchor(n, 0.0);
-		AnchorPane.setRightAnchor(n, 0.0);
+		FXMLUtils.setAnchorPaneConstraints(n, 0.0, 0.0, 0.0, 0.0);
 	}
 
 	private void initializePropertiesPanel() {
 		propertiesPanelAnchorPane.getChildren().add(propertiesPanel);
-		AnchorPane.setBottomAnchor(propertiesPanel, 0.0);
-		AnchorPane.setLeftAnchor(propertiesPanel, 0.0);
-		AnchorPane.setTopAnchor(propertiesPanel, 0.0);
-		AnchorPane.setRightAnchor(propertiesPanel, 0.0);
+		FXMLUtils.setAnchorPaneConstraints(propertiesPanel, 0.0, 0.0, 0.0, 0.0);
 	}
 
 }
