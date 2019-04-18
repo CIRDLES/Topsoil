@@ -8,13 +8,10 @@ cache:
 
 jdk: oraclejdk8
 
-matrix:
-  include:
-    - addons:
-        apt:
-          packages:
-            - oracle-java8-installer # latest version
-    - # older version
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer # latest version
      
 before_script:
   - export DISPLAY=:99.0
