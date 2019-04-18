@@ -12,7 +12,6 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.util.PlotObservationThread;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
-import org.cirdles.topsoil.app.util.DataChangeObserver;
 import org.cirdles.topsoil.plot.*;
 import org.cirdles.topsoil.variable.*;
 
@@ -90,9 +89,7 @@ public class VisualizationsMenuHelper {
             Plot plot = plotType.getPlot();
             plot.setData(data);
 
-            // Listen for changes in the DataTable @TODO Replace Observer interface in model with events in view
-            DataChangeObserver dataChangeObserver = new DataChangeObserver(table, plot);
-            table.addObserver(dataChangeObserver);
+            table.addListener(c -> plot.setData(DataUtils.getPlotData(table)));
 
             if (properties == null) {
                 properties = new DefaultProperties();
@@ -129,7 +126,6 @@ public class VisualizationsMenuHelper {
                     () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
             plotStage.setOnCloseRequest(closeEvent -> {
                 observer.shutdown();
-                table.deleteObserver(dataChangeObserver);
                 ProjectManager.deregisterOpenPlot(table, plotType);
             });
 
