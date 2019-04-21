@@ -12,7 +12,7 @@ import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.constant.Lambda;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.plot.PlotProperty;
+import org.cirdles.topsoil.plot.PlotProperties;
 import org.cirdles.topsoil.plot.PlotType;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.variable.Variable;
@@ -96,8 +96,15 @@ public class SerializableProject implements Serializable {
                     break;
                 }
             }
+
             PlotType plotType = (PlotType) plotData.get(PLOT_TYPE);
-            VisualizationsMenuHelper.generatePlot(plotType, table, (Map<PlotProperty, Object>) plotData.get(PLOT_PROPERTIES));
+
+            Map<String, Object> propertyMap = (Map<String, Object>) plotData.get(PLOT_PROPERTIES);
+            PlotProperties properties = new PlotProperties();
+            for (Map.Entry<String, Object> entry : propertyMap.entrySet()) {
+                properties.set(PlotProperties.propertyForKey(entry.getKey()), entry.getValue());
+            }
+            VisualizationsMenuHelper.generatePlot(plotType, table, properties);
         }
 
         Map<Lambda, Number> lambdaMap = (Map<Lambda, Number>) data.get(PROJECT_LAMBDAS);
@@ -121,10 +128,10 @@ public class SerializableProject implements Serializable {
         return plotData;
     }
 
-    private HashMap<PlotProperty, Serializable> extractPlotProperties(Map<PlotProperty, Object> properties) {
-        HashMap<PlotProperty, Serializable> sProperties = new HashMap<>();
-        for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
-            sProperties.put(entry.getKey(), (Serializable) entry.getValue());
+    private HashMap<String, Serializable> extractPlotProperties(PlotProperties properties) {
+        HashMap<String, Serializable> sProperties = new HashMap<>();
+        for (Map.Entry<PlotProperties.Property<?>, Object> entry : properties.getProperties().entrySet()) {
+            sProperties.put(entry.getKey().getKey(), (Serializable) entry.getValue());
         }
         return sProperties;
     }

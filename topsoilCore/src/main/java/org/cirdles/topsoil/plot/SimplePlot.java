@@ -1,8 +1,6 @@
 package org.cirdles.topsoil.plot;
 
 import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.BrowserContext;
-import com.teamdev.jxbrowser.chromium.BrowserContextParams;
 import com.teamdev.jxbrowser.chromium.BrowserType;
 import com.teamdev.jxbrowser.chromium.JSArray;
 import com.teamdev.jxbrowser.chromium.JSFunction;
@@ -16,6 +14,7 @@ import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 import javafx.scene.Node;
 import org.cirdles.commons.util.ResourceExtractor;
+import org.cirdles.topsoil.plot.PlotProperties.Property;
 import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
 import org.cirdles.topsoil.plot.bridges.Regression;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
@@ -33,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +59,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public SimplePlot(PlotType plotType, Map<PlotProperty, Object> plotProperties) {
+    public SimplePlot(PlotType plotType, PlotProperties plotProperties) {
         super(plotType, plotProperties);
 
         this.browser = new Browser(BrowserType.LIGHTWEIGHT);
@@ -158,7 +156,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public final void setProperties(Map<PlotProperty, Object> properties) {
+    public final void setProperties(PlotProperties properties) {
         super.setProperties(properties);
         JSFunction setProperties = getTopsoilFunction("setProperties");
         if (setProperties != null) {
@@ -168,7 +166,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public final void setProperty(PlotProperty key, Object value) {
+    public final void setProperty(Property<?> key, Object value) {
         super.setProperty(key, value);
         if (topsoil != null) {
             JSValue setProperties = topsoil.getProperty("setProperty");
@@ -193,8 +191,8 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     /**{@inheritDoc}*/
     @Override
     public final void updateProperties() {
-        Map<PlotProperty, Object> properties = propertiesBridge.getProperties();
-        for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
+        Map<PlotProperties.Property<?>, Object> properties = propertiesBridge.getProperties();
+        for (Map.Entry<PlotProperties.Property<?>, Object> entry : properties.entrySet()) {
             super.setProperty(entry.getKey(), entry.getValue());
         }
     }
@@ -295,10 +293,10 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      *
      * @return              JSObject
      */
-    private JSObject convertProperties(Map<PlotProperty, Object> properties) {
+    private JSObject convertProperties(PlotProperties properties) {
         JSObject jsProperties = browser.getJSContext().createObject();
-        for (Map.Entry<PlotProperty, Object> entry : properties.entrySet()) {
-            jsProperties.setProperty(entry.getKey().toString(), entry.getValue());
+        for (Map.Entry<Property<?>, Object> entry : properties.getProperties().entrySet()) {
+            jsProperties.setProperty(entry.getKey().getKey(), entry.getValue());
         }
         return jsProperties;
     }

@@ -17,6 +17,7 @@ package org.cirdles.topsoil.plot;
 
 import java.util.List;
 import java.util.Map;
+import org.cirdles.topsoil.plot.PlotProperties.Property;
 
 /**
  * A generalized plot that can express itself as a {@link javafx.scene.Node}.
@@ -34,24 +35,24 @@ public interface Plot extends Displayable {
     /**
      * Gets the properties for the {@code Plot}.
      *
-     * @return  a Map of PlotProperty keys to Object values
+     * @return  PlotProperties object
      */
-    Map<PlotProperty, Object> getProperties();
+    PlotProperties getProperties();
 
     /**
      * Sets the properties for the {@code Plot}.
      *
-     * @param properties    a Map of PlotProperty keys to Object values
+     * @param properties    PlotProperties object
      */
-    void setProperties(Map<PlotProperty, Object> properties);
+    void setProperties(PlotProperties properties);
 
     /**
      * Sets a single property for the {@code Plot}.
      *
-     * @param key   PlotProperty key
-     * @param value Object property value
+     * @param property   Property
+     * @param value      Object property value
      */
-    void setProperty(PlotProperty key, Object value);
+    void setProperty(Property<?> property, Object value);
 
     /**
      *

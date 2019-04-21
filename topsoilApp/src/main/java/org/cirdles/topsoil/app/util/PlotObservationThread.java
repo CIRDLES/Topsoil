@@ -2,10 +2,9 @@ package org.cirdles.topsoil.app.util;
 
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.PlotProperty;
+import org.cirdles.topsoil.plot.PlotProperties;
 
 import java.text.DecimalFormat;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,12 +43,12 @@ public class PlotObservationThread {
 
     private void updateAxes() {
         if(propertiesPanel.liveAxisUpdate()) {
-            Map<PlotProperty, Object> properties = plot.getProperties();
+            PlotProperties properties = plot.getProperties();
 
-            String xMin = properties.get(PlotProperty.X_MIN).toString(),
-                    xMax = properties.get(PlotProperty.X_MAX).toString(),
-                    yMin = properties.get(PlotProperty.Y_MIN).toString(),
-                    yMax = properties.get(PlotProperty.Y_MAX).toString();
+            String xMin = properties.get(PlotProperties.X_MIN),
+                    xMax = properties.get(PlotProperties.X_MAX),
+                    yMin = properties.get(PlotProperties.Y_MIN),
+                    yMax = properties.get(PlotProperties.Y_MAX);
 
             double xMinNumber = (! xMin.isEmpty()) ? Double.parseDouble(xMin) : 0.0,
                     xMaxNumber = (! xMax.isEmpty()) ? Double.parseDouble(xMax) : 0.0,

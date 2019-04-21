@@ -22,10 +22,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static org.cirdles.topsoil.plot.PlotProperty.TITLE;
-import static org.cirdles.topsoil.plot.PlotProperty.UNCERTAINTY;
-import static org.cirdles.topsoil.plot.PlotProperty.X_AXIS;
-import static org.cirdles.topsoil.plot.PlotProperty.Y_AXIS;
+import static org.cirdles.topsoil.plot.PlotProperties.*;
 
 /**
  * A utility class providing helper methods for the logic behind items in the menu bar.
@@ -54,7 +51,7 @@ public class VisualizationsMenuHelper {
      *
      * @return              true if successful
      */
-    public static boolean generatePlot(PlotType plotType, DataTable table, Map<PlotProperty, Object> properties) {
+    public static boolean generatePlot(PlotType plotType, DataTable table, PlotProperties properties) {
         // Check for required plotting variables
         List<Variable<?>> required = Arrays.asList(Variables.X, Variables.Y);
         List<Variable<?>> missing = new ArrayList<>();
@@ -92,18 +89,18 @@ public class VisualizationsMenuHelper {
             table.addListener(c -> plot.setData(DataUtils.getPlotData(table)));
 
             if (properties == null) {
-                properties = new DefaultProperties();
+                properties = new PlotProperties();
             }
 
             // Set data-dependent properties
-            properties.put(TITLE, table.getLabel());
+            properties.set(TITLE, table.getLabel());
             // @TODO assign X and Y axis labels
-            properties.put(UNCERTAINTY, table.getUncertainty().getMultiplier());
+            properties.set(UNCERTAINTY, table.getUncertainty().getMultiplier());
             if (table.getVariableColumnMap().containsKey(Variables.X)) {
-                properties.put(X_AXIS, table.getColumnForVariable(Variables.X).getLabel());
+                properties.set(X_AXIS, table.getColumnForVariable(Variables.X).getLabel());
             }
             if (table.getVariableColumnMap().containsKey(Variables.Y)) {
-                properties.put(Y_AXIS, table.getColumnForVariable(Variables.Y).getLabel());
+                properties.set(Y_AXIS, table.getColumnForVariable(Variables.Y).getLabel());
             }
             plot.setProperties(properties);
             TopsoilPlotView plotView = new TopsoilPlotView(plot);

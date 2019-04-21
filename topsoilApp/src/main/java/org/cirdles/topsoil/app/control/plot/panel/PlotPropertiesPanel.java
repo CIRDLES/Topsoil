@@ -7,22 +7,21 @@ import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.plot.PlotProperties;
 import org.cirdles.topsoil.uncertainty.Uncertainty;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.PlotProperty;
-import org.cirdles.topsoil.plot.DefaultProperties;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static org.cirdles.topsoil.plot.PlotProperty.*;
+import static org.cirdles.topsoil.plot.PlotProperties.*;
 
 public class PlotPropertiesPanel extends Accordion {
 
     private static final String CONTROLLER_FXML = "plot-properties-panel.fxml";
 
 	private Plot plot;
-	private Map<PlotProperty, Object> properties;
+	private PlotProperties properties;
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -491,9 +490,7 @@ public class PlotPropertiesPanel extends Accordion {
 
     public PlotPropertiesPanel(Plot plot) {
         this.plot = plot;
-        if (plot.getProperties() == null) {
-        	plot.setProperties(new DefaultProperties());
-        }
+        this.properties = new PlotProperties();
 		try {
 			FXMLUtils.loadController(CONTROLLER_FXML, PlotPropertiesPanel.class, this);
 		} catch (IOException e) {
@@ -504,8 +501,8 @@ public class PlotPropertiesPanel extends Accordion {
     @FXML protected void initialize() {
     	axisStyling.setPropertiesPanel(this);
 
-	    this.properties = plot.getProperties();
-    	setPlotProperties(properties);
+	    properties.setAll(plot.getProperties());
+	    setPlotProperties(properties.getProperties());
 	    configureListeners();
 
 	    plotFeatures.isotopeSystemProperty().bind(this.isotopeSystemProperty());
@@ -515,11 +512,11 @@ public class PlotPropertiesPanel extends Accordion {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public Map<PlotProperty, Object> getPlotProperties() {
-		return properties;
+    public PlotProperties getPlotProperties() {
+		return new PlotProperties(properties);
     }
 
-    public void setPlotProperties(Map<PlotProperty, Object> properties) {
+    public void setPlotProperties(Map<PlotProperties.Property<?>, Object> properties) {
 	    if (properties.containsKey(TITLE)) setPlotTitle(String.valueOf(properties.get(TITLE)));
 	    if (properties.containsKey(X_AXIS)) setXAxisTitle(String.valueOf(properties.get(X_AXIS)));
 	    if (properties.containsKey(Y_AXIS)) setYAxisTitle(String.valueOf(properties.get(Y_AXIS)));
@@ -621,105 +618,101 @@ public class PlotPropertiesPanel extends Accordion {
 
 	private void configureListeners() {
     	plotTitleProperty().addListener(c -> {
-    		properties.put(TITLE, getPlotTitle());
+    		properties.set(TITLE, getPlotTitle());
     		refreshPlot();
 	    });
     	xAxisTitleProperty().addListener(c -> {
-    		properties.put(X_AXIS, getXAxisTitle());
+    		properties.set(X_AXIS, getXAxisTitle());
     		refreshPlot();
 	    });
     	yAxisTitleProperty().addListener(c -> {
-    		properties.put(Y_AXIS, getYAxisTitle());
+    		properties.set(Y_AXIS, getYAxisTitle());
     		refreshPlot();
 	    });
 
     	isotopeSystemProperty().addListener(c -> {
-    		properties.put(ISOTOPE_SYSTEM, getIsotopeSystem().getName());
+    		properties.set(ISOTOPE_SYSTEM, getIsotopeSystem().getName());
     		refreshPlot();
 	    });
     	uncertaintyFormatProperty().addListener(c -> {
-    		properties.put(UNCERTAINTY, getUncertaintyFormat().getMultiplier());
+    		properties.set(UNCERTAINTY, getUncertaintyFormat().getMultiplier());
     		refreshPlot();
 	    });
 
     	pointsProperty().addListener(c -> {
-    		properties.put(POINTS, getPoints());
+    		properties.set(POINTS, getPoints());
     		refreshPlot();
 	    });
     	pointsFillProperty().addListener(c -> {
-    		properties.put(POINTS_FILL, convertColor(getPointsFill()));
-    		properties.put(POINTS_OPACITY, convertOpacity(getPointsFill()));
+    		properties.set(POINTS_FILL, convertColor(getPointsFill()));
+    		properties.set(POINTS_OPACITY, convertOpacity(getPointsFill()));
     		refreshPlot();
 	    });
 
     	ellipsesProperty().addListener(c -> {
-    		properties.put(ELLIPSES, getEllipses());
+    		properties.set(ELLIPSES, getEllipses());
     		refreshPlot();
 	    });
     	ellipsesFillProperty().addListener(c -> {
-			properties.put(ELLIPSES_FILL, convertColor(getEllipsesFill()));
-			properties.put(ELLIPSES_OPACITY, convertOpacity(getEllipsesFill()));
+			properties.set(ELLIPSES_FILL, convertColor(getEllipsesFill()));
+			properties.set(ELLIPSES_OPACITY, convertOpacity(getEllipsesFill()));
     		refreshPlot();
 	    });
 
     	uncertaintyBarsProperty().addListener(c -> {
-			properties.put(UNCTBARS, getUncertaintyBars());
+			properties.set(UNCTBARS, getUncertaintyBars());
     		refreshPlot();
 	    });
     	uncertaintyBarsFillProperty().addListener(c -> {
-			properties.put(UNCTBARS_FILL, convertColor(getEllipsesFill()));
-			properties.put(UNCTBARS_OPACITY, convertOpacity(getUncertaintyBarsFill()));
+			properties.set(UNCTBARS_FILL, convertColor(getEllipsesFill()));
+			properties.set(UNCTBARS_OPACITY, convertOpacity(getUncertaintyBarsFill()));
     		refreshPlot();
 	    });
 
     	wetherillLineProperty().addListener(c -> {
-			properties.put(WETHERILL_LINE, wetherillLine());
+			properties.set(WETHERILL_LINE, wetherillLine());
     		refreshPlot();
 	    });
 		wetherillEnvelopeProperty().addListener(c -> {
-			properties.put(WETHERILL_ENVELOPE, wetherillEnvelope());
+			properties.set(WETHERILL_ENVELOPE, wetherillEnvelope());
 			refreshPlot();
 		});
     	wetherillLineFillProperty().addListener(c -> {
-    		properties.put(WETHERILL_LINE_FILL, convertColor(getWetherillLineFill()));
+    		properties.set(WETHERILL_LINE_FILL, convertColor(getWetherillLineFill()));
     		refreshPlot();
 	    });
     	wetherillEnvelopeFillProperty().addListener(c -> {
-    		properties.put(WETHERILL_ENVELOPE_FILL, convertColor(getWetherillEnvelopeFill()));
+    		properties.set(WETHERILL_ENVELOPE_FILL, convertColor(getWetherillEnvelopeFill()));
     		refreshPlot();
 	    });
 
-
-
 		wasserburgLineProperty().addListener(c -> {
-			properties.put(WASSERBURG_LINE, wasserburgLine());
+			properties.set(WASSERBURG_LINE, wasserburgLine());
 			refreshPlot();
 		});
 		wasserburgEnvelopeProperty().addListener(c -> {
-			properties.put(WASSERBURG_ENVELOPE, wasserburgEnvelope());
+			properties.set(WASSERBURG_ENVELOPE, wasserburgEnvelope());
 			refreshPlot();
 		});
 		wasserburgLineFillProperty().addListener(c -> {
-			properties.put(WASSERBURG_LINE_FILL, convertColor(getWasserburgLineFill()));
+			properties.set(WASSERBURG_LINE_FILL, convertColor(getWasserburgLineFill()));
 			refreshPlot();
 		});
 		wasserburgEnvelopeFillProperty().addListener(c -> {
-			properties.put(WASSERBURG_ENVELOPE_FILL, convertColor(getWasserburgEnvelopeFill()));
+			properties.set(WASSERBURG_ENVELOPE_FILL, convertColor(getWasserburgEnvelopeFill()));
 			refreshPlot();
 		});
 
-
-
     	evolutionMatrixProperty().addListener(c -> {
-    		properties.put(EVOLUTION, evolutionMatrix());
+    		properties.set(EVOLUTION, evolutionMatrix());
     		refreshPlot();
 	    });
     	mcLeanRegressionLineProperty().addListener(c -> {
-			properties.put(MCLEAN_REGRESSION, mcLeanRegressionLine());
+			properties.set(MCLEAN_REGRESSION, mcLeanRegressionLine());
     		refreshPlot();
 	    });
     	mcLeanRegressionEnvelopeProperty().addListener(c -> {
-			properties.put(MCLEAN_REGRESSION_ENVELOPE, mcLeanRegressionEnvelope());
+			properties.set(MCLEAN_REGRESSION_ENVELOPE, mcLeanRegressionEnvelope());
     		refreshPlot();
 	    });
 	}

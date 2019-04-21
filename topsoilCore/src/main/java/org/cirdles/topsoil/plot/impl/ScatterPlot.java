@@ -15,7 +15,7 @@
  */
 package org.cirdles.topsoil.plot.impl;
 
-import org.cirdles.topsoil.plot.DefaultProperties;
+import org.cirdles.topsoil.plot.PlotProperties;
 import org.cirdles.topsoil.plot.PlotType;
 import org.cirdles.topsoil.plot.SimplePlot;
 
@@ -27,7 +27,7 @@ import org.cirdles.topsoil.plot.SimplePlot;
 public class ScatterPlot extends SimplePlot {
 
     public ScatterPlot() {
-        super(PlotType.SCATTER, new DefaultProperties());
+        super(PlotType.SCATTER, new PlotProperties());
     }
 
 }

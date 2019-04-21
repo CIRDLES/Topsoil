@@ -15,7 +15,6 @@
  */
 package org.cirdles.topsoil.plot;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public abstract class AbstractPlot implements Plot {
 
     protected List<Map<String, Object>> data;
     protected PlotType plotType;
-    protected Map<PlotProperty, Object> properties;
+    protected PlotProperties properties;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -46,16 +45,16 @@ public abstract class AbstractPlot implements Plot {
      * @param plotType  PloType
      */
     public AbstractPlot(PlotType plotType) {
-        this(plotType, new HashMap<>());
+        this(plotType, new PlotProperties());
     }
 
     /**
      * Constructs a new {@code AbstractPlot} with the specified properties.
      *
      * @param plotType   PlotType
-     * @param properties a Map of PlotProperty keys to Object values
+     * @param properties PlotProperties
      */
-    public AbstractPlot(PlotType plotType, Map<PlotProperty, Object> properties) {
+    public AbstractPlot(PlotType plotType, PlotProperties properties) {
         this.plotType = plotType;
         data = emptyList();
         this.properties = properties;
@@ -81,20 +80,20 @@ public abstract class AbstractPlot implements Plot {
 
     /**{@inheritDoc}*/
     @Override
-    public Map<PlotProperty, Object> getProperties() {
+    public PlotProperties getProperties() {
         return properties;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperties(Map<PlotProperty, Object> properties) {
-        this.properties = properties;
+    public void setProperties(PlotProperties properties) {
+        this.properties.setAll(properties);
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperty(PlotProperty key, Object value) {
-        this.properties.put(key, value);
+    public void setProperty(PlotProperties.Property<?> property, Object value) {
+        this.properties.set(property, value);
     }
 
 }
