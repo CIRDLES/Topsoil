@@ -74,7 +74,7 @@ public class ProjectView extends SplitPane {
         FXMLUtils.setAnchorPaneConstraints(projectTreeView, 0.0, 0.0, 0.0, 0.0);
         projectTreeViewPane.getChildren().add(projectTreeView);
 
-        this.constantsEditor = new ConstantsEditor();
+        this.constantsEditor = new ConstantsEditor(project);
         FXMLUtils.setAnchorPaneConstraints(constantsEditor, 0.0, 0.0, 0.0, 0.0);
         constantsEditorPane.getChildren().add(constantsEditor);
 

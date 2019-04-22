@@ -18,6 +18,7 @@ import org.cirdles.topsoil.plot.PlotProperties.Property;
 import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
 import org.cirdles.topsoil.plot.bridges.Regression;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
+import org.cirdles.topsoil.variable.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -58,6 +59,10 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
+
+    public SimplePlot(PlotType plotType) {
+        this(plotType, new PlotProperties());
+    }
 
     public SimplePlot(PlotType plotType, PlotProperties plotProperties) {
         super(plotType, plotProperties);
@@ -144,7 +149,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public final void setData(List<Map<String, Object>> data) {
+    public final void setData(List<PlotDataEntry> data) {
         super.setData(data);
         JSFunction setData = getTopsoilFunction("setData");
         if (setData != null) {
@@ -296,7 +301,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     private JSObject convertProperties(PlotProperties properties) {
         JSObject jsProperties = browser.getJSContext().createObject();
         for (Map.Entry<Property<?>, Object> entry : properties.getProperties().entrySet()) {
-            jsProperties.setProperty(entry.getKey().getKey(), entry.getValue());
+            jsProperties.setProperty(entry.getKey().getKeyString(), entry.getValue());
         }
         return jsProperties;
     }
@@ -309,15 +314,15 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      *
      * @return              JSArray
      */
-    private JSArray convertData(List<Map<String, Object>> javaData, JSArray jsData) {
+    private JSArray convertData(List<PlotDataEntry> javaData, JSArray jsData) {
         JSObject row;
         for (int i = 0; i < Math.max(javaData.size(), jsData.length()); i++) {
             if (i >= javaData.size()) {
                 jsData.set(i, null);
             } else {
                 row = browser.getJSContext().createObject();
-                for (Map.Entry<String, Object> entry : javaData.get(i).entrySet()) {
-                    row.setProperty(entry.getKey(), entry.getValue());
+                for (Map.Entry<Variable<?>, Object> entry : javaData.get(i).getAll().entrySet()) {
+                    row.setProperty(entry.getKey().getName(), entry.getValue());
                 }
                 jsData.set(i, row);
             }

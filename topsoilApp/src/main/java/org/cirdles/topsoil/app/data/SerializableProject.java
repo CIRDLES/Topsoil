@@ -10,12 +10,13 @@ import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
-import org.cirdles.topsoil.constant.Lambda;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.Lambda;
+import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.plot.PlotProperties;
 import org.cirdles.topsoil.plot.PlotType;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.variable.Variable;
+import org.cirdles.topsoil.variable.Variables;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -62,10 +63,7 @@ public class SerializableProject implements Serializable {
         data.put(PROJECT_TABLES, tables);
         data.put(PROJECT_PLOTS, plots);
 
-        HashMap<Lambda, Double> lambdas = new HashMap<>();
-        for (Lambda l : Lambda.values()) {
-            lambdas.put(l, (double) l.getValue());
-        }
+        HashMap<Lambda, Number> lambdas = new HashMap<>(project.getLambdas());
         data.put(PROJECT_LAMBDAS, lambdas);
     }
 
@@ -85,6 +83,11 @@ public class SerializableProject implements Serializable {
             tables.add(createDataTable(tableData));
         }
         TopsoilProject project = new TopsoilProject(tables.toArray(new DataTable[]{}));
+
+        Map<Lambda, Number> lambdaMap = (Map<Lambda, Number>) data.get(PROJECT_LAMBDAS);
+        for (Map.Entry<Lambda, Number> entry : lambdaMap.entrySet()) {
+            project.setLambdaValue(entry.getKey(), entry.getValue());
+        }
 
         List<Map<SerializationKey, Object>> plotDataList = (List<Map<SerializationKey, Object>>) data.get(PROJECT_PLOTS);
         for (Map<SerializationKey, Object> plotData : plotDataList) {
@@ -107,11 +110,6 @@ public class SerializableProject implements Serializable {
             VisualizationsMenuHelper.generatePlot(plotType, table, properties);
         }
 
-        Map<Lambda, Number> lambdaMap = (Map<Lambda, Number>) data.get(PROJECT_LAMBDAS);
-        for (Map.Entry<Lambda, Number> entry : lambdaMap.entrySet()) {
-            entry.getKey().setValue(entry.getValue());
-        }
-
         return project;
     }
 
@@ -131,7 +129,7 @@ public class SerializableProject implements Serializable {
     private HashMap<String, Serializable> extractPlotProperties(PlotProperties properties) {
         HashMap<String, Serializable> sProperties = new HashMap<>();
         for (Map.Entry<PlotProperties.Property<?>, Object> entry : properties.getProperties().entrySet()) {
-            sProperties.put(entry.getKey().getKey(), (Serializable) entry.getValue());
+            sProperties.put(entry.getKey().getKeyString(), (Serializable) entry.getValue());
         }
         return sProperties;
     }
@@ -156,9 +154,9 @@ public class SerializableProject implements Serializable {
         }
         tableData.put(TABLE_SEGMENTS, segments);
 
-        HashMap<Variable<?>, Integer> varMap = new HashMap<>();
+        HashMap<String, Integer> varMap = new HashMap<>();
         for (Map.Entry<Variable<?>, DataColumn<?>> entry : table.getVariableColumnMap().entrySet()) {
-            varMap.put(entry.getKey(), columns.indexOf(entry.getValue()));
+            varMap.put(entry.getKey().getKeyString(), columns.indexOf(entry.getValue()));
         }
         tableData.put(TABLE_VARIABLES, varMap);
 
@@ -176,7 +174,11 @@ public class SerializableProject implements Serializable {
 
         DataTable table = new DataTable(template, label, columnRoot, dataRoot, isotopeSystem, uncertainty);
         List<DataColumn<?>> columns = table.getDataColumns();
-        Map<Variable<?>, Integer> varIndices = (Map<Variable<?>, Integer>) tableData.get(TABLE_VARIABLES);
+        Map<String, Integer> varStringMap = (Map<String, Integer>) tableData.get(TABLE_VARIABLES);
+        Map<Variable<?>, Integer> varIndices = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : varStringMap.entrySet()) {
+            varIndices.put(Variables.variableForKey(entry.getKey()), entry.getValue());
+        }
 
         for (Map.Entry<Variable<?>, Integer> entry : varIndices.entrySet()) {
             table.setColumnForVariable(entry.getKey(), columns.get(entry.getValue()));

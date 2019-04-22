@@ -3,7 +3,11 @@ package org.cirdles.topsoil.app.data;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+import org.cirdles.topsoil.Lambda;
+import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.plot.PlotType;
@@ -23,14 +27,8 @@ import java.util.Objects;
  */
 public class TopsoilProject {
 
-    //**********************************************//
-    //                  PROPERTIES                  //
-    //**********************************************//
-
+    private ObservableMap<Lambda, Number> lambdas = FXCollections.observableHashMap();
     private ObservableList<DataTable> dataTables = FXCollections.observableArrayList();
-    public ObservableList<DataTable> getDataTables() {
-        return dataTables;
-    }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -38,11 +36,41 @@ public class TopsoilProject {
 
     public TopsoilProject(DataTable... tables) {
         addDataTables(tables);
+        resetAllLambdas();
+        lambdas.addListener((MapChangeListener<? super Lambda, ? super Number>) c -> {
+            ProjectManager.updatePlots();
+        });
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
+    public ObservableMap<Lambda, Number> getLambdas() {
+        return FXCollections.unmodifiableObservableMap(lambdas);
+    }
+
+    public Number getLambdaValue(Lambda lambda) {
+        return lambdas.get(lambda);
+    }
+
+    public void setLambdaValue(Lambda lambda, Number value) {
+        lambdas.put(lambda, value);
+    }
+
+    public void resetLambdaValue(Lambda lambda) {
+        lambdas.put(lambda, lambda.getDefaultValue());
+    }
+
+    public void resetAllLambdas() {
+        for (Lambda lambda : Lambda.values()) {
+            resetLambdaValue(lambda);
+        }
+    }
+
+    public ObservableList<DataTable> getDataTables() {
+        return FXCollections.unmodifiableObservableList(dataTables);
+    }
 
     public void addDataTable(DataTable table) {
         dataTables.add(table);

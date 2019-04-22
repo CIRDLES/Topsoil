@@ -18,7 +18,6 @@ import org.cirdles.topsoil.variable.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -70,7 +69,7 @@ public class VisualizationsMenuHelper {
             // Find already-open plot and request focus
             openPlotView.getScene().getWindow().requestFocus();
         } else {
-            List<Map<String, Object>> data = DataUtils.getPlotData(table);
+            List<PlotDataEntry> data = DataUtils.getPlotData(table);
             List<String> dataErrors = DataUtils.getDataErrors(table);
 
             // Notify the user of any invalid data values
@@ -109,11 +108,6 @@ public class VisualizationsMenuHelper {
             PlotPropertiesPanel panel = plotView.getPropertiesPanel();
             panel.isotopeSystemProperty().bindBidirectional(table.isotopeSystemProperty());
 
-
-            // Update properties panel with changes in the plot
-            PlotObservationThread observationThread = new PlotObservationThread();
-            ScheduledExecutorService observer = observationThread.initializePlotObservation(plot, panel);
-
             // Setup plot Stage
             Scene scene = new Scene(plotView, DEFAULT_PLOT_WIDTH, DEFAULT_PLOT_HEIGHT);
             Stage plotStage = new PlotStage(plotType);
@@ -122,7 +116,6 @@ public class VisualizationsMenuHelper {
             plotStage.titleProperty().bind(Bindings.createStringBinding(
                     () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
             plotStage.setOnCloseRequest(closeEvent -> {
-                observer.shutdown();
                 ProjectManager.deregisterOpenPlot(table, plotType);
             });
 

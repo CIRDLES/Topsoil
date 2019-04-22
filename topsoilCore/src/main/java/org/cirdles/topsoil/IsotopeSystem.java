@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.isotope;
+package org.cirdles.topsoil;
 
 import org.cirdles.topsoil.plot.PlotType;
 

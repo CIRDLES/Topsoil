@@ -14,8 +14,8 @@ import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.util.ResourceBundles;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.IsotopeSystem;
+import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.variable.Variable;
 
 import java.io.IOException;

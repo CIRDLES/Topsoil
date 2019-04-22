@@ -5,9 +5,9 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Squid3DataParser;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.app.file.parser.DefaultDataParser;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variables;
 
 import java.io.IOException;

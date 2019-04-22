@@ -145,14 +145,7 @@ public class FileMenuHelper {
     public static boolean closeProject() {
         if (ProjectManager.getProject() != null) {
             if (handleDataBeforeClose()) {
-                Stage[] stages = StageHelper.getStages().toArray(new Stage[]{});
-                for (Stage stage : stages) {
-                    if (stage instanceof PlotStage) {
-                        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-                    }
-                }
-                ProjectManager.setProjectPath(null);
-                ProjectManager.setProject(null);
+                ProjectManager.closeProject();
             }
         }
         return true;

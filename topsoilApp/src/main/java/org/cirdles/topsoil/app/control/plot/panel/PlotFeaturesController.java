@@ -10,7 +10,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.control.FXMLUtils;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.IsotopeSystem;
 
 import java.io.IOException;
 

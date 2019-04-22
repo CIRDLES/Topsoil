@@ -16,7 +16,6 @@
 package org.cirdles.topsoil.plot;
 
 import java.util.List;
-import java.util.Map;
 import org.cirdles.topsoil.plot.PlotProperties.Property;
 
 /**
@@ -28,9 +27,9 @@ public interface Plot extends Displayable {
 
     PlotType getPlotType();
 
-    List<Map<String, Object>> getData();
+    List<PlotDataEntry> getData();
 
-    void setData(List<Map<String, Object>> data);
+    void setData(List<PlotDataEntry> data);
 
     /**
      * Gets the properties for the {@code Plot}.

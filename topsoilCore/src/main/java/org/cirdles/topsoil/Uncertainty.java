@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.uncertainty;
+package org.cirdles.topsoil;
 
 import java.util.Collections;
 import java.util.List;

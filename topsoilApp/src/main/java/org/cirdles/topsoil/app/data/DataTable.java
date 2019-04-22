@@ -21,8 +21,8 @@ import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
 import org.cirdles.topsoil.app.util.undo.UndoAction;
 import org.cirdles.topsoil.app.util.undo.UndoManager;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.Uncertainty;
+import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
 
 import java.util.*;

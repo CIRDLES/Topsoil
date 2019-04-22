@@ -84,20 +84,7 @@ public class TopsoilPlotView extends VBox {
 	 * Saves the current view of the plot as an SVG file.
 	 */
 	@FXML private void saveSVGButtonAction() {
-
-//		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
 		Document doc = plot.displayAsSVGDocument();
-
-//		Element ele = doc.getDocumentElement();
-//		Element textNode = doc.createElement("text");
-//		textNode.setAttribute("x", "230");
-//		textNode.setAttribute("y", "553");
-//		textNode.setAttribute("font-family", "sans-serif");
-//		textNode.setAttribute("font-size", "18px");
-//		textNode.setTextContent("Uncertainty Format: " + uncValue);
-//
-//		ele.appendChild(textNode);
-
 		new SVGSaver().save(doc);
 	}
 
@@ -105,13 +92,7 @@ public class TopsoilPlotView extends VBox {
 	 * Saves the current view of the plot as a PDF file.
 	 */
 	@FXML private void savePDFButtonAction() {
-
-//		WritableImage plotSnap = plotAnchorPane.snapshot(new SnapshotParameters(), null);
-//		String uncValue = propertiesPanel.getUncertaintyFormat().toString();
-//		PDFSaver.saveToPDF(plotSnap, uncValue);
-
 		PDFSaver.save(plot);
-
 	}
 
 	/**

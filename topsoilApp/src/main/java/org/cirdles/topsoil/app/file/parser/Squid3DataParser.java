@@ -10,8 +10,8 @@ import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.IsotopeSystem;
+import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.variable.Variables;
 
 import java.io.IOException;

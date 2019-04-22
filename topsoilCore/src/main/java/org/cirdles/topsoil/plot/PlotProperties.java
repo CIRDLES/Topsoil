@@ -1,8 +1,9 @@
 package org.cirdles.topsoil.plot;
 
-import org.cirdles.topsoil.constant.Lambda;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.Lambda;
+import org.cirdles.topsoil.constant.ParameterizedConstant;
+import org.cirdles.topsoil.IsotopeSystem;
+import org.cirdles.topsoil.Uncertainty;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,10 +29,10 @@ public class PlotProperties {
 
     public static final Property<String> ISOTOPE_SYSTEM = new Property<>("Isotope System", IsotopeSystem.GENERIC.getName());
     public static final Property<Number> UNCERTAINTY = new Property<>("Uncertainty", Uncertainty.ONE_SIGMA_ABSOLUTE.getMultiplier());
-    public static final Property<Number> LAMBDA_U234 = new Property<>("U234", Lambda.U234.getValue());
-    public static final Property<Number> LAMBDA_U235 = new Property<>("U235", Lambda.U235.getValue());
-    public static final Property<Number> LAMBDA_U238 = new Property<>("U238", Lambda.U238.getValue());
-    public static final Property<Number> LAMBDA_TH230 = new Property<>("Th230", Lambda.Th230.getValue());
+    public static final Property<Number> LAMBDA_U234 = new Property<>("U234", Lambda.U234.getDefaultValue());
+    public static final Property<Number> LAMBDA_U235 = new Property<>("U235", Lambda.U235.getDefaultValue());
+    public static final Property<Number> LAMBDA_U238 = new Property<>("U238", Lambda.U238.getDefaultValue());
+    public static final Property<Number> LAMBDA_TH230 = new Property<>("Th230", Lambda.Th230.getDefaultValue());
     public static final Property<Number> R238_235S = new Property<>("R238_235S", 137.88);
 
     public static final Property<Boolean> POINTS = new Property<>("Points", true);
@@ -111,7 +112,7 @@ public class PlotProperties {
     public PlotProperties(PlotProperties props) {
         if (props != null) {
             for (Property<?> property : ALL) {
-                this.properties.put(property,  props.get(property));
+                this.properties.put(property, props.get(property));
             }
         } else {
             setDefault();
@@ -167,7 +168,7 @@ public class PlotProperties {
 
     public static Property<?> propertyForKey(String key) {
         for (Property<?> property : ALL) {
-            if (property.key.equals(key)) {
+            if (property.getKeyString().equals(key)) {
                 return property;
             }
         }
@@ -182,40 +183,10 @@ public class PlotProperties {
     //                INNER CLASSES                 //
     //**********************************************//
     
-    public static final class Property<T> {
-
-        private String key;
-        private Class<T> type;
-        private T defaultValue;
+    public static final class Property<T> extends ParameterizedConstant<T> {
 
         private Property(String key, T defaultValue) {
-            this.key = key;
-            this.defaultValue = defaultValue;
-            this.type = (Class<T>) defaultValue.getClass();
-        }
-
-        public T getDefaultValue() {
-            return defaultValue;
-        }
-
-        public Class<T> getType() {
-            return type;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        @Override
-        public String toString() {
-            return key;
-        }
-
-        private boolean match(Object value) {
-            if (type.isInstance(value)) {
-                return true;
-            }
-            return false;
+            super(key, key, defaultValue);
         }
         
     }
