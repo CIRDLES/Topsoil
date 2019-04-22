@@ -1,17 +1,12 @@
 package org.cirdles.topsoil.app.menu.helpers;
 
-import com.sun.javafx.stage.StageHelper;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.Clipboard;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard;
-import org.cirdles.topsoil.app.control.plot.PlotStage;
-import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;

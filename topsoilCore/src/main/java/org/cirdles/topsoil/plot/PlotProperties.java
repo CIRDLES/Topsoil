@@ -148,6 +148,7 @@ public class PlotProperties {
         for (Map.Entry<Property<?>, Object> entry : plotProps.properties.entrySet()) {
             set(entry.getKey(), entry.getValue());
         }
+        return;
     }
 
     public void setAll(Map<Property<?>, Object> properties) {

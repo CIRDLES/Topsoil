@@ -580,7 +580,7 @@ public class PlotPropertiesPanel extends Accordion {
 	    	if (yMax == null) yMax = "";
 	    	setAxes(xMin, xMax, yMin, yMax);
 	    }
-
+		this.properties.setAll(properties);
 	    refreshPlot();
     }
 

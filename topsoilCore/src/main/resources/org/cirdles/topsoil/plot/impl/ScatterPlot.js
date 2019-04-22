@@ -76,6 +76,22 @@ if (plot.initialized == null) {
  */
 plot.initialize = function (data) {
 
+    if (plot.lambda.U234 === null) {
+        plot.lambda.U234 = topsoil.defaultLambda.U234;
+    }
+    if (plot.lambda.U235 === null) {
+        plot.lambda.U235 = topsoil.defaultLambda.U235;
+    }
+    if (plot.lambda.U238 === null) {
+        plot.lambda.U238 = topsoil.defaultLambda.U238;
+    }
+    if (plot.lambda.Th230 === null) {
+        plot.lambda.Th230 = topsoil.defaultLambda.Th230;
+    }
+    if (plot.lambda.R238_235S === null) {
+        plot.lambda.R238_235S = topsoil.defaultLambda.R238_235S;
+    }
+
     //create title
     plot.area.append("text")
         .attr("class", "titleText")
@@ -241,7 +257,7 @@ plot.initialize = function (data) {
 
 /*
     Draws and sets plot elements, defines special behaviors like topsoil.recenter() and d3.behavior.zoom(). This function
-    handles operations that need to be re-performed whenever new model is entered.
+    handles operations that need to be re-performed whenever new data is entered.
  */
 plot.setData = function (data) {
 
@@ -275,13 +291,13 @@ plot.update = function (data) {
     }
 
     //if the isotope type has changed, alert Java
-    if (plot.currentIsotope != plot.getProperty('Isotope System')) {
+    if (plot.currentIsotope !== plot.getProperty('Isotope System')) {
         plot.currentIsotope = plot.getProperty('Isotope System');
     }
 
     // If the uncertainty has changed, the plot extent and ellipse model have to be re-calculated, and the ellipses
     // redrawn. Removes ellipses to be later re-drawn by plot.manageEllipses().
-    if (plot.uncertainty != plot.getProperty("Uncertainty")) {
+    if (plot.uncertainty !== plot.getProperty("Uncertainty")) {
         plot.uncertainty = plot.getProperty("Uncertainty");
         plot.updateDataExtent();
         plot.ellipseData = plot.calcEllipses(plot.data);
@@ -293,47 +309,37 @@ plot.update = function (data) {
     var redrawTWConcordia = false;
 
     if (plot.getProperty('U234') != null && !isNaN(plot.getProperty('U234'))) {
-        if (plot.lambda.U234 != plot.getProperty("U234")) {
+        if (plot.lambda.U234 !== plot.getProperty("U234")) {
             plot.lambda.U234 = plot.getProperty("U234");
             redrawConcordia = true;
             redrawEvolution = true;
             redrawTWConcordia = true;
         }
-    } else if (plot.lambda.U234 === null) {
-        plot.lambda.U234 = topsoil.defaultLambda.U234;
     }
     if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235'))) {
-        if (plot.lambda.U235 != plot.getProperty("U235")) {
+        if (plot.lambda.U235 !== plot.getProperty("U235")) {
             plot.lambda.U235 = plot.getProperty("U235");
             redrawConcordia = true;
             redrawTWConcordia = true;
         }
-    } else if (plot.lambda.U235 === null) {
-        plot.lambda.U235 = topsoil.defaultLambda.U235;
     }
     if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) {
-        if (plot.lambda.U238 != plot.getProperty("U238")) {
+        if (plot.lambda.U238 !== plot.getProperty("U238")) {
             plot.lambda.U238 = plot.getProperty("U238");
             redrawEvolution = true
         }
-    } else if (plot.lambda.U238 === null) {
-        plot.lambda.U238 = topsoil.defaultLambda.U238;
     }
     if (plot.getProperty('Th230') != null && !isNaN(plot.getProperty('Th230'))) {
-        if (plot.lambda.Th230 != plot.getProperty("Th230")) {
+        if (plot.lambda.Th230 !== plot.getProperty("Th230")) {
             plot.lambda.Th230 = plot.getProperty("Th230");
             redrawEvolution = true
         }
-    } else if (plot.lambda.Th230 === null) {
-        plot.lambda.Th230 = topsoil.defaultLambda.Th230;
     }
     if (plot.getProperty('R238_235S') != null && !isNaN(plot.getProperty('R238_235S'))) {
-        if (plot.lambda.R238_235S != plot.getProperty("R238_235S")) {
+        if (plot.lambda.R238_235S !== plot.getProperty("R238_235S")) {
             plot.lambda.R238_235S = plot.getProperty("R238_235S");
             redrawTWConcordia = true;
         }
-    } else if (plot.lambda.R238_235S === null) {
-        plot.lambda.R238_235S = topsoil.defaultLambda.R238_235S;
     }
 
     if (redrawEvolution) {
@@ -544,7 +550,7 @@ plot.manageUncertaintyBars = function () {
 plot.managePlotFeatures = function () {
 
     // If the isotope system is UPb...
-    if (plot.currentIsotope == "Uranium Lead") {
+    if (plot.currentIsotope === "Uranium Lead") {
 
         // If the concordia line should be visible...
         if (plot.getProperty("Wetherill Line")) {
@@ -588,7 +594,7 @@ plot.managePlotFeatures = function () {
     }
 
     // If the isotope system is UTh...
-    if (plot.currentIsotope = "Uranium Thorium" ) {
+    if (plot.currentIsotope === "Uranium Thorium" ) {
 
         // If the evolution matrix should be visible...
         if (plot.getProperty("Evolution Matrix")) {
