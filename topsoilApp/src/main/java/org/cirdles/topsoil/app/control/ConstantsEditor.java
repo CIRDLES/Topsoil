@@ -94,6 +94,7 @@ public class ConstantsEditor extends Accordion {
 
             constantLabel.setText(lambda.getTitle());
             textField.setText(lambdaValue.toString());
+            textField.setPrefWidth(100.0);
 
             Button setButton = new Button("Set Value");
             setButton.setOnAction(event -> {

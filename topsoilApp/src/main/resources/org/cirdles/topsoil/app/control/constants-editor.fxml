@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-
 
 <fx:root fx:id="accordion" type="Accordion" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
    <panes>
       <TitledPane text="Lambda">
         <content>
-          <AnchorPane minHeight="-Infinity" minWidth="-Infinity">
-               <children>
-                  <VBox fx:id="lambdaBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-               </children>
-            </AnchorPane>
+            <ScrollPane fitToHeight="true" fitToWidth="true">
+               <content>
+                <AnchorPane>
+                     <children>
+                        <VBox fx:id="lambdaBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </ScrollPane>
         </content>
       </TitledPane>
    </panes>

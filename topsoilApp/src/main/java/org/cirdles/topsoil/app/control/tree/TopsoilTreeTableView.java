@@ -83,7 +83,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             DataComponent component = param.getValue().getValue();
             return component.labelProperty();
         });
-        column.setPrefWidth(INIT_COL_WIDTH);
+        column.setPrefWidth(150.0);
         return column;
     }
 
