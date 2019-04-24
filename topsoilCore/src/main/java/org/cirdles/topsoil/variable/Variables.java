@@ -57,6 +57,12 @@ public final class Variables {
             X, SIGMA_X, Y, SIGMA_Y, RHO
     ));
 
+    /**
+     * Returns the {@code Variable} object with the specified {@code String} key.
+     *
+     * @param key   String key
+     * @return      Variable with key
+     */
     public static Variable<?> variableForKey(String key) {
         for (Variable<?> variable : ALL) {
             if (variable.getKeyString().equals(key)) {

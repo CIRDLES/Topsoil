@@ -60,10 +60,22 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
+    /**
+     * Constructs a new instance of {@code SimplePlot} of the specified {@code PlotType}.
+     *
+     * @param plotType      plot type
+     */
     public SimplePlot(PlotType plotType) {
         this(plotType, new PlotProperties());
     }
 
+    /**
+     * Constructs a new instance of {@code SimplePlot} of the specified {@code PlotType}, with the provided
+     * {@code PlotProperties}.
+     *
+     * @param plotType          plot type
+     * @param plotProperties    plot properties
+     */
     public SimplePlot(PlotType plotType, PlotProperties plotProperties) {
         super(plotType, plotProperties);
 
@@ -239,6 +251,11 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     //                PRIVATE METHODS               //
     //**********************************************//
 
+    /**
+     * Returns a {@code String} containing the HTML document to be displayed in the {@link Browser}.
+     *
+     * @return  String HTML content
+     */
     private String buildHTML() {
         final URI D3_JS_URI = resourceExtractor
                 .extractResourceAsPath("d3.min.js")
@@ -292,7 +309,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     }
 
     /**
-     * Converts plot properties into a JSObject that can be passed into the Browser.
+     * Converts plot properties into a {@link JSObject} that can be passed into the {@link Browser}.
      *
      * @param properties    properties as Java Map
      *
@@ -307,7 +324,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     }
 
     /**
-     * Converts plot data into a JSArray that can be passed into the Browser.
+     * Converts plot data into a {@link JSArray} that can be passed into the {@link Browser}.
      *
      * @param javaData      data as Java List
      * @param jsData        empty JSArray to write data to
@@ -321,7 +338,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 jsData.set(i, null);
             } else {
                 row = browser.getJSContext().createObject();
-                for (Map.Entry<Variable<?>, Object> entry : javaData.get(i).getAll().entrySet()) {
+                for (Map.Entry<Variable<?>, Object> entry : javaData.get(i).getMap().entrySet()) {
                     row.setProperty(entry.getKey().getName(), entry.getValue());
                 }
                 jsData.set(i, row);
@@ -331,7 +348,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     }
 
     /**
-     * Obtains a JSFunction object for the specified function of "topsoil".
+     * Obtains a {@link JSFunction} object for the specified function of "topsoil".
      *
      * @param functionName      String function name
      * @return                  JSFunction
@@ -346,10 +363,19 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         return null;
     }
 
+    /**
+     * Obtains an empty array from the {@link Browser}'s JS context.
+     *
+     * @return  empty JSArray
+     */
     private JSArray emptyJSArray() {
         return browser.executeJavaScriptAndReturnValue("topsoil.emptyArray()").asArray();
     }
 
+    /**
+     * Manually adjusts the size of the {@link Browser} and the size of the JS execution of topsoil to the size of the
+     * containing {@link BrowserView}.
+     */
     private void resize() {
         JSFunction resize = getTopsoilFunction("resize");
         double width = browserView.getWidth();

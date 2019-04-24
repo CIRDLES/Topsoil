@@ -19,7 +19,7 @@ import org.cirdles.topsoil.plot.PlotType;
 import org.cirdles.topsoil.plot.SimplePlot;
 
 /**
- * A {@code Plot} which handles features for all isotope systems.
+ * A {@code Plot} which handles features for scatter plots.
  *
  * @author Emily Coleman
  */

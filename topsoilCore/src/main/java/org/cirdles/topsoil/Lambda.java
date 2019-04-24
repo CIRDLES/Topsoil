@@ -1,6 +1,8 @@
 package org.cirdles.topsoil;
 
 /**
+ * Defines lambda constants.
+ *
  * @author marottajb
  */
 public enum Lambda {
@@ -33,15 +35,29 @@ public enum Lambda {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-
+    /**
+     * Returns the readable title of this {@code Lambda} value.
+     *
+     * @return  String title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Returns the abbreviation of this {@code Lambda} value.
+     *
+     * @return  String abbreviation
+     */
     public String getAbbreviation() {
         return abbreviation;
     }
 
+    /**
+     * Returns the default value of this {@code Lambda} value.
+     *
+     * @return  default Number value
+     */
     public Number getDefaultValue() {
         return defaultValue;
     }

@@ -533,7 +533,7 @@ public class PlotPropertiesPanel extends Accordion {
 
 	    if (properties.containsKey(ISOTOPE_SYSTEM)) setIsotopeSystem(IsotopeSystem.fromName(
 	    		String.valueOf(properties.get(ISOTOPE_SYSTEM))));
-	    if (properties.containsKey(UNCERTAINTY)) setUncertaintyFormat(Uncertainty.fromValue(
+	    if (properties.containsKey(UNCERTAINTY)) setUncertaintyFormat(Uncertainty.fromMultiplier(
 			    (Double) properties.get(UNCERTAINTY)));
 	    if (properties.containsKey(WETHERILL_LINE)) setWetherillLine((Boolean) properties.get(WETHERILL_LINE));
 		if (properties.containsKey(WETHERILL_ENVELOPE)) setWetherillEnvelope((Boolean) properties.get(WETHERILL_ENVELOPE));

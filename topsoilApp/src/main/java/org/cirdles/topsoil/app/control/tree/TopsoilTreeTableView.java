@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A customized {@code TreeTableView} that displays the data contained in a {@link DataTable}.
+ *
  * @author marottajb
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {

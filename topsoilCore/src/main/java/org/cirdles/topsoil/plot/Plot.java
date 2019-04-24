@@ -25,8 +25,18 @@ import org.cirdles.topsoil.plot.PlotProperties.Property;
  */
 public interface Plot extends Displayable {
 
+    /**
+     * Returns the type of the plot.
+     *
+     * @return  PlotType
+     */
     PlotType getPlotType();
 
+    /**
+     * Returns the data of the plot as a list of {@code PlotDataEntry} objects.
+     *
+     * @return  list of PlotDataEntries
+     */
     List<PlotDataEntry> getData();
 
     void setData(List<PlotDataEntry> data);

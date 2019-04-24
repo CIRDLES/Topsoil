@@ -3,6 +3,8 @@ package org.cirdles.topsoil.plot;
 import org.cirdles.topsoil.plot.impl.ScatterPlot;
 
 /**
+ * Pre-defined types of plots available in Topsoil.
+ *
  * @author marottajb
  */
 public enum PlotType {
@@ -38,14 +40,24 @@ public enum PlotType {
         this.resources = resources;
     }
 
-    public String getName() {
-        return name;
-    }
-
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Returns the readable name of this plot type.
+     *
+     * @return  String name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns a new {@code Plot} instance of this type.
+     *
+     * @return  new Plot
+     */
     public Plot getPlot() {
         try {
             return plot.newInstance();
@@ -55,10 +67,20 @@ public enum PlotType {
         return null;
     }
 
+    /**
+     * Returns the name of the associated JS file for this plot type.
+     *
+     * @return  String file name
+     */
     public String getPlotFile() {
         return plotFile;
     }
 
+    /**
+     * An array of file names of resource files used by this plot type's associated JS file.
+     *
+     * @return  String[] of file names
+     */
     public String[] getResources() {
         return resources;
     }

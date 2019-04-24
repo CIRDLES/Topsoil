@@ -47,19 +47,35 @@ public enum Uncertainty {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static Uncertainty fromValue(double val) {
+    /**
+     * Returns the {@code Uncertainty} value with the provided multiplier.
+     *
+     * @param multiplier   multiplier
+     * @return      Uncertainty with multiplier
+     */
+    public static Uncertainty fromMultiplier(double multiplier) {
         for (Uncertainty format : values()) {
-            if (Double.compare(val, format.getMultiplier()) == 0) {
+            if (Double.compare(multiplier, format.getMultiplier()) == 0) {
                 return format;
             }
         }
         return null;
     }
 
+    /**
+     * Returns the readable name of this {@code Uncertainty} value.
+     *
+     * @return  String name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the {@code double} multiplier of this {@code Uncertainty} value.
+     *
+     * @return  double multiplier
+     */
     public double getMultiplier() {
         return multiplier;
     }
@@ -69,16 +85,4 @@ public enum Uncertainty {
         return name;
     }
 
-    //**********************************************//
-    //                 CLASS METHODS                //
-    //**********************************************//
-
-    public static Uncertainty getFromValue(Double value) {
-        for (Uncertainty format : values()) {
-            if (Double.compare(format.getMultiplier(), value) == 0) {
-                return format;
-            }
-        }
-        return null;
-    }
 }

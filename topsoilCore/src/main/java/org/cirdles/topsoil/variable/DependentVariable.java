@@ -14,6 +14,11 @@ public class DependentVariable extends Variable<Number> {
         this.dependency = dependency;
     }
 
+    /**
+     * Returns the {@code Variable} that this {@code DependentVariable} is dependent on.
+     *
+     * @return  Variable of type Number
+     */
     public Variable<Number> getDependency() {
         return dependency;
     }

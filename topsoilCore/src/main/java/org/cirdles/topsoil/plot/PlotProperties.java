@@ -11,6 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class defines numerous plot properties that may be set on a plot, and instances of this class contain a map of
+ * {@link Property} objects to {@code Object}s that represent their value.
+ *
+ * @author marottajb
+ */
 public class PlotProperties {
 
     //**********************************************//
@@ -105,10 +111,19 @@ public class PlotProperties {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
+    /**
+     * Constructs a new instance of {@code PlotProperties} with default settings.
+     */
     public PlotProperties() {
         this(null);
     }
 
+    /**
+     * Constructs a new instance of {@code PlotProperties} with the same settings as the provided {@code PlotProperties}
+     * instance.
+     *
+     * @param props     provided PlotProperties
+     */
     public PlotProperties(PlotProperties props) {
         if (props != null) {
             for (Property<?> property : ALL) {
@@ -123,17 +138,34 @@ public class PlotProperties {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /**
+     * Sets all {@link Property} keys in {@link PlotProperties#properties} to their default values.
+     */
     public void setDefault() {
         for (Property<?> property : ALL) {
             properties.put(property, property.getDefaultValue());
         }
     }
 
+    /**
+     * Returns the value associated with the specified {@code Property}.
+     *
+     * @param property  Property object
+     * @param <T>       type of the Property object and of the value object
+     *
+     * @return          value object
+     */
     public <T> T get(Property<T> property) {
         Class<T> clazz = property.getType();
         return clazz.cast(properties.get(property));
     }
 
+    /**
+     * Sets the value of the specified {@code Property} to the provided {@code Object}.
+     *
+     * @param property      Property key
+     * @param value         Object value
+     */
     public void set(Property<?> property, Object value) {
         if (! property.match(value)) {
             throw new IllegalArgumentException(
@@ -144,6 +176,11 @@ public class PlotProperties {
         properties.put(property, value);
     }
 
+    /**
+     * Sets the values of all properties to those in the provided {@code PlotProperties} instance.
+     *
+     * @param plotProps     PlotProperties instance
+     */
     public void setAll(PlotProperties plotProps) {
         for (Map.Entry<Property<?>, Object> entry : plotProps.properties.entrySet()) {
             set(entry.getKey(), entry.getValue());
@@ -151,6 +188,11 @@ public class PlotProperties {
         return;
     }
 
+    /**
+     * Sets the values of the provided properties to their mapped values.
+     *
+     * @param properties    Map of Property keys to Object values
+     */
     public void setAll(Map<Property<?>, Object> properties) {
         for (Map.Entry<Property<?>, Object> entry : properties.entrySet()) {
             if (! entry.getKey().match(entry.getValue())) {
@@ -163,10 +205,22 @@ public class PlotProperties {
         this.properties.putAll(properties);
     }
 
+    /**
+     * Returns an unmodifiable map of properties and their associated {@code Object} values.
+     *
+     * @return  Map of Property keys to Object values
+     */
     public Map<Property<?>, Object> getProperties() {
         return Collections.unmodifiableMap(this.properties);
     }
 
+    /**
+     * Returns the {@code Property} with the specified {@code String} key.
+     *
+     * @param key   String key
+     *
+     * @return      Property with key
+     */
     public static Property<?> propertyForKey(String key) {
         for (Property<?> property : ALL) {
             if (property.getKeyString().equals(key)) {
@@ -177,13 +231,14 @@ public class PlotProperties {
     }
 
     //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    //**********************************************//
     //                INNER CLASSES                 //
     //**********************************************//
-    
+
+    /**
+     * Defines a plot property that may be set with a value of the same type {@code T}.
+     *
+     * @param <T>   the type of the Property's value
+     */
     public static final class Property<T> extends ParameterizedConstant<T> {
 
         private Property(String key, T defaultValue) {
