@@ -81,7 +81,7 @@ public class ProjectView extends SplitPane {
         for (DataTable table : project.getDataTables()) {
             addTabForTable(table);
         }
-        project.getDataTables().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
+        project.dataTablesProperty().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
             while (c.next()) {
                 for (DataTable table : c.getAddedSubList()) {
                     addTabForTable(table);

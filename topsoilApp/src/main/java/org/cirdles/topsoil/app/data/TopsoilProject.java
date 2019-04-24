@@ -1,5 +1,9 @@
 package org.cirdles.topsoil.app.data;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
@@ -15,8 +19,21 @@ import org.cirdles.topsoil.app.ProjectManager;
  */
 public class TopsoilProject {
 
-    private ObservableMap<Lambda, Number> lambdas = FXCollections.observableHashMap();
-    private ObservableList<DataTable> dataTables = FXCollections.observableArrayList();
+    private MapProperty<Lambda, Number> lambdas = new SimpleMapProperty<>(FXCollections.observableHashMap());
+    public MapProperty<Lambda, Number> lambdasProperty() {
+        return lambdas;
+    }
+    public final ObservableMap<Lambda, Number> getLambdas() {
+        return FXCollections.unmodifiableObservableMap(lambdas);
+    }
+
+    private ListProperty<DataTable> dataTables = new SimpleListProperty<>(FXCollections.observableArrayList());
+    public ListProperty<DataTable> dataTablesProperty() {
+        return dataTables;
+    }
+    public final ObservableList<DataTable> getDataTables() {
+        return FXCollections.unmodifiableObservableList(dataTables);
+    }
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -34,10 +51,6 @@ public class TopsoilProject {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public ObservableMap<Lambda, Number> getLambdas() {
-        return FXCollections.unmodifiableObservableMap(lambdas);
-    }
-
     public Number getLambdaValue(Lambda lambda) {
         return lambdas.get(lambda);
     }
@@ -54,10 +67,6 @@ public class TopsoilProject {
         for (Lambda lambda : Lambda.values()) {
             resetLambdaValue(lambda);
         }
-    }
-
-    public ObservableList<DataTable> getDataTables() {
-        return FXCollections.unmodifiableObservableList(dataTables);
     }
 
     public void addDataTable(DataTable table) {

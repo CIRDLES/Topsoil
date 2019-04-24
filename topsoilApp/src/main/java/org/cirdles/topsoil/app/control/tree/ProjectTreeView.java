@@ -31,7 +31,7 @@ public class ProjectTreeView extends TreeView<DataComponent> {
         for (DataTable table : project.getDataTables()) {
             addDataTable(table);
         }
-        project.getDataTables().addListener((ListChangeListener<? super DataTable>) c -> {
+        project.dataTablesProperty().addListener((ListChangeListener<? super DataTable>) c -> {
             while(c.next()) {
                 for (DataTable table : c.getRemoved()) {
                     removeDataTable(table);

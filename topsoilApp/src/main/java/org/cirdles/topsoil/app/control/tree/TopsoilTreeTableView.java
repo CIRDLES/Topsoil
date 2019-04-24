@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
+    private static final double INIT_COL_WIDTH = 100.0;
+
     private DataTable table;
 
     //**********************************************//
@@ -70,7 +72,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      * @return  new TreeTableColumn
      */
     private TreeTableColumn<DataComponent, String> makeLabelColumn() {
-        TreeTableColumn<DataComponent, String> column = new TreeTableColumn<>("Label");
+        MultilineHeaderTreeTableColumn<String> column = new MultilineHeaderTreeTableColumn<>("Label");
         column.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
             cell.setTextAlignment(TextAlignment.LEFT);
@@ -81,7 +83,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             DataComponent component = param.getValue().getValue();
             return component.labelProperty();
         });
-        column.setPrefWidth(150);
+        column.setPrefWidth(INIT_COL_WIDTH);
         return column;
     }
 
@@ -91,7 +93,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      * @return  new TreeTableColumn
      */
     private TreeTableColumn<DataComponent, Boolean> makeCheckBoxColumn() {
-        TreeTableColumn<DataComponent, Boolean> column = new TreeTableColumn<>("Selected");
+        MultilineHeaderTreeTableColumn<Boolean> column = new MultilineHeaderTreeTableColumn<>("Selected");
         column.setCellFactory(param -> {
             CheckBoxTreeTableCell<DataComponent, Boolean> cell = new CheckBoxTreeTableCell<>();
             cell.setAlignment(Pos.CENTER);
@@ -127,7 +129,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             } else {
                 newColumn = makeTreeTableColumn((DataCategory) node);
             }
-            newColumn.setPrefWidth(150.0);
             node.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
             tableColumns.add(newColumn);
         }
@@ -136,7 +137,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     }
 
     private <T extends Serializable> TreeTableColumn<DataComponent, T> makeTreeTableColumn(DataColumn<T> dataColumn) {
-        TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
+        DataTreeTableColumn<T> newColumn = new DataTreeTableColumn<>(dataColumn);
         newColumn.setCellFactory(param -> {
             TreeTableCell<DataComponent, T> cell = new TopsoilTreeTableCell<>(dataColumn, table);
             cell.addEventHandler(CellEditEvent.CELL_EDITED, event -> {
