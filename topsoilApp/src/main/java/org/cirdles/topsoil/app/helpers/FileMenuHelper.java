@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.menu.helpers;
+package org.cirdles.topsoil.app.helpers;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.Clipboard;

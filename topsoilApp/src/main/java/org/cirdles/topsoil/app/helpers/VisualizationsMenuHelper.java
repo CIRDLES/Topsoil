@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.menu.helpers;
+package org.cirdles.topsoil.app.helpers;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
@@ -9,7 +9,6 @@ import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.plot.PlotStage;
 import org.cirdles.topsoil.app.data.DataUtils;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.PlotObservationThread;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.*;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.concurrent.ScheduledExecutorService;
 
 import static org.cirdles.topsoil.plot.PlotProperties.*;
 

@@ -3,7 +3,6 @@ package org.cirdles.topsoil.app;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
 import org.cirdles.topsoil.app.data.DataUtils;
@@ -17,9 +16,12 @@ import org.cirdles.topsoil.plot.PlotType;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
+/**
+ * Utility class for managing the current {@link TopsoilProject}, as well as its associated file {@code Path} and open
+ * plots.
+ */
 public class ProjectManager {
 
     /**
@@ -51,9 +53,23 @@ public class ProjectManager {
     }
 
     private static List<OpenPlot> openPlots = new ArrayList<>();
+
+    /**
+     * Registers the {@code TopsoilPlotView} for a table so that the open plot can be tracked and updated.
+     *
+     * @param table     DataTable
+     * @param plotView  TopsoilPlotView
+     */
     public static void registerOpenPlot(DataTable table, TopsoilPlotView plotView) {
         openPlots.add(new OpenPlot(table, plotView));
     }
+
+    /**
+     * De-registers the plot of the specified plot type for the provided table.
+     *
+     * @param table     DataTable
+     * @param plotType  PlotType
+     */
     public static void deregisterOpenPlot(DataTable table, PlotType plotType) {
         for (OpenPlot openPlot : openPlots) {
             if (openPlot.getTable().equals(table) && openPlot.getPlotType().equals(plotType)) {
@@ -63,6 +79,15 @@ public class ProjectManager {
             }
         }
     }
+
+    /**
+     * Returns the {@code TopsoilPlotView} with the specified plot type for the provided table.
+     *
+     * @param table     DataTable
+     * @param plotType  PlotType
+     *
+     * @return          TopsoilPlotView
+     */
     public static TopsoilPlotView getOpenPlotView(DataTable table, PlotType plotType) {
         for (OpenPlot openPlot : openPlots) {
             if (openPlot.getTable().equals(table) && openPlot.getPlotType().equals(plotType)) {
@@ -71,6 +96,14 @@ public class ProjectManager {
         }
         return null;
     }
+
+    /**
+     * Returns a list of the plot types that are currently open for the specified table.
+     *
+     * @param table     DataTable
+     *
+     * @return          List of PlotType
+     */
     public static List<PlotType> getOpenPlotTypesForTable(DataTable table) {
         List<PlotType> plotTypes = new ArrayList<>();
         for (OpenPlot openPlot : openPlots) {
@@ -80,6 +113,12 @@ public class ProjectManager {
         }
         return plotTypes;
     }
+
+    /**
+     * Updates the data for all open plots for the specified table.
+     *
+     * @param table     DataTable
+     */
     public static void updatePlotsForTable(DataTable table) {
         for (OpenPlot openPlot : openPlots) {
             if (openPlot.getTable().equals(table)) {
@@ -88,6 +127,10 @@ public class ProjectManager {
         }
     }
 
+    /**
+     * Updates all plots with information about project {@link Lambda} values and the data for their associated
+     * {@link DataTable}s.
+     */
     public static void updatePlots() {
         DataTable table;
         Plot plot;
@@ -104,10 +147,12 @@ public class ProjectManager {
 
             plot.setData(DataUtils.getPlotData(table));
             openPlot.getPlotView().getPropertiesPanel().setPlotProperties(properties.getProperties());
-//            plot.setProperties(properties);
         }
     }
 
+    /**
+     * Closes all open plots for the project and sets the project to null.
+     */
     public static void closeProject() {
         Stage plotStage;
         OpenPlot[] plots = openPlots.toArray(new OpenPlot[]{});
@@ -122,6 +167,14 @@ public class ProjectManager {
 
     private ProjectManager() {}
 
+    /**
+     * Acts as a handle for objects associated with an open plot, including the {@code DataTable} model and the
+     * {@code TopsoilPlotView} view.
+     *
+     * Upon creation, it will start a {@code Service} that will automatically update certain properties in the
+     * {@link org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel} that change within the JS execution of a
+     * plot. The service must be shut down manually upon plot de-registration.
+     */
     public static class OpenPlot {
         private DataTable table;
         private TopsoilPlotView plotView;
@@ -136,18 +189,36 @@ public class ProjectManager {
             observer = observationThread.initializePlotObservation(plotView.getPlot(), plotView.getPropertiesPanel());
         }
 
+        /**
+         * Returns the table associated with this plot.
+         *
+         * @return  DataTable
+         */
         public DataTable getTable() {
             return table;
         }
 
+        /**
+         * Returns the plot type of this plot.
+         *
+         * @return  PlotType
+         */
         public PlotType getPlotType() {
             return plotView.getPlot().getPlotType();
         }
 
+        /**
+         * Returns the {@code TopsoilPlotView} node for this plot.
+         *
+         * @return  TopsoilPlotView
+         */
         public TopsoilPlotView getPlotView() {
             return plotView;
         }
 
+        /**
+         * Shuts down the service that automatically updates the plot properties panel.
+         */
         private void shutdownObserver() {
             observer.shutdown();
         }

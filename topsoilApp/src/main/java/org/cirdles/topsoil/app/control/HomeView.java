@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.app.control;
 
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -9,7 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.util.ResourceBundles;
 

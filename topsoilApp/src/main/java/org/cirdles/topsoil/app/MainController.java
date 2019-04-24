@@ -11,9 +11,16 @@ import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.io.IOException;
 
+/**
+ * The main node for the Topsoil application.
+ *
+ * It is a singleton, since we only need one at time of writing. The instance is only accessible from inside this
+ * package. The main content node will be automatically set to either a {@link HomeView}, if no data is showing, or a
+ * {@link ProjectView}, if there is data showing, based on the value of {@link ProjectManager#projectProperty()}.
+ */
 public class MainController extends VBox {
 
-    public static MainController instance;
+    private static MainController instance;
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -32,7 +39,7 @@ public class MainController extends VBox {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    MainController() {
+    private MainController() {
         try {
             FXMLUtils.loadController(CONTROLLER_FXML, MainController.class, this);
         } catch (IOException e) {
@@ -61,7 +68,7 @@ public class MainController extends VBox {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static MainController getInstance() {
+    static MainController getInstance() {
         if (instance == null) {
             instance = new MainController();
         }
@@ -69,22 +76,22 @@ public class MainController extends VBox {
     }
 
     /**
-     * Returns the main content node of the controller, at time of writing either a {@code HomeView} or a {@code ProjectView},
-     * depending on whether a project is loaded.
-     *
-     * @return  Node
-     */
-    public Node getMainContent() {
-        return mainContentPane.getChildren().get(0);
-    }
-
-    /**
      * Returns the {@code HomeView} instance used by the controller.
      *
      * @return  HomeView
      */
-    public HomeView getHomeView() {
+    HomeView getHomeView() {
         return homeView;
+    }
+
+    /**
+     * Returns the {@code ProjectView} being displayed by the controller, if one is being displayed.
+     *
+     * @return  current ProjectView, else null
+     */
+    ProjectView getProjectView() {
+        Node view = mainContentPane.getChildren().get(0);
+        return (view instanceof ProjectView) ? (ProjectView) view : null;
     }
 
     //**********************************************//

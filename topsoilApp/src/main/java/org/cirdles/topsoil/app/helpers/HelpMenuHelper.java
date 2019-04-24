@@ -1,6 +1,7 @@
-package org.cirdles.topsoil.app.menu.helpers;
+package org.cirdles.topsoil.app.helpers;
 
 import javafx.stage.Stage;
+import org.cirdles.topsoil.app.TopsoilMenuBar;
 import org.cirdles.topsoil.app.control.AboutView;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
@@ -10,8 +11,7 @@ import org.cirdles.topsoil.app.util.issue.StandardGitHubIssueCreator;
 import java.awt.*;
 
 /**
- * A utility class providing helper methods for the logic behind items in
- * {@link org.cirdles.topsoil.app.menu.TopsoilMenuBar}.
+ * A utility class providing helper methods for the logic behind items in {@link TopsoilMenuBar}.
  *
  * @author marottajb
  */

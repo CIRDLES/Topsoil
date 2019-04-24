@@ -1,25 +1,23 @@
-package org.cirdles.topsoil.app.menu;
+package org.cirdles.topsoil.app;
 
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
-import org.cirdles.topsoil.app.MainController;
-import org.cirdles.topsoil.app.ProjectManager;
-import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.RecentFiles;
-import org.cirdles.topsoil.app.util.ExampleData;
 import org.cirdles.topsoil.app.file.TopsoilFileChooser;
 import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.parser.Delimiter;
+import org.cirdles.topsoil.app.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.helpers.HelpMenuHelper;
+import org.cirdles.topsoil.app.helpers.VisualizationsMenuHelper;
+import org.cirdles.topsoil.app.util.ExampleData;
 import org.cirdles.topsoil.app.util.ResourceBundles;
+import org.cirdles.topsoil.plot.PlotType;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,42 +27,37 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
+ * The main {@code MenuBar} for the application.
+ *
  * @author marottajb
  */
-public class FileMenu extends Menu {
+public class TopsoilMenuBar extends MenuBar {
 
-    private MenuItem openProjectItem;
-    private Menu openRecentProjectMenu;
-    private MenuItem clearRecentProjectsItem;
-    private Menu openExampleMenu;
-    private MenuItem openUPbExampleItem;
-    private MenuItem openUThExampleItem;
-    private MenuItem openSquid3ExampleItem;
-    private MenuItem saveProjectItem;
-    private MenuItem saveProjectAsItem;
-    private MenuItem closeProjectItem;
-    private Menu importTableMenu;
-    private MenuItem fromFileItem;
-    private MenuItem fromMultipleItem;
-    private MenuItem fromClipboardItem;
-    private MenuItem exportTableMenuItem;
-    private MenuItem exitTopsoilItem;
+    private ResourceBundle resources = ResourceBundles.MENU_BAR.getBundle();
 
-    FileMenu() {
-        super(ResourceBundles.MENU_BAR.getString("fileMenu"));
+    public TopsoilMenuBar() {
+        super();
+        this.getMenus().addAll(
+                getFileMenu(),
+                getEditMenu(),
+//                getViewMenu(),
+                getVisualizationsMenu(),
+                getHelpMenu()
+        );
+    }
 
-        ResourceBundle resources = ResourceBundles.MENU_BAR.getBundle();
+    private Menu getFileMenu() {
 
-        openProjectItem = new MenuItem(resources.getString("openProject"));
+        MenuItem openProjectItem = new MenuItem(resources.getString("openProject"));
         openProjectItem.setOnAction(event -> FileMenuHelper.openProject());
         MenuItem placeholder = new MenuItem(resources.getString("recentPlaceholder"));
         placeholder.setDisable(true);
-        clearRecentProjectsItem = new MenuItem(resources.getString("clearRecent"));
+        MenuItem clearRecentProjectsItem = new MenuItem(resources.getString("clearRecent"));
         clearRecentProjectsItem.setOnAction(event -> {
             RecentFiles.clear();
             MainController.getInstance().getHomeView().refreshRecentFiles();
         });
-        openRecentProjectMenu = new Menu(resources.getString("openRecent"), null, placeholder);
+        Menu openRecentProjectMenu = new Menu(resources.getString("openRecent"), null, placeholder);
         openRecentProjectMenu.setOnShowing(event -> {
             Path[] paths = RecentFiles.getPaths();
             if (paths.length != 0) {
@@ -83,36 +76,36 @@ public class FileMenu extends Menu {
             openRecentProjectMenu.getItems().add(placeholder);
         });
 
-        openUPbExampleItem = new MenuItem(resources.getString("UPb"));
-        openUPbExampleItem.setOnAction(event -> openExampleTable(ExampleData.UPB));
-        openUThExampleItem = new MenuItem(resources.getString("UTh"));
-        openUThExampleItem.setOnAction(event -> openExampleTable(ExampleData.UTH));
-        openSquid3ExampleItem = new MenuItem(resources.getString("squid3"));
-        openSquid3ExampleItem.setOnAction(event -> openExampleTable(ExampleData.SQUID_3));
-        openExampleMenu = new Menu(resources.getString("openExample"), null,
+        MenuItem openUPbExampleItem = new MenuItem(resources.getString("UPb"));
+        openUPbExampleItem.setOnAction(event -> FileMenuHelper.openExampleData(ExampleData.UPB));
+        MenuItem openUThExampleItem = new MenuItem(resources.getString("UTh"));
+        openUThExampleItem.setOnAction(event -> FileMenuHelper.openExampleData(ExampleData.UTH));
+        MenuItem openSquid3ExampleItem = new MenuItem(resources.getString("squid3"));
+        openSquid3ExampleItem.setOnAction(event -> FileMenuHelper.openExampleData(ExampleData.SQUID_3));
+        Menu openExampleMenu = new Menu(resources.getString("openExample"), null,
                 openUPbExampleItem,
                 openUThExampleItem,
                 openSquid3ExampleItem
         );
 
-        saveProjectItem = new MenuItem(resources.getString("saveProject"));
+        MenuItem saveProjectItem = new MenuItem(resources.getString("saveProject"));
         saveProjectItem.setOnAction(event -> {
             TopsoilProject project = ProjectManager.getProject();
             if (project != null) {
                 FileMenuHelper.saveProject(project);
             }
         });
-        saveProjectAsItem = new MenuItem(resources.getString("saveProjectAs"));
+        MenuItem saveProjectAsItem = new MenuItem(resources.getString("saveProjectAs"));
         saveProjectAsItem.setOnAction(event -> {
             TopsoilProject project = ProjectManager.getProject();
             if (project != null) {
                 FileMenuHelper.saveProjectAs(project);
             }
         });
-        closeProjectItem = new MenuItem(resources.getString("closeProject"));
+        MenuItem closeProjectItem = new MenuItem(resources.getString("closeProject"));
         closeProjectItem.setOnAction(event -> FileMenuHelper.closeProject());
 
-        fromFileItem = new MenuItem(resources.getString("importFile"));
+        MenuItem fromFileItem = new MenuItem(resources.getString("importFile"));
         fromFileItem.setOnAction(event -> {
             File file = TopsoilFileChooser.openTableFile().showOpenDialog(Topsoil.getPrimaryStage());
             if (file != null && file.exists()) {
@@ -146,19 +139,19 @@ public class FileMenu extends Menu {
                 }
             }
         });
-        fromMultipleItem = new MenuItem(resources.getString("importMultiFile"));
+        MenuItem fromMultipleItem = new MenuItem(resources.getString("importMultiFile"));
         fromMultipleItem.setOnAction(event -> FileMenuHelper.importMultipleFiles());
-        fromClipboardItem = new MenuItem(resources.getString("importClipboard"));
+        MenuItem fromClipboardItem = new MenuItem(resources.getString("importClipboard"));
         fromClipboardItem.setOnAction(event -> FileMenuHelper.importTableFromClipboard());
 
-        importTableMenu = new Menu(resources.getString("importMenu"), null,
-                                   fromFileItem,
-                                   fromMultipleItem,
-                                   fromClipboardItem
+        Menu importTableMenu = new Menu(resources.getString("importMenu"), null,
+                fromFileItem,
+                fromMultipleItem,
+                fromClipboardItem
         );
         importTableMenu.setOnShown(event -> fromClipboardItem.setDisable(! Clipboard.getSystemClipboard().hasString()));
 
-        exportTableMenuItem = new MenuItem(resources.getString("exportTable"));
+        MenuItem exportTableMenuItem = new MenuItem(resources.getString("exportTable"));
         exportTableMenuItem.setOnAction(event -> {
             DataTable table = MenuUtils.getCurrentDataTable();
             if (table != null) {
@@ -166,14 +159,15 @@ public class FileMenu extends Menu {
             }
         });
 
-        exitTopsoilItem = new MenuItem(resources.getString("exit"));
+        MenuItem exitTopsoilItem = new MenuItem(resources.getString("exit"));
         exitTopsoilItem.setOnAction(event -> {
             if (FileMenuHelper.handleDataBeforeClose()) {
                 Topsoil.shutdown();
             }
         });
 
-        this.setOnShown(event -> {
+        Menu fileMenu = new Menu(resources.getString("fileMenu"));
+        fileMenu.setOnShown(event -> {
             TopsoilProject project = ProjectManager.getProject();
             if (project != null) {
                 exportTableMenuItem.setDisable(false);
@@ -189,8 +183,7 @@ public class FileMenu extends Menu {
                 closeProjectItem.setDisable(true);
             }
         });
-
-        this.getItems().addAll(
+        fileMenu.getItems().addAll(
                 openProjectItem,
                 openRecentProjectMenu,
                 openExampleMenu,
@@ -203,12 +196,93 @@ public class FileMenu extends Menu {
                 new SeparatorMenuItem(),
                 exitTopsoilItem
         );
+        return fileMenu;
     }
 
-    private void openExampleTable(ExampleData example) {
-        FileMenuHelper.openExampleData(example);
+    private Menu getEditMenu() {
+        MenuItem preferencesItem = new MenuItem(resources.getString("preferences"));
+        preferencesItem.setDisable(true);
+
+        MenuItem undoItem = new MenuItem("Undo");
+        undoItem.setOnAction(event -> MenuUtils.undoLastAction());
+
+        MenuItem redoItem = new MenuItem("Redo");
+        redoItem.setOnAction(event -> MenuUtils.redoLastAction());
+
+        MenuItem tableOptionsItem = new MenuItem(resources.getString("tableOptions"));
+        tableOptionsItem.setOnAction(event -> DataTableOptionsDialog.showDialog(
+                MenuUtils.getCurrentDataTable(),
+                Topsoil.getPrimaryStage()
+        ));
+
+        Menu editMenu = new Menu(resources.getString("editMenu"), null,
+                undoItem,
+                redoItem,
+                new SeparatorMenuItem(),
+                tableOptionsItem
+//                new SeparatorMenuItem(),
+//                preferencesItem
+        );
+        editMenu.setOnShown(event -> {
+            if (MenuUtils.lastUndoName() != null) {
+                undoItem.setDisable(false);
+                undoItem.setText(resources.getString("undo") + " \"" + MenuUtils.lastUndoName() + "\"");
+            } else {
+                undoItem.setDisable(true);
+                undoItem.setText(resources.getString("undo"));
+            }
+            if (MenuUtils.lastRedoName() != null) {
+                redoItem.setDisable(false);
+                redoItem.setText(resources.getString("redo") + " \"" + MenuUtils.lastRedoName() + "\"");
+            } else {
+                redoItem.setDisable(true);
+                redoItem.setText(resources.getString("redo"));
+            }
+            tableOptionsItem.setDisable(ProjectManager.getProject() == null);
+        });
+
+        return editMenu;
     }
-    
+
+    private Menu getViewMenu() {
+        Menu viewMenu = new Menu(resources.getString("viewMenu"), null);
+        return viewMenu;
+    }
+
+    private Menu getVisualizationsMenu() {
+        MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
+        generatePlotItem.setOnAction(event -> {
+            // @TODO Check to make sure proper variables are assigned
+            VisualizationsMenuHelper.generatePlot(
+                    PlotType.SCATTER,
+                    MenuUtils.getCurrentDataTable(),
+                    null);
+        });
+
+        Menu visualizationsMenu = new Menu(resources.getString("visualizationsMenu"), null,
+                                           generatePlotItem
+        );
+        visualizationsMenu.setOnShown(event -> {
+            generatePlotItem.setDisable(ProjectManager.getProject() == null);
+        });
+        return visualizationsMenu;
+    }
+
+    private Menu getHelpMenu() {
+        MenuItem onlineHelpItem = new MenuItem(resources.getString("onlineHelp"));
+        onlineHelpItem.setOnAction(event -> HelpMenuHelper.openOnlineHelp());
+
+        MenuItem reportIssueItem = new MenuItem(resources.getString("reportIssue"));
+        reportIssueItem.setOnAction(event -> HelpMenuHelper.openIssueReporter());
+
+        MenuItem aboutItem = new MenuItem(resources.getString("about"));
+        aboutItem.setOnAction(event -> HelpMenuHelper.openAboutScreen(Topsoil.getPrimaryStage()));
+
+        return new Menu(resources.getString("helpMenu"), null,
+                        onlineHelpItem,
+                        reportIssueItem,
+                        aboutItem
+        );
+    }
+
 }
-
-

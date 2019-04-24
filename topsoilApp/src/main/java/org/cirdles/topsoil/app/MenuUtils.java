@@ -1,9 +1,12 @@
-package org.cirdles.topsoil.app.menu;
+package org.cirdles.topsoil.app;
 
-import org.cirdles.topsoil.app.MainController;
-import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.helpers.EditMenuHelper;
+import org.cirdles.topsoil.app.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.helpers.HelpMenuHelper;
+import org.cirdles.topsoil.app.helpers.ViewMenuHelper;
+import org.cirdles.topsoil.app.helpers.VisualizationsMenuHelper;
 
 /**
  * Utility methods for menu actions in {@link TopsoilMenuBar} and its associated helpers.
@@ -11,14 +14,13 @@ import org.cirdles.topsoil.app.data.DataTable;
  * @author marottajb
  *
  * @see TopsoilMenuBar
- * @see FileMenu
- * @see org.cirdles.topsoil.app.menu.helpers.FileMenuHelper
- * @see org.cirdles.topsoil.app.menu.helpers.EditMenuHelper
- * @see org.cirdles.topsoil.app.menu.helpers.ViewMenuHelper
- * @see org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper
- * @see org.cirdles.topsoil.app.menu.helpers.HelpMenuHelper
+ * @see FileMenuHelper
+ * @see EditMenuHelper
+ * @see ViewMenuHelper
+ * @see VisualizationsMenuHelper
+ * @see HelpMenuHelper
  */
-public class MenuUtils {
+class MenuUtils {
 
     /**
      * Returns the {@code DataTable} that is currently being displayed; otherwise, null.
@@ -27,7 +29,7 @@ public class MenuUtils {
      */
     static DataTable getCurrentDataTable() {
         if (ProjectManager.getProject() != null) {
-            ProjectView projectView = (ProjectView) MainController.getInstance().getMainContent();
+            ProjectView projectView = MainController.getInstance().getProjectView();
             if (projectView != null) {
                 return projectView.getVisibleDataTable();
             }
@@ -35,14 +37,14 @@ public class MenuUtils {
         return null;
     }
 
-    public static void undoLastAction() {
+    static void undoLastAction() {
         DataTable table = getCurrentDataTable();
         if (table != null) {
             table.undoLastAction();
         }
     }
 
-    public static void redoLastAction() {
+    static void redoLastAction() {
         DataTable table = getCurrentDataTable();
         if (table != null) {
             table.redoLastAction();

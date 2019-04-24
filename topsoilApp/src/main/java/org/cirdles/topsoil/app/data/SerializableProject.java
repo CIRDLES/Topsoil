@@ -9,7 +9,7 @@ import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
-import org.cirdles.topsoil.app.menu.helpers.VisualizationsMenuHelper;
+import org.cirdles.topsoil.app.helpers.VisualizationsMenuHelper;
 import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.plot.PlotProperties;
