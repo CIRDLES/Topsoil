@@ -27,6 +27,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
+/**
+ * The main class of the Topsoil application.
+ */
 public class Topsoil extends Application {
 
     //**********************************************//
@@ -54,7 +57,6 @@ public class Topsoil extends Application {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-
     @Override
     public void init() {
         // JxBrowser; enables lightweight mode, local files, and logging
@@ -74,7 +76,8 @@ public class Topsoil extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Topsoil.primaryStage = primaryStage;
+//        Topsoil.primaryStage = primaryStage;
+        setPrimaryStage(primaryStage);
         MainController controller = MainController.getInstance();
 
         // Set the stage to appear at the center of the screen
@@ -99,7 +102,8 @@ public class Topsoil extends Application {
         try {
             // Load logo image
             ResourceExtractor re = new ResourceExtractor(Topsoil.class);
-            logo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+//            logo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+            setLogo(new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString()));
             primaryStage.getIcons().add(logo);
 
             // Load custom font
@@ -129,10 +133,20 @@ public class Topsoil extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Returns the primary {@code Stage} of the application.
+     *
+     * @return  primary Stage
+     */
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
 
+    /**
+     * Returns the {@code Image} for the Topsoil logo.
+     *
+     * @return  logo Image
+     */
     public static Image getLogo() {
         return logo;
     }
@@ -201,6 +215,14 @@ public class Topsoil extends Application {
         }
 
         launch(args);
+    }
+
+    private void setPrimaryStage(Stage stage) {
+        Topsoil.primaryStage = stage;
+    }
+
+    private void setLogo(Image logo) {
+        Topsoil.logo = logo;
     }
 
     private static void setupKeyboardShortcuts(Scene scene) {

@@ -18,7 +18,7 @@ import java.io.IOException;
  * package. The main content node will be automatically set to either a {@link HomeView}, if no data is showing, or a
  * {@link ProjectView}, if there is data showing, based on the value of {@link ProjectManager#projectProperty()}.
  */
-public class MainController extends VBox {
+class MainController extends VBox {
 
     private static MainController instance;
 

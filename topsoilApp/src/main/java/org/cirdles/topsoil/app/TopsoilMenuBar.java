@@ -252,7 +252,6 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getVisualizationsMenu() {
         MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
         generatePlotItem.setOnAction(event -> {
-            // @TODO Check to make sure proper variables are assigned
             VisualizationsMenuHelper.generatePlot(
                     PlotType.SCATTER,
                     MenuUtils.getCurrentDataTable(),

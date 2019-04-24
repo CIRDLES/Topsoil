@@ -30,33 +30,42 @@ public class Squid3DataParser implements DataParser {
     /** {@inheritDoc} */
     @Override
     public ColumnRoot parseColumnTree(String content, String delimiter) {
-        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
-        return parseColumnTree(rows);
+        if (content != null && delimiter != null) {
+            String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
+            return parseColumnTree(rows);
+        }
+        return null;
     }
 
     /** {@inheritDoc} */
     @Override
     public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
-        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
-        if (label == null) {
-            if (path.getFileName() != null) {
-                label = path.getFileName().toString();
-            } else {
-                label = path.toString();
+        if (path != null && delimiter != null) {
+            String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
+            if (label == null) {
+                if (path.getFileName() != null) {
+                    label = path.getFileName().toString();
+                } else {
+                    label = path.toString();
+                }
             }
+            DataTable table = parseDataTable(rows, label);
+            prepareTable(table);
+            return table;
         }
-        DataTable table = parseDataTable(rows, label);
-        prepareTable(table);
-        return table;
+        return null;
     }
 
     /** {@inheritDoc} */
     @Override
     public DataTable parseDataTable(String content, String delimiter, String label) {
-        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
-        DataTable table =parseDataTable(rows, label);
-        prepareTable(table);
-        return table;
+        if (content != null && delimiter != null) {
+            String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
+            DataTable table = parseDataTable(rows, label);
+            prepareTable(table);
+            return table;
+        }
+        return null;
     }
 
     //**********************************************//

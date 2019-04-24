@@ -4,15 +4,18 @@ import javafx.event.Event;
 import javafx.event.EventType;
 import org.cirdles.topsoil.app.data.row.DataRow;
 
+/**
+ * An event that is fired when a cell in a {@link TopsoilTreeTableView} is edited.
+ */
 public class CellEditEvent extends Event {
 
-    public static EventType<CellEditEvent> CELL_EDITED = new EventType<>("CELL_EDITED");
+    public final static EventType<CellEditEvent> CELL_EDITED = new EventType<>("CELL_EDITED");
 
     private DataRow.DataValue<?> dataValue;
     private Object oldValue;
     private Object newValue;
 
-    public CellEditEvent(DataRow.DataValue<?> dataValue, Object oldValue, Object newValue) {
+    CellEditEvent(DataRow.DataValue<?> dataValue, Object oldValue, Object newValue) {
         super(CELL_EDITED);
 
         this.dataValue = dataValue;

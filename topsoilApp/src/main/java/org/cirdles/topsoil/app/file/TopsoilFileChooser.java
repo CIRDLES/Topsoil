@@ -35,10 +35,11 @@ public class TopsoilFileChooser {
 
         Path path = ProjectManager.getProjectPath();
         if (path != null) {
-            if (path.getParent() == null) {
-                fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
+            Path parent = path.getParent();
+            if (parent != null) {
+                fileChooser.setInitialDirectory(parent.toFile());
             } else {
-                fileChooser.setInitialDirectory(path.getParent().toFile());
+                fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
             }
         }
         return fileChooser;
@@ -58,13 +59,15 @@ public class TopsoilFileChooser {
 
         Path path = ProjectManager.getProjectPath();
         if (path != null) {
-            if (path.getParent() == null) {
-                fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
-                if (path.getFileName() != null) {
-                    fileChooser.setInitialFileName(path.getFileName().toString());
-                }
+            Path parent = path.getParent();
+            if (parent != null) {
+                fileChooser.setInitialDirectory(parent.toFile());
             } else {
-                fileChooser.setInitialDirectory(path.getParent().toFile());
+                fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
+                Path fileName = path.getFileName();
+                if (fileName != null) {
+                    fileChooser.setInitialFileName(fileName.toString());
+                }
             }
         }
         return fileChooser;

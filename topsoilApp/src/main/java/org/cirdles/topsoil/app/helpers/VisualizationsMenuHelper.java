@@ -91,7 +91,6 @@ public class VisualizationsMenuHelper {
 
             // Set data-dependent properties
             properties.set(TITLE, table.getLabel());
-            // @TODO assign X and Y axis labels
             properties.set(UNCERTAINTY, table.getUncertainty().getMultiplier());
             if (table.getVariableColumnMap().containsKey(Variables.X)) {
                 properties.set(X_AXIS, table.getColumnForVariable(Variables.X).getLabel());

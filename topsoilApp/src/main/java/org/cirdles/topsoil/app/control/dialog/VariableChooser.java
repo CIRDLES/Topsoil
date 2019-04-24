@@ -207,9 +207,9 @@ public class VariableChooser extends HBox {
         return newColumn;
     }
 
-    static class VariableRow<T> extends HashMap<DataColumn<?>, BooleanProperty> {
+    private static class VariableRow<T> extends HashMap<DataColumn<?>, BooleanProperty> {
 
-        Variable<T> variable;
+        private Variable<T> variable;
 
         VariableRow(Variable<T> variable) {
             super();

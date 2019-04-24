@@ -3,9 +3,7 @@ package org.cirdles.topsoil.app.data.row;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class DataRoot extends DataComposite<DataSegment> {
 
@@ -23,7 +21,12 @@ public class DataRoot extends DataComposite<DataSegment> {
 
     @Override
     public List<DataRow> getLeafNodes() {
-        return leavesAsDataRows(super.getLeafNodes());
+        try {
+            return leavesAsDataRows(super.getLeafNodes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -40,16 +43,19 @@ public class DataRoot extends DataComposite<DataSegment> {
      *
      * @param leaves    List of leaves in this tree
      * @param <T>       the type of the leaves in this tree
-     * @return          List o
+     *
+     * @return          List of DataRows
+     *
+     * @throws          Exception if a leaf is not an instance of DataRow
      */
-    private <T> List<DataRow> leavesAsDataRows(List<T> leaves) {
+    private <T> List<DataRow> leavesAsDataRows(List<T> leaves) throws Exception {
         List<DataRow> rows = new ArrayList<>();
         for (T leaf : leaves) {
             if (leaf instanceof DataRow) {
                 rows.add((DataRow) leaf);
             } else {
-                // @TODO Probably better to throw an exception here
-                return null;
+                // this should not happen
+                throw new Exception("Leaf is not an instance of DataRow.");
             }
         }
         return rows;

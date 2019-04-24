@@ -158,11 +158,10 @@ public class FileMenuHelper {
      */
     public static DataTable importTableFromFile(Path path, Delimiter delimiter, DataTemplate template) throws IOException {
         DataParser parser = template.getParser();
-        if (parser != null) {
-            String label = path.getFileName() != null ? path.getFileName().toString() : path.toString();
+        if (parser != null && path != null) {
+            String label = (path.getFileName() != null) ? path.getFileName().toString() : path.toString();
             return template.getParser().parseDataTable(path, delimiter.getValue(), label);
         }
-        // @TODO Throw exception
         return null;
     }
 
