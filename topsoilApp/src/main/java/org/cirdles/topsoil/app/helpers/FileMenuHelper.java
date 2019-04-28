@@ -306,13 +306,7 @@ public class FileMenuHelper {
 
     private static void openProjectPrivate(Path projectPath) {
         try {
-            TopsoilProject project = ProjectSerializer.deserialize(projectPath);
-            if (project != null) {
-                ProjectManager.setProject(project);
-                ProjectManager.setProjectPath(projectPath);
-                RecentFiles.addPath(projectPath);
-                ProjectManager.setProject(project);
-            }
+            ProjectSerializer.deserialize(projectPath);
         } catch (IOException e) {
             e.printStackTrace();
             TopsoilNotification.error(

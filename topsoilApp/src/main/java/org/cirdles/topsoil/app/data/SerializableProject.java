@@ -76,7 +76,7 @@ public class SerializableProject implements Serializable {
      *
      * @return  TopsoilProject
      */
-    public TopsoilProject reconstruct() {
+    public void reconstruct() {
         List<Map<SerializationKey, Object>> tableDataList = (List<Map<SerializationKey, Object>>) data.get(PROJECT_TABLES);
         List<DataTable> tables = new ArrayList<>();
         for (Map<SerializationKey, Object> tableData : tableDataList) {
@@ -88,6 +88,8 @@ public class SerializableProject implements Serializable {
         for (Map.Entry<Lambda, Number> entry : lambdaMap.entrySet()) {
             project.setLambdaValue(entry.getKey(), entry.getValue());
         }
+
+        ProjectManager.setProject(project);
 
         List<Map<SerializationKey, Object>> plotDataList = (List<Map<SerializationKey, Object>>) data.get(PROJECT_PLOTS);
         for (Map<SerializationKey, Object> plotData : plotDataList) {
@@ -109,8 +111,6 @@ public class SerializableProject implements Serializable {
             }
             VisualizationsMenuHelper.generatePlot(plotType, table, properties);
         }
-
-        return project;
     }
 
     //**********************************************//
