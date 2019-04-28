@@ -146,7 +146,8 @@ public class ProjectManager {
             properties.set(PlotProperties.LAMBDA_TH230, project.get().getLambdaValue(Lambda.Th230));
 
             plot.setData(DataUtils.getPlotData(table));
-            openPlot.getPlotView().getPropertiesPanel().setPlotProperties(properties.getProperties());
+            openPlot.getPlotView().getPropertiesPanel().setPlotProperties(properties);
+//            openPlot.getPlotView().getPlot().setProperties(properties);
         }
     }
 

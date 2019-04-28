@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.helpers;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
@@ -17,6 +18,7 @@ import org.cirdles.topsoil.variable.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import static org.cirdles.topsoil.plot.PlotProperties.*;
@@ -86,18 +88,26 @@ public class VisualizationsMenuHelper {
             table.addListener(c -> plot.setData(DataUtils.getPlotData(table)));
 
             if (properties == null) {
-                properties = new PlotProperties();
+                properties = PlotProperties.defaultProperties();
             }
 
             // Set data-dependent properties
             properties.set(TITLE, table.getLabel());
-            properties.set(UNCERTAINTY, table.getUncertainty().getMultiplier());
+            properties.set(ISOTOPE_SYSTEM, table.getIsotopeSystem());
+            properties.set(UNCERTAINTY, table.getUncertainty());
             if (table.getVariableColumnMap().containsKey(Variables.X)) {
                 properties.set(X_AXIS, table.getColumnForVariable(Variables.X).getLabel());
             }
             if (table.getVariableColumnMap().containsKey(Variables.Y)) {
                 properties.set(Y_AXIS, table.getColumnForVariable(Variables.Y).getLabel());
             }
+
+            Map<Lambda, Number> lambdas = ProjectManager.getProject().getLambdas();
+            properties.set(LAMBDA_U234, lambdas.get(Lambda.U234));
+            properties.set(LAMBDA_U235, lambdas.get(Lambda.U235));
+            properties.set(LAMBDA_U238, lambdas.get(Lambda.U238));
+            properties.set(LAMBDA_TH230, lambdas.get(Lambda.Th230));
+
             plot.setProperties(properties);
             TopsoilPlotView plotView = new TopsoilPlotView(plot);
 
@@ -111,7 +121,7 @@ public class VisualizationsMenuHelper {
             plotStage.setScene(scene);
             plotStage.getIcons().add(Topsoil.getLogo());
             plotStage.titleProperty().bind(Bindings.createStringBinding(
-                    () -> plotType.getName() + ": " + panel.getPlotTitle(), panel.plotTitleProperty()));
+                    () -> plotType.getName() + ": " + panel.titleProperty().get(), panel.titleProperty()));
             plotStage.setOnCloseRequest(closeEvent -> {
                 ProjectManager.deregisterOpenPlot(table, plotType);
             });

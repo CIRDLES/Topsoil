@@ -32,42 +32,6 @@ plot.drawTWConcordia = function() {
 plot.updateTWConcordia = function() {
     if (plot.twconcordiaVisible) {
 
-        if (plot.lambda.U235 == null) {
-            if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235'))) {
-                plot.lambda.U235 = plot.getProperty('U235');
-            } else {
-                plot.lambda.U235 = topsoil.defaultLambda.U235;
-            }
-        } else if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235')) ||
-            plot.lambda.U235 != plot.getProperty("U235")) {
-
-            plot.lambda.U235 = plot.getProperty("U235");
-        }
-
-        if (plot.lambda.U238 == null) {
-            if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) {
-                plot.lambda.U238 = plot.getProperty('U238');
-            } else {
-                plot.lambda.U238 = topsoil.defaultLambda.U238;
-            }
-        } else if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238')) ||
-            plot.lambda.U238 != plot.getProperty("U238")) {
-
-            plot.lambda.U238 = plot.getProperty("U238");
-        }
-
-        if (plot.lambda.R238_235S == null) {
-            if (plot.getProperty('R238_235S') != null && !isNaN(plot.getProperty('R238_235S'))) {
-                plot.lambda.R238_235S = plot.getProperty('R238_235S');
-            } else {
-                plot.lambda.R238_235S = topsoil.defaultLambda.R238_235S;
-            }
-        } else if (plot.getProperty('R238_235S') != null && !isNaN(plot.getProperty('R238_235S')) ||
-            plot.lambda.R238_235S != plot.getProperty("R238_235S")) {
-
-            plot.lambda.R238_235S = plot.getProperty("R238_235S");
-        }
-
         initializeWasserburg({
             LAMBDA_235: plot.lambda.U235,
             LAMBDA_238: plot.lambda.U238,
@@ -118,10 +82,10 @@ plot.updateTWConcordia = function() {
 
                 return path.join("");
             })
-            .attr("stroke", plot.getProperty('Wasserburg Line Fill'))
+            .attr("stroke", plot.getProperty(Property.CONCORDIA_LINE_FILL))
             .attr("stroke-width", 2);
 
-        if (plot.getProperty("Wasserburg Envelope")) {
+        if (plot.getProperty(Property.CONCORDIA_ENVELOPE)) {
             plot.twconcordiaGroup.select(".twuncertaintyEnvelope")
                 .attr("d", function () {
                     var approximateUpperSegment = function (path, minT, maxT) {
@@ -196,7 +160,7 @@ plot.updateTWConcordia = function() {
 
                     return path.join("");
                 })
-                .attr("fill", plot.getProperty('Wasserburg Envelope Fill'));
+                .attr("fill", plot.getProperty(Property.CONCORDIA_ENVELOPE_FILL));
         }
 
         plot.t.domain([minT, maxT]);

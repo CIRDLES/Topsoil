@@ -24,9 +24,7 @@ public class PlotObservationThread {
         this.propertiesPanel = propertiesPanel;
 
         ScheduledExecutorService observer = Executors.newSingleThreadScheduledExecutor();
-        observer.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
+        observer.scheduleAtFixedRate(() -> {
                 //Check if the plot's properties have been updated from the Javascript side
                 if(plot.getIfUpdated()) {
                     plot.updateProperties();
@@ -35,30 +33,24 @@ public class PlotObservationThread {
                     //PROPERTIES is now in sync with Javascript properties
                     plot.setIfUpdated(false);
                 }
-            }
         }, 0, 100, TimeUnit.MILLISECONDS);
 
         return observer;
     }
 
     private void updateAxes() {
-        if(propertiesPanel.liveAxisUpdate()) {
+        if(propertiesPanel.liveAxisUpdateActive()) {
             PlotProperties properties = plot.getProperties();
 
-            String xMin = properties.get(PlotProperties.X_MIN),
+            Number xMin = properties.get(PlotProperties.X_MIN),
                     xMax = properties.get(PlotProperties.X_MAX),
                     yMin = properties.get(PlotProperties.Y_MIN),
                     yMax = properties.get(PlotProperties.Y_MAX);
 
-            double xMinNumber = (! xMin.isEmpty()) ? Double.parseDouble(xMin) : 0.0,
-                    xMaxNumber = (! xMax.isEmpty()) ? Double.parseDouble(xMax) : 0.0,
-                    yMinNumber = (! yMin.isEmpty()) ? Double.parseDouble(yMin) : 0.0,
-                    yMaxNumber = (! yMax.isEmpty()) ? Double.parseDouble(yMax) : 0.0;
-
-            propertiesPanel.updateXMin(df.format(xMinNumber));
-            propertiesPanel.updateXMax(df.format(xMaxNumber));
-            propertiesPanel.updateYMin(df.format(yMinNumber));
-            propertiesPanel.updateYMax(df.format(yMaxNumber));
+            propertiesPanel.updateXMin(df.format(xMin.doubleValue()));
+            propertiesPanel.updateXMax(df.format(xMax.doubleValue()));
+            propertiesPanel.updateYMin(df.format(yMin.doubleValue()));
+            propertiesPanel.updateYMax(df.format(yMax.doubleValue()));
         }
     }
 

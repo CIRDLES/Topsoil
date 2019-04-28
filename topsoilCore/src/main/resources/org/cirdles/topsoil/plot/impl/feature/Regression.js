@@ -223,7 +223,7 @@ plot.drawRegressionEnvelope = function () {
  */
 plot.updateRegressionEnvelope = function () {
 
-    if(plot.regressionVisible && plot.getProperty("McLean Regression Envelope")) {
+    if(plot.regressionVisible && plot.getProperty(Property.MCLEAN_REGRESSION_ENVELOPE)) {
 
         //Draws the regression envelope if it's not present
         if(!plot.regressionEnvelopeVisible) {
@@ -243,7 +243,7 @@ plot.updateRegressionEnvelope = function () {
 
         plot.lowerEnvelope.attr("d", lineGenerator(plot.uncertaintyEnvelopeUpperBound));
         plot.upperEnvelope.attr("d", lineGenerator(plot.uncertaintyEnvelopeLowerBound));
-    } else if (plot.regressionVisible && !plot.getProperty("McLean Regression Envelope")) {
+    } else if (plot.regressionVisible && !plot.getProperty(Property.MCLEAN_REGRESSION_ENVELOPE)) {
         plot.removeRegressionEnvelope();
     }
 };

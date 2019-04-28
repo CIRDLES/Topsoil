@@ -1,9 +1,15 @@
 package org.cirdles.topsoil.app.control.plot.panel;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.plot.PlotProperties;
+
+import static org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel.fireEventOnChanged;
 
 import java.io.IOException;
 
@@ -32,10 +38,14 @@ public class AxisStylingController extends AnchorPane {
     @FXML CheckBox axisLiveUpdateCheckBox;
 
     //**********************************************//
-    //                  ATTRIBUTES                  //
+    //                  PROPERTIES                  //
     //**********************************************//
 
-    private PlotPropertiesPanel panel;
+    final DoubleProperty xAxisMin = new SimpleDoubleProperty(0.0);
+    final DoubleProperty xAxisMax = new SimpleDoubleProperty(1.0);
+
+    final DoubleProperty yAxisMin = new SimpleDoubleProperty(0.0);
+    final DoubleProperty yAxisMax = new SimpleDoubleProperty(1.0);
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -49,38 +59,29 @@ public class AxisStylingController extends AnchorPane {
         }
     }
 
-	//**********************************************//
-	//                PUBLIC METHODS                //
-	//**********************************************//
+    @FXML
+    protected void initialize() {
+        // Configure properties that need to have values converted
+        xAxisMin.bind(Bindings.createDoubleBinding(() -> getDouble(xMinTextField.getText()), xMinTextField.textProperty()));
+        xAxisMax.bind(Bindings.createDoubleBinding(() -> getDouble(xMaxTextField.getText()), xMaxTextField.textProperty()));
+        yAxisMin.bind(Bindings.createDoubleBinding(() -> getDouble(yMinTextField.getText()), yMinTextField.textProperty()));
+        yAxisMax.bind(Bindings.createDoubleBinding(() -> getDouble(yMaxTextField.getText()), yMaxTextField.textProperty()));
 
-	public void setPropertiesPanel(PlotPropertiesPanel panel) {
-    	this.panel = panel;
-	}
+        // Fire property changed events
+        fireEventOnChanged(plotTitleTextField.textProperty(), plotTitleTextField, PlotProperties.TITLE);
+        fireEventOnChanged(xTitleTextField.textProperty(), xTitleTextField, PlotProperties.X_AXIS);
+        fireEventOnChanged(yTitleTextField.textProperty(), yTitleTextField, PlotProperties.Y_AXIS);
+    }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    @FXML private void setXExtentsButtonAction() {
-    	String xMin = testDoubleString(xMinTextField.getText());
-    	String xMax = testDoubleString(xMaxTextField.getText());
-
-		panel.setAxes(xMin, xMax, "", "");
-    }
-
-    @FXML private void setYExtentsButtonAction() {
-	    String yMin = testDoubleString(yMinTextField.getText());
-	    String yMax = testDoubleString(yMaxTextField.getText());
-
-		panel.setAxes("", "", yMin, yMax);
-    }
-
-    private String testDoubleString(String s) {
-    	try {
-    		Double.parseDouble(s);
-    		return s;
-	    } catch (NumberFormatException e) {
-    		return "";
-	    }
+    private double getDouble(String string) {
+        try {
+            return Double.parseDouble(string);
+        } catch (NumberFormatException e) {
+            return Double.NaN;
+        }
     }
 }

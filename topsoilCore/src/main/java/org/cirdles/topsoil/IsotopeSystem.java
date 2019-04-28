@@ -138,6 +138,6 @@ public enum IsotopeSystem {
 
     @Override
     public String toString() {
-        return abbreviation;
+        return name;
     }
 }

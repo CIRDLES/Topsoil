@@ -46,7 +46,7 @@
                                     <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                  </GridPane.margin>
                               </ComboBox>
-                              <ComboBox fx:id="uncertaintyFormatComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <ComboBox fx:id="uncertaintyComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                  </GridPane.margin>

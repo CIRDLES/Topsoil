@@ -51,11 +51,7 @@
     };
 
     topsoil.setProperties = function (properties) {
-        plot.properties = {};
-
-        plot.propertiesKeys.forEach(function (key) {
-            plot.properties[key] = properties[key];
-        });
+        plot.properties = properties;
 
         plot.update(ts.data);
     };

@@ -107,11 +107,11 @@ plot.updateEllipses = function() {
                 if (! d.selected) {
                     fill = 'gray';
                 } else {
-                    fill = plot.getProperty('Ellipses Fill');
+                    fill = plot.getProperty(Property.ELLIPSES_FILL);
                 }
                 return fill;
             })
-            .attr("fill-opacity", plot.getProperty("Ellipses Opacity") * 0.2)
+            .attr("fill-opacity", plot.getProperty(Property.ELLIPSES_OPACITY) * 0.2)
             .attr("opacity", function (d) {
                 return d.selected ? 1.0 : 0.0;
             })

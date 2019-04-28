@@ -53,9 +53,9 @@ public enum Uncertainty {
      * @param multiplier   multiplier
      * @return      Uncertainty with multiplier
      */
-    public static Uncertainty fromMultiplier(double multiplier) {
+    public static Uncertainty fromMultiplier(Number multiplier) {
         for (Uncertainty format : values()) {
-            if (Double.compare(multiplier, format.getMultiplier()) == 0) {
+            if (Double.compare(multiplier.doubleValue(), format.getMultiplier()) == 0) {
                 return format;
             }
         }

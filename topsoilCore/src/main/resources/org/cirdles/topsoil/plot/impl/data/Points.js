@@ -38,9 +38,9 @@ plot.updatePoints = function (data) {
 
         // This applies variable model to all point elements.
         points
-            .attr("fill", plot.getProperty("Points Fill"))
+            .attr("fill", plot.getProperty(Property.POINTS_FILL))
             .attr("opacity", function (d) {
-                return d.selected ? plot.getProperty("Points Opacity") : 0.0;
+                return d.selected ? plot.getProperty(Property.POINTS_OPACITY) : 0.0;
             })
             .attr("cx", function (d) {
                 return plot.xAxisScale(d.x);

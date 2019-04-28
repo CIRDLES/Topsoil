@@ -80,7 +80,7 @@
                                     <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                  </padding>
                               </HBox>
-                              <Button fx:id="setXExtentsButton" mnemonicParsing="false" onAction="#setXExtentsButtonAction" text="Set Extents">
+                              <Button fx:id="setXExtentsButton" mnemonicParsing="false" text="Set Extents">
                                  <VBox.margin>
                                     <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                  </VBox.margin>
@@ -129,7 +129,7 @@
                                     <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                  </padding>
                               </HBox>
-                              <Button fx:id="setYExtentsButton" mnemonicParsing="false" onAction="#setYExtentsButtonAction" text="Set Extents">
+                              <Button fx:id="setYExtentsButton" mnemonicParsing="false" text="Set Extents">
                                  <VBox.margin>
                                     <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                  </VBox.margin>

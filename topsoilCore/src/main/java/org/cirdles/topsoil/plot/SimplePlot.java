@@ -15,7 +15,7 @@ import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 import javafx.scene.Node;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.plot.PlotProperties.Property;
-import org.cirdles.topsoil.plot.bridges.PropertiesBridge;
+import org.cirdles.topsoil.plot.bridges.AxisExtentsBridge;
 import org.cirdles.topsoil.plot.bridges.Regression;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
 import org.cirdles.topsoil.variable.Variable;
@@ -50,7 +50,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     private static final Logger LOGGER = LoggerFactory.getLogger(SimplePlot.class);
 
     private final ResourceExtractor resourceExtractor = new ResourceExtractor(SimplePlot.class);
-    private final PropertiesBridge propertiesBridge = new PropertiesBridge();
+    private final AxisExtentsBridge axisExtentsBridge = new AxisExtentsBridge();
     private final Regression regression = new Regression();
     private Browser browser;
     private BrowserView browserView;
@@ -66,7 +66,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      * @param plotType      plot type
      */
     public SimplePlot(PlotType plotType) {
-        this(plotType, new PlotProperties());
+        this(plotType, PlotProperties.defaultProperties());
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                     topsoil = browser.executeJavaScriptAndReturnValue("topsoil").asObject();
 
                     // Add bridges for JS-to-Java calls
-                    topsoil.setProperty("propertiesBridge", propertiesBridge);
+                    topsoil.setProperty("axisExtentsBridge", axisExtentsBridge);
                     topsoil.setProperty("regression", regression);
 
                     if (data != null) {
@@ -137,7 +137,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
 
     /**{@inheritDoc}*/
     @Override
-    public final void setAxes(String xMin, String xMax, String yMin, String yMax) {
+    public final void setAxes(Double xMin, Double xMax, Double yMin, Double yMax) {
         JSFunction setAxes = getTopsoilFunction("setAxes");
         if (setAxes != null) {
             setAxes.invoke(topsoil, xMin, xMax, yMin, yMax);
@@ -196,22 +196,20 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     /**{@inheritDoc}*/
     @Override
     public final boolean getIfUpdated() {
-        return propertiesBridge.getIfUpdated();
+        return axisExtentsBridge.getIfUpdated();
     }
 
     /**{@inheritDoc}*/
     @Override
     public final void setIfUpdated(boolean update) {
-        propertiesBridge.setIfUpdated(update);
+        axisExtentsBridge.setIfUpdated(update);
     }
 
     /**{@inheritDoc}*/
     @Override
     public final void updateProperties() {
-        Map<PlotProperties.Property<?>, Object> properties = propertiesBridge.getProperties();
-        for (Map.Entry<PlotProperties.Property<?>, Object> entry : properties.entrySet()) {
-            super.setProperty(entry.getKey(), entry.getValue());
-        }
+        properties.setAll(axisExtentsBridge.getProperties());
+        setProperties(properties);
     }
 
     /**
@@ -317,8 +315,10 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      */
     private JSObject convertProperties(PlotProperties properties) {
         JSObject jsProperties = browser.getJSContext().createObject();
+        Property<?> property;
         for (Map.Entry<Property<?>, Object> entry : properties.getProperties().entrySet()) {
-            jsProperties.setProperty(entry.getKey().getKeyString(), entry.getValue());
+            property = entry.getKey();
+            jsProperties.setProperty(property.getKeyString(), property.toJSCompatibleValue(entry.getValue()));
         }
         return jsProperties;
     }

@@ -5,7 +5,7 @@ import org.cirdles.topsoil.plot.PlotProperties;
 import java.util.HashMap;
 
 //Passes values from Javascript back into Java
-public class PropertiesBridge {
+public class AxisExtentsBridge {
 
     private HashMap<PlotProperties.Property<?>, Object> axisProperties = new HashMap<>();
     private boolean updated = true;
@@ -25,10 +25,10 @@ public class PropertiesBridge {
     }
 
     //Takes axis extents from Javascript and passes them to Java
-    public void setAxesExtents(String X_MIN, String X_MAX, String Y_MIN, String Y_MAX) {
-        axisProperties.put(PlotProperties.X_MIN, X_MIN);
-        axisProperties.put(PlotProperties.X_MAX, X_MAX);
-        axisProperties.put(PlotProperties.Y_MIN, Y_MIN);
-        axisProperties.put(PlotProperties.Y_MAX, Y_MAX);
+    public void update(Double xMin, Double xMax, Double yMin, Double yMax) {
+        if (xMin != null) axisProperties.put(PlotProperties.X_MIN, xMin);
+        if (xMax != null) axisProperties.put(PlotProperties.X_MAX, xMax);
+        if (yMin != null) axisProperties.put(PlotProperties.Y_MIN, yMin);
+        if (yMax != null) axisProperties.put(PlotProperties.Y_MAX, yMax);
     }
 }

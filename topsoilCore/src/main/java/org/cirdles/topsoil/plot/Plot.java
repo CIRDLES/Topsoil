@@ -89,12 +89,12 @@ public interface Plot extends Displayable {
     /**
      * Allows the user to set the X and Y axis extents.
      *
-     * @param xMin as String
-     * @param xMax as String
-     * @param yMin as String
-     * @param yMax as String
+     * @param xMin  as Double
+     * @param xMax  as Double
+     * @param yMin  as Double
+     * @param yMax  as Double
      */
-    void setAxes(String xMin, String xMax, String yMin, String yMax);
+    void setAxes(Double xMin, Double xMax, Double yMin, Double yMax);
     
     /**
      * Zooms plot so Concordia displays from corner to corner of plot.

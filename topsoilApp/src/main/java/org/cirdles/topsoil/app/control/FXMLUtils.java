@@ -20,7 +20,8 @@ public class FXMLUtils {
     }
 
     /**
-     * A helper method that loads FXML defined controls into the provided controller.
+     * A helper method that loads FXML defined controls into the provided controller. Call within a controller's
+     * constructor. Controller classes must be declared public.
      *
      * @param fileName      FXML file name
      * @param clazz         controller Class
