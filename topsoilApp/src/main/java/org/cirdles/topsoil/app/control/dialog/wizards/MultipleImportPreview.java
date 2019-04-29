@@ -7,7 +7,7 @@ import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
-import org.cirdles.topsoil.app.util.ResourceBundles;
+import org.cirdles.topsoil.app.ResourceBundles;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 

@@ -1,7 +1,5 @@
-package org.cirdles.topsoil.app.file;
+package org.cirdles.topsoil.app.file.serialization;
 
-import org.cirdles.topsoil.app.ProjectManager;
-import org.cirdles.topsoil.app.data.SerializableProject;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.io.*;
@@ -49,11 +47,9 @@ public class ProjectSerializer {
      *
      * @throws IOException  if file error
      */
-    public static void deserialize(Path projectPath) throws IOException {
+    public static TopsoilProject deserialize(Path projectPath) throws IOException {
         try (InputStream in = Files.newInputStream(projectPath); ObjectInputStream ois = new ObjectInputStream(in)) {
-            ((SerializableProject) ois.readObject()).reconstruct();
-            ProjectManager.setProjectPath(projectPath);
-            RecentFiles.addPath(projectPath);
+            return ((SerializableProject) ois.readObject()).reconstruct();
         } catch (InvalidClassException | ClassNotFoundException e) {
             throw new IOException(e);
         }

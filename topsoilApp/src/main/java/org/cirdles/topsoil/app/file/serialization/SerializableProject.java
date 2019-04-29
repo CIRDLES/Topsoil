@@ -1,7 +1,8 @@
-package org.cirdles.topsoil.app.data;
+package org.cirdles.topsoil.app.file.serialization;
 
-import org.cirdles.topsoil.app.ProjectManager;
-import org.cirdles.topsoil.app.control.plot.TopsoilPlotView;
+import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.DataTemplate;
+import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
@@ -9,9 +10,10 @@ import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
-import org.cirdles.topsoil.app.helpers.VisualizationsMenuHelper;
+import org.cirdles.topsoil.app.control.plot.PlotGenerator;
 import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.IsotopeSystem;
+import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotProperties;
 import org.cirdles.topsoil.plot.PlotType;
 import org.cirdles.topsoil.Uncertainty;
@@ -24,8 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.cirdles.topsoil.app.data.SerializableProject.SerializationKey.*;
-import static org.cirdles.topsoil.app.data.SerializableProject.SerializationKey.CATEGORY_SELECTED;
+import static org.cirdles.topsoil.app.file.serialization.SerializableProject.SerializationKey.*;
 
 /**
  * A serializable class for storing data from a {@link TopsoilProject}.
@@ -53,10 +54,9 @@ public class SerializableProject implements Serializable {
         ArrayList<HashMap<SerializationKey, Serializable>> plots = new ArrayList<>();
         for (DataTable table : project.getDataTables()) {
             tables.add(extractTableData(table));
-            for (PlotType plotType : ProjectManager.getOpenPlotTypesForTable(table)) {
-                TopsoilPlotView plotView = ProjectManager.getOpenPlotView(table, plotType);
-                if (plotView != null) {
-                    plots.add(extractPlotData(table, plotView));
+            for (TopsoilProject.OpenPlot openPlot : project.getOpenPlots()) {
+                if (openPlot.getTable() == table) {
+                    plots.add(extractPlotData(table, openPlot.getPlot()));
                 }
             }
         }
@@ -76,7 +76,7 @@ public class SerializableProject implements Serializable {
      *
      * @return  TopsoilProject
      */
-    public void reconstruct() {
+    public TopsoilProject reconstruct() {
         List<Map<SerializationKey, Object>> tableDataList = (List<Map<SerializationKey, Object>>) data.get(PROJECT_TABLES);
         List<DataTable> tables = new ArrayList<>();
         for (Map<SerializationKey, Object> tableData : tableDataList) {
@@ -88,8 +88,6 @@ public class SerializableProject implements Serializable {
         for (Map.Entry<Lambda, Number> entry : lambdaMap.entrySet()) {
             project.setLambdaValue(entry.getKey(), entry.getValue());
         }
-
-        ProjectManager.setProject(project);
 
         List<Map<SerializationKey, Object>> plotDataList = (List<Map<SerializationKey, Object>>) data.get(PROJECT_PLOTS);
         for (Map<SerializationKey, Object> plotData : plotDataList) {
@@ -109,19 +107,20 @@ public class SerializableProject implements Serializable {
             for (Map.Entry<String, Object> entry : propertyMap.entrySet()) {
                 properties.set(PlotProperties.propertyForKey(entry.getKey()), entry.getValue());
             }
-            VisualizationsMenuHelper.generatePlot(plotType, table, properties);
+            PlotGenerator.generatePlot(project, plotType, table, properties);
         }
+        return project;
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private HashMap<SerializationKey, Serializable> extractPlotData(DataTable table, TopsoilPlotView plotView) {
+    private HashMap<SerializationKey, Serializable> extractPlotData(DataTable table, Plot plot) {
         HashMap<SerializationKey, Serializable> plotData = new HashMap<>();
         plotData.put(PLOT_TABLE_LABEL, table.getLabel());
-        plotData.put(PLOT_TYPE, plotView.getPlot().getPlotType());
-        plotData.put(PLOT_PROPERTIES, extractPlotProperties(plotView.getPropertiesPanel().getPlotProperties()));
+        plotData.put(PLOT_TYPE, plot.getPlotType());
+        plotData.put(PLOT_PROPERTIES, extractPlotProperties(plot.getProperties()));
 
         return plotData;
     }

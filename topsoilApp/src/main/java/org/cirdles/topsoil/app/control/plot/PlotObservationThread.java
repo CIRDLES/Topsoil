@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util;
+package org.cirdles.topsoil.app.control.plot;
 
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.plot.Plot;

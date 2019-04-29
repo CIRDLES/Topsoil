@@ -17,10 +17,11 @@ import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.app.file.TopsoilFileUtils;
 import org.cirdles.topsoil.app.file.parser.DataParser;
-import org.cirdles.topsoil.app.file.parser.Delimiter;
-import org.cirdles.topsoil.app.file.TopsoilFileChooser;
-import org.cirdles.topsoil.app.util.ResourceBundles;
+import org.cirdles.topsoil.app.file.Delimiter;
+import org.cirdles.topsoil.app.file.FileChoosers;
+import org.cirdles.topsoil.app.ResourceBundles;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -117,7 +118,7 @@ class MultipleImportSourcesView extends WizardPane {
      */
     @FXML
     private void addFilesButtonAction() {
-        List<File> files = TopsoilFileChooser.openTableFile().showOpenMultipleDialog(Topsoil.getPrimaryStage());
+        List<File> files = FileChoosers.openTableFile().showOpenMultipleDialog(Topsoil.getPrimaryStage());
         if ( files != null && !files.isEmpty() ) {
             List<File> selectedFiles = new ArrayList<>(files);
             List<File> rejectedFiles = new ArrayList<>();
@@ -135,14 +136,14 @@ class MultipleImportSourcesView extends WizardPane {
                     iterator.remove();  // don't read in duplicates
                 } else {
                     try {
-                        Delimiter guess = DataParser.guessDelimiter(path);
+                        Delimiter guess = TopsoilFileUtils.guessDelimiter(path);
                         Map<DataImportDialog.Key, Object> fileSettings =
                                 DataImportDialog.showDialog(path.getFileName().toString(), guess, (Stage) this.getScene().getWindow());
                         if (guess == null) {
                             guess = (Delimiter) fileSettings.get(DataImportDialog.Key.DELIMITER);
                         }
-                        String delimiter = (guess != null) ? guess.getValue() :
-                                ((Delimiter) fileSettings.get(DataImportDialog.Key.DELIMITER)).getValue();
+                        String delimiter = (guess != null) ? guess.asString() :
+                                ((Delimiter) fileSettings.get(DataImportDialog.Key.DELIMITER)).asString();
                         DataTemplate template = (DataTemplate) fileSettings.get(DataImportDialog.Key.TEMPLATE);
                         DataParser parser = template.getParser();
                         DataTable table = parser.parseDataTable(path, delimiter, path.getFileName().toString());
@@ -184,7 +185,7 @@ class MultipleImportSourcesView extends WizardPane {
         Path path = Paths.get(file.toURI());
         boolean valid;
         try {
-            valid = DataParser.isFileSupported(path) && ! DataParser.isFileEmpty(path);
+            valid = TopsoilFileUtils.isFileSupported(path) && ! TopsoilFileUtils.isFileEmpty(path);
         } catch ( IOException e ) {
             throw new RuntimeException(e);
         }

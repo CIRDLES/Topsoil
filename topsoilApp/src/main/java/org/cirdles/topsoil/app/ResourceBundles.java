@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util;
+package org.cirdles.topsoil.app;
 
 import java.util.ResourceBundle;
 

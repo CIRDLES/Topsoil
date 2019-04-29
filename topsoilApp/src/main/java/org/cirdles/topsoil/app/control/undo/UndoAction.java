@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.undo;
+package org.cirdles.topsoil.app.control.undo;
 
 /**
  * An undoable action. Instances of the implementing class can be stored in an

@@ -5,7 +5,6 @@ import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.control.FXMLUtils;
-import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 
@@ -54,8 +53,8 @@ class MainController extends VBox {
 
         // Set the main window content appropriately based on whether or not a project is present
         replaceMainContent((project != null) ? new ProjectView(project) : homeView);
-        ProjectManager.projectProperty().addListener(c -> {
-            if (ProjectManager.getProject() == null) {
+        ProjectManager.projectProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
                 homeView.refreshRecentFiles();
                 replaceMainContent(homeView);
             } else {

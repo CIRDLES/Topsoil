@@ -8,18 +8,20 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel;
 import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.internal.PDFSaver;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * A custom control for viewing a {@link Plot}, containing the plot itself, its button bar, and its
  * {@link PlotPropertiesPanel}.
  */
-public class TopsoilPlotView extends VBox {
+public class PlotView extends VBox {
 
 	private static final String CONTROLLER_FXML = "plot-view.fxml";
 
@@ -43,17 +45,21 @@ public class TopsoilPlotView extends VBox {
 	//**********************************************//
 
 	private Plot plot;
+	private DataTable table;
+	private ScheduledExecutorService plotObserver;
 
 	//**********************************************//
 	//                 CONSTRUCTORS                 //
 	//**********************************************//
 
-	public TopsoilPlotView(Plot plot) {
+	PlotView(Plot plot, DataTable table) {
 		super();
 		this.plot = plot;
+		this.table = table;
 		this.propertiesPanel = new PlotPropertiesPanel(plot);
+		this.plotObserver = new PlotObservationThread().initializePlotObservation(this.plot, this.propertiesPanel);
 		try {
-			FXMLUtils.loadController(CONTROLLER_FXML, TopsoilPlotView.class, this);
+			FXMLUtils.loadController(CONTROLLER_FXML, PlotView.class, this);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -62,18 +68,37 @@ public class TopsoilPlotView extends VBox {
 	@FXML protected void initialize() {
 		initializePlot();
 		initializePropertiesPanel();
+
 	}
 
 	//**********************************************//
 	//                PUBLIC METHODS                //
 	//**********************************************//
 
+	/**
+	 * Returns the {@code Plot} instance for this {@code PlotView}.
+	 *
+	 * @return	Plot
+	 */
 	public Plot getPlot() {
 		return plot;
 	}
 
-	public PlotPropertiesPanel getPropertiesPanel() {
+	/**
+	 * Returns the properties panel of this {@code PlotView}.
+	 *
+	 * @return	PlotPropertiesPanel
+	 */
+	PlotPropertiesPanel getPropertiesPanel() {
 		return propertiesPanel;
+	}
+
+	/**
+	 * Shuts down the {@link ScheduledExecutorService} responsible for updating the properties panel with changes in the
+	 * plot. Should only be called if this instance will no longer be used.
+	 */
+	void shutdownObserver() {
+		plotObserver.shutdown();
 	}
 
 	//**********************************************//
@@ -116,6 +141,9 @@ public class TopsoilPlotView extends VBox {
 	}
 
 	private void initializePropertiesPanel() {
+		// Bind IsotopeSystem of table and properties panel
+		propertiesPanel.isotopeSystemProperty().bindBidirectional(table.isotopeSystemProperty());
+
 		propertiesPanelAnchorPane.getChildren().add(propertiesPanel);
 		FXMLUtils.setAnchorPaneConstraints(propertiesPanel, 0.0, 0.0, 0.0, 0.0);
 	}

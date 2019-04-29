@@ -1,9 +1,11 @@
 package org.cirdles.topsoil.app.file;
 
+import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.data.column.DataColumn;
-import org.cirdles.topsoil.app.util.ExampleData;
+import org.cirdles.topsoil.app.data.ExampleData;
+import org.cirdles.topsoil.app.file.serialization.ProjectSerializer;
 import org.cirdles.topsoil.variable.Variable;
 import org.junit.Test;
 
@@ -23,8 +25,15 @@ public class SerializationTest {
             Path path = Files.createTempFile(null, null);
             DataTable table = ExampleData.UPB.getDataTable();
             TopsoilProject project = new TopsoilProject(table);
+
+            project.setLambdaValue(Lambda.U234, 0.0);
+
             ProjectSerializer.serialize(path, project);
             TopsoilProject reconstructed = ProjectSerializer.deserialize(path);
+
+            for (Lambda lambda : Lambda.values()) {
+                assertEquals(project.getLambdaValue(lambda), reconstructed.getLambdaValue(lambda));
+            }
 
             DataTable newTable = reconstructed.getDataTables().get(0);
 

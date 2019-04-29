@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util;
+package org.cirdles.topsoil.app.data.column;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;

@@ -18,9 +18,9 @@ import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
-import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
-import org.cirdles.topsoil.app.util.undo.UndoAction;
-import org.cirdles.topsoil.app.util.undo.UndoManager;
+import org.cirdles.topsoil.app.data.column.NumberColumnStringConverter;
+import org.cirdles.topsoil.app.control.undo.UndoAction;
+import org.cirdles.topsoil.app.control.undo.UndoManager;
 import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
@@ -120,7 +120,7 @@ public class DataTable implements ObservableObjectValue<DataTable> {
         }
 
         // Sets the fraction digits for each column to align values by their decimal separators
-        for (DataColumn<?> column : this.columnRoot.getLeafNodes()) {
+        for (DataColumn<?> column : getDataColumns()) {
             if (column.getType() == Number.class) {
                 updateFractionDigitsForNumberColumn((DataColumn<Number>) column);
             }

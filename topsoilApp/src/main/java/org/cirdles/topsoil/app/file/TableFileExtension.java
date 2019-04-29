@@ -1,6 +1,4 @@
-package org.cirdles.topsoil.app.file.writer;
-
-import org.cirdles.topsoil.app.file.parser.Delimiter;
+package org.cirdles.topsoil.app.file;
 
 import java.nio.file.Path;
 

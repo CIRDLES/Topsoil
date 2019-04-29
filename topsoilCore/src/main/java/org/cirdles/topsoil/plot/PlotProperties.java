@@ -132,6 +132,8 @@ public class PlotProperties {
 
     /**
      * Returns a new instance of {@code PlotProperties} with default settings.
+     *
+     * @return  default PlotProperties
      */
     public static PlotProperties defaultProperties() {
         PlotProperties properties = new PlotProperties();
@@ -217,10 +219,6 @@ public class PlotProperties {
      */
     public Map<Property<?>, Object> getProperties() {
         return Collections.unmodifiableMap(this.properties);
-    }
-
-    public boolean containsProperty(Property<?> property) {
-        return properties.containsKey(property);
     }
 
     /**

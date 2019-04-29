@@ -13,14 +13,11 @@ import javafx.stage.StageStyle;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
-import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.util.ResourceBundles;
+import org.cirdles.topsoil.app.ResourceBundles;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ResourceBundle;
-
-import static org.cirdles.topsoil.app.util.ResourceBundles.MAIN;
 
 /**
  * @author marottajb

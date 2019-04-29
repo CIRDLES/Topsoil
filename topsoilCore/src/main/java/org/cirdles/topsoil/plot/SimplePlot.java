@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,6 +44,21 @@ import java.util.Objects;
  * Base implementation for {@link Plot} subclasses. Controls the JxBrowser {@code BrowserView} used to display JS files.
  */
 public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayable {
+
+    private static final List<String> PLOT_RESOURCE_FILES = new ArrayList<>();
+    static {
+        Collections.addAll(PLOT_RESOURCE_FILES,
+                "impl/data/Points.js",
+                "impl/data/Ellipses.js",
+                "impl/data/UncertaintyBars.js",
+                "impl/feature/Concordia.js",
+                "impl/feature/TWConcordia.js",
+                "impl/feature/Regression.js",
+                "impl/feature/Evolution.js",
+                "impl/DefaultLambda.js",
+                "impl/Utils.js"
+        );
+    }
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -66,60 +83,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      * @param plotType      plot type
      */
     public SimplePlot(PlotType plotType) {
-        this(plotType, PlotProperties.defaultProperties());
-    }
-
-    /**
-     * Constructs a new instance of {@code SimplePlot} of the specified {@code PlotType}, with the provided
-     * {@code PlotProperties}.
-     *
-     * @param plotType          plot type
-     * @param plotProperties    plot properties
-     */
-    public SimplePlot(PlotType plotType, PlotProperties plotProperties) {
-        super(plotType, plotProperties);
-
-        this.browser = new Browser(BrowserType.LIGHTWEIGHT);
-        browser.addLoadListener(new LoadAdapter() {
-            @Override
-            public void onFinishLoadingFrame(FinishLoadingEvent event) {
-                if (event.isMainFrame()) {
-                    Browser browser = event.getBrowser();
-
-                    // Get JSObject for Java-to-JS calls
-                    topsoil = browser.executeJavaScriptAndReturnValue("topsoil").asObject();
-
-                    // Add bridges for JS-to-Java calls
-                    topsoil.setProperty("axisExtentsBridge", axisExtentsBridge);
-                    topsoil.setProperty("regression", regression);
-
-                    if (data != null) {
-                        setData(data);
-                    }
-
-                    if (properties != null) {
-                        setProperties(properties);
-                    }
-
-                    resize();
-                }
-            }
-        });
-        // Listen for logs from JS
-        browser.addConsoleListener(event -> {
-            if (Objects.equals(event.getLevel().toString(), "ERROR")) {
-                LOGGER.error(event.getMessage());
-            } else {
-                LOGGER.info(event.getMessage());
-            }
-        });
-
-        browser.loadHTML(buildHTML());
-
-        browserView = new BrowserView(browser);
-        // Listen for size changes to Node
-        browserView.widthProperty().addListener(c -> resize());
-        browserView.heightProperty().addListener(c -> resize());
+        super(plotType, PlotProperties.defaultProperties());
     }
 
     //**********************************************//
@@ -156,6 +120,9 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     /**{@inheritDoc}*/
     @Override
     public final Node displayAsNode() {
+        if (browserView == null) {
+            initializeBrowserView();
+        }
         return browserView;
     }
 
@@ -250,6 +217,53 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     //**********************************************//
 
     /**
+     * Constructs and configures the {@code BrowserView} in this plot.
+     */
+    private void initializeBrowserView() {
+        this.browser = new Browser(BrowserType.LIGHTWEIGHT);
+        browser.addLoadListener(new LoadAdapter() {
+            @Override
+            public void onFinishLoadingFrame(FinishLoadingEvent event) {
+                if (event.isMainFrame()) {
+                    Browser browser = event.getBrowser();
+
+                    // Get JSObject for Java-to-JS calls
+                    topsoil = browser.executeJavaScriptAndReturnValue("topsoil").asObject();
+
+                    // Add bridges for JS-to-Java calls
+                    topsoil.setProperty("axisExtentsBridge", axisExtentsBridge);
+                    topsoil.setProperty("regression", regression);
+
+                    if (data != null) {
+                        setData(data);
+                    }
+
+                    if (properties != null) {
+                        setProperties(properties);
+                    }
+
+                    resize();
+                }
+            }
+        });
+        // Listen for logs from JS
+        browser.addConsoleListener(event -> {
+            if (Objects.equals(event.getLevel().toString(), "ERROR")) {
+                LOGGER.error(event.getMessage());
+            } else {
+                LOGGER.info(event.getMessage());
+            }
+        });
+
+        browser.loadHTML(buildHTML());
+
+        browserView = new BrowserView(browser);
+        // Listen for size changes to Node
+        browserView.widthProperty().addListener(c -> resize());
+        browserView.heightProperty().addListener(c -> resize());
+    }
+
+    /**
      * Returns a {@code String} containing the HTML document to be displayed in the {@link Browser}.
      *
      * @return  String HTML content
@@ -294,7 +308,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
         // Append plotType-specific scripts to HTML
         StringBuilder script = new StringBuilder();
         Path path;
-        for (String resource : plotType.getResources()) {
+        for (String resource : PLOT_RESOURCE_FILES) {
             path = resourceExtractor.extractResourceAsPath(resource);
             if (path == null) {
                 throw new RuntimeException(plotType.getName() + " resource not found: " + resource);

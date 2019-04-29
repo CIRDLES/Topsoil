@@ -11,8 +11,8 @@ import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.FXMLUtils;
-import org.cirdles.topsoil.app.file.parser.Delimiter;
-import org.cirdles.topsoil.app.util.ResourceBundles;
+import org.cirdles.topsoil.app.file.Delimiter;
+import org.cirdles.topsoil.app.ResourceBundles;
 
 import java.io.IOException;
 import java.util.HashMap;

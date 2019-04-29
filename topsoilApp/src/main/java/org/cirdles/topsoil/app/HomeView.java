@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control;
+package org.cirdles.topsoil.app;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
@@ -8,9 +8,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.helpers.FileMenuHelper;
+import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.file.RecentFiles;
-import org.cirdles.topsoil.app.util.ResourceBundles;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -68,7 +67,7 @@ public class HomeView extends GridPane {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public void refreshRecentFiles() {
+    void refreshRecentFiles() {
         recentFilesLinkBox.getChildren().clear();
         Path[] recentFiles = RecentFiles.getPaths();
         if (recentFiles.length == 0) {
@@ -77,14 +76,10 @@ public class HomeView extends GridPane {
             Hyperlink link;
             for (Path path : recentFiles) {
                 link = new Hyperlink(path.toString());
-                link.setOnAction(event -> FileMenuHelper.openProject(path));
+                link.setOnAction(event -> MenuItemHelper.openProject(path));
                 recentFilesLinkBox.getChildren().add(link);
             }
         }
-    }
-
-    public void clearRecentFiles() {
-        recentFilesLinkBox.getChildren().setAll(noRecentFilesLabel);
     }
 
 }

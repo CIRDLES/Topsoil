@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.issue;
+package org.cirdles.topsoil.app.help;
 
 import org.cirdles.topsoil.app.browse.WebBrowser;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;

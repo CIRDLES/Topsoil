@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.file.parser;
+package org.cirdles.topsoil.app.file;
 
 /**
  * Common delimiters used to separate model values. This is used when attempting to determine the delimiter of a
@@ -29,7 +29,12 @@ public enum Delimiter {
      *
      * @return  String delimiter value
      */
-    public String getValue() {
+    public String asString() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

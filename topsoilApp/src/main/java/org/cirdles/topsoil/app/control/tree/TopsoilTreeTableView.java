@@ -14,7 +14,7 @@ import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.undo.UndoAction;
+import org.cirdles.topsoil.app.control.undo.UndoAction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,7 +27,9 @@ import java.util.List;
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
 
-    private static final double INIT_COL_WIDTH = 100.0;
+    private static final double LABEL_COL_WIDTH = 150.0;
+    private static final double SELECTED_COL_WIDTH = 65.0;
+    private static final double DATA_COL_WIDTH = 135.0;
 
     private DataTable table;
 
@@ -35,6 +37,11 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
+    /**
+     * Constructs a new tree table view for the given data table.
+     *
+     * @param table     DataTable
+     */
     public TopsoilTreeTableView(DataTable table) {
         this.table = table;
 
@@ -85,7 +92,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             DataComponent component = param.getValue().getValue();
             return component.labelProperty();
         });
-        column.setPrefWidth(150.0);
+        column.setPrefWidth(LABEL_COL_WIDTH);
         return column;
     }
 
@@ -109,6 +116,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             return property;
         });
         column.setEditable(true);
+        column.setPrefWidth(SELECTED_COL_WIDTH);
         return column;
     }
 
@@ -173,6 +181,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             return null;
         });
         newColumn.setVisible(dataColumn.isSelected());
+        newColumn.setPrefWidth(DATA_COL_WIDTH);
         return newColumn;
     }
 

@@ -3,11 +3,6 @@ package org.cirdles.topsoil.app.data.column;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import org.cirdles.topsoil.app.data.composite.DataLeaf;
-import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Represents a column of data, and acts as a leaf in a {@link ColumnRoot}.

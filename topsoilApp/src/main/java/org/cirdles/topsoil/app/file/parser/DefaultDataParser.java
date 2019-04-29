@@ -8,56 +8,37 @@ import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 
 /**
+ * Parses value-separated data into a {@link DataTable}.
+ *
+ * This {@link DataParser} assumes that data is organized in a standard format, with one or more string header rows
+ * followed by some data rows.
+ *
  * @author marottajb
  */
-public class DefaultDataParser implements DataParser {
-
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
+public class DefaultDataParser extends AbstractDataParser {
 
     /** {@inheritDoc} */
     @Override
-    public ColumnRoot parseColumnTree(String content, String delimiter) {
-        if (content != null && delimiter != null) {
-            String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
-            return parseColumnTree(rows);
+    protected DataTable parseDataTable(String[][] rows, String label) {
+        ColumnRoot columnRoot = parseColumnTree(rows);
+        List<DataColumn<?>> columns = columnRoot.getLeafNodes();
+        int startIndex = countHeaderRows(rows);
+        List<DataRow> dataRows = new ArrayList<>();
+        for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
+            dataRows.add(
+                    getDataRow(
+                            "row" + (rowIndex - startIndex + 1),
+                            rows[rowIndex],
+                            columns
+                    )
+            );
         }
-        return null;
-    }
+        DataRoot dataRoot = new DataRoot(new DataSegment("model", dataRows.toArray(new DataRow[]{})));
 
-    /** {@inheritDoc} */
-    @Override
-    public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
-        if (path != null && delimiter != null) {
-            String[] lines = DataParser.readLines(path);
-            String[][] rows = DataParser.readCells(lines, delimiter);
-            if (label == null) {
-                Path fileName = path.getFileName();
-                if (fileName != null) {
-                    label = fileName.toString();
-                } else {
-                    label = path.toString();
-                }
-            }
-            return parseDataTable(rows, label);
-        }
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DataTable parseDataTable(String content, String delimiter, String label) {
-        if (content != null && delimiter != null) {
-            String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
-            return parseDataTable(rows, label);
-        }
-        return null;
+        return new DataTable(DataTemplate.DEFAULT, label, columnRoot, dataRoot);
     }
 
     //**********************************************//
@@ -81,7 +62,7 @@ public class DefaultDataParser implements DataParser {
                 }
             }
 
-            clazz = DataParser.getColumnDataType(rows, colIndex, numHeaderRows);
+            clazz = getColumnDataType(rows, colIndex, numHeaderRows);
             label = joiner.toString();
 
             if (label.equals("")) {
@@ -105,27 +86,10 @@ public class DefaultDataParser implements DataParser {
         return new ColumnRoot(columns.toArray(new DataColumn[]{}));
     }
 
-    private DataTable parseDataTable(String[][] rows, String label) {
-        ColumnRoot columnRoot = parseColumnTree(rows);
-        List<DataColumn<?>> columns = columnRoot.getLeafNodes();
-        int startIndex = countHeaderRows(rows);
-        List<DataRow> dataRows = new ArrayList<>();
-        for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
-            dataRows.add(DataParser.getDataRow(
-                    "row" + (rowIndex - startIndex + 1),
-                    rows[rowIndex],
-                    columns
-            ));
-        }
-        DataRoot dataRoot = new DataRoot(new DataSegment("model", dataRows.toArray(new DataRow[]{})));
-
-        return new DataTable(DataTemplate.DEFAULT, label, columnRoot, dataRoot);
-    }
-
     private int countHeaderRows(String[][] rows) {
         int count = 0;
         for (String[] row : rows) {
-            if (DataParser.isDouble(row[0])) {
+            if (isDouble(row[0])) {
                 break;
             }
             count++;

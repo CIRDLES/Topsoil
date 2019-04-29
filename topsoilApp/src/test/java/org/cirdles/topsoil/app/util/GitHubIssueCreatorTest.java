@@ -2,8 +2,8 @@ package org.cirdles.topsoil.app.util;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.cirdles.topsoil.app.browse.WebBrowser;
-import org.cirdles.topsoil.app.util.issue.GitHubIssueCreator;
-import org.cirdles.topsoil.app.util.issue.IssueCreator;
+import org.cirdles.topsoil.app.help.GitHubIssueCreator;
+import org.cirdles.topsoil.app.help.IssueCreator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

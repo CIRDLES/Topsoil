@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util.issue;
+package org.cirdles.topsoil.app.help;
 
 /**
  * An interface implemented by classes which create issues for external logs.

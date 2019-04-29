@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.plot;
 
 import org.cirdles.topsoil.plot.impl.ScatterPlot;
+import org.cirdles.topsoil.variable.Variable;
+import org.cirdles.topsoil.variable.Variables;
 
 /**
  * Pre-defined types of plots available in Topsoil.
@@ -10,15 +12,9 @@ import org.cirdles.topsoil.plot.impl.ScatterPlot;
 public enum PlotType {
 
     SCATTER("Scatter Plot", ScatterPlot.class, "impl/ScatterPlot.js",
-            "impl/data/Points.js",
-            "impl/data/Ellipses.js",
-            "impl/data/UncertaintyBars.js",
-            "impl/feature/Concordia.js",
-            "impl/feature/TWConcordia.js",
-            "impl/feature/Regression.js",
-            "impl/feature/Evolution.js",
-            "impl/DefaultLambda.js",
-            "impl/Utils.js");
+            Variables.X,
+            Variables.Y
+    );
 
     //**********************************************//
     //                  ATTRIBUTES                  //
@@ -27,17 +23,17 @@ public enum PlotType {
     private final String name;
     private final Class<? extends Plot> plot;
     private final String plotFile;
-    private final String[] resources;
+    private final Variable[] requiredVariables;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    PlotType(String name, Class<? extends Plot> plot, String plotFile, String... resources) {
+    PlotType(String name, Class<? extends Plot> plot, String plotFile, Variable... requiredVariables) {
         this.name = name;
         this.plot = plot;
         this.plotFile = plotFile;
-        this.resources = resources;
+        this.requiredVariables = requiredVariables;
     }
 
     //**********************************************//
@@ -76,12 +72,6 @@ public enum PlotType {
         return plotFile;
     }
 
-    /**
-     * An array of file names of resource files used by this plot type's associated JS file.
-     *
-     * @return  String[] of file names
-     */
-    public String[] getResources() {
-        return resources;
-    }
-}
+    public Variable[] getRequiredVariables() {
+        return requiredVariables;
+    }}

@@ -2,11 +2,6 @@ package org.cirdles.topsoil.app;
 
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.helpers.EditMenuHelper;
-import org.cirdles.topsoil.app.helpers.FileMenuHelper;
-import org.cirdles.topsoil.app.helpers.HelpMenuHelper;
-import org.cirdles.topsoil.app.helpers.ViewMenuHelper;
-import org.cirdles.topsoil.app.helpers.VisualizationsMenuHelper;
 
 /**
  * Utility methods for menu actions in {@link TopsoilMenuBar} and its associated helpers.
@@ -14,13 +9,12 @@ import org.cirdles.topsoil.app.helpers.VisualizationsMenuHelper;
  * @author marottajb
  *
  * @see TopsoilMenuBar
- * @see FileMenuHelper
- * @see EditMenuHelper
- * @see ViewMenuHelper
- * @see VisualizationsMenuHelper
- * @see HelpMenuHelper
  */
-class MenuUtils {
+final class MenuUtils {
+
+    private MenuUtils() {
+        // Prevents instantiation by default constructor
+    }
 
     /**
      * Returns the {@code DataTable} that is currently being displayed; otherwise, null.

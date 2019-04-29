@@ -2,8 +2,6 @@ package org.cirdles.topsoil.app.file;
 
 import javafx.stage.FileChooser;
 import org.cirdles.topsoil.app.ProjectManager;
-import org.cirdles.topsoil.app.Topsoil;
-import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,7 +12,7 @@ import java.nio.file.Paths;
  *
  * @author Benjamin Muldrow
  */
-public class TopsoilFileChooser {
+public class FileChoosers {
 
     //**********************************************//
     //                PUBLIC METHODS                //
