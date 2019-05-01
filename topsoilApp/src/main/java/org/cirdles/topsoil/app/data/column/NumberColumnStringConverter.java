@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.data.column;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.StringConverter;
+import org.cirdles.topsoil.app.data.DataUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -52,7 +53,7 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
     @Override
     public String toString(Number number) {
         if (number != null) {
-            int valueFractionDigits = countFractionDigits(number);
+            int valueFractionDigits = DataUtils.countFractionDigits(number);
             StringBuilder pattern = new StringBuilder(patternBase);
             for (int i = 1; i < numFractionDigits.get(); i++) {
                 if (i < valueFractionDigits) {
@@ -79,15 +80,6 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
             }
         }
         return null;
-    }
-
-    public static int countFractionDigits(Number number) {
-        if (number != null) {
-            String str = number.toString().toLowerCase();
-            int dotIndex = str.indexOf(".");
-            return str.substring(dotIndex + 1).length();
-        }
-        return -1;
     }
 
 }

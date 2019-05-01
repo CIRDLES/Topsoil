@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -12,23 +13,30 @@
    <columnConstraints>
       <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
-      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
    <rowConstraints>
-      <RowConstraints vgrow="NEVER" />
-      <RowConstraints valignment="TOP" vgrow="ALWAYS" />
+      <RowConstraints minHeight="10.0" vgrow="NEVER" />
+      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="ALWAYS" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="NEVER" />
       <RowConstraints valignment="TOP" vgrow="NEVER" />
-      <RowConstraints valignment="TOP" vgrow="NEVER" />
+      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="NEVER" />
    </rowConstraints>
    <children>
       <Label fx:id="columnTreeViewLabel" text="columnTreeViewLabel" />
       <VBox fx:id="columnTreeViewPane" alignment="TOP_CENTER" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" GridPane.vgrow="ALWAYS" />
       <Label fx:id="variableChooserLabel" text="variableChooserLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
       <VBox fx:id="variableChooserPane" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
-      <Label fx:id="uncertaintyLabel" text="uncertaintyLabel" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-      <Label fx:id="isotopeSystemLabel" text="isotopeSystemLabel" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-      <ComboBox fx:id="unctComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-      <ComboBox fx:id="isoComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+      <Label fx:id="uncertaintyLabel" text="uncertaintyLabel" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+      <Label fx:id="isotopeSystemLabel" text="isotopeSystemLabel" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+      <ComboBox fx:id="unctComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+      <ComboBox fx:id="isoComboBox" prefWidth="150.0" promptText="Select..." GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+      <Label fx:id="fractionDigitsLabel" text="fractionDigitsLabel" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <CheckBox fx:id="fractionDigitsCheckBox" mnemonicParsing="false" text="Restrict" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <ComboBox fx:id="fractionDigitsComboBox" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

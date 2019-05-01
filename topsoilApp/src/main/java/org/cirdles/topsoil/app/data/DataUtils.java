@@ -92,4 +92,13 @@ public class DataUtils {
         return plotData;
     }
 
+    public static int countFractionDigits(Number number) {
+        if (number != null) {
+            String str = number.toString().toLowerCase();
+            int dotIndex = str.indexOf(".");
+            return str.substring(dotIndex + 1).length();
+        }
+        return -1;
+    }
+
 }

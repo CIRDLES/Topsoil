@@ -3,8 +3,10 @@ package org.cirdles.topsoil.app.data;
 import com.google.common.collect.HashBiMap;
 import com.sun.javafx.binding.ExpressionHelper;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -76,6 +78,21 @@ public class DataTable implements ObservableObjectValue<DataTable> {
     public final void setUncertainty(Uncertainty uncertainty) { this.uncertainty.set(uncertainty); }
 
     /**
+     * The maximum number of fraction digits for the table. A value of -1 signifies no restriction.
+     */
+    private IntegerProperty fractionDigits = new SimpleIntegerProperty(-1);
+    public IntegerProperty fracionDigitsProperty() {
+        return fractionDigits;
+    }
+    public final int getMaxFractionDigits() {
+        return fractionDigits.get();
+    }
+    public final void setMaxFractionDigits(int n) {
+        fractionDigits.set(n);
+        updateFractionDigits();
+    }
+
+    /**
      * This is a property with a bi-directional map representing associations between plotting variables and data columns
      * in the table. Internally, it is a {@link HashBiMap}, so uniqueness among values is maintained.
      */
@@ -106,6 +123,7 @@ public class DataTable implements ObservableObjectValue<DataTable> {
         this.dataRoot.labelProperty().bind(labelProperty());
 
         this.label.addListener(c -> fireValueChangedEvent());
+        this.fractionDigits.addListener(c -> fireValueChangedEvent());
         this.isotopeSystem.addListener(c -> fireValueChangedEvent());
         this.uncertainty.addListener(c -> fireValueChangedEvent());
         this.variableColumnMap.addListener(
@@ -120,11 +138,7 @@ public class DataTable implements ObservableObjectValue<DataTable> {
         }
 
         // Sets the fraction digits for each column to align values by their decimal separators
-        for (DataColumn<?> column : getDataColumns()) {
-            if (column.getType() == Number.class) {
-                updateFractionDigitsForNumberColumn((DataColumn<Number>) column);
-            }
-        }
+        updateFractionDigits();
     }
 
     //**********************************************//
@@ -281,6 +295,14 @@ public class DataTable implements ObservableObjectValue<DataTable> {
     //                PRIVATE METHODS               //
     //**********************************************//
 
+    private void updateFractionDigits() {
+        for (DataColumn<?> column : getDataColumns()) {
+            if (column.getType() == Number.class) {
+                updateFractionDigitsForNumberColumn((DataColumn<Number>) column);
+            }
+        }
+    }
+
     /**
      * Checks the maximum number of fraction digits for the values for the specified number column, and appropriately
      * sets its {@link NumberColumnStringConverter}.
@@ -288,11 +310,15 @@ public class DataTable implements ObservableObjectValue<DataTable> {
      * @param column    DataColumn of type Number
      */
     private void updateFractionDigitsForNumberColumn(DataColumn<Number> column) {
-        int maxFractionDigits = 0;
-        for (Number n : getValuesForColumn(column)) {
-            maxFractionDigits = Math.max(maxFractionDigits, NumberColumnStringConverter.countFractionDigits(n));
+        int n = -1;
+        if (fractionDigits.get() == -1) {
+            for (Number value : getValuesForColumn(column)) {
+                n = Math.max(n, DataUtils.countFractionDigits(value));
+            }
+        } else {
+            n = fractionDigits.get();
         }
-        ((NumberColumnStringConverter) column.getStringConverter()).setNumFractionDigits(maxFractionDigits);
+        ((NumberColumnStringConverter) column.getStringConverter()).setNumFractionDigits(n);
     }
 
     /**

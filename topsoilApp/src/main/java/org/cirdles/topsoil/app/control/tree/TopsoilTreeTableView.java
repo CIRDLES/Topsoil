@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.control.tree;
 
+import com.sun.javafx.scene.control.skin.TreeTableViewSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
@@ -49,6 +50,9 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         this.setSortMode(TreeSortMode.ALL_DESCENDANTS);
         this.setShowRoot(false);
 
+        // Set custom Skin
+        this.setSkin(new TopsoilTreeTableViewSkin(this));
+
         // Create root item
         CheckBoxTreeItem<DataComponent> rootItem;
         rootItem = new CheckBoxTreeItem<>(table.getDataRoot());
@@ -69,6 +73,9 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         this.getColumns().addAll(makeTableColumnsForComposite(table.getColumnRoot()));
 
         this.getSortOrder().add(labelColumn);
+
+        // Refresh cells on fraction digit changes
+        table.fracionDigitsProperty().addListener(c -> ((TopsoilTreeTableViewSkin) getSkin()).refreshCells());
     }
 
     //**********************************************//
@@ -213,6 +220,18 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      */
     private CheckBoxTreeItem<DataComponent> makeTreeItemForDataRow(DataRow row) {
         return new CheckBoxTreeItem<>(row);
+    }
+
+    private class TopsoilTreeTableViewSkin extends TreeTableViewSkin<DataComponent> {
+
+        TopsoilTreeTableViewSkin(TopsoilTreeTableView treeTableView) {
+            super(treeTableView);
+        }
+
+        public void refreshCells() {
+            super.flow.recreateCells();
+        }
+
     }
 
 }

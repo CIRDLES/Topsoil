@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.util;
+package org.cirdles.topsoil.app.help;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.cirdles.topsoil.app.browse.WebBrowser;
