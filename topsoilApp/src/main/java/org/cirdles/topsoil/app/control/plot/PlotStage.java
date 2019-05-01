@@ -32,9 +32,10 @@ class PlotStage extends Stage {
 
         // Bind plot stage title to properties panel title
         PlotType plotType = plotView.getPlot().getPlotType();
-        StringProperty panelTitle = plotView.getPropertiesPanel().titleProperty();
         this.titleProperty().bind(Bindings.createStringBinding(
-                () -> plotType.getName() + ": " + panelTitle.get(), panelTitle));
+                () -> plotType.getName() + ": " + plotView.getPropertiesPanel().titleProperty().get(),
+                plotView.getPropertiesPanel().titleProperty()
+        ));
     }
 
 }

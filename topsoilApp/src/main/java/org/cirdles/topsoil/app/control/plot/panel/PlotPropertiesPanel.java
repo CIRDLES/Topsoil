@@ -63,6 +63,8 @@ public class PlotPropertiesPanel extends Accordion {
     @FXML protected void initialize() {
     	setPlotProperties(properties);
 
+    	title.bind(axisStyling.plotTitleTextField.textProperty());
+
     	// Make sure isotope system is uniform
     	isotopeSystem.bindBidirectional(dataOptions.isotopeSystemComboBox.valueProperty());	// bind isotopeSystem to control
 		plotFeatures.isotopeSystemProperty().bind(isotopeSystem);

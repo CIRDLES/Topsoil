@@ -138,12 +138,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 dataUpdateThread = new Thread(() -> {
                     try {
                         Thread.sleep(10);   // Forces a wait in case of multiple data changes at the same time
-                        JSFunction setData = getTopsoilFunction("setData");
-                        if (setData != null) {
-                            JSArray jsData = emptyJSArray();
-                            putJavaDataInJSArray(this.data, jsData);
-                            setData.invoke(topsoil, jsData);
-                        }
+                        updateJSData();
                         dataUpdateThread = null;
                     } catch (InterruptedException e) {
                         // Do nothing
@@ -251,13 +246,13 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                     topsoil.setProperty("regression", regression);
 
                     if (data != null) {
-                        setData(data);
+                        updateJSData();
                     }
                     if (properties != null) {
                         setProperties(properties);
                     }
-
                     resize();
+                    recenter();
                 }
             }
         });
@@ -372,6 +367,15 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 }
                 jsData.set(i, row);
             }
+        }
+    }
+
+    private void updateJSData() {
+        JSFunction setData = getTopsoilFunction("setData");
+        if (setData != null) {
+            JSArray jsData = emptyJSArray();
+            putJavaDataInJSArray(this.data, jsData);
+            setData.invoke(topsoil, jsData);
         }
     }
 
