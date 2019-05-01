@@ -26,7 +26,7 @@ public class PlotDataEntry {
      * @return          associated value of variable
      */
     public <T> T get(Variable<T> variable) {
-        return (T) values.get(variable);
+        return variable.getType().cast(values.get(variable));
     }
 
     /**

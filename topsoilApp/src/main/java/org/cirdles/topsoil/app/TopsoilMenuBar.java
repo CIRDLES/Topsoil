@@ -2,26 +2,17 @@ package org.cirdles.topsoil.app;
 
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
-import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
-import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.plot.PlotGenerator;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.file.TopsoilFileUtils;
 import org.cirdles.topsoil.app.file.RecentFiles;
-import org.cirdles.topsoil.app.file.FileChoosers;
-import org.cirdles.topsoil.app.file.Delimiter;
 import org.cirdles.topsoil.app.data.ExampleData;
 import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.plot.PlotType;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -38,7 +29,6 @@ public class TopsoilMenuBar extends MenuBar {
         this.getMenus().addAll(
                 getFileMenu(),
                 getEditMenu(),
-//                getViewMenu(),
                 getVisualizationsMenu(),
                 getHelpMenu()
         );
@@ -140,9 +130,7 @@ public class TopsoilMenuBar extends MenuBar {
         });
 
         MenuItem exitTopsoilItem = new MenuItem(resources.getString("exit"));
-        exitTopsoilItem.setOnAction(event -> {
-            Topsoil.safeShutdown();
-        });
+        exitTopsoilItem.setOnAction(event -> Topsoil.safeShutdown());
 
         Menu fileMenu = new Menu(resources.getString("fileMenu"));
         fileMenu.setOnShown(event -> {
@@ -195,8 +183,6 @@ public class TopsoilMenuBar extends MenuBar {
                 redoItem,
                 new SeparatorMenuItem(),
                 tableOptionsItem
-//                new SeparatorMenuItem(),
-//                preferencesItem
         );
         editMenu.setOnShown(event -> {
             if (MenuUtils.lastUndoName() != null) {
@@ -219,11 +205,6 @@ public class TopsoilMenuBar extends MenuBar {
         return editMenu;
     }
 
-    private Menu getViewMenu() {
-        Menu viewMenu = new Menu(resources.getString("viewMenu"), null);
-        return viewMenu;
-    }
-
     private Menu getVisualizationsMenu() {
         MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
         generatePlotItem.setOnAction(event -> {
@@ -240,9 +221,7 @@ public class TopsoilMenuBar extends MenuBar {
         Menu visualizationsMenu = new Menu(resources.getString("visualizationsMenu"), null,
                                            generatePlotItem
         );
-        visualizationsMenu.setOnShown(event -> {
-            generatePlotItem.setDisable(ProjectManager.getProject() == null);
-        });
+        visualizationsMenu.setOnShown(event -> generatePlotItem.setDisable(ProjectManager.getProject() == null));
         return visualizationsMenu;
     }
 

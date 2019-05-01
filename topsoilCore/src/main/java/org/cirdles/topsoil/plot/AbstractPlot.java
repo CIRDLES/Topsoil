@@ -44,7 +44,7 @@ public abstract class AbstractPlot implements Plot {
      * @param plotType   PlotType
      * @param properties PlotProperties
      */
-    public AbstractPlot(PlotType plotType, PlotProperties properties) {
+    AbstractPlot(PlotType plotType, PlotProperties properties) {
         this.plotType = plotType;
         data = emptyList();
         this.properties = properties;

@@ -14,6 +14,7 @@ import org.cirdles.topsoil.plot.PlotProperties;
 import org.cirdles.topsoil.plot.PlotType;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class TopsoilProject {
 
-    private MapProperty<Lambda, Number> lambdas = new SimpleMapProperty<>(FXCollections.observableHashMap());
+    private MapProperty<Lambda, Number> lambdas = new SimpleMapProperty<>(FXCollections.observableMap(new LinkedHashMap<>()));
     public MapProperty<Lambda, Number> lambdasProperty() {
         return lambdas;
     }

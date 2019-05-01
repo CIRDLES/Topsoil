@@ -73,6 +73,8 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     private BrowserView browserView;
     private JSObject topsoil;
 
+    private Thread dataUpdateThread = null;
+
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
@@ -130,11 +132,25 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     @Override
     public final void setData(List<PlotDataEntry> data) {
         super.setData(data);
-        JSFunction setData = getTopsoilFunction("setData");
-        if (setData != null) {
-            JSArray jsData = emptyJSArray();    // Browser requires a JSArray instead of a Java array, so
-                                                // we get one here, and write to it in convertData()
-            setData.invoke(topsoil, convertData(data, jsData));
+
+        if (browserView != null) {
+            if (dataUpdateThread == null) {
+                dataUpdateThread = new Thread(() -> {
+                    try {
+                        Thread.sleep(10);   // Forces a wait in case of multiple data changes at the same time
+                        JSFunction setData = getTopsoilFunction("setData");
+                        if (setData != null) {
+                            JSArray jsData = emptyJSArray();
+                            putJavaDataInJSArray(this.data, jsData);
+                            setData.invoke(topsoil, jsData);
+                        }
+                        dataUpdateThread = null;
+                    } catch (InterruptedException e) {
+                        // Do nothing
+                    }
+                });
+                dataUpdateThread.start();
+            }
         }
     }
 
@@ -237,7 +253,6 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                     if (data != null) {
                         setData(data);
                     }
-
                     if (properties != null) {
                         setProperties(properties);
                     }
@@ -338,14 +353,14 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     }
 
     /**
-     * Converts plot data into a {@link JSArray} that can be passed into the {@link Browser}.
+     * Puts plot data into a {@link JSArray} that can be passed into the {@link Browser}.
      *
      * @param javaData      data as Java List
      * @param jsData        empty JSArray to write data to
      *
      * @return              JSArray
      */
-    private JSArray convertData(List<PlotDataEntry> javaData, JSArray jsData) {
+    private void putJavaDataInJSArray(List<PlotDataEntry> javaData, JSArray jsData) {
         JSObject row;
         for (int i = 0; i < Math.max(javaData.size(), jsData.length()); i++) {
             if (i >= javaData.size()) {
@@ -358,7 +373,6 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 jsData.set(i, row);
             }
         }
-        return jsData;
     }
 
     /**
