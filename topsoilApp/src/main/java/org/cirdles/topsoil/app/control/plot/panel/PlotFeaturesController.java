@@ -1,15 +1,14 @@
 package org.cirdles.topsoil.app.control.plot.panel;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.RadioButton;
@@ -55,6 +54,7 @@ public class PlotFeaturesController extends AnchorPane {
     ToggleGroup concordiaToggleGroup = new ToggleGroup();
     @FXML ColorPicker concordiaLineColorPicker;
     @FXML ColorPicker concordiaEnvelopeColorPicker;
+    @FXML Button snapToCornersButton;
 
     @FXML private VBox evolutionControls;
     @FXML CheckBox evolutionCheckBox;
@@ -138,6 +138,7 @@ public class PlotFeaturesController extends AnchorPane {
             }
         }, concordiaToggleGroup.selectedToggleProperty()));
         concordiaEnvelopeCheckBox.disableProperty().bind(Bindings.not(concordiaLineCheckBox.selectedProperty()));
+        snapToCornersButton.disableProperty().bind(Bindings.not(wetherillRadioButton.selectedProperty()));
 
         // Configure properties that need to have values converted
         concordiaLineFillValue.bind(Bindings.createStringBinding(

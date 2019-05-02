@@ -36,12 +36,13 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * Base implementation for {@link Plot} subclasses. Controls the JxBrowser {@code BrowserView} used to display JS files.
+ * Base implementation for {@link Plot} subclasses. Configures the JxBrowser {@code BrowserView} used to display JS files.
  */
 public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayable {
 
@@ -73,7 +74,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     private BrowserView browserView;
     private JSObject topsoil;
 
-    private Thread dataUpdateThread = null;
+    private Map<String, Thread> updateThreads = new HashMap<>();
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -133,30 +134,15 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     public final void setData(List<PlotDataEntry> data) {
         super.setData(data);
 
-        if (browserView != null) {
-            if (dataUpdateThread == null) {
-                dataUpdateThread = new Thread(() -> {
-                    try {
-                        Thread.sleep(10);   // Forces a wait in case of multiple data changes at the same time
-                        updateJSData();
-                        dataUpdateThread = null;
-                    } catch (InterruptedException e) {
-                        // Do nothing
-                    }
-                });
-                dataUpdateThread.start();
-            }
-        }
+        updateJSOnDelayedThread("setData", () -> updateJSData());
     }
 
     /**{@inheritDoc}*/
     @Override
     public final void setProperties(PlotProperties properties) {
         super.setProperties(properties);
-        JSFunction setProperties = getTopsoilFunction("setProperties");
-        if (setProperties != null) {
-            setProperties.invoke(topsoil, convertProperties(this.properties));
-        }
+
+        updateJSOnDelayedThread("setProperties", () -> updateJSProperties());
     }
 
     /**{@inheritDoc}*/
@@ -352,8 +338,6 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      *
      * @param javaData      data as Java List
      * @param jsData        empty JSArray to write data to
-     *
-     * @return              JSArray
      */
     private void putJavaDataInJSArray(List<PlotDataEntry> javaData, JSArray jsData) {
         JSObject row;
@@ -376,6 +360,39 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
             JSArray jsData = emptyJSArray();
             putJavaDataInJSArray(this.data, jsData);
             setData.invoke(topsoil, jsData);
+        }
+    }
+
+    private void updateJSProperties() {
+        JSFunction setProperties = getTopsoilFunction("setProperties");
+        if (setProperties != null) {
+            setProperties.invoke(topsoil, convertProperties(this.properties));
+        }
+    }
+
+    /**
+     * Forces a short delay before the update is applied. Meant to avoid freezing in situations like the (de)selection
+     * of an entire data segment/aliquot, where many small data events are fired and "setData" may be called many times.
+     *
+     * @param jsFunctionName    String name of JS function to be invoked
+     * @param runnable          Runnable code to execute the update
+     */
+    private void updateJSOnDelayedThread(String jsFunctionName, Runnable runnable) {
+        if (topsoil != null) {
+            if (updateThreads.get(jsFunctionName) == null) {
+                Thread updateThread = new Thread(() -> {
+                    try {
+                        Thread.sleep(10);   // Forces a wait in case of multiple data changes at the same time
+                        runnable.run();           // Runs the update action
+                        updateThreads.remove(jsFunctionName);   // Removes the current update thread from
+                    } catch (InterruptedException e) {
+                        // Do nothing
+                    }
+                });
+                updateThreads.put(jsFunctionName, updateThread);    // Put the update thread in the map so we know that
+                                                                    // there is already an update being performed.
+                updateThread.start();
+            }
         }
     }
 

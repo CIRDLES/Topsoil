@@ -33,7 +33,6 @@ public class PlotView extends VBox {
 	@FXML private Button saveSVGButton;
 	@FXML private Button savePDFButton;
 	@FXML private Button resetViewButton;
-	@FXML private Button snapToCornersButton;
 
 	private PlotPropertiesPanel propertiesPanel;
 
@@ -125,13 +124,6 @@ public class PlotView extends VBox {
 	 */
 	@FXML private void resetViewButtonAction() {
 		plot.recenter();
-	}
-
-	/**
-	 * If applicable, adjusts the plot view so that the concordia line passes through the corners.
-	 */
-	@FXML private void snapToCornersButtonAction() {
-		plot.snapToCorners();
 	}
 
 	private void initializePlot() {

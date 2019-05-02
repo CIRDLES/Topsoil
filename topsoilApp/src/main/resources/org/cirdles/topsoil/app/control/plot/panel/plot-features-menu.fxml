@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
@@ -26,7 +27,7 @@
                               <CheckBox fx:id="mcLeanRegressionCheckBox" mnemonicParsing="false" text="McLean Regression" />
                               <CheckBox fx:id="mcLeanEnvelopeCheckBox" mnemonicParsing="false" text="Uncertainty Envelope">
                                  <VBox.margin>
-                                    <Insets bottom="5.0" left="25.0" top="5.0" />
+                                    <Insets left="25.0" />
                                  </VBox.margin>
                               </CheckBox>
                            </children>
@@ -45,32 +46,40 @@
                                     <ColumnConstraints />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-                                    <RowConstraints vgrow="NEVER" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                                     <RowConstraints vgrow="NEVER" />
                                     <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints vgrow="NEVER" />
+                                    <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                  </rowConstraints>
                                  <children>
-                                    <Label text="Line Fill:" GridPane.rowIndex="4">
+                                    <Label text="Line Fill:" GridPane.rowIndex="5">
                                        <GridPane.margin>
-                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                          <Insets />
                                        </GridPane.margin>
-                                    </Label>
-                                    <Label text="Envelope Fill:" GridPane.rowIndex="5">
-                                       <GridPane.margin>
+                                       <padding>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                       </GridPane.margin>
+                                       </padding>
                                     </Label>
-                                    <ColorPicker fx:id="concordiaLineColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <Label text="Envelope Fill:" GridPane.rowIndex="6">
                                        <GridPane.margin>
-                                          <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                          <Insets />
+                                       </GridPane.margin>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </Label>
+                                    <ColorPicker fx:id="concordiaLineColorPicker" minWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                       <GridPane.margin>
+                                          <Insets />
                                        </GridPane.margin>
                                     </ColorPicker>
-                                    <ColorPicker fx:id="concordiaEnvelopeColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                    <ColorPicker fx:id="concordiaEnvelopeColorPicker" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <GridPane.margin>
-                                          <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                          <Insets />
                                        </GridPane.margin>
                                     </ColorPicker>
                                     <CheckBox fx:id="concordiaEnvelopeCheckBox" mnemonicParsing="false" text="Uncertainty Envelope" GridPane.columnSpan="2147483647" />
@@ -79,11 +88,21 @@
                                           <Font name="System Bold" size="12.0" />
                                        </font>
                                     </Label>
-                                    <RadioButton fx:id="wetherillRadioButton" mnemonicParsing="false" text="Wetherill" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
-                                    <RadioButton fx:id="wasserburgRadioButton" mnemonicParsing="false" text="Tera-Wasserburg" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
+                                    <RadioButton fx:id="wetherillRadioButton" mnemonicParsing="false" text="Wetherill" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding></RadioButton>
+                                    <RadioButton fx:id="wasserburgRadioButton" mnemonicParsing="false" text="Tera-Wasserburg" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding></RadioButton>
+                                    <Button fx:id="snapToCornersButton" minWidth="-Infinity" mnemonicParsing="false" text="Snap to Corners" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
+                                       <GridPane.margin>
+                                          <Insets bottom="5.0" left="25.0" />
+                                       </GridPane.margin></Button>
                                  </children>
                                  <VBox.margin>
-                                    <Insets left="25.0" />
+                                    <Insets left="25.0" top="5.0" />
                                  </VBox.margin>
                               </GridPane>
                            </children>

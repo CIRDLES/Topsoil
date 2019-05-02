@@ -86,55 +86,13 @@ public class PlotPropertiesPanel extends Accordion {
 			plot.setAxes(null, null, axisStyling.yAxisMin.getValue(), axisStyling.yAxisMax.getValue());
 		});
 
+		// Snap to Corners button action
+		plotFeatures.snapToCornersButton.setOnAction(event -> plot.snapToCorners());
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
-
-    public PlotProperties getPlotProperties() {
-		return new PlotProperties(properties);
-    }
-
-    public void setPlotProperties(PlotProperties properties) {
-		// TITLE
-		axisStyling.plotTitleTextField.setText(properties.get(TITLE));
-
-		// X_AXIS
-		axisStyling.xTitleTextField.setText(properties.get(X_AXIS));
-
-		// Y_AXIS
-		axisStyling.yTitleTextField.setText(properties.get(Y_AXIS));
-
-		// ISOTOPE_SYSTEM
-		dataOptions.isotopeSystemComboBox.getSelectionModel().select(properties.get(ISOTOPE_SYSTEM));
-
-		// UNCERTAINTY
-		dataOptions.uncertaintyComboBox.getSelectionModel().select(properties.get(UNCERTAINTY));
-
-		// POINTS
-		dataOptions.pointsCheckBox.setSelected(properties.get(POINTS));
-		dataOptions.pointsFillColorPicker.setValue(getJavaColor(properties.get(POINTS_FILL), properties.get(POINTS_OPACITY)));
-
-		// ELLIPSES
-		dataOptions.ellipsesRadioButton.setSelected(properties.get(ELLIPSES));
-		dataOptions.ellipsesFillColorPicker.setValue(getJavaColor(properties.get(ELLIPSES_FILL), properties.get(ELLIPSES_OPACITY)));
-
-		// UNCTBARS
-		dataOptions.unctBarsRadioButton.setSelected(properties.get(UNCTBARS));
-		dataOptions.unctBarsFillColorPicker.setValue(getJavaColor(properties.get(UNCTBARS_FILL), properties.get(UNCTBARS_OPACITY)));
-
-		// MCLEAN_REGRESSION
-		plotFeatures.mcLeanRegressionCheckBox.setSelected(properties.get(MCLEAN_REGRESSION));
-		plotFeatures.mcLeanEnvelopeCheckBox.setSelected(properties.get(MCLEAN_REGRESSION_ENVELOPE));
-
-		// Concordia
-		plotFeatures.setConcordiaType(properties.get(CONCORDIA_TYPE));
-		plotFeatures.concordiaLineCheckBox.setSelected(properties.get(CONCORDIA_LINE));
-		plotFeatures.concordiaLineColorPicker.setValue(getJavaColor(properties.get(CONCORDIA_LINE_FILL), properties.get(CONCORDIA_LINE_OPACITY)));
-		plotFeatures.concordiaEnvelopeCheckBox.setSelected(properties.get(CONCORDIA_ENVELOPE));
-		plotFeatures.concordiaEnvelopeColorPicker.setValue(getJavaColor(properties.get(CONCORDIA_ENVELOPE_FILL), properties.get(CONCORDIA_ENVELOPE_OPACITY)));
-	}
 
 	public boolean liveAxisUpdateActive() {
 		return axisStyling.axisLiveUpdateCheckBox.isSelected();
@@ -196,6 +154,46 @@ public class PlotPropertiesPanel extends Accordion {
 
 	private void refreshPlot() {
 		plot.setProperties(properties);
+	}
+
+	private void setPlotProperties(PlotProperties properties) {
+		// TITLE
+		axisStyling.plotTitleTextField.setText(properties.get(TITLE));
+
+		// X_AXIS
+		axisStyling.xTitleTextField.setText(properties.get(X_AXIS));
+
+		// Y_AXIS
+		axisStyling.yTitleTextField.setText(properties.get(Y_AXIS));
+
+		// ISOTOPE_SYSTEM
+		dataOptions.isotopeSystemComboBox.getSelectionModel().select(properties.get(ISOTOPE_SYSTEM));
+
+		// UNCERTAINTY
+		dataOptions.uncertaintyComboBox.getSelectionModel().select(properties.get(UNCERTAINTY));
+
+		// POINTS
+		dataOptions.pointsCheckBox.setSelected(properties.get(POINTS));
+		dataOptions.pointsFillColorPicker.setValue(getJavaColor(properties.get(POINTS_FILL), properties.get(POINTS_OPACITY)));
+
+		// ELLIPSES
+		dataOptions.ellipsesRadioButton.setSelected(properties.get(ELLIPSES));
+		dataOptions.ellipsesFillColorPicker.setValue(getJavaColor(properties.get(ELLIPSES_FILL), properties.get(ELLIPSES_OPACITY)));
+
+		// UNCTBARS
+		dataOptions.unctBarsRadioButton.setSelected(properties.get(UNCTBARS));
+		dataOptions.unctBarsFillColorPicker.setValue(getJavaColor(properties.get(UNCTBARS_FILL), properties.get(UNCTBARS_OPACITY)));
+
+		// MCLEAN_REGRESSION
+		plotFeatures.mcLeanRegressionCheckBox.setSelected(properties.get(MCLEAN_REGRESSION));
+		plotFeatures.mcLeanEnvelopeCheckBox.setSelected(properties.get(MCLEAN_REGRESSION_ENVELOPE));
+
+		// Concordia
+		plotFeatures.setConcordiaType(properties.get(CONCORDIA_TYPE));
+		plotFeatures.concordiaLineCheckBox.setSelected(properties.get(CONCORDIA_LINE));
+		plotFeatures.concordiaLineColorPicker.setValue(getJavaColor(properties.get(CONCORDIA_LINE_FILL), properties.get(CONCORDIA_LINE_OPACITY)));
+		plotFeatures.concordiaEnvelopeCheckBox.setSelected(properties.get(CONCORDIA_ENVELOPE));
+		plotFeatures.concordiaEnvelopeColorPicker.setValue(getJavaColor(properties.get(CONCORDIA_ENVELOPE_FILL), properties.get(CONCORDIA_ENVELOPE_OPACITY)));
 	}
 
 	private static Color getJavaColor(String string, Number opacity) {
