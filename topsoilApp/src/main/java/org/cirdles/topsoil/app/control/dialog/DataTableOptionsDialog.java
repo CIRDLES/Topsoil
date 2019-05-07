@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.control.dialog;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -10,15 +11,17 @@ import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.tree.ColumnTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.data.column.DataCategory;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.composite.DataComponent;
-import org.cirdles.topsoil.app.util.ResourceBundles;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.app.ResourceBundles;
+import org.cirdles.topsoil.IsotopeSystem;
+import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.variable.Variable;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -26,7 +29,7 @@ import java.util.ResourceBundle;
 /**
  * @author marottajb
  */
-public class DataTableOptionsDialog extends Dialog<Boolean> {
+public class DataTableOptionsDialog extends Dialog<Map<DataTableOptionsDialog.Key, Object>> {
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -46,16 +49,15 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
 
         this.setResultConverter(value -> {
             if (value == ButtonType.OK) {
-                for (Map.Entry<DataComponent, Boolean> entry : controller.getColumnSelections().entrySet()) {
-                    entry.getKey().setSelected(entry.getValue());
-                }
-                table.setColumnsForAllVariables(controller.getVariableAssignments());
-                table.setIsotopeSystem(controller.getIsotopeSystem());
-                table.setUncertainty(controller.getUncertainty());
-                ProjectManager.updatePlotsForTable(table);
-                return true;
+                Map<Key, Object> settings = new HashMap<>();
+                settings.put(Key.VARIABLE_ASSOCIATIONS, controller.getVariableAssignments());
+                settings.put(Key.COLUMN_SELECTIONS, controller.getColumnSelections());
+                settings.put(Key.FRACTION_DIGITS, controller.getFractionDigits());
+                settings.put(Key.ISOTOPE_SYSTEM, controller.getIsotopeSystem());
+                settings.put(Key.UNCERTAINTY, controller.getUncertainty());
+                return settings;
             }
-            return false;
+            return null;
         });
     }
 
@@ -71,8 +73,34 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
      *
      * @return          true if changes saved
      */
-    public static Boolean showDialog(DataTable table, Stage owner) {
+    public static Map<Key, Object> showDialog(DataTable table, Stage owner) {
         return new DataTableOptionsDialog(table, owner).showAndWait().orElse(null);
+    }
+
+    public static void applySettings(DataTable table, Map<Key, Object> settings) {
+        // Variable assignments
+        Map<Variable<?>, DataColumn<?>> variableAssignments =
+                (Map<Variable<?>, DataColumn<?>>) settings.get(DataTableOptionsDialog.Key.VARIABLE_ASSOCIATIONS);
+        table.setColumnsForAllVariables(variableAssignments);
+
+        // Column selections
+        Map<DataComponent, Boolean> columnSelections =
+                (Map<DataComponent, Boolean>) settings.get(Key.COLUMN_SELECTIONS);
+        for (Map.Entry<DataComponent, Boolean> entry : columnSelections.entrySet()) {
+            entry.getKey().setSelected(entry.getValue());
+        }
+
+        // Fraction Digits
+        int maxFractionDigits = (int) settings.get(Key.FRACTION_DIGITS);
+        table.setMaxFractionDigits(maxFractionDigits);
+
+        // Isotope system
+        IsotopeSystem isotopeSystem = (IsotopeSystem) settings.get(Key.ISOTOPE_SYSTEM);
+        table.setIsotopeSystem(isotopeSystem);
+
+        // Uncertainty
+        Uncertainty uncertainty = (Uncertainty) settings.get(Key.UNCERTAINTY);
+        table.setUncertainty(uncertainty);
     }
 
     /**
@@ -101,7 +129,9 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
         @FXML private VBox variableChooserPane;
         VariableChooser variableChooser;
 
-        @FXML private Label uncertaintyLabel, isotopeSystemLabel;
+        @FXML private Label fractionDigitsLabel, uncertaintyLabel, isotopeSystemLabel;
+        @FXML CheckBox fractionDigitsCheckBox;
+        @FXML ComboBox<Integer> fractionDigitsComboBox;
         @FXML ComboBox<Uncertainty> unctComboBox;
         @FXML ComboBox<IsotopeSystem> isoComboBox;
 
@@ -130,6 +160,7 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             ResourceBundle resources = ResourceBundles.DIALOGS.getBundle();
             columnTreeViewLabel.setText(resources.getString("columnTreeLabel"));
             variableChooserLabel.setText(resources.getString("variableChooserLabel"));
+            fractionDigitsLabel.setText(resources.getString("fractionDigitsLabel"));
             uncertaintyLabel.setText(resources.getString("uncertaintyLabel"));
             isotopeSystemLabel.setText(resources.getString("isotopeSystemLabel"));
 
@@ -139,8 +170,28 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             this.variableChooser = new VariableChooser(table);
             variableChooserPane.getChildren().add(variableChooser);
 
+            // Live edits between ColumnTreeView and VariableChooser
             listenToTreeItemChildren(columnTreeView.getRoot(), variableChooser);
 
+            // Configure other table options
+            int maxFractionDigits = table.getMaxFractionDigits();
+            for (int i = 0; i <= 12; i++) {
+                fractionDigitsComboBox.getItems().add(i);
+            }
+            fractionDigitsComboBox.disableProperty().bind(Bindings.not(fractionDigitsCheckBox.selectedProperty()));
+            if (maxFractionDigits != -1) {
+                if (maxFractionDigits < 0) {
+                    fractionDigitsComboBox.getSelectionModel().select(0);
+                } else if (maxFractionDigits > 12) {
+                    fractionDigitsComboBox.getSelectionModel().select(12);
+                } else {
+                    fractionDigitsComboBox.getSelectionModel().select(maxFractionDigits);
+                }
+                fractionDigitsCheckBox.setSelected(true);
+            } else {
+                fractionDigitsComboBox.getSelectionModel().select(9);
+                fractionDigitsCheckBox.setSelected(false);
+            }
             unctComboBox.getItems().addAll(Uncertainty.values());
             unctComboBox.getSelectionModel().select(table.getUncertainty());
             isoComboBox.getItems().addAll(IsotopeSystem.values());
@@ -167,6 +218,14 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
          */
         public Map<Variable<?>, DataColumn<?>> getVariableAssignments() {
             return variableChooser.getSelections();
+        }
+
+        public int getFractionDigits() {
+            if (fractionDigitsCheckBox.isSelected()) {
+                return fractionDigitsComboBox.getValue();
+            } else {
+                return -1;
+            }
         }
 
         public IsotopeSystem getIsotopeSystem() {
@@ -197,6 +256,14 @@ public class DataTableOptionsDialog extends Dialog<Boolean> {
             }
         }
 
+    }
+
+    public enum Key {
+        VARIABLE_ASSOCIATIONS,
+        COLUMN_SELECTIONS,
+        FRACTION_DIGITS,
+        ISOTOPE_SYSTEM,
+        UNCERTAINTY
     }
 
 }

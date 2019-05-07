@@ -10,51 +10,40 @@ import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.IsotopeSystem;
+import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.variable.Variables;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 
 /**
+ * Parses value-separated data into a {@link DataTable}.
+ *
+ * This {@link DataParser} assumes that data is exported in a specific format from Squid 3.
+ *
  * @author marottajb
  */
-public class Squid3DataParser implements DataParser {
-
-    //**********************************************//
-    //                PUBLIC METHODS                //
-    //**********************************************//
+public class Squid3DataParser extends AbstractDataParser {
 
     /** {@inheritDoc} */
     @Override
-    public ColumnRoot parseColumnTree(String content, String delimiter) {
-        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
-        return parseColumnTree(rows);
-    }
+    protected DataTable parseDataTable(String[][] rows, String label) {
+        ColumnRoot columnRoot = parseColumnTree(rows);
+        List<DataColumn<?>> columns = columnRoot.getLeafNodes();
 
-    /** {@inheritDoc} */
-    @Override
-    public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
-        String[][] rows = DataParser.readCells(DataParser.readLines(path), delimiter);
-        if (label == null) {
-            if (path.getFileName() != null) {
-                label = path.getFileName().toString();
-            } else {
-                label = path.toString();
-            }
+        int[] segIndices = readDataSegments(rows);
+        List<DataSegment> segments = new ArrayList<>();
+        for (int i = 0; i < segIndices.length; i++) {
+            segments.add(parseDataSegment(
+                    rows,
+                    segIndices[i],
+                    (i < (segIndices.length - 1) ? segIndices[i + 1] : -1),
+                    columns
+            ));
         }
-        DataTable table = parseDataTable(rows, label);
-        prepareTable(table);
-        return table;
-    }
+        DataRoot dataRoot = new DataRoot(segments.toArray(new DataSegment[]{}));
 
-    /** {@inheritDoc} */
-    @Override
-    public DataTable parseDataTable(String content, String delimiter, String label) {
-        String[][] rows = DataParser.readCells(DataParser.readLines(content), delimiter);
-        DataTable table =parseDataTable(rows, label);
+        DataTable table = new DataTable(DataTemplate.SQUID_3, label, columnRoot, dataRoot);
         prepareTable(table);
         return table;
     }
@@ -76,24 +65,6 @@ public class Squid3DataParser implements DataParser {
             ));
         }
         return new ColumnRoot(topLevel.toArray(new DataComponent[]{}));
-    }
-
-    private DataTable parseDataTable(String[][] rows, String label) {
-        ColumnRoot columnRoot = parseColumnTree(rows);
-        List<DataColumn<?>> columns = columnRoot.getLeafNodes();
-
-        int[] segIndices = readDataSegments(rows);
-        List<DataSegment> segments = new ArrayList<>();
-        for (int i = 0; i < segIndices.length; i++) {
-            segments.add(parseDataSegment(
-                    rows,
-                    segIndices[i],
-                    (i < (segIndices.length - 1) ? segIndices[i + 1] : -1),
-                    columns
-            ));
-        }
-        DataRoot dataRoot = new DataRoot(segments.toArray(new DataSegment[]{}));
-        return new DataTable(DataTemplate.SQUID_3, label, columnRoot, dataRoot);
     }
 
     /**
@@ -136,7 +107,7 @@ public class Squid3DataParser implements DataParser {
                 usedColumnLabels.put(colLabel, 1);
             }
 
-            Class<?> clazz = DataParser.getColumnDataType(rows, colIndex, 5);
+            Class<?> clazz = getColumnDataType(rows, colIndex, 5);
             if (clazz == Number.class) {
                 columns.add(DataColumn.numberColumn(colLabel));
             } else {
@@ -166,7 +137,7 @@ public class Squid3DataParser implements DataParser {
         }
         for (int rowIndex = segIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
             rowLabel = rows[rowIndex][0];
-            dataRows.add(DataParser.getDataRow(
+            dataRows.add(getDataRow(
                     rowLabel,
                     Arrays.copyOfRange(rows[rowIndex], 1, rows[rowIndex].length),
                     columns

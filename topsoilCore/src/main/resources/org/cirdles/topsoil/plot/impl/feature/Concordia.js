@@ -35,30 +35,6 @@ plot.drawConcordia = function() {
 plot.updateConcordia = function() {
     if (plot.concordiaVisible) {
 
-        if (plot.lambda.U235 == null) {
-            if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235'))) {
-                plot.lambda.U235 = plot.getProperty('U235');
-            } else {
-                plot.lambda.U235 = topsoil.defaultLambda.U235;
-            }
-        } else if (plot.getProperty('U235') != null && !isNaN(plot.getProperty('U235')) ||
-            plot.lambda.U235 != plot.getProperty("U235")) {
-
-            plot.lambda.U235 = plot.getProperty("U235");
-        }
-
-        if (plot.lambda.U238 == null) {
-            if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238'))) {
-                plot.lambda.U238 = plot.getProperty('U238');
-            } else {
-                plot.lambda.U238 = topsoil.defaultLambda.U238;
-            }
-        } else if (plot.getProperty('U238') != null && !isNaN(plot.getProperty('U238')) ||
-            plot.lambda.U238 != plot.getProperty("U238")) {
-
-            plot.lambda.U238 = plot.getProperty("U238");
-        }
-
         initializeWetherill({
             LAMBDA_235: plot.lambda.U235,
             LAMBDA_238: plot.lambda.U238
@@ -109,10 +85,10 @@ plot.updateConcordia = function() {
 
                 return path.join("");
             })
-            .attr("stroke", plot.getProperty('Wetherill Line Fill'))
+            .attr("stroke", plot.getProperty(Property.CONCORDIA_LINE_FILL))
             .attr("stroke-width", 2);
 
-        if (plot.getProperty("Wetherill Envelope")) {
+        if (plot.getProperty(Property.CONCORDIA_ENVELOPE)) {
             plot.concordiaGroup.select(".uncertaintyEnvelope")
                 .attr("d", function () {
                     var approximateUpperSegment = function (path, minT, maxT) {
@@ -186,7 +162,7 @@ plot.updateConcordia = function() {
 
                     return path.join("");
                 })
-                .attr("fill", plot.getProperty('Wetherill Envelope Fill'));
+                .attr("fill", plot.getProperty(Property.CONCORDIA_ENVELOPE_FILL));
         }
 
         plot.t.domain([minT, maxT]);

@@ -1,16 +1,15 @@
 package org.cirdles.topsoil.app.file;
 
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-public class RecentFiles {
+/**
+ * Utility methods for setting/retrieving a list of most recently used files.
+ */
+public final class RecentFiles {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -20,16 +19,12 @@ public class RecentFiles {
     private static final int MAX_SIZE = 10;
 
     //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
-
-    private static Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
-
-    //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    private RecentFiles() { }
+    private RecentFiles() {
+        // Prevents instantiation by default constructor
+    }
 
     //**********************************************//
     //                PUBLIC METHODS                //
@@ -63,6 +58,7 @@ public class RecentFiles {
      * Clears the list of most recent files.
      */
     public static void clear() {
+        Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
         for (int i = 1; i <= MAX_SIZE; i++) {
             prefs.remove(RECENT_FILES + i);
         }
@@ -79,6 +75,7 @@ public class RecentFiles {
      */
     private static List<Path> loadRecentFiles() {
         String str;
+        Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
         List<Path> paths = new ArrayList<>(MAX_SIZE);
         for (int i = 1; i <= MAX_SIZE; i++) {
             str = prefs.get(RECENT_FILES + i, null);
@@ -98,6 +95,7 @@ public class RecentFiles {
      * @param paths List of Paths
      */
     private static void saveRecentFiles(List<Path> paths) {
+        Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
         String str;
         for (int i = 1; i <= MAX_SIZE; i++) {
             if (i > paths.size()) {

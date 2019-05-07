@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.control.tree;
 
+import com.sun.javafx.scene.control.skin.TreeTableViewSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
@@ -14,16 +15,22 @@ import org.cirdles.topsoil.app.data.composite.DataComponent;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
 import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.util.undo.UndoAction;
+import org.cirdles.topsoil.app.control.undo.UndoAction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A customized {@code TreeTableView} that displays the data contained in a {@link DataTable}.
+ *
  * @author marottajb
  */
 public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
+
+    private static final double LABEL_COL_WIDTH = 150.0;
+    private static final double SELECTED_COL_WIDTH = 65.0;
+    private static final double DATA_COL_WIDTH = 135.0;
 
     private DataTable table;
 
@@ -31,12 +38,20 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
+    /**
+     * Constructs a new tree table view for the given data table.
+     *
+     * @param table     DataTable
+     */
     public TopsoilTreeTableView(DataTable table) {
         this.table = table;
 
         this.setEditable(true);
         this.setSortMode(TreeSortMode.ALL_DESCENDANTS);
         this.setShowRoot(false);
+
+        // Set custom Skin
+        this.setSkin(new TopsoilTreeTableViewSkin(this));
 
         // Create root item
         CheckBoxTreeItem<DataComponent> rootItem;
@@ -58,6 +73,9 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         this.getColumns().addAll(makeTableColumnsForComposite(table.getColumnRoot()));
 
         this.getSortOrder().add(labelColumn);
+
+        // Refresh cells on fraction digit changes
+        table.fracionDigitsProperty().addListener(c -> ((TopsoilTreeTableViewSkin) getSkin()).refreshCells());
     }
 
     //**********************************************//
@@ -70,7 +88,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      * @return  new TreeTableColumn
      */
     private TreeTableColumn<DataComponent, String> makeLabelColumn() {
-        TreeTableColumn<DataComponent, String> column = new TreeTableColumn<>("Label");
+        MultilineHeaderTreeTableColumn<String> column = new MultilineHeaderTreeTableColumn<>("Label");
         column.setCellFactory(param -> {
             TextFieldTreeTableCell<DataComponent, String> cell = new TextFieldTreeTableCell<>();
             cell.setTextAlignment(TextAlignment.LEFT);
@@ -81,7 +99,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             DataComponent component = param.getValue().getValue();
             return component.labelProperty();
         });
-        column.setPrefWidth(150);
+        column.setPrefWidth(LABEL_COL_WIDTH);
         return column;
     }
 
@@ -91,7 +109,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      * @return  new TreeTableColumn
      */
     private TreeTableColumn<DataComponent, Boolean> makeCheckBoxColumn() {
-        TreeTableColumn<DataComponent, Boolean> column = new TreeTableColumn<>("Selected");
+        MultilineHeaderTreeTableColumn<Boolean> column = new MultilineHeaderTreeTableColumn<>("Selected");
         column.setCellFactory(param -> {
             CheckBoxTreeTableCell<DataComponent, Boolean> cell = new CheckBoxTreeTableCell<>();
             cell.setAlignment(Pos.CENTER);
@@ -105,6 +123,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             return property;
         });
         column.setEditable(true);
+        column.setPrefWidth(SELECTED_COL_WIDTH);
         return column;
     }
 
@@ -127,7 +146,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             } else {
                 newColumn = makeTreeTableColumn((DataCategory) node);
             }
-            newColumn.setPrefWidth(150.0);
             node.selectedProperty().addListener(((observable, oldValue, newValue) -> newColumn.setVisible(newValue)));
             tableColumns.add(newColumn);
         }
@@ -136,7 +154,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
     }
 
     private <T extends Serializable> TreeTableColumn<DataComponent, T> makeTreeTableColumn(DataColumn<T> dataColumn) {
-        TreeTableColumn<DataComponent, T> newColumn = new TreeTableColumn<>(dataColumn.getLabel());
+        DataTreeTableColumn<T> newColumn = new DataTreeTableColumn<>(dataColumn);
         newColumn.setCellFactory(param -> {
             TreeTableCell<DataComponent, T> cell = new TopsoilTreeTableCell<>(dataColumn, table);
             cell.addEventHandler(CellEditEvent.CELL_EDITED, event -> {
@@ -170,6 +188,7 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
             return null;
         });
         newColumn.setVisible(dataColumn.isSelected());
+        newColumn.setPrefWidth(DATA_COL_WIDTH);
         return newColumn;
     }
 
@@ -201,6 +220,18 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
      */
     private CheckBoxTreeItem<DataComponent> makeTreeItemForDataRow(DataRow row) {
         return new CheckBoxTreeItem<>(row);
+    }
+
+    private class TopsoilTreeTableViewSkin extends TreeTableViewSkin<DataComponent> {
+
+        TopsoilTreeTableViewSkin(TopsoilTreeTableView treeTableView) {
+            super(treeTableView);
+        }
+
+        public void refreshCells() {
+            super.flow.recreateCells();
+        }
+
     }
 
 }

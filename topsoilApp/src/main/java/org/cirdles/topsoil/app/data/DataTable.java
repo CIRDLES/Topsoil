@@ -1,28 +1,30 @@
 package org.cirdles.topsoil.app.data;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.sun.javafx.binding.ExpressionHelper;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SetProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.MapChangeListener;
 import org.cirdles.topsoil.app.data.column.ColumnRoot;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRoot;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
-import org.cirdles.topsoil.app.util.ListUtils;
-import org.cirdles.topsoil.app.util.NumberColumnStringConverter;
-import org.cirdles.topsoil.app.util.undo.UndoAction;
-import org.cirdles.topsoil.app.util.undo.UndoManager;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
-import org.cirdles.topsoil.isotope.IsotopeSystem;
+import org.cirdles.topsoil.app.data.column.NumberColumnStringConverter;
+import org.cirdles.topsoil.app.control.undo.UndoAction;
+import org.cirdles.topsoil.app.control.undo.UndoManager;
+import org.cirdles.topsoil.Uncertainty;
+import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.variable.Variable;
 
 import java.util.*;
@@ -32,7 +34,7 @@ import java.util.*;
  *
  * @author marottajb
  */
-public class DataTable extends Observable {
+public class DataTable implements ObservableObjectValue<DataTable> {
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -48,68 +50,58 @@ public class DataTable extends Observable {
     private DataRoot dataRoot;
     private DataTemplate template;
     private UndoManager undoManager = new UndoManager(50);
+    private ExpressionHelper<DataTable> helper;
 
     //**********************************************//
     //                  PROPERTIES                  //
     //**********************************************//
 
-    protected StringProperty label;
+    private StringProperty label = new SimpleStringProperty(DEFAULT_LABEL);
     public StringProperty labelProperty() {
-        if (label == null) {
-            label = new SimpleStringProperty(DEFAULT_LABEL);
-        }
         return label;
     }
-    public String getLabel() { return labelProperty().get(); }
-    public void setLabel(String label) { labelProperty().set(label); }
+    public final String getLabel() { return label.get(); }
+    public final void setLabel(String label) { this.label.set(label); }
 
-    private ObjectProperty<IsotopeSystem> isotopeSystem;
+    private ObjectProperty<IsotopeSystem> isotopeSystem = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
     public ObjectProperty<IsotopeSystem> isotopeSystemProperty() {
-        if (isotopeSystem == null) {
-            isotopeSystem = new SimpleObjectProperty<>(IsotopeSystem.GENERIC);
-        }
         return isotopeSystem;
     }
-    public final IsotopeSystem getIsotopeSystem() { return isotopeSystemProperty().get(); }
-    public final void setIsotopeSystem(IsotopeSystem type ) { isotopeSystemProperty().set(type); }
+    public final IsotopeSystem getIsotopeSystem() { return isotopeSystem.get(); }
+    public final void setIsotopeSystem(IsotopeSystem system) { isotopeSystem.set(system); }
 
-    private ObjectProperty<Uncertainty> uncertainty;
+    private ObjectProperty<Uncertainty> uncertainty = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
     public ObjectProperty<Uncertainty> uncertaintyProperty() {
-        if (uncertainty == null) {
-            uncertainty = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
-        }
         return uncertainty;
     }
-    public final Uncertainty getUncertainty() { return uncertaintyProperty().get(); }
-    public final void setUncertainty(Uncertainty unct) { uncertaintyProperty().set(unct); }
+    public final Uncertainty getUncertainty() { return uncertainty.get(); }
+    public final void setUncertainty(Uncertainty uncertainty) { this.uncertainty.set(uncertainty); }
 
-    private SetProperty<DataRow> dataRows;
-    public SetProperty<DataRow> dataRowsProperty() {
-        if (dataRows == null) {
-            List<ObservableList<DataRow>> rowLists = new ArrayList<>();
-            for (DataSegment segment : getDataRoot().getChildren()) {
-                rowLists.add(segment.getChildren());
-            }
-            dataRows = new SimpleSetProperty<>(ListUtils.mergeObservableLists(rowLists));
-        }
-        return dataRows;
+    /**
+     * The maximum number of fraction digits for the table. A value of -1 signifies no restriction.
+     */
+    private IntegerProperty fractionDigits = new SimpleIntegerProperty(-1);
+    public IntegerProperty fracionDigitsProperty() {
+        return fractionDigits;
     }
-    public final Set<DataRow> getDataRows() {
-        return dataRowsProperty().get();
+    public final int getMaxFractionDigits() {
+        return fractionDigits.get();
+    }
+    public final void setMaxFractionDigits(int n) {
+        fractionDigits.set(n);
+        updateFractionDigits();
     }
 
+    /**
+     * This is a property with a bi-directional map representing associations between plotting variables and data columns
+     * in the table. Internally, it is a {@link HashBiMap}, so uniqueness among values is maintained.
+     */
     private final MapProperty<Variable<?>, DataColumn<?>> variableColumnMap = new SimpleMapProperty<>(FXCollections.observableMap(HashBiMap.create()));
     public MapProperty<Variable<?>, DataColumn<?>> variableColumnMapProperty() {
         return variableColumnMap;
     }
-    /**
-     * Returns a map of variable/column associations for the table. The {@code Variable} key is represented by
-     * the corresponding {@code DataColumn} value in the table.
-     *
-     * @return  Map of Variable/DataColumn associations
-     */
-    public BiMap<Variable<?>, DataColumn<?>> getVariableColumnMap() {
-        return HashBiMap.create(variableColumnMap);
+    public Map<Variable<?>, DataColumn<?>> getVariableColumnMap() {
+        return variableColumnMap.get();
     }
 
     //**********************************************//
@@ -130,27 +122,23 @@ public class DataTable extends Observable {
         this.dataRoot = dataRoot;
         this.dataRoot.labelProperty().bind(labelProperty());
 
-        for (DataRow row : getDataRows()) {
-            // notify observers of row selection changes
-            row.selectedProperty().addListener(c -> {
-                setChanged();
-                notifyObservers();
-            });
+        this.label.addListener(c -> fireValueChangedEvent());
+        this.fractionDigits.addListener(c -> fireValueChangedEvent());
+        this.isotopeSystem.addListener(c -> fireValueChangedEvent());
+        this.uncertainty.addListener(c -> fireValueChangedEvent());
+        this.variableColumnMap.addListener(
+                (MapChangeListener<? super Variable<?>, ? super DataColumn<?>>) c -> fireValueChangedEvent()
+        );
 
+        for (DataRow row : getDataRows()) {
+            row.selectedProperty().addListener(c -> fireValueChangedEvent());
             for (DataRow.DataValue<?> value : row.getValueMap().values()) {
-                value.valueProperty().addListener(c -> {
-                    setChanged();
-                    notifyObservers();
-                });
+                value.valueProperty().addListener(c -> fireValueChangedEvent());
             }
         }
 
         // Sets the fraction digits for each column to align values by their decimal separators
-        for (DataColumn<?> column : this.columnRoot.getLeafNodes()) {
-            if (column.getType() == Number.class) {
-                setFractionDigitsForNumberColumn((DataColumn<Number>) column);
-            }
-        }
+        updateFractionDigits();
     }
 
     //**********************************************//
@@ -167,6 +155,14 @@ public class DataTable extends Observable {
 
     public DataRoot getDataRoot() {
         return dataRoot;
+    }
+
+    public List<DataRow> getDataRows() {
+        List<DataRow> rows = new ArrayList<>();
+        for (DataSegment segment : dataRoot.getChildren()) {
+            rows.addAll(segment.getChildren());
+        }
+        return rows;
     }
 
     public DataTemplate getTemplate() {
@@ -253,6 +249,43 @@ public class DataTable extends Observable {
         return undoManager.getRedoName();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public DataTable get() {
+        return this;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addListener(InvalidationListener listener) {
+        helper = ExpressionHelper.addListener(helper, this, listener);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeListener(InvalidationListener listener) {
+        helper = ExpressionHelper.removeListener(helper, listener);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addListener(ChangeListener<? super DataTable> listener) {
+        helper = ExpressionHelper.addListener(helper, this, listener);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeListener(ChangeListener<? super DataTable> listener) {
+        helper = ExpressionHelper.removeListener(helper, listener);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DataTable getValue() {
+        return get();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return getLabel();
@@ -262,12 +295,39 @@ public class DataTable extends Observable {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private void setFractionDigitsForNumberColumn(DataColumn<Number> column) {
-        int maxFractionDigits = 0;
-        for (Number n : getValuesForColumn(column)) {
-            maxFractionDigits = Math.max(maxFractionDigits, NumberColumnStringConverter.countFractionDigits(n));
+    private void updateFractionDigits() {
+        for (DataColumn<?> column : getDataColumns()) {
+            if (column.getType() == Number.class) {
+                updateFractionDigitsForNumberColumn((DataColumn<Number>) column);
+            }
         }
-        ((NumberColumnStringConverter) column.getStringConverter()).setNumFractionDigits(maxFractionDigits);
+    }
+
+    /**
+     * Checks the maximum number of fraction digits for the values for the specified number column, and appropriately
+     * sets its {@link NumberColumnStringConverter}.
+     *
+     * @param column    DataColumn of type Number
+     */
+    private void updateFractionDigitsForNumberColumn(DataColumn<Number> column) {
+        int n = -1;
+        if (fractionDigits.get() == -1) {
+            for (Number value : getValuesForColumn(column)) {
+                n = Math.max(n, DataUtils.countFractionDigits(value));
+            }
+        } else {
+            n = fractionDigits.get();
+        }
+        ((NumberColumnStringConverter) column.getStringConverter()).setNumFractionDigits(n);
+    }
+
+    /**
+     * Sends notifications to all attached
+     * {@link javafx.beans.InvalidationListener InvalidationListeners} and
+     * {@link javafx.beans.value.ChangeListener ChangeListeners}.
+     */
+    private void fireValueChangedEvent() {
+        ExpressionHelper.fireValueChangedEvent(helper);
     }
 
 }

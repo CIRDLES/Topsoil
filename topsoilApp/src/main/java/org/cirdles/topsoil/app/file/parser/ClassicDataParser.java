@@ -17,16 +17,8 @@ public class ClassicDataParser extends DefaultDataParser {
 
     /** {@inheritDoc} */
     @Override
-    public DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
-        DataTable table = super.parseDataTable(path, delimiter, label);
-        prepareTable(table);
-        return table;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DataTable parseDataTable(String content, String delimiter, String label) {
-        DataTable table = super.parseDataTable(content, delimiter, label);
+    public DataTable parseDataTable(String[][] cells, String label) {
+        DataTable table = super.parseDataTable(cells, label);
         prepareTable(table);
         return table;
     }

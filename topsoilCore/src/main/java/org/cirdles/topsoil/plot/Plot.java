@@ -16,7 +16,7 @@
 package org.cirdles.topsoil.plot;
 
 import java.util.List;
-import java.util.Map;
+import org.cirdles.topsoil.plot.PlotProperties.Property;
 
 /**
  * A generalized plot that can express itself as a {@link javafx.scene.Node}.
@@ -25,33 +25,43 @@ import java.util.Map;
  */
 public interface Plot extends Displayable {
 
+    /**
+     * Returns the type of the plot.
+     *
+     * @return  PlotType
+     */
     PlotType getPlotType();
 
-    List<Map<String, Object>> getData();
+    /**
+     * Returns the data of the plot as a list of {@code PlotDataEntry} objects.
+     *
+     * @return  list of PlotDataEntries
+     */
+    List<PlotDataEntry> getData();
 
-    void setData(List<Map<String, Object>> data);
+    void setData(List<PlotDataEntry> data);
 
     /**
      * Gets the properties for the {@code Plot}.
      *
-     * @return  a Map of PlotProperty keys to Object values
+     * @return  PlotProperties object
      */
-    Map<PlotProperty, Object> getProperties();
+    PlotProperties getProperties();
 
     /**
      * Sets the properties for the {@code Plot}.
      *
-     * @param properties    a Map of PlotProperty keys to Object values
+     * @param properties    PlotProperties object
      */
-    void setProperties(Map<PlotProperty, Object> properties);
+    void setProperties(PlotProperties properties);
 
     /**
      * Sets a single property for the {@code Plot}.
      *
-     * @param key   PlotProperty key
-     * @param value Object property value
+     * @param property   Property
+     * @param value      Object property value
      */
-    void setProperty(PlotProperty key, Object value);
+    void setProperty(Property<?> property, Object value);
 
     /**
      *
@@ -79,12 +89,12 @@ public interface Plot extends Displayable {
     /**
      * Allows the user to set the X and Y axis extents.
      *
-     * @param xMin as String
-     * @param xMax as String
-     * @param yMin as String
-     * @param yMax as String
+     * @param xMin  as Double
+     * @param xMax  as Double
+     * @param yMin  as Double
+     * @param yMax  as Double
      */
-    void setAxes(String xMin, String xMax, String yMin, String yMax);
+    void setAxes(Double xMin, Double xMax, Double yMin, Double yMax);
     
     /**
      * Zooms plot so Concordia displays from corner to corner of plot.

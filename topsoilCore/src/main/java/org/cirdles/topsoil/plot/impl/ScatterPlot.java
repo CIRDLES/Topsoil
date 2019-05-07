@@ -15,19 +15,18 @@
  */
 package org.cirdles.topsoil.plot.impl;
 
-import org.cirdles.topsoil.plot.DefaultProperties;
 import org.cirdles.topsoil.plot.PlotType;
 import org.cirdles.topsoil.plot.SimplePlot;
 
 /**
- * A {@code Plot} which handles features for all isotope systems.
+ * A {@code Plot} which handles features for scatter plots.
  *
  * @author Emily Coleman
  */
 public class ScatterPlot extends SimplePlot {
 
     public ScatterPlot() {
-        super(PlotType.SCATTER, new DefaultProperties());
+        super(PlotType.SCATTER);
     }
 
 }

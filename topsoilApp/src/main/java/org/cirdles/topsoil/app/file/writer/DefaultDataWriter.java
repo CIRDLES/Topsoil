@@ -3,25 +3,24 @@ package org.cirdles.topsoil.app.file.writer;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
+import org.cirdles.topsoil.app.file.Delimiter;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author marottajb
  */
-public class DefaultDataWriter implements DataWriter {
+public class DefaultDataWriter extends AbstractDataWriter {
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    /** {@inheritDoc} */
     @Override
-    public boolean writeTableToFile(Path path, DataTable table) throws IOException {
+    protected String[] linesFromData(DataTable table, Delimiter delimiter) {
         int columnDepth = table.getColumnRoot().getDepth();
-        Set<DataRow> dataRows = table.getDataRows();
+        List<DataRow> dataRows = table.getDataRows();
         List<DataColumn<?>> columns = table.getDataColumns();
         String[][] rows = new String[dataRows.size() + columnDepth][columns.size()];
 
@@ -48,20 +47,11 @@ public class DefaultDataWriter implements DataWriter {
             r++;
         }
 
-        // Write lines
-        TableFileExtension ext = TableFileExtension.getExtensionFromPath(path);
         String[] lines = new String[rows.length];
         for (int i = 0; i < lines.length; i++) {
-            lines[i] = String.join(ext.getDelimiter().getValue(), rows[i]);
+            lines[i] = String.join(delimiter.asString(), rows[i]);
         }
 
-        return DataWriter.writeLines(path, lines);
+        return lines;
     }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-
-
 }

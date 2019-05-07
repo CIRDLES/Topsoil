@@ -15,9 +15,7 @@
  */
 package org.cirdles.topsoil.plot;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.emptyList;
 
@@ -32,30 +30,21 @@ public abstract class AbstractPlot implements Plot {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    protected List<Map<String, Object>> data;
+    protected List<PlotDataEntry> data;
     protected PlotType plotType;
-    protected Map<PlotProperty, Object> properties;
+    protected PlotProperties properties;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     /**
-     * Constructs a new {@code AbstractPlot}. No properties are set by default.
-     *
-     * @param plotType  PloType
-     */
-    public AbstractPlot(PlotType plotType) {
-        this(plotType, new HashMap<>());
-    }
-
-    /**
      * Constructs a new {@code AbstractPlot} with the specified properties.
      *
      * @param plotType   PlotType
-     * @param properties a Map of PlotProperty keys to Object values
+     * @param properties PlotProperties
      */
-    public AbstractPlot(PlotType plotType, Map<PlotProperty, Object> properties) {
+    AbstractPlot(PlotType plotType, PlotProperties properties) {
         this.plotType = plotType;
         data = emptyList();
         this.properties = properties;
@@ -69,32 +58,32 @@ public abstract class AbstractPlot implements Plot {
 
     /**{@inheritDoc}*/
     @Override
-    public List<Map<String, Object>> getData() {
+    public List<PlotDataEntry> getData() {
         return data;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setData(List<Map<String, Object>> data) {
+    public void setData(List<PlotDataEntry> data) {
         this.data = data;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public Map<PlotProperty, Object> getProperties() {
+    public PlotProperties getProperties() {
         return properties;
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperties(Map<PlotProperty, Object> properties) {
-        this.properties = properties;
+    public void setProperties(PlotProperties properties) {
+        this.properties.setAll(properties);
     }
 
     /**{@inheritDoc}*/
     @Override
-    public void setProperty(PlotProperty key, Object value) {
-        this.properties.put(key, value);
+    public void setProperty(PlotProperties.Property<?> property, Object value) {
+        this.properties.set(property, value);
     }
 
 }

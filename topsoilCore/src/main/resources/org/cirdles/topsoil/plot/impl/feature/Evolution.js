@@ -5,8 +5,7 @@
 evolution = plot.evolution = {};
 
 /**
- * The values of each of the displayed isochrons, in millions of years(?).
- * TODO Ask whether value is millions or thousands.
+ * The values of each of the displayed isochrons, in thousands of years.
  *
  * @type {Array}
  */
@@ -73,7 +72,6 @@ var diag = function (x, y, z) {
     ];
 };
 
-// TODO ???
 var indicatorCompare = function (f) {
     return function (a, b) {
         var result = [];
@@ -112,7 +110,6 @@ var lt = indicatorCompare(function (a, b) {
 });
 
 // see matlab documentation
-// TODO ???
 var max = function (a, b) {
     var result = [];
 
@@ -599,19 +596,11 @@ plot.updateEvolutionMatrix = function () {
                     xOffset = 5 / slope;
                     x = plot.margin.left + plot.xAxisScale(T[i] * (plot.lambda.Th230 / plot.lambda.U238)) + xOffset;
                     y = plot.margin.top - 5;
-                    // if (d.value == INF) {
-                    //     // TODO '15' is a stand-in for [I don't even know anymore, 1/6?] of the font size in px.
-                    //     y = y + 5;
-                    // }
                 } else if (R[i] < contourYLimits[1]) {
                     // isochron intersects plot boundary at right
                     yOffset = 10 * slope;
                     x = window.innerWidth - plot.margin.right + 10;
                     y = plot.margin.top + plot.yAxisScale(R[i] * (plot.lambda.U234 / plot.lambda.U238)) - yOffset;
-                    // if (d.value == INF) {
-                    //     // TODO '15' is a stand-in for half of the font size in px.
-                    //     y = y + 15;
-                    // }
                 } else {
                     x = window.innerWidth - plot.margin.right + 10;
                     y = plot.margin.top - 5;

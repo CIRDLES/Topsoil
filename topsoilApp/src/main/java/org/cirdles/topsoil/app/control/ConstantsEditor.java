@@ -10,11 +10,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.constant.Constant;
-import org.cirdles.topsoil.constant.Lambda;
+import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.Lambda;
 import org.controlsfx.control.PopOver;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * A custom control for editing constant values.
@@ -27,7 +28,10 @@ public class ConstantsEditor extends Accordion {
 
     @FXML private VBox lambdaBox;
 
-    public ConstantsEditor() {
+    private TopsoilProject project;
+
+    public ConstantsEditor(TopsoilProject project) {
+        this.project = project;
         try {
             FXMLUtils.loadController(CONTROLLER_FXML, ConstantsEditor.class, this);
         } catch (IOException e) {
@@ -37,8 +41,8 @@ public class ConstantsEditor extends Accordion {
 
     @FXML
     protected void initialize() {
-        for (Lambda l : Lambda.values()) {
-            lambdaBox.getChildren().add(new ConstantRow(l));
+        for (Map.Entry<Lambda, Number> entry : project.getLambdas().entrySet()) {
+            lambdaBox.getChildren().add(new LambdaRow(entry.getKey(), project));
         }
     }
 
@@ -47,7 +51,7 @@ public class ConstantsEditor extends Accordion {
      *
      * @author marottajb
      */
-    public static class ConstantRow extends HBox {
+    public static class LambdaRow extends HBox {
 
         private static String CONTROLLER_FXML = "constant-row.fxml";
 
@@ -55,7 +59,8 @@ public class ConstantsEditor extends Accordion {
         //                  ATTRIBUTES                  //
         //**********************************************//
 
-        private Constant<Number> constant;
+        private TopsoilProject project;
+        private Lambda lambda;
 
         //**********************************************//
         //                   CONTROLS                   //
@@ -69,10 +74,11 @@ public class ConstantsEditor extends Accordion {
         //                 CONSTRUCTORS                 //
         //**********************************************//
 
-        ConstantRow(Constant<Number> l) {
-            this.constant = l;
+        LambdaRow(Lambda lambda, TopsoilProject project) {
+            this.lambda = lambda;
+            this.project = project;
             try {
-                final ResourceExtractor re = new ResourceExtractor(ConstantRow.class);
+                final ResourceExtractor re = new ResourceExtractor(LambdaRow.class);
                 final FXMLLoader loader = new FXMLLoader(re.extractResourceAsPath(CONTROLLER_FXML).toUri().toURL());
                 loader.setRoot(this);
                 loader.setController(this);
@@ -84,23 +90,26 @@ public class ConstantsEditor extends Accordion {
 
         @FXML
         protected void initialize() {
-            constantLabel.setText(constant.getTitle());
-            textField.setText(constant.getValue().toString());
+            Number lambdaValue = project.getLambdaValue(lambda);
+
+            constantLabel.setText(lambda.getTitle());
+            textField.setText(lambdaValue.toString());
+            textField.setPrefWidth(100.0);
 
             Button setButton = new Button("Set Value");
             setButton.setOnAction(event -> {
                 try {
                     double value = Double.parseDouble(textField.getText());
-                    constant.setValue(value);
+                    project.setLambdaValue(lambda, value);
                 } catch (NumberFormatException e) {
-                    textField.setText(constant.getValue().toString());
+                    textField.setText(getLambdaValue());
                 }
             });
 
             Button resetButton = new Button("Reset to Default");
             resetButton.setOnAction(event -> {
-                constant.resetToDefault();
-                textField.setText(constant.getValue().toString());
+                project.setLambdaValue(lambda, lambda.getDefaultValue());
+                textField.setText(getLambdaValue());
             });
 
             VBox vBox = new VBox(setButton, resetButton);
@@ -109,6 +118,10 @@ public class ConstantsEditor extends Accordion {
 
             PopOver popOver = new PopOver(vBox);
             moreOptionsButton.setOnAction(event -> popOver.show(moreOptionsButton));
+        }
+
+        private String getLambdaValue() {
+            return project.getLambdaValue(lambda).toString();
         }
 
     }

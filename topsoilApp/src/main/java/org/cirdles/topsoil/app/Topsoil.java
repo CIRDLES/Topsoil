@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -17,10 +18,13 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.app.menu.MenuUtils;
-import org.cirdles.topsoil.app.menu.helpers.FileMenuHelper;
-import org.cirdles.topsoil.app.util.ResourceBundles;
+import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
+import org.cirdles.topsoil.app.data.TopsoilProject;
+import org.cirdles.topsoil.app.file.FileChoosers;
+import org.cirdles.topsoil.app.file.serialization.ProjectSerializer;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
@@ -28,6 +32,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static org.cirdles.topsoil.app.MenuItemHelper.saveProject;
+
+/**
+ * The main class of the Topsoil application.
+ */
 public class Topsoil extends Application {
 
     //**********************************************//
@@ -55,7 +64,6 @@ public class Topsoil extends Application {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-
     @Override
     public void init() {
         // JxBrowser; enables lightweight mode, local files, and logging
@@ -75,7 +83,7 @@ public class Topsoil extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Topsoil.primaryStage = primaryStage;
+        setPrimaryStage(primaryStage);
         MainController controller = MainController.getInstance();
 
         // Set the stage to appear at the center of the screen
@@ -100,10 +108,10 @@ public class Topsoil extends Application {
         try {
             // Load logo image
             ResourceExtractor re = new ResourceExtractor(Topsoil.class);
-            logo = new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString());
+            setLogo(new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString()));
             primaryStage.getIcons().add(logo);
 
-            // Load custom font
+            // Load custom fonts
             Font.loadFont(re.extractResourceAsFile(ARIMO_REGULAR).toURI().toURL().toExternalForm(), 12.0);
             Font.loadFont(re.extractResourceAsFile(ARIMO_BOLD).toURI().toURL().toExternalForm(), 12.0);
             Font.loadFont(re.extractResourceAsFile(ARIMO_ITALIC).toURI().toURL().toExternalForm(), 12.0);
@@ -119,9 +127,7 @@ public class Topsoil extends Application {
         // Exit platform on window close
         primaryStage.setOnCloseRequest(event -> {
             event.consume();
-            if (FileMenuHelper.handleDataBeforeClose()) {
-                shutdown();
-            }
+            safeShutdown();
         });
 
         setupKeyboardShortcuts(scene);
@@ -130,12 +136,60 @@ public class Topsoil extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Returns the primary {@code Stage} of the application.
+     *
+     * @return  primary Stage
+     */
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
 
+    /**
+     * Returns the {@code Image} for the Topsoil logo.
+     *
+     * @return  logo Image
+     */
     public static Image getLogo() {
         return logo;
+    }
+
+    public static void safeShutdown() {
+        TopsoilProject project = ProjectManager.getProject();
+        if (project == null) {
+            shutdown();     // No data loaded, safe to shut down
+            return;
+        }
+
+        // Ask the user whether or not to save their work before exiting
+        ButtonType saveVerification = TopsoilNotification.yesNo(
+                "Save Changes",
+                "Would you like to save your work?"
+        ).orElse(null);
+        if (saveVerification == null || saveVerification.equals(ButtonType.CANCEL)) {
+            return;   // Dialog cancelled; don't exit the application
+        }
+
+        // If the user wants to save their work
+        if (saveVerification == ButtonType.YES) {
+            if (ProjectManager.getProjectPath() != null) {
+                MenuItemHelper.saveProject(project);
+            } else {
+                File file = FileChoosers.saveTopsoilFile().showSaveDialog(Topsoil.getPrimaryStage());
+
+                if (file != null) {
+                    try {
+                        ProjectSerializer.serialize(file.toPath(), project);
+                        shutdown();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        TopsoilNotification.error("Error", "Unable to save project: " + file.getName());
+                    }
+                }
+            }
+        } else {
+            shutdown();
+        }
     }
 
     /**
@@ -202,6 +256,14 @@ public class Topsoil extends Application {
         }
 
         launch(args);
+    }
+
+    private void setPrimaryStage(Stage stage) {
+        Topsoil.primaryStage = stage;
+    }
+
+    private void setLogo(Image logo) {
+        Topsoil.logo = logo;
     }
 
     private static void setupKeyboardShortcuts(Scene scene) {

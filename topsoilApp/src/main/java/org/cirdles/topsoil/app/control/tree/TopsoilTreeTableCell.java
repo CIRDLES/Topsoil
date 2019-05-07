@@ -76,7 +76,7 @@ public class TopsoilTreeTableCell<T> extends TextFieldTreeTableCell<DataComponen
         if (!isEmpty()) {
             super.startEdit();
             TextField textField = (TextField) this.getGraphic();
-            textField.setText(textField.getText().trim());
+            textField.setText(getItem().toString());
         }
     }
 

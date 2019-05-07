@@ -2,30 +2,24 @@ package org.cirdles.topsoil.app.file.writer;
 
 import org.cirdles.topsoil.app.data.DataTable;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 /**
+ * Provides methods for writing the data in a {@link DataTable} to a file.
+ *
  * @author marottajb
  */
 public interface DataWriter {
 
-    boolean writeTableToFile(Path path, DataTable table) throws IOException;
-
-    static boolean writeLines(Path path, String[] lines) throws IOException {
-        FileOutputStream fileOut = new FileOutputStream(path.toFile());
-        OutputStreamWriter out = new OutputStreamWriter(fileOut, StandardCharsets.UTF_8);
-
-        for (String line : lines) {
-            out.write(line + System.lineSeparator());
-        }
-
-        out.close();
-        fileOut.close();
-        return true;
-    }
+    /**
+     * Writes the data in the provided {@code DataTable} to the specified {@code Path}.
+     *
+     * @param path  file Path
+     * @param table DataTable
+     *
+     * @throws IOException  for file errors
+     */
+    void writeTableToFile(Path path, DataTable table) throws IOException;
 
 }

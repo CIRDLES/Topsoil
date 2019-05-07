@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
 import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.app.util.ResourceBundles;
+import org.cirdles.topsoil.app.ResourceBundles;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -74,14 +74,14 @@ public class ProjectView extends SplitPane {
         FXMLUtils.setAnchorPaneConstraints(projectTreeView, 0.0, 0.0, 0.0, 0.0);
         projectTreeViewPane.getChildren().add(projectTreeView);
 
-        this.constantsEditor = new ConstantsEditor();
+        this.constantsEditor = new ConstantsEditor(project);
         FXMLUtils.setAnchorPaneConstraints(constantsEditor, 0.0, 0.0, 0.0, 0.0);
         constantsEditorPane.getChildren().add(constantsEditor);
 
         for (DataTable table : project.getDataTables()) {
             addTabForTable(table);
         }
-        project.getDataTables().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
+        project.dataTablesProperty().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
             while (c.next()) {
                 for (DataTable table : c.getAddedSubList()) {
                     addTabForTable(table);

@@ -5,38 +5,20 @@ package org.cirdles.topsoil.variable;
  *
  * @author marottajb
  */
-public enum DependentVariable implements Variable<Number> {
+public class DependentVariable extends Variable<Number> {
 
-    SIGMA_X("sigma_x", "σX", 0.0, IndependentVariable.X),
-    SIGMA_Y("sigma_y", "σY", 0.0, IndependentVariable.Y);
-
-    private String name;
-    private String abbr;
-    private Number defaultValue;
     private Variable<Number> dependency;
 
-    DependentVariable(String name, String abbreviation, Number defaultValue, Variable<Number> dependency) {
-        this.name = name;
-        this.abbr = abbreviation;
-        this.defaultValue = defaultValue;
+    DependentVariable(String name, String abbreviation, String key, Number defaultValue, Variable<Number> dependency) {
+        super(name, abbreviation, key, defaultValue);
         this.dependency = dependency;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getAbbreviation() {
-        return abbr;
-    }
-
-    @Override
-    public Number defaultValue() {
-        return defaultValue;
-    }
-
+    /**
+     * Returns the {@code Variable} that this {@code DependentVariable} is dependent on.
+     *
+     * @return  Variable of type Number
+     */
     public Variable<Number> getDependency() {
         return dependency;
     }

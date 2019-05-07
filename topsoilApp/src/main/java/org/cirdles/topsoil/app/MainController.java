@@ -5,15 +5,21 @@ import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.control.FXMLUtils;
-import org.cirdles.topsoil.app.control.HomeView;
 import org.cirdles.topsoil.app.control.ProjectView;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 
 import java.io.IOException;
 
-public class MainController extends VBox {
+/**
+ * The main node for the Topsoil application.
+ *
+ * It is a singleton, since we only need one at time of writing. The instance is only accessible from inside this
+ * package. The main content node will be automatically set to either a {@link HomeView}, if no data is showing, or a
+ * {@link ProjectView}, if there is data showing, based on the value of {@link ProjectManager#projectProperty()}.
+ */
+class MainController extends VBox {
 
-    public static MainController instance;
+    private static MainController instance;
 
     //**********************************************//
     //                  CONSTANTS                   //
@@ -32,7 +38,7 @@ public class MainController extends VBox {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    MainController() {
+    private MainController() {
         try {
             FXMLUtils.loadController(CONTROLLER_FXML, MainController.class, this);
         } catch (IOException e) {
@@ -47,8 +53,8 @@ public class MainController extends VBox {
 
         // Set the main window content appropriately based on whether or not a project is present
         replaceMainContent((project != null) ? new ProjectView(project) : homeView);
-        ProjectManager.projectProperty().addListener(c -> {
-            if (ProjectManager.getProject() == null) {
+        ProjectManager.projectProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
                 homeView.refreshRecentFiles();
                 replaceMainContent(homeView);
             } else {
@@ -61,7 +67,7 @@ public class MainController extends VBox {
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public static MainController getInstance() {
+    static MainController getInstance() {
         if (instance == null) {
             instance = new MainController();
         }
@@ -69,22 +75,22 @@ public class MainController extends VBox {
     }
 
     /**
-     * Returns the main content node of the controller, at time of writing either a {@code HomeView} or a {@code ProjectView},
-     * depending on whether a project is loaded.
-     *
-     * @return  Node
-     */
-    public Node getMainContent() {
-        return mainContentPane.getChildren().get(0);
-    }
-
-    /**
      * Returns the {@code HomeView} instance used by the controller.
      *
      * @return  HomeView
      */
-    public HomeView getHomeView() {
+    HomeView getHomeView() {
         return homeView;
+    }
+
+    /**
+     * Returns the {@code ProjectView} being displayed by the controller, if one is being displayed.
+     *
+     * @return  current ProjectView, else null
+     */
+    ProjectView getProjectView() {
+        Node view = mainContentPane.getChildren().get(0);
+        return (view instanceof ProjectView) ? (ProjectView) view : null;
     }
 
     //**********************************************//

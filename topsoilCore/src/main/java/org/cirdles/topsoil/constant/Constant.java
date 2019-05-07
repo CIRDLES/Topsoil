@@ -5,14 +5,14 @@ package org.cirdles.topsoil.constant;
  */
 public interface Constant<T> {
 
-    String getTitle();
+    String getName();
 
-    String getAbbreviation();
+    String getKeyString();
 
-    T getValue();
+    Class<T> getType();
 
-    void setValue(T value);
+    T getDefaultValue();
 
-    void resetToDefault();
+    boolean match(Object value);
 
 }

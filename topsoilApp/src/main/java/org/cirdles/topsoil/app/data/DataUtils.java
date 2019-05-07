@@ -3,15 +3,14 @@ package org.cirdles.topsoil.app.data;
 import org.cirdles.topsoil.app.data.column.DataColumn;
 import org.cirdles.topsoil.app.data.row.DataRow;
 import org.cirdles.topsoil.app.data.row.DataSegment;
+import org.cirdles.topsoil.plot.PlotDataEntry;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.uncertainty.Uncertainty;
+import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.variable.DependentVariable;
-import org.cirdles.topsoil.variable.IndependentVariable;
 import org.cirdles.topsoil.variable.Variable;
 import org.cirdles.topsoil.variable.Variables;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,23 +42,23 @@ public class DataUtils {
      * @param table     DataTable
      * @return          plot data
      */
-    public static List<Map<String, Object>> getPlotData(DataTable table) {
-        List<Map<String, Object>> plotData = new ArrayList<>();
+    public static List<PlotDataEntry> getPlotData(DataTable table) {
+        List<PlotDataEntry> plotData = new ArrayList<>();
         List<DataSegment> tableAliquots = table.getDataRoot().getChildren();
         Map<Variable<?>, DataColumn<?>> varMap = table.getVariableColumnMap();
 
         List<DataRow> rows;
         DataColumn column;
-        Map<String, Object> entry;
+        PlotDataEntry entry;
 
         for (DataSegment aliquot : tableAliquots) {
             rows = aliquot.getChildren();
             for (DataRow row : rows) {
-                entry = new HashMap<>();
+                entry = new PlotDataEntry();
 
-                entry.put(Variables.LABEL.getName(), row.getLabel());
-                entry.put(Variables.ALIQUOT.getName(), aliquot.getLabel());
-                entry.put(Variables.SELECTED.getName(), row.isSelected());
+                entry.set(Variables.LABEL, row.getLabel());
+                entry.set(Variables.ALIQUOT, aliquot.getLabel());
+                entry.set(Variables.SELECTED, row.isSelected());
 
                 for (Variable var : Variables.NUMBER_TYPE) {
                     Object value;
@@ -70,27 +69,36 @@ public class DataUtils {
                         if (var instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(table.getUncertainty())) {
                             double doubleVal = (double) value;
                             DependentVariable dependentVariable = (DependentVariable) var;
-                            IndependentVariable dependency = (IndependentVariable) dependentVariable.getDependency();
+                            Variable<Number> dependency = dependentVariable.getDependency();
                             DataColumn dependentColumn = varMap.get(dependency);
                             doubleVal /= 100;
                             doubleVal *= (Double) row.getValueForColumn(dependentColumn).getValue();
                             value = doubleVal;
                         }
-                        if (var == IndependentVariable.RHO) {
+                        if (var == Variables.RHO) {
                             double doubleVal = ((Number) value).doubleValue();
                             if (doubleVal < -1 || doubleVal > 1) {
-                                value = var.defaultValue();
+                                value = var.getDefaultValue();
                             }
                         }
                     } else {
-                        value = var.defaultValue();
+                        value = var.getDefaultValue();
                     }
-                    entry.put(var.getName(), value);
+                    entry.set(var, value);
                 }
                 plotData.add(entry);
             }
         }
         return plotData;
+    }
+
+    public static int countFractionDigits(Number number) {
+        if (number != null) {
+            String str = number.toString().toLowerCase();
+            int dotIndex = str.indexOf(".");
+            return str.substring(dotIndex + 1).length();
+        }
+        return -1;
     }
 
 }
