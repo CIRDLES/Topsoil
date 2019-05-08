@@ -44,7 +44,7 @@ import java.util.Objects;
 /**
  * Base implementation for {@link Plot} subclasses. Configures the JxBrowser {@code BrowserView} used to display JS files.
  */
-public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayable {
+public abstract class JxBrowserPlot extends AbstractPlot implements JavaFXDisplayable {
 
     private static final List<String> PLOT_RESOURCE_FILES = new ArrayList<>();
     static {
@@ -65,9 +65,9 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimplePlot.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JxBrowserPlot.class);
 
-    private final ResourceExtractor resourceExtractor = new ResourceExtractor(SimplePlot.class);
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(JxBrowserPlot.class);
     private final AxisExtentsBridge axisExtentsBridge = new AxisExtentsBridge();
     private final Regression regression = new Regression();
     private Browser browser;
@@ -85,7 +85,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      *
      * @param plotType      plot type
      */
-    public SimplePlot(PlotType plotType) {
+    public JxBrowserPlot(PlotType plotType) {
         super(plotType, PlotProperties.defaultProperties());
     }
 
@@ -279,25 +279,106 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 .extractResourceAsPath("topsoil.js")
                 .toUri();
 
-        String htmlTemplate = (""
-                + "<!DOCTYPE html>\n"
-                // <html>
-                // <head>
-                + "<style>\n"
-                + "body {\n"
-                + "  margin: 0; padding: 0;\n"
-                + "  overflow: hidden;\n"
-                + "}\n"
-                + "</style>\n"
-                // </head>
-                + "<body>\n"
-                + "<script src=\"" + D3_JS_URI + "\"></script>\n"
-                + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
-                + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
-                + "<script src=\"%s\"></script>\n" // add plot file here
-                + "</body>\n"
-                // </html>
-                + "").replaceAll("%20", "%%20");
+//        String htmlTemplate = (""
+//                + "<!DOCTYPE html>\n"
+//                // <html>
+//                // <head>
+//                + "<style>\n"
+//                + "body {\n"
+//                + "  margin: 0; padding: 0;\n"
+//                + "  overflow: hidden;\n"
+//                + "}\n"
+//                + "</style>\n"
+//                // </head>
+//                + "<body>\n"
+//                + "<script src=\"" + D3_JS_URI + "\"></script>\n"
+//                + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
+//                + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
+//                + "<script src=\"%s\"></script>\n" // add plot file here
+//                + "</body>\n"
+//                // </html>
+//                + "").replaceAll("%20", "%%20");
+
+        String htmlTemplate = ("<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "  <head>\n" +
+                "    <title>Restricted zoom behavior in d3</title>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "    <script src=\"http://d3js.org/d3.v3.min.js\"></script>\n" +
+                "    <style>\n" +
+                "    </style>\n" +
+                "  </head>\n" +
+                "  <body>\n" +
+                "    <script>\n" +
+                "      // first, define your viewport dimensions\n" +
+                "      var width = 960,\n" +
+                "          height = 500;\n" +
+                "\n" +
+                "      // then, create your svg element and a <g> container\n" +
+                "      // for all of the transformed content\n" +
+                "      var svg = d3.select(\"body\").append(\"svg\")\n" +
+                "            .attr(\"width\", width)\n" +
+                "            .attr(\"height\", height)\n" +
+                "            .style(\"background-color\", randomColor),\n" +
+                "          g = svg.append(\"g\");\n" +
+                "\n" +
+                "      // then, create the zoom behvavior\n" +
+                "      var zoom = d3.behavior.zoom()\n" +
+                "        // only scale up, e.g. between 1x and 50x\n" +
+                "        .scaleExtent([1, 50])\n" +
+                "        .on(\"zoom\", function() {\n" +
+                "          // the \"zoom\" event populates d3.event with an object that has\n" +
+                "          // a \"translate\" property (a 2-element Array in the form [x, y])\n" +
+                "          // and a numeric \"scale\" property\n" +
+                "          var e = d3.event,\n" +
+                "              // now, constrain the x and y components of the translation by the\n" +
+                "              // dimensions of the viewport\n" +
+                "              tx = Math.min(0, Math.max(e.translate[0], width - width * e.scale)),\n" +
+                "              ty = Math.min(0, Math.max(e.translate[1], height - height * e.scale));\n" +
+                "          // then, update the zoom behavior's internal translation, so that\n" +
+                "          // it knows how to properly manipulate it on the next movement\n" +
+                "          zoom.translate([tx, ty]);\n" +
+                "          // and finally, update the <g> element's transform attribute with the\n" +
+                "          // correct translation and scale (in reverse order)\n" +
+                "          g.attr(\"transform\", [\n" +
+                "            \"translate(\" + [tx, ty] + \")\",\n" +
+                "            \"scale(\" + e.scale + \")\"\n" +
+                "          ].join(\" \"));\n" +
+                "        });\n" +
+                "\n" +
+                "      // then, call the zoom behavior on the svg element, which will add\n" +
+                "      // all of the necessary mouse and touch event handlers.\n" +
+                "      // remember that if you call this on the <g> element, the even handlers\n" +
+                "      // will only trigger when the mouse or touch cursor intersects with the\n" +
+                "      // <g> elements' children!\n" +
+                "      svg.call(zoom);\n" +
+                "\n" +
+                "      // then, let's add some circles\n" +
+                "      var circle = g.selectAll(\"circle\")\n" +
+                "        .data(d3.range(300).map(function(i) {\n" +
+                "          return {\n" +
+                "            x: Math.random() * width,\n" +
+                "            y: Math.random() * height,\n" +
+                "            r: .01 + Math.random() * 50,\n" +
+                "            color: randomColor()\n" +
+                "          };\n" +
+                "        }).sort(function(a, b) {\n" +
+                "          return d3.descending(a.r, b.r);\n" +
+                "        }))\n" +
+                "        .enter()\n" +
+                "        .append(\"circle\")\n" +
+                "          .attr(\"fill\", function(d) { return d.color; })\n" +
+                "          .attr(\"cx\", function(d) { return d.x; })\n" +
+                "          .attr(\"cy\", function(d) { return d.y; })\n" +
+                "          .attr(\"r\", function(d) { return d.r; });\n" +
+                "\n" +
+                "      function randomColor() {\n" +
+                "        return \"hsl(\" + ~~(60 + Math.random() * 180) + \",80%,60%)\";\n" +
+                "      }\n" +
+                "\n" +
+                "    </script>\n" +
+                "  </body>\n" +
+                "</html>").replaceAll("%20", "%%20");
 
         String plotFile = resourceExtractor.extractResourceAsPath(plotType.getPlotFile()).toUri().toString();
 

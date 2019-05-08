@@ -209,7 +209,7 @@ plot.initialize = function (data) {
 
     plot.initialized = true;
     plot.manageAxisExtents();
-    plot.update(plot.data);
+    plot.setData(data);
 };
 
 /*

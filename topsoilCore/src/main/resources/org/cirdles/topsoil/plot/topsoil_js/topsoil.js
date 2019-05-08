@@ -34,12 +34,12 @@
 
     topsoil.setData = function (data) {
         topsoil.data = [];
-        for (var index = 0; index < data.length; index++) {
+        for (var index = 0; index < data.size(); index++) {
             var entry = {};
-            var row = data[index];
+            var row = data.get(index);
             if (row != null) {
                 plot.dataKeys.forEach(function (key) {
-                    var value = row[key];
+                    var value = row.get(key);
                     if (value != null) {
                         entry[key] = value;
                     }
@@ -51,15 +51,21 @@
     };
 
     topsoil.setProperties = function (properties) {
-        plot.properties = properties;
+        plot.properties = {};
 
-        plot.update(ts.data);
+        var key;
+        for (var p in Property) {
+            key = Property[p];
+            plot.properties[key] = properties.get(key);
+        }
+
+        plot.update(topsoil.data);
     };
 
     topsoil.updateProperty = function(key, value) {
         plot.properties[key] = value;
 
-        plot.update(ts.data)
+        plot.update(topsoil.data)
     };
 
     /*

@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.plot.bridges;
 
 /**
- * Intended to be added as a member to a JavaScriptPlot, so that the JavaScript may make upcalls to JavaFX.
+ * Intended to be added as a member to a WebViewPlot, so that the JavaScript may make upcalls to JavaFX.
  *
  * @author Emily Coleman
  */
