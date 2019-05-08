@@ -44,7 +44,7 @@ import java.util.Objects;
 /**
  * Base implementation for {@link Plot} subclasses. Configures the JxBrowser {@code BrowserView} used to display JS files.
  */
-public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayable {
+public abstract class JxBrowserPlot extends AbstractPlot implements JavaFXDisplayable {
 
     private static final List<String> PLOT_RESOURCE_FILES = new ArrayList<>();
     static {
@@ -65,9 +65,9 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimplePlot.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JxBrowserPlot.class);
 
-    private final ResourceExtractor resourceExtractor = new ResourceExtractor(SimplePlot.class);
+    private final ResourceExtractor resourceExtractor = new ResourceExtractor(JxBrowserPlot.class);
     private final AxisExtentsBridge axisExtentsBridge = new AxisExtentsBridge();
     private final Regression regression = new Regression();
     private Browser browser;
@@ -85,7 +85,7 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
      *
      * @param plotType      plot type
      */
-    public SimplePlot(PlotType plotType) {
+    public JxBrowserPlot(PlotType plotType) {
         super(plotType, PlotProperties.defaultProperties());
     }
 
@@ -279,25 +279,25 @@ public abstract class SimplePlot extends AbstractPlot implements JavaFXDisplayab
                 .extractResourceAsPath("topsoil.js")
                 .toUri();
 
-        String htmlTemplate = (""
-                + "<!DOCTYPE html>\n"
-                // <html>
-                // <head>
-                + "<style>\n"
-                + "body {\n"
-                + "  margin: 0; padding: 0;\n"
-                + "  overflow: hidden;\n"
-                + "}\n"
-                + "</style>\n"
-                // </head>
-                + "<body>\n"
-                + "<script src=\"" + D3_JS_URI + "\"></script>\n"
-                + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
-                + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
-                + "<script src=\"%s\"></script>\n" // add plot file here
-                + "</body>\n"
-                // </html>
-                + "").replaceAll("%20", "%%20");
+       String htmlTemplate = (""
+               + "<!DOCTYPE html>\n"
+               // <html>
+               // <head>
+               + "<style>\n"
+               + "body {\n"
+               + "  margin: 0; padding: 0;\n"
+               + "  overflow: hidden;\n"
+               + "}\n"
+               + "</style>\n"
+               // </head>
+               + "<body>\n"
+               + "<script src=\"" + D3_JS_URI + "\"></script>\n"
+               + "<script src=\"" + NUMERIC_JS_URI + "\"></script>\n"
+               + "<script src=\"" + TOPSOIL_JS_URI + "\"></script>\n"
+               + "<script src=\"%s\"></script>\n" // add plot file here
+               + "</body>\n"
+               // </html>
+               + "").replaceAll("%20", "%%20");
 
         String plotFile = resourceExtractor.extractResourceAsPath(plotType.getPlotFile()).toUri().toString();
 

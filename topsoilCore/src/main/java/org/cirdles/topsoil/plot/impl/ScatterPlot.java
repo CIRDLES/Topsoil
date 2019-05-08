@@ -15,15 +15,16 @@
  */
 package org.cirdles.topsoil.plot.impl;
 
+import org.cirdles.topsoil.plot.JxBrowserPlot;
 import org.cirdles.topsoil.plot.PlotType;
-import org.cirdles.topsoil.plot.SimplePlot;
+import org.cirdles.topsoil.plot.WebViewPlot;
 
 /**
  * A {@code Plot} which handles features for scatter plots.
  *
  * @author Emily Coleman
  */
-public class ScatterPlot extends SimplePlot {
+public class ScatterPlot extends WebViewPlot {
 
     public ScatterPlot() {
         super(PlotType.SCATTER);
