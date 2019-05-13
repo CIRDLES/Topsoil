@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.data.row;
 
+import org.cirdles.topsoil.app.data.composite.DataComponentComparator;
 import org.cirdles.topsoil.app.data.composite.DataComposite;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class DataRoot extends DataComposite<DataSegment> {
 
     public DataRoot(DataSegment... segments) {
         super("root", segments);
+        children.sort(new DataComponentComparator());
     }
 
     //**********************************************//

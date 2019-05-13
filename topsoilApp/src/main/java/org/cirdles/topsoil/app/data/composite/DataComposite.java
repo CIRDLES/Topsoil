@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.data.composite;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.cirdles.topsoil.app.util.IntuitiveStringComparator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -47,7 +47,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         this.table = table;
 
         this.setEditable(true);
-        this.setSortMode(TreeSortMode.ALL_DESCENDANTS);
         this.setShowRoot(false);
 
         // Set custom Skin
@@ -71,8 +70,6 @@ public class TopsoilTreeTableView extends TreeTableView<DataComponent> {
         this.getColumns().add(labelColumn);
         this.getColumns().add(makeCheckBoxColumn());
         this.getColumns().addAll(makeTableColumnsForComposite(table.getColumnRoot()));
-
-        this.getSortOrder().add(labelColumn);
 
         // Refresh cells on fraction digit changes
         table.fracionDigitsProperty().addListener(c -> ((TopsoilTreeTableViewSkin) getSkin()).refreshCells());
