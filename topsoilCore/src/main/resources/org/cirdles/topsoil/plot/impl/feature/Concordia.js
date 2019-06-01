@@ -85,10 +85,10 @@ plot.updateConcordia = function() {
 
                 return path.join("");
             })
-            .attr("stroke", plot.getProperty(Property.CONCORDIA_LINE_FILL))
+            .attr("stroke", plot.getOption(PlotOption.CONCORDIA_LINE_FILL))
             .attr("stroke-width", 2);
 
-        if (plot.getProperty(Property.CONCORDIA_ENVELOPE)) {
+        if (plot.getOption(PlotOption.CONCORDIA_ENVELOPE)) {
             plot.concordiaGroup.select(".uncertaintyEnvelope")
                 .attr("d", function () {
                     var approximateUpperSegment = function (path, minT, maxT) {
@@ -162,7 +162,7 @@ plot.updateConcordia = function() {
 
                     return path.join("");
                 })
-                .attr("fill", plot.getProperty(Property.CONCORDIA_ENVELOPE_FILL));
+                .attr("fill", plot.getOption(PlotOption.CONCORDIA_ENVELOPE_FILL));
         }
 
         plot.t.domain([minT, maxT]);

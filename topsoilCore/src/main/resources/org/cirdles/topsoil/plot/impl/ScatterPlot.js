@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-plot.dataKeys = ['x', 'sigma_x', 'y', 'sigma_y', 'rho', 'selected', 'valid', 'aliquot', 'label'];
-
 /*
     Creates an SVG group for model elements like points and ellipses. Inserting other groups below this one ensures that
     the model is always the top layer.
@@ -142,8 +140,18 @@ plot.initialize = function (data) {
         changeAxes(plot.xDataMin, plot.xDataMax, plot.yDataMin, plot.yDataMax);
     };
 
+    topsoil.getAxisExtents = function() {
+        alert("here");
+        return [
+            plot.xAxisScale.domain()[0],
+            plot.xAxisScale.domain()[1],
+            plot.yAxisScale.domain()[0],
+            plot.yAxisScale.domain()[1]
+        ]
+    };
+
     // function to manually the x and y axes' extents
-    topsoil.setAxes = function(xMin, xMax, yMin, yMax) {
+    topsoil.setAxisExtents = function(xMin, xMax, yMin, yMax) {
 
         // if the user hasn't set a new extent for a field, leave it as-is
         if (xMin == null) xMin = plot.xAxisScale.domain()[0];
@@ -248,14 +256,14 @@ plot.update = function (data) {
     }
 
     //if the isotope type has changed, alert Java
-    if (plot.currentIsotope !== plot.getProperty(Property.ISOTOPE_SYSTEM)) {
-        plot.currentIsotope = plot.getProperty(Property.ISOTOPE_SYSTEM);
+    if (plot.currentIsotope !== plot.getOption(PlotOption.ISOTOPE_SYSTEM)) {
+        plot.currentIsotope = plot.getOption(PlotOption.ISOTOPE_SYSTEM);
     }
 
     // If the uncertainty has changed, the plot extent and ellipse model have to be re-calculated, and the ellipses
     // redrawn. Removes ellipses to be later re-drawn by plot.manageEllipses().
-    if (plot.uncertainty !== plot.getProperty(Property.UNCERTAINTY)) {
-        plot.uncertainty = plot.getProperty(Property.UNCERTAINTY);
+    if (plot.uncertainty !== plot.getOption(PlotOption.UNCERTAINTY)) {
+        plot.uncertainty = plot.getOption(PlotOption.UNCERTAINTY);
         plot.updateDataExtent();
         plot.ellipseData = plot.calcEllipses(plot.data);
         plot.removeEllipses();
@@ -266,7 +274,7 @@ plot.update = function (data) {
     var redrawTWConcordia = false;
 
     var lambda230, lambda234, lambda235, lambda238, R238_235S;
-    lambda234 = plot.getProperty(Property.LAMBDA_234);
+    lambda234 = plot.getOption(PlotOption.LAMBDA_234);
     if (lambda234 != null && !isNaN(lambda234)) {
         if (plot.lambda.U234 !== lambda234) {
             plot.lambda.U234 = lambda234;
@@ -275,7 +283,7 @@ plot.update = function (data) {
             redrawTWConcordia = true;
         }
     }
-    lambda235 = plot.getProperty(Property.LAMBDA_235);
+    lambda235 = plot.getOption(PlotOption.LAMBDA_235);
     if (lambda235 != null && !isNaN(lambda235)) {
         if (plot.lambda.U235 !== lambda235) {
             plot.lambda.U235 = lambda235;
@@ -283,21 +291,21 @@ plot.update = function (data) {
             redrawTWConcordia = true;
         }
     }
-    lambda238 = plot.getProperty(Property.LAMBDA_238);
+    lambda238 = plot.getOption(PlotOption.LAMBDA_238);
     if (lambda238 != null && !isNaN(lambda238)) {
         if (plot.lambda.U238 !== lambda238) {
             plot.lambda.U238 = lambda238;
             redrawEvolution = true
         }
     }
-    lambda230 = plot.getProperty(Property.LAMBDA_230);
+    lambda230 = plot.getOption(PlotOption.LAMBDA_230);
     if (lambda230 != null && !isNaN(lambda230)) {
         if (plot.lambda.Th230 !== lambda230) {
             plot.lambda.Th230 = lambda230;
             redrawEvolution = true
         }
     }
-    R238_235S = plot.getProperty(Property.R238_235S);
+    R238_235S = plot.getOption(PlotOption.R238_235S);
     if (R238_235S != null && !isNaN(R238_235S)) {
         if (plot.lambda.R238_235S !== R238_235S) {
             plot.lambda.R238_235S = R238_235S;
@@ -320,13 +328,13 @@ plot.update = function (data) {
 
     //draw title and axis labels
     d3.select(".titleText")
-        .text(plot.getProperty(Property.TITLE))
+        .text(plot.getOption(PlotOption.TITLE))
         .attr("x", (plot.innerWidth / 2) - (d3.select(".titleText").node().getBBox().width) / 2);
     d3.select(".x.axis .label")
-        .text(plot.getProperty(Property.X_AXIS))
+        .text(plot.getOption(PlotOption.X_AXIS))
         .attr("x", (plot.innerWidth) - (d3.select(".x.axis .label").node().getBBox().width));
     d3.select(".y.axis .label")
-        .text(plot.getProperty(Property.Y_AXIS))
+        .text(plot.getOption(PlotOption.Y_AXIS))
         .attr("x",  -(d3.select(".y.axis .label").node().getBBox().width));
 
     // axis styling
@@ -373,16 +381,16 @@ plot.updateDataExtent = function () {
     //find the extent of the points
     if (plot.data.length > 0) {
         var dataXMin = d3.min(plot.data, function (d) {
-            return (d.selected) ? d.x - (d.sigma_x * (plot.uncertainty != null ? plot.uncertainty : 2)) : 6500.0;
+            return (d.selected) ? d.x - ((d.sigma_x || 0) * (plot.uncertainty != null ? plot.uncertainty : 2)) : 6500.0;
         });
         var dataYMin = d3.min(plot.data, function (d) {
-            return (d.selected) ? d.y - (d.sigma_y * (plot.uncertainty != null ? plot.uncertainty : 2)) : 6500.0;
+            return (d.selected) ? d.y - ((d.sigma_y || 0) * (plot.uncertainty != null ? plot.uncertainty : 2)) : 6500.0;
         });
         var dataXMax = d3.max(plot.data, function (d) {
-            return (d.selected) ? d.x + (d.sigma_x * (plot.uncertainty != null ? plot.uncertainty : 2)) : 0.0;
+            return (d.selected) ? d.x + ((d.sigma_x || 0) * (plot.uncertainty != null ? plot.uncertainty : 2)) : 0.0;
         });
         var dataYMax = d3.max(plot.data, function (d) {
-            return (d.selected) ? d.y + (d.sigma_y * (plot.uncertainty != null ? plot.uncertainty : 2)) : 0.0;
+            return (d.selected) ? d.y + ((d.sigma_y || 0) * (plot.uncertainty != null ? plot.uncertainty : 2)) : 0.0;
         });
 
         var xRange = dataXMax - dataXMin;
@@ -403,10 +411,10 @@ plot.manageAxisExtents = function() {
         ymin = yDomain[0],
         ymax = yDomain[1];
 
-    topsoil.updateProperty(Property.X_MIN, xmin);
-    topsoil.updateProperty(Property.X_MAX, xmax);
-    topsoil.updateProperty(Property.Y_MIN, ymin);
-    topsoil.updateProperty(Property.Y_MAX, ymax);
+    topsoil.updateOption(PlotOption.X_MIN, xmin);
+    topsoil.updateOption(PlotOption.X_MAX, xmax);
+    topsoil.updateOption(PlotOption.Y_MIN, ymin);
+    topsoil.updateOption(PlotOption.Y_MAX, ymax);
     topsoil.axisExtentsBridge.update(xmin, xmax, ymin, ymax);
     topsoil.axisExtentsBridge.setIfUpdated(true);
 };
@@ -417,7 +425,7 @@ plot.manageAxisExtents = function() {
 plot.managePoints = function () {
 
     // If points should be visible...
-    if (plot.getProperty(Property.POINTS)) {
+    if (plot.getOption(PlotOption.POINTS)) {
 
         // If points should be visible, but aren't...
         if (!plot.pointsVisible) {
@@ -442,7 +450,7 @@ plot.managePoints = function () {
 plot.manageEllipses = function () {
 
     // If ellipses should be visible...
-    if (plot.getProperty(Property.ELLIPSES)) {
+    if (plot.getOption(PlotOption.ELLIPSES)) {
 
         // If the ellipses simply need to be updated...
         if (plot.ellipsesVisible) {
@@ -463,7 +471,7 @@ plot.manageEllipses = function () {
 
 plot.manageRegressionLine = function() {
     // If RegressionLine shouldn't be visible
-    if(plot.getProperty(Property.MCLEAN_REGRESSION)) {
+    if(plot.getOption(PlotOption.MCLEAN_REGRESSION)) {
 
         // If the RegressionLine needs to be updated
         if (plot.regressionVisible) {
@@ -486,7 +494,7 @@ plot.manageRegressionLine = function() {
 plot.manageUncertaintyBars = function () {
 
     // If UncertaintyBars should be visible...
-    if (plot.getProperty(Property.UNCTBARS)) {
+    if (plot.getOption(PlotOption.UNCTBARS)) {
 
         // If the UncertaintyBars simply need to be updated...
         if (plot.uncertaintyBarsVisible) {
@@ -513,11 +521,11 @@ plot.managePlotFeatures = function () {
 
     if (plot.currentIsotope === "Uranium Lead") {
 
-        if (plot.getProperty(Property.CONCORDIA_TYPE) === 'Wetherill') {
+        if (plot.getOption(PlotOption.CONCORDIA_TYPE) === 'Wetherill') {
             if (plot.twconcordiaVisible) {
                 plot.removeTWConcordia();
             }
-            if (plot.getProperty(Property.CONCORDIA_LINE)) {
+            if (plot.getOption(PlotOption.CONCORDIA_LINE)) {
                 if (!plot.concordiaVisible) {
                     plot.drawConcordia();
                 }
@@ -528,11 +536,11 @@ plot.managePlotFeatures = function () {
                 plot.removeConcordia();
             }
 
-        } else if (plot.getProperty(Property.CONCORDIA_TYPE) === 'Tera-Wasserburg') {
+        } else if (plot.getOption(PlotOption.CONCORDIA_TYPE) === 'Tera-Wasserburg') {
             if (plot.concordiaVisible) {
                 plot.removeConcordia();
             }
-            if (plot.getProperty(Property.CONCORDIA_LINE)) {
+            if (plot.getOption(PlotOption.CONCORDIA_LINE)) {
                 if (!plot.twconcordiaVisible) {
                     plot.drawTWConcordia();
                 } else {
@@ -558,7 +566,7 @@ plot.managePlotFeatures = function () {
     if (plot.currentIsotope === "Uranium Thorium" ) {
 
         // If the evolution matrix should be visible...
-        if (plot.getProperty(Property.EVOLUTION)) {
+        if (plot.getOption(PlotOption.EVOLUTION)) {
 
             // If the evolution matrix should be visible, but isn't...
             if (!plot.evolutionMatrixVisible) {

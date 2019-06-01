@@ -5,9 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
-import org.cirdles.topsoil.app.data.composite.DataComponent;
 
-public class MultilineHeaderTreeTableColumn<T> extends TreeTableColumn<DataComponent, T> {
+public class MultilineHeaderTreeTableColumn<R, T> extends TreeTableColumn<R, T> {
 
     public static final int LABEL_PADDING = 5;
 

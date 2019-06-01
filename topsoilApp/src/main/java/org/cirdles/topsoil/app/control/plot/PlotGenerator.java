@@ -1,19 +1,24 @@
 package org.cirdles.topsoil.app.control.plot;
 
-import org.cirdles.topsoil.Lambda;
+import javafx.collections.ListChangeListener;
+import org.apache.commons.lang3.Validate;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.data.DataUtils;
-import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.FXDataRow;
+import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
-import org.cirdles.topsoil.plot.*;
-import org.cirdles.topsoil.variable.*;
+import org.cirdles.topsoil.data.DataColumn;
+import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.PlotOptions;
+import org.cirdles.topsoil.plot.PlotType;
+import org.cirdles.topsoil.Variable;
+import org.cirdles.topsoil.javafx.PlotView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import static org.cirdles.topsoil.plot.PlotProperties.*;
+import static org.cirdles.topsoil.plot.PlotOption.*;
 
 /**
  * A utility class providing helper methods for handling {@link Plot}s.
@@ -30,64 +35,77 @@ public class PlotGenerator {
      * Generates and displays a plot.
      *
      * @param project       TopsoilProject
-     * @param plotType      PlotType
      * @param table         DataTable
-     * @param properties    plot properties
+     * @param plotType      PlotType
+     * @param options    plot options
      */
-    public static void generatePlot(TopsoilProject project, PlotType plotType, DataTable table, PlotProperties properties) {
-        // Construct Plot
-        Plot plot = plotType.getPlot();
-        if (plot == null) {
-            throw new IllegalArgumentException("Could not obtain plot instance from provided plot type: " + plotType);
-        }
+    public static void generatePlot(
+            TopsoilProject project,
+            FXDataTable table,
+            Map<Variable<?>, DataColumn<?>> variableMap,
+            PlotType plotType,
+            PlotOptions options
+    ) {
+        Validate.notNull(project, "Project cannot be null.");
+        Validate.notNull(table, "Data table cannot be null.");
+        Validate.notNull(variableMap, "Variable map cannot be null.");
+        Validate.notNull(plotType, "Plot type cannot be null.");
 
         // Check for required plotting variables
-        List<Variable> missing = findMissingVariables(table, plotType);
+        List<Variable> missing = findMissingVariables(variableMap, plotType);
         if (! missing.isEmpty()) {
-            TopsoilNotification.error("Missing Variables", "The following variables must be assigned:\n\n" + missing.toString());
+            StringJoiner joiner = new StringJoiner(", ");
+            for (Variable v : missing) {
+                joiner.add(v.getAbbreviation());
+            }
+            TopsoilNotification.error(
+                    "Missing Variables",
+                    "The following variables must be assigned for this plot type:\n\n[" + joiner.toString() + "]"
+            );
             return;
         }
 
-        // Check if the requested plot type is already open for the table
-        if (project.getOpenPlotTypesForTable(table).contains(plotType)) {
-            TopsoilNotification.info("Plot Already Exists",
-                    "A plot with plot type \"" + plotType.getName() + "\" is already open for table \"" + table.getLabel() + "\".");
-            return;
-        }
-
-        // Get Plot-compatible data
-        List<PlotDataEntry> data = DataUtils.getPlotData(table);
+//        // Check if the requested plot type is already open for the table
+//        if (project.getPlotMap().get(table).contains(plotType)) {
+//            TopsoilNotification.info(
+//                    "Plot Already Exists",
+//                    "A plot with plot type \"" + plotType.getName() +
+//                            "\" is already open for table \"" + table.getTitle() + "\"."
+//            );
+//            return;
+//        }
 
         // Notify the user of any invalid data values
-        List<String> dataErrors = DataUtils.getDataErrors(table);
-        if (dataErrors.size() > 0) {
-            StringJoiner errors = new StringJoiner("\n");
-            for (String err : dataErrors) {
-                errors.add(err);
-            }
-            // @TODO Encapsulate reasons for invalid rows; right now there's only one:
-            TopsoilNotification.error("Invalid Rows", "The following rows have errors: \n\n" + errors.toString());
+//        List<String> dataErrors = DataUtils.getDataErrors(table);
+//        if (dataErrors.size() > 0) {
+//            StringJoiner errors = new StringJoiner("\n");
+//            for (String err : dataErrors) {
+//                errors.add(err);
+//            }
+//            // @TODO Encapsulate reasons for invalid rows; right now there's only one:
+//            TopsoilNotification.error("Invalid Rows", "The following rows have errors: \n\n" + errors.toString());
+//        }
+
+        // Assign plot options
+        if (options == null) {
+            options = PlotOptions.defaultOptions();
+            options.put(TITLE, table.getTitle());
+            options.put(X_AXIS, variableMap.get(Variable.X).getTitle());
+            options.put(Y_AXIS, variableMap.get(Variable.Y).getTitle());
         }
 
-        // Set the plot data
-        plot.setData(data);
-
-        // Listen for changes in the DataTable; update plot with new data
-        table.addListener(c -> plot.setData(DataUtils.getPlotData(table)));
-
-        // Assign plot properties
-        if (properties == null) {
-            properties = PlotProperties.defaultProperties();
-            syncProperties(properties, project, table);  // Set data-dependent properties
-        }
-        plot.setProperties(properties);
+        // Construct Plot
+        PlotView plot = new FXPlotView(plotType, table, variableMap, options);
+//        table.rowsProperty().addListener((ListChangeListener<? super FXDataRow>) c -> {
+//            plot.setDataTable(table, plot.getVariableMap());
+//        });
 
         // Setup plot window
         PlotStage plotStage = new PlotStage(plot, table);
 
         // Make the project aware that this plot is open
         project.registerOpenPlot(table, plot);
-        plotStage.setOnCloseRequest(closeEvent -> project.deregisterOpenPlot(table, plotType));
+        plotStage.setOnCloseRequest(closeEvent -> project.deregisterOpenPlot(table, plot));
 
         // Show plot
         plotStage.show();
@@ -100,44 +118,19 @@ public class PlotGenerator {
     /**
      * Returns a list of {@code Variable}s which are required by the plot type, but not defined in the table.
      *
-     * @param table     DataTable
-     * @param plotType  PlotType
+     * @param variableMap     Map of Variables to DataColumns
+     * @param plotType        PlotType
      *
      * @return          List of missing Variables
      */
-    private static List<Variable> findMissingVariables(DataTable table, PlotType plotType) {
+    private static List<Variable> findMissingVariables(Map<Variable<?>, DataColumn<?>> variableMap, PlotType plotType) {
         List<Variable> missing = new ArrayList<>();
         for (Variable v : plotType.getRequiredVariables()) {
-            if (table.getColumnForVariable(v) == null) {
+            if (variableMap.get(v) == null) {
                 missing.add(v);
             }
         }
         return missing;
     }
 
-    /**
-     * Assigns data-specific plot properties to the provided {@code PlotProperties} instance based on the table.
-     *
-     * @param properties    PlotProperties instance
-     * @param table         DataTable
-     */
-    private static void syncProperties(PlotProperties properties, TopsoilProject project, DataTable table) {
-        // Sync properties from table
-        properties.set(TITLE, table.getLabel());
-        properties.set(ISOTOPE_SYSTEM, table.getIsotopeSystem());
-        properties.set(UNCERTAINTY, table.getUncertainty());
-        if (table.getVariableColumnMap().containsKey(Variables.X)) {
-            properties.set(X_AXIS, table.getColumnForVariable(Variables.X).getLabel());
-        }
-        if (table.getVariableColumnMap().containsKey(Variables.Y)) {
-            properties.set(Y_AXIS, table.getColumnForVariable(Variables.Y).getLabel());
-        }
-
-        // Sync lambdas
-        Map<Lambda, Number> lambdas = project.getLambdas();
-        properties.set(LAMBDA_U234, lambdas.get(Lambda.U234));
-        properties.set(LAMBDA_U235, lambdas.get(Lambda.U235));
-        properties.set(LAMBDA_U238, lambdas.get(Lambda.U238));
-        properties.set(LAMBDA_TH230, lambdas.get(Lambda.Th230));
-    }
 }

@@ -1,8 +1,8 @@
 package org.cirdles.topsoil.app.control;
 
 import javafx.scene.control.Tab;
-import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.control.tree.TopsoilTreeTableView;
+import org.cirdles.topsoil.app.control.tree.FXDataTableViewer;
+import org.cirdles.topsoil.app.data.FXDataTable;
 
 /**
  * A custom {@code Tab} associated with a particular {@code DataTable}.
@@ -15,24 +15,30 @@ public class ProjectTableTab extends Tab {
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private DataTable table;
+    private FXDataTable table;
+    private FXDataTableViewer viewer;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    ProjectTableTab(DataTable table) {
+    ProjectTableTab(FXDataTable table) {
         super();
         this.table = table;
-        this.setContent(new TopsoilTreeTableView(table));
+        this.viewer = new FXDataTableViewer(table);
+        this.setContent(viewer);
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
 
-    public DataTable getDataTable() {
+    public FXDataTable getDataTable() {
         return table;
+    }
+
+    public FXDataTableViewer getDataTableViewer() {
+        return viewer;
     }
 
 }

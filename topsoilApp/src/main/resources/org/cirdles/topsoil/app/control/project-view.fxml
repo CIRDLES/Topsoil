@@ -18,7 +18,7 @@
                      <children>
                         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Label fx:id="projectTreeViewLabel" text="Project Structure">
+                              <Label fx:id="projectSidebarLabel" text="Project Structure">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -29,7 +29,7 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </padding>
                               </Label>
-                              <AnchorPane fx:id="projectTreeViewPane" VBox.vgrow="ALWAYS" />
+                              <AnchorPane fx:id="projectSidebarPane" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </children></AnchorPane>

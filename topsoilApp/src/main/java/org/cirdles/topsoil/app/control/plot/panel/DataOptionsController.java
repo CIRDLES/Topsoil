@@ -13,11 +13,11 @@ import javafx.scene.layout.AnchorPane;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Uncertainty;
-import org.cirdles.topsoil.plot.PlotProperties;
+import org.cirdles.topsoil.plot.PlotOption;
 
 import java.io.IOException;
 
-import static org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel.fireEventOnChanged;
+import static org.cirdles.topsoil.app.control.plot.panel.PlotOptionsPanel.fireEventOnChanged;
 
 public class DataOptionsController extends AnchorPane {
 
@@ -91,33 +91,33 @@ public class DataOptionsController extends AnchorPane {
         unctBarsRadioButton.setOnMouseReleased(unctBarsSelectionHandler.getOnMouseReleased());
 
         // Configure properties that need to have values converted
-		pointsFillValue.bind(Bindings.createStringBinding(() -> PlotPropertiesPanel.convertColor(pointsFillColorPicker.getValue()),
+		pointsFillValue.bind(Bindings.createStringBinding(() -> PlotOptionsPanel.convertColor(pointsFillColorPicker.getValue()),
 				pointsFillColorPicker.valueProperty()));
-		pointsOpacityValue.bind(Bindings.createDoubleBinding(() -> PlotPropertiesPanel.convertOpacity(pointsFillColorPicker.getValue()),
+		pointsOpacityValue.bind(Bindings.createDoubleBinding(() -> PlotOptionsPanel.convertOpacity(pointsFillColorPicker.getValue()),
 				pointsFillColorPicker.valueProperty()));
-		ellipsesFillValue.bind(Bindings.createStringBinding(() -> PlotPropertiesPanel.convertColor(ellipsesFillColorPicker.getValue()),
+		ellipsesFillValue.bind(Bindings.createStringBinding(() -> PlotOptionsPanel.convertColor(ellipsesFillColorPicker.getValue()),
 				ellipsesFillColorPicker.valueProperty()));
-		ellipsesOpacityValue.bind(Bindings.createDoubleBinding(() -> PlotPropertiesPanel.convertOpacity(ellipsesFillColorPicker.getValue()),
+		ellipsesOpacityValue.bind(Bindings.createDoubleBinding(() -> PlotOptionsPanel.convertOpacity(ellipsesFillColorPicker.getValue()),
 				ellipsesFillColorPicker.valueProperty()));
-		unctBarsFillValue.bind(Bindings.createStringBinding(() ->PlotPropertiesPanel. convertColor(unctBarsFillColorPicker.getValue()),
+		unctBarsFillValue.bind(Bindings.createStringBinding(() -> PlotOptionsPanel. convertColor(unctBarsFillColorPicker.getValue()),
 				unctBarsFillColorPicker.valueProperty()));
-		unctBarsOpacityValue.bind(Bindings.createDoubleBinding(() -> PlotPropertiesPanel.convertOpacity(unctBarsFillColorPicker.getValue()),
+		unctBarsOpacityValue.bind(Bindings.createDoubleBinding(() -> PlotOptionsPanel.convertOpacity(unctBarsFillColorPicker.getValue()),
 				unctBarsFillColorPicker.valueProperty()));
 
         // Fire property changed events
-		fireEventOnChanged(isotopeSystemComboBox.valueProperty(), isotopeSystemComboBox, PlotProperties.ISOTOPE_SYSTEM);
-		fireEventOnChanged(uncertaintyComboBox.valueProperty(), uncertaintyComboBox, PlotProperties.UNCERTAINTY);
+		fireEventOnChanged(isotopeSystemComboBox.valueProperty(), isotopeSystemComboBox, PlotOption.ISOTOPE_SYSTEM);
+		fireEventOnChanged(uncertaintyComboBox.valueProperty(), uncertaintyComboBox, PlotOption.UNCERTAINTY);
 
-        fireEventOnChanged(pointsCheckBox.selectedProperty(), pointsCheckBox, PlotProperties.POINTS);
-        fireEventOnChanged(ellipsesRadioButton.selectedProperty(), ellipsesRadioButton, PlotProperties.ELLIPSES);
-        fireEventOnChanged(unctBarsRadioButton.selectedProperty(), unctBarsRadioButton, PlotProperties.UNCTBARS);
+        fireEventOnChanged(pointsCheckBox.selectedProperty(), pointsCheckBox, PlotOption.POINTS);
+        fireEventOnChanged(ellipsesRadioButton.selectedProperty(), ellipsesRadioButton, PlotOption.ELLIPSES);
+        fireEventOnChanged(unctBarsRadioButton.selectedProperty(), unctBarsRadioButton, PlotOption.UNCTBARS);
 
-        fireEventOnChanged(pointsFillValue, pointsFillColorPicker, PlotProperties.POINTS_FILL);
-        fireEventOnChanged(pointsOpacityValue, pointsFillColorPicker, PlotProperties.POINTS_OPACITY);
-		fireEventOnChanged(ellipsesFillValue, ellipsesFillColorPicker, PlotProperties.ELLIPSES_FILL);
-		fireEventOnChanged(ellipsesOpacityValue, ellipsesFillColorPicker, PlotProperties.ELLIPSES_OPACITY);
-		fireEventOnChanged(unctBarsFillValue, unctBarsFillColorPicker, PlotProperties.UNCTBARS_FILL);
-		fireEventOnChanged(unctBarsOpacityValue, unctBarsFillColorPicker, PlotProperties.UNCTBARS_OPACITY);
+        fireEventOnChanged(pointsFillValue, pointsFillColorPicker, PlotOption.POINTS_FILL);
+        fireEventOnChanged(pointsOpacityValue, pointsFillColorPicker, PlotOption.POINTS_OPACITY);
+		fireEventOnChanged(ellipsesFillValue, ellipsesFillColorPicker, PlotOption.ELLIPSES_FILL);
+		fireEventOnChanged(ellipsesOpacityValue, ellipsesFillColorPicker, PlotOption.ELLIPSES_OPACITY);
+		fireEventOnChanged(unctBarsFillValue, unctBarsFillColorPicker, PlotOption.UNCTBARS_FILL);
+		fireEventOnChanged(unctBarsOpacityValue, unctBarsFillColorPicker, PlotOption.UNCTBARS_OPACITY);
 
     }
 

@@ -2,17 +2,21 @@ package org.cirdles.topsoil.app;
 
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
+import org.cirdles.topsoil.Variable;
+import org.cirdles.topsoil.app.control.dialog.PlotConfigDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.plot.PlotGenerator;
-import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.RecentFiles;
-import org.cirdles.topsoil.app.data.ExampleData;
 import org.cirdles.topsoil.app.util.TopsoilException;
+import org.cirdles.topsoil.data.DataColumn;
+import org.cirdles.topsoil.data.ExampleData;
 import org.cirdles.topsoil.plot.PlotType;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -123,7 +127,7 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem exportTableMenuItem = new MenuItem(resources.getString("exportTable"));
         exportTableMenuItem.setOnAction(event -> {
-            DataTable table = MenuUtils.getCurrentDataTable();
+            FXDataTable table = MenuUtils.getCurrentDataTable();
             if (table != null) {
                 MenuItemHelper.exportTableAs(table);
             }
@@ -208,12 +212,15 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getVisualizationsMenu() {
         MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
         generatePlotItem.setOnAction(event -> {
-            TopsoilProject project = ProjectManager.getProject();
-            if (project != null) {
+            FXDataTable table = MenuUtils.getCurrentDataTable();
+            PlotConfigDialog dialog = new PlotConfigDialog(table, null);
+            Map<Variable<?>, DataColumn<?>> variableMap = dialog.showAndWait().orElse(null);
+            if (variableMap != null) {
                 PlotGenerator.generatePlot(
-                        project,
+                        ProjectManager.getProject(),
+                        table,
+                        variableMap,
                         PlotType.SCATTER,
-                        MenuUtils.getCurrentDataTable(),
                         null);
             }
         });

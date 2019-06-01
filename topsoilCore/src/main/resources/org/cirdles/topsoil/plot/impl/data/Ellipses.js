@@ -25,7 +25,11 @@ plot.calcEllipses = function(data) {
         [1, 0]
     ];
 
-    var ellipseData = data.map(function (d) {
+    var validEntries = data.filter(function (d) {
+        return d.sigma_x && d.sigma_y
+    });
+
+    var ellipseData = validEntries.map(function (d) {
         var r = [
             [d.sigma_x, d.rho * d.sigma_y],
             [0, d.sigma_y * Math.sqrt(1 - d.rho * d.rho)]
@@ -107,11 +111,11 @@ plot.updateEllipses = function() {
                 if (! d.selected) {
                     fill = 'gray';
                 } else {
-                    fill = plot.getProperty(Property.ELLIPSES_FILL);
+                    fill = plot.getOption(PlotOption.ELLIPSES_FILL);
                 }
                 return fill;
             })
-            .attr("fill-opacity", plot.getProperty(Property.ELLIPSES_OPACITY) * 0.2)
+            .attr("fill-opacity", plot.getOption(PlotOption.ELLIPSES_OPACITY) * 0.2)
             .attr("opacity", function (d) {
                 return d.selected ? 1.0 : 0.0;
             })

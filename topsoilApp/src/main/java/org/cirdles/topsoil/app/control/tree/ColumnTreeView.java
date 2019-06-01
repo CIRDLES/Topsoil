@@ -4,11 +4,12 @@ import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
-import org.cirdles.topsoil.app.data.column.ColumnRoot;
-import org.cirdles.topsoil.app.data.column.DataCategory;
-import org.cirdles.topsoil.app.data.composite.DataComponent;
+import org.cirdles.topsoil.app.data.FXDataColumn;
+import org.cirdles.topsoil.app.data.FXDataTable;
+import org.cirdles.topsoil.data.SimpleDataColumn;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,20 +17,20 @@ import java.util.Map;
  *
  * @author marottajb
  */
-public class ColumnTreeView extends TreeView<DataComponent> {
+public class ColumnTreeView extends TreeView<FXDataColumn<?>> {
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public ColumnTreeView(ColumnRoot columnRoot) {
+    public ColumnTreeView(FXDataTable table) {
         this.setCellFactory(CheckBoxTreeCell.forTreeView());
-        final CheckBoxTreeItem<DataComponent> rootItem = new CheckBoxTreeItem<>(new DataCategory("(all columns)"));
+        final CheckBoxTreeItem<FXDataColumn<?>> rootItem = new CheckBoxTreeItem<>(new FXDataColumn<>(new SimpleDataColumn<>("all columns")));
         rootItem.setSelected(true);
         rootItem.setExpanded(true);
         this.setRoot(rootItem);
-        for (DataComponent component : columnRoot.getChildren()) {
-            addTreeItem(component, getRoot());
+        for (FXDataColumn<?> column : table.getColumns()) {
+            addTreeItem(column, getRoot());
         }
     }
 
@@ -42,18 +43,19 @@ public class ColumnTreeView extends TreeView<DataComponent> {
      *
      * @return  Map of DataComponent to Boolean values, true if column should be visible
      */
-    public Map<DataComponent, Boolean> getColumnSelections() {
-        return getColumnSelections((CheckBoxTreeItem<DataComponent>) getRoot());
+    public Map<FXDataColumn<?>, Boolean> getColumnSelections() {
+        return getColumnSelections((CheckBoxTreeItem<FXDataColumn<?>>) getRoot());
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private void addTreeItem(DataComponent component, TreeItem<DataComponent> parent) {
-        CheckBoxTreeItem<DataComponent> item = new CheckBoxTreeItem<>(component, null, component.isSelected());
-        if (component instanceof DataCategory) {
-            for (DataComponent child : ((DataCategory) component).getChildren()) {
+    private void addTreeItem(FXDataColumn<?> column, TreeItem<FXDataColumn<?>> parent) {
+        CheckBoxTreeItem<FXDataColumn<?>> item = new CheckBoxTreeItem<>(column, null, column.isSelected());
+        List<FXDataColumn<?>> children = column.getChildren();
+        if (children.size() > 0) {
+            for (FXDataColumn<?> child : children) {
                 if (! child.isSelected() && item.isSelected()) {
                     item.setIndeterminate(true);
                 }
@@ -64,11 +66,11 @@ public class ColumnTreeView extends TreeView<DataComponent> {
         parent.getChildren().add(item);
     }
 
-    private boolean shouldBeIndeterminate(CheckBoxTreeItem<DataComponent> item) {
+    private boolean shouldBeIndeterminate(CheckBoxTreeItem<FXDataColumn<?>> item) {
         boolean allTrue = true;
         boolean allFalse = true;
-        for (TreeItem<DataComponent> child : item.getChildren()) {
-            CheckBoxTreeItem<DataComponent> cBChild = (CheckBoxTreeItem<DataComponent>) child;
+        for (TreeItem<FXDataColumn<?>> child : item.getChildren()) {
+            CheckBoxTreeItem<FXDataColumn<?>> cBChild = (CheckBoxTreeItem<FXDataColumn<?>>) child;
             if (cBChild.isIndeterminate()) {
                 allTrue = false;
                 allFalse = false;
@@ -83,12 +85,12 @@ public class ColumnTreeView extends TreeView<DataComponent> {
         return (! allTrue) && (! allFalse);
     }
 
-    private Map<DataComponent, Boolean> getColumnSelections(CheckBoxTreeItem<DataComponent> root) {
-        Map<DataComponent, Boolean> selections = new HashMap<>();
-        for (TreeItem<DataComponent> item : root.getChildren()) {
-            CheckBoxTreeItem<DataComponent> child = (CheckBoxTreeItem<DataComponent>) item;
+    private Map<FXDataColumn<?>, Boolean> getColumnSelections(CheckBoxTreeItem<FXDataColumn<?>> root) {
+        Map<FXDataColumn<?>, Boolean> selections = new HashMap<>();
+        for (TreeItem<FXDataColumn<?>> item : root.getChildren()) {
+            CheckBoxTreeItem<FXDataColumn<?>> child = (CheckBoxTreeItem<FXDataColumn<?>>) item;
             selections.put(child.getValue(), child.isSelected());
-            if (child.getValue() instanceof DataCategory) {
+            if (child.getValue().getChildren().size() > 0) {
                 selections.putAll(getColumnSelections(child));
             }
         }

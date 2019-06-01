@@ -7,9 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import org.cirdles.topsoil.app.control.FXMLUtils;
-import org.cirdles.topsoil.plot.PlotProperties;
+import org.cirdles.topsoil.plot.PlotOption;
 
-import static org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel.fireEventOnChanged;
+import static org.cirdles.topsoil.app.control.plot.panel.PlotOptionsPanel.fireEventOnChanged;
 
 import java.io.IOException;
 
@@ -68,9 +68,9 @@ public class AxisStylingController extends AnchorPane {
         yAxisMax.bind(Bindings.createDoubleBinding(() -> getDouble(yMaxTextField.getText()), yMaxTextField.textProperty()));
 
         // Fire property changed events
-        fireEventOnChanged(plotTitleTextField.textProperty(), plotTitleTextField, PlotProperties.TITLE);
-        fireEventOnChanged(xTitleTextField.textProperty(), xTitleTextField, PlotProperties.X_AXIS);
-        fireEventOnChanged(yTitleTextField.textProperty(), yTitleTextField, PlotProperties.Y_AXIS);
+        fireEventOnChanged(plotTitleTextField.textProperty(), plotTitleTextField, PlotOption.TITLE);
+        fireEventOnChanged(xTitleTextField.textProperty(), xTitleTextField, PlotOption.X_AXIS);
+        fireEventOnChanged(yTitleTextField.textProperty(), yTitleTextField, PlotOption.Y_AXIS);
     }
 
     //**********************************************//

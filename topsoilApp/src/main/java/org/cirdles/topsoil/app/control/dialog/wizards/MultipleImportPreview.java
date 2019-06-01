@@ -4,10 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
-import org.cirdles.topsoil.app.data.DataTable;
 import org.cirdles.topsoil.app.control.FXMLUtils;
-import org.cirdles.topsoil.app.data.composite.DataComponent;
+import org.cirdles.topsoil.app.data.FXDataColumn;
 import org.cirdles.topsoil.app.ResourceBundles;
+import org.cirdles.topsoil.app.data.FXDataTable;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 
@@ -27,7 +27,7 @@ class MultipleImportPreview extends WizardPane {
 
     @FXML private TabPane fileTabs;
     
-    private List<DataTable> tables;
+    private List<FXDataTable> tables;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -40,7 +40,6 @@ class MultipleImportPreview extends WizardPane {
             throw new RuntimeException(e);
         }
         this.setPrefHeight(INIT_HEIGHT);
-//        this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
     }
 
     @FXML
@@ -55,7 +54,7 @@ class MultipleImportPreview extends WizardPane {
     @Override
     public void onEnteringPage(Wizard wizard) {
         wizard.setTitle(ResourceBundles.DIALOGS.getString("importPreviewTitle"));
-        List<DataTable> newTables = (List<DataTable>) wizard.getSettings().get(TABLES);
+        List<FXDataTable> newTables = (List<FXDataTable>) wizard.getSettings().get(TABLES);
         updateTabs(newTables);
     }
 
@@ -63,15 +62,15 @@ class MultipleImportPreview extends WizardPane {
     public void onExitingPage(Wizard wizard) {
         wizard.invalidProperty().unbind();
         PreviewTab preViewTab;
-        List<DataTable> tables = new ArrayList<>();
+        List<FXDataTable> tables = new ArrayList<>();
         for (Tab tab : fileTabs.getTabs()) {
             preViewTab = (PreviewTab) tab;
-            Map<DataComponent, Boolean> selections = ((PreviewTab) tab).controller.getColumnSelections();
-            for (Map.Entry<DataComponent, Boolean> entry : selections.entrySet()) {
+            Map<FXDataColumn<?>, Boolean> selections = ((PreviewTab) tab).controller.getColumnSelections();
+            for (Map.Entry<FXDataColumn<?>, Boolean> entry : selections.entrySet()) {
                 entry.getKey().setSelected(entry.getValue());
             }
-            preViewTab.getTable().setColumnsForAllVariables(((PreviewTab) tab).controller.getVariableAssignments());
-            preViewTab.getTable().setIsotopeSystem(preViewTab.getController().getIsotopeSystem());
+//            preViewTab.getTable().setColumnsForAllVariables(((PreviewTab) tab).controller.getVariableAssignments());
+//            preViewTab.getTable().setIsotopeSystem(preViewTab.getController().getIsotopeSystem());
             preViewTab.getTable().setUncertainty(preViewTab.getController().getUncertainty());
             tables.add(preViewTab.getTable());
         }
@@ -82,14 +81,14 @@ class MultipleImportPreview extends WizardPane {
     //               PRIVATE METHODS                //
     //**********************************************//
 
-    private void updateTabs(List<DataTable> tableList) {
+    private void updateTabs(List<FXDataTable> tableList) {
         for (Tab tab : fileTabs.getTabs()) {
-            DataTable table = ((PreviewTab) tab).getTable();
+            FXDataTable table = ((PreviewTab) tab).getTable();
             if (! tableList.contains(table)) {
                 fileTabs.getTabs().remove(tab);
             }
         }
-        for (DataTable table : tableList) {
+        for (FXDataTable table : tableList) {
             if (! hasTabForTable(table)) {
                 PreviewTab tab = new PreviewTab(table);
                 fileTabs.getTabs().add(tab);
@@ -97,7 +96,7 @@ class MultipleImportPreview extends WizardPane {
         }
     }
 
-    private boolean hasTabForTable(DataTable table) {
+    private boolean hasTabForTable(FXDataTable table) {
         for (Tab tab : fileTabs.getTabs()) {
             if (((PreviewTab) tab).getTable().equals(table)) {
                 return true;
@@ -113,17 +112,17 @@ class MultipleImportPreview extends WizardPane {
     static class PreviewTab extends Tab {
 
         private DataTableOptionsDialog.DataTableOptionsView controller;
-        private DataTable table;
+        private FXDataTable table;
 
-        PreviewTab(DataTable table) {
-            super(table.getLabel());
+        PreviewTab(FXDataTable table) {
+            super(table.getTitle());
             this.table = table;
             controller = new DataTableOptionsDialog.DataTableOptionsView(table);
 
             this.setContent(controller);
         }
 
-        public DataTable getTable() {
+        public FXDataTable getTable() {
             return table;
         }
 

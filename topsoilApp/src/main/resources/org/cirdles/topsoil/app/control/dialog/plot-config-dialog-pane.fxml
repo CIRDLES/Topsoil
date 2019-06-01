@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<fx:root prefHeight="500.0" prefWidth="650.0" type="DialogPane" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <buttonTypes>
+      <ButtonType fx:constant="CANCEL" />
+      <ButtonType fx:constant="APPLY" />
+   </buttonTypes>
+   <content>
+      <GridPane hgap="10.0" vgap="10.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <TreeView fx:id="columnTreeView" GridPane.rowSpan="2147483647" />
+            <ListView fx:id="variableListView" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowSpan="2" />
+            <HBox alignment="TOP_CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <children>
+                  <Button fx:id="removeButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Remove" />
+                  <Button fx:id="useExistingButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Use Existing..." />
+               </children>
+            </HBox>
+         </children>
+      </GridPane>
+   </content>
+   <header>
+      <Label alignment="CENTER" text="Use the tree on the left to select which columns to correspond with plotting variables." textAlignment="CENTER" wrapText="true">
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+      </Label>
+   </header>
+   <padding>
+      <Insets top="10.0" />
+   </padding>
+</fx:root>

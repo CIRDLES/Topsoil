@@ -1,8 +1,6 @@
 package org.cirdles.topsoil.plot;
 
-import org.cirdles.topsoil.plot.impl.ScatterPlot;
-import org.cirdles.topsoil.variable.Variable;
-import org.cirdles.topsoil.variable.Variables;
+import org.cirdles.topsoil.Variable;
 
 /**
  * Pre-defined types of plots available in Topsoil.
@@ -11,9 +9,24 @@ import org.cirdles.topsoil.variable.Variables;
  */
 public enum PlotType {
 
-    SCATTER("Scatter Plot", ScatterPlot.class, "impl/ScatterPlot.js",
-            Variables.X,
-            Variables.Y
+    SCATTER(
+            "Scatter Plot",
+            "impl/ScatterPlot.js",
+            new Variable[]{
+                    Variable.X,
+                    Variable.Y
+            },
+            new String[]{
+                    "impl/data/Points.js",
+                    "impl/data/Ellipses.js",
+                    "impl/data/UncertaintyBars.js",
+                    "impl/feature/Concordia.js",
+                    "impl/feature/TWConcordia.js",
+                    "impl/feature/Regression.js",
+                    "impl/feature/Evolution.js",
+                    "impl/DefaultLambda.js",
+                    "impl/Utils.js"
+            }
     );
 
     //**********************************************//
@@ -21,19 +34,19 @@ public enum PlotType {
     //**********************************************//
 
     private final String name;
-    private final Class<? extends Plot> plot;
     private final String plotFile;
     private final Variable[] requiredVariables;
+    private final String[] resourceFiles;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    PlotType(String name, Class<? extends Plot> plot, String plotFile, Variable... requiredVariables) {
+    PlotType(String name, String plotFile, Variable[] requiredVariables, String[] resourceFiles) {
         this.name = name;
-        this.plot = plot;
         this.plotFile = plotFile;
         this.requiredVariables = requiredVariables;
+        this.resourceFiles = resourceFiles;
     }
 
     //**********************************************//
@@ -50,20 +63,6 @@ public enum PlotType {
     }
 
     /**
-     * Returns a new {@code Plot} instance of this type.
-     *
-     * @return  new Plot
-     */
-    public Plot getPlot() {
-        try {
-            return plot.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * Returns the name of the associated JS file for this plot type.
      *
      * @return  String file name
@@ -74,4 +73,10 @@ public enum PlotType {
 
     public Variable[] getRequiredVariables() {
         return requiredVariables;
-    }}
+    }
+
+    public String[] getResourceFiles() {
+        return resourceFiles;
+    }
+
+}

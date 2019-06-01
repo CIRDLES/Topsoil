@@ -19,7 +19,7 @@
 
     // top level containers
     window.topsoil = {data: []};
-    window.plot = {dataKeys: [], properties: {}, propertiesKeys: []};
+    window.plot = {data: [], options: {}};
 
     // alias topsoil
     window.ts = topsoil;
@@ -29,42 +29,21 @@
     };
 
     topsoil.getData = function () {
-        return topsoil.data;
+        return JSON.stringify(topsoil.data);
     };
 
     topsoil.setData = function (data) {
-        topsoil.data = [];
-        for (var index = 0; index < data.size(); index++) {
-            var entry = {};
-            var row = data.get(index);
-            if (row != null) {
-                plot.dataKeys.forEach(function (key) {
-                    var value = row.get(key);
-                    if (value != null) {
-                        entry[key] = value;
-                    }
-                });
-                topsoil.data.push(entry);
-            }
-        }
+        topsoil.data = JSON.parse(data);
         plot.setData(topsoil.data);
     };
 
-    topsoil.setProperties = function (properties) {
-        plot.properties = {};
-
-        var key;
-        for (var p in Property) {
-            key = Property[p];
-            plot.properties[key] = properties.get(key);
-        }
-
+    topsoil.setOptions = function (options) {
+        plot.options = JSON.parse(options);
         plot.update(topsoil.data);
     };
 
-    topsoil.updateProperty = function(key, value) {
-        plot.properties[key] = value;
-
+    topsoil.updateOption = function(key, value) {
+        plot.options[key] = value;
         plot.update(topsoil.data)
     };
 
@@ -78,8 +57,6 @@
     plot.innerWidth = 0.0;
     plot.innerHeight = 0.0;
 
-    // somewhat confusing locally, but this element should be considered
-    // to be the plot externally
     var svgContainer = d3.select("body").append("div")
         .attr("id", "svgContainer");
     var svg = svgContainer.append("svg")
@@ -145,8 +122,8 @@
     };
 
     // PROPERTIES
-    plot.getProperty = function (key) {
-        return plot.properties[key];
+    plot.getOption = function (key) {
+        return plot.options[key];
     };
 
 })();

@@ -18,12 +18,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.IsotopeSystem;
-import org.cirdles.topsoil.plot.PlotProperties;
+import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.plot.feature.Concordia;
 
 import java.io.IOException;
 
-import static org.cirdles.topsoil.app.control.plot.panel.PlotPropertiesPanel.fireEventOnChanged;
+import static org.cirdles.topsoil.app.control.plot.panel.PlotOptionsPanel.fireEventOnChanged;
 
 /**
  * A controller with controls for plot features.
@@ -124,7 +124,9 @@ public class PlotFeaturesController extends AnchorPane {
         });
 
         // Configure plot controls
-        mcLeanEnvelopeCheckBox.disableProperty().bind(Bindings.not(mcLeanRegressionCheckBox.selectedProperty()));
+        mcLeanEnvelopeCheckBox.disableProperty().bind(Bindings.or(
+                mcLeanRegressionCheckBox.disableProperty(), Bindings.not(mcLeanRegressionCheckBox.selectedProperty()))
+        );
 
         // Configure UPb controls
         concordiaToggleGroup.getToggles().addAll(wetherillRadioButton, wasserburgRadioButton);
@@ -142,35 +144,35 @@ public class PlotFeaturesController extends AnchorPane {
 
         // Configure properties that need to have values converted
         concordiaLineFillValue.bind(Bindings.createStringBinding(
-                () -> PlotPropertiesPanel.convertColor(concordiaLineColorPicker.getValue()),
+                () -> PlotOptionsPanel.convertColor(concordiaLineColorPicker.getValue()),
                 concordiaLineColorPicker.valueProperty())
         );
         concordiaLineOpacityValue.bind(Bindings.createDoubleBinding(
-                () -> PlotPropertiesPanel.convertOpacity(concordiaLineColorPicker.getValue()),
+                () -> PlotOptionsPanel.convertOpacity(concordiaLineColorPicker.getValue()),
                 concordiaLineColorPicker.valueProperty()
         ));
         concordiaEnvelopeFillValue.bind(Bindings.createStringBinding(
-                () -> PlotPropertiesPanel.convertColor(concordiaEnvelopeColorPicker.getValue()),
+                () -> PlotOptionsPanel.convertColor(concordiaEnvelopeColorPicker.getValue()),
                 concordiaEnvelopeColorPicker.valueProperty()
         ));
         concordiaEnvelopeOpacityValue.bind(Bindings.createDoubleBinding(
-                () -> PlotPropertiesPanel.convertOpacity(concordiaEnvelopeColorPicker.getValue()),
+                () -> PlotOptionsPanel.convertOpacity(concordiaEnvelopeColorPicker.getValue()),
                 concordiaEnvelopeColorPicker.valueProperty()
         ));
 
         // Fire property changed events
-        fireEventOnChanged(mcLeanRegressionCheckBox.selectedProperty(), mcLeanRegressionCheckBox, PlotProperties.MCLEAN_REGRESSION);
-        fireEventOnChanged(mcLeanEnvelopeCheckBox.selectedProperty(), mcLeanEnvelopeCheckBox, PlotProperties.MCLEAN_REGRESSION_ENVELOPE);
+        fireEventOnChanged(mcLeanRegressionCheckBox.selectedProperty(), mcLeanRegressionCheckBox, PlotOption.MCLEAN_REGRESSION);
+        fireEventOnChanged(mcLeanEnvelopeCheckBox.selectedProperty(), mcLeanEnvelopeCheckBox, PlotOption.MCLEAN_REGRESSION_ENVELOPE);
 
-        fireEventOnChanged(concordiaType, this, PlotProperties.CONCORDIA_TYPE);
-        fireEventOnChanged(concordiaLineCheckBox.selectedProperty(), concordiaLineCheckBox, PlotProperties.CONCORDIA_LINE);
-        fireEventOnChanged(concordiaLineFillValue, concordiaLineColorPicker, PlotProperties.CONCORDIA_LINE_FILL);
-        fireEventOnChanged(concordiaLineOpacityValue, concordiaLineColorPicker, PlotProperties.CONCORDIA_LINE_OPACITY);
-        fireEventOnChanged(concordiaEnvelopeCheckBox.selectedProperty(), concordiaEnvelopeCheckBox, PlotProperties.CONCORDIA_ENVELOPE);
-        fireEventOnChanged(concordiaEnvelopeFillValue, concordiaEnvelopeColorPicker, PlotProperties.CONCORDIA_ENVELOPE_FILL);
-        fireEventOnChanged(concordiaEnvelopeOpacityValue, concordiaEnvelopeColorPicker, PlotProperties.CONCORDIA_ENVELOPE_OPACITY);
+        fireEventOnChanged(concordiaType, this, PlotOption.CONCORDIA_TYPE);
+        fireEventOnChanged(concordiaLineCheckBox.selectedProperty(), concordiaLineCheckBox, PlotOption.CONCORDIA_LINE);
+        fireEventOnChanged(concordiaLineFillValue, concordiaLineColorPicker, PlotOption.CONCORDIA_LINE_FILL);
+        fireEventOnChanged(concordiaLineOpacityValue, concordiaLineColorPicker, PlotOption.CONCORDIA_LINE_OPACITY);
+        fireEventOnChanged(concordiaEnvelopeCheckBox.selectedProperty(), concordiaEnvelopeCheckBox, PlotOption.CONCORDIA_ENVELOPE);
+        fireEventOnChanged(concordiaEnvelopeFillValue, concordiaEnvelopeColorPicker, PlotOption.CONCORDIA_ENVELOPE_FILL);
+        fireEventOnChanged(concordiaEnvelopeOpacityValue, concordiaEnvelopeColorPicker, PlotOption.CONCORDIA_ENVELOPE_OPACITY);
 
-        fireEventOnChanged(evolutionCheckBox.selectedProperty(), evolutionCheckBox, PlotProperties.EVOLUTION);
+        fireEventOnChanged(evolutionCheckBox.selectedProperty(), evolutionCheckBox, PlotOption.EVOLUTION);
     }
 
 }
