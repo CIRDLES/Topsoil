@@ -22,6 +22,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.app.ProjectManager;
 import org.cirdles.topsoil.app.Topsoil;
@@ -36,12 +37,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
+public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> {
 
-    public PlotConfigDialog(FXDataTable table, Map<Variable<?>, DataColumn<?>> variableMap) {
-        PlotConfigDialogPane dialogPane = new PlotConfigDialogPane(table, variableMap);
+    public PlotConfigDialog(FXDataTable table) {
+        this(table, null);
+    }
+
+    public PlotConfigDialog(FXDataTable table, Map<Key, Object> settings) {
+        PlotConfigDialogPane dialogPane = new PlotConfigDialogPane(table, settings);
         this.setDialogPane(dialogPane);
-        this.setTitle("Variable Selection");
+        this.setTitle("Plot Configuration");
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.getIcons().addAll(Topsoil.getLogo());
@@ -50,10 +55,18 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
 
         this.setResultConverter(buttonType -> {
             if (buttonType == ButtonType.APPLY) {
-                return dialogPane.getSelections();
+                Map<Key, Object> results = new HashMap<>();
+                results.put(Key.VARIABLE_MAP, dialogPane.getVariableSelections());
+                results.put(Key.ISOTOPE_SYSTEM, dialogPane.getIsotopeSystem());
+                return results;
             }
             return null;
         });
+    }
+
+    public enum Key {
+        VARIABLE_MAP,
+        ISOTOPE_SYSTEM,
     }
 
     private class PlotConfigDialogPane extends DialogPane {
@@ -61,15 +74,22 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
         private static final String CONTROLLER_FXML = "plot-config-dialog-pane.fxml";
 
         private FXDataTable table;
+        private Map<Key, Object> preSettings;
         private MapProperty<Variable<?>, DataColumn<?>> selections = new SimpleMapProperty<>(FXCollections.observableHashMap());
         private Map<Variable<?>, SelectionEntry> selectionEntries = new HashMap<>();
 
         @FXML private TreeView<DataColumn<?>> columnTreeView;
         @FXML private ListView<SelectionEntry> variableListView;
         @FXML private Button removeButton, useExistingButton;
+        @FXML private ComboBox<IsotopeSystem> isotopeSystemComboBox;
 
-        public PlotConfigDialogPane(FXDataTable table, Map<Variable<?>, DataColumn<?>> variableMap) {
+        public PlotConfigDialogPane(FXDataTable table) {
+            this(table, null);
+        }
+
+        public PlotConfigDialogPane(FXDataTable table, Map<Key, Object> settings) {
             this.table = table;
+            this.preSettings = (settings != null) ? settings : new HashMap<>(0);
             try {
                 FXMLUtils.loadController(CONTROLLER_FXML, PlotConfigDialogPane.class, this);
             } catch (IOException e) {
@@ -82,6 +102,7 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
             TreeItem<DataColumn<?>> rootItem = new TreeItem<>();
             columnTreeView.setRoot(rootItem);
             columnTreeView.setShowRoot(false);
+//            columnTreeView.setStyle("-fx-selection-bar: transparent");
             columnTreeView.setCellFactory(param -> new ColumnTreeViewCell());
             for (DataColumn<?> column : table.getColumns()) {
                 rootItem.getChildren().add(createColumnItem(column));
@@ -103,6 +124,7 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
                     }
             });
 
+            // When variable selections are updated, update the entries for the variableListView
             selections.addListener((MapChangeListener<Variable<?>, DataColumn<?>>) c -> {
                 SelectionEntry selectionEntry = selectionEntries.get(c.getKey());
                 Variable<?> variable = c.getKey();
@@ -130,6 +152,9 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
                 }
                 variableListView.refresh();
             });
+            if (preSettings.get(Key.VARIABLE_MAP) != null) {
+                selections.putAll((Map<Variable<?>, DataColumn<?>>) preSettings.get(Key.VARIABLE_MAP));
+            }
 
             removeButton.disableProperty().bind(
                     Bindings.createBooleanBinding(
@@ -139,15 +164,21 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
             );
 
             useExistingButton.disableProperty().bind(ProjectManager.getProject().getPlotMap().get(table).emptyProperty());
+
+            isotopeSystemComboBox.getItems().addAll(IsotopeSystem.values());
+            if (preSettings.get(Key.ISOTOPE_SYSTEM) != null) {
+                isotopeSystemComboBox.getSelectionModel().select((IsotopeSystem) preSettings.get(Key.ISOTOPE_SYSTEM));
+            } else {
+                isotopeSystemComboBox.getSelectionModel().select(IsotopeSystem.GENERIC);
+            }
         }
 
-        Map<Variable<?>, DataColumn<?>> getSelections() {
+        private Map<Variable<?>, DataColumn<?>> getVariableSelections() {
             return selections;
         }
 
-        void setSelections(Map<Variable<?>, DataColumn<?>> variableMap) {
-            selections.clear();
-            selections.putAll(variableMap);
+        private IsotopeSystem getIsotopeSystem() {
+            return isotopeSystemComboBox.getSelectionModel().getSelectedItem();
         }
 
         //**********************************************//
@@ -160,6 +191,17 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
 
         private void deselect(Variable<?> variable) {
             selections.remove(variable);
+        }
+
+        private void setVariableSelections(Map<Variable<?>, DataColumn<?>> variableMap) {
+            selections.clear();
+            selections.putAll(variableMap);
+        }
+
+        private void setIsotopeSystem(IsotopeSystem isotopeSystem) {
+            if (isotopeSystem != null) {
+                isotopeSystemComboBox.getSelectionModel().select(isotopeSystem);
+            }
         }
 
         private TreeItem<DataColumn<?>> createColumnItem(DataColumn<?> column) {
@@ -180,10 +222,11 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
 
         @FXML
         private void useExistingButtonAction() {
-            Map<Variable<?>, DataColumn<?>> newSelections =
+            Plot existingPlot =
                     new ExistingPlotDialog(ProjectManager.getProject(), table).showAndWait().orElse(null);
-            if (newSelections != null) {
-                setSelections(newSelections);
+            if (existingPlot != null) {
+                setVariableSelections(existingPlot.getVariableMap());
+                setIsotopeSystem((IsotopeSystem) existingPlot.getOptions().get(PlotOption.ISOTOPE_SYSTEM));
             }
         }
 
@@ -215,7 +258,7 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
                         setText(item.getTitle());
                         setGraphic(null);
                     }
-                    setStyle((getIndex() % 2 == 1) ? "-fx-background-color: #eee" : "-fx-background-color: #fff");
+//                    setStyle((getIndex() % 2 == 1) ? "-fx-background-color: #eee" : "-fx-background-color: #fff");
                 } else {
                     setText("");
                     setGraphic(null);
@@ -267,7 +310,7 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
 
         }
 
-        private class ExistingPlotDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
+        private class ExistingPlotDialog extends Dialog<Plot> {
 
             public ExistingPlotDialog(TopsoilProject project, FXDataTable table) {
 
@@ -299,7 +342,7 @@ public class PlotConfigDialog extends Dialog<Map<Variable<?>, DataColumn<?>>> {
 
                 this.setResultConverter(buttonType -> {
                     if (buttonType == ButtonType.APPLY) {
-                        return plotListView.getSelectionModel().getSelectedItem().getVariableMap();
+                        return plotListView.getSelectionModel().getSelectedItem();
                     }
                     return null;
                 });

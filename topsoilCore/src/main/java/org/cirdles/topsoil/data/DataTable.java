@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.data;
 
-import org.cirdles.topsoil.Uncertainty;
 import org.json.JSONObject;
 import org.json.JSONString;
 

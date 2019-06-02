@@ -16,13 +16,9 @@ import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.control.tree.FXDataTableViewer;
-import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.FileChoosers;
 import org.cirdles.topsoil.app.file.serialization.ProjectSerializer;
-import org.cirdles.topsoil.data.DataTable;
-import org.cirdles.topsoil.file.parser.DefaultDataParser;
 
 import java.io.File;
 import java.io.IOException;

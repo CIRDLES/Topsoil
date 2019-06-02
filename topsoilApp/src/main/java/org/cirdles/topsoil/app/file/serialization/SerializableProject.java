@@ -6,10 +6,9 @@ import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.control.plot.PlotGenerator;
 import org.cirdles.topsoil.Lambda;
-import org.cirdles.topsoil.Uncertainty;
+import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
-import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.data.DataTemplate;
 import org.cirdles.topsoil.data.SimpleDataColumn;
 import org.cirdles.topsoil.data.SimpleDataRow;
@@ -138,11 +137,12 @@ public class SerializableProject implements Serializable {
         return sProperties;
     }
 
-    private HashMap<SerializationKey, Serializable> extractTableData(TopsoilProject project, DataTable table) {
+    private HashMap<SerializationKey, Serializable> extractTableData(TopsoilProject project, FXDataTable table) {
         HashMap<SerializationKey, Serializable> tableData = new HashMap<>();
         tableData.put(TABLE_LABEL, table.getTitle());
         tableData.put(TABLE_TEMPLATE, table.getTemplate());
         tableData.put(TABLE_UNCERTAINTY, table.getUncertainty());
+        tableData.put(TABLE_FRACTION_DIGITS, table.getMaxFractionDigits());
 
         ArrayList<HashMap<SerializationKey, Serializable>> columnData = new ArrayList<>();
         for (DataColumn<?> column : table.getColumns()) {
@@ -178,14 +178,17 @@ public class SerializableProject implements Serializable {
 
         List<FXDataRow> rows = new ArrayList<>();
         List<Map<SerializationKey, Object>> rowDataList = (List<Map<SerializationKey, Object>>) tableData.get(TABLE_ROWS);
+        List<FXDataColumn<?>> leafColumns = TableUtils.getLeafColumns(columns);
         for (Map<SerializationKey, Object> rowData : rowDataList) {
-            rows.add(createDataRow(rowData, TableUtils.getLeafColumns(columns)));
+            rows.add(createDataRow(rowData, leafColumns));
         }
 
         Uncertainty uncertainty = (Uncertainty) tableData.get(TABLE_UNCERTAINTY);
+        int maxFractionDigits = (int) tableData.get(TABLE_FRACTION_DIGITS);
 
         FXDataTable table = new FXDataTable(template, label, columns, rows);
         table.setUncertainty(uncertainty);
+        table.setMaxFractionDigits(maxFractionDigits);
 
         return table;
     }
@@ -220,6 +223,14 @@ public class SerializableProject implements Serializable {
             String defaultValue = String.valueOf(columnData.get(COLUMN_DEFAULT_VALUE));
             column = new FXDataColumn<>(new SimpleDataColumn<>(label, selected, defaultValue, String.class));
         }
+
+        List<Map<SerializationKey, Object>> childList = (List<Map<SerializationKey, Object>>) columnData.get(COLUMN_CHILDREN);
+        if (childList != null) {
+            for (Map<SerializationKey, Object> childData : childList) {
+                column.getChildren().add(createDataColumn(childData));
+            }
+        }
+
         return column;
     }
 
@@ -250,6 +261,8 @@ public class SerializableProject implements Serializable {
     private FXDataRow createDataRow(Map<SerializationKey, Object> data, List<FXDataColumn<?>> columns) {
         FXDataRow row = new FXDataRow(new SimpleDataRow(String.valueOf(data.get(ROW_LABEL))));
         row.setSelected((boolean) data.get(ROW_SELECTED));
+
+        // Rebuild row values
         List<Map<SerializationKey, Object>> valueDataList = (List<Map<SerializationKey, Object>>) data.get(ROW_VALUES);
         FXDataColumn<?> column;
         for (Map<SerializationKey, Object> valueData : valueDataList) {
@@ -260,6 +273,13 @@ public class SerializableProject implements Serializable {
                 row.setValueForColumn((FXDataColumn<String>) column, String.valueOf(valueData.get(VALUE)));
             }
         }
+
+        // Rebuild row children
+        List<Map<SerializationKey, Object>> childList = (List<Map<SerializationKey, Object>>) data.get(ROW_CHILDREN);
+        for (Map<SerializationKey, Object> childData : childList) {
+            row.getChildren().add(createDataRow(childData, columns));
+        }
+
         return row;
     }
 
@@ -272,6 +292,7 @@ public class SerializableProject implements Serializable {
         TABLE_COLUMNS,
         TABLE_ROWS,
         TABLE_UNCERTAINTY,
+        TABLE_FRACTION_DIGITS,
         TABLE_PLOTS,
 
         COLUMN_LABEL,

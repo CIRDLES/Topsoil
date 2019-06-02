@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.data;
 
-import org.cirdles.topsoil.Uncertainty;
-
 import java.util.ArrayList;
 import java.util.List;
 

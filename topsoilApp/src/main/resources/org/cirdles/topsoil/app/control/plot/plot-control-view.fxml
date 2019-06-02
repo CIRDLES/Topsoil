@@ -11,6 +11,7 @@
    <children>
       <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0">
         <items>
+            <Button fx:id="plotConfigButton" mnemonicParsing="false" onAction="#plotConfigButtonAction" text="Edit Plot Config" />
           <Button fx:id="saveSVGButton" mnemonicParsing="false" onAction="#saveSVGButtonAction" text="Export to SVG" />
             <Button fx:id="savePDFButton" mnemonicParsing="false" onAction="#savePDFButtonAction" text="Export to PDF" />
             <Button fx:id="resetViewButton" mnemonicParsing="false" onAction="#resetViewButtonAction" text="Reset View" />

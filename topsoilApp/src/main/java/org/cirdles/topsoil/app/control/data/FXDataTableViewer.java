@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control.tree;
+package org.cirdles.topsoil.app.control.data;
 
 import com.sun.javafx.scene.control.skin.TreeTableViewSkin;
 import javafx.beans.property.SimpleObjectProperty;
@@ -16,7 +16,6 @@ import org.cirdles.topsoil.app.data.FXDataRow;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.NumberColumnStringConverter;
 import org.cirdles.topsoil.data.DataColumn;
-import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.data.TableUtils;
 

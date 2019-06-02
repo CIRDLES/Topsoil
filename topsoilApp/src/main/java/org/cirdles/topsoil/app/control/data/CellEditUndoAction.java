@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control.tree;
+package org.cirdles.topsoil.app.control.data;
 
 import javafx.scene.control.TreeTableColumn;
 import org.cirdles.topsoil.app.control.undo.UndoAction;

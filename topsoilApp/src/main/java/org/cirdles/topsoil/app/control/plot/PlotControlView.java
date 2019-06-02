@@ -6,18 +6,24 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.app.Topsoil;
+import org.cirdles.topsoil.app.control.dialog.PlotConfigDialog;
 import org.cirdles.topsoil.app.control.plot.panel.PlotOptionsPanel;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.data.FXDataTable;
+import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotFunction;
 import org.cirdles.topsoil.javafx.PlotView;
+import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.plot.internal.PDFSaver;
 import org.cirdles.topsoil.plot.internal.SVGSaver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -26,16 +32,14 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class PlotControlView extends VBox {
 
-	private static final String CONTROLLER_FXML = "plot-view.fxml";
+	private static final String CONTROLLER_FXML = "plot-control-view.fxml";
 
 	//**********************************************//
 	//                   CONTROLS                   //
 	//**********************************************//
 
 	@FXML private ToolBar toolbar;
-	@FXML private Button saveSVGButton;
-	@FXML private Button savePDFButton;
-	@FXML private Button resetViewButton;
+	@FXML private Button plotConfigButton, saveSVGButton, savePDFButton, resetViewButton;
 
 	private PlotView plot;
 	private PlotOptionsPanel propertiesPanel;
@@ -105,6 +109,19 @@ public class PlotControlView extends VBox {
 	//**********************************************//
 	//                PRIVATE METHODS               //
 	//**********************************************//
+
+	@FXML private void plotConfigButtonAction() {
+		Map<PlotConfigDialog.Key, Object> settings = new HashMap<>();
+		settings.put(PlotConfigDialog.Key.VARIABLE_MAP, getPlot().getVariableMap());
+		settings.put(PlotConfigDialog.Key.ISOTOPE_SYSTEM, getPlot().getOptions().get(PlotOption.ISOTOPE_SYSTEM));
+
+		PlotConfigDialog dialog = new PlotConfigDialog(table, settings);
+		Map<PlotConfigDialog.Key, Object> newSettings = dialog.showAndWait().orElse(null);
+		if (newSettings != null) {
+			getPlot().setVariableMap((Map<Variable<?>, DataColumn<?>>) newSettings.get(PlotConfigDialog.Key.VARIABLE_MAP));
+			getPlot().getOptions().put(PlotOption.ISOTOPE_SYSTEM, newSettings.get(PlotConfigDialog.Key.ISOTOPE_SYSTEM));
+		}
+	}
 
 	/**
 	 * Saves the current view of the plot as an SVG file.

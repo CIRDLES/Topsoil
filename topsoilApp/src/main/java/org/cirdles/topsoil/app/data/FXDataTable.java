@@ -12,7 +12,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.cirdles.topsoil.Uncertainty;
+import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.control.undo.UndoAction;
 import org.cirdles.topsoil.app.control.undo.UndoManager;
 import org.cirdles.topsoil.data.DataColumn;
@@ -113,6 +113,7 @@ public class FXDataTable implements DataTable {
     public FXDataTable(DataTable table) {
         this.template = table.getTemplate();
         setTitle(table.getTitle());
+        setUncertainty(table.getUncertainty());
 
         // Create FXDataColumns for each column
         List<? extends DataColumn<?>> columns = table.getColumns();

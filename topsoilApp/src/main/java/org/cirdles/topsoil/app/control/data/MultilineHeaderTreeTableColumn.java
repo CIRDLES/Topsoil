@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.app.control.tree;
+package org.cirdles.topsoil.app.control.data;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

@@ -7,19 +7,16 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Topsoil;
-import org.cirdles.topsoil.app.control.tree.ColumnTreeView;
+import org.cirdles.topsoil.app.control.data.ColumnTreeView;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.ResourceBundles;
 import org.cirdles.topsoil.IsotopeSystem;
-import org.cirdles.topsoil.Uncertainty;
-import org.cirdles.topsoil.Variable;
+import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.data.FXDataColumn;
 import org.cirdles.topsoil.app.data.FXDataTable;
-import org.cirdles.topsoil.data.DataColumn;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 

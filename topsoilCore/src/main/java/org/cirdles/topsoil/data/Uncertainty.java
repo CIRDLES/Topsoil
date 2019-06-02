@@ -1,4 +1,4 @@
-package org.cirdles.topsoil;
+package org.cirdles.topsoil.data;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,18 +18,10 @@ public enum Uncertainty {
     TWO_SIGMA_PERCENT("2σ (%)", 2.0),
     NINETY_FIVE_PERCENT_CONFIDENCE("95% Conf.", 2.4477);
 
-    //**********************************************//
-    //                  CONSTANTS                   //
-    //**********************************************//
-
     public static final List<Uncertainty> PERCENT_FORMATS = Collections.unmodifiableList(asList(
             ONE_SIGMA_PERCENT,
             TWO_SIGMA_PERCENT
     ));
-
-    //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
 
     private String name;
     private Double multiplier;

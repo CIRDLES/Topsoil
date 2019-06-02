@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app;
 
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
+import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.app.control.dialog.PlotConfigDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
@@ -12,6 +13,8 @@ import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.ExampleData;
+import org.cirdles.topsoil.plot.PlotOption;
+import org.cirdles.topsoil.plot.PlotOptions;
 import org.cirdles.topsoil.plot.PlotType;
 
 import java.io.IOException;
@@ -213,15 +216,22 @@ public class TopsoilMenuBar extends MenuBar {
         MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
         generatePlotItem.setOnAction(event -> {
             FXDataTable table = MenuUtils.getCurrentDataTable();
-            PlotConfigDialog dialog = new PlotConfigDialog(table, null);
-            Map<Variable<?>, DataColumn<?>> variableMap = dialog.showAndWait().orElse(null);
-            if (variableMap != null) {
+            PlotConfigDialog dialog = new PlotConfigDialog(table);
+            Map<PlotConfigDialog.Key, Object> settings = dialog.showAndWait().orElse(null);
+            if (settings != null) {
+                PlotOptions options = PlotOptions.defaultOptions();
+                Map<Variable<?>, DataColumn<?>> variableMap =
+                        (Map<Variable<?>, DataColumn<?>>) settings.get(PlotConfigDialog.Key.VARIABLE_MAP);
+
+                IsotopeSystem isotopeSystem = (IsotopeSystem) settings.get(PlotConfigDialog.Key.ISOTOPE_SYSTEM);
+                options.put(PlotOption.ISOTOPE_SYSTEM, isotopeSystem);
+
                 PlotGenerator.generatePlot(
                         ProjectManager.getProject(),
                         table,
                         variableMap,
                         PlotType.SCATTER,
-                        null);
+                        options);
             }
         });
 

@@ -6,12 +6,16 @@ import javafx.beans.property.ReadOnlyListProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.javafx.PlotView;
 import org.cirdles.topsoil.plot.PlotOption;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +24,7 @@ import java.util.List;
  */
 public class ProjectSidebar extends Region {
 
+    private final ResourceExtractor re = new ResourceExtractor(ProjectSidebar.class);
     private TopsoilProject project;
     private TreeView<String> treeView;
 
@@ -140,6 +145,20 @@ public class ProjectSidebar extends Region {
         TableTreeItem(FXDataTable dataTable) {
             this.table = dataTable;
             valueProperty().bind(table.titleProperty());
+            try {
+                ImageView graphic = new ImageView(
+                        new Image(
+                                re.extractResourceAsPath("table-icon.png").toUri().toURL().toString(),
+                                16.0,
+                                16.0,
+                                true,
+                                true
+                        )
+                );
+                setGraphic(graphic);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
 
         public FXDataTable getTable() {
@@ -161,6 +180,21 @@ public class ProjectSidebar extends Region {
                     },
                     valueBinding
             ));
+
+            try {
+                ImageView graphic = new ImageView(
+                        new Image(
+                                re.extractResourceAsPath("plot-icon.png").toUri().toURL().toString(),
+                                16.0,
+                                16.0,
+                                true,
+                                true
+                        )
+                );
+                setGraphic(graphic);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

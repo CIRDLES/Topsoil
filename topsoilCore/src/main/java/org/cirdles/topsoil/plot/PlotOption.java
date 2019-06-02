@@ -2,7 +2,7 @@ package org.cirdles.topsoil.plot;
 
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Lambda;
-import org.cirdles.topsoil.Uncertainty;
+import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.plot.feature.Concordia;
 import org.cirdles.topsoil.symbols.SimpleSymbolKey;
 

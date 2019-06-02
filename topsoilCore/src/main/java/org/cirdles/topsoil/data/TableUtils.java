@@ -1,6 +1,7 @@
 package org.cirdles.topsoil.data;
 
 import org.apache.commons.lang3.Validate;
+import org.cirdles.topsoil.DependentVariable;
 import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.plot.DataEntry;
 import org.cirdles.topsoil.plot.Plot;
@@ -22,7 +23,7 @@ public final class TableUtils {
     }
 
     public static List<DataEntry> getPlotData(DataTable table, Map<Variable<?>, DataColumn<?>> variableMap) {
-        return convertToPlotData(table.getRows(), variableMap);
+        return convertToPlotData(table.getRows(), variableMap, table.getUncertainty());
     }
 
     public static <T extends DataComponent<T>> T findIn(String title, List<? extends T> list) {
@@ -81,7 +82,7 @@ public final class TableUtils {
      * Creates a list of data entries for a {@link Plot} from a list of {@code DataRow}s and a map associating plotting
      * {@code Variable}s with instances of {@code DataColumn}.
      * <p>
-     * {@code DataRow} objects map {@code {@literal DataColumn<T, C>}} instances to values of type {@code T}, while
+     * {@code DataRow} objects map {@code {@literal DataColumn<T>}} instances to values of type {@code T}, while
      * {@code DataEntry} objects map {@code {@literal Variable<T>}} instances to values of type {@code T}. Each new data
      * entry's values are set based on a data row, using the provided map. For each variable/column pair in the map, the
      * data entry's value for the variable is set to the data row's value for the column, if such a value exists. Data
@@ -91,25 +92,41 @@ public final class TableUtils {
      * @param variableMap   Map associating plotting variables to table columns
      * @return              List of DataEntry
      */
-    private static <C extends DataRow> List<DataEntry> convertToPlotData(List<C> dataRows, Map<Variable<?>, DataColumn<?>> variableMap) {
+    private static <T extends DataRow> List<DataEntry> convertToPlotData(List<T> dataRows, Map<Variable<?>, DataColumn<?>> variableMap, Uncertainty uncertainty) {
         List<DataEntry> dataEntries = new ArrayList<>();
         DataEntry newEntry;
         Object value;
-        for (C row : dataRows) {
+        for (T row : dataRows) {
             newEntry = new DataEntry();
-            if (row.getChildren().size() == 0) {   // DataRow has no child rows, create new DataEntry
-                newEntry.put(Variable.LABEL, row.getTitle());
-                newEntry.put(Variable.SELECTED, row.isSelected());
-                for (Map.Entry<Variable<?>, DataColumn<?>> e : variableMap.entrySet()) {
-                    value = row.getValueForColumn(e.getValue());
-                    if (value != null) {
-                        newEntry.put(e.getKey(), value);
-                    }
-                }
-                dataEntries.add(newEntry);
-            } else {        // DataRow has child rows, recursively create entries for list of child rows
-                dataEntries.addAll(convertToPlotData(row.getChildren(), variableMap));
+
+            if (row.getChildren().size() > 0) {
+                // DataRow has child rows, recursively create entries for list of child rows
+                dataEntries.addAll(convertToPlotData(row.getChildren(), variableMap, uncertainty));
+                continue;
             }
+
+            // Extract values for each variable from the row
+            newEntry.put(Variable.LABEL, row.getTitle());
+            newEntry.put(Variable.SELECTED, row.isSelected());
+            for (Map.Entry<Variable<?>, DataColumn<?>> e : variableMap.entrySet()) {
+                Variable<?> variable = e.getKey();
+                value = row.getValueForColumn(e.getValue());
+
+                if (value == null) {
+                    continue;
+                }
+
+                if (variable instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(uncertainty)) {
+                    double doubleValue = (double) value;
+                    Variable<Number> dependency = ((DependentVariable) variable).getDependency();
+                    DataColumn<Number> dependentColumn = (DataColumn<Number>) variableMap.get(dependency);
+                    doubleValue /= 100;
+                    doubleValue *= (Double) row.getValueForColumn(dependentColumn);
+                    value = doubleValue;
+                }
+                newEntry.put(variable, value);
+            }
+            dataEntries.add(newEntry);
         }
         return dataEntries;
     }

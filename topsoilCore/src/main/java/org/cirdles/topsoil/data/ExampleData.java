@@ -2,7 +2,6 @@ package org.cirdles.topsoil.data;
 
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.IsotopeSystem;
-import org.cirdles.topsoil.Uncertainty;
 import org.cirdles.topsoil.file.parser.DataParser;
 import org.cirdles.topsoil.file.parser.DefaultDataParser;
 import org.cirdles.topsoil.file.parser.Squid3DataParser;
@@ -46,6 +45,7 @@ public enum ExampleData {
         DataTable table = null;
         try {
             table = dataParser.parseDataTable(filePath, ",", fileName);
+            table.setUncertainty(unctFormat);
         } catch (IOException e) {
             e.printStackTrace();
         }

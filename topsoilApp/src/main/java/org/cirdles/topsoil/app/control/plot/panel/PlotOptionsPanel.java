@@ -14,7 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.IsotopeSystem;
-import org.cirdles.topsoil.Uncertainty;
+import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.plot.PlotFunction;
 import org.cirdles.topsoil.plot.PlotOption;
