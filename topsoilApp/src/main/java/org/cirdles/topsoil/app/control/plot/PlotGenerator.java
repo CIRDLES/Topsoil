@@ -1,9 +1,7 @@
 package org.cirdles.topsoil.app.control.plot;
 
-import javafx.collections.ListChangeListener;
 import org.apache.commons.lang3.Validate;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
-import org.cirdles.topsoil.app.data.FXDataRow;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.data.DataColumn;
@@ -36,6 +34,7 @@ public class PlotGenerator {
      *
      * @param project       TopsoilProject
      * @param table         DataTable
+     * @param variableMap   Map of plotting Variables to table DataColumns
      * @param plotType      PlotType
      * @param options    plot options
      */
