@@ -10,7 +10,7 @@ import org.cirdles.topsoil.app.data.FXDataTable;
  *
  * @see TopsoilMenuBar
  */
-final class MenuUtils {
+public final class MenuUtils {
 
     private MenuUtils() {
         // Prevents instantiation by default constructor
@@ -29,6 +29,17 @@ final class MenuUtils {
             }
         }
         return null;
+    }
+
+    public static void selectDataTable(FXDataTable table) {
+        if (ProjectManager.getProject() == null) {
+            return;
+        }
+
+        ProjectView projectView = MainController.getInstance().getProjectView();
+        if (projectView != null) {
+            projectView.selectDataTable(table);
+        }
     }
 
     static void undoLastAction() {

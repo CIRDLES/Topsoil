@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.MapChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static org.cirdles.topsoil.app.control.plot.panel.OptionChangeEvent.PROPERTY_CHANGED;
+import static org.cirdles.topsoil.app.control.plot.panel.OptionChangeEvent.OPTION_CHANGED;
 import static org.cirdles.topsoil.plot.PlotOption.*;
 
 public class PlotOptionsPanel extends Accordion {
@@ -75,6 +76,13 @@ public class PlotOptionsPanel extends Accordion {
     	for (Map.Entry<PlotOption<?>, Object> entry : plot.getOptions().entrySet()) {
     		updateControl(entry.getKey(), entry.getValue());
 		}
+    	plot.plotOptionsProperty().addListener((MapChangeListener<PlotOption, Object>) c -> {
+    		if (c.wasAdded()) {
+    			updateControl(c.getKey(), c.getValueAdded());
+			} else if (c.wasRemoved()) {
+    			updateControl(c.getKey(), null);
+			}
+		});
 
     	title.bind(axisStyling.plotTitleTextField.textProperty());
 
@@ -86,9 +94,9 @@ public class PlotOptionsPanel extends Accordion {
 		EventHandler<OptionChangeEvent> changeEventHandler = event -> {
 			plot.getOptions().put(event.getOption(), event.getNewValue());
 		};
-		axisStyling.addEventFilter(PROPERTY_CHANGED, changeEventHandler);
-		dataOptions.addEventFilter(PROPERTY_CHANGED, changeEventHandler);
-		plotFeatures.addEventFilter(PROPERTY_CHANGED, changeEventHandler);
+		axisStyling.addEventFilter(OPTION_CHANGED, changeEventHandler);
+		dataOptions.addEventFilter(OPTION_CHANGED, changeEventHandler);
+		plotFeatures.addEventFilter(OPTION_CHANGED, changeEventHandler);
 
 		// Update axes when buttons pressed
 		axisStyling.setXExtentsButton.setOnAction(event -> {

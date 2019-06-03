@@ -134,6 +134,15 @@ public class ProjectView extends SplitPane {
         return null;
     }
 
+    public void selectDataTable(FXDataTable table) {
+        List<Tab> tabs = tabPane.getTabs();
+        for (Tab tab : tabs) {
+            if (((ProjectTableTab) tab).getDataTable().equals(table)) {
+                tabPane.getSelectionModel().select(tab);
+            }
+        }
+    }
+
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//

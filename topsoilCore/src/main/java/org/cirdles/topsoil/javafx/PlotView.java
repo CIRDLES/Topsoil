@@ -55,7 +55,6 @@ public class PlotView extends Region implements Plot {
     private PlotType plotType;
     private String htmlString;
     private DataTable table;
-    private Map<Variable<?>, DataColumn<?>> variableMap;
 
     private WebView webView;
     private JSObject topsoil;
@@ -93,6 +92,24 @@ public class PlotView extends Region implements Plot {
         }
     }
 
+    private ReadOnlyMapWrapper<Variable<?>, DataColumn<?>> variableMap = new ReadOnlyMapWrapper<>();
+    public final ReadOnlyMapProperty<Variable<?>, DataColumn<?>> variableMapProperty() {
+        return variableMap.getReadOnlyProperty();
+    }
+    @Override
+    public Map<Variable<?>, DataColumn<?>> getVariableMap() {
+        return variableMap.get();
+    }
+    @Override
+    public void setVariableMap(Map<Variable<?>, DataColumn<?>> variableMap) {
+        if (variableMap instanceof ObservableMap) {
+            this.variableMap.set((ObservableMap<Variable<?>, DataColumn<?>>) variableMap);
+        } else {
+            this.variableMap.set(FXCollections.observableMap(variableMap));
+        }
+        updateDataEntries();
+    }
+
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
@@ -114,8 +131,6 @@ public class PlotView extends Region implements Plot {
         setOptions(options);
 
         webView = new WebView();
-//        webView.prefWidthProperty().bind(this.prefWidthProperty());
-//        webView.prefHeightProperty().bind(this.prefHeightProperty());
         webView.setContextMenuEnabled(false);
         getChildren().add(webView);
         initializeWebEngine();
@@ -138,19 +153,7 @@ public class PlotView extends Region implements Plot {
     @Override
     public void setDataTable(DataTable table, Map<Variable<?>, DataColumn<?>> variableMap) {
         this.table = table;
-        this.variableMap = variableMap;
-        updateDataEntries();
-    }
-
-    @Override
-    public Map<Variable<?>, DataColumn<?>> getVariableMap() {
-        return variableMap;
-    }
-
-    @Override
-    public void setVariableMap(Map<Variable<?>, DataColumn<?>> variableMap) {
-        this.variableMap = variableMap;
-        updateDataEntries();
+        setVariableMap(variableMap);
     }
 
     @Override

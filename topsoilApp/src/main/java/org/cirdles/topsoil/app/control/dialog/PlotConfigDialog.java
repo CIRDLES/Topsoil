@@ -145,7 +145,7 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                     }
                 }
                 if (c.wasRemoved()) {
-                    if (c.getMap().get(variable) == null) {
+                    if (! c.getMap().containsKey(variable)) {
                         selectionEntries.remove(variable);
                         variableListView.getItems().remove(selectionEntry);
                     }
@@ -153,14 +153,14 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                 variableListView.refresh();
             });
             if (preSettings.get(Key.VARIABLE_MAP) != null) {
-                selections.putAll((Map<Variable<?>, DataColumn<?>>) preSettings.get(Key.VARIABLE_MAP));
+                Map<Variable<?>, DataColumn<?>> map = (Map<Variable<?>, DataColumn<?>>) preSettings.get(Key.VARIABLE_MAP);
+                for (Map.Entry<Variable<?>, DataColumn<?>> entry : map.entrySet()) {
+                    select(entry.getKey(), entry.getValue());
+                }
             }
 
             removeButton.disableProperty().bind(
-                    Bindings.createBooleanBinding(
-                            () -> variableListView.getSelectionModel().getSelectedItems().isEmpty(),
-                            variableListView.getSelectionModel().selectedItemProperty()
-                    )
+                    variableListView.getSelectionModel().selectedItemProperty().isNull()
             );
 
             useExistingButton.disableProperty().bind(ProjectManager.getProject().getPlotMap().get(table).emptyProperty());
