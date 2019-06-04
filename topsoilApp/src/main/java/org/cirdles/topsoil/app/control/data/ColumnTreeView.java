@@ -53,14 +53,15 @@ public class ColumnTreeView extends TreeView<FXDataColumn<?>> {
 
     private void addTreeItem(FXDataColumn<?> column, TreeItem<FXDataColumn<?>> parent) {
         CheckBoxTreeItem<FXDataColumn<?>> item = new CheckBoxTreeItem<>(column, null, column.isSelected());
-        List<FXDataColumn<?>> children = column.getChildren();
-        if (children.size() > 0) {
-            for (FXDataColumn<?> child : children) {
-                if (! child.isSelected() && item.isSelected()) {
+        if (column.countChildren() > 0) {
+            for (FXDataColumn<?> child : column.getChildren()) {
+                if (child.isSelected() ^ item.isSelected()) {
+                    //
                     item.setIndeterminate(true);
                 }
                 addTreeItem(child, item);
             }
+            // Determine whether this box should be indeterminate, after adding all of its children
             item.setIndeterminate(shouldBeIndeterminate(item));
         }
         parent.getChildren().add(item);

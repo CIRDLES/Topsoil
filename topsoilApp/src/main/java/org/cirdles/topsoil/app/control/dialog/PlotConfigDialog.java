@@ -105,7 +105,10 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
 //            columnTreeView.setStyle("-fx-selection-bar: transparent");
             columnTreeView.setCellFactory(param -> new ColumnTreeViewCell());
             for (DataColumn<?> column : table.getColumns()) {
-                rootItem.getChildren().add(createColumnItem(column));
+                TreeItem<DataColumn<?>> item = createColumnItem(column);
+                if (item != null) {
+                    rootItem.getChildren().add(item);
+                }
             }
 
             variableListView.setCellFactory(param -> new ListCell<SelectionEntry>() {
@@ -207,9 +210,18 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
         private TreeItem<DataColumn<?>> createColumnItem(DataColumn<?> column) {
             TreeItem<DataColumn<?>> treeItem = new TreeItem<>(column);
             if (column.countChildren() > 0) {
+                TreeItem<DataColumn<?>> childItem;
                 for (DataColumn<?> child : column.getChildren()) {
-                    treeItem.getChildren().add(createColumnItem(child));
+                    childItem = createColumnItem(child);
+                    if (childItem != null) {
+                        treeItem.getChildren().add(createColumnItem(child));
+                    }
                 }
+                if (treeItem.getChildren().size() == 0) {
+                    return null;
+                }
+            } else if (! column.isSelected()) {
+                return null;
             }
             return treeItem;
         }

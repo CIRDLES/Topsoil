@@ -186,7 +186,7 @@ public class FXDataTableViewer extends Region {
                 editAction.execute();
                 this.table.addUndo(editAction);
             });
-            treeTableColumn.setVisible(column.isSelected());
+            treeTableColumn.visibleProperty().bindBidirectional(column.selectedProperty());
             treeTableColumn.setPrefWidth(DATA_COL_WIDTH);
         } else {
             for (FXDataColumn<?> child : column.getChildren()) {

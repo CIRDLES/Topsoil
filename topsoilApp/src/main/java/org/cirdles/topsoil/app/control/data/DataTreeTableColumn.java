@@ -2,7 +2,7 @@ package org.cirdles.topsoil.app.control.data;
 
 import org.cirdles.topsoil.app.data.FXDataColumn;
 
-class DataTreeTableColumn<R, T> extends MultilineHeaderTreeTableColumn<R, T> {
+class DataTreeTableColumn<S, T> extends MultilineHeaderTreeTableColumn<S, T> {
 
     DataTreeTableColumn(FXDataColumn<T> dataColumn) {
         super("");
