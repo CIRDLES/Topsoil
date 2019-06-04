@@ -39,10 +39,6 @@ public class ProjectView extends SplitPane {
     @FXML private AnchorPane projectSidebarPane;
     private ProjectSidebar projectSidebar;
 
-    @FXML private Label constantsEditorLabel;
-    @FXML private AnchorPane constantsEditorPane;
-    private ConstantsEditor constantsEditor;
-
     private VBox noTables = new VBox(new Label("No tables loaded. Import from the \"File\" menu."));
 
     //**********************************************//
@@ -69,15 +65,10 @@ public class ProjectView extends SplitPane {
     @FXML
     public void initialize() {
         projectSidebarLabel.setText(resources.getString("projectStructure"));
-        constantsEditorLabel.setText(resources.getString("constantsEditor"));
 
         this.projectSidebar = new ProjectSidebar(project);
         FXMLUtils.setAnchorPaneConstraints(projectSidebar, 0.0, 0.0, 0.0, 0.0);
         projectSidebarPane.getChildren().add(projectSidebar);
-
-        this.constantsEditor = new ConstantsEditor(project);
-        FXMLUtils.setAnchorPaneConstraints(constantsEditor, 0.0, 0.0, 0.0, 0.0);
-        constantsEditorPane.getChildren().add(constantsEditor);
 
         for (FXDataTable table : project.getDataTables()) {
             addTabForTable(table);

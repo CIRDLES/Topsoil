@@ -117,6 +117,24 @@ public final class PlotOption<T> extends SimpleSymbolKey<T> {
     }
 
     //**********************************************//
+    //                PUBLIC METHODS                //
+    //**********************************************//
+
+    public static PlotOption<Number> forLambda(Lambda lambda) {
+        switch(lambda) {
+            case Th230:
+                return LAMBDA_TH230;
+            case U234:
+                return LAMBDA_U234;
+            case U235:
+                return LAMBDA_U235;
+            case U238:
+                return LAMBDA_U238;
+        }
+        return null;
+    }
+
+    //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 

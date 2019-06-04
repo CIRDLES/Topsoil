@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.IsotopeSystem;
+import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.plot.PlotFunction;
@@ -46,6 +47,7 @@ public class PlotOptionsPanel extends Accordion {
     @FXML private AxisStylingController axisStyling;
     @FXML private DataOptionsController dataOptions;
     @FXML private PlotFeaturesController plotFeatures;
+    @FXML private PhysicalConstantsController physicalConstants;
 
     private final StringProperty title = new SimpleStringProperty();
     public StringProperty titleProperty() {
@@ -97,6 +99,7 @@ public class PlotOptionsPanel extends Accordion {
 		axisStyling.addEventFilter(OPTION_CHANGED, changeEventHandler);
 		dataOptions.addEventFilter(OPTION_CHANGED, changeEventHandler);
 		plotFeatures.addEventFilter(OPTION_CHANGED, changeEventHandler);
+		physicalConstants.addEventFilter(OPTION_CHANGED, changeEventHandler);
 
 		// Update axes when buttons pressed
 		axisStyling.setXExtentsButton.setOnAction(event -> {
@@ -230,6 +233,11 @@ public class PlotOptionsPanel extends Accordion {
 		));
 
 		updateActions.put(EVOLUTION, (value) -> plotFeatures.evolutionCheckBox.setSelected((Boolean) value));
+
+		updateActions.put(LAMBDA_TH230, (value) -> physicalConstants.setLambda(Lambda.Th230, (double) value));
+		updateActions.put(LAMBDA_U234, (value) -> physicalConstants.setLambda(Lambda.U234, (double) value));
+		updateActions.put(LAMBDA_U235, (value) -> physicalConstants.setLambda(Lambda.U235, (double) value));
+		updateActions.put(LAMBDA_U238, (value) -> physicalConstants.setLambda(Lambda.U238, (double) value));
 	}
 
 	private void updateControl(PlotOption<?> option, Object value) {

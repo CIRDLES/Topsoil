@@ -55,9 +55,6 @@ public class SerializableProject implements Serializable {
             tables.add(extractTableData(project, table));
         }
         data.put(PROJECT_TABLES, tables);
-
-        HashMap<Lambda, Number> lambdas = new HashMap<>(project.getLambdas());
-        data.put(PROJECT_LAMBDAS, lambdas);
     }
 
     //**********************************************//
@@ -72,11 +69,6 @@ public class SerializableProject implements Serializable {
     public TopsoilProject reconstruct() {
         List<Map<SerializationKey, Object>> tableDataList = (List<Map<SerializationKey, Object>>) data.get(PROJECT_TABLES);
         TopsoilProject project = new TopsoilProject();
-
-        Map<Lambda, Number> lambdaMap = (Map<Lambda, Number>) data.get(PROJECT_LAMBDAS);
-        for (Map.Entry<Lambda, Number> entry : lambdaMap.entrySet()) {
-            project.setLambdaValue(entry.getKey(), entry.getValue());
-        }
 
         FXDataTable table;
         for (Map<SerializationKey, Object> tableData : tableDataList) {

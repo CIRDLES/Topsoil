@@ -1,7 +1,6 @@
 package org.cirdles.topsoil.app.file;
 
 import org.cirdles.topsoil.Lambda;
-import org.cirdles.topsoil.app.data.FXDataColumn;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.serialization.ProjectSerializer;
@@ -14,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class SerializationTest {
@@ -26,14 +24,8 @@ public class SerializationTest {
             DataTable table = ExampleData.UPB.getDataTable();
             TopsoilProject project = new TopsoilProject(new FXDataTable(table));
 
-            project.setLambdaValue(Lambda.U234, 0.0);
-
             ProjectSerializer.serialize(path, project);
             TopsoilProject reconstructed = ProjectSerializer.deserialize(path);
-
-            for (Lambda lambda : Lambda.values()) {
-                assertEquals(project.getLambdaValue(lambda), reconstructed.getLambdaValue(lambda));
-            }
 
             DataTable newTable = reconstructed.getDataTables().get(0);
 

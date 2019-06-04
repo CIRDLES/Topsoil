@@ -58,11 +58,10 @@ plot.initialize = function (data) {
     //create x axis label
     plot.area.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + plot.innerHeight + ")")
+        .attr("transform", "translate(-8," + plot.innerHeight + ")")
         .append("text")
         .attr("class", "label")
         .style("font-size", "16px")
-        .attr("x", plot.innerWidth / 2)
         .attr("y", -10);
 
     //create y axis label
@@ -70,10 +69,9 @@ plot.initialize = function (data) {
         .attr("class", "y axis")
         .append("text")
         .attr("class", "label")
-        .attr("transform", "rotate(-90)")
+        .attr("y", 20)
+        .attr("transform", "translate(0 8) rotate(-90)")
         .style("font-size", "16px")
-        .attr("x", -plot.innerHeight / 2)
-        .attr("y", 15)
         .attr("dy", ".1em");
 
     // defaults if no model is provided

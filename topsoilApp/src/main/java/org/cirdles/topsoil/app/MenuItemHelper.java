@@ -101,7 +101,9 @@ final class MenuItemHelper {
     static boolean saveProject(TopsoilProject project) {
         boolean completed = false;
         Path path = ProjectManager.getProjectPath();
-        if (path != null) {
+        if (path == null) {
+            completed = saveProjectAs(project);
+        } else {
             try {
                 completed = ProjectSerializer.serialize(path, project);
             } catch (IOException e) {
@@ -111,8 +113,6 @@ final class MenuItemHelper {
                         "Unable to save project: " + path.toString()
                 );
             }
-        } else {
-            completed = saveProjectAs(project);
         }
         return completed;
     }
@@ -125,21 +125,23 @@ final class MenuItemHelper {
      * @return          true if successful
      */
     static boolean saveProjectAs(TopsoilProject project) {
-        boolean completed = false;
         File file = FileChoosers.saveTopsoilFile().showSaveDialog(Topsoil.getPrimaryStage());
-        if (file != null) {
-            try {
-                Path path = file.toPath();
-                completed = ProjectSerializer.serialize(path, project);
-                ProjectManager.setProjectPath(path);
-                RecentFiles.addPath(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-                TopsoilNotification.error(
-                        "Error",
-                        "Unable to save project: " + file.getName()
-                );
-            }
+        if (file == null) {
+            return false;
+        }
+
+        boolean completed = false;
+        try {
+            Path path = file.toPath();
+            completed = ProjectSerializer.serialize(path, project);
+            ProjectManager.setProjectPath(path);
+            RecentFiles.addPath(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            TopsoilNotification.error(
+                    "Error",
+                    "Unable to save project: " + file.getName()
+            );
         }
         return completed;
     }

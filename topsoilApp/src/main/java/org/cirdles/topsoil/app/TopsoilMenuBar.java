@@ -216,23 +216,33 @@ public class TopsoilMenuBar extends MenuBar {
         MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
         generatePlotItem.setOnAction(event -> {
             FXDataTable table = MenuUtils.getCurrentDataTable();
+            if (table == null) {
+                return;
+            }
+
             PlotConfigDialog dialog = new PlotConfigDialog(table);
             Map<PlotConfigDialog.Key, Object> settings = dialog.showAndWait().orElse(null);
-            if (settings != null) {
-                PlotOptions options = PlotOptions.defaultOptions();
-                Map<Variable<?>, DataColumn<?>> variableMap =
-                        (Map<Variable<?>, DataColumn<?>>) settings.get(PlotConfigDialog.Key.VARIABLE_MAP);
-
-                IsotopeSystem isotopeSystem = (IsotopeSystem) settings.get(PlotConfigDialog.Key.ISOTOPE_SYSTEM);
-                options.put(PlotOption.ISOTOPE_SYSTEM, isotopeSystem);
-
-                PlotGenerator.generatePlot(
-                        ProjectManager.getProject(),
-                        table,
-                        variableMap,
-                        PlotType.SCATTER,
-                        options);
+            if (settings == null) {
+                return;
             }
+
+            PlotOptions options = PlotOptions.defaultOptions();
+            Map<Variable<?>, DataColumn<?>> variableMap =
+                    (Map<Variable<?>, DataColumn<?>>) settings.get(PlotConfigDialog.Key.VARIABLE_MAP);
+
+            IsotopeSystem isotopeSystem = (IsotopeSystem) settings.get(PlotConfigDialog.Key.ISOTOPE_SYSTEM);
+            options.put(PlotOption.ISOTOPE_SYSTEM, isotopeSystem);
+
+            options.put(PlotOption.TITLE, table.getTitle());
+            options.put(PlotOption.X_AXIS, variableMap.get(Variable.X).getTitle());
+            options.put(PlotOption.Y_AXIS, variableMap.get(Variable.Y).getTitle());
+
+            PlotGenerator.generatePlot(
+                    ProjectManager.getProject(),
+                    table,
+                    variableMap,
+                    PlotType.SCATTER,
+                    options);
         });
 
         Menu visualizationsMenu = new Menu(resources.getString("visualizationsMenu"), null,

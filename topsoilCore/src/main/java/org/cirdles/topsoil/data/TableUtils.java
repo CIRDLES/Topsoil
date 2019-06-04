@@ -126,6 +126,14 @@ public final class TableUtils {
                 }
                 newEntry.put(variable, value);
             }
+
+            // Make sure there are values for each variable
+            for (Variable<?> variable : Variable.NUMBER_TYPE) {
+                if (! newEntry.containsKey(variable)) {
+                    newEntry.put(variable, variable.getDefaultValue());
+                }
+            }
+
             dataEntries.add(newEntry);
         }
         return dataEntries;

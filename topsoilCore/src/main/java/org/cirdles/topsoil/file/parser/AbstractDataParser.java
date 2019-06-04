@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.file.parser;
 
+import org.apache.commons.lang3.Validate;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTable;
@@ -21,30 +22,30 @@ public abstract class AbstractDataParser implements DataParser {
     /** {@inheritDoc} */
     @Override
     public final DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
-        if (path != null && delimiter != null) {
-            String[] lines = TopsoilFileUtils.readLines(path);
-            String[][] cells = TopsoilFileUtils.readCells(lines, delimiter);
-            if (label == null) {
-                Path fileName = path.getFileName();
-                if (fileName != null) {
-                    label = fileName.toString();
-                } else {
-                    label = path.toString();
-                }
-            }
-            return parseDataTable(cells, label);
+        Validate.notNull(path, "Path cannot be null.");
+        Validate.notNull(delimiter, "Delimiter cannot be null.");
+
+        String[] lines = TopsoilFileUtils.readLines(path);
+        String[][] cells = TopsoilFileUtils.readCells(lines, delimiter);
+        if (label == null) {
+            Path fileName = path.getFileName();
+            label = (fileName != null) ? fileName.toString() : path.toString();
         }
-        return null;
+        return parseDataTable(cells, label);
     }
 
     /** {@inheritDoc} */
     @Override
     public final DataTable parseDataTable(String content, String delimiter, String label) {
-        if (content != null && delimiter != null) {
-            String[][] rows = TopsoilFileUtils.readCells(TopsoilFileUtils.readLines(content), delimiter);
-            return parseDataTable(rows, label);
+        Validate.notNull(content, "String content cannot be null.");
+        Validate.notNull(delimiter, "Delimiter cannot be null.");
+
+        if (label == null) {
+            label = "DataFromClipboard";
         }
-        return null;
+
+        String[][] cells = TopsoilFileUtils.readCells(TopsoilFileUtils.readLines(content), delimiter);
+        return parseDataTable(cells, label);
     }
 
     protected abstract DataTable parseDataTable(String[][] cells, String label);

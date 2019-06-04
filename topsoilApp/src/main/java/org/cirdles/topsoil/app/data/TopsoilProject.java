@@ -27,14 +27,6 @@ import java.util.List;
  */
 public class TopsoilProject {
 
-    private MapProperty<Lambda, Number> lambdas = new SimpleMapProperty<>(FXCollections.observableMap(new LinkedHashMap<>()));
-    public MapProperty<Lambda, Number> lambdasProperty() {
-        return lambdas;
-    }
-    public final ObservableMap<Lambda, Number> getLambdas() {
-        return FXCollections.unmodifiableObservableMap(lambdas);
-    }
-
     private ListProperty<FXDataTable> dataTables = new SimpleListProperty<>(FXCollections.observableArrayList());
     public ListProperty<FXDataTable> dataTablesProperty() {
         return dataTables;
@@ -57,33 +49,11 @@ public class TopsoilProject {
 
     public TopsoilProject(FXDataTable... tables) {
         addDataTables(tables);
-        resetAllLambdas();
-        lambdas.addListener((MapChangeListener<? super Lambda, ? super Number>) c -> {
-            updatePlotLambdas();
-        });
     }
 
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
-
-    public Number getLambdaValue(Lambda lambda) {
-        return lambdas.get(lambda);
-    }
-
-    public void setLambdaValue(Lambda lambda, Number value) {
-        lambdas.put(lambda, value);
-    }
-
-    public void resetLambdaValue(Lambda lambda) {
-        lambdas.put(lambda, lambda.getDefaultValue());
-    }
-
-    public void resetAllLambdas() {
-        for (Lambda lambda : Lambda.values()) {
-            resetLambdaValue(lambda);
-        }
-    }
 
     public void addDataTable(FXDataTable table) {
         plotMap.put(table, new SimpleListProperty<>(FXCollections.observableArrayList()));
@@ -139,54 +109,6 @@ public class TopsoilProject {
         if (plotList != null) {
             plotList.remove(plot);
         }
-    }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private void updatePlotLambdas() {
-        PlotOptions options;
-        for (List<PlotView> plotList : plotMap.values()) {
-            for (PlotView plot : plotList) {
-                options = new PlotOptions(plot.getOptions());
-
-                options.put(PlotOption.LAMBDA_U234, getLambdaValue(Lambda.U234));
-                options.put(PlotOption.LAMBDA_U235, getLambdaValue(Lambda.U235));
-                options.put(PlotOption.LAMBDA_U238, getLambdaValue(Lambda.U238));
-                options.put(PlotOption.LAMBDA_TH230, getLambdaValue(Lambda.Th230));
-
-                plot.setOptions(options);
-            }
-        }
-    }
-
-    //**********************************************//
-    //                INNER CLASSES                 //
-    //**********************************************//
-
-    public static class OpenPlot {
-        private FXDataTable table;
-        private PlotView plot;
-
-        OpenPlot(FXDataTable table, PlotView plot) {
-            this.table = table;
-            this.plot = plot;
-        }
-
-        /**
-         * Returns the table associated with this plot.
-         *
-         * @return  FXDataTable
-         */
-        public FXDataTable getTable() {
-            return table;
-        }
-
-        public PlotView getPlot() {
-            return plot;
-        }
-
     }
 
 }
