@@ -77,7 +77,7 @@ public class Topsoil extends Application {
                 "--enable-logging --v=1"
         );
         if (Environment.isMac()) {
-            BrowserCore.initialize();   // must be initialized on non-UI thread on Mac
+            //BrowserCore.initialize();   // must be initialized on non-UI thread on Mac
         }
     }
 
