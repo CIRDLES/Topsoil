@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.plot.bridges;
+package org.cirdles.topsoil.javafx.bridges;
 
 /**
  * Intended to be added as a member to a WebViewPlot, so that the JavaScript may make upcalls to JavaFX.

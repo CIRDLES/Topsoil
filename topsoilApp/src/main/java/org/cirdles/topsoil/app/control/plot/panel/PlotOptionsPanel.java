@@ -186,6 +186,27 @@ public class PlotOptionsPanel extends Accordion {
 		updateActions.put(X_AXIS, (value) -> axisStyling.xTitleTextField.setText(String.valueOf(value)));
 		updateActions.put(Y_AXIS, (value) -> axisStyling.yTitleTextField.setText(String.valueOf(value)));
 
+		updateActions.put(X_MIN, (value) -> {
+			if (liveAxisUpdateActive()) {
+				axisStyling.xMinTextField.setText(Double.toString((double) value));
+			}
+		});
+		updateActions.put(Y_MIN, (value) -> {
+			if (liveAxisUpdateActive()){
+				axisStyling.yMinTextField.setText(Double.toString((double) value));
+			}
+		});
+		updateActions.put(X_MAX, (value) -> {
+			if (liveAxisUpdateActive()) {
+				axisStyling.xMaxTextField.setText(Double.toString((double) value));
+			}
+		});
+		updateActions.put(Y_MAX, (value) -> {
+			if (liveAxisUpdateActive()) {
+				axisStyling.yMaxTextField.setText(Double.toString((double) value));
+			}
+		});
+
 		updateActions.put(ISOTOPE_SYSTEM, (value) -> dataOptions.isotopeSystemComboBox.getSelectionModel().select((IsotopeSystem) value));
 		updateActions.put(UNCERTAINTY, (value) -> dataOptions.uncertaintyComboBox.getSelectionModel().select((Uncertainty) value));
 

@@ -1,4 +1,4 @@
-package org.cirdles.topsoil.plot.bridges;
+package org.cirdles.topsoil.javafx.bridges;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.cirdles.mcLeanRegression.McLeanRegression;

@@ -413,8 +413,7 @@ plot.manageAxisExtents = function() {
     topsoil.updateOption(PlotOption.X_MAX, xmax);
     topsoil.updateOption(PlotOption.Y_MIN, ymin);
     topsoil.updateOption(PlotOption.Y_MAX, ymax);
-    topsoil.axisExtentsBridge.update(xmin, xmax, ymin, ymax);
-    topsoil.axisExtentsBridge.setIfUpdated(true);
+    topsoil.axisExtentsBridge.syncAxes(xmin, xmax, ymin, ymax);
 };
 
 /*

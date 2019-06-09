@@ -26,9 +26,9 @@ import org.cirdles.topsoil.plot.PlotFunction;
 import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.plot.PlotOptions;
 import org.cirdles.topsoil.plot.PlotType;
-import org.cirdles.topsoil.plot.bridges.AxisExtentsBridge;
-import org.cirdles.topsoil.plot.bridges.JavaScriptBridge;
-import org.cirdles.topsoil.plot.bridges.Regression;
+import org.cirdles.topsoil.javafx.bridges.AxisExtentsBridge;
+import org.cirdles.topsoil.javafx.bridges.JavaScriptBridge;
+import org.cirdles.topsoil.javafx.bridges.Regression;
 import org.cirdles.topsoil.symbols.SymbolMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,7 +59,7 @@ public class PlotView extends Region implements Plot {
     private WebView webView;
     private JSObject topsoil;
     private final JavaScriptBridge bridge = new JavaScriptBridge();
-    private final AxisExtentsBridge axisExtentsBridge = new AxisExtentsBridge();
+    private final AxisExtentsBridge axisExtentsBridge;
     private final Regression regression = new Regression();
 
     //**********************************************//
@@ -123,6 +123,8 @@ public class PlotView extends Region implements Plot {
 
         this.plotType = plotType;
         this.htmlString = HTMLTemplate.forPlotType(plotType);
+
+        this.axisExtentsBridge = new AxisExtentsBridge(this);
 
         plotData.addListener((ListChangeListener<DataEntry>) c -> updateJSData());
         setDataTable(table, variableMap);
