@@ -35,6 +35,7 @@ import org.cirdles.topsoil.plot.PlotOption;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> {
@@ -80,7 +81,7 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
 
         @FXML private TreeView<DataColumn<?>> columnTreeView;
         @FXML private ListView<SelectionEntry> variableListView;
-        @FXML private Button removeButton, useExistingButton;
+        @FXML private Button removeButton, useExistingButton, classicButton;
         @FXML private ComboBox<IsotopeSystem> isotopeSystemComboBox;
 
         public PlotConfigDialogPane(FXDataTable table) {
@@ -242,6 +243,15 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
             }
         }
 
+        @FXML
+        private void classicButtonAction() {
+            selections.clear();
+            List<? extends DataColumn<?>> leafColumns = table.getLeafColumns();
+            for (int i = 0; i < Math.min(Variable.CLASSIC.size(), leafColumns.size()); i++) {
+                select(Variable.CLASSIC.get(i), leafColumns.get(i));
+            }
+        }
+
         private class SelectionEntry {
             Variable<?> variable;
             DataColumn<?> column;
@@ -284,7 +294,7 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                 label.setMaxWidth(labelWidth);
                 label.setWrapText(true);
 
-                ComboBox<Variable<?>> variableComboBox = new ComboBox<>(FXCollections.observableList(Variable.NUMBER_TYPE));
+                ComboBox<Variable<?>> variableComboBox = new ComboBox<>(FXCollections.observableList(Variable.CLASSIC));
                 variableComboBox.setCellFactory(param ->  new ListCell<Variable<?>>() {
                         @Override
                         protected void updateItem(Variable<?> item, boolean empty) {

@@ -128,7 +128,7 @@ public final class TableUtils {
             }
 
             // Make sure there are values for each variable
-            for (Variable<?> variable : Variable.NUMBER_TYPE) {
+            for (Variable<?> variable : Variable.CLASSIC) {
                 if (! newEntry.containsKey(variable)) {
                     newEntry.put(variable, variable.getDefaultValue());
                 }

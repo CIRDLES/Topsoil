@@ -19,8 +19,10 @@ import org.cirdles.topsoil.plot.PlotType;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.StringJoiner;
 
 /**
  * The main {@code MenuBar} for the application.
@@ -229,6 +231,20 @@ public class TopsoilMenuBar extends MenuBar {
             PlotOptions options = PlotOptions.defaultOptions();
             Map<Variable<?>, DataColumn<?>> variableMap =
                     (Map<Variable<?>, DataColumn<?>>) settings.get(PlotConfigDialog.Key.VARIABLE_MAP);
+
+            // Check for required plotting variables
+            List<Variable> missing = PlotGenerator.findMissingVariables(variableMap, PlotType.SCATTER);
+            if (! missing.isEmpty()) {
+                StringJoiner joiner = new StringJoiner(", ");
+                for (Variable v : missing) {
+                    joiner.add(v.getAbbreviation());
+                }
+                TopsoilNotification.error(
+                        "Missing Variables",
+                        "The following variables must be assigned for this plot type:\n\n[" + joiner.toString() + "]"
+                );
+                return;
+            }
 
             IsotopeSystem isotopeSystem = (IsotopeSystem) settings.get(PlotConfigDialog.Key.ISOTOPE_SYSTEM);
             options.put(PlotOption.ISOTOPE_SYSTEM, isotopeSystem);

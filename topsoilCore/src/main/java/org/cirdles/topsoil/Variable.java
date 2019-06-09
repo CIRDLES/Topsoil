@@ -39,7 +39,7 @@ public class Variable<T> extends SimpleSymbolKey<T> {
             SELECTED
     ));
 
-    public static final List<Variable<?>> NUMBER_TYPE = Collections.unmodifiableList(asList(
+    public static final List<Variable<?>> CLASSIC = Collections.unmodifiableList(asList(
             X, SIGMA_X, Y, SIGMA_Y, RHO
     ));
 

@@ -50,20 +50,6 @@ public class PlotGenerator {
         Validate.notNull(variableMap, "Variable map cannot be null.");
         Validate.notNull(plotType, "Plot type cannot be null.");
 
-        // Check for required plotting variables
-        List<Variable> missing = findMissingVariables(variableMap, plotType);
-        if (! missing.isEmpty()) {
-            StringJoiner joiner = new StringJoiner(", ");
-            for (Variable v : missing) {
-                joiner.add(v.getAbbreviation());
-            }
-            TopsoilNotification.error(
-                    "Missing Variables",
-                    "The following variables must be assigned for this plot type:\n\n[" + joiner.toString() + "]"
-            );
-            return;
-        }
-
 //        // Check if the requested plot type is already open for the table
 //        if (project.getPlotMap().get(table).contains(plotType)) {
 //            TopsoilNotification.info(
@@ -110,10 +96,6 @@ public class PlotGenerator {
         plotStage.show();
     }
 
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
     /**
      * Returns a list of {@code Variable}s which are required by the plot type, but not defined in the table.
      *
@@ -122,7 +104,7 @@ public class PlotGenerator {
      *
      * @return          List of missing Variables
      */
-    private static List<Variable> findMissingVariables(Map<Variable<?>, DataColumn<?>> variableMap, PlotType plotType) {
+    public static List<Variable> findMissingVariables(Map<Variable<?>, DataColumn<?>> variableMap, PlotType plotType) {
         List<Variable> missing = new ArrayList<>();
         for (Variable v : plotType.getRequiredVariables()) {
             if (variableMap.get(v) == null) {
