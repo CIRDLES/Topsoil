@@ -1,10 +1,12 @@
 package org.cirdles.topsoil.app.data;
 
 import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -87,6 +89,17 @@ public class FXDataTable implements DataTable {
     }
     public final void setMaxFractionDigits(int n) {
         maxFractionDigits.set(n);
+    }
+
+    private BooleanProperty isScientificNotation = new SimpleBooleanProperty(false);
+    public BooleanProperty scientificNotationProperty() {
+        return isScientificNotation;
+    }
+    public Boolean isScientificNotation() {
+        return isScientificNotation.get();
+    }
+    public void setScientificNotation(boolean value) {
+        isScientificNotation.set(value);
     }
 
     private ObjectProperty<Uncertainty> uncertainty = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);

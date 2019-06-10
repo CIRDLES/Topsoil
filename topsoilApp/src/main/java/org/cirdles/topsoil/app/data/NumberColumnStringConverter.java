@@ -1,6 +1,8 @@
 package org.cirdles.topsoil.app.data;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.StringConverter;
 import org.cirdles.topsoil.data.TableUtils;
@@ -17,10 +19,6 @@ import java.util.Locale;
  */
 public class NumberColumnStringConverter extends StringConverter<Number> {
 
-    //**********************************************//
-    //                  ATTRIBUTES                  //
-    //**********************************************//
-
     private String patternBase;
     private DecimalFormat df = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.getDefault());
 
@@ -33,6 +31,17 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
     }
     public final void setNumFractionDigits(int n) {
         numFractionDigits.set(n);
+    }
+
+    private BooleanProperty isScientificNotation = new SimpleBooleanProperty(false);
+    public BooleanProperty scientificNotationProperty() {
+        return isScientificNotation;
+    }
+    public Boolean isScientificNotation() {
+        return isScientificNotation.get();
+    }
+    public void setScientificNotation(boolean value) {
+        isScientificNotation.set(value);
     }
 
     //**********************************************//
@@ -55,15 +64,18 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
         if (number != null) {
             int valueFractionDigits = TableUtils.countFractionDigits(number);
             StringBuilder pattern = new StringBuilder(patternBase);
-            for (int i = 1; i < numFractionDigits.get(); i++) {
-                if (i < valueFractionDigits) {
-                    pattern.append("0");
-                } else {
-                    pattern.append(" ");        // Pad extra fraction places with whitespace
-                }
+            for (int i = 1; i < Math.min(valueFractionDigits, numFractionDigits.get()); i++) {
+                pattern.append("0");
+            }
+            if (isScientificNotation()) {
+                pattern.append("E00");
+            }
+            for (int i = valueFractionDigits; i < numFractionDigits.get(); i++) {
+                pattern.append(" ");
             }
             df.applyLocalizedPattern(pattern.toString());
-            return df.format(number);
+            System.out.println("\"" + pattern.toString() + "\": " + df.format(number).toLowerCase());
+            return df.format(number).toLowerCase();
         }
         return "";
     }

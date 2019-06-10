@@ -1,6 +1,10 @@
 package org.cirdles.topsoil.app.control.data;
 
 import com.sun.javafx.scene.control.skin.TreeTableViewSkin;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -99,6 +103,10 @@ public class FXDataTableViewer extends Region {
         // Refresh cells on fraction digit changes
         table.maxFractionDigitsProperty().addListener(c -> {
             updateFractionDigitsForLeafColumns();
+            refreshCells();
+        });
+        table.scientificNotationProperty().addListener(c -> {
+            updateScientificNotationForLeafColumns();
             refreshCells();
         });
     }
@@ -258,6 +266,15 @@ public class FXDataTableViewer extends Region {
                     );
                 }
                 converter.setNumFractionDigits(maxFractionDigits);
+            }
+        }
+    }
+
+    private void updateScientificNotationForLeafColumns() {
+        for (Map.Entry<DataColumn<?>, StringConverter<?>> entry : converterMap.entrySet()) {
+            if (entry.getValue() instanceof NumberColumnStringConverter) {
+                NumberColumnStringConverter converter = (NumberColumnStringConverter) entry.getValue();
+                converter.setScientificNotation(table.isScientificNotation());
             }
         }
     }

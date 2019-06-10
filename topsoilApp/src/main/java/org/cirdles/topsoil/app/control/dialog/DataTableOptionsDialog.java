@@ -46,6 +46,7 @@ public class DataTableOptionsDialog extends Dialog<Map<DataTableOptionsDialog.Ke
                 Map<Key, Object> settings = new HashMap<>();
                 settings.put(Key.COLUMN_SELECTIONS, controller.getColumnSelections());
                 settings.put(Key.FRACTION_DIGITS, controller.getFractionDigits());
+                settings.put(Key.SCIENTIFIC_NOTATION, controller.getScientificNotation());
                 settings.put(Key.UNCERTAINTY, controller.getUncertainty());
                 return settings;
             }
@@ -81,6 +82,10 @@ public class DataTableOptionsDialog extends Dialog<Map<DataTableOptionsDialog.Ke
         int maxFractionDigits = (int) settings.get(Key.FRACTION_DIGITS);
         table.setMaxFractionDigits(maxFractionDigits);
 
+        // Scientific Notation
+        boolean scientificNotation = (boolean) settings.get(Key.SCIENTIFIC_NOTATION);
+        table.setScientificNotation(scientificNotation);
+
         // Uncertainty
         Uncertainty uncertainty = (Uncertainty) settings.get(Key.UNCERTAINTY);
         table.setUncertainty(uncertainty);
@@ -109,7 +114,7 @@ public class DataTableOptionsDialog extends Dialog<Map<DataTableOptionsDialog.Ke
         ColumnTreeView columnTreeView;
 
         @FXML private Label fractionDigitsLabel, uncertaintyLabel;
-        @FXML CheckBox fractionDigitsCheckBox;
+        @FXML CheckBox fractionDigitsCheckBox, scientificNotationCheckBox;
         @FXML ComboBox<Integer> fractionDigitsComboBox;
         @FXML ComboBox<Uncertainty> unctComboBox;
 
@@ -162,6 +167,9 @@ public class DataTableOptionsDialog extends Dialog<Map<DataTableOptionsDialog.Ke
                 fractionDigitsComboBox.getSelectionModel().select(9);
                 fractionDigitsCheckBox.setSelected(false);
             }
+
+            scientificNotationCheckBox.setSelected(table.isScientificNotation());
+
             unctComboBox.getItems().addAll(Uncertainty.values());
             unctComboBox.getSelectionModel().select(table.getUncertainty());
         }
@@ -187,6 +195,10 @@ public class DataTableOptionsDialog extends Dialog<Map<DataTableOptionsDialog.Ke
             }
         }
 
+        public boolean getScientificNotation() {
+            return scientificNotationCheckBox.isSelected();
+        }
+
         public Uncertainty getUncertainty() {
             return unctComboBox.getValue();
         }
@@ -196,6 +208,7 @@ public class DataTableOptionsDialog extends Dialog<Map<DataTableOptionsDialog.Ke
     public enum Key {
         COLUMN_SELECTIONS,
         FRACTION_DIGITS,
+        SCIENTIFIC_NOTATION,
         UNCERTAINTY
     }
 
