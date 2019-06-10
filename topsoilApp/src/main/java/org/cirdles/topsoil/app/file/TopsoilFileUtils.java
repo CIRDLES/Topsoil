@@ -1,7 +1,5 @@
 package org.cirdles.topsoil.app.file;
 
-import org.springframework.util.StringUtils;
-
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -210,7 +208,7 @@ public class TopsoilFileUtils {
         int numLines = Math.min(NUM_LINES, lines.length);
         int[] counts = new int[numLines];
         for (int i = 0; i < numLines; i++) {
-            counts[i] = StringUtils.countOccurrencesOf(lines[i], delim.asString());
+            counts[i] = countOccurrencesOfSubstring(lines[i], delim.asString());
         }
 
         // If the number of occurrences of delimiter is not the same for each line, return false.;
@@ -220,6 +218,16 @@ public class TopsoilFileUtils {
             }
         }
         return true;
+    }
+
+    private static int countOccurrencesOfSubstring(String string, String subString) {
+        int startIndex = string.indexOf(subString, 0);
+        int count = 0;
+        while (startIndex != -1) {
+            count++;
+            startIndex = string.indexOf(subString, startIndex + subString.length());
+        }
+        return count;
     }
 
 }
