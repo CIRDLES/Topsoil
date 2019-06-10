@@ -60,7 +60,7 @@ public class TopsoilFileUtils {
      * @return  String[] of lines
      */
     public static String[] readLines(String content) {
-        return content.split("[\\r\\n]+");
+        return content.split("\\r?\\n");
     }
 
     /**

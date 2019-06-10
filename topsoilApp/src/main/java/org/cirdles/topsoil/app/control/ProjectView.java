@@ -111,7 +111,8 @@ public class ProjectView extends SplitPane {
     }
 
     public FXDataTable getVisibleDataTable() {
-        return ((ProjectTableTab) tabPane.getSelectionModel().getSelectedItem()).getDataTable();
+        return (!tabPane.getSelectionModel().isEmpty()) ?
+                ((ProjectTableTab) tabPane.getSelectionModel().getSelectedItem()).getDataTable() : null;
     }
 
     public FXDataTableViewer getViewerForTable(FXDataTable table) {

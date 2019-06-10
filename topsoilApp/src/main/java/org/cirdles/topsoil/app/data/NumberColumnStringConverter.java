@@ -74,7 +74,6 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
                 pattern.append(" ");
             }
             df.applyLocalizedPattern(pattern.toString());
-            System.out.println("\"" + pattern.toString() + "\": " + df.format(number).toLowerCase());
             return df.format(number).toLowerCase();
         }
         return "";
