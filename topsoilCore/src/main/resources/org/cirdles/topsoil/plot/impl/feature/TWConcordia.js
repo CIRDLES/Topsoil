@@ -38,30 +38,33 @@ plot.updateTWConcordia = function() {
             R238_235S: plot.lambda.R238_235S
         });
 
+        var minX = Math.max(1.0, plot.xAxisScale.domain()[0]),
+            maxX = Math.min(6500.0, plot.xAxisScale.domain()[1]),
+            minY = Math.max(0.04613, plot.yAxisScale.domain()[0]), // Covers down to ~4.2 Ma; lowest without glitchy envelope
+            maxY = Math.min(0.625, plot.yAxisScale.domain()[1]);
 
-        var minX_T = (Math.log1p(plot.xAxisScale.domain()[1]) - Math.log(plot.xAxisScale.domain()[1]))
+        var minT_X = (Math.log1p(maxX) - Math.log(maxX))
             / plot.lambda.U238;
-        var minY_T = calculateDate(plot.yAxisScale.domain()[0], 0.0);
-        var minT = Math.max(minX_T, minY_T);
+        var minT_Y = calculateDate(minY, 0.0);
+        var minT = Math.max(minT_X, minT_Y);
 
-
-        var maxX_T = (Math.log1p(plot.xAxisScale.domain()[0]) - Math.log(plot.xAxisScale.domain()[0]))
+        var maxT_X = (Math.log1p(minX) - Math.log(minX))
             / plot.lambda.U238;
-        var maxY_T = calculateDate(plot.yAxisScale.domain()[1], 0.0);
-        var maxT = Math.min(maxX_T, maxY_T);
-
+        var maxT_Y = calculateDate(maxY, 0.0);
+        var maxT = Math.min(maxT_X, maxT_Y);
 
         // build the concordia line
         plot.twconcordia = plot.twconcordiaGroup.select(".twconcordia")
             .attr("d", function () {
-                var approximateSegment = function (path, minT, maxT) {
-                    var p1 = wasserburg(minT).plus(
-                        wasserburg.prime(minT).times((maxT - minT) / 3))
+                var approximateSegment = function (path, startT, endT) {
+                    var p1 = wasserburg(startT).plus(
+                        wasserburg.prime(startT).times(3 / (endT - startT))
+                    ).scaleBy(plot.xAxisScale, plot.yAxisScale);
+                    var p2 = wasserburg(endT).minus(
+                        wasserburg.prime(endT).times(3 / (endT - startT))
+                    ).scaleBy(plot.xAxisScale, plot.yAxisScale);
+                    var p3 = wasserburg(endT)
                         .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p2 = wasserburg(maxT).minus(
-                        wasserburg.prime(maxT).times((maxT - minT) / 3))
-                        .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                    var p3 = wasserburg(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
 
                     // append a cubic bezier to the path
                     plot.cubicBezier(path, p1, p2, p3);
@@ -72,7 +75,7 @@ plot.updateTWConcordia = function() {
                 moveTo(path, wasserburg(minT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
                 // determine the step size using the number of pieces
-                var pieces = 60;
+                var pieces = 30;
                 var stepSize = (maxT - minT) / pieces;
 
                 // build the pieces
@@ -88,74 +91,75 @@ plot.updateTWConcordia = function() {
         if (plot.getOption(PlotOption.CONCORDIA_ENVELOPE)) {
             plot.twconcordiaGroup.select(".twuncertaintyEnvelope")
                 .attr("d", function () {
-                    var approximateUpperSegment = function (path, minT, maxT) {
-                        var p1 = wasserburg.upperEnvelope(minT).plus(
-                            wasserburg.prime(minT).times((maxT - minT) / 3))
+                    var approximateUpperSegment = function (path, startT, endT) {
+                        var p1 = wasserburg.upperEnvelope(startT).plus(
+                            wasserburg.prime(startT).times(3 / (endT - startT)))
                             .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                        var p2 = wasserburg.upperEnvelope(maxT).minus(
-                            wasserburg.prime(maxT).times((maxT - minT) / 3))
+                        var p2 = wasserburg.upperEnvelope(endT).minus(
+                            wasserburg.prime(endT).times(3 / (endT - startT)))
                             .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                        var p3 = wasserburg.upperEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p3 = wasserburg.upperEnvelope(endT).scaleBy(plot.xAxisScale, plot.yAxisScale);
 
                         // append a cubic bezier to the path
                         plot.cubicBezier(path, p1, p2, p3);
                     };
 
-                    var approximateLowerSegment = function (path, minT, maxT) {
-                        var p1 = wasserburg.lowerEnvelope(minT).plus(
-                            wasserburg.prime(minT).times((maxT - minT) / 3))
+                    var approximateLowerSegment = function (path, startT, endT) {
+                        var p1 = wasserburg.lowerEnvelope(startT).plus(
+                            wasserburg.prime(startT).times(3 / (endT - startT)))
                             .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                        var p2 = wasserburg.lowerEnvelope(maxT).minus(
-                            wasserburg.prime(maxT).times((maxT - minT) / 3))
+                        var p2 = wasserburg.lowerEnvelope(endT).minus(
+                            wasserburg.prime(endT).times(3 / (endT - startT)))
                             .scaleBy(plot.xAxisScale, plot.yAxisScale);
-                        var p3 = wasserburg.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale);
+                        var p3 = wasserburg.lowerEnvelope(endT).scaleBy(plot.xAxisScale, plot.yAxisScale);
 
                         // append a cubic bezier to the path
                         plot.cubicBezier(path, p1, p2, p3);
                     };
 
-                    var minT = Math.min(
-                        newtonMethod(wasserburg.upperEnvelope.x, plot.xAxisScale.domain()[0]),
-                        newtonMethod(wasserburg.upperEnvelope.y, plot.yAxisScale.domain()[0]));
+                    var upperMinT = Math.min(
+                        newtonMethod(wasserburg.upperEnvelope.x, minX),
+                        newtonMethod(wasserburg.upperEnvelope.y, minY)
+                    );
 
-                    var maxT = Math.min(
-                        newtonMethod(wasserburg.upperEnvelope.x, plot.xAxisScale.domain()[1]),
-                        newtonMethod(wasserburg.upperEnvelope.y, plot.yAxisScale.domain()[1]));
+                    var upperMaxT = Math.min(
+                        newtonMethod(wasserburg.upperEnvelope.x, maxX),
+                        newtonMethod(wasserburg.upperEnvelope.y, maxY)
+                    );
 
 
                     // initialize path
                     var path = [];
-                    moveTo(path, wasserburg.upperEnvelope(minT).scaleBy(plot.xAxisScale, plot.yAxisScale));
+                    moveTo(path, wasserburg.upperEnvelope(upperMinT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
                     // determine the step size using the number of pieces
                     var pieces = 30;
-                    var stepSize = (maxT - minT) / pieces;
+                    var stepSize = (upperMaxT - upperMinT) / pieces;
 
                     // build the pieces
                     for (var i = 0; i < pieces; i++) {
-                        approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
+                        approximateUpperSegment(path, upperMinT + stepSize * i, upperMinT + stepSize * (i + 1));
                     }
 
-                    lineTo(path, [plot.xAxisScale.range()[1], plot.yAxisScale.range()[1]]);
+                    var lowerMinT = Math.min(
+                        newtonMethod(wasserburg.lowerEnvelope.x, minX),
+                        newtonMethod(wasserburg.lowerEnvelope.y, minY)
+                    );
 
-                    minT = Math.min(
-                        newtonMethod(wasserburg.lowerEnvelope.x, plot.xAxisScale.domain()[0]),
-                        newtonMethod(wasserburg.lowerEnvelope.y, plot.yAxisScale.domain()[0]));
+                    var lowerMaxT = Math.min(
+                        newtonMethod(wasserburg.lowerEnvelope.x, maxX),
+                        newtonMethod(wasserburg.lowerEnvelope.y, maxY)
+                    );
 
-                    maxT = Math.min(
-                        newtonMethod(wasserburg.lowerEnvelope.x, plot.xAxisScale.domain()[1]),
-                        newtonMethod(wasserburg.lowerEnvelope.y, plot.yAxisScale.domain()[1]));
+                    lineTo(path, wasserburg.lowerEnvelope(lowerMaxT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
-                    lineTo(path, wasserburg.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale));
-
-                    stepSize = (maxT - minT) / pieces;
+                    stepSize = (lowerMaxT - lowerMinT) / pieces;
 
                     // build the pieces
                     for (i = 0; i < pieces; i++) {
-                        approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
+                        approximateLowerSegment(path, lowerMaxT - stepSize * i, lowerMaxT - stepSize * (i + 1));
                     }
 
-                    lineTo(path, [plot.xAxisScale.range()[0], plot.yAxisScale.range()[0]]);
                     close(path);
 
                     return path.join("");

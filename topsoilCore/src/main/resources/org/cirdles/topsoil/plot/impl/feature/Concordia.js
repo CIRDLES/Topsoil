@@ -40,18 +40,23 @@ plot.updateConcordia = function() {
             LAMBDA_238: plot.lambda.U238
         });
 
+        var minX = Math.max(0.0, plot.xAxisScale.domain()[0]),
+            maxX = Math.min(93.0, plot.xAxisScale.domain()[1]),
+            minY = Math.max(0.0, plot.yAxisScale.domain()[0]),
+            maxY = Math.min(2.05, plot.yAxisScale.domain()[1]);
+
         var minT = Math.max(
-            newtonMethod(wetherill.x, plot.xAxisScale.domain()[0]),
-            newtonMethod(wetherill.y, plot.yAxisScale.domain()[0]));
+            newtonMethod(wetherill.x, minX),
+            newtonMethod(wetherill.y, minY));
 
         var maxT = Math.min(
-            newtonMethod(wetherill.x, plot.xAxisScale.domain()[1]),
-            newtonMethod(wetherill.y, plot.yAxisScale.domain()[1]));
+            newtonMethod(wetherill.x, maxX),
+            newtonMethod(wetherill.y, maxY));
 
-        var minT1 = Math.max(Math.log1p(plot.xAxisScale.domain()[0] / plot.lambda.U235),
-            Math.log(1 + plot.yAxisScale.domain()[0]) / plot.lambda.U238);
-        var maxT1 = Math.min(Math.log1p(plot.xAxisScale.domain()[1] / plot.lambda.U235),
-            Math.log(1 + plot.yAxisScale.domain()[1]) / plot.lambda.U238);
+        var minT1 = Math.max(Math.log1p(minX / plot.lambda.U235),
+            Math.log(1 + minY) / plot.lambda.U238);
+        var maxT1 = Math.min(Math.log1p(maxX / plot.lambda.U235),
+            Math.log(1 + maxY) / plot.lambda.U238);
 
 
         // build the concordia line
@@ -118,12 +123,12 @@ plot.updateConcordia = function() {
                     };
 
                     var minT = Math.max(
-                        newtonMethod(wetherill.upperEnvelope.x, plot.xAxisScale.domain()[0]),
-                        newtonMethod(wetherill.upperEnvelope.y, plot.yAxisScale.domain()[0]));
+                        newtonMethod(wetherill.upperEnvelope.x, minX),
+                        newtonMethod(wetherill.upperEnvelope.y, minY));
 
                     var maxT = Math.min(
-                        newtonMethod(wetherill.upperEnvelope.x, plot.xAxisScale.domain()[1]),
-                        newtonMethod(wetherill.upperEnvelope.y, plot.yAxisScale.domain()[1]));
+                        newtonMethod(wetherill.upperEnvelope.x, maxX),
+                        newtonMethod(wetherill.upperEnvelope.y, maxY));
 
                     // initialize path
                     var path = [];
@@ -138,15 +143,13 @@ plot.updateConcordia = function() {
                         approximateUpperSegment(path, minT + stepSize * i, minT + stepSize * (i + 1));
                     }
 
-                    lineTo(path, [plot.xAxisScale.range()[1], plot.yAxisScale.range()[1]]);
-
                     minT = Math.max(
-                        newtonMethod(wetherill.lowerEnvelope.x, plot.xAxisScale.domain()[0]),
-                        newtonMethod(wetherill.lowerEnvelope.y, plot.yAxisScale.domain()[0]));
+                        newtonMethod(wetherill.lowerEnvelope.x, minX),
+                        newtonMethod(wetherill.lowerEnvelope.y, minY));
 
                     maxT = Math.min(
-                        newtonMethod(wetherill.lowerEnvelope.x, plot.xAxisScale.domain()[1]),
-                        newtonMethod(wetherill.lowerEnvelope.y, plot.yAxisScale.domain()[1]));
+                        newtonMethod(wetherill.lowerEnvelope.x, maxX),
+                        newtonMethod(wetherill.lowerEnvelope.y, maxY));
 
                     lineTo(path, wetherill.lowerEnvelope(maxT).scaleBy(plot.xAxisScale, plot.yAxisScale));
 
@@ -157,7 +160,6 @@ plot.updateConcordia = function() {
                         approximateLowerSegment(path, maxT - stepSize * i, maxT - stepSize * (i + 1));
                     }
 
-                    lineTo(path, [plot.xAxisScale.range()[0], plot.yAxisScale.range()[0]]);
                     close(path);
 
                     return path.join("");
