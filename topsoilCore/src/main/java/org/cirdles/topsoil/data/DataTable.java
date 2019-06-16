@@ -21,6 +21,10 @@ public interface DataTable extends JSONString {
 
     List<? extends DataRow> getRows();
 
+    default List<? extends DataRow> getLeafRows() {
+        return TableUtils.getLeafRows(getRows());
+    }
+
     Uncertainty getUncertainty();
 
     void setUncertainty(Uncertainty u);

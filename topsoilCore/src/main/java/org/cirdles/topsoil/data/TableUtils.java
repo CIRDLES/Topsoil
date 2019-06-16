@@ -15,11 +15,34 @@ public final class TableUtils {
     private TableUtils() {}
 
     public static <T extends DataColumn<?>> List<T> getLeafColumns(List<T> columns) {
+        Validate.notNull(columns, "Columns cannot be null.");
+
         List<T> leafColumns = new ArrayList<>();
         for (T column : columns) {
             leafColumns.addAll((List<T>) column.getLeafChildren());
         }
         return leafColumns;
+    }
+
+    public static int countLeafColumns(List<? extends DataColumn<?>> columns) {
+        Validate.notNull(columns, "Columns cannot be null.");
+
+        return countLeafComponents(columns);
+    }
+
+    public static <T extends DataRow> List<T> getLeafRows(List<T> rows) {
+        Validate.notNull(rows, "Rows cannot be null.");
+
+        List<T> leafRows = new ArrayList<>();
+        for (T row : rows) {
+            leafRows.addAll((List<T>) row.getLeafChildren());
+        }
+        return leafRows;
+    }
+
+    public static int countLeafRows(List<? extends DataRow> rows) {
+        Validate.notNull(rows, "Rows cannot be null.");
+        return countLeafComponents(rows);
     }
 
     public static List<DataEntry> getPlotData(DataTable table, Map<Variable<?>, DataColumn<?>> variableMap) {
@@ -79,6 +102,18 @@ public final class TableUtils {
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
+
+    private static <T extends DataComponent<T>> int countLeafComponents(List<? extends T> components) {
+        int count = 0;
+        for (T component : components) {
+            if (component.countChildren() > 0) {
+                count += countLeafComponents(component.getChildren());
+            } else {
+                count += 1;
+            }
+        }
+        return count;
+    }
 
     /**
      * Creates a list of data entries for a {@link Plot} from a list of {@code DataRow}s and a map associating plotting

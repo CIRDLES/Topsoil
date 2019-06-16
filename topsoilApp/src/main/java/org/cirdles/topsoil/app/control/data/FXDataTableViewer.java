@@ -22,6 +22,7 @@ import org.cirdles.topsoil.app.data.NumberColumnStringConverter;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.data.TableUtils;
+import org.cirdles.topsoil.javafx.SingleChildRegion;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author marottajb
  */
-public class FXDataTableViewer extends Region {
+public class FXDataTableViewer extends SingleChildRegion {
 
     private static final double LABEL_COL_WIDTH = 150.0;
     private static final double SELECTED_COL_WIDTH = 65.0;
@@ -52,15 +53,14 @@ public class FXDataTableViewer extends Region {
      * @param table     DataTable
      */
     public FXDataTableViewer(FXDataTable table) {
-        setFocusTraversable(true);
+        super(new TreeTableView<>());
 
         this.table = table;
 
-        treeTableView = new TreeTableView<>();
+        treeTableView = (TreeTableView<FXDataRow>) getChild();
         treeTableView.setEditable(true);
         treeTableView.setShowRoot(false);
         treeTableView.setSkin(new CustomTreeTableViewSkin(treeTableView));
-        getChildren().add(treeTableView);
 
         // Create root item
         CheckBoxTreeItem<FXDataRow> rootItem = new CheckBoxTreeItem<>();
@@ -208,36 +208,6 @@ public class FXDataTableViewer extends Region {
             treeItem.getChildren().add(treeItemForDataRow(child));
         }
         return treeItem;
-    }
-
-    @Override
-    protected double computeMinWidth(double height) {
-        return treeTableView.minWidth(height);
-    }
-
-    @Override
-    protected double computeMinHeight(double width) {
-        return treeTableView.minHeight(width);
-    }
-
-    @Override
-    protected double computePrefWidth(double height) {
-        return treeTableView.prefWidth(height) + snappedLeftInset() + snappedRightInset();
-    }
-
-    @Override
-    protected double computePrefHeight(double width) {
-        return treeTableView.prefHeight(width) + snappedTopInset() + snappedBottomInset();
-    }
-
-    @Override
-    protected void layoutChildren() {
-        final double x = snappedLeftInset();
-        final double y = snappedTopInset();
-        final double width = getWidth() - (snappedLeftInset() + snappedRightInset());
-        final double height = getHeight() - (snappedTopInset() + snappedBottomInset());
-
-        treeTableView.resizeRelocate(x, y, width, height);
     }
 
     private void updateFractionDigitsForLeafColumns() {

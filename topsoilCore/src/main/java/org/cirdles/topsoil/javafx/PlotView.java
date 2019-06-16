@@ -10,7 +10,6 @@ import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Worker;
-import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
@@ -47,16 +46,17 @@ import java.util.Map;
  *
  * @author John Zeringue
  */
-public class PlotView extends Region implements Plot {
+public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(PlotView.class);
+
+    private WebView webView;
 
     private PlotType plotType;
     private String htmlString;
     private DataTable table;
 
-    private WebView webView;
     private JSObject topsoil;
     private final JavaScriptBridge bridge = new JavaScriptBridge();
     private final AxisExtentsBridge axisExtentsBridge;
@@ -115,6 +115,8 @@ public class PlotView extends Region implements Plot {
     //**********************************************//
 
     public PlotView(PlotType plotType, DataTable table, Map<Variable<?>, DataColumn<?>> variableMap, PlotOptions options) {
+        super(new WebView());
+
         Validate.notNull(plotType, "Plot type cannot be null.");
         Validate.notNull(table, "Data table cannot be null.");
         Validate.notNull(variableMap, "Variable map cannot be null.");
@@ -132,9 +134,8 @@ public class PlotView extends Region implements Plot {
         plotOptions.addListener((MapChangeListener<PlotOption<?>, Object>) c -> updateJSOptions());
         setOptions(options);
 
-        webView = new WebView();
+        webView = getChild();
         webView.setContextMenuEnabled(false);
-        getChildren().add(webView);
         initializeWebEngine();
     }
 
@@ -224,51 +225,6 @@ public class PlotView extends Region implements Plot {
     protected void updateDataEntries() {
         List<DataEntry> entries = TableUtils.getPlotData(table, variableMap);
         plotData.set(FXCollections.observableList(entries));
-    }
-
-    @Override
-    protected double computeMinWidth(double height) {
-        return webView.minWidth(height);
-    }
-
-    @Override
-    protected double computeMinHeight(double width) {
-        return webView.minHeight(width);
-    }
-
-    @Override
-    protected double computeMaxWidth(double height) {
-        return computePrefWidth(height);
-    }
-
-    @Override
-    protected double computeMaxHeight(double width) {
-        return computePrefHeight(width);
-    }
-
-    @Override
-    protected double computePrefWidth(double height) {
-        return webView.prefWidth(height) +
-                snappedLeftInset() +
-                snappedRightInset();
-    }
-
-    @Override
-    protected double computePrefHeight(double width) {
-        return webView.prefHeight(width) +
-                snappedTopInset() +
-                snappedBottomInset();
-    }
-
-    @Override
-    protected void layoutChildren() {
-        final double x = snappedLeftInset();
-        final double y = snappedTopInset();
-
-        final double width = getWidth() - (snappedLeftInset() + snappedRightInset());
-        final double height = getHeight() - (snappedTopInset() + snappedBottomInset());
-
-        webView.resizeRelocate(x, y, width, height);
     }
 
     //**********************************************//

@@ -14,7 +14,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Region;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Variable;
@@ -25,39 +24,40 @@ import org.cirdles.topsoil.app.control.dialog.PlotConfigDialog;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.data.DataColumn;
+import org.cirdles.topsoil.data.TableUtils;
 import org.cirdles.topsoil.javafx.PlotView;
+import org.cirdles.topsoil.javafx.SingleChildRegion;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotOption;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * @author marottajb
  */
-public class ProjectSidebar extends Region {
+public class ProjectSidebar extends SingleChildRegion<TreeView<String>> {
 
     private final ResourceExtractor re = new ResourceExtractor(ProjectSidebar.class);
     private TopsoilProject project;
-    private TreeView<String> treeView;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
     ProjectSidebar(TopsoilProject project) {
-        setFocusTraversable(true);
+        super(new TreeView<>());
 
         this.project = project;
 
         final TreeItem<String> rootItem = new TreeItem<>("root");
-        treeView = new TreeView<>(rootItem);
+        TreeView<String> treeView = getChild();
+        treeView.setRoot(rootItem);
         treeView.setShowRoot(false);
         treeView.setCellFactory(param -> new SidebarTreeCell());
-        getChildren().add(treeView);
 
         for (FXDataTable table : project.getDataTables()) {
             rootItem.getChildren().add(new TableTreeItem(table));
@@ -82,47 +82,19 @@ public class ProjectSidebar extends Region {
     //               PRIVATE METHODS                //
     //**********************************************//
 
-    @Override
-    protected double computeMinWidth(double height) {
-        return treeView.minWidth(height);
-    }
-
-    @Override
-    protected double computeMinHeight(double width) {
-        return treeView.minHeight(width);
-    }
-
-    @Override
-    protected double computePrefWidth(double height) {
-        return treeView.prefWidth(height) +
-                snappedLeftInset() +
-                snappedRightInset();
-    }
-
-    @Override
-    protected double computePrefHeight(double width) {
-        return treeView.prefHeight(width) +
-                snappedTopInset() +
-                snappedBottomInset();
-    }
-
-    @Override
-    protected void layoutChildren() {
-        final double x = snappedLeftInset();
-        final double y = snappedTopInset();
-
-        final double width = getWidth() - (snappedLeftInset() + snappedRightInset());
-        final double height = getHeight() - (snappedTopInset() + snappedBottomInset());
-
-        treeView.resizeRelocate(x, y, width, height);
-    }
-
     private void removeTable(FXDataTable table) {
-        List<TreeItem<String>> tableItems = new ArrayList<>(treeView.getRoot().getChildren());
-        for (TreeItem<String> item : tableItems) {
-            if (((TableTreeItem) item).table.equals(table)) {
-                treeView.getRoot().getChildren().remove(item);
-                break;
+        if (table == null) {
+            return;
+        }
+        Iterator<TreeItem<String>> iterator = getChild().getRoot().getChildren().iterator();
+        TreeItem<String> item;
+        while (iterator.hasNext()) {
+            item = iterator.next();
+            if (item instanceof TableTreeItem) {
+                if (table.equals(((TableTreeItem) item).table)) {
+                    iterator.remove();
+                    break;
+                }
             }
         }
     }
@@ -160,11 +132,21 @@ public class ProjectSidebar extends Region {
             this.infoSectionItem = new TreeItem<>("Info:");
             getChildren().add(infoSectionItem);
             TreeItem<String> uncertaintyItem = new TreeItem<>("Unct. Format: " + table.getUncertainty().getName());
-            table.uncertaintyProperty().addListener(c -> {
+            table.uncertaintyProperty().addListener(c ->
                 uncertaintyItem.setValue("Unct. Format: " +
-                        ((table.getUncertainty() != null) ? table.getUncertainty().getName() : "[none]"));
-            });
-            infoSectionItem.getChildren().add(uncertaintyItem);
+                        ((table.getUncertainty() != null) ? table.getUncertainty().getName() : "[none]"))
+            );
+            TreeItem<String> columnCountItem = new TreeItem<>("# Columns: " + TableUtils.countLeafColumns(table.getColumns()));
+            columnCountItem.valueProperty().bind(Bindings.createStringBinding(
+                    () -> "# Columns: " + TableUtils.countLeafColumns(table.getColumns()),
+                    table.columnsProperty()
+            ));
+            TreeItem<String> rowCountItem = new TreeItem<>("# Rows: " + table.getLeafRows().size());
+            rowCountItem.valueProperty().bind(Bindings.createStringBinding(
+                    () -> "# Rows: " + TableUtils.countLeafRows(table.getRows()),
+                    table.rowsProperty()
+            ));
+            infoSectionItem.getChildren().addAll(Arrays.asList(uncertaintyItem, columnCountItem, rowCountItem));
 
             this.plotSectionItem = new TreeItem<>("Plots:");
             ReadOnlyListProperty<PlotView> plotList = project.getPlotMap().get(table);
@@ -193,7 +175,7 @@ public class ProjectSidebar extends Region {
                 }
             });
             if (! plotList.isEmpty()) {
-                // No plots are open for this table, remove the plot section
+                // Add plot section if plots are open for this table
                 getChildren().add(plotSectionItem);
             }
         }
