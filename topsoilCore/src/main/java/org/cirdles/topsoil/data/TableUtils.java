@@ -66,10 +66,12 @@ public final class TableUtils {
     }
 
     public static int countFractionDigits(Number number) {
-        if (number != null) {
+        if (number instanceof Double) {
             String str = number.toString().toLowerCase();
             int dotIndex = str.indexOf(".");
             return str.substring(dotIndex + 1).length();
+        } else if (number instanceof Integer) {
+            return 0;
         }
         return -1;
     }

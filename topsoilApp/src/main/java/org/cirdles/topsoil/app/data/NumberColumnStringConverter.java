@@ -9,8 +9,10 @@ import org.cirdles.topsoil.data.TableUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * A custom {@code StringConverter} that uses a {@code DecimalFormat} to enforce a specific number of fraction digits on
@@ -61,36 +63,46 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
 
     @Override
     public String toString(Number number) {
-        if (number != null) {
-            int valueFractionDigits = TableUtils.countFractionDigits(number);
-            StringBuilder pattern = new StringBuilder(patternBase);
-            for (int i = 1; i < Math.min(valueFractionDigits, numFractionDigits.get()); i++) {
-                pattern.append("0");
-            }
-            if (isScientificNotation()) {
-                pattern.append("E00");
-            }
-            for (int i = valueFractionDigits; i < numFractionDigits.get(); i++) {
-                pattern.append(" ");
-            }
-            df.applyLocalizedPattern(pattern.toString());
-            return df.format(number).toLowerCase();
+        if (number == null) {
+            return "";
         }
-        return "";
+
+        int valueFractionDigits = Math.max(1, TableUtils.countFractionDigits(number));
+        StringBuilder pattern = new StringBuilder(patternBase);
+        for (int i = 1; i < Math.min(valueFractionDigits, numFractionDigits.get()); i++) {
+            pattern.append("0");
+        }
+        if (isScientificNotation()) {
+            pattern.append("E00");
+        }
+        for (int i = valueFractionDigits; i < numFractionDigits.get(); i++) {
+            pattern.append(" ");
+        }
+        df.applyLocalizedPattern(pattern.toString());
+
+        // When an instance of Number is passed as an argument to df.format(), it is first cast to a double. If this
+        // number is actually an int, then a placeholder 0 will be added in the tenths place, and the number of
+        // significant digits used when formatting the number in scientific notation will be off by +1. So, if the
+        // number is an Integer, it is cast to a Long, which does not undergo conversion to a double.
+        return df.format((number instanceof Integer) ? new Long((int) number) : number).toLowerCase();
     }
 
     @Override
     public Number fromString(String str) {
+        if (str.isEmpty()) {
+            return null;
+        }
         df.applyPattern(patternBase);
-        if (! str.isEmpty()) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
             try {
                 return df.parse(str);
-            } catch (ParseException e) {
+            } catch (ParseException e2) {
                 e.printStackTrace();
                 return Double.NaN;
             }
         }
-        return null;
     }
 
 }

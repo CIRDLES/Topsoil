@@ -25,6 +25,7 @@ import org.cirdles.topsoil.data.TableUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * A customized {@code TreeTableView} that displays the data contained in a {@link DataTable}.
@@ -162,16 +163,7 @@ public class FXDataTableViewer extends Region {
         DataTreeTableColumn<FXDataRow, T> treeTableColumn = new DataTreeTableColumn<>(column);
         if (column.getChildren().size() == 0) {
             treeTableColumn.setCellFactory(param -> {
-                TextFieldTreeTableCell<FXDataRow, T> cell =
-                        new TextFieldTreeTableCell<FXDataRow, T>((StringConverter<T>) converterMap.get(column)) {
-                            @Override
-                            public void startEdit() {
-                                super.startEdit();
-                                TextField textField = (TextField) getGraphic();
-                                textField.setText(textField.getText().trim());
-                                textField.selectAll();
-                            }
-                        };
+                TreeTableCell<FXDataRow, T> cell = new FXDataTreeTableCell<>(column, (StringConverter<T>) converterMap.get(column));
                 if (column.getType() == Number.class) {
                     cell.setAlignment(Pos.CENTER_RIGHT);
                 } else {
