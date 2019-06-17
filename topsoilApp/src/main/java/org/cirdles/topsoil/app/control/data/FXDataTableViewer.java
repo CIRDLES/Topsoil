@@ -76,16 +76,13 @@ public class FXDataTableViewer extends SingleChildRegion {
         for (DataColumn<?> column : table.getLeafColumns()) {
             if (column.getType() == Number.class) {
                 NumberColumnStringConverter converter = new NumberColumnStringConverter();
+                maxFractionDigits = TableUtils.maxFractionDigitsForColumn(
+                        table.getRows(),
+                        (DataColumn<Number>) column,
+                        table.isScientificNotation()
+                );
                 if (table.getMaxFractionDigits() >= 0) {
-                    maxFractionDigits = Math.min(table.getMaxFractionDigits(), TableUtils.maxFractionDigitsForColumn(
-                            table.getRows(),
-                            (DataColumn<Number>) column
-                    ));
-                } else {
-                    maxFractionDigits = TableUtils.maxFractionDigitsForColumn(
-                            table.getRows(),
-                            (DataColumn<Number>) column
-                    );
+                    maxFractionDigits = Math.min(maxFractionDigits, table.getMaxFractionDigits());
                 }
                 converter.setNumFractionDigits(maxFractionDigits);
                 converterMap.put(column, converter);
@@ -107,7 +104,7 @@ public class FXDataTableViewer extends SingleChildRegion {
             refreshCells();
         });
         table.scientificNotationProperty().addListener(c -> {
-            updateScientificNotationForLeafColumns();
+            updateFractionDigitsForLeafColumns();
             refreshCells();
         });
     }
@@ -216,26 +213,20 @@ public class FXDataTableViewer extends SingleChildRegion {
         for (Map.Entry<DataColumn<?>, StringConverter<?>> entry : converterMap.entrySet()) {
             if (entry.getValue() instanceof NumberColumnStringConverter) {
                 NumberColumnStringConverter converter = (NumberColumnStringConverter) entry.getValue();
-                if (tableSetting >= 0) {
+                if (tableSetting > -1) {
                     maxFractionDigits = Math.min(tableSetting, TableUtils.maxFractionDigitsForColumn(
                             table.getRows(),
-                            (DataColumn<Number>) entry.getKey()
+                            (DataColumn<Number>) entry.getKey(),
+                            table.isScientificNotation()
                     ));
                 } else {
                     maxFractionDigits = TableUtils.maxFractionDigitsForColumn(
                             table.getRows(),
-                            (DataColumn<Number>) entry.getKey()
+                            (DataColumn<Number>) entry.getKey(),
+                            table.isScientificNotation()
                     );
                 }
                 converter.setNumFractionDigits(maxFractionDigits);
-            }
-        }
-    }
-
-    private void updateScientificNotationForLeafColumns() {
-        for (Map.Entry<DataColumn<?>, StringConverter<?>> entry : converterMap.entrySet()) {
-            if (entry.getValue() instanceof NumberColumnStringConverter) {
-                NumberColumnStringConverter converter = (NumberColumnStringConverter) entry.getValue();
                 converter.setScientificNotation(table.isScientificNotation());
             }
         }

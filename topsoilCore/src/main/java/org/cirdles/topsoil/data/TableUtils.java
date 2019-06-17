@@ -6,11 +6,19 @@ import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.plot.DataEntry;
 import org.cirdles.topsoil.plot.Plot;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public final class TableUtils {
+
+    private static final char DECIMAL_SEPARATOR;
+    static {
+        DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
+        DECIMAL_SEPARATOR = df.getDecimalFormatSymbols().getDecimalSeparator();
+    }
 
     private TableUtils() {}
 
@@ -74,15 +82,19 @@ public final class TableUtils {
         return values;
     }
 
-    public static int maxFractionDigitsForColumn(List<? extends DataRow> rows, DataColumn<Number> column) {
+    public static int maxFractionDigitsForColumn(List<? extends DataRow> rows, DataColumn<Number> column, boolean scientificNotation) {
         Validate.notNull(column, "Column cannot be null.");
 
         int maxFractionDigits = -1;
         for (DataRow row : rows) {
             if (row.countChildren() > 0) {
-                maxFractionDigits = Math.max(maxFractionDigits, maxFractionDigitsForColumn(row.getChildren(), column));
+                maxFractionDigits = Math.max(maxFractionDigits, maxFractionDigitsForColumn(row.getChildren(), column, scientificNotation));
             } else {
-                maxFractionDigits = Math.max(maxFractionDigits, countFractionDigits(row.getValueForColumn(column)));
+                if (scientificNotation) {
+                    maxFractionDigits = Math.max(maxFractionDigits, countSignificantDigits(row.getValueForColumn(column)) - 1);
+                } else {
+                    maxFractionDigits = Math.max(maxFractionDigits, countFractionDigits(row.getValueForColumn(column)));
+                }
             }
         }
         return maxFractionDigits;
@@ -91,12 +103,31 @@ public final class TableUtils {
     public static int countFractionDigits(Number number) {
         if (number instanceof Double) {
             String str = number.toString().toLowerCase();
-            int dotIndex = str.indexOf(".");
+            int dotIndex = str.indexOf(DECIMAL_SEPARATOR);
             return str.substring(dotIndex + 1).length();
         } else if (number instanceof Integer) {
             return 0;
         }
         return -1;
+    }
+
+    /**
+     * Counts the significant digits in a number by splitting its String representation on a regular expression that
+     * identifies ranges of insignificant digits. The lengths of the resulting substrings are aggregated into the total
+     * number of significant digits.
+     *
+     * @param number    Number
+     * @return          int # of significant digits
+     */
+    public static int countSignificantDigits(Number number) {
+        String str = number.toString();
+        // if the number is a decimal value, use the first regex; if the number is an integer value, use the second
+        String[] chunks = str.split((str.indexOf(DECIMAL_SEPARATOR) > -1) ? "(^0+(\\.?)0*|(~\\.)0+$|\\.)" : "(^0+|0+$)");
+        int count = 0;
+        for (String chunk : chunks) {
+            count += chunk.length();
+        }
+        return count;
     }
 
     //**********************************************//

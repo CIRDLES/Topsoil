@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.StringConverter;
 import org.cirdles.topsoil.data.TableUtils;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
 public class NumberColumnStringConverter extends StringConverter<Number> {
 
     private String patternBase;
+    private char decSeparator;
     private DecimalFormat df = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.getDefault());
 
     private IntegerProperty numFractionDigits = new SimpleIntegerProperty(9);
@@ -53,7 +55,8 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
     public NumberColumnStringConverter() {
         super();
         DecimalFormatSymbols symbols = df.getDecimalFormatSymbols();
-        patternBase = "0" + symbols.getDecimalSeparator() + "0";
+        decSeparator = symbols.getDecimalSeparator();
+        patternBase = "0" + decSeparator + "0";
         df.applyPattern(patternBase);
     }
 
@@ -67,24 +70,40 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
             return "";
         }
 
-        int valueFractionDigits = Math.max(1, TableUtils.countFractionDigits(number));
+        // Construct the correct format pattern
         StringBuilder pattern = new StringBuilder(patternBase);
-        for (int i = 1; i < Math.min(valueFractionDigits, numFractionDigits.get()); i++) {
+        String str = number.toString();
+
+        int decimalIndex = str.indexOf(decSeparator);
+        int numberFractionDigits;       // # of fraction digits in the Number value
+        if (isScientificNotation()) {
+            numberFractionDigits = TableUtils.countSignificantDigits(number) - 1;
+        } else if (decimalIndex > -1) {
+            // number is a decimal value
+            numberFractionDigits = str.length() - (decimalIndex + 1);
+        } else {
+            // number is an integer value
+            numberFractionDigits = 0;
+        }
+        int maxFractionDigits = numFractionDigits.get();    // max # of fraction digits for the converter
+        int formatFractionDigits =
+                Math.min(Math.max(1, numberFractionDigits), maxFractionDigits);     // # of fraction digits to put in the format
+        for (int i = 1; i < formatFractionDigits; i++) {
             pattern.append("0");
         }
         if (isScientificNotation()) {
-            pattern.append("E00");
+            pattern.append("E0");
+            if (number.doubleValue() >= 1) {
+                // Add an extra space to account for the lack of a negative sign for the exponent
+                pattern.append(" ");
+            }
         }
-        for (int i = valueFractionDigits; i < numFractionDigits.get(); i++) {
+        for (int i = formatFractionDigits; i < maxFractionDigits; i++) {
             pattern.append(" ");
         }
         df.applyLocalizedPattern(pattern.toString());
 
-        // When an instance of Number is passed as an argument to df.format(), it is first cast to a double. If this
-        // number is actually an int, then a placeholder 0 will be added in the tenths place, and the number of
-        // significant digits used when formatting the number in scientific notation will be off by +1. So, if the
-        // number is an Integer, it is cast to a Long, which does not undergo conversion to a double.
-        return df.format((number instanceof Integer) ? new Long((int) number) : number).toLowerCase();
+        return df.format(number).toLowerCase();
     }
 
     @Override
@@ -92,17 +111,12 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
         if (str.isEmpty()) {
             return null;
         }
-        df.applyPattern(patternBase);
         try {
-            return Integer.parseInt(str);
+            return new BigDecimal(str);
         } catch (NumberFormatException e) {
-            try {
-                return df.parse(str);
-            } catch (ParseException e2) {
-                e.printStackTrace();
-                return Double.NaN;
-            }
+            return Double.NaN;
         }
+
     }
 
 }
