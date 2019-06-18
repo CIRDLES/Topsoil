@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.javafx;
 
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.ReadOnlyMapProperty;
@@ -38,6 +39,7 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +58,7 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     private PlotType plotType;
     private String htmlString;
     private DataTable table;
+    private final Map<String, Thread> updateThreads = new HashMap<>();
 
     private JSObject topsoil;
     private final JavaScriptBridge bridge = new JavaScriptBridge();
@@ -128,10 +131,10 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
         this.axisExtentsBridge = new AxisExtentsBridge(this);
 
-        plotData.addListener((ListChangeListener<DataEntry>) c -> updateJSData());
+        plotData.addListener((ListChangeListener<DataEntry>) c -> updateJSDelayed("setData", this::updateJSData));
         setDataTable(table, variableMap);
 
-        plotOptions.addListener((MapChangeListener<PlotOption<?>, Object>) c -> updateJSOptions());
+        plotOptions.addListener((MapChangeListener<PlotOption<?>, Object>) c -> updateJSDelayed("setOptions", this::updateJSOptions));
         setOptions(options);
 
         webView = getChild();
@@ -258,8 +261,8 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
                         topsoil.setMember("axisExtentsBridge", axisExtentsBridge);
                         topsoil.setMember("regression", regression);
 
-                        updateJSData();
-                        updateJSOptions();
+                        topsoil.call("setData", getJSONData());
+                        topsoil.call("setOptions", getJSONOptions());
 
                         resize();
                     }
@@ -277,14 +280,32 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
     private void updateJSData() {
         if (topsoil != null) {
-            topsoil.call("setData", getJSONData());
+            Platform.runLater(() -> topsoil.call("setData", getJSONData()));
         }
     }
 
     private void updateJSOptions() {
         if (topsoil != null) {
-            topsoil.call("setOptions", getJSONOptions());
+            Platform.runLater(() -> topsoil.call("setOptions", getJSONOptions()));
         }
+    }
+
+    private void updateJSDelayed(String name, Runnable runnable) {
+        if (updateThreads.containsKey(name)) {
+            return; // an update has already been called
+        }
+        Thread updateThread = new Thread(() -> {
+            try {
+                Thread.sleep(10);
+                runnable.run();
+            } catch (InterruptedException e) {
+                // Do nothing
+            } finally {
+                updateThreads.remove(name);
+            }
+        });
+        updateThreads.put(name, updateThread);
+        updateThread.start();
     }
 
 }

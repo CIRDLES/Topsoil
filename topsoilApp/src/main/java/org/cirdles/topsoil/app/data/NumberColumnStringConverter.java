@@ -56,7 +56,7 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
         super();
         DecimalFormatSymbols symbols = df.getDecimalFormatSymbols();
         decSeparator = symbols.getDecimalSeparator();
-        patternBase = "0" + decSeparator + "0";
+        patternBase = "0";
         df.applyPattern(patternBase);
     }
 
@@ -86,11 +86,16 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
             numberFractionDigits = 0;
         }
         int maxFractionDigits = numFractionDigits.get();    // max # of fraction digits for the converter
-        int formatFractionDigits =
-                Math.min(Math.max(1, numberFractionDigits), maxFractionDigits);     // # of fraction digits to put in the format
-        for (int i = 1; i < formatFractionDigits; i++) {
-            pattern.append("0");
+        int formatFractionDigits = Math.min(numberFractionDigits, maxFractionDigits);     // # of fraction digits to put in the format
+
+        // add fraction digits, if present
+        if (formatFractionDigits > 0) {
+            pattern.append(".");
+            for (int i = 0; i < formatFractionDigits; i++) {
+                pattern.append("0");
+            }
         }
+        // add sci notation, if necessary
         if (isScientificNotation()) {
             pattern.append("E0");
             if (number.doubleValue() >= 1) {
@@ -98,7 +103,12 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
                 pattern.append(" ");
             }
         }
+        // pad remaining places with space
         for (int i = formatFractionDigits; i < maxFractionDigits; i++) {
+            pattern.append(" ");
+        }
+        // add an extra space, if there is no decimal separator
+        if (numberFractionDigits == 0 && maxFractionDigits > 0) {
             pattern.append(" ");
         }
         df.applyLocalizedPattern(pattern.toString());

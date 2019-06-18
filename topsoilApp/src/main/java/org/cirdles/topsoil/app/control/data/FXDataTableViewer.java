@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author marottajb
  */
-public class FXDataTableViewer extends SingleChildRegion {
+public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow>> {
 
     private static final double LABEL_COL_WIDTH = 150.0;
     private static final double SELECTED_COL_WIDTH = 65.0;
@@ -57,7 +57,7 @@ public class FXDataTableViewer extends SingleChildRegion {
 
         this.table = table;
 
-        treeTableView = (TreeTableView<FXDataRow>) getChild();
+        treeTableView = getChild();
         treeTableView.setEditable(true);
         treeTableView.setShowRoot(false);
         treeTableView.setSkin(new CustomTreeTableViewSkin(treeTableView));
@@ -204,6 +204,7 @@ public class FXDataTableViewer extends SingleChildRegion {
         for (FXDataRow child : row.getChildren()) {
             treeItem.getChildren().add(treeItemForDataRow(child));
         }
+        treeItem.selectedProperty().bindBidirectional(row.selectedProperty());
         return treeItem;
     }
 
