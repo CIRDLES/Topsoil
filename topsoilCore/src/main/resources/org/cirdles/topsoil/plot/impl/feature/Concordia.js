@@ -169,9 +169,9 @@ plot.updateConcordia = function() {
 
         plot.t.domain([minT, maxT]);
 
-        var concordiaTicks;
-        (concordiaTicks = plot.concordiaTicks = plot.concordiaGroup.selectAll(".concordiaTicks")
-            .data(plot.t.ticks()))
+        var concordiaTicks = plot.concordiaGroup.selectAll(".concordiaTicks")
+            .data(plot.t.ticks());
+        concordiaTicks
             .enter()
             .append("circle")
             .attr("class", "concordiaTicks")
@@ -179,7 +179,6 @@ plot.updateConcordia = function() {
             .style('stroke-width', 2)
             .style("stroke", "black")
             .style("fill", "white");
-
         concordiaTicks
             .attr("cx", function (t) {
                 return plot.xAxisScale(wetherill.x(t));
@@ -187,15 +186,17 @@ plot.updateConcordia = function() {
             .attr("cy", function (t) {
                 return plot.yAxisScale(wetherill.y(t));
             });
+        concordiaTicks
+            .exit()
+            .remove();
 
-        var tickLabels;
-        (tickLabels = plot.tickLabels = plot.concordiaGroup.selectAll(".tickLabel")
-            .data(plot.t.ticks()))
+        var tickLabels = plot.concordiaGroup.selectAll(".tickLabel")
+            .data(plot.t.ticks());
+        tickLabels
             .enter()
             .append("text")
             .attr("font-family", "sans-serif")
             .attr("class", "tickLabel");
-
         tickLabels
             .attr("x", function (t) {
                 return plot.xAxisScale(wetherill.x(t)) + 12;
@@ -206,9 +207,10 @@ plot.updateConcordia = function() {
             .text(function (t) {
                 return t / 1000000;
             });
+        tickLabels
+            .exit()
+            .remove();
 
-        plot.concordiaTicks.exit().remove();
-        plot.tickLabels.exit().remove();
     }
 };
 

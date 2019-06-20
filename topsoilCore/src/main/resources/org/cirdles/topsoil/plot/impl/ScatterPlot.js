@@ -75,14 +75,10 @@ plot.initialize = function (data) {
         .range([plot.innerHeight, 0]);
     plot.t = d3.scale.linear();
 
-    // Applies the scales to the x and y axes.
-    //draw the axes
     plot.xAxis = d3.svg.axis()
-        .orient("bottom")
-        // .scale(plot.xAxisScale);
+        .orient("bottom");
     plot.yAxis = d3.svg.axis()
-        .orient("left")
-        // .scale(plot.yAxisScale);
+        .orient("left");
 
     //create x axis label
     plot.area.append("g")
