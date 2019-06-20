@@ -47,22 +47,51 @@ plot.initialize = function (data) {
         plot.lambda.R238_235S = topsoil.defaultLambda.R238_235S;
     }
 
+    topsoil.resize();
+
     //create title
     plot.area.append("text")
         .attr("class", "titleText")
         .attr("font-family", "sans-serif")
         .attr("font-size", "20px")
-        .attr("x", plot.innerWidth / 2)
         .attr("y", -60);
+
+    plot.data = data;
+
+    // defaults if no model is provided
+    plot.xDataMin = 0;
+    plot.xDataMax = 1;
+    plot.yDataMin = 0;
+    plot.yDataMax = 1;
+    // Updates plot.xDataMin, plot.xDataMax, etc. based on the model.
+    plot.updateDataExtent();
+
+    // Initialize axis scales
+    plot.xAxisScale = d3.scale.linear()
+        .domain([plot.xDataMin, plot.xDataMax])
+        .range([0, plot.innerWidth]);
+    plot.yAxisScale = d3.scale.linear()
+        .domain([plot.yDataMin, plot.yDataMax])
+        .range([plot.innerHeight, 0]);
+    plot.t = d3.scale.linear();
+
+    // Applies the scales to the x and y axes.
+    //draw the axes
+    plot.xAxis = d3.svg.axis()
+        .orient("bottom")
+        // .scale(plot.xAxisScale);
+    plot.yAxis = d3.svg.axis()
+        .orient("left")
+        // .scale(plot.yAxisScale);
 
     //create x axis label
     plot.area.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(-8," + plot.innerHeight + ")")
         .append("text")
         .attr("class", "label")
-        .style("font-size", "16px")
-        .attr("y", -10);
+        .attr("transform", "translate(-8 0)")
+        .attr("y", -10)
+        .style("font-size", "16px");
 
     //create y axis label
     plot.area.append("g")
@@ -73,55 +102,6 @@ plot.initialize = function (data) {
         .attr("transform", "translate(0 8) rotate(-90)")
         .style("font-size", "16px")
         .attr("dy", ".1em");
-
-    // defaults if no model is provided
-    plot.xDataMin = 0;
-    plot.xDataMax = 1;
-    plot.yDataMin = 0;
-    plot.yDataMax = 1;
-
-    // Initialize axis scales
-    plot.xAxisScale = d3.scale.linear();
-    plot.yAxisScale = d3.scale.linear();
-
-    plot.t = d3.scale.linear();
-
-    //draw the axes
-    plot.xAxis = d3.svg.axis()
-        .ticks(Math.floor(plot.innerWidth / 50.0))
-        .orient("bottom");
-    plot.yAxis = d3.svg.axis()
-        .ticks(Math.floor(plot.innerHeight / 50.0))
-        .orient("left");
-
-    plot.data = data;
-
-    // Updates plot.xDataMin, plot.xDataMax, etc. based on the model.
-    plot.updateDataExtent();
-
-    // Updates the scales for the x and y axes
-    plot.xAxisScale
-        .domain([plot.xDataMin, plot.xDataMax])
-        .range([0, plot.innerWidth]);
-    plot.yAxisScale
-        .domain([plot.yDataMin, plot.yDataMax])
-        .range([plot.innerHeight, 0]);
-
-    // Applies the scales to the x and y axes.
-    plot.xAxis.scale(plot.xAxisScale);
-    plot.yAxis.scale(plot.yAxisScale);
-
-    // call the axes
-    plot.area.selectAll(".x.axis").call(plot.xAxis);
-    plot.area.selectAll(".y.axis").call(plot.yAxis);
-
-    plot.area.selectAll(".axis text")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "12px");
-    plot.area.selectAll(".axis path, .axis line")
-        .attr("fill", "none")
-        .attr("stroke", "black")
-        .attr("shape-rendering", "geometricPrecision");
 
     // add pan/zoom
     var zoom = plot.zoom = d3.behavior.zoom()
@@ -152,10 +132,10 @@ plot.initialize = function (data) {
     topsoil.setAxisExtents = function(xMin, xMax, yMin, yMax) {
 
         // if the user hasn't set a new extent for a field, leave it as-is
-        if (xMin == null) xMin = plot.xAxisScale.domain()[0];
-        if (xMax == null) xMax = plot.xAxisScale.domain()[1];
-        if (yMin == null) yMin = plot.yAxisScale.domain()[0];
-        if (yMax == null) yMax = plot.yAxisScale.domain()[1];
+        if (!xMin || isNaN(xMin)) xMin = plot.xAxisScale.domain()[0];
+        if (!xMax || isNaN(xMax)) xMax = plot.xAxisScale.domain()[1];
+        if (!yMin || isNaN(yMin)) yMin = plot.yAxisScale.domain()[0];
+        if (!yMax || isNaN(yMax)) yMax = plot.yAxisScale.domain()[1];
 
         // if the user input a min greater than the max, arbitrarily set the max to a larger value
         if(xMin >= xMax) { xMax = xMin + .1; }
@@ -175,46 +155,36 @@ plot.initialize = function (data) {
             };
         });
     };
-    
-    // function to bring concordia to corners of plot 
+
+    // function to bring concordia to corners of plot
     topsoil.snapToCorners = function () {
-        
-        // get x axis min and find coordinate on y axis 
-        
-        //this should be the currrent axis extent 
+
+        // get x axis min and find coordinate on y axis
         var xAxisMin = plot.xAxisScale.domain()[0];
         var lamda235 = 0.00000000098485000000;
         var lamda238 = 0.00000000015512500000;
-        var age207_235 = 0;
-        var age206_238 = 0;
-        
+        var age207_235 = ( 1 / lamda235 ) * Math.log( xAxisMin + 1);
+        var age206_238 = age207_235;
+
         var concordiaXMin = xAxisMin;
-        var concordiaYMin = 0;
-        
-        //calculate y value passing through x axis 
-        age207_235 = ( 1 / lamda235 ) * Math.log( xAxisMin + 1);
-        age206_238 = age207_235;
-        concordiaYMin = exp ( age206_238 * lamda238 ) - 1;
-        
-        // get x axis max and find coordinate on y axis 
+        var concordiaYMin = exp ( age206_238 * lamda238 ) - 1;
+
+        // get x axis max and find coordinate on y axis
         var xAxisMax = plot.xAxisScale.domain()[1];
-        
-        var concordiaXMax = xAxisMax;
-        var concordiaYMax = 0;
-        
-        age207_235 = ( 1 / lamda235 ) * Math.log( xAxisMax + 1 ); 
+        age207_235 = ( 1 / lamda235 ) * Math.log( xAxisMax + 1 );
         age206_238 = age207_235;
-        concordiaYMax = exp ( age206_238 * lamda238 ) - 1;
-        
-        //change axes to snap the concordia to corners 
+
+        var concordiaXMax = xAxisMax;
+        var concordiaYMax = exp ( age206_238 * lamda238 ) - 1;
+
+        //change axes to snap the concordia to corners
         changeAxes( concordiaXMin, concordiaXMax, concordiaYMin, concordiaYMax );
-        
+
     };
 
     //Helper function that will bring the concordia line to the front
 
     plot.initialized = true;
-    plot.manageAxisExtents();
     plot.setData(data);
 };
 
@@ -239,19 +209,21 @@ plot.setData = function (data) {
     // Updates plot.xDataMin, plot.xDataMax, etc. based on the model.
     plot.updateDataExtent();
 
-    plot.update(plot.data);
+    plot.update();
 };
 
 /*
     Updates plot elements. This function handles operations that need to be re-performed every time there is a change made
     to the plot.
  */
-plot.update = function (data) {
+plot.update = function () {
     // Makes sure that the plot has been initialized.
     if (!plot.initialized) {
-        plot.initialize(data);
+        plot.initialize(topsoil.data);
         return;
     }
+
+    topsoil.resize();
 
     //if the isotope type has changed, alert Java
     if (plot.currentIsotope !== plot.getOption(PlotOption.ISOTOPE_SYSTEM)) {
@@ -324,18 +296,37 @@ plot.update = function (data) {
         plot.removeTWConcordia();
     }
 
-    //draw title and axis labels
+    //draw title
     d3.select(".titleText")
         .text(plot.getOption(PlotOption.TITLE))
         .attr("x", (plot.innerWidth / 2) - (d3.select(".titleText").node().getBBox().width) / 2);
-    d3.select(".x.axis .label")
+    var xLabel = d3.select(".x.axis .label"),
+        yLabel = d3.select(".y.axis .label");
+    xLabel
         .text(plot.getOption(PlotOption.X_AXIS))
-        .attr("x", (plot.innerWidth) - (d3.select(".x.axis .label").node().getBBox().width));
-    d3.select(".y.axis .label")
+        .attr("x", plot.innerWidth - xLabel.node().getBBox().width);
+    yLabel
         .text(plot.getOption(PlotOption.Y_AXIS))
-        .attr("x",  -(d3.select(".y.axis .label").node().getBBox().width));
+        .attr("x", -(yLabel.node().getBBox().width));
 
-    // axis styling
+    // axes
+    plot.xAxisScale
+        .range([0, plot.innerWidth]);
+    plot.yAxisScale
+        .range([plot.innerHeight, 0]);
+
+    plot.xAxis
+        .ticks(Math.floor(plot.innerWidth / 50.0))
+        .scale(plot.xAxisScale);
+    plot.yAxis
+        .ticks(Math.floor(plot.innerHeight / 50.0))
+        .scale(plot.yAxisScale);
+
+    plot.area.selectAll(".x.axis")
+        .attr("transform", "translate(0 " + plot.innerHeight + ")")
+        .call(plot.xAxis);
+    plot.area.selectAll(".y.axis")
+        .call(plot.yAxis);
     plot.area.selectAll(".axis text")
         .attr("font-family", "sans-serif")
         .attr("font-size", "10px");
@@ -345,6 +336,7 @@ plot.update = function (data) {
         .attr("shape-rendering", "geometricPrecision"); // see SVG docs
 
     // Manage the plot elements
+    plot.manageAxisExtents();
     plot.managePoints();
     plot.manageEllipses();
     plot.manageRegressionLine();
@@ -357,18 +349,13 @@ plot.update = function (data) {
     then updates all plot elements.
  */
 plot.zoomed = function() {
-
-    // re-tick the axes
-    plot.area.selectAll(".x.axis").call(plot.xAxis);
-    plot.area.selectAll(".y.axis").call(plot.yAxis);
-
     //If necessary, update the regression line
     if(plot.regressionVisible) {
         plot.updateRegressionLine();
     }
 
-    plot.manageAxisExtents();
-    plot.update(topsoil.data);
+    // plot.manageAxisExtents();
+    plot.update();
 };
 
 /*
@@ -376,29 +363,28 @@ plot.zoomed = function() {
     plot.uncertainty is unspecified, the default value 2 is used.
  */
 plot.updateDataExtent = function () {
-    //find the extent of the points
-    if (plot.data.length > 0) {
-        var dataXMin = d3.min(plot.data, function (d) {
-            return (d.selected) ? d.x - ((d.sigma_x || 0) * (plot.uncertainty != null ? plot.uncertainty : 2)) : 6500.0;
-        });
-        var dataYMin = d3.min(plot.data, function (d) {
-            return (d.selected) ? d.y - ((d.sigma_y || 0) * (plot.uncertainty != null ? plot.uncertainty : 2)) : 6500.0;
-        });
-        var dataXMax = d3.max(plot.data, function (d) {
-            return (d.selected) ? d.x + ((d.sigma_x || 0) * (plot.uncertainty != null ? plot.uncertainty : 2)) : 0.0;
-        });
-        var dataYMax = d3.max(plot.data, function (d) {
-            return (d.selected) ? d.y + ((d.sigma_y || 0) * (plot.uncertainty != null ? plot.uncertainty : 2)) : 0.0;
-        });
-
-        var xRange = dataXMax - dataXMin;
-        var yRange = dataYMax - dataYMin;
-
-        plot.xDataMin = dataXMin - 0.05 * xRange;
-        plot.yDataMin =  dataYMin - 0.05 * yRange;
-        plot.xDataMax = dataXMax + 0.05 * xRange;
-        plot.yDataMax = dataYMax + 0.05 * yRange;
-    }
+    var xMin = Infinity,
+        xMax = -Infinity,
+        yMin = Infinity,
+        yMax = -Infinity,
+        sigmaX,
+        sigmaY;
+    plot.data.forEach(d => {
+        if (d.selected) {
+            sigmaX = (d.sigma_x || 0) * (plot.uncertainty || 1);
+            sigmaY = (d.sigma_y || 0) * (plot.uncertainty || 1);
+            xMin = Math.min(xMin, d.x - sigmaX);
+            xMax = Math.max(xMax, d.x + sigmaX);
+            yMin = Math.min(yMin, d.y - sigmaY);
+            yMax = Math.max(yMax, d.y + sigmaY);
+        }
+    });
+    var xRange = xMax - xMin;
+    var yRange = yMax - yMin;
+    plot.xDataMin = xMin - 0.05 * xRange;
+    plot.yDataMin = yMin - 0.05 * yRange;
+    plot.xDataMax = xMax + 0.05 * xRange;
+    plot.yDataMax = yMax + 0.05 * yRange;
 };
 
 plot.manageAxisExtents = function() {
@@ -409,10 +395,10 @@ plot.manageAxisExtents = function() {
         ymin = yDomain[0],
         ymax = yDomain[1];
 
-    topsoil.updateOption(PlotOption.X_MIN, xmin);
-    topsoil.updateOption(PlotOption.X_MAX, xmax);
-    topsoil.updateOption(PlotOption.Y_MIN, ymin);
-    topsoil.updateOption(PlotOption.Y_MAX, ymax);
+    plot.options[PlotOption.X_MIN] = xmin;
+    plot.options[PlotOption.X_MAX] = xmax;
+    plot.options[PlotOption.Y_MIN] = ymin;
+    plot.options[PlotOption.Y_MAX] = ymax;
     topsoil.axisExtentsBridge.syncAxes(xmin, xmax, ymin, ymax);
 };
 

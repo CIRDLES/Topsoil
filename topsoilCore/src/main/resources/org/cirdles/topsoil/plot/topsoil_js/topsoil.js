@@ -24,6 +24,11 @@
     // alias topsoil
     window.ts = topsoil;
 
+    topsoil.init = function (data, options) {
+        plot.options = options;
+        topsoil.setData(data);
+    };
+
     topsoil.emptyArray = function () {
         return [];
     };
@@ -39,12 +44,16 @@
 
     topsoil.setOptions = function (options) {
         plot.options = JSON.parse(options);
-        plot.update(topsoil.data);
+        plot.update();
     };
 
     topsoil.updateOption = function(key, value) {
         plot.options[key] = value;
-        plot.update(topsoil.data)
+        plot.update()
+    };
+
+    topsoil.update = function () {
+        plot.update();
     };
 
     /*
@@ -96,29 +105,23 @@
         .attr("stroke", "black")
         .attr("stroke-width", "2px");
 
-    topsoil.resize = function (width, height) {
-        if (plot.initialized) {
+    topsoil.resize = function () {
+        plot.outerWidth = window.innerWidth;
+        plot.outerHeight = window.innerHeight;
+        plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;
+        plot.innerHeight = plot.outerHeight - plot.margin.top - plot.margin.bottom;
 
-            plot.outerWidth = width;
-            plot.outerHeight = height;
-            plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;
-            plot.innerHeight = plot.outerHeight - plot.margin.top - plot.margin.bottom;
+        svg
+            .attr("width", plot.outerWidth)
+            .attr("height", plot.outerHeight);
 
-            svg
-                .attr("width", plot.outerWidth)
-                .attr("height", plot.outerHeight);
+        plot.plotArea
+            .attr("width", plot.innerWidth)
+            .attr("height", plot.innerHeight);
 
-            plot.plotArea
-                .attr("width", plot.innerWidth)
-                .attr("height", plot.innerHeight);
-
-            plot.plotBorder
-                .attr("width", plot.innerWidth)
-                .attr("height", plot.innerHeight);
-
-            plot.removeAxes();
-            plot.initialize(ts.data);
-        }
+        plot.plotBorder
+            .attr("width", plot.innerWidth)
+            .attr("height", plot.innerHeight);
     };
 
     // PROPERTIES

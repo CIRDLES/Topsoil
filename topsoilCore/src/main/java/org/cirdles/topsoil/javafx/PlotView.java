@@ -117,6 +117,10 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
+//    public PlotView(PlotType plotType, List<Map<Variable, Object>> plotData, PlotOptions plotOptions) {
+//
+//    }
+
     public PlotView(PlotType plotType, DataTable table, Map<Variable<?>, DataColumn<?>> variableMap, PlotOptions options) {
         super(new WebView());
 
@@ -242,8 +246,8 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
         WebEngine webEngine = webView.getEngine();
         webEngine.setJavaScriptEnabled(true);
 
-        webView.widthProperty().addListener(c -> resize());
-        webView.heightProperty().addListener(c -> resize());
+        webView.widthProperty().addListener(c -> update());
+        webView.heightProperty().addListener(c -> update());
 
         // useful for debugging
         webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
@@ -255,16 +259,33 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
                             webEngine.getDocument().getDoctype() != null &&
                             newValue == Worker.State.SUCCEEDED) {
 
+                        Double initXMin = (Double) plotOptions.get(PlotOption.X_MIN),
+                                initXMax = (Double) plotOptions.get(PlotOption.X_MAX),
+                                initYMin = (Double) plotOptions.get(PlotOption.Y_MIN),
+                                initYMax = (Double) plotOptions.get(PlotOption.Y_MAX);
+                        boolean isCustomViewport = ! (
+                                initXMin.equals(PlotOption.X_MIN.getDefaultValue()) &&
+                                        initXMax.equals(PlotOption.X_MAX.getDefaultValue()) &&
+                                        initYMin.equals(PlotOption.Y_MIN.getDefaultValue()) &&
+                                        initYMax.equals(PlotOption.Y_MAX.getDefaultValue())
+                        );
+
                         topsoil = (JSObject) webEngine.executeScript("topsoil");
 
                         topsoil.setMember("bridge", bridge);
                         topsoil.setMember("axisExtentsBridge", axisExtentsBridge);
                         topsoil.setMember("regression", regression);
 
-                        topsoil.call("setData", getJSONData());
-                        topsoil.call("setOptions", getJSONOptions());
+                        topsoil.call("init", getJSONData(), getJSONOptions());
 
-                        resize();
+                        if (isCustomViewport) {
+                            call(PlotFunction.Scatter.SET_AXIS_EXTENTS,
+                                    initXMin,
+                                    initXMax,
+                                    initYMin,
+                                    initYMax
+                            );
+                        }
                     }
                 });
 
@@ -272,9 +293,9 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
         webEngine.loadContent(htmlString);
     }
 
-    private void resize() {
+    private void update() {
         if (topsoil != null) {
-            topsoil.call("resize", webView.getWidth(), webView.getHeight());
+            topsoil.call("update");
         }
     }
 
