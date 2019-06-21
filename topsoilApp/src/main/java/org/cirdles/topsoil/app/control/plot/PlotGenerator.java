@@ -50,27 +50,6 @@ public class PlotGenerator {
         Validate.notNull(variableMap, "Variable map cannot be null.");
         Validate.notNull(plotType, "Plot type cannot be null.");
 
-//        // Check if the requested plot type is already open for the table
-//        if (project.getPlotMap().get(table).contains(plotType)) {
-//            TopsoilNotification.info(
-//                    "Plot Already Exists",
-//                    "A plot with plot type \"" + plotType.getName() +
-//                            "\" is already open for table \"" + table.getTitle() + "\"."
-//            );
-//            return;
-//        }
-
-        // Notify the user of any invalid data values
-//        List<String> dataErrors = DataUtils.getDataErrors(table);
-//        if (dataErrors.size() > 0) {
-//            StringJoiner errors = new StringJoiner("\n");
-//            for (String err : dataErrors) {
-//                errors.add(err);
-//            }
-//            // @TODO Encapsulate reasons for invalid rows; right now there's only one:
-//            TopsoilNotification.error("Invalid Rows", "The following rows have errors: \n\n" + errors.toString());
-//        }
-
         // Assign plot options
         if (options == null) {
             options = PlotOptions.defaultOptions();
@@ -80,10 +59,7 @@ public class PlotGenerator {
         }
 
         // Construct Plot
-        PlotView plot = new FXPlotView(plotType, table, variableMap, options);
-//        table.rowsProperty().addListener((ListChangeListener<? super FXDataRow>) c -> {
-//            plot.setDataTable(table, plot.getVariableMap());
-//        });
+        PlotView plot = new FXPlotView(plotType, options, table, variableMap);
 
         // Setup plot window
         PlotStage plotStage = new PlotStage(plot, table);

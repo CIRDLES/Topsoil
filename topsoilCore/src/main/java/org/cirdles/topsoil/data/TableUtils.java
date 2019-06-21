@@ -189,7 +189,7 @@ public final class TableUtils {
                     Variable<Number> dependency = ((DependentVariable) variable).getDependency();
                     DataColumn<Number> dependentColumn = (DataColumn<Number>) variableMap.get(dependency);
                     doubleValue /= 100;
-                    doubleValue *= (Double) row.getValueForColumn(dependentColumn);
+                    doubleValue *= row.getValueForColumn(dependentColumn).doubleValue();
                     value = doubleValue;
                 }
                 newEntry.put(variable, value);

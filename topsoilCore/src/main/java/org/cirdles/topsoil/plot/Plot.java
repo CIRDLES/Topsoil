@@ -17,11 +17,13 @@ public interface Plot extends JSONString {
 
     Map<Variable<?>, DataColumn<?>> getVariableMap();
 
-    List<DataEntry> getPlotData();
+    List<DataEntry> getData();
 
     String getJSONData();
 
-    void setDataTable(DataTable table, Map<Variable<?>, DataColumn<?>> variableMap);
+    void setData(DataTable table, Map<Variable<?>, DataColumn<?>> variableMap);
+
+    void setData(List<DataEntry> data);
 
     void setVariableMap(Map<Variable<?>, DataColumn<?>> variableMap);
 

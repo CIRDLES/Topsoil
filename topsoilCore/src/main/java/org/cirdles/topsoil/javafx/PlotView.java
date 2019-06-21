@@ -69,12 +69,12 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     //                  PROPERTIES                  //
     //**********************************************//
 
-    private ReadOnlyListWrapper<DataEntry> plotData = new ReadOnlyListWrapper<>();
+    private ReadOnlyListWrapper<DataEntry> plotData = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
     public final ReadOnlyListProperty<DataEntry> plotDataProperty() {
         return plotData.getReadOnlyProperty();
     }
     @Override
-    public final ObservableList<DataEntry> getPlotData() {
+    public final ObservableList<DataEntry> getData() {
         return plotData.get();
     }
 
@@ -117,33 +117,38 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-//    public PlotView(PlotType plotType, List<Map<Variable, Object>> plotData, PlotOptions plotOptions) {
-//
-//    }
-
-    public PlotView(PlotType plotType, DataTable table, Map<Variable<?>, DataColumn<?>> variableMap, PlotOptions options) {
+    public PlotView(PlotType type) {
         super(new WebView());
 
-        Validate.notNull(plotType, "Plot type cannot be null.");
-        Validate.notNull(table, "Data table cannot be null.");
-        Validate.notNull(variableMap, "Variable map cannot be null.");
+        Validate.notNull(type, "Plot type cannot be null.");
 
-        if (options == null) options = PlotOptions.defaultOptions();
+        this.webView = getChild();
+        webView.setContextMenuEnabled(false);
 
-        this.plotType = plotType;
+        this.plotType = type;
         this.htmlString = HTMLTemplate.forPlotType(plotType);
 
         this.axisExtentsBridge = new AxisExtentsBridge(this);
 
         plotData.addListener((ListChangeListener<DataEntry>) c -> updateJSDelayed("setData", this::updateJSData));
-        setDataTable(table, variableMap);
-
         plotOptions.addListener((MapChangeListener<PlotOption<?>, Object>) c -> updateJSDelayed("setOptions", this::updateJSOptions));
-        setOptions(options);
 
-        webView = getChild();
-        webView.setContextMenuEnabled(false);
         initializeWebEngine();
+    }
+
+    public PlotView(PlotType type, PlotOptions options) {
+        this(type);
+        setOptions((options != null) ? options : PlotOptions.defaultOptions());
+    }
+
+    public PlotView(PlotType type, PlotOptions options, List<DataEntry> data) {
+        this(type, options);
+        setData(data);
+    }
+
+    public PlotView(PlotType type, PlotOptions options, DataTable table, Map<Variable<?>, DataColumn<?>> variableMap) {
+        this(type, options);
+        setData(table, variableMap);
     }
 
     //**********************************************//
@@ -161,14 +166,26 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     }
 
     @Override
-    public void setDataTable(DataTable table, Map<Variable<?>, DataColumn<?>> variableMap) {
+    public void setData(DataTable table, Map<Variable<?>, DataColumn<?>> variableMap) {
+        Validate.notNull(table, "Table cannot be null.");
+        Validate.notNull(variableMap, "Variable map cannot be null.");
+
         this.table = table;
         setVariableMap(variableMap);
     }
 
     @Override
+    public void setData(List<DataEntry> data) {
+        if (data != null) {
+            plotData.setAll(data);
+            this.table = null;
+            variableMap.clear();
+        }
+    }
+
+    @Override
     public String getJSONData() {
-        return new JSONArray(getPlotData()).toString();
+        return new JSONArray(getData()).toString();
     }
 
     @Override
@@ -179,7 +196,7 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     @Override
     public String toJSONString() {
         JSONObject json = new JSONObject();
-        json.put("data", getPlotData());
+        json.put("data", getData());
         json.put("options", getOptions());
         return json.toString();
     }
@@ -231,7 +248,7 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
     protected void updateDataEntries() {
         List<DataEntry> entries = TableUtils.getPlotData(table, variableMap);
-        plotData.set(FXCollections.observableList(entries));
+        plotData.setAll(entries);
     }
 
     //**********************************************//
