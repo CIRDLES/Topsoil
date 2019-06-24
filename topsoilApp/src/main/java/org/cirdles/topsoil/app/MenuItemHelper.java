@@ -9,20 +9,21 @@ import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard;
-import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.DataTemplate;
+import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.TopsoilFileUtils;
 import org.cirdles.topsoil.app.file.serialization.ProjectSerializer;
 import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.file.FileChoosers;
-import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.Delimiter;
 import org.cirdles.topsoil.app.help.IssueCreator;
 import org.cirdles.topsoil.app.help.StandardGitHubIssueCreator;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.data.ExampleData;
 import org.cirdles.topsoil.app.util.TopsoilException;
+import org.cirdles.topsoil.data.DataTable;
+import org.cirdles.topsoil.data.DataTemplate;
+import org.cirdles.topsoil.data.ExampleData;
+import org.cirdles.topsoil.file.parser.DataParser;
 
 import java.awt.*;
 import java.io.File;
@@ -81,10 +82,11 @@ final class MenuItemHelper {
      */
     static void openExampleData(ExampleData data) {
         TopsoilProject project = ProjectManager.getProject();
+        FXDataTable table = new FXDataTable(data.getDataTable());
         if (project != null) {
-            project.addDataTable(data.getDataTable());
+            project.addDataTable(table);
         } else {
-            project = new TopsoilProject(data.getDataTable());
+            project = new TopsoilProject(table);
             ProjectManager.setProject(project);
         }
     }
@@ -99,7 +101,9 @@ final class MenuItemHelper {
     static boolean saveProject(TopsoilProject project) {
         boolean completed = false;
         Path path = ProjectManager.getProjectPath();
-        if (path != null) {
+        if (path == null) {
+            completed = saveProjectAs(project);
+        } else {
             try {
                 completed = ProjectSerializer.serialize(path, project);
             } catch (IOException e) {
@@ -109,8 +113,6 @@ final class MenuItemHelper {
                         "Unable to save project: " + path.toString()
                 );
             }
-        } else {
-            completed = saveProjectAs(project);
         }
         return completed;
     }
@@ -123,21 +125,23 @@ final class MenuItemHelper {
      * @return          true if successful
      */
     static boolean saveProjectAs(TopsoilProject project) {
-        boolean completed = false;
         File file = FileChoosers.saveTopsoilFile().showSaveDialog(Topsoil.getPrimaryStage());
-        if (file != null) {
-            try {
-                Path path = file.toPath();
-                completed = ProjectSerializer.serialize(path, project);
-                ProjectManager.setProjectPath(path);
-                RecentFiles.addPath(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-                TopsoilNotification.error(
-                        "Error",
-                        "Unable to save project: " + file.getName()
-                );
-            }
+        if (file == null) {
+            return false;
+        }
+
+        boolean completed = false;
+        try {
+            Path path = file.toPath();
+            completed = ProjectSerializer.serialize(path, project);
+            ProjectManager.setProjectPath(path);
+            RecentFiles.addPath(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            TopsoilNotification.error(
+                    "Error",
+                    "Unable to save project: " + file.getName()
+            );
         }
         return completed;
     }
@@ -196,7 +200,8 @@ final class MenuItemHelper {
         Path path = Paths.get(file.toURI());
         String fileName = (path.getFileName() != null) ? path.getFileName().toString() : path.toString();
         Delimiter delimiter = TopsoilFileUtils.guessDelimiter(path);
-        Map<DataImportDialog.Key, Object> settings = DataImportDialog.showDialog(fileName, delimiter);
+        Map<DataImportDialog.Key, Object> settings =
+                new DataImportDialog(fileName, delimiter, Topsoil.getPrimaryStage()).showAndWait().orElse(null);
         if (settings == null) {
             return; // Dialog cancelled
         }
@@ -219,7 +224,7 @@ final class MenuItemHelper {
             throw new TopsoilException("DataParser instance for template \"" + template + "\" is null, but parsing is supported.");
         }
 
-        DataTable table = parser.parseDataTable(path, delimiter.asString(), fileName);
+        FXDataTable table = new FXDataTable(parser.parseDataTable(path, delimiter.asString(), fileName));
         Map<DataTableOptionsDialog.Key, Object> tableOptions = DataTableOptionsDialog.showDialog(table, Topsoil.getPrimaryStage());
         if (tableOptions == null) {
             return; // Dialog cancelled
@@ -246,7 +251,8 @@ final class MenuItemHelper {
         Delimiter delimiter = TopsoilFileUtils.guessDelimiter(content);
 
         // Get necessary information from user
-        Map<DataImportDialog.Key, Object> settings = DataImportDialog.showDialog("Clipboard", delimiter);
+        Map<DataImportDialog.Key, Object> settings =
+                new DataImportDialog("Clipboard", delimiter, Topsoil.getPrimaryStage()).showAndWait().orElse(null);
         if (settings == null) {
             return; // Dialog cancelled
         }
@@ -270,8 +276,15 @@ final class MenuItemHelper {
             throw new TopsoilException("DataParser instance for template \"" + template + "\" is null, but parsing is supported.");
         }
 
+        // Check if the String content is able to be parsed into a data table
+        if (! parser.isParseableString(content, delimiter.asString())) {
+            TopsoilNotification.error("Unreadable Data",
+                    "Topsoil could not read table data from the clipboard.");
+            return;
+        }
+
         // Parse table; get table options from user
-        DataTable table = parser.parseDataTable(content, delimiter.asString(), "clipboard-content");
+        FXDataTable table = new FXDataTable(parser.parseDataTable(content, delimiter.asString(), "clipboard-content"));
         Map<DataTableOptionsDialog.Key, Object> tableOptions = DataTableOptionsDialog.showDialog(table, Topsoil.getPrimaryStage());
         if (tableOptions == null) {
             return; // Dialog cancelled
@@ -294,12 +307,12 @@ final class MenuItemHelper {
     static void importMultipleFiles() {
         Map<String, Object> settings = MultipleImportWizard.startWizard();
         if (settings != null) {
-            List<DataTable> tables = (List<DataTable>) settings.get(MultipleImportWizard.Key.TABLES);
+            List<FXDataTable> tables = (List<FXDataTable>) settings.get(MultipleImportWizard.Key.TABLES);
             TopsoilProject project = ProjectManager.getProject();
             if (project != null) {
-                project.addDataTables(tables.toArray(new DataTable[]{}));
+                project.addDataTables(tables.toArray(new FXDataTable[]{}));
             } else {
-                ProjectManager.setProject(new TopsoilProject(tables.toArray(new DataTable[]{})));
+                ProjectManager.setProject(new TopsoilProject(tables.toArray(new FXDataTable[]{})));
             }
         }
     }
@@ -309,7 +322,7 @@ final class MenuItemHelper {
      *
      * @param table DataTable
      */
-    static void exportTableAs(DataTable table) {
+    static void exportTableAs(FXDataTable table) {
         DataTemplate template = table.getTemplate();
         if (template.isWritingSupported()) {
             TopsoilNotification.info(
@@ -325,12 +338,11 @@ final class MenuItemHelper {
     }
 
     static void editTableOptions() {
-        DataTable table = MenuUtils.getCurrentDataTable();
+        FXDataTable table = MenuUtils.getCurrentDataTable();
         if (table != null) {
             Map<DataTableOptionsDialog.Key, Object> tableOptions = DataTableOptionsDialog.showDialog(table, Topsoil.getPrimaryStage());
             if (tableOptions != null) {
                 DataTableOptionsDialog.applySettings(table, tableOptions);
-                ProjectManager.getProject().updatePlotsForTable(table);
             }
         }
     }

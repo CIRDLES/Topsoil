@@ -1,5 +1,7 @@
 package org.cirdles.topsoil;
 
+import org.cirdles.topsoil.plot.PlotOption;
+
 /**
  * Defines lambda constants.
  *

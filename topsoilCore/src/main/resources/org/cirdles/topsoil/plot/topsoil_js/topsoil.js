@@ -19,53 +19,41 @@
 
     // top level containers
     window.topsoil = {data: []};
-    window.plot = {dataKeys: [], properties: {}, propertiesKeys: []};
+    window.plot = {data: [], options: {}};
 
     // alias topsoil
     window.ts = topsoil;
+
+    topsoil.init = function (data, options) {
+        plot.options = options;
+        topsoil.setData(data);
+    };
 
     topsoil.emptyArray = function () {
         return [];
     };
 
     topsoil.getData = function () {
-        return topsoil.data;
+        return JSON.stringify(topsoil.data);
     };
 
     topsoil.setData = function (data) {
-        topsoil.data = [];
-        for (var index = 0; index < data.size(); index++) {
-            var entry = {};
-            var row = data.get(index);
-            if (row != null) {
-                plot.dataKeys.forEach(function (key) {
-                    var value = row.get(key);
-                    if (value != null) {
-                        entry[key] = value;
-                    }
-                });
-                topsoil.data.push(entry);
-            }
-        }
+        topsoil.data = JSON.parse(data);
         plot.setData(topsoil.data);
     };
 
-    topsoil.setProperties = function (properties) {
-        plot.properties = {};
-
-        var key;
-        for (var p in Property) {
-            key = Property[p];
-            plot.properties[key] = properties.get(key);
-        }
-
-        plot.update(topsoil.data);
+    topsoil.setOptions = function (options) {
+        plot.options = JSON.parse(options);
+        plot.update();
     };
 
-    topsoil.updateProperty = function(key, value) {
-        plot.properties[key] = value;
+    topsoil.updateOption = function(key, value) {
+        plot.options[key] = value;
+        plot.update()
+    };
 
-        plot.update(topsoil.data)
+    topsoil.update = function () {
+        plot.update();
     };
 
     /*
@@ -78,8 +66,6 @@
     plot.innerWidth = 0.0;
     plot.innerHeight = 0.0;
 
-    // somewhat confusing locally, but this element should be considered
-    // to be the plot externally
     var svgContainer = d3.select("body").append("div")
         .attr("id", "svgContainer");
     var svg = svgContainer.append("svg")
@@ -119,34 +105,33 @@
         .attr("stroke", "black")
         .attr("stroke-width", "2px");
 
-    topsoil.resize = function (width, height) {
-        if (plot.initialized) {
+    topsoil.resize = function () {
+        plot.resize();
+        plot.update();
+    };
 
-            plot.outerWidth = width;
-            plot.outerHeight = height;
-            plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;
-            plot.innerHeight = plot.outerHeight - plot.margin.top - plot.margin.bottom;
+    plot.resize = function () {
+        plot.outerWidth = window.innerWidth;
+        plot.outerHeight = window.innerHeight;
+        plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;
+        plot.innerHeight = plot.outerHeight - plot.margin.top - plot.margin.bottom;
 
-            svg
-                .attr("width", plot.outerWidth)
-                .attr("height", plot.outerHeight);
+        svg
+            .attr("width", plot.outerWidth)
+            .attr("height", plot.outerHeight);
 
-            plot.plotArea
-                .attr("width", plot.innerWidth)
-                .attr("height", plot.innerHeight);
+        plot.plotArea
+            .attr("width", plot.innerWidth)
+            .attr("height", plot.innerHeight);
 
-            plot.plotBorder
-                .attr("width", plot.innerWidth)
-                .attr("height", plot.innerHeight);
-
-            plot.removeAxes();
-            plot.initialize(ts.data);
-        }
+        plot.plotBorder
+            .attr("width", plot.innerWidth)
+            .attr("height", plot.innerHeight);
     };
 
     // PROPERTIES
-    plot.getProperty = function (key) {
-        return plot.properties[key];
+    plot.getOption = function (key) {
+        return plot.options[key];
     };
 
 })();

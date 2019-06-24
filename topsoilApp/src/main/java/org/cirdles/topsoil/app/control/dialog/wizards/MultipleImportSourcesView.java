@@ -13,15 +13,15 @@ import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
-import org.cirdles.topsoil.app.data.DataTable;
-import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.file.TopsoilFileUtils;
-import org.cirdles.topsoil.app.file.parser.DataParser;
 import org.cirdles.topsoil.app.file.Delimiter;
 import org.cirdles.topsoil.app.file.FileChoosers;
 import org.cirdles.topsoil.app.ResourceBundles;
+import org.cirdles.topsoil.data.DataTable;
+import org.cirdles.topsoil.data.DataTemplate;
+import org.cirdles.topsoil.file.parser.DataParser;
 import org.controlsfx.dialog.Wizard;
 import org.controlsfx.dialog.WizardPane;
 

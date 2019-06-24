@@ -1,7 +1,7 @@
 package org.cirdles.topsoil.app;
 
 import org.cirdles.topsoil.app.control.ProjectView;
-import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.FXDataTable;
 
 /**
  * Utility methods for menu actions in {@link TopsoilMenuBar} and its associated helpers.
@@ -10,7 +10,7 @@ import org.cirdles.topsoil.app.data.DataTable;
  *
  * @see TopsoilMenuBar
  */
-final class MenuUtils {
+public final class MenuUtils {
 
     private MenuUtils() {
         // Prevents instantiation by default constructor
@@ -21,7 +21,7 @@ final class MenuUtils {
      *
      * @return  current DataTable; else null
      */
-    static DataTable getCurrentDataTable() {
+    static FXDataTable getCurrentDataTable() {
         if (ProjectManager.getProject() != null) {
             ProjectView projectView = MainController.getInstance().getProjectView();
             if (projectView != null) {
@@ -31,22 +31,33 @@ final class MenuUtils {
         return null;
     }
 
+    public static void selectDataTable(FXDataTable table) {
+        if (ProjectManager.getProject() == null) {
+            return;
+        }
+
+        ProjectView projectView = MainController.getInstance().getProjectView();
+        if (projectView != null) {
+            projectView.selectDataTable(table);
+        }
+    }
+
     static void undoLastAction() {
-        DataTable table = getCurrentDataTable();
+        FXDataTable table = getCurrentDataTable();
         if (table != null) {
             table.undoLastAction();
         }
     }
 
     static void redoLastAction() {
-        DataTable table = getCurrentDataTable();
+        FXDataTable table = getCurrentDataTable();
         if (table != null) {
             table.redoLastAction();
         }
     }
 
     static String lastUndoName() {
-        DataTable table = getCurrentDataTable();
+        FXDataTable table = getCurrentDataTable();
         if (table != null) {
             return table.lastUndoName();
         }
@@ -54,7 +65,7 @@ final class MenuUtils {
     }
 
     static String lastRedoName() {
-        DataTable table = getCurrentDataTable();
+        FXDataTable table = getCurrentDataTable();
         if (table != null) {
             return table.lastRedoName();
         }

@@ -6,12 +6,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import org.cirdles.topsoil.app.control.tree.ProjectTreeView;
-import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.control.data.FXDataTableViewer;
+import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.ResourceBundles;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -34,13 +35,9 @@ public class ProjectView extends SplitPane {
     @FXML private AnchorPane tabPaneContainer;
     @FXML private TabPane tabPane;
 
-    @FXML private Label projectTreeViewLabel;
-    @FXML private AnchorPane projectTreeViewPane;
-    private ProjectTreeView projectTreeView;
-
-    @FXML private Label constantsEditorLabel;
-    @FXML private AnchorPane constantsEditorPane;
-    private ConstantsEditor constantsEditor;
+    @FXML private Label projectSidebarLabel;
+    @FXML private AnchorPane projectSidebarPane;
+    private ProjectSidebar projectSidebar;
 
     private VBox noTables = new VBox(new Label("No tables loaded. Import from the \"File\" menu."));
 
@@ -67,23 +64,18 @@ public class ProjectView extends SplitPane {
 
     @FXML
     public void initialize() {
-        projectTreeViewLabel.setText(resources.getString("projectStructure"));
-        constantsEditorLabel.setText(resources.getString("constantsEditor"));
+        projectSidebarLabel.setText(resources.getString("projectStructure"));
 
-        this.projectTreeView = new ProjectTreeView(project);
-        FXMLUtils.setAnchorPaneConstraints(projectTreeView, 0.0, 0.0, 0.0, 0.0);
-        projectTreeViewPane.getChildren().add(projectTreeView);
+        this.projectSidebar = new ProjectSidebar(project);
+        FXMLUtils.setAnchorPaneConstraints(projectSidebar, 0.0, 0.0, 0.0, 0.0);
+        projectSidebarPane.getChildren().add(projectSidebar);
 
-        this.constantsEditor = new ConstantsEditor(project);
-        FXMLUtils.setAnchorPaneConstraints(constantsEditor, 0.0, 0.0, 0.0, 0.0);
-        constantsEditorPane.getChildren().add(constantsEditor);
-
-        for (DataTable table : project.getDataTables()) {
+        for (FXDataTable table : project.getDataTables()) {
             addTabForTable(table);
         }
-        project.dataTablesProperty().addListener((ListChangeListener.Change<? extends DataTable> c) -> {
+        project.dataTablesProperty().addListener((ListChangeListener.Change<? extends FXDataTable> c) -> {
             while (c.next()) {
-                for (DataTable table : c.getAddedSubList()) {
+                for (FXDataTable table : c.getAddedSubList()) {
                     addTabForTable(table);
                 }
             }
@@ -118,8 +110,29 @@ public class ProjectView extends SplitPane {
         return project;
     }
 
-    public DataTable getVisibleDataTable() {
-        return ((ProjectTableTab) tabPane.getSelectionModel().getSelectedItem()).getDataTable();
+    public FXDataTable getVisibleDataTable() {
+        return (!tabPane.getSelectionModel().isEmpty()) ?
+                ((ProjectTableTab) tabPane.getSelectionModel().getSelectedItem()).getDataTable() : null;
+    }
+
+    public FXDataTableViewer getViewerForTable(FXDataTable table) {
+        List<Tab> tabs = tabPane.getTabs();
+        for (Tab tab : tabs) {
+            ProjectTableTab tableTab = (ProjectTableTab) tab;
+            if (tableTab.getDataTable().equals(table)) {
+                return tableTab.getDataTableViewer();
+            }
+        }
+        return null;
+    }
+
+    public void selectDataTable(FXDataTable table) {
+        List<Tab> tabs = tabPane.getTabs();
+        for (Tab tab : tabs) {
+            if (((ProjectTableTab) tab).getDataTable().equals(table)) {
+                tabPane.getSelectionModel().select(tab);
+            }
+        }
     }
 
     //**********************************************//
@@ -131,15 +144,10 @@ public class ProjectView extends SplitPane {
      *
      * @param table DataTable
      */
-    private void addTabForTable(DataTable table) {
+    private void addTabForTable(FXDataTable table) {
         ProjectTableTab tableTab = new ProjectTableTab(table);
-        tableTab.setOnClosed(event -> {
-            project.removeDataTable(table);
-//            if (tabPane.getTabs().isEmpty()) {
-//                Topsoil.getController().setHomeView();
-//            }
-        });
-        tableTab.textProperty().bindBidirectional(table.labelProperty());
+        tableTab.setOnClosed(event -> project.removeDataTable(table));
+        tableTab.textProperty().bindBidirectional(table.titleProperty());
         tabPane.getTabs().add(tableTab);
         tabPane.getSelectionModel().select(tableTab);
     }
@@ -149,7 +157,7 @@ public class ProjectView extends SplitPane {
      *
      * @param table DataTable
      */
-    private void removeTabForTable(DataTable table) {
+    private void removeTabForTable(FXDataTable table) {
         for (Tab tab : tabPane.getTabs()) {
             if (tab instanceof ProjectTableTab) {
                 if (((ProjectTableTab) tab).getDataTable().equals(table)) {

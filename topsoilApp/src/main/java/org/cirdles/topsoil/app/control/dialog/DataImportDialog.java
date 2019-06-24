@@ -9,10 +9,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.Topsoil;
-import org.cirdles.topsoil.app.data.DataTemplate;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.file.Delimiter;
 import org.cirdles.topsoil.app.ResourceBundles;
+import org.cirdles.topsoil.data.DataTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class DataImportDialog extends Dialog<Map<DataImportDialog.Key, Object>> 
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    private DataImportDialog(String sourceName, Delimiter initial, Stage owner) {
+    public DataImportDialog(String sourceName, Delimiter initial, Stage owner) {
         this.setTitle(ResourceBundles.DIALOGS.getString("importingData") + " " + sourceName);
         this.initOwner(owner);
 

@@ -2,18 +2,27 @@ package org.cirdles.topsoil.app;
 
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
+import org.cirdles.topsoil.IsotopeSystem;
+import org.cirdles.topsoil.Variable;
+import org.cirdles.topsoil.app.control.dialog.PlotConfigDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.plot.PlotGenerator;
-import org.cirdles.topsoil.app.data.DataTable;
+import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.RecentFiles;
-import org.cirdles.topsoil.app.data.ExampleData;
 import org.cirdles.topsoil.app.util.TopsoilException;
+import org.cirdles.topsoil.data.DataColumn;
+import org.cirdles.topsoil.data.ExampleData;
+import org.cirdles.topsoil.plot.PlotOption;
+import org.cirdles.topsoil.plot.PlotOptions;
 import org.cirdles.topsoil.plot.PlotType;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.StringJoiner;
 
 /**
  * The main {@code MenuBar} for the application.
@@ -123,7 +132,7 @@ public class TopsoilMenuBar extends MenuBar {
 
         MenuItem exportTableMenuItem = new MenuItem(resources.getString("exportTable"));
         exportTableMenuItem.setOnAction(event -> {
-            DataTable table = MenuUtils.getCurrentDataTable();
+            FXDataTable table = MenuUtils.getCurrentDataTable();
             if (table != null) {
                 MenuItemHelper.exportTableAs(table);
             }
@@ -208,14 +217,48 @@ public class TopsoilMenuBar extends MenuBar {
     private Menu getVisualizationsMenu() {
         MenuItem generatePlotItem = new MenuItem(resources.getString("generatePlot"));
         generatePlotItem.setOnAction(event -> {
-            TopsoilProject project = ProjectManager.getProject();
-            if (project != null) {
-                PlotGenerator.generatePlot(
-                        project,
-                        PlotType.SCATTER,
-                        MenuUtils.getCurrentDataTable(),
-                        null);
+            FXDataTable table = MenuUtils.getCurrentDataTable();
+            if (table == null) {
+                return;
             }
+
+            PlotConfigDialog dialog = new PlotConfigDialog(table);
+            Map<PlotConfigDialog.Key, Object> settings = dialog.showAndWait().orElse(null);
+            if (settings == null) {
+                return;
+            }
+
+            PlotOptions options = PlotOptions.defaultOptions();
+            Map<Variable<?>, DataColumn<?>> variableMap =
+                    (Map<Variable<?>, DataColumn<?>>) settings.get(PlotConfigDialog.Key.VARIABLE_MAP);
+
+            // Check for required plotting variables
+            List<Variable> missing = PlotGenerator.findMissingVariables(variableMap, PlotType.SCATTER);
+            if (! missing.isEmpty()) {
+                StringJoiner joiner = new StringJoiner(", ");
+                for (Variable v : missing) {
+                    joiner.add(v.getAbbreviation());
+                }
+                TopsoilNotification.error(
+                        "Missing Variables",
+                        "The following variables must be assigned for this plot type:\n\n[" + joiner.toString() + "]"
+                );
+                return;
+            }
+
+            IsotopeSystem isotopeSystem = (IsotopeSystem) settings.get(PlotConfigDialog.Key.ISOTOPE_SYSTEM);
+            options.put(PlotOption.ISOTOPE_SYSTEM, isotopeSystem);
+
+            options.put(PlotOption.TITLE, table.getTitle());
+            options.put(PlotOption.X_AXIS, variableMap.get(Variable.X).getTitle());
+            options.put(PlotOption.Y_AXIS, variableMap.get(Variable.Y).getTitle());
+
+            PlotGenerator.generatePlot(
+                    ProjectManager.getProject(),
+                    table,
+                    variableMap,
+                    PlotType.SCATTER,
+                    options);
         });
 
         Menu visualizationsMenu = new Menu(resources.getString("visualizationsMenu"), null,

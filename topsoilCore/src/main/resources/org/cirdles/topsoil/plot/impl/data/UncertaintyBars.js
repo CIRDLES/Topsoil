@@ -30,8 +30,8 @@ plot.drawUncertaintyBars = function () {
 plot.updateUncertaintyBars = function () {
     if (plot.uncertaintyBarsVisible) {
 
-        var fill = plot.getProperty(Property.UNCTBARS_FILL),
-            opacity = plot.getProperty(Property.UNCTBARS_OPACITY);
+        var fill = plot.getOption(PlotOption.UNCTBARS_FILL),
+            opacity = plot.getOption(PlotOption.UNCTBARS_OPACITY);
 
         var uncertaintyBars = plot.uncertaintyBarGroup.selectAll(".uncertaintyBar").data(plot.data);
 

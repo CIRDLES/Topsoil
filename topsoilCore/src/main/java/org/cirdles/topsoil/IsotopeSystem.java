@@ -1,7 +1,5 @@
 package org.cirdles.topsoil;
 
-import org.cirdles.topsoil.plot.PlotType;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -11,17 +9,11 @@ import java.util.List;
 public enum IsotopeSystem {
 
     //Isotope abbreviation, isotope name, array of default headers as strings
-    GENERIC("Gen", "Generic",
-            new String[]{"x", "y", "xσ", "yσ", "Corr Coef"},
-            new PlotType[] {PlotType.SCATTER}),
+    GENERIC("Gen", "Generic"),
 
-    UPB("UPb", "Uranium Lead",
-        new String[]{"207Pb*/235U", "206Pb*/238U", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-        new PlotType[] {PlotType.SCATTER}),
+    UPB("UPb", "Uranium Lead"),
 
-    UTH("UTh", "Uranium Thorium",
-        new String[]{"[234Pb/238U]t", "[230Th/238U]t", "±2σ (%)", "±2σ (%)", "Corr Coef"},
-        new PlotType[] {PlotType.SCATTER});
+    UTH("UTh", "Uranium Thorium");
 
     /**
      * An abbreviation of the {@code IsotopeSystem}'s name.
@@ -32,16 +24,6 @@ public enum IsotopeSystem {
      * The name of the {@code IsotopeSystem}.
      */
     private final String name;
-
-    /**
-     * Default headers for model of an {@code IsotopeSystem}.
-     */
-    private final String[] headers;
-
-    /**
-     * The available {@code PlotType}s for the {@code IsotopeSystem}.
-     */
-    private final PlotType[] plots;
 
     /**
      * A {@code List} of all {@code IsotopeSystem}s.
@@ -59,11 +41,9 @@ public enum IsotopeSystem {
     // Constructors
     //***********************
 
-    IsotopeSystem( String abbr, String name, String [] headers, PlotType[] plots ) {
+    IsotopeSystem(String abbr, String name) {
         this.abbreviation = abbr;
         this.name = name;
-        this.headers = headers;
-        this.plots = plots;
     }
 
     //***********************
@@ -86,21 +66,6 @@ public enum IsotopeSystem {
     }
 
     /**
-     * Returns the appropriate {@code IsotopeSystem} for the given abbreviation, if one exists.
-     *
-     * @param abbr  String abbreviation
-     * @return      associated IsotopeSystem
-     */
-    public static IsotopeSystem fromAbbreviation( String abbr ) {
-        for (IsotopeSystem i : values()) {
-            if (abbr.equals(i.getAbbreviation())) {
-                return i;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the abbreviated name of the {@code IsotopeSystem}.
      *
      * @return abbreviated String name
@@ -116,24 +81,6 @@ public enum IsotopeSystem {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Returns the default headers for model of {@code IsotopeSystem}.
-     *
-     * @return array of String headers
-     */
-    public String[] getHeaders() {
-        return headers.clone();
-    }
-
-    /**
-     * Returns the available {@code PlotType}s for the {@code IsotopeSystem}.
-     *
-     * @return array of TopsoilPlotTypes
-     */
-    public PlotType[] getPlots() {
-        return plots.clone();
     }
 
     @Override

@@ -15,8 +15,6 @@
  */
 package org.cirdles.topsoil.plot.internal;
 
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -27,12 +25,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.util.Optional;
 
 import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
 import static javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM;
@@ -56,29 +51,9 @@ public class SVGSaver {
     private static final String SVG_DOCTYPE_SYSTEM
             = "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd";
 
-    private static final File FILE_CHOOSER_INITIAL_DIRECTORY
-            = new File(System.getProperty("user.home"));
-
     //***********************
     // Methods
     //***********************
-
-    /**
-     * Saves the vector image in Topsoil with the .svg file extension
-     *
-     * @param svgDocument Document to be saved
-     */
-    public void save(Document svgDocument) {
-        // If there is no file specified, then there is nothing to do.
-        // Otherwise, write the file with the SVG format.
-        generateSaveUI().ifPresent(stream -> {
-            try {
-                writeSVGToOutputStream(svgDocument, stream);
-            } catch (IOException ex) {
-                LOGGER.error(null, ex);
-            }
-        });
-    }
 
     /**
      * Saves the vector image in Topsoil with the .svg file extension, to the provided file.
@@ -95,41 +70,6 @@ public class SVGSaver {
             LOGGER.error(null, e);
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Creates a {@code FileChooser} with an {@code ExtensionFilter} for .svg files.
-     *
-     * @return  a FileChooser for .svg files
-     */
-    private FileChooser getFileChooser() {
-        FileChooser fileChooser = new FileChooser();
-
-        fileChooser.setTitle("Export to SVG");
-        fileChooser.setInitialDirectory(FILE_CHOOSER_INITIAL_DIRECTORY);
-
-        fileChooser.getExtensionFilters().setAll(
-                new ExtensionFilter("SVG Image", "*.svg"),
-                new ExtensionFilter("All Files", "*.*"));
-
-        return fileChooser;
-    }
-
-    /**
-     * Creates a save {@code Dialog} window and prompts user for file path.
-     *
-     * @return Optional of type FileOutputStream describing the file path
-     */
-    private Optional<OutputStream> generateSaveUI() {
-        return Optional.ofNullable(getFileChooser().showSaveDialog(null))
-                .map(file -> {
-                    try {
-                        return new FileOutputStream(file);
-                    } catch (FileNotFoundException ex) {
-                        LOGGER.error(null, ex);
-                        return null;
-                    }
-                });
     }
 
     /**

@@ -16,6 +16,7 @@
     -fx-border-color: #ccc;
     -fx-border-style: solid;
     -fx-font-family: Monospaced;
+    -fx-font-weight: bold;
 }
 
 .table-view *.scroll-bar:horizontal *.increment-button,

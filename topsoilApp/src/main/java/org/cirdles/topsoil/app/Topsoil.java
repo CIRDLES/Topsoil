@@ -2,9 +2,6 @@ package org.cirdles.topsoil.app;
 
 import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.stage.StageHelper;
-import com.teamdev.jxbrowser.chromium.BrowserCore;
-import com.teamdev.jxbrowser.chromium.BrowserPreferences;
-import com.teamdev.jxbrowser.chromium.internal.Environment;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -31,8 +28,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
-
-import static org.cirdles.topsoil.app.MenuItemHelper.saveProject;
 
 /**
  * The main class of the Topsoil application.
@@ -63,23 +58,6 @@ public class Topsoil extends Application {
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
-
-    @Override
-    public void init() {
-        // JxBrowser; enables lightweight mode, local files, and logging
-        BrowserPreferences.setChromiumSwitches(
-                "--disable-gpu",
-                "--disable-gpu-compositing",
-                "--enable-begin-frame-scheduling",
-                "--software-rendering-fps=60",
-                "--disable-web-security",
-                "-–allow-file-access-from-files",
-                "--enable-logging --v=1"
-        );
-        if (Environment.isMac()) {
-            //BrowserCore.initialize();   // must be initialized on non-UI thread on Mac
-        }
-    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -134,6 +112,7 @@ public class Topsoil extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 
     /**
@@ -154,7 +133,7 @@ public class Topsoil extends Application {
         return logo;
     }
 
-    public static void safeShutdown() {
+    static void safeShutdown() {
         TopsoilProject project = ProjectManager.getProject();
         if (project == null) {
             shutdown();     // No data loaded, safe to shut down
@@ -195,12 +174,13 @@ public class Topsoil extends Application {
     /**
      * Exits the application without saving.
      */
-    public static void shutdown() {
+    private static void shutdown() {
         List<Stage> stages = StageHelper.getStages();
         for (int index = stages.size() - 1; index > 0; index--) {
             stages.get(index).close();
         }
         Platform.exit();
+        System.exit(0);
     }
 
     public static void main(String[] args) {
@@ -269,11 +249,11 @@ public class Topsoil extends Application {
     private static void setupKeyboardShortcuts(Scene scene) {
         scene.getAccelerators().put(
                 new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN),
-                () -> MenuUtils.undoLastAction()
+                MenuUtils::undoLastAction
         );
         scene.getAccelerators().put(
                 new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN),
-                () -> MenuUtils.redoLastAction()
+                MenuUtils::redoLastAction
         );
     }
 
