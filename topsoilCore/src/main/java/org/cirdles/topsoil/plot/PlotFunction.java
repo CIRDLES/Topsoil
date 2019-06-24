@@ -30,10 +30,11 @@ public final class PlotFunction {
 
         private Scatter() {}
 
-        public static PlotFunction GET_AXIS_EXTENTS = new PlotFunction("getAxisExtents", SCATTER, Double[].class);
-        public static PlotFunction SET_AXIS_EXTENTS = new PlotFunction("setAxisExtents", SCATTER, null);
-        public static PlotFunction RECENTER = new PlotFunction("recenter", SCATTER, null);
-        public static PlotFunction SNAP_TO_CORNERS = new PlotFunction("snapToCorners", SCATTER, null);
+        public static final PlotFunction GET_AXIS_EXTENTS = new PlotFunction("getAxisExtents", SCATTER, Double[].class);
+        public static final PlotFunction SET_AXIS_EXTENTS = new PlotFunction("setAxisExtents", SCATTER, null);
+        public static final PlotFunction RESIZE = new PlotFunction("resize", PlotType.SCATTER, null);
+        public static final PlotFunction RECENTER = new PlotFunction("recenter", SCATTER, null);
+        public static final PlotFunction SNAP_TO_CORNERS = new PlotFunction("snapToCorners", SCATTER, null);
 
     }
 

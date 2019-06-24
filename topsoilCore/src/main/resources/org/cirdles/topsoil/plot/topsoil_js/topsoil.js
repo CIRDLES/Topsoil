@@ -106,6 +106,11 @@
         .attr("stroke-width", "2px");
 
     topsoil.resize = function () {
+        plot.resize();
+        plot.update();
+    };
+
+    plot.resize = function () {
         plot.outerWidth = window.innerWidth;
         plot.outerHeight = window.innerHeight;
         plot.innerWidth = plot.outerWidth - plot.margin.left - plot.margin.right;

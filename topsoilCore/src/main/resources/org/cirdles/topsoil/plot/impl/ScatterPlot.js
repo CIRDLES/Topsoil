@@ -47,7 +47,7 @@ plot.initialize = function (data) {
         plot.lambda.R238_235S = topsoil.defaultLambda.R238_235S;
     }
 
-    topsoil.resize();
+    plot.resize();
 
     //create title
     plot.area.append("text")
@@ -111,7 +111,7 @@ plot.initialize = function (data) {
 
     // function to recenter the plot to its original control
     topsoil.recenter = function() {
-        changeAxes(plot.xDataMin, plot.xDataMax, plot.yDataMin, plot.yDataMax);
+        changeAxes(plot.xDataMin, plot.xDataMax, plot.yDataMin, plot.yDataMax, true);
     };
 
     topsoil.getAxisExtents = function() {
@@ -125,7 +125,7 @@ plot.initialize = function (data) {
     };
 
     // function to manually the x and y axes' extents
-    topsoil.setAxisExtents = function(xMin, xMax, yMin, yMax) {
+    topsoil.setAxisExtents = function(xMin, xMax, yMin, yMax, doInterpolate) {
 
         // if the user hasn't set a new extent for a field, leave it as-is
         if (!xMin || isNaN(xMin)) xMin = plot.xAxisScale.domain()[0];
@@ -137,19 +137,25 @@ plot.initialize = function (data) {
         if(xMin >= xMax) { xMax = xMin + .1; }
         if(yMin >= yMax) { yMax = yMin + .1; }
 
-        changeAxes(xMin, xMax, yMin, yMax);
+        changeAxes(xMin, xMax, yMin, yMax, doInterpolate);
     };
 
     // function to change the X and Y extents of the plot
-    var changeAxes = function(xMin, xMax, yMin, yMax) {
-        d3.transition().duration(750).tween("zoom", function() {
-            var ix = d3.interpolate(plot.xAxisScale.domain(), [xMin, xMax]);
-            var iy = d3.interpolate(plot.yAxisScale.domain(), [yMin, yMax]);
-            return function(t) {
-                zoom.x(plot.xAxisScale.domain(ix(t))).y(plot.yAxisScale.domain(iy(t)));
-                zoomed();
-            };
-        });
+    var changeAxes = function(xMin, xMax, yMin, yMax, doInterpolate) {
+        if (doInterpolate) {
+            d3.transition().duration(750).tween("zoom", function() {
+                var ix = d3.interpolate(plot.xAxisScale.domain(), [xMin, xMax]);
+                var iy = d3.interpolate(plot.yAxisScale.domain(), [yMin, yMax]);
+                return function(t) {
+                    zoom.x(plot.xAxisScale.domain(ix(t))).y(plot.yAxisScale.domain(iy(t)));
+                    zoomed();
+                };
+            });
+        } else {
+            zoom.x(plot.xAxisScale.domain([xMin, xMax]))
+                .y(plot.yAxisScale.domain([yMin, yMax]));
+            plot.update();
+        }
     };
 
     // function to bring concordia to corners of plot
@@ -219,7 +225,7 @@ plot.update = function () {
         return;
     }
 
-    topsoil.resize();
+    plot.resize();
 
     //if the isotope type has changed, alert Java
     if (plot.currentIsotope !== plot.getOption(PlotOption.ISOTOPE_SYSTEM)) {
@@ -359,10 +365,10 @@ plot.zoomed = function() {
     plot.uncertainty is unspecified, the default value 2 is used.
  */
 plot.updateDataExtent = function () {
-    var xMin = Infinity,
-        xMax = -Infinity,
-        yMin = Infinity,
-        yMax = -Infinity,
+    var xMin = 1000000,
+        xMax = -1000000,
+        yMin = 1000000,
+        yMax = -1000000,
         sigmaX,
         sigmaY;
     plot.data.forEach(d => {

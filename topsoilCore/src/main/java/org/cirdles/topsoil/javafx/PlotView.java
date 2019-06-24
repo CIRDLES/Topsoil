@@ -42,6 +42,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A {@link Plot} that uses JavaScript and HTML to power its visualizations.
@@ -54,6 +55,8 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
             = LoggerFactory.getLogger(PlotView.class);
 
     private WebView webView;
+    private WebEngine webEngine;
+    private CompletableFuture<Void> loadFuture;
 
     private PlotType plotType;
     private String htmlString;
@@ -122,18 +125,64 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
         Validate.notNull(type, "Plot type cannot be null.");
 
-        this.webView = getChild();
-        webView.setContextMenuEnabled(false);
+        this.axisExtentsBridge = new AxisExtentsBridge(this);
 
         this.plotType = type;
         this.htmlString = HTMLTemplate.forPlotType(plotType);
 
-        this.axisExtentsBridge = new AxisExtentsBridge(this);
-
         plotData.addListener((ListChangeListener<DataEntry>) c -> updateJSDelayed("setData", this::updateJSData));
         plotOptions.addListener((MapChangeListener<PlotOption<?>, Object>) c -> updateJSDelayed("setOptions", this::updateJSOptions));
 
-        initializeWebEngine();
+        loadFuture = new CompletableFuture<>();
+
+        this.webView = getChild();
+        webView.setContextMenuEnabled(false);
+        webView.widthProperty().addListener(c -> update());
+        webView.heightProperty().addListener(c -> update());
+
+        this.webEngine = webView.getEngine();
+        webEngine.setJavaScriptEnabled(true);
+        // useful for debugging
+        webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
+        webEngine.getLoadWorker().stateProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (webEngine.getDocument() != null &&
+                            webEngine.getDocument().getDoctype() != null &&
+                            newValue == Worker.State.SUCCEEDED) {
+
+                        Number initXMin = (Number) plotOptions.get(PlotOption.X_MIN),
+                                initXMax = (Number) plotOptions.get(PlotOption.X_MAX),
+                                initYMin = (Number) plotOptions.get(PlotOption.Y_MIN),
+                                initYMax = (Number) plotOptions.get(PlotOption.Y_MAX);
+                        boolean isCustomViewport = ! (
+                                PlotOption.X_MIN.getDefaultValue().equals(initXMin) &&
+                                        PlotOption.X_MAX.getDefaultValue().equals(initXMax) &&
+                                        PlotOption.Y_MIN.getDefaultValue().equals(initYMin) &&
+                                        PlotOption.Y_MAX.getDefaultValue().equals(initYMax)
+                        );
+
+                        topsoil = (JSObject) webEngine.executeScript("topsoil");
+
+                        topsoil.setMember("bridge", bridge);
+                        topsoil.setMember("axisExtentsBridge", axisExtentsBridge);
+                        topsoil.setMember("regression", regression);
+
+                        topsoil.call("init", getJSONData(), getJSONOptions());
+
+                        if (isCustomViewport) {
+                            call(PlotFunction.Scatter.SET_AXIS_EXTENTS,
+                                    initXMin,
+                                    initXMax,
+                                    initYMin,
+                                    initYMax,
+                                    false
+                            );
+                        }
+                        loadFuture.complete(null);
+                    }
+                });
+        reloadEngine();
     }
 
     public PlotView(PlotType type, PlotOptions options) {
@@ -242,6 +291,26 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
         return svgDocument;
     }
 
+    public void update() {
+        if (topsoil != null) {
+            topsoil.call("update");
+        }
+    }
+
+    /**
+     * Loads a webpage with the Topsoil JS plot files.
+     */
+    public CompletableFuture<Void> reloadEngine() {
+        loadFuture = new CompletableFuture<>();
+        // asynchronous
+        webEngine.loadContent(htmlString);
+        return loadFuture;
+    }
+
+    public CompletableFuture<Void> getLoadFuture() {
+        return loadFuture;
+    }
+
     //**********************************************//
     //               PROTECTED METHODS              //
     //**********************************************//
@@ -254,67 +323,6 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
-
-    /**
-     * Initializes this {@link PlotView}'s {@link WebView} and related
-     * objects if it has not already been done.
-     */
-    private void initializeWebEngine() {
-        WebEngine webEngine = webView.getEngine();
-        webEngine.setJavaScriptEnabled(true);
-
-        webView.widthProperty().addListener(c -> update());
-        webView.heightProperty().addListener(c -> update());
-
-        // useful for debugging
-        webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
-
-        webEngine.getLoadWorker().stateProperty().addListener(
-                (observable, oldValue, newValue) -> {
-
-                    if (webEngine.getDocument() != null &&
-                            webEngine.getDocument().getDoctype() != null &&
-                            newValue == Worker.State.SUCCEEDED) {
-
-                        Double initXMin = (Double) plotOptions.get(PlotOption.X_MIN),
-                                initXMax = (Double) plotOptions.get(PlotOption.X_MAX),
-                                initYMin = (Double) plotOptions.get(PlotOption.Y_MIN),
-                                initYMax = (Double) plotOptions.get(PlotOption.Y_MAX);
-                        boolean isCustomViewport = ! (
-                                initXMin.equals(PlotOption.X_MIN.getDefaultValue()) &&
-                                        initXMax.equals(PlotOption.X_MAX.getDefaultValue()) &&
-                                        initYMin.equals(PlotOption.Y_MIN.getDefaultValue()) &&
-                                        initYMax.equals(PlotOption.Y_MAX.getDefaultValue())
-                        );
-
-                        topsoil = (JSObject) webEngine.executeScript("topsoil");
-
-                        topsoil.setMember("bridge", bridge);
-                        topsoil.setMember("axisExtentsBridge", axisExtentsBridge);
-                        topsoil.setMember("regression", regression);
-
-                        topsoil.call("init", getJSONData(), getJSONOptions());
-
-                        if (isCustomViewport) {
-                            call(PlotFunction.Scatter.SET_AXIS_EXTENTS,
-                                    initXMin,
-                                    initXMax,
-                                    initYMin,
-                                    initYMax
-                            );
-                        }
-                    }
-                });
-
-        // asynchronous
-        webEngine.loadContent(htmlString);
-    }
-
-    private void update() {
-        if (topsoil != null) {
-            topsoil.call("update");
-        }
-    }
 
     private void updateJSData() {
         if (topsoil != null) {
