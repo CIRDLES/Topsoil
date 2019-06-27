@@ -40,7 +40,7 @@ plot.updatePoints = function (data) {
         points
             .attr("fill", plot.getOption(PlotOption.POINTS_FILL))
             .attr("opacity", function (d) {
-                return d.selected ? plot.getOption(PlotOption.POINTS_OPACITY) : 0.0;
+                return d.visible ? plot.getOption(PlotOption.POINTS_OPACITY) : 0.0;
             })
             .attr("cx", function (d) {
                 return plot.xAxisScale(d.x);
