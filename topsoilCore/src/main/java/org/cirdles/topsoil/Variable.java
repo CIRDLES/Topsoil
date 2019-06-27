@@ -37,7 +37,8 @@ public class Variable<T> extends SimpleSymbolKey<T> {
             RHO,
             LABEL,
             ALIQUOT,
-            SELECTED
+            SELECTED,
+            VISIBLE
     ));
 
     public static final List<Variable<?>> CLASSIC = Collections.unmodifiableList(asList(
