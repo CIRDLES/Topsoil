@@ -27,6 +27,7 @@ public class Variable<T> extends SimpleSymbolKey<T> {
     public static final Variable<String> ALIQUOT = new Variable<>("aliquot", "alqt.", "aliquot", "aliquot", String.class);
 
     public static final Variable<Boolean> SELECTED = new Variable<>("selected", "selected", "selected", true, Boolean.class);
+    public static final Variable<Boolean> VISIBLE = new Variable<>("visible", "visible", "visible", true, Boolean.class);
 
     public static final List<Variable<?>> ALL = Collections.unmodifiableList(asList(
             X,

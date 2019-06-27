@@ -47,6 +47,7 @@ plot.calcEllipses = function(data) {
             .map(shift(d.x, d.y));
 
         points.selected = d.selected;
+        points.visible = d.visible;
 
         return points;
     });
@@ -107,17 +108,11 @@ plot.updateEllipses = function() {
                 return ellipsePath(d);
             })
             .attr("fill", function(d) {
-                var fill;
-                if (! d.selected) {
-                    fill = 'gray';
-                } else {
-                    fill = plot.getOption(PlotOption.ELLIPSES_FILL);
-                }
-                return fill;
+                return d.selected ? plot.getOption(PlotOption.ELLIPSES_FILL) : 'gray';
             })
             .attr("fill-opacity", plot.getOption(PlotOption.ELLIPSES_OPACITY) * 0.2)
             .attr("opacity", function (d) {
-                return d.selected ? 1.0 : 0.0;
+                return d.visible ? 1.0 : 0.0;
             })
             .attr("stroke", "black");
     }
