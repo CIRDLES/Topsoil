@@ -1,10 +1,13 @@
 package org.cirdles.topsoil.app.data;
 
 import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.MapProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
@@ -50,6 +53,17 @@ public class FXDataRow extends FXDataComponent<DataRow> implements DataRow {
     @Override
     public final ObservableMap<DataColumn<?>, Object> getColumnValueMap() {
         return columnMap.get();
+    }
+
+    private BooleanProperty visible = new SimpleBooleanProperty(true);
+    public ReadOnlyBooleanProperty visibleProperty() {
+        return visible;
+    }
+    public final boolean isVisible() {
+        return visible.get();
+    }
+    public final void setVisible(boolean value) {
+        visible.set(value);
     }
 
     //**********************************************//

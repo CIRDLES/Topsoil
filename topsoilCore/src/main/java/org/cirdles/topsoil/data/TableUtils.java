@@ -176,7 +176,7 @@ public final class TableUtils {
             // Extract values for each variable from the row
             newEntry.put(Variable.LABEL, row.getTitle());
             newEntry.put(Variable.SELECTED, row.isSelected());
-            newEntry.put(Variable.VISIBLE, true);       // @TODO enable toggling
+            newEntry.put(Variable.VISIBLE, row.isVisible());
             for (Map.Entry<Variable<?>, DataColumn<?>> e : variableMap.entrySet()) {
                 Variable<?> variable = e.getKey();
                 value = row.getValueForColumn(e.getValue());
