@@ -32,7 +32,8 @@ public class FXDataTreeTableCell<S, T> extends TreeTableCell<S, T> {
     @Override public void startEdit() {
         if (! isEditable()
                 || ! getTreeTableView().isEditable()
-                || ! getTableColumn().isEditable()) {
+                || ! getTableColumn().isEditable()
+                || getItem() == null) {
             return;
         }
         super.startEdit();

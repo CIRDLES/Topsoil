@@ -1,18 +1,12 @@
 package org.cirdles.topsoil.file.parser;
 
-import org.cirdles.commons.util.ResourceExtractor;
-import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTemplate;
 import org.cirdles.topsoil.data.SimpleDataColumn;
 import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.data.SimpleDataTable;
-import org.cirdles.topsoil.data.TableUtils;
-import org.json.JSONArray;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +29,15 @@ public class DefaultDataParser extends AbstractDataParser {
         int startIndex = countHeaderRows(rows);
         List<DataColumn<?>> columns = parseColumns(rows, startIndex);
         List<DataRow> dataRows = new ArrayList<>();
+        DataRow row;
         for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
-            dataRows.add(
-                    getTableRow(
-                            "row" + (rowIndex - startIndex + 1),
-                            rows[rowIndex],
-                            columns
-                    )
+            row = getTableRow(
+                    "row" + (rowIndex - startIndex + 1),
+                    rows[rowIndex],
+                    columns
             );
+            row.setSelected(true);
+            dataRows.add(row);
         }
 
         return new SimpleDataTable(DataTemplate.DEFAULT, label, columns, dataRows);

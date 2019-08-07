@@ -13,6 +13,7 @@ public class SimpleDataRow extends AbstractDataComponent<DataRow> implements Dat
 
     private final List<SimpleDataRow> children = new ArrayList<>();
     private SymbolMap<DataColumn<?>> columnMap = new SimpleSymbolMap<>();
+    private boolean visible = true;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -64,4 +65,13 @@ public class SimpleDataRow extends AbstractDataComponent<DataRow> implements Dat
         columnMap.put(column, value);
     }
 
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 }

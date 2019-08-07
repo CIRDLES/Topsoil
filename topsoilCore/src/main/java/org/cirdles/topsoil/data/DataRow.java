@@ -15,11 +15,16 @@ public interface DataRow extends DataComponent<DataRow> {
 
     List<? extends DataRow> getChildren();
 
+    boolean isVisible();
+
+    void setVisible(boolean value);
+
     @Override
     default String toJSONString() {
         JSONObject json = new JSONObject();
         json.put("title", getTitle());
         json.put("selected", isSelected());
+        json.put("visible", isVisible());
 
         DataColumn<?> column;
         Map<? extends DataColumn, Object> map = getColumnValueMap();
