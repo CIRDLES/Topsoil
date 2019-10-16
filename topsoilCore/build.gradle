@@ -11,22 +11,6 @@ plugins {
 apply plugin: 'java-library'
 apply plugin: 'com.github.rundis.buster'
 
-javascript.source {
-    topsoil {
-        js {
-            srcDir 'src/main/resources/org/cirdles/topsoil/plot/topsoil_js'
-            include '*.js'
-        }
-    }
-}
-
-combineJs {
-    source = javascript.source.topsoil.js.files
-    dest = file("${project.buildDir}/resources/main/org/cirdles/topsoil/plot/topsoil.js")
-}
-
-processResources.dependsOn combineJs
-
 dependencies {
     compile 'com.github.CIRDLES:McLeanRegression:-SNAPSHOT'
     

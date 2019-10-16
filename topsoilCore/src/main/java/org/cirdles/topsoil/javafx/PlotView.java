@@ -19,6 +19,7 @@ import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.data.TableUtils;
+import org.cirdles.topsoil.javafx.bridges.Regression;
 import org.cirdles.topsoil.plot.DataEntry;
 import org.cirdles.topsoil.plot.HTMLTemplate;
 import org.cirdles.topsoil.plot.Plot;
@@ -26,9 +27,7 @@ import org.cirdles.topsoil.plot.PlotFunction;
 import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.plot.PlotOptions;
 import org.cirdles.topsoil.plot.PlotType;
-import org.cirdles.topsoil.javafx.bridges.AxisExtentsBridge;
-import org.cirdles.topsoil.javafx.bridges.JavaScriptBridge;
-import org.cirdles.topsoil.javafx.bridges.Regression;
+import org.cirdles.topsoil.javafx.bridges.PlotBridge;
 import org.cirdles.topsoil.symbols.SymbolMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,6 +53,8 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     private static final Logger LOGGER
             = LoggerFactory.getLogger(PlotView.class);
 
+    private static int jsFile = 1;
+
     private WebView webView;
     private WebEngine webEngine;
     private CompletableFuture<Void> loadFuture;
@@ -64,9 +65,8 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     private final Map<String, Thread> updateThreads = new HashMap<>();
 
     private JSObject topsoil;
-    private final JavaScriptBridge bridge = new JavaScriptBridge();
-    private final AxisExtentsBridge axisExtentsBridge;
-    private final Regression regression = new Regression();
+    private PlotBridge javaBridge;
+    private Regression regressionBridge;
 
     //**********************************************//
     //                  PROPERTIES                  //
@@ -125,22 +125,24 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
         Validate.notNull(type, "Plot type cannot be null.");
 
-        this.axisExtentsBridge = new AxisExtentsBridge(this);
+        this.javaBridge = new PlotBridge(this);
+        this.regressionBridge = new Regression();
 
         this.plotType = type;
-        this.htmlString = HTMLTemplate.forPlotType(plotType);
+        this.htmlString = HTMLTemplate.withRootDiv();
 
-        plotData.addListener((ListChangeListener<DataEntry>) c -> updateJSDelayed("setData", this::updateJSData));
-        plotOptions.addListener((MapChangeListener<PlotOption<?>, Object>) c -> updateJSDelayed("setOptions", this::updateJSOptions));
+        plotData.addListener((ListChangeListener<DataEntry>) c -> updateJSDelayed("setDataFromJSON", this::updateJSData));
+        plotOptions.addListener((MapChangeListener<PlotOption<?>, Object>) c -> updateJSDelayed("setOptionsFromJSON", this::updateJSOptions));
 
         loadFuture = new CompletableFuture<>();
 
         this.webView = getChild();
-        webView.setContextMenuEnabled(false);
+        webView.setContextMenuEnabled(true);
         webView.widthProperty().addListener(c -> update());
         webView.heightProperty().addListener(c -> update());
 
         this.webEngine = webView.getEngine();
+        webEngine.setJavaScriptEnabled(false);
         webEngine.setJavaScriptEnabled(true);
         // useful for debugging
         webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
@@ -162,13 +164,15 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
                                         PlotOption.Y_MAX.getDefaultValue().equals(initYMax)
                         );
 
-                        topsoil = (JSObject) webEngine.executeScript("topsoil");
-
-                        topsoil.setMember("bridge", bridge);
-                        topsoil.setMember("axisExtentsBridge", axisExtentsBridge);
-                        topsoil.setMember("regression", regression);
-
-                        topsoil.call("init", getJSONData(), getJSONOptions());
+                        topsoil = (JSObject) webEngine.executeScript("new topsoil.ScatterPlot(" +
+                                "document.getElementById(\"root\")," +
+                                getJSONData() + "," +
+                                getJSONOptions() + "," +
+                                "[\"points\", [\"ellipses\", \"unctbars\"], [\"mclean_regression\", \"concordia\", \"evolution\"]]" +
+                                ")"
+                        );
+                        topsoil.setMember("javaBridge", javaBridge);
+                        topsoil.setMember("regressionBridge", regressionBridge);
 
                         if (isCustomViewport) {
                             call(PlotFunction.Scatter.SET_AXIS_EXTENTS,
@@ -276,7 +280,7 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
             // the SVG element in the HTML should have the ID "plot"
             Element svgElement = webView.getEngine()
-                    .getDocument().getElementById("plot");
+                    .getDocument().getElementById("plot_svg");
 
             // additional configuration to make the SVG standalone
             svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -326,13 +330,13 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
     private void updateJSData() {
         if (topsoil != null) {
-            Platform.runLater(() -> topsoil.call("setData", getJSONData()));
+            Platform.runLater(() -> topsoil.call("setDataFromJSON", getJSONData()));
         }
     }
 
     private void updateJSOptions() {
         if (topsoil != null) {
-            Platform.runLater(() -> topsoil.call("setOptions", getJSONOptions()));
+            Platform.runLater(() -> topsoil.call("setOptionsFromJSON", getJSONOptions()));
         }
     }
 
