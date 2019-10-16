@@ -29,48 +29,48 @@ public final class PlotOption<T> extends SimpleSymbolKey<T> {
 
     public static final PlotOption<String> TITLE = stringValue("title", "New Plot");
 
-    public static final PlotOption<String> X_AXIS = stringValue("x-axis", "X Axis");
-    public static final PlotOption<Number> X_MIN = numberValue("x-min", 0.0);
-    public static final PlotOption<Number> X_MAX = numberValue("x-max", 1.0);
+    public static final PlotOption<String> X_AXIS = stringValue("x_axis", "X Axis");
+    public static final PlotOption<Number> X_MIN = numberValue("x_min", 0.0);
+    public static final PlotOption<Number> X_MAX = numberValue("x_max", 1.0);
 
-    public static final PlotOption<String> Y_AXIS = stringValue("y-axis", "Y Axis");
-    public static final PlotOption<Number> Y_MIN = numberValue("y-min", 0.0);
-    public static final PlotOption<Number> Y_MAX = numberValue("y-max", 1.0);
+    public static final PlotOption<String> Y_AXIS = stringValue("y_axis", "Y Axis");
+    public static final PlotOption<Number> Y_MIN = numberValue("y_min", 0.0);
+    public static final PlotOption<Number> Y_MAX = numberValue("y_max", 1.0);
 
     public static final PlotOption<IsotopeSystem> ISOTOPE_SYSTEM =
-            new PlotOption<>("isotope-system", IsotopeSystem.GENERIC, IsotopeSystem.class, IsotopeSystem::getName);
+            new PlotOption<>("isotope_system", IsotopeSystem.GENERIC, IsotopeSystem.class, IsotopeSystem::getName);
     public static final PlotOption<Uncertainty> UNCERTAINTY =
             new PlotOption<>("uncertainty", Uncertainty.ONE_SIGMA_ABSOLUTE, Uncertainty.class, Uncertainty::getMultiplier);
-    public static final PlotOption<Number> LAMBDA_U234 = numberValue("lambda-234", Lambda.U234.getDefaultValue());
-    public static final PlotOption<Number> LAMBDA_U235 = numberValue("lambda-235", Lambda.U235.getDefaultValue());
-    public static final PlotOption<Number> LAMBDA_U238 = numberValue("lambda-238", Lambda.U238.getDefaultValue());
-    public static final PlotOption<Number> LAMBDA_TH230 = numberValue("lambda-230", Lambda.Th230.getDefaultValue());
+    public static final PlotOption<Number> LAMBDA_U234 = numberValue("lambda_234", Lambda.U234.getDefaultValue());
+    public static final PlotOption<Number> LAMBDA_U235 = numberValue("lambda_235", Lambda.U235.getDefaultValue());
+    public static final PlotOption<Number> LAMBDA_U238 = numberValue("lambda_238", Lambda.U238.getDefaultValue());
+    public static final PlotOption<Number> LAMBDA_TH230 = numberValue("lambda_230", Lambda.Th230.getDefaultValue());
     public static final PlotOption<Number> R238_235S = numberValue("R238_235S", 137.88);
 
     public static final PlotOption<Boolean> POINTS = booleanValue("points", true);
-    public static final PlotOption<String> POINTS_FILL = stringValue("points-fill", "steelblue");
-    public static final PlotOption<Number> POINTS_OPACITY = numberValue("points-opacity", 1.0);
+    public static final PlotOption<String> POINTS_FILL = stringValue("points_fill", "steelblue");
+    public static final PlotOption<Number> POINTS_OPACITY = numberValue("points_opacity", 1.0);
 
     public static final PlotOption<Boolean> ELLIPSES = booleanValue("ellipses", true);
-    public static final PlotOption<String> ELLIPSES_FILL = stringValue("ellipses-fill", "red");
-    public static final PlotOption<Number> ELLIPSES_OPACITY = numberValue("ellipses-opacity", 1.0);
+    public static final PlotOption<String> ELLIPSES_FILL = stringValue("ellipses_fill", "red");
+    public static final PlotOption<Number> ELLIPSES_OPACITY = numberValue("ellipses_opacity", 1.0);
 
-    public static final PlotOption<Boolean> UNCTBARS = booleanValue("unctbars", false);
-    public static final PlotOption<String> UNCTBARS_FILL = stringValue("unctbars-fill", "black");
-    public static final PlotOption<Number> UNCTBARS_OPACITY = numberValue("unctbars-opacity", 1.0);
+    public static final PlotOption<Boolean> UNCTBARS = booleanValue("error_bars", false);
+    public static final PlotOption<String> UNCTBARS_FILL = stringValue("error_bars_fill", "black");
+    public static final PlotOption<Number> UNCTBARS_OPACITY = numberValue("error_bars_opacity", 1.0);
 
     public static final PlotOption<Concordia> CONCORDIA_TYPE =
-            new PlotOption<>("concordia-type", Concordia.WETHERILL, Concordia.class, Concordia::getTitle);
-    public static final PlotOption<Boolean> CONCORDIA_LINE = booleanValue("concordia-line", false);
-    public static final PlotOption<String> CONCORDIA_LINE_FILL = stringValue("concordia-line-fill", "blue");
-    public static final PlotOption<Number> CONCORDIA_LINE_OPACITY = numberValue("concordia-line-opacity", 1.0);
-    public static final PlotOption<Boolean> CONCORDIA_ENVELOPE = booleanValue("concordia-envelope", false);
-    public static final PlotOption<String> CONCORDIA_ENVELOPE_FILL = stringValue("concordia-envelope-fill", "lightgray");
-    public static final PlotOption<Number> CONCORDIA_ENVELOPE_OPACITY = numberValue("concordia-envelope-opacity", 1.0);
+            new PlotOption<>("concordia_type", Concordia.WETHERILL, Concordia.class, Concordia::getTitle);
+    public static final PlotOption<Boolean> CONCORDIA_LINE = booleanValue("concordia_line", false);
+    public static final PlotOption<String> CONCORDIA_LINE_FILL = stringValue("concordia_line_fill", "blue");
+    public static final PlotOption<Number> CONCORDIA_LINE_OPACITY = numberValue("concordia_line_opacity", 1.0);
+    public static final PlotOption<Boolean> CONCORDIA_ENVELOPE = booleanValue("concordia_envelope", false);
+    public static final PlotOption<String> CONCORDIA_ENVELOPE_FILL = stringValue("concordia_envelope_fill", "lightgray");
+    public static final PlotOption<Number> CONCORDIA_ENVELOPE_OPACITY = numberValue("concordia_envelope_opacity", 1.0);
 
     public static final PlotOption<Boolean> EVOLUTION = booleanValue("evolution", false);
-    public static final PlotOption<Boolean> MCLEAN_REGRESSION = booleanValue("regression-mclean", false);
-    public static final PlotOption<Boolean> MCLEAN_REGRESSION_ENVELOPE = booleanValue("regression-mclean-envelope", false);
+    public static final PlotOption<Boolean> MCLEAN_REGRESSION = booleanValue("regression_mclean", false);
+    public static final PlotOption<Boolean> MCLEAN_REGRESSION_ENVELOPE = booleanValue("regression_mclean_envelope", false);
 
     public static final List<PlotOption<?>> ALL;
     static {

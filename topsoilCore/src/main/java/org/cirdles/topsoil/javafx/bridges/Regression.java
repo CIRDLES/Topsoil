@@ -7,8 +7,8 @@ import org.cirdles.mcLeanRegression.core.McLeanRegressionLineInterface;
 
 public class Regression {
 
-    McLeanRegressionLineInterface mcLeanRegressionLine;
-    McLeanRegressionInterface mcLeanRegression = new McLeanRegression();
+    private McLeanRegressionLineInterface mcLeanRegressionLine;
+    private McLeanRegressionInterface mcLeanRegression = new McLeanRegression();
 
     //args come in as Strings because arrays can't be passed between JavaScript and Java
     public McLeanRegressionLineInterface fitLineToDataFor2D(String x, String y, String x1SigmaAbs, String y1SigmaAbs, String rhos) {
