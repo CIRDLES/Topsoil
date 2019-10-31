@@ -89,12 +89,7 @@ public class Topsoil extends Application {
             setLogo(new Image(re.extractResourceAsPath(TOPSOIL_LOGO).toUri().toString()));
             primaryStage.getIcons().add(logo);
 
-            // Load custom fonts
-            Font.loadFont(re.extractResourceAsFile(ARIMO_REGULAR).toURI().toURL().toExternalForm(), 12.0);
-            Font.loadFont(re.extractResourceAsFile(ARIMO_BOLD).toURI().toURL().toExternalForm(), 12.0);
-            Font.loadFont(re.extractResourceAsFile(ARIMO_ITALIC).toURI().toURL().toExternalForm(), 12.0);
-            Font.loadFont(re.extractResourceAsFile(ARIMO_BOLDITALIC).toURI().toURL().toExternalForm(), 12.0);
-
+            // Load stylesheet
             String stylesheet = re.extractResourceAsPath(STYLESHEET).toUri().toURL().toExternalForm();
             scene.getStylesheets().add(stylesheet);
             StyleManager.getInstance().setDefaultUserAgentStylesheet(stylesheet);
