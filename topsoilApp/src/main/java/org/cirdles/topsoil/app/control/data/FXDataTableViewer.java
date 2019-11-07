@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow>> {
 
     private static final double LABEL_COL_WIDTH = 150.0;
-    private static final double SELECTED_COL_WIDTH = 65.0;
+    private static final double SELECTED_COL_WIDTH = 70.0;
     private static final double DATA_COL_WIDTH = 145.0;
 
     private FXDataTable table;
