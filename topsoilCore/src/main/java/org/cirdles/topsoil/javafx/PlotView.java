@@ -303,6 +303,8 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
     /**
      * Loads a webpage with the Topsoil JS plot files.
+     *
+     * @return CompletableFuture of Void
      */
     public CompletableFuture<Void> reloadEngine() {
         loadFuture = new CompletableFuture<>();

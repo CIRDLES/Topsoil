@@ -104,12 +104,12 @@ public class PlotOptionsPanel extends Accordion {
 		// Update axes when buttons pressed
 		axisStyling.setXExtentsButton.setOnAction(event -> {
 			plot.call(PlotFunction.Scatter.SET_AXIS_EXTENTS,
-					axisStyling.xAxisMin.getValue(), axisStyling.xAxisMax.getValue(), null, null
+					axisStyling.xAxisMin.getValue(), axisStyling.xAxisMax.getValue(), plotOptions.get(Y_MIN), plotOptions.get(Y_MAX), true
 			);
 		});
 		axisStyling.setYExtentsButton.setOnAction(event -> {
 			plot.call(PlotFunction.Scatter.SET_AXIS_EXTENTS,
-					null, null, axisStyling.yAxisMin.getValue(), axisStyling.yAxisMax.getValue()
+					plotOptions.get(X_MIN), plotOptions.get(X_MAX), axisStyling.yAxisMin.getValue(), axisStyling.yAxisMax.getValue(), true
 			);
 		});
 
