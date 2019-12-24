@@ -64,6 +64,23 @@ public final class RecentFiles {
         }
     }
 
+    /**
+     * Returns the path of the directory containing the most recently used project files.
+     * @return Path
+     */
+    public static Path findMRUProjectFolder() {
+        Path path;
+        Path[] recentlyUsed = getPaths();
+        if (recentlyUsed[0] == null) {
+            //fix this
+            path = Paths.get(System.getProperty("user.home"));
+        }
+        else {
+            path = Paths.get(recentlyUsed[0].toUri()).getParent();
+        }
+        return path;
+    }
+
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
