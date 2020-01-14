@@ -71,8 +71,7 @@ public final class RecentFiles {
     public static Path findMRUProjectFolder() {
         Path path;
         Path[] recentlyUsed = getPaths();
-        if (recentlyUsed[0] == null) {
-            //fix this
+        if (recentlyUsed.length == 0) {
             path = Paths.get(System.getProperty("user.home"));
         }
         else {
