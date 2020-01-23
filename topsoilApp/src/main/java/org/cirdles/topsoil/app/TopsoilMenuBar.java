@@ -159,6 +159,7 @@ public class TopsoilMenuBar extends MenuBar {
             }
         });
         fileMenu.getItems().addAll(
+                importTableMenu,
                 openProjectItem,
                 openRecentProjectMenu,
                 openExampleMenu,
@@ -166,7 +167,6 @@ public class TopsoilMenuBar extends MenuBar {
                 saveProjectAsItem,
                 closeProjectItem,
                 new SeparatorMenuItem(),
-                importTableMenu,
                 exportTableMenuItem,
                 new SeparatorMenuItem(),
                 exitTopsoilItem
