@@ -336,16 +336,16 @@ final class MenuItemHelper {
      */
     static void exportTableAs(FXDataTable table) {
         DataTemplate template = table.getTemplate();
+
         if (template.isWritingSupported()) {
-            TopsoilNotification.info(
-                    "Unsupported Operation",
-                    template + " table exporting is currently unsupported."
-            );
-        } else {
             File file = FileChoosers.exportTableFile().showSaveDialog(Topsoil.getPrimaryStage());
             if (file != null) {
                 exportTableAs(file.toPath(), table);
             }
+        } else {
+            TopsoilNotification.info(
+                    "Unsupported Operation",
+                    template + " table exporting is currently unsupported.");
         }
     }
 
