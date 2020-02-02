@@ -97,6 +97,10 @@ public class Squid3DataParser extends AbstractDataParser {
                 colLabel = "newColumn";
             }
 
+            //check for sigma column
+            //is there a previous column?
+            //reference previous column
+
             if (usedColumnLabels.containsKey(colLabel)) {
                 labelFreq = usedColumnLabels.get(colLabel);
                 usedColumnLabels.put(colLabel, labelFreq + 1);
@@ -111,6 +115,7 @@ public class Squid3DataParser extends AbstractDataParser {
             } else {
                 columns.add(new SimpleDataColumn<>(colLabel, true, "", String.class));
             }
+            //add dependency column variable (1st conversation)
         }
         return new SimpleDataColumn(catLabel, true, columns.toArray(new SimpleDataColumn[]{}));
     }
