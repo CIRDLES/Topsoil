@@ -36,6 +36,20 @@ public final class ProjectManager {
         ProjectManager.project.set(project);
     }
 
+    private static ObjectProperty<Path> directoryPath = new SimpleObjectProperty<>();
+    public static ObjectProperty<Path> directoryPathProperty() {
+        return directoryPath;
+    }
+    /**
+     * Returns the {@code Path} associated with the most recently opened directory, if one exists
+     *
+     */
+    public static Path getDirectoryPath() {
+        return directoryPath.get();
+    }
+    public static void setDirectoryPath(Path path) {
+        ProjectManager.directoryPath.set(path);
+    }
 
     private static ObjectProperty<Path> projectPath = new SimpleObjectProperty<>();
     public static ObjectProperty<Path> projectPathProperty() {

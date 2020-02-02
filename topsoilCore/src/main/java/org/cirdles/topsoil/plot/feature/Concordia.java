@@ -2,8 +2,8 @@ package org.cirdles.topsoil.plot.feature;
 
 public enum Concordia {
 
-    WETHERILL("Wetherill"),
-    TERA_WASSERBURG("Tera-Wasserburg");
+    WETHERILL("wetherill"),
+    TERA_WASSERBURG("tera-wasserburg");
 
     private String title;
 
