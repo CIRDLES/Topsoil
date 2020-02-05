@@ -6,6 +6,7 @@ import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.lang3.ObjectUtils;
 import org.cirdles.topsoil.data.DataColumn;
 
 public class FXDataColumn<T> extends FXDataComponent<DataColumn<?>> implements DataColumn<T> {
@@ -60,4 +61,8 @@ public class FXDataColumn<T> extends FXDataComponent<DataColumn<?>> implements D
         return valueType;
     }
 
+    @Override
+    public List<T> columnLinking() {
+        return null;
+    }
 }

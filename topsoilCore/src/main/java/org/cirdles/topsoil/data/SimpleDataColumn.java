@@ -63,4 +63,9 @@ public class SimpleDataColumn<T> extends AbstractDataComponent<DataColumn<?>> im
         return valueType;
     }
 
+    @Override
+    public List<T> columnLinking() {
+        return null;
+    }
+
 }
