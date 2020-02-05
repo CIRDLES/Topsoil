@@ -35,11 +35,7 @@ import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotOption;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> {
 
@@ -59,7 +55,7 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
 
         this.setResultConverter(buttonType -> {
             if (buttonType == ButtonType.APPLY) {
-                Map<Key, Object> results = new HashMap<>();
+                Map<Key, Object> results = new LinkedHashMap<>();
                 results.put(Key.VARIABLE_MAP, dialogPane.getVariableSelections());
                 results.put(Key.ISOTOPE_SYSTEM, dialogPane.getIsotopeSystem());
                 return results;
@@ -80,8 +76,8 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
         private FXDataTable table;
         private Map<Key, Object> preSettings;
         private MapProperty<Variable<?>, DataColumn<?>> selections = new SimpleMapProperty<>(FXCollections.observableHashMap());
-        private Map<Variable<?>, SelectionEntry> selectionEntries = new HashMap<>();
-        private Map<DataColumn<?>, LeafColumnControl> leafColumnGraphics = new HashMap<>();
+        private Map<Variable<?>, SelectionEntry> selectionEntries = new LinkedHashMap<>();
+        private Map<DataColumn<?>, LeafColumnControl> leafColumnGraphics = new LinkedHashMap<>();
 
         @FXML private TreeView<DataColumn<?>> columnTreeView;
         @FXML private ListView<SelectionEntry> variableListView;
@@ -90,7 +86,7 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
 
         public PlotConfigDialogPane(FXDataTable table, Map<Key, Object> settings) {
             this.table = table;
-            this.preSettings = (settings != null) ? settings : new HashMap<>(0);
+            this.preSettings = (settings != null) ? settings : new LinkedHashMap<>(0 );
             try {
                 FXMLUtils.loadController(CONTROLLER_FXML, PlotConfigDialogPane.class, this);
             } catch (IOException e) {
