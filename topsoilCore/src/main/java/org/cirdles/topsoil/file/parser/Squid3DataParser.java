@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.file.parser;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTemplate;
@@ -81,12 +82,13 @@ public class Squid3DataParser extends AbstractDataParser {
         List<DataColumn<?>> columns = new ArrayList<>();
         String colLabel;
         StringJoiner joiner;
+        String dependencyRow;
         if (nextCatIndex == -1 || nextCatIndex > catRow.length) {
             nextCatIndex = catRow.length;
         }
         for (int colIndex = catIndex; colIndex < nextCatIndex; colIndex++) {
             joiner = new StringJoiner(" ");
-            for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
+            for (int rowIndex = 1; rowIndex < 5; rowIndex++) { //join 5 header rows
                 colLabel = rows[rowIndex][colIndex];
                 if (! colLabel.equals("")) {
                     joiner.add(colLabel);
@@ -97,9 +99,18 @@ public class Squid3DataParser extends AbstractDataParser {
                 colLabel = "newColumn";
             }
 
-            //check for sigma column
-            //is there a previous column?
-            //reference previous column
+            if (colLabel.equals("±2σ (%)")) {
+                //should we check for this aswell
+            }if (colLabel.equals("±2&sigma; (%)")){ //check for sigma column
+                //is there a previous column?
+                for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
+                    if(colLabel == rows[rowIndex][colIndex]){
+                        if(rows[rowIndex-1][colIndex] != null) {
+                            dependencyRow  = rows[rowIndex-1][colIndex]; //reference previous column
+                        }
+                    }
+                }
+            }
 
             if (usedColumnLabels.containsKey(colLabel)) {
                 labelFreq = usedColumnLabels.get(colLabel);
@@ -115,7 +126,7 @@ public class Squid3DataParser extends AbstractDataParser {
             } else {
                 columns.add(new SimpleDataColumn<>(colLabel, true, "", String.class));
             }
-            //add dependency column variable (1st conversation)
+            columns.add(new SimpleDataColumn<>(dependencyRow, true, "", String.class)); //add dependency column variable (1st conversation)
         }
         return new SimpleDataColumn(catLabel, true, columns.toArray(new SimpleDataColumn[]{}));
     }
