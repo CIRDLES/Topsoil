@@ -23,23 +23,13 @@ public class FileChoosers {
      *
      * @return instance of FileChooser with a .topsoil extension filter
      */
-    public static FileChooser openTopsoilFile() {
+    public static FileChooser topsoilProjectFileChooser() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Topsoil Project");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Topsoil Project (.topsoil)", "*.topsoil"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
-
-        Path path = ProjectManager.getProjectPath();
-        if (path != null) {
-            Path parent = path.getParent();
-            if (parent != null) {
-                fileChooser.setInitialDirectory(parent.toFile());
-            } else {
-                fileChooser.setInitialDirectory(Paths.get(System.getProperty("user.home")).toFile());
-            }
-        }
         return fileChooser;
     }
 

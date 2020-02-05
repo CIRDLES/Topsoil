@@ -2,6 +2,7 @@ package org.cirdles.topsoil.app;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.Clipboard;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.cirdles.topsoil.app.browse.DesktopWebBrowser;
 import org.cirdles.topsoil.app.control.AboutView;
@@ -47,7 +48,16 @@ final class MenuItemHelper {
      * Handles the opening of a .topsoil file and returns the deserialized {@code TopsoilProject}.
      */
     static void openProject() {
-        Path path = Paths.get(FileChoosers.openTopsoilFile().showOpenDialog(Topsoil.getPrimaryStage()).toURI());
+        //Garrett Brenner: add a try-catch to try and open the folder of the most recently used project. If no recent
+        //projects exist, open to the root folder
+        Path path;
+        FileChooser chooser = new FileChoosers().topsoilProjectFileChooser();
+
+        //set to most recent path (no recently used path available is accounted for in
+        //RecentFiles.findMRUProjectFolder()
+        chooser.setInitialDirectory(RecentFiles.findMRUProjectFolder().toFile());
+
+        path = Paths.get(chooser.showOpenDialog(Topsoil.getPrimaryStage()).toURI());
         openProject(path);
     }
 
@@ -125,7 +135,9 @@ final class MenuItemHelper {
      * @return          true if successful
      */
     static boolean saveProjectAs(TopsoilProject project) {
-        File file = FileChoosers.saveTopsoilFile().showSaveDialog(Topsoil.getPrimaryStage());
+        FileChooser chooser = FileChoosers.saveTopsoilFile();
+        chooser.setInitialDirectory(RecentFiles.findMRUProjectFolder().toFile());
+        File file = chooser.showSaveDialog(Topsoil.getPrimaryStage());
         if (file == null) {
             return false;
         }
