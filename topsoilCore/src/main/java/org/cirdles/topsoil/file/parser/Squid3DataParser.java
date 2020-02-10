@@ -90,18 +90,18 @@ public class Squid3DataParser extends AbstractDataParser {
             joiner = new StringJoiner(" ");
             for (int rowIndex = 1; rowIndex < 5; rowIndex++) { //join 5 header rows
                 colLabel = rows[rowIndex][colIndex];
-                if (! colLabel.equals("")) {
+                if (! colLabel.compareTo("")) {
                     joiner.add(colLabel);
                 }
             }
             colLabel = joiner.toString().trim();
-            if (colLabel.equals("")) {
+            if (colLabel.compareTo("")) {
                 colLabel = "newColumn";
             }
 
-            if (colLabel.equals("±2σ (%)")) {
+            if (colLabel.compareTo("±2σ (%)")) {
                 //should we check for this aswell
-            }if (colLabel.equals("±2&sigma; (%)")){ //check for sigma column
+            }if (colLabel.compareTo("±2&sigma; (%)")){ //check for sigma column
                 //is there a previous column?
                 for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
                     if(colLabel == rows[rowIndex][colIndex]){
@@ -158,7 +158,7 @@ public class Squid3DataParser extends AbstractDataParser {
     private static int[] readCategories(String[] catRow) {
         List<Integer> idxs = new ArrayList<>();
         for (int index = 0; index < catRow.length; index++) {
-            if (! "".equals(catRow[index])) {
+            if (! "".compareTo(catRow[index])) {
                 idxs.add(index);
             }
         }
@@ -176,7 +176,7 @@ public class Squid3DataParser extends AbstractDataParser {
 
         String last = cells[5][0];
         String current;
-        if (! "".equals(last)) {
+        if (! "".compareTo(last)) {
             idxs.add(5);
             for (int index = 6; index < cells.length; index++) {
                 current = cells[index][0];

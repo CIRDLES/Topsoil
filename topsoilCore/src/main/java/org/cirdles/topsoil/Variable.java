@@ -50,7 +50,7 @@ public class Variable<T> extends SimpleSymbolKey<T> {
     ));
 
     public static final List<Variable<?>> CLASSICY = Collections.unmodifiableList(asList(
-           Y, SIGMA_Y
+           Y, SIGMA_Y, RHO
     ));
 
     private String abbreviation;
