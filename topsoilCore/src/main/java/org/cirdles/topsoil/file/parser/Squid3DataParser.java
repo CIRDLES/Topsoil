@@ -90,18 +90,22 @@ public class Squid3DataParser extends AbstractDataParser {
             joiner = new StringJoiner(" ");
             for (int rowIndex = 1; rowIndex < 5; rowIndex++) { //join 5 header rows
                 colLabel = rows[rowIndex][colIndex];
-                if (! colLabel.compareTo("")) {
+                if (! colLabel.equals("")) {
                     joiner.add(colLabel);
                 }
             }
             colLabel = joiner.toString().trim();
-            if (colLabel.compareTo("")) {
+            if (colLabel.equals("")) {
                 colLabel = "newColumn";
             }
 
-            if (colLabel.compareTo("±2σ (%)")) {
-                //should we check for this aswell
-            }if (colLabel.compareTo("±2&sigma; (%)")){ //check for sigma column
+            if (colLabel.equals("±2σ (%)")) {
+                dependencyCreator("±2σ (%)");
+            }if (colLabel.equals("±2&sigma; (%)")){ //check for sigma column
+                dependencyCreator("±2&sigma; (%)"); //±\d&sigma\b; \W%\W
+            }
+
+            public void dependencyCreator(String x){
                 //is there a previous column?
                 for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
                     if(colLabel == rows[rowIndex][colIndex]){
