@@ -12,8 +12,9 @@ import java.util.List;
  */
 public interface DataColumn<T> extends DataComponent<DataColumn<?>>, SymbolKey<T> {
 
-    List<? extends DataColumn<?>> columnLinking = ; //link each column with its uncertainty column
-
+    // List<? extends DataColumn<?>> columnLinking = ; //link each column with its uncertainty column
+    
+    public void setDependency(DataColumn<?> column);
 
     @Override
     default String toJSONString() {
