@@ -1,6 +1,5 @@
 package org.cirdles.topsoil.file.parser;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTemplate;
@@ -82,11 +81,13 @@ public class Squid3DataParser extends AbstractDataParser {
         List<DataColumn<?>> columns = new ArrayList<>();
         String colLabel;
         StringJoiner joiner;
-        String dependencyRow;
+        //String dependencyRow;
         if (nextCatIndex == -1 || nextCatIndex > catRow.length) {
             nextCatIndex = catRow.length;
         }
         for (int colIndex = catIndex; colIndex < nextCatIndex; colIndex++) {
+            boolean isDependency = false;
+
             joiner = new StringJoiner(" ");
             for (int rowIndex = 1; rowIndex < 5; rowIndex++) { //join 5 header rows
                 colLabel = rows[rowIndex][colIndex];
@@ -100,21 +101,23 @@ public class Squid3DataParser extends AbstractDataParser {
             }
 
             if (colLabel.equals("±2σ (%)")) {
-                dependencyCreator("±2σ (%)");
+                // dependencyCreator("±2σ (%)");
+                isDependency = true;
             }if (colLabel.equals("±2&sigma; (%)")){ //check for sigma column
-                dependencyCreator("±2&sigma; (%)"); //±\d&sigma\b; \W%\W
+                //dependencyCreator("±2&sigma; (%)"); //±\d&sigma\b; \W%\W
+                isDependency = true;
             }
 
-            public void dependencyCreator(String x){
-                //is there a previous column?
-                for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
-                    if(colLabel == rows[rowIndex][colIndex]){
-                        if(rows[rowIndex-1][colIndex] != null) {
-                            dependencyRow  = rows[rowIndex-1][colIndex]; //reference previous column
-                        }
-                    }
-                }
-            }
+            // public void dependencyCreator(String x){
+            //     //is there a previous column?
+            //     for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
+            //         if(colLabel == rows[rowIndex][colIndex]){
+            //             if(rows[rowIndex-1][colIndex] != null) {
+            //                 dependencyRow  = rows[rowIndex-1][colIndex]; //reference previous column
+            //             }
+            //         }
+            //     }
+            // }
 
             if (usedColumnLabels.containsKey(colLabel)) {
                 labelFreq = usedColumnLabels.get(colLabel);
@@ -125,12 +128,17 @@ public class Squid3DataParser extends AbstractDataParser {
             }
 
             Class<?> clazz = getColumnDataType(rows, colIndex, 5);
+            DataColumn<?> newColumn;
             if (clazz == Number.class) {
-                columns.add(new SimpleDataColumn<>(colLabel, true, 0.0, Number.class));
+                newColumn = new SimpleDataColumn<>(colLabel, true, 0.0, Number.class);
             } else {
-                columns.add(new SimpleDataColumn<>(colLabel, true, "", String.class));
+                newColumn = new SimpleDataColumn<>(colLabel, true, "", String.class);
             }
-            columns.add(new SimpleDataColumn<>(dependencyRow, true, "", String.class)); //add dependency column variable (1st conversation)
+            if (isDependency) {
+              columns.get(columns.size() - 1).setDependency(newColumn);
+            }
+            columns.add(newColumn);
+            // columns.add(new SimpleDataColumn<>(dependencyRow, true, "", String.class)); //add dependency column variable (1st conversation)
         }
         return new SimpleDataColumn(catLabel, true, columns.toArray(new SimpleDataColumn[]{}));
     }
