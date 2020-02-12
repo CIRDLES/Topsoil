@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
 /**
  * Parses value-separated data into a {@link DataTable}.
@@ -100,11 +101,9 @@ public class Squid3DataParser extends AbstractDataParser {
                 colLabel = "newColumn";
             }
 
-            if (colLabel.equals("±2σ (%)")) {
-                // dependencyCreator("±2σ (%)");
+            if (Pattern.matches(colLabel,"//±\\dσ\\W%\\W")){ //±2σ (%)
                 isDependency = true;
-            }if (colLabel.equals("±2&sigma; (%)")){ //check for sigma column
-                //dependencyCreator("±2&sigma; (%)"); //±\d&sigma\b; \W%\W
+            }if (Pattern.matches(colLabel, "//±\\d&sigma\\b; \\W%\\W")){ //±2&sigma; (%)
                 isDependency = true;
             }
 
@@ -170,7 +169,7 @@ public class Squid3DataParser extends AbstractDataParser {
     private static int[] readCategories(String[] catRow) {
         List<Integer> idxs = new ArrayList<>();
         for (int index = 0; index < catRow.length; index++) {
-            if (! "".compareTo(catRow[index])) {
+            if (! "".equals(catRow[index])) {
                 idxs.add(index);
             }
         }
@@ -188,7 +187,7 @@ public class Squid3DataParser extends AbstractDataParser {
 
         String last = cells[5][0];
         String current;
-        if (! "".compareTo(last)) {
+        if (! "".equals(last)) {
             idxs.add(5);
             for (int index = 6; index < cells.length; index++) {
                 current = cells[index][0];

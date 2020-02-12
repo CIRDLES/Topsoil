@@ -10,8 +10,7 @@ public class SimpleDataColumn<T> extends AbstractDataComponent<DataColumn<?>> im
 
     private final T defaultValue;
     private final Class<T> valueType;
-    
-    private final DataColumn<?> dependency;
+    private final DataColumn<?> setDependency;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -64,11 +63,6 @@ public class SimpleDataColumn<T> extends AbstractDataComponent<DataColumn<?>> im
     public Class<T> getType() {
         return valueType;
     }
-
-    //@Override
-    //public List<T> columnLinking() {
-    //    return null;
-    //}
     
     @Override
     public void setDependency(DataColumn<?> column) {
