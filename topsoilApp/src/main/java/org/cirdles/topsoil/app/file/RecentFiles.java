@@ -35,7 +35,7 @@ public final class RecentFiles {
      *
      * @return  Path[]
      */
-    public static Path[] getPaths() {
+    public static Path[] getProjectPaths() {
         return loadRecentFiles().toArray(new Path[]{});
     }
 
@@ -44,7 +44,7 @@ public final class RecentFiles {
      *
      * @param path  project file Path
      */
-    public static void addPath(Path path) {
+    public static void addProjectPath(Path path) {
         List<Path> paths = loadRecentFiles();
         paths.remove(path);
         if (paths.size() == MAX_SIZE) {
@@ -57,7 +57,7 @@ public final class RecentFiles {
     /**
      * Clears the list of most recent files.
      */
-    public static void clear() {
+    public static void clearProjectPaths() {
         Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
         for (int i = 1; i <= MAX_SIZE; i++) {
             prefs.remove(RECENT_FILES + i);
@@ -70,7 +70,24 @@ public final class RecentFiles {
      */
     public static Path findMRUProjectFolder() {
         Path path;
-        Path[] recentlyUsed = getPaths();
+        Path[] recentlyUsed = getProjectPaths();
+        if (recentlyUsed.length == 0) {
+            path = Paths.get(System.getProperty("user.home"));
+        }
+        else {
+            path = Paths.get(recentlyUsed[0].toUri()).getParent();
+        }
+        return path;
+    }
+
+    /**
+     * Returns the path of the directory containing the most recently exported table.
+     * @return Path
+      */
+    public static Path findMRUExportFolder() {
+        //THIS IS NOT ACCURATE - We need to find a way of storing recently exported tables
+        Path path;
+        Path[] recentlyUsed = getProjectPaths();
         if (recentlyUsed.length == 0) {
             path = Paths.get(System.getProperty("user.home"));
         }

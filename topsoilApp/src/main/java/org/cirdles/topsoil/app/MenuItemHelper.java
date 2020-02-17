@@ -147,7 +147,7 @@ final class MenuItemHelper {
             Path path = file.toPath();
             completed = ProjectSerializer.serialize(path, project);
             ProjectManager.setProjectPath(path);
-            RecentFiles.addPath(path);
+            RecentFiles.addProjectPath(path);
         } catch (IOException e) {
             e.printStackTrace();
             TopsoilNotification.error(
@@ -338,7 +338,11 @@ final class MenuItemHelper {
         DataTemplate template = table.getTemplate();
 
         if (template.isWritingSupported()) {
-            File file = FileChoosers.exportTableFile().showSaveDialog(Topsoil.getPrimaryStage());
+            FileChooser chooser = FileChoosers.exportTableFile();
+            chooser.setInitialDirectory(RecentFiles.findMRUExportFolder().toFile());
+            File file = chooser.showSaveDialog(Topsoil.getPrimaryStage());
+
+            //File file = FileChoosers.exportTableFile().showSaveDialog(Topsoil.getPrimaryStage());
             if (file != null) {
                 exportTableAs(file.toPath(), table);
             }
@@ -435,7 +439,7 @@ final class MenuItemHelper {
             if (project != null) {
                 ProjectManager.setProject(project);
                 ProjectManager.setProjectPath(projectPath);
-                RecentFiles.addPath(projectPath);
+                RecentFiles.addProjectPath(projectPath);
             }
         } catch (IOException e) {
             e.printStackTrace();
