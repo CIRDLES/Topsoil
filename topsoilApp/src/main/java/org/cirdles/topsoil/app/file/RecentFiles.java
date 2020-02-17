@@ -65,6 +65,25 @@ public final class RecentFiles {
     }
 
     /**
+     * Returns an array containing the most recently exported table paths.
+     *
+     * @return Path[]
+     */
+    public static Path[] getExportPaths() { return null;}
+
+    /**
+     * Adds a path to the list of most recently exported table paths.
+     *
+     * @param path table path
+     */
+    public static void addExportPath(Path path) { return;}
+
+    /**
+     * Clears the list of most recently exported table paths.
+     */
+    public static void clearExportPaths() { return;}
+
+    /**
      * Returns the path of the directory containing the most recently used project files.
      * @return Path
      */
