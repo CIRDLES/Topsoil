@@ -36,7 +36,7 @@ public final class RecentFiles {
      * @return  Path[]
      */
     public static Path[] getProjectPaths() {
-        return loadRecentFiles().toArray(new Path[]{});
+        return loadRecentProjectFiles().toArray(new Path[]{});
     }
 
     /**
@@ -45,13 +45,13 @@ public final class RecentFiles {
      * @param path  project file Path
      */
     public static void addProjectPath(Path path) {
-        List<Path> paths = loadRecentFiles();
+        List<Path> paths = loadRecentProjectFiles();
         paths.remove(path);
         if (paths.size() == MAX_SIZE) {
             paths.remove(MAX_SIZE - 1);
         }
         paths.add(0, path);
-        saveRecentFiles(paths);
+        saveRecentProjectFiles(paths);
     }
 
     /**
@@ -121,11 +121,11 @@ public final class RecentFiles {
     //**********************************************//
 
     /**
-     * Reads a list of most recent paths from the {@code Preferences} node.
+     * Reads a list of most recent Project paths from the {@code Preferences} node.
      *
      * @return  List of Paths
      */
-    private static List<Path> loadRecentFiles() {
+    private static List<Path> loadRecentProjectFiles() {
         String str;
         Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
         List<Path> paths = new ArrayList<>(MAX_SIZE);
@@ -142,11 +142,11 @@ public final class RecentFiles {
     }
 
     /**
-     * Updates the paths stored in the {@code Preferences} node with the provided list of paths.
+     * Updates the Project paths stored in the {@code Preferences} node with the provided list of paths.
      *
      * @param paths List of Paths
      */
-    private static void saveRecentFiles(List<Path> paths) {
+    private static void saveRecentProjectFiles(List<Path> paths) {
         Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
         String str;
         for (int i = 1; i <= MAX_SIZE; i++) {
@@ -158,4 +158,18 @@ public final class RecentFiles {
             }
         }
     }
+
+    /**
+     * Reads a list of most recent Export paths from the {@code Preferences} node.
+     *
+     * @return  List of Paths
+     */
+    private static List<Path> loadRecentExportFiles() { return null;}
+
+    /**
+     * Updates the Export paths stored in the {@code Preferences} node with the provided list of paths.
+     *
+     * @param paths List of Paths
+     */
+    private static void saveRecentExportFiles(List<Path> paths) { return;}
 }
