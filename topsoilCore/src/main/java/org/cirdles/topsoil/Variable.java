@@ -42,15 +42,11 @@ public class Variable<T> extends SimpleSymbolKey<T> {
     ));
 
     public static final List<Variable<?>> CLASSIC = Collections.unmodifiableList(asList(
-            X, SIGMA_X, Y, SIGMA_Y, RHO
+            X, Y, RHO //SIGMA_X, SIGMA_Y,
     ));
 
-    public static final List<Variable<?>> CLASSICX = Collections.unmodifiableList(asList(
-            X, SIGMA_X
-    ));
-
-    public static final List<Variable<?>> CLASSICY = Collections.unmodifiableList(asList(
-           Y, SIGMA_Y, RHO
+    public static final List<Variable<?>> nullIncludedCLASSIC = Collections.unmodifiableList(asList(
+            null, X, Y, RHO
     ));
 
     private String abbreviation;

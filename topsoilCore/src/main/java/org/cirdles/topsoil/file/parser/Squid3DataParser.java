@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.regex.Pattern;
 
 /**
  * Parses value-separated data into a {@link DataTable}.
@@ -87,7 +86,7 @@ public class Squid3DataParser extends AbstractDataParser {
             nextCatIndex = catRow.length;
         }
         for (int colIndex = catIndex; colIndex < nextCatIndex; colIndex++) {
-            boolean isDependency = false;
+            boolean isDependentColumn = false;
 
             joiner = new StringJoiner(" ");
             for (int rowIndex = 1; rowIndex < 5; rowIndex++) { //join 5 header rows
@@ -101,22 +100,13 @@ public class Squid3DataParser extends AbstractDataParser {
                 colLabel = "newColumn";
             }
 
-            if (Pattern.matches(colLabel,"//±\\dσ\\W%\\W")){ //±2σ (%)
-                isDependency = true;
-            }if (Pattern.matches(colLabel, "//±\\d&sigma\\b; \\W%\\W")){ //±2&sigma; (%)
-                isDependency = true;
-            }
+//            if (Pattern.matches(colLabel,"\\±\\dσ\\W%\\W")){
+//                isDependentColumn = true;
+//            }
+            //if (Pattern.matches(colLabel, "\\±\\d&sigma\\b; \\W%\\W")){
+            //    isDependentColumn = true;
+            //}
 
-            // public void dependencyCreator(String x){
-            //     //is there a previous column?
-            //     for (int rowIndex = 1; rowIndex < 5; rowIndex++) {
-            //         if(colLabel == rows[rowIndex][colIndex]){
-            //             if(rows[rowIndex-1][colIndex] != null) {
-            //                 dependencyRow  = rows[rowIndex-1][colIndex]; //reference previous column
-            //             }
-            //         }
-            //     }
-            // }
 
             if (usedColumnLabels.containsKey(colLabel)) {
                 labelFreq = usedColumnLabels.get(colLabel);
@@ -133,8 +123,8 @@ public class Squid3DataParser extends AbstractDataParser {
             } else {
                 newColumn = new SimpleDataColumn<>(colLabel, true, "", String.class);
             }
-            if (isDependency) {
-              columns.get(columns.size() - 1).setDependency(newColumn);
+            if (isDependentColumn) {
+              columns.get(columns.size() - 1).setDependentColumn(newColumn);
             }
             columns.add(newColumn);
             // columns.add(new SimpleDataColumn<>(dependencyRow, true, "", String.class)); //add dependency column variable (1st conversation)

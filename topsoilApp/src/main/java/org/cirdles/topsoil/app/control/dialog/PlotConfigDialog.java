@@ -21,6 +21,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Variable;
@@ -81,7 +82,7 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
 
         @FXML private TreeView<DataColumn<?>> columnTreeView;
         @FXML private ListView<SelectionEntry> variableListView;
-        @FXML private Button removeButton, useExistingButton, classicButton, setAllButton;
+        @FXML private Button removeButton, useExistingButton, classicButton; //setAllButton;
         @FXML private ComboBox<IsotopeSystem> isotopeSystemComboBox;
 
         public PlotConfigDialogPane(FXDataTable table, Map<Key, Object> settings) {
@@ -100,9 +101,13 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
             columnTreeView.setRoot(rootItem);
             columnTreeView.setShowRoot(false);
             columnTreeView.setCellFactory(param -> new ColumnTreeViewCell());
+
+            //regular for loop
             for (DataColumn<?> column : table.getColumns()) {
                 TreeItem<DataColumn<?>> item = createColumnItem(column);
                 if (item != null) {
+                    //if has dependent{
+                    // skip[ next}
                     rootItem.getChildren().add(item);
                 }
             }
@@ -192,6 +197,11 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
             if (leafColumnGraphics.get(column) != null) {
                 leafColumnGraphics.get(column).variableComboBox.setValue(variable);
             }
+            if (column.getDependentColumn() != null) {
+                if (variable == Variable.X) {
+                    select(Variable.X, column.getDependentColumn());
+                }
+            }
         }
 
         private void deselect(Variable<?> variable) {
@@ -215,6 +225,8 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                 // column group
                 List<TreeItem<DataColumn<?>>> children = new ArrayList<>(column.countChildren());
                 TreeItem<DataColumn<?>> childItem;
+
+                //same as 104
                 for (DataColumn<?> child : column.getChildren()) {
                     childItem = createColumnItem(child);
                     if (childItem != null) {
@@ -270,16 +282,16 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
             }
         }
 
-        @FXML
-        private void setAllButtonAction() {
-            Variable<?> variable;
-            for (Map.Entry<DataColumn<?>, LeafColumnControl> entry : leafColumnGraphics.entrySet()) {
-                variable = entry.getValue().variableComboBox.getValue();
-                if (variable != null) {
-                    select(variable, entry.getKey());
-                }
-            }
-        }
+//        @FXML
+//        private void setAllButtonAction() {
+//            Variable<?> variable;
+//            for (Map.Entry<DataColumn<?>, LeafColumnControl> entry : leafColumnGraphics.entrySet()) {
+//                variable = entry.getValue().variableComboBox.getValue();
+//                if (variable != null) {
+//                    select(variable, entry.getKey());
+//                }
+//            }
+//        }
 
         private class SelectionEntry {
             private final Variable<?> variable;
@@ -314,7 +326,8 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                     setText("");
                     LeafColumnControl graphic = leafColumnGraphics.get(item);
                     if (graphic == null) {
-                        graphic = new LeafColumnControl(item);  // Only create a new graphic if necessary
+                        //graphic = new LeafColumnControl(item);  // Only create a new graphic if necessary
+                        graphic = new HBox(new LeafColumnControl(item), new LeafColumnControl(item.getDependentColumn();
                         leafColumnGraphics.put(item, graphic);
                     }
                     setGraphic(graphic);
@@ -331,7 +344,6 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
 
             private Label label;
             private ComboBox<Variable<?>> variableComboBox;
-            private Button setButton;
 
             LeafColumnControl(DataColumn<?> column) {
                 super(new HBox());
@@ -341,7 +353,7 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                 label.setMaxWidth(LABEL_WIDTH);
                 label.setWrapText(true);
 
-                variableComboBox = new ComboBox<>(FXCollections.observableList(Variable.CLASSIC));
+                variableComboBox = new ComboBox<>(FXCollections.observableList(Variable.nullIncludedCLASSIC)); // put null list in then classic
                 variableComboBox.setCellFactory(param ->  new ListCell<Variable<?>>() {
                     @Override
                     protected void updateItem(Variable<?> item, boolean empty) {
@@ -381,17 +393,13 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                     }
                 });
 
-                setButton = new Button("Set");
-                setButton.setMinWidth(USE_PREF_SIZE);   // Prevents shrinking on container resizing
-                setButton.disableProperty().bind(variableComboBox.valueProperty().isNull());
-                setButton.setOnAction(event -> {
+                variableComboBox.setOnAction((event) -> {
                     Variable<?> variable = variableComboBox.getValue();
                     select(variable, column);
                 });
-
                 HBox container = getChild();
                 container.setSpacing(5.0);
-                container.getChildren().addAll(label, variableComboBox, setButton);
+                container.getChildren().addAll(label, variableComboBox);
             }
         }
 

@@ -32,7 +32,7 @@ public class FXDataColumn<T> extends FXDataComponent<DataColumn<?>> implements D
 
     private Class<T> valueType;
     private T defaultValue;
-    private final DataColumn<?> setDependency;
+    private DataColumn<?> dependentColumn;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -63,7 +63,12 @@ public class FXDataColumn<T> extends FXDataComponent<DataColumn<?>> implements D
     }
 
     @Override
-    public void setDependency(DataColumn<?> column) {
-        this.dependency = column;
+    public void getDependentColumn(DataColumn<?> column) {
+        this.dependentColumn = column;
+    }
+
+    @Override
+    public void setDependentColumn(DataColumn<?> column) {
+        this.dependentColumn = column;
     }
 }
