@@ -453,6 +453,7 @@ final class MenuItemHelper {
     private static void exportTableAs(Path path, DataTable table) {
         try {
             table.getTemplate().getWriter().writeTableToFile(path, table);
+            RecentFiles.addExportPath(path);
         } catch (IOException e) {
             e.printStackTrace();
         }

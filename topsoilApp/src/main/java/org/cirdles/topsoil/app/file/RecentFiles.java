@@ -15,7 +15,9 @@ public final class RecentFiles {
     //                  CONSTANTS                   //
     //**********************************************//
 
-    private static final String RECENT_FILES = "recent-files";
+    private static final String RECENT_PROJECTS = "recent-files";
+    private static final String RECENT_EXPORTS = "recent-exports";
+
     private static final int MAX_SIZE = 10;
 
     //**********************************************//
@@ -60,7 +62,7 @@ public final class RecentFiles {
     public static void clearProjectPaths() {
         Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
         for (int i = 1; i <= MAX_SIZE; i++) {
-            prefs.remove(RECENT_FILES + i);
+            prefs.remove(RECENT_PROJECTS + i);
         }
     }
 
@@ -69,19 +71,34 @@ public final class RecentFiles {
      *
      * @return Path[]
      */
-    public static Path[] getExportPaths() { return null;}
+    public static Path[] getExportPaths() {
+        return loadRecentExportFiles().toArray(new Path[]{});
+    }
 
     /**
      * Adds a path to the list of most recently exported table paths.
      *
      * @param path table path
      */
-    public static void addExportPath(Path path) { return;}
+    public static void addExportPath(Path path){
+        List<Path> paths = loadRecentExportFiles();
+        paths.remove(path);
+        if (paths.size() == MAX_SIZE) {
+            paths.remove(MAX_SIZE - 1);
+        }
+        paths.add(0, path);
+        saveRecentExportFiles(paths);
+    }
 
     /**
      * Clears the list of most recently exported table paths.
      */
-    public static void clearExportPaths() { return;}
+    public static void clearExportPaths() {
+        Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
+        for (int i = 1; i <= MAX_SIZE; i++) {
+            prefs.remove(RECENT_EXPORTS + i);
+        }
+    }
 
     /**
      * Returns the path of the directory containing the most recently used project files.
@@ -106,7 +123,7 @@ public final class RecentFiles {
     public static Path findMRUExportFolder() {
         //THIS IS NOT ACCURATE - We need to find a way of storing recently exported tables
         Path path;
-        Path[] recentlyUsed = getProjectPaths();
+        Path[] recentlyUsed = getExportPaths();
         if (recentlyUsed.length == 0) {
             path = Paths.get(System.getProperty("user.home"));
         }
@@ -130,7 +147,7 @@ public final class RecentFiles {
         Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
         List<Path> paths = new ArrayList<>(MAX_SIZE);
         for (int i = 1; i <= MAX_SIZE; i++) {
-            str = prefs.get(RECENT_FILES + i, null);
+            str = prefs.get(RECENT_PROJECTS + i, null);
             if (str != null) {
                 Path path = Paths.get(str);
                 if (path.toFile().exists()) {
@@ -151,10 +168,10 @@ public final class RecentFiles {
         String str;
         for (int i = 1; i <= MAX_SIZE; i++) {
             if (i > paths.size()) {
-                prefs.remove(RECENT_FILES + i);
+                prefs.remove(RECENT_PROJECTS + i);
             } else {
                 str = paths.get(i - 1).toString();
-                prefs.put(RECENT_FILES + i, str);
+                prefs.put(RECENT_PROJECTS + i, str);
             }
         }
     }
@@ -164,12 +181,36 @@ public final class RecentFiles {
      *
      * @return  List of Paths
      */
-    private static List<Path> loadRecentExportFiles() { return null;}
+    private static List<Path> loadRecentExportFiles() {
+        String str;
+        Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
+        List<Path> paths = new ArrayList<>(MAX_SIZE);
+        for (int i = 1; i <= MAX_SIZE; i++) {
+            str = prefs.get(RECENT_EXPORTS + i, null);
+            if (str != null) {
+                Path path = Paths.get(str);
+                if (path.toFile().exists()) {
+                    paths.add(path);
+                }
+            }
+        }
+        return paths;
+    }
 
     /**
      * Updates the Export paths stored in the {@code Preferences} node with the provided list of paths.
      *
      * @param paths List of Paths
      */
-    private static void saveRecentExportFiles(List<Path> paths) { return;}
+    private static void saveRecentExportFiles(List<Path> paths) {
+        Preferences prefs = Preferences.userNodeForPackage(RecentFiles.class);
+        String str;
+        for (int i = 1; i <= MAX_SIZE; i++) {
+            if (i > paths.size()) {
+                prefs.remove(RECENT_EXPORTS + i);
+            } else {
+                str = paths.get(i - 1).toString();
+                prefs.put(RECENT_EXPORTS + i, str);
+            }
+        }}
 }
