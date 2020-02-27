@@ -18,6 +18,7 @@ import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.FileChoosers;
+import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.file.serialization.ProjectSerializer;
 
 import java.io.File;

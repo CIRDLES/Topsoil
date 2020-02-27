@@ -51,15 +51,15 @@ public class TopsoilMenuBar extends MenuBar {
         placeholder.setDisable(true);
         MenuItem clearRecentProjectsItem = new MenuItem(resources.getString("clearRecent"));
         clearRecentProjectsItem.setOnAction(event -> {
-            RecentFiles.clear();
+            RecentFiles.clearProjectPaths();
             MainController.getInstance().getHomeView().refreshRecentFiles();
         });
         Menu openRecentProjectMenu = new Menu(resources.getString("openRecent"), null, placeholder);
         openRecentProjectMenu.setOnShowing(event -> {
-            Path[] paths = RecentFiles.getPaths();
+            Path[] paths = RecentFiles.getProjectPaths();
             if (paths.length != 0) {
                 openRecentProjectMenu.getItems().remove(placeholder);
-                for (Path path : RecentFiles.getPaths()) {
+                for (Path path : RecentFiles.getProjectPaths()) {
                     MenuItem item = new MenuItem(path.toString());
                     item.setOnAction(event1 -> MenuItemHelper.openProject(path));
                     openRecentProjectMenu.getItems().add(item);

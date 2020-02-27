@@ -69,7 +69,7 @@ public class HomeView extends GridPane {
 
     void refreshRecentFiles() {
         recentFilesLinkBox.getChildren().clear();
-        Path[] recentFiles = RecentFiles.getPaths();
+        Path[] recentFiles = RecentFiles.getProjectPaths();
         if (recentFiles.length == 0) {
             recentFilesLinkBox.getChildren().add(noRecentFilesLabel);
         } else {
