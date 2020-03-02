@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -37,6 +38,7 @@ import org.cirdles.topsoil.plot.PlotOption;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> {
 
@@ -102,12 +104,13 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
             columnTreeView.setShowRoot(false);
             columnTreeView.setCellFactory(param -> new ColumnTreeViewCell());
 
-            //regular for loop
+            Map<DataColumn<?>, Boolean> dependentColumns = findDependentColumns(table.getColumns(), null);
+
+            System.out.println(dependentColumns);
+
             for (DataColumn<?> column : table.getColumns()) {
-                TreeItem<DataColumn<?>> item = createColumnItem(column);
+                TreeItem<DataColumn<?>> item = createColumnItem(column, dependentColumns);
                 if (item != null) {
-                    //if has dependent{
-                    // skip[ next}
                     rootItem.getChildren().add(item);
                 }
             }
@@ -219,16 +222,37 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
             }
         }
 
-        private TreeItem<DataColumn<?>> createColumnItem(DataColumn<?> column) {
+        private Map<DataColumn<?>, Boolean> findDependentColumns(List<? extends DataColumn<?>> columns, Map<DataColumn<?>, Boolean> targetMap) {
+            if (targetMap == null) {
+                targetMap = new HashMap<>();
+            }
+
+            DataColumn<?> dependentColumn;
+            for (DataColumn<?> column : columns) {
+                dependentColumn = column.getDependentColumn();
+                if (dependentColumn != null) {
+                    targetMap.put(dependentColumn, true);
+                }
+                targetMap = findDependentColumns(column.getChildren(), targetMap);
+            }
+
+            return targetMap;
+        }
+
+        private TreeItem<DataColumn<?>> createColumnItem(DataColumn<?> column, Map<DataColumn<?>, Boolean> dependentColumns) {
+            Boolean isDependentColumn = dependentColumns.get(column);
+            if (isDependentColumn != null && isDependentColumn) {
+                return null;    // Don't create a tree item if the column is dependent on another one
+            }
+
             TreeItem<DataColumn<?>> treeItem = null;
             if (column.countChildren() > 0) {
                 // column group
                 List<TreeItem<DataColumn<?>>> children = new ArrayList<>(column.countChildren());
                 TreeItem<DataColumn<?>> childItem;
 
-                //same as 104
                 for (DataColumn<?> child : column.getChildren()) {
-                    childItem = createColumnItem(child);
+                    childItem = createColumnItem(child, dependentColumns);
                     if (childItem != null) {
                         children.add(childItem);
                     }
@@ -282,17 +306,6 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
             }
         }
 
-//        @FXML
-//        private void setAllButtonAction() {
-//            Variable<?> variable;
-//            for (Map.Entry<DataColumn<?>, LeafColumnControl> entry : leafColumnGraphics.entrySet()) {
-//                variable = entry.getValue().variableComboBox.getValue();
-//                if (variable != null) {
-//                    select(variable, entry.getKey());
-//                }
-//            }
-//        }
-
         private class SelectionEntry {
             private final Variable<?> variable;
             private DataColumn<?> column;
@@ -324,11 +337,22 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
 
                 if (item.countChildren() == 0) {
                     setText("");
-                    LeafColumnControl graphic = leafColumnGraphics.get(item);
-                    if (graphic == null) {
-                        //graphic = new LeafColumnControl(item);  // Only create a new graphic if necessary
-                        graphic = new HBox(new LeafColumnControl(item), new LeafColumnControl(item.getDependentColumn();
-                        leafColumnGraphics.put(item, graphic);
+                    Node graphic;
+                    DataColumn<?> dependentCol = item.getDependentColumn();
+                    LeafColumnControl itemControl = leafColumnGraphics.get(item);
+                    if (itemControl == null) {
+                        itemControl = new LeafColumnControl(item);
+                        leafColumnGraphics.put(item, itemControl);
+                    }
+                    if (dependentCol != null) {
+                        LeafColumnControl dependentControl = leafColumnGraphics.get(dependentCol);
+                        if (dependentControl == null) {
+                            dependentControl = new LeafColumnControl(dependentCol);
+                            leafColumnGraphics.put(dependentCol, dependentControl);
+                        }
+                        graphic = new HBox(itemControl, dependentControl);
+                    } else {
+                        graphic = itemControl;
                     }
                     setGraphic(graphic);
                 } else {

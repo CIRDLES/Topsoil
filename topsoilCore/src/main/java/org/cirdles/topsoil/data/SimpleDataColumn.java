@@ -10,7 +10,7 @@ public class SimpleDataColumn<T> extends AbstractDataComponent<DataColumn<?>> im
 
     private final T defaultValue;
     private final Class<T> valueType;
-    private DataColumn<?> dependentColumn;
+    private DataColumn<T> dependentColumn;
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
@@ -65,12 +65,12 @@ public class SimpleDataColumn<T> extends AbstractDataComponent<DataColumn<?>> im
     }
 
     @Override
-    public void getDependentColumn(DataColumn<?> column) {
-        this.dependentColumn = column;
+    public DataColumn<T> getDependentColumn() {
+        return this.dependentColumn;
     }
 
     @Override
-    public void setDependentColumn(DataColumn<?> column) {
+    public void setDependentColumn(DataColumn<T> column) {
         this.dependentColumn = column;
     }
 

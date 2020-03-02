@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface DataColumn<T> extends DataComponent<DataColumn<?>>, SymbolKey<T> {
 
-    public void getDependentColumn(DataColumn<?> column);
+    public DataColumn<T> getDependentColumn();
 
-    public void setDependentColumn(DataColumn<?> column);
+    public void setDependentColumn(DataColumn<T> column);
 
     @Override
     default String toJSONString() {

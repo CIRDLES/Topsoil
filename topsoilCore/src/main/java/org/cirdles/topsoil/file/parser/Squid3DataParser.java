@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
 /**
  * Parses value-separated data into a {@link DataTable}.
@@ -66,6 +67,7 @@ public class Squid3DataParser extends AbstractDataParser {
         return headers;
     }
 
+    @SuppressWarnings("unchecked")
     private DataColumn parseCategory(String[][] rows, int catIndex, int nextCatIndex, Map<String, Integer> usedColumnLabels) {
         int labelFreq;
         String[] catRow = rows[0];
@@ -81,10 +83,12 @@ public class Squid3DataParser extends AbstractDataParser {
         List<DataColumn<?>> columns = new ArrayList<>();
         String colLabel;
         StringJoiner joiner;
-        //String dependencyRow;
         if (nextCatIndex == -1 || nextCatIndex > catRow.length) {
             nextCatIndex = catRow.length;
         }
+        Pattern unctColPattern = Pattern.compile(".*(±|\\+\\/-)\\d?(σ|sigma)\\W?%\\W?");
+        DataColumn<Number> newNumberCol;
+        DataColumn<String> newStringCol;
         for (int colIndex = catIndex; colIndex < nextCatIndex; colIndex++) {
             boolean isDependentColumn = false;
 
@@ -100,13 +104,9 @@ public class Squid3DataParser extends AbstractDataParser {
                 colLabel = "newColumn";
             }
 
-//            if (Pattern.matches(colLabel,"\\±\\dσ\\W%\\W")){
-//                isDependentColumn = true;
-//            }
-            //if (Pattern.matches(colLabel, "\\±\\d&sigma\\b; \\W%\\W")){
-            //    isDependentColumn = true;
-            //}
-
+            if (unctColPattern.matcher(colLabel).matches()){
+                isDependentColumn = true;
+            }
 
             if (usedColumnLabels.containsKey(colLabel)) {
                 labelFreq = usedColumnLabels.get(colLabel);
@@ -119,15 +119,17 @@ public class Squid3DataParser extends AbstractDataParser {
             Class<?> clazz = getColumnDataType(rows, colIndex, 5);
             DataColumn<?> newColumn;
             if (clazz == Number.class) {
-                newColumn = new SimpleDataColumn<>(colLabel, true, 0.0, Number.class);
+                newColumn = newNumberCol = new SimpleDataColumn<>(colLabel, true, 0.0, Number.class);
+                if (isDependentColumn) {
+                    ((DataColumn<Number>) columns.get(columns.size() - 1)).setDependentColumn(newNumberCol);
+                }
             } else {
-                newColumn = new SimpleDataColumn<>(colLabel, true, "", String.class);
-            }
-            if (isDependentColumn) {
-              columns.get(columns.size() - 1).setDependentColumn(newColumn);
+                newColumn = newStringCol = new SimpleDataColumn<>(colLabel, true, "", String.class);
+                if (isDependentColumn) {
+                    ((DataColumn<String>) columns.get(columns.size() - 1)).setDependentColumn(newStringCol);
+                }
             }
             columns.add(newColumn);
-            // columns.add(new SimpleDataColumn<>(dependencyRow, true, "", String.class)); //add dependency column variable (1st conversation)
         }
         return new SimpleDataColumn(catLabel, true, columns.toArray(new SimpleDataColumn[]{}));
     }
