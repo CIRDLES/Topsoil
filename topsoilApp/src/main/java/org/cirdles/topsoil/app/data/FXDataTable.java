@@ -134,6 +134,8 @@ public class FXDataTable implements DataTable {
             this.columns.add(new FXDataColumn<>(column));
         }
 
+
+
         // Create FXDataRows for each row, and associate their values with the newly created FXDataColumn
         this.rows.addAll(mapRowsToFXDataColumns(table.getRows(), this.columns));
     }

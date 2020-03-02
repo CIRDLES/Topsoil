@@ -24,7 +24,11 @@ import java.util.regex.Pattern;
  *
  * @author marottajb
  */
-public class Squid3DataParser extends AbstractDataParser {
+public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R extends DataRow> extends AbstractDataParser<T, C, R> {
+
+    public Squid3DataParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
+        super(tableClass, columnClass, rowClass);
+    }
 
     /** {@inheritDoc} */
     @Override

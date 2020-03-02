@@ -8,6 +8,7 @@ import org.cirdles.topsoil.data.SimpleDataRow;
 import org.cirdles.topsoil.file.TopsoilFileUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,11 +18,25 @@ import java.util.regex.Pattern;
  *
  * @author marottajb
  */
-public abstract class AbstractDataParser implements DataParser {
+public abstract class AbstractDataParser<T extends DataTable, C extends DataColumn<?>, R extends DataRow> implements DataParser {
+
+    protected Class<T> tableClass;
+    protected Class<C> columnClass;
+    protected Class<R> rowClass;
+
+    private AbstractDataParser() {
+
+    }
+
+    public AbstractDataParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
+        this.tableClass = tableClass;
+        this.columnClass = columnClass;
+        this.rowClass = rowClass;
+    }
 
     /** {@inheritDoc} */
     @Override
-    public final DataTable parseDataTable(Path path, String delimiter, String label) throws IOException {
+    public final T parseDataTable(Path path, String delimiter, String label) throws IOException {
         Validate.notNull(path, "Path cannot be null.");
         Validate.notNull(delimiter, "Delimiter cannot be null.");
 
@@ -36,7 +51,7 @@ public abstract class AbstractDataParser implements DataParser {
 
     /** {@inheritDoc} */
     @Override
-    public final DataTable parseDataTable(String content, String delimiter, String label) {
+    public final T parseDataTable(String content, String delimiter, String label) {
         Validate.notNull(content, "String content cannot be null.");
         Validate.notNull(delimiter, "Delimiter cannot be null.");
 
@@ -48,7 +63,7 @@ public abstract class AbstractDataParser implements DataParser {
         return parseDataTable(cells, label);
     }
 
-    protected abstract DataTable parseDataTable(String[][] cells, String label);
+    protected abstract T parseDataTable(String[][] cells, String label);
 
     /**
      * Identifies the data type of a column of values in the provided data. Currently, only {@code Number} and
@@ -89,7 +104,8 @@ public abstract class AbstractDataParser implements DataParser {
      * @return          DataRow with assigned values
      */
     protected DataRow getTableRow(String label, String[] row, List<DataColumn<?>> columns) {
-        DataRow newRow = new SimpleDataRow(label);
+        Constructor<R> constructor = rowClass.getConstructor(String.class);
+        DataRow newRow = constructor.newInstance(label);
         DataColumn<?> col;
         String str;
         for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
