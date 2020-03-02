@@ -44,11 +44,7 @@ public class Variable<T> extends SimpleSymbolKey<T> {
     public static final List<Variable<?>> CLASSIC = Collections.unmodifiableList(asList(
             X, Y, RHO //SIGMA_X, SIGMA_Y,
     ));
-
-    public static final List<Variable<?>> nullIncludedCLASSIC = Collections.unmodifiableList(asList(
-            null, X, Y, RHO
-    ));
-
+    
     private String abbreviation;
 
     protected Variable(String name, String abbreviation, String key, T defaultValue, Class<T> valueType) {
