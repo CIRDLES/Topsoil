@@ -43,8 +43,8 @@ public enum DataTemplate {
      *
      * @return          DataParser
      */
-    public DataParser getParser() {
-        return getInstanceOf(parserClass);
+    public <T extends DataTable, C extends DataColumn<?>, R extends DataRow> DataParser getParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
+        return getInstanceOf(parserClass, tableClass, columnClass, rowClass);
     }
 
     /**
@@ -53,7 +53,7 @@ public enum DataTemplate {
      * @return          DataWriter
      */
     public DataWriter getWriter() {
-        return getInstanceOf(writerClass);
+        return getInstanceOf(writerClass, null, null, null);
     }
 
     public boolean isParsingSupported() {
@@ -73,9 +73,10 @@ public enum DataTemplate {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private <T> T getInstanceOf(Class<T> clazz) {
+    private <I, T extends DataTable, C extends DataColumn<?>, R extends DataRow> T getInstanceOf(Class<I> clazz, Class<? extends DataTable> tableClass) {
         try {
             if (clazz != null) {
+
                 return clazz.newInstance();
             }
         } catch (InstantiationException|IllegalAccessException e) {
