@@ -15,21 +15,31 @@ import java.util.StringJoiner;
 
 /**
  * Parses value-separated data into a {@link DataTable}.
- *
+ * <p>
  * This {@link DataParser} assumes that data is organized in a standard format, with one or more string header rows
  * followed by some data rows.
  *
  * @author marottajb
  */
-public class DefaultDataParser extends AbstractDataParser {
+public class DefaultDataParser<T extends DataTable, C extends DataColumn<?>, R extends DataRow> extends AbstractDataParser<T, C, R> {
 
-    /** {@inheritDoc} */
+    private Class<T> tableClass;
+    private Class<C> columnClass;
+    private Class<R> rowClass;
+
+    public DefaultDataParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
+        super(tableClass, columnClass, rowClass);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected DataTable parseDataTable(String[][] rows, String label) {
+    protected T parseDataTable(String[][] rows, String label) {
         int startIndex = countHeaderRows(rows);
-        List<DataColumn<?>> columns = parseColumns(rows, startIndex);
-        List<DataRow> dataRows = new ArrayList<>();
-        DataRow row;
+        List<C> columns = parseColumns(rows, startIndex);
+        List<R> dataRows = new ArrayList<>();
+        R row;
         for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
             row = getTableRow(
                     "row" + (rowIndex - startIndex + 1),
@@ -47,8 +57,8 @@ public class DefaultDataParser extends AbstractDataParser {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private List<DataColumn<?>> parseColumns(String[][] rows, int numHeaderRows) {
-        List<DataColumn<?>> columns = new ArrayList<>();
+    private List<C> parseColumns(String[][] rows, int numHeaderRows) {
+        List<C> columns = new ArrayList<>();
         Map<String, Integer> usedColumnLabels = new HashMap<>();
         String label;
         int labelFreq;
@@ -58,7 +68,7 @@ public class DefaultDataParser extends AbstractDataParser {
         for (int colIndex = 0; colIndex < rows[0].length; colIndex++) {
             joiner = new StringJoiner("\n");
             for (int hRowIndex = 0; hRowIndex < numHeaderRows; hRowIndex++) {
-                if (! rows[hRowIndex][colIndex].isEmpty()) {
+                if (!rows[hRowIndex][colIndex].isEmpty()) {
                     joiner.add(rows[hRowIndex][colIndex]);
                 }
             }

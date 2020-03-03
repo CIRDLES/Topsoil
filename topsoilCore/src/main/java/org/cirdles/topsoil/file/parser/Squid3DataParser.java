@@ -19,25 +19,31 @@ import java.util.regex.Pattern;
 
 /**
  * Parses value-separated data into a {@link DataTable}.
- *
+ * <p>
  * This {@link DataParser} assumes that data is exported in a specific format from Squid 3.
  *
  * @author marottajb
  */
 public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R extends DataRow> extends AbstractDataParser<T, C, R> {
 
+    private Class<T> tableClass;
+    private Class<C> columnClass;
+    private Class<R> rowClass;
+
     public Squid3DataParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
         super(tableClass, columnClass, rowClass);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected DataTable parseDataTable(String[][] rows, String label) {
-        List<DataColumn<?>> columns = parseHeaders(rows);
-        List<DataColumn<?>> leafColumns = TableUtils.getLeafColumns(columns);
+    protected T parseDataTable(String[][] rows, String label) {
+        List<C> columns = parseHeaders(rows);
+        List<C> leafColumns = TableUtils.getLeafColumns(columns);
 
         int[] segIndices = readAliquots(rows);
-        List<DataRow> dataRows = new ArrayList<>();
+        List<R> dataRows = new ArrayList<>();
         for (int i = 0; i < segIndices.length; i++) {
             dataRows.add(parseAliquot(
                     rows,
@@ -47,7 +53,7 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
             ));
         }
 
-        DataTable table = new SimpleDataTable(DataTemplate.SQUID_3, label, columns, dataRows);
+        T table = new SimpleDataTable(DataTemplate.SQUID_3, label, columns, dataRows);
 //        prepareTable(table);
         return table;
     }
@@ -56,8 +62,8 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private List<DataColumn<?>> parseHeaders(String[][] rows) {
-        List<DataColumn<?>> headers = new ArrayList<>();
+    private List<C> parseHeaders(String[][] rows) {
+        List<C> headers = new ArrayList<>();
         int[] categoryIndices = readCategories(rows[0]);
         Map<String, Integer> usedColumnLabels = new HashMap<>();
         for (int i = 0; i < categoryIndices.length; i++) {
@@ -84,7 +90,7 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
             usedColumnLabels.put(catLabel, 1);
         }
 
-        List<DataColumn<?>> columns = new ArrayList<>();
+        List<C> columns = new ArrayList<>();
         String colLabel;
         StringJoiner joiner;
         if (nextCatIndex == -1 || nextCatIndex > catRow.length) {
@@ -99,7 +105,7 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
             joiner = new StringJoiner(" ");
             for (int rowIndex = 1; rowIndex < 5; rowIndex++) { //join 5 header rows
                 colLabel = rows[rowIndex][colIndex];
-                if (! colLabel.equals("")) {
+                if (!colLabel.equals("")) {
                     joiner.add(colLabel);
                 }
             }
@@ -108,7 +114,7 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
                 colLabel = "newColumn";
             }
 
-            if (unctColPattern.matcher(colLabel).matches()){
+            if (unctColPattern.matcher(colLabel).matches()) {
                 isDependentColumn = true;
             }
 
@@ -121,7 +127,7 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
             }
 
             Class<?> clazz = getColumnDataType(rows, colIndex, 5);
-            DataColumn<?> newColumn;
+            C newColumn;
             if (clazz == Number.class) {
                 newColumn = newNumberCol = new SimpleDataColumn<>(colLabel, true, 0.0, Number.class);
                 if (isDependentColumn) {
@@ -138,7 +144,7 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
         return new SimpleDataColumn(catLabel, true, columns.toArray(new SimpleDataColumn[]{}));
     }
 
-    private DataRow parseAliquot(String[][] rows, int segIndex, int nextSegIndex, List<DataColumn<?>> columns) {
+    private R parseAliquot(String[][] rows, int segIndex, int nextSegIndex, List<C> columns) {
         String segmentLabel = rows[segIndex][0];
         List<DataRow> dataRows = new ArrayList<>();
         String rowLabel;
@@ -159,13 +165,13 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
     /**
      * Returns an array of ints representing the column indices of each of the top-level data categories.
      *
-     * @param catRow    the top row of data
-     * @return          category indices
+     * @param catRow the top row of data
+     * @return category indices
      */
     private static int[] readCategories(String[] catRow) {
         List<Integer> idxs = new ArrayList<>();
         for (int index = 0; index < catRow.length; index++) {
-            if (! "".equals(catRow[index])) {
+            if (!"".equals(catRow[index])) {
                 idxs.add(index);
             }
         }
@@ -175,19 +181,19 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
     /**
      * Returns an array of ints representing the row indices of each data segment.
      *
-     * @param cells     String[][] of data values
-     * @return          segment indices
+     * @param cells String[][] of data values
+     * @return segment indices
      */
     private static int[] readAliquots(String[][] cells) {
         List<Integer> idxs = new ArrayList<>();
 
         String last = cells[5][0];
         String current;
-        if (! "".equals(last)) {
+        if (!"".equals(last)) {
             idxs.add(5);
             for (int index = 6; index < cells.length; index++) {
                 current = cells[index][0];
-                if (! current.startsWith(last)) {
+                if (!current.startsWith(last)) {
                     idxs.add(index);
                     last = current;
                 }

@@ -41,19 +41,41 @@ public enum DataTemplate {
     /**
      * Returns a new instance of the {@code DataParser} for the template.
      *
-     * @return          DataParser
+     * @return DataParser
      */
     public <T extends DataTable, C extends DataColumn<?>, R extends DataRow> DataParser getParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
-        return getInstanceOf(parserClass, tableClass, columnClass, rowClass);
+        try {
+            if (parserClass != null) {
+                if (tableClass != null) {
+                    if (columnClass != null) {
+                        if (rowClass != null) {
+                            return parserClass.newInstance();
+                        }
+                    }
+                }
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
+
 
     /**
      * Returns a new instance of the {@code DataWriter} for the template.
      *
-     * @return          DataWriter
+     * @return DataWriter
      */
     public DataWriter getWriter() {
-        return getInstanceOf(writerClass, null, null, null);
+        try {
+            if (writerClass != null) {
+
+                return writerClass.newInstance();
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public boolean isParsingSupported() {
@@ -68,21 +90,4 @@ public enum DataTemplate {
     public String toString() {
         return name;
     }
-
-    //**********************************************//
-    //                PRIVATE METHODS               //
-    //**********************************************//
-
-    private <I, T extends DataTable, C extends DataColumn<?>, R extends DataRow> T getInstanceOf(Class<I> clazz, Class<? extends DataTable> tableClass) {
-        try {
-            if (clazz != null) {
-
-                return clazz.newInstance();
-            }
-        } catch (InstantiationException|IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 }
