@@ -1,8 +1,12 @@
-package org.cirdles.topsoil.data;
+package org.cirdles.topsoil.utils;
 
 import org.apache.commons.lang3.Validate;
-import org.cirdles.topsoil.DependentVariable;
 import org.cirdles.topsoil.Variable;
+import org.cirdles.topsoil.data.DataColumn;
+import org.cirdles.topsoil.data.DataComponent;
+import org.cirdles.topsoil.data.DataRow;
+import org.cirdles.topsoil.data.DataTable;
+import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.plot.DataEntry;
 import org.cirdles.topsoil.plot.Plot;
 
@@ -12,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public final class TableUtils {
+public final class TopsoilTableUtils {
 
     private static final char DECIMAL_SEPARATOR;
     static {
@@ -20,7 +24,7 @@ public final class TableUtils {
         DECIMAL_SEPARATOR = df.getDecimalFormatSymbols().getDecimalSeparator();
     }
 
-    private TableUtils() {}
+    private TopsoilTableUtils() {}
 
     public static <T extends DataColumn<?>> List<T> getLeafColumns(List<T> columns) {
         Validate.notNull(columns, "Columns cannot be null.");
@@ -185,9 +189,9 @@ public final class TableUtils {
                     continue;
                 }
 
-                if (variable instanceof DependentVariable && Uncertainty.PERCENT_FORMATS.contains(uncertainty)) {
+                if (variable instanceof Variable.DependentVariable && Uncertainty.PERCENT_FORMATS.contains(uncertainty)) {
                     double doubleValue = (double) value;
-                    Variable<Number> dependency = ((DependentVariable) variable).getDependency();
+                    Variable<Number> dependency = ((Variable.DependentVariable) variable).getDependency();
                     DataColumn<Number> dependentColumn = (DataColumn<Number>) variableMap.get(dependency);
                     doubleValue /= 100;
                     doubleValue *= row.getValueForColumn(dependentColumn).doubleValue();

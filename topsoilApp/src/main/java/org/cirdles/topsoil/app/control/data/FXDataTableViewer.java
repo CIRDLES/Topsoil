@@ -1,16 +1,11 @@
 package org.cirdles.topsoil.app.control.data;
 
 import com.sun.javafx.scene.control.skin.TreeTableViewSkin;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
-import javafx.scene.layout.Region;
 import javafx.scene.text.TextAlignment;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -21,12 +16,11 @@ import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.NumberColumnStringConverter;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataTable;
-import org.cirdles.topsoil.data.TableUtils;
+import org.cirdles.topsoil.utils.TopsoilTableUtils;
 import org.cirdles.topsoil.javafx.SingleChildRegion;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * A customized {@code TreeTableView} that displays the data contained in a {@link DataTable}.
@@ -76,7 +70,7 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
         for (DataColumn<?> column : table.getLeafColumns()) {
             if (column.getType() == Number.class) {
                 NumberColumnStringConverter converter = new NumberColumnStringConverter();
-                maxFractionDigits = TableUtils.maxFractionDigitsForColumn(
+                maxFractionDigits = TopsoilTableUtils.maxFractionDigitsForColumn(
                         table.getRows(),
                         (DataColumn<Number>) column,
                         table.isScientificNotation()
@@ -215,13 +209,13 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
             if (entry.getValue() instanceof NumberColumnStringConverter) {
                 NumberColumnStringConverter converter = (NumberColumnStringConverter) entry.getValue();
                 if (tableSetting > -1) {
-                    maxFractionDigits = Math.min(tableSetting, TableUtils.maxFractionDigitsForColumn(
+                    maxFractionDigits = Math.min(tableSetting, TopsoilTableUtils.maxFractionDigitsForColumn(
                             table.getRows(),
                             (DataColumn<Number>) entry.getKey(),
                             table.isScientificNotation()
                     ));
                 } else {
-                    maxFractionDigits = TableUtils.maxFractionDigitsForColumn(
+                    maxFractionDigits = TopsoilTableUtils.maxFractionDigitsForColumn(
                             table.getRows(),
                             (DataColumn<Number>) entry.getKey(),
                             table.isScientificNotation()

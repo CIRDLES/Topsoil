@@ -345,12 +345,14 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                         itemControl = new LeafColumnControl(item);
                         leafColumnGraphics.put(item, itemControl);
                     }
+                    itemControl.variableComboBox.setItems(FXCollections.observableList(Variable.CLASSIC));
                     if (dependentCol != null) {
                         LeafColumnControl dependentControl = leafColumnGraphics.get(dependentCol);
                         if (dependentControl == null) {
                             dependentControl = new LeafColumnControl(dependentCol);
                             leafColumnGraphics.put(dependentCol, dependentControl);
                         }
+                        dependentControl.variableComboBox.setItems(FXCollections.observableList(Variable.));
                         graphic = new HBox(itemControl, dependentControl);
                     } else {
                         graphic = itemControl;
@@ -378,7 +380,7 @@ public class PlotConfigDialog extends Dialog<Map<PlotConfigDialog.Key, Object>> 
                 label.setMaxWidth(LABEL_WIDTH);
                 label.setWrapText(true);
 
-                variableComboBox = new ComboBox<>(FXCollections.observableList(Variable.nullIncludedCLASSIC)); // put null list in then classic
+                variableComboBox = new ComboBox<>(); // put null list in then classic
                 variableComboBox.setCellFactory(param ->  new ListCell<Variable<?>>() {
                     @Override
                     protected void updateItem(Variable<?> item, boolean empty) {

@@ -10,6 +10,8 @@ import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.DataTableOptionsDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.dialog.wizards.MultipleImportWizard;
+import org.cirdles.topsoil.app.data.FXDataColumn;
+import org.cirdles.topsoil.app.data.FXDataRow;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.TopsoilFileUtils;
@@ -20,7 +22,6 @@ import org.cirdles.topsoil.app.file.Delimiter;
 import org.cirdles.topsoil.app.help.IssueCreator;
 import org.cirdles.topsoil.app.help.StandardGitHubIssueCreator;
 import org.cirdles.topsoil.app.metadata.TopsoilMetadata;
-import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.data.DataTemplate;
 import org.cirdles.topsoil.data.ExampleData;
@@ -198,12 +199,7 @@ final class MenuItemHelper {
         }
     }
 
-    /**
-     * Handles the parsing of a {@code DataTable} from some file.
-     *
-     * @throws IOException  if unable to read the file
-     */
-    static void importTableFromFile() throws IOException, TopsoilException {
+    static void importTableFromFile() throws IOException {
         File file = FileChoosers.openTableFile().showOpenDialog(Topsoil.getPrimaryStage());
         if (file == null) {
             return; // Dialog cancelled
@@ -220,20 +216,13 @@ final class MenuItemHelper {
 
         delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);
         DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
-        if (delimiter == null || template == null) {
-            // This shouldn't happen
-            throw new TopsoilException("Null setting from DataImportDialog");
-        }
 
         // Check if parsing for the template is supported
-        DataParser parser = template.getParser();
+        DataParser<FXDataTable, FXDataColumn<?>, FXDataRow> parser = template.getParser(FXDataTable.class);
         if (! template.isParsingSupported()) {
             TopsoilNotification.info("Unsupported Operation",
                     template + " data parsing is not currently supported.");
             return;
-        } else if (parser == null) {
-            // This shouldn't happen
-            throw new TopsoilException("DataParser instance for template \"" + template + "\" is null, but parsing is supported.");
         }
 
         FXDataTable table = new FXDataTable(parser.parseDataTable(path, delimiter.asString(), fileName));
@@ -253,12 +242,7 @@ final class MenuItemHelper {
         }
     }
 
-    /**
-     * Handles the parsing of a {@code DataTable} from some {@code String} value.
-     *
-     * @throws TopsoilException     in cases of application error
-     */
-    static void importTableFromClipboard() throws TopsoilException {
+    static void importTableFromClipboard() {
         String content = Clipboard.getSystemClipboard().getString();
         Delimiter delimiter = TopsoilFileUtils.guessDelimiter(content);
 
@@ -272,20 +256,13 @@ final class MenuItemHelper {
         // Extract information from dialog settings
         delimiter = (Delimiter) settings.get(DataImportDialog.Key.DELIMITER);   // Overwrite guessed delimiter
         DataTemplate template = (DataTemplate) settings.get(DataImportDialog.Key.TEMPLATE);
-        if (delimiter == null || template == null) {
-            // This shouldn't happen
-            throw new TopsoilException("Null setting from DataImportDialog");
-        }
 
         // Check if parsing for the template is supported
-        DataParser parser = template.getParser();
+        DataParser<FXDataTable, FXDataColumn<?>, FXDataRow> parser = template.getParser(FXDataTable.class);
         if (! template.isParsingSupported()) {
             TopsoilNotification.info("Unsupported Operation",
                     template + " data parsing is not currently supported.");
             return;
-        } else if (parser == null) {
-            // This shouldn't happen
-            throw new TopsoilException("DataParser instance for template \"" + template + "\" is null, but parsing is supported.");
         }
 
         // Check if the String content is able to be parsed into a data table

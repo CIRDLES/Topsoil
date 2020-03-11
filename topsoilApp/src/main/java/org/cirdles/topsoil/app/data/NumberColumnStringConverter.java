@@ -5,15 +5,12 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.util.StringConverter;
-import org.cirdles.topsoil.data.TableUtils;
+import org.cirdles.topsoil.utils.TopsoilTableUtils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * A custom {@code StringConverter} that uses a {@code DecimalFormat} to enforce a specific number of fraction digits on
@@ -77,7 +74,7 @@ public class NumberColumnStringConverter extends StringConverter<Number> {
         int decimalIndex = str.indexOf(decSeparator);
         int numberFractionDigits;       // # of fraction digits in the Number value
         if (isScientificNotation()) {
-            numberFractionDigits = TableUtils.countSignificantDigits(number) - 1;
+            numberFractionDigits = TopsoilTableUtils.countSignificantDigits(number) - 1;
         } else if (decimalIndex > -1) {
             // number is a decimal value
             numberFractionDigits = str.length() - (decimalIndex + 1);

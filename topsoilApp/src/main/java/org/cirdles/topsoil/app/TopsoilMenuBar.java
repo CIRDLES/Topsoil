@@ -10,7 +10,6 @@ import org.cirdles.topsoil.app.control.plot.PlotGenerator;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.RecentFiles;
-import org.cirdles.topsoil.app.util.TopsoilException;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.ExampleData;
 import org.cirdles.topsoil.plot.PlotOption;
@@ -108,20 +107,12 @@ public class TopsoilMenuBar extends MenuBar {
                 MenuItemHelper.importTableFromFile();
             } catch (IOException e) {
                 TopsoilNotification.error("Invalid File", "Topsoil could not read the selected file.");
-            } catch (TopsoilException e) {
-                TopsoilNotification.error("Error", "An unknown error occurred.");
             }
         });
         MenuItem fromMultipleItem = new MenuItem(resources.getString("importMultiFile"));
         fromMultipleItem.setOnAction(event -> MenuItemHelper.importMultipleFiles());
         MenuItem fromClipboardItem = new MenuItem(resources.getString("importClipboard"));
-        fromClipboardItem.setOnAction(event -> {
-            try {
-                MenuItemHelper.importTableFromClipboard();
-            } catch (TopsoilException e) {
-                TopsoilNotification.error("Error", "An unknown error occurred.");
-            }
-        });
+        fromClipboardItem.setOnAction(event -> MenuItemHelper.importTableFromClipboard());
 
         Menu importTableMenu = new Menu(resources.getString("importMenu"), null,
                 fromFileItem,

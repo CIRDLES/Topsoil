@@ -20,11 +20,7 @@ public class SimpleDataRow extends AbstractDataComponent<DataRow> implements Dat
     //**********************************************//
 
     public SimpleDataRow(String title) {
-        this(title, true);
-    }
-
-    public SimpleDataRow(String title, boolean selected, SimpleDataRow... children) {
-        this(title, selected, null, children);
+        this(title, true, null);
     }
 
     public SimpleDataRow(String title, boolean selected, Map<DataColumn<?>, Object> map) {

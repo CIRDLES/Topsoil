@@ -15,6 +15,9 @@ import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.dialog.DataImportDialog;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.app.data.FXDataColumn;
+import org.cirdles.topsoil.app.data.FXDataRow;
+import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.file.TopsoilFileUtils;
 import org.cirdles.topsoil.app.file.Delimiter;
 import org.cirdles.topsoil.app.file.FileChoosers;
@@ -44,13 +47,13 @@ class MultipleImportSourcesView extends WizardPane {
 
     @FXML private Label selectFilesLabel;
     @FXML private Button addFilesButton, removeFileButton;
-    @FXML private ListView<DataTable> filesListView;
+    @FXML private ListView<FXDataTable> filesListView;
 
     //**********************************************//
     //                  ATTRIBUTES                  //
     //**********************************************//
 
-    private ListProperty<DataTable> tables = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private ListProperty<FXDataTable> tables = new SimpleListProperty<>(FXCollections.observableArrayList());
     private BiMap<DataTable, Path> tablePathMap = HashBiMap.create();
     private ResourceBundle resources = ResourceBundles.DIALOGS.getBundle();
 
@@ -88,7 +91,7 @@ class MultipleImportSourcesView extends WizardPane {
         wizard.invalidProperty().bind(tables.emptyProperty());
         wizard.setTitle(resources.getString("importMultiTitle"));
         if (wizard.getSettings().containsKey(TABLES)) {
-            List<DataTable> tableList = (List<DataTable>) wizard.getSettings().get(TABLES);
+            List<FXDataTable> tableList = (List<FXDataTable>) wizard.getSettings().get(TABLES);
             updateTables(tableList);
         }
     }
@@ -103,8 +106,8 @@ class MultipleImportSourcesView extends WizardPane {
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private void updateTables(List<DataTable> newList) {
-        for (DataTable table : tables) {
+    private void updateTables(List<FXDataTable> newList) {
+        for (FXDataTable table : tables) {
             if (! newList.contains(table)) {
                 tables.remove(table);
                 tablePathMap.remove(table);
@@ -145,8 +148,8 @@ class MultipleImportSourcesView extends WizardPane {
                         String delimiter = (guess != null) ? guess.asString() :
                                 ((Delimiter) fileSettings.get(DataImportDialog.Key.DELIMITER)).asString();
                         DataTemplate template = (DataTemplate) fileSettings.get(DataImportDialog.Key.TEMPLATE);
-                        DataParser parser = template.getParser();
-                        DataTable table = parser.parseDataTable(path, delimiter, path.getFileName().toString());
+                        DataParser<FXDataTable, FXDataColumn<?>, FXDataRow> parser = template.getParser(FXDataTable.class);
+                        FXDataTable table = parser.parseDataTable(path, delimiter, path.getFileName().toString());
                         tables.add(table);
                         tablePathMap.put(table, path);
                     } catch (IOException e) {

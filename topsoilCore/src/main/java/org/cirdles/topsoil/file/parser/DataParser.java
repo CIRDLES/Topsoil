@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.file.parser;
 
+import org.cirdles.topsoil.data.DataColumn;
+import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTable;
 
 import java.io.IOException;
@@ -10,11 +12,11 @@ import java.nio.file.Path;
  *
  * @author marottajb
  */
-public interface DataParser {
+public interface DataParser<T extends DataTable<C, R>, C extends DataColumn<?>, R extends DataRow> {
 
-    DataTable parseDataTable(Path path, String delimiter, String label) throws IOException;
+    T parseDataTable(Path path, String delimiter, String label) throws IOException;
 
-    DataTable parseDataTable(String content, String delimiter, String label);
+    T parseDataTable(String content, String delimiter, String label);
 
     default boolean isParseableString(String content, String delimiter) {
         // TODO something more sophisticated

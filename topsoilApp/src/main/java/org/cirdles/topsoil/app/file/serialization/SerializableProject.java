@@ -5,14 +5,13 @@ import org.cirdles.topsoil.app.data.FXDataRow;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.control.plot.PlotGenerator;
-import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTemplate;
 import org.cirdles.topsoil.data.SimpleDataColumn;
 import org.cirdles.topsoil.data.SimpleDataRow;
-import org.cirdles.topsoil.data.TableUtils;
+import org.cirdles.topsoil.utils.TopsoilTableUtils;
 import org.cirdles.topsoil.javafx.PlotView;
 import org.cirdles.topsoil.plot.Plot;
 import org.cirdles.topsoil.plot.PlotOption;
@@ -170,7 +169,7 @@ public class SerializableProject implements Serializable {
 
         List<FXDataRow> rows = new ArrayList<>();
         List<Map<SerializationKey, Object>> rowDataList = (List<Map<SerializationKey, Object>>) tableData.get(TABLE_ROWS);
-        List<FXDataColumn<?>> leafColumns = TableUtils.getLeafColumns(columns);
+        List<FXDataColumn<?>> leafColumns = TopsoilTableUtils.getLeafColumns(columns);
         for (Map<SerializationKey, Object> rowData : rowDataList) {
             rows.add(createDataRow(rowData, leafColumns));
         }
@@ -178,8 +177,7 @@ public class SerializableProject implements Serializable {
         Uncertainty uncertainty = (Uncertainty) tableData.get(TABLE_UNCERTAINTY);
         int maxFractionDigits = (int) tableData.get(TABLE_FRACTION_DIGITS);
 
-        FXDataTable table = new FXDataTable(template, label, columns, rows);
-        table.setUncertainty(uncertainty);
+        FXDataTable table = new FXDataTable(template, label, uncertainty, columns, rows);
         table.setMaxFractionDigits(maxFractionDigits);
 
         return table;

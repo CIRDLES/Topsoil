@@ -18,7 +18,7 @@ import org.apache.commons.lang3.Validate;
 import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataTable;
-import org.cirdles.topsoil.data.TableUtils;
+import org.cirdles.topsoil.utils.TopsoilTableUtils;
 import org.cirdles.topsoil.javafx.bridges.Regression;
 import org.cirdles.topsoil.plot.DataEntry;
 import org.cirdles.topsoil.plot.HTMLTemplate;
@@ -320,7 +320,7 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     //**********************************************//
 
     protected void updateDataEntries() {
-        List<DataEntry> entries = TableUtils.getPlotData(table, variableMap);
+        List<DataEntry> entries = TopsoilTableUtils.getPlotData(table, variableMap);
         plotData.setAll(entries);
     }
 

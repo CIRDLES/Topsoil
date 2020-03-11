@@ -1,19 +1,19 @@
 package org.cirdles.topsoil.app.data;
 
 import javafx.beans.Observable;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyListProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.cirdles.topsoil.data.AbstractDataTable;
 import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.control.undo.UndoAction;
 import org.cirdles.topsoil.app.control.undo.UndoManager;
@@ -27,25 +27,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FXDataTable implements DataTable {
+public class FXDataTable extends AbstractDataTable<FXDataColumn<?>, FXDataRow> {
 
-    private StringProperty title = new SimpleStringProperty();
-    public final StringProperty titleProperty() {
-        return title;
+    private ReadOnlyStringWrapper titleProperty = new ReadOnlyStringWrapper();
+    public final ReadOnlyStringProperty titleProperty() {
+        return titleProperty.getReadOnlyProperty();
     }
     @Override
     public final String getTitle() {
-        return title.get();
+        return titleProperty.get();
     }
     @Override
     public final void setTitle(String title) {
-        this.title.set(title);
+        this.titleProperty.set(title);
     }
 
-    private ListProperty<FXDataColumn<?>> columns = new SimpleListProperty<>(
+    private ReadOnlyListWrapper<FXDataColumn<?>> columnsListProperty = new ReadOnlyListWrapper<>(
             // Initializes the list property with an observable list that listens to changes in the properties of each
             // column
-            FXCollections.observableArrayList(column -> {
+            FXCollections.observableArrayList((FXDataColumn<?> column) -> {
                 return new Observable[]{
                         column.titleProperty(),
                         column.selectedProperty(),
@@ -54,17 +54,17 @@ public class FXDataTable implements DataTable {
             })
     );
     public final ReadOnlyListProperty<FXDataColumn<?>> columnsProperty() {
-        return columns;
+        return columnsListProperty.getReadOnlyProperty();
     }
     @Override
     public final ObservableList<FXDataColumn<?>> getColumns() {
-        return columns.get();
+        return columnsListProperty.get();
     }
 
-    private ListProperty<FXDataRow> rows = new SimpleListProperty<>(
+    private ReadOnlyListWrapper<FXDataRow> rowsListProperty = new ReadOnlyListWrapper<>(
             // Initializes the list property with an observable list that listens to changes in the properties of each
             // row
-            FXCollections.observableArrayList(row -> {
+            FXCollections.observableArrayList((FXDataRow row) -> {
                 return new Observable[]{
                         row.titleProperty(),
                         row.selectedProperty(),
@@ -74,15 +74,15 @@ public class FXDataTable implements DataTable {
             })
     );
     public final ReadOnlyListProperty<FXDataRow> rowsProperty() {
-        return rows;
+        return rowsListProperty.getReadOnlyProperty();
     }
     @Override public final ObservableList<FXDataRow> getRows() {
-        return rows.get();
+        return rowsListProperty.get();
     }
 
-    private IntegerProperty maxFractionDigits = new SimpleIntegerProperty(-1);
-    public final IntegerProperty maxFractionDigitsProperty() {
-        return maxFractionDigits;
+    private ReadOnlyIntegerWrapper maxFractionDigits = new ReadOnlyIntegerWrapper(-1);
+    public final ReadOnlyIntegerProperty maxFractionDigitsProperty() {
+        return maxFractionDigits.getReadOnlyProperty();
     }
     public final int getMaxFractionDigits() {
         return maxFractionDigits.get();
@@ -91,9 +91,9 @@ public class FXDataTable implements DataTable {
         maxFractionDigits.set(n);
     }
 
-    private BooleanProperty isScientificNotation = new SimpleBooleanProperty(false);
-    public BooleanProperty scientificNotationProperty() {
-        return isScientificNotation;
+    private ReadOnlyBooleanWrapper isScientificNotation = new ReadOnlyBooleanWrapper(false);
+    public ReadOnlyBooleanProperty scientificNotationProperty() {
+        return isScientificNotation.getReadOnlyProperty();
     }
     public Boolean isScientificNotation() {
         return isScientificNotation.get();
@@ -102,8 +102,8 @@ public class FXDataTable implements DataTable {
         isScientificNotation.set(value);
     }
 
-    private ObjectProperty<Uncertainty> uncertainty = new SimpleObjectProperty<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
-    public final ObjectProperty<Uncertainty> uncertaintyProperty() {
+    private ReadOnlyObjectWrapper<Uncertainty> uncertainty = new ReadOnlyObjectWrapper<>(Uncertainty.ONE_SIGMA_ABSOLUTE);
+    public final ReadOnlyObjectProperty<Uncertainty> uncertaintyProperty() {
         return uncertainty;
     }
     public final Uncertainty getUncertainty() {
@@ -116,40 +116,27 @@ public class FXDataTable implements DataTable {
         uncertainty.set(u);
     }
 
-    private final DataTemplate template;
     private UndoManager undoManager = new UndoManager(50);
 
     //**********************************************//
     //                 CONSTRUCTORS                 //
     //**********************************************//
 
-    public FXDataTable(DataTable table) {
-        this.template = table.getTemplate();
-        setTitle(table.getTitle());
-        setUncertainty(table.getUncertainty());
-
-        // Create FXDataColumns for each column
-        List<? extends DataColumn<?>> columns = table.getColumns();
-        for (DataColumn<?> column : columns) {
-            this.columns.add(new FXDataColumn<>(column));
-        }
-
-
-
-        // Create FXDataRows for each row, and associate their values with the newly created FXDataColumn
-        this.rows.addAll(mapRowsToFXDataColumns(table.getRows(), this.columns));
+    public FXDataTable(DataTable<FXDataColumn<?>, FXDataRow> table) {
+        this(
+                table.getTemplate(),
+                table.getTitle(),
+                table.getUncertainty(),
+                table.getColumns(),
+                table.getRows()
+        );
     }
 
-    public FXDataTable(DataTemplate template, String title, List<FXDataColumn<?>> columns, List<FXDataRow> rows) {
-        this.template = template;
-        setTitle(title);
+    public FXDataTable(DataTemplate template, String title, Uncertainty uncertainty, List<FXDataColumn<?>> columns, List<FXDataRow> rows) {
+        super(template, title, uncertainty, columns, rows);
 
-        if (columns != null) {
-            this.columns.addAll(columns);
-        }
-        if (rows != null) {
-            this.rows.addAll(rows);
-        }
+        this.columnsListProperty.addAll(this.columns);
+        this.rowsListProperty.addAll(this.rows);
     }
 
     //**********************************************//

@@ -1,10 +1,16 @@
 package org.cirdles.topsoil.data;
 
+import org.apache.commons.lang3.Validate;
+import org.cirdles.topsoil.exception.MissingImplementationException;
 import org.cirdles.topsoil.file.parser.DataParser;
 import org.cirdles.topsoil.file.parser.DefaultDataParser;
 import org.cirdles.topsoil.file.parser.Squid3DataParser;
 import org.cirdles.topsoil.file.writer.DataWriter;
 import org.cirdles.topsoil.file.writer.DefaultDataWriter;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 /**
  * Each template represents a possible format for imported data.
@@ -43,21 +49,23 @@ public enum DataTemplate {
      *
      * @return DataParser
      */
-    public <T extends DataTable, C extends DataColumn<?>, R extends DataRow> DataParser getParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
-        try {
-            if (parserClass != null) {
-                if (tableClass != null) {
-                    if (columnClass != null) {
-                        if (rowClass != null) {
-                            return parserClass.newInstance();
-                        }
-                    }
-                }
-            }
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+    @SuppressWarnings("unchecked")  // this is okay because DataParser's C and R are based off of the T class provided
+    public <T extends DataTable<C, R>, C extends DataColumn<?>, R extends DataRow> DataParser<T, C, R> getParser(Class<T> tableClass) {
+        Validate.notNull(tableClass, "The Class of a concrete implementor of DataTable must be provided.");
+        if (!isParsingSupported()) {
+            throw new UnsupportedOperationException("Data parsing is not supported for DataTemplate." + this.name());
         }
-        return null;
+        try {
+            Constructor<? extends DataParser> constructor = parserClass.getConstructor(Class.class);
+            return constructor.newInstance(tableClass);
+        } catch (InstantiationException|IllegalAccessException|NoSuchMethodException|InvocationTargetException e) {
+            throw new MissingImplementationException(
+                    e,
+                    parserClass,
+                    MissingImplementationException.Type.CONSTRUCTOR,
+                    Class.class
+            );
+        }
     }
 
 
@@ -67,12 +75,12 @@ public enum DataTemplate {
      * @return DataWriter
      */
     public DataWriter getWriter() {
+        if (!isWritingSupported()) {
+            throw new UnsupportedOperationException("Data writing is not supported for DataTemplate." + this.name());
+        }
         try {
-            if (writerClass != null) {
-
-                return writerClass.newInstance();
-            }
-        } catch (InstantiationException | IllegalAccessException e) {
+            return writerClass.newInstance();
+        } catch (InstantiationException|IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;

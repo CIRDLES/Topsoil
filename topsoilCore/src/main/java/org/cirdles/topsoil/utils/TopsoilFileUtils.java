@@ -1,4 +1,8 @@
-package org.cirdles.topsoil.file;
+package org.cirdles.topsoil.utils;
+
+import org.cirdles.topsoil.file.Delimiter;
+import org.cirdles.topsoil.file.TableFileExtension;
+import org.cirdles.topsoil.file.UnicodeBOMInputStream;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -12,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TopsoilFileUtils {
+public final class TopsoilFileUtils {
 
     private TopsoilFileUtils() {
         // Prevents instantiation by default constructor

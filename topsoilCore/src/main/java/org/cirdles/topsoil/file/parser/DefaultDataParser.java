@@ -3,15 +3,15 @@ package org.cirdles.topsoil.file.parser;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTemplate;
-import org.cirdles.topsoil.data.SimpleDataColumn;
 import org.cirdles.topsoil.data.DataTable;
-import org.cirdles.topsoil.data.SimpleDataTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+
+import static org.cirdles.topsoil.utils.TopsoilClassUtils.instantiate;
 
 /**
  * Parses value-separated data into a {@link DataTable}.
@@ -21,59 +21,39 @@ import java.util.StringJoiner;
  *
  * @author marottajb
  */
-public class DefaultDataParser<T extends DataTable, C extends DataColumn<?>, R extends DataRow> extends AbstractDataParser<T, C, R> {
+public class DefaultDataParser<T extends DataTable<C, R>, C extends DataColumn<?>, R extends DataRow> extends AbstractDataParser<T, C, R> {
 
-    private Class<T> tableClass;
-    private Class<C> columnClass;
-    private Class<R> rowClass;
+    private static final Class[] COLUMN_CONSTRUCTOR_ARG_TYPES = {String.class, Boolean.class, Object.class, Class.class};
 
-    public DefaultDataParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
-        super(tableClass, columnClass, rowClass);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected T parseDataTable(String[][] rows, String label) {
-        int startIndex = countHeaderRows(rows);
-        List<C> columns = parseColumns(rows, startIndex);
-        List<R> dataRows = new ArrayList<>();
-        R row;
-        for (int rowIndex = startIndex; rowIndex < rows.length; rowIndex++) {
-            row = getTableRow(
-                    "row" + (rowIndex - startIndex + 1),
-                    rows[rowIndex],
-                    columns
-            );
-            row.setSelected(true);
-            dataRows.add(row);
-        }
-
-        return new SimpleDataTable(DataTemplate.DEFAULT, label, columns, dataRows);
+    public DefaultDataParser(Class<T> tableClass) {
+        super(DataTemplate.DEFAULT, tableClass);
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private List<C> parseColumns(String[][] rows, int numHeaderRows) {
+    @Override
+    protected List<C> parseColumns(String[][] cells, Object... args) {
+        int headerRowCount = countHeaderRows(cells);
         List<C> columns = new ArrayList<>();
         Map<String, Integer> usedColumnLabels = new HashMap<>();
         String label;
         int labelFreq;
         StringJoiner joiner;
-        Class clazz;
+        Class<?> columnType;
+        C newColumn;
+        Object defaultValue;
 
-        for (int colIndex = 0; colIndex < rows[0].length; colIndex++) {
+        for (int colIndex = 0; colIndex < cells[0].length; colIndex++) {
             joiner = new StringJoiner("\n");
-            for (int hRowIndex = 0; hRowIndex < numHeaderRows; hRowIndex++) {
-                if (!rows[hRowIndex][colIndex].isEmpty()) {
-                    joiner.add(rows[hRowIndex][colIndex]);
+            for (int rowIndex = 0; rowIndex < headerRowCount; rowIndex++) {
+                if (!cells[rowIndex][colIndex].isEmpty()) {
+                    joiner.add(cells[rowIndex][colIndex]);
                 }
             }
 
-            clazz = getColumnDataType(rows, colIndex, numHeaderRows);
+            columnType = getColumnDataType(cells, colIndex, headerRowCount);
             label = joiner.toString();
 
             if (label.equals("")) {
@@ -88,25 +68,38 @@ public class DefaultDataParser<T extends DataTable, C extends DataColumn<?>, R e
                 usedColumnLabels.put(label, 1);
             }
 
-            if (clazz == Number.class) {
-                columns.add(new SimpleDataColumn<>(label, true, 0.0, Number.class));
+            if (columnType == Number.class) {
+                defaultValue = 0.0;
             } else {
-                columns.add(new SimpleDataColumn<>(label, true, "", String.class));
+                defaultValue = "";
             }
+
+            newColumn = instantiate(
+                    columnClass,
+                    COLUMN_CONSTRUCTOR_ARG_TYPES,
+                    new Object[]{label, true, defaultValue, columnType}
+            );
+            columns.add(newColumn);
         }
 
         return columns;
     }
 
-    private int countHeaderRows(String[][] rows) {
-        int count = 0;
-        for (String[] row : rows) {
-            if (isDouble(row[0])) {
-                break;
-            }
-            count++;
+    @Override
+    protected List<R> parseRows(String[][] cells, List<C> leafColumns, Object... args) {
+        int headerRowCount = countHeaderRows(cells);
+        List<R> dataRows = new ArrayList<>();
+        R newRow;
+        for (int rowIndex = headerRowCount; rowIndex < cells.length; rowIndex++) {
+            newRow = getTableRow(
+                    "row" + (rowIndex - headerRowCount + 1),
+                    cells[rowIndex],
+                    leafColumns
+            );
+            newRow.setSelected(true);
+            dataRows.add(newRow);
         }
-        return count;
+        return dataRows;
     }
 
 }

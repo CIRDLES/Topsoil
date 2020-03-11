@@ -3,11 +3,9 @@ package org.cirdles.topsoil.file.parser;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTemplate;
-import org.cirdles.topsoil.data.SimpleDataColumn;
-import org.cirdles.topsoil.data.SimpleDataRow;
 import org.cirdles.topsoil.data.DataTable;
-import org.cirdles.topsoil.data.SimpleDataTable;
-import org.cirdles.topsoil.data.TableUtils;
+import org.cirdles.topsoil.utils.TopsoilTableUtils;
+import org.cirdles.topsoil.data.Uncertainty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +15,8 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
+import static org.cirdles.topsoil.utils.TopsoilClassUtils.instantiate;
+
 /**
  * Parses value-separated data into a {@link DataTable}.
  * <p>
@@ -24,51 +24,51 @@ import java.util.regex.Pattern;
  *
  * @author marottajb
  */
-public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R extends DataRow> extends AbstractDataParser<T, C, R> {
+public class Squid3DataParser<T extends DataTable<C, R>, C extends DataColumn<?>, R extends DataRow> extends AbstractDataParser<T, C, R> {
 
-    private Class<T> tableClass;
-    private Class<C> columnClass;
-    private Class<R> rowClass;
+    private static final Class[] TABLE_CONSTRUCTOR_ARG_TYPES = {
+            DataTemplate.class,
+            String.class,
+            Uncertainty.class,
+            List.class,
+            List.class
+    };
+    private static final Class[] ALIQUOT_CONSTRUCTOR_ARG_TYPES = {String.class};
+    private static final Class[] CATEGORY_CONSTRUCTOR_ARG_TYPES = {String.class};
+    private static final Class[] COLUMN_CONSTRUCTOR_ARG_TYPES = {String.class, Boolean.class, Object.class, Class.class};
 
-    public Squid3DataParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
-        super(tableClass, columnClass, rowClass);
+    public Squid3DataParser(Class<T> tableClass) {
+        super(DataTemplate.SQUID_3, tableClass);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected T parseDataTable(String[][] rows, String label) {
-        List<C> columns = parseHeaders(rows);
-        List<C> leafColumns = TableUtils.getLeafColumns(columns);
+    protected T parseDataTable(String[][] cells, String label) {
+        List<C> columns = parseColumns(cells);
+        List<C> leafColumns = TopsoilTableUtils.getLeafColumns(columns);
+        List<R> rows = parseRows(cells, leafColumns);
 
-        int[] segIndices = readAliquots(rows);
-        List<R> dataRows = new ArrayList<>();
-        for (int i = 0; i < segIndices.length; i++) {
-            dataRows.add(parseAliquot(
-                    rows,
-                    segIndices[i],
-                    (i < (segIndices.length - 1) ? segIndices[i + 1] : -1),
-                    leafColumns
-            ));
-        }
-
-        T table = new SimpleDataTable(DataTemplate.SQUID_3, label, columns, dataRows);
-//        prepareTable(table);
-        return table;
+        return instantiate(
+                tableClass,
+                TABLE_CONSTRUCTOR_ARG_TYPES,
+                new Object[]{template, label, null, columns, rows}
+        );
     }
 
     //**********************************************//
     //                PRIVATE METHODS               //
     //**********************************************//
 
-    private List<C> parseHeaders(String[][] rows) {
+    @Override
+    protected List<C> parseColumns(String[][] cells, Object... args) {
         List<C> headers = new ArrayList<>();
-        int[] categoryIndices = readCategories(rows[0]);
+        int[] categoryIndices = readCategories(cells[0]);
         Map<String, Integer> usedColumnLabels = new HashMap<>();
         for (int i = 0; i < categoryIndices.length; i++) {
             headers.add(parseCategory(
-                    rows,
+                    cells,
                     categoryIndices[i],
                     (i == (categoryIndices.length - 1) ? -1 : categoryIndices[i + 1]),
                     usedColumnLabels
@@ -77,8 +77,23 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
         return headers;
     }
 
+    @Override
+    protected List<R> parseRows(String[][] cells, List<C> leafColumns, Object... args) {
+        int[] segIndices = readAliquots(cells);
+        List<R> rows = new ArrayList<>();
+        for (int i = 0; i < segIndices.length; i++) {
+            rows.add(parseAliquot(
+                    cells,
+                    segIndices[i],
+                    (i < (segIndices.length - 1) ? segIndices[i + 1] : -1),
+                    leafColumns
+            ));
+        }
+        return rows;
+    }
+
     @SuppressWarnings("unchecked")
-    private DataColumn parseCategory(String[][] rows, int catIndex, int nextCatIndex, Map<String, Integer> usedColumnLabels) {
+    private C parseCategory(String[][] rows, int catIndex, int nextCatIndex, Map<String, Integer> usedColumnLabels) {
         int labelFreq;
         String[] catRow = rows[0];
         String catLabel = catRow[catIndex];
@@ -92,13 +107,13 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
 
         List<C> columns = new ArrayList<>();
         String colLabel;
+        C newColumn;
+        Class<?> columnType;
         StringJoiner joiner;
         if (nextCatIndex == -1 || nextCatIndex > catRow.length) {
             nextCatIndex = catRow.length;
         }
         Pattern unctColPattern = Pattern.compile(".*(±|\\+\\/-)\\d?(σ|sigma)\\W?%\\W?");
-        DataColumn<Number> newNumberCol;
-        DataColumn<String> newStringCol;
         for (int colIndex = catIndex; colIndex < nextCatIndex; colIndex++) {
             boolean isDependentColumn = false;
 
@@ -126,40 +141,55 @@ public class Squid3DataParser<T extends DataTable, C extends DataColumn<?>, R ex
                 usedColumnLabels.put(colLabel, 1);
             }
 
-            Class<?> clazz = getColumnDataType(rows, colIndex, 5);
-            C newColumn;
-            if (clazz == Number.class) {
-                newColumn = newNumberCol = new SimpleDataColumn<>(colLabel, true, 0.0, Number.class);
+            columnType = getColumnDataType(rows, colIndex, 5);
+
+            if (columnType == Number.class) {
+                newColumn = instantiate(
+                        columnClass,
+                        COLUMN_CONSTRUCTOR_ARG_TYPES,
+                        new Object[]{colLabel, true, 0.0, Number.class}
+                );
                 if (isDependentColumn) {
-                    ((DataColumn<Number>) columns.get(columns.size() - 1)).setDependentColumn(newNumberCol);
+                    ((DataColumn<Number>) columns.get(columns.size() - 1)).setDependentColumn((DataColumn<Number>) newColumn);
                 }
             } else {
-                newColumn = newStringCol = new SimpleDataColumn<>(colLabel, true, "", String.class);
+                newColumn = instantiate(
+                        columnClass,
+                        COLUMN_CONSTRUCTOR_ARG_TYPES,
+                        new Object[]{colLabel, true, "", String.class}
+                );
                 if (isDependentColumn) {
-                    ((DataColumn<String>) columns.get(columns.size() - 1)).setDependentColumn(newStringCol);
+                    ((DataColumn<String>) columns.get(columns.size() - 1)).setDependentColumn((DataColumn<String>) newColumn);
                 }
             }
             columns.add(newColumn);
         }
-        return new SimpleDataColumn(catLabel, true, columns.toArray(new SimpleDataColumn[]{}));
+
+        C newCategory = instantiate(columnClass, CATEGORY_CONSTRUCTOR_ARG_TYPES, new Object[]{catLabel, true, null});
+        ((List<C>) newCategory.getChildren()).addAll(columns);
+        return newCategory;
     }
 
-    private R parseAliquot(String[][] rows, int segIndex, int nextSegIndex, List<C> columns) {
-        String segmentLabel = rows[segIndex][0];
-        List<DataRow> dataRows = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    private R parseAliquot(String[][] cells, int segIndex, int nextSegIndex, List<C> columns) {
+        String aliquotLabel = cells[segIndex][0];
+        List<R> rows = new ArrayList<>();
         String rowLabel;
-        if (nextSegIndex == -1 || nextSegIndex > rows.length) {
-            nextSegIndex = rows.length;
+        if (nextSegIndex == -1 || nextSegIndex > cells.length) {
+            nextSegIndex = cells.length;
         }
         for (int rowIndex = segIndex + 1; rowIndex < nextSegIndex; rowIndex++) {
-            rowLabel = rows[rowIndex][0];
-            dataRows.add(getTableRow(
+            rowLabel = cells[rowIndex][0];
+            rows.add(getTableRow(
                     rowLabel,
-                    Arrays.copyOfRange(rows[rowIndex], 1, rows[rowIndex].length),
+                    Arrays.copyOfRange(cells[rowIndex], 1, cells[rowIndex].length),
                     columns
             ));
         }
-        return new SimpleDataRow(segmentLabel, true, dataRows.toArray(new SimpleDataRow[]{}));
+
+        R newAliquot = instantiate(rowClass, ALIQUOT_CONSTRUCTOR_ARG_TYPES, new Object[]{aliquotLabel});
+        ((List<R>) newAliquot.getChildren()).addAll(rows);
+        return newAliquot;
     }
 
     /**

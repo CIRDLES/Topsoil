@@ -1,11 +1,12 @@
 package org.cirdles.topsoil.data;
 
+import org.cirdles.topsoil.utils.TopsoilTableUtils;
 import org.json.JSONObject;
 import org.json.JSONString;
 
 import java.util.List;
 
-public interface DataTable extends JSONString {
+public interface DataTable<C extends DataColumn<?>, R extends DataRow> extends JSONString {
 
     DataTemplate getTemplate();
 
@@ -13,16 +14,16 @@ public interface DataTable extends JSONString {
 
     void setTitle(String s);
 
-    List<? extends DataColumn<?>> getColumns();
+    List<C> getColumns();
 
-    default List<? extends DataColumn<?>> getLeafColumns() {
-        return TableUtils.getLeafColumns(getColumns());
+    default List<C> getLeafColumns() {
+        return TopsoilTableUtils.getLeafColumns(getColumns());
     }
 
-    List<? extends DataRow> getRows();
+    List<R> getRows();
 
-    default List<? extends DataRow> getLeafRows() {
-        return TableUtils.getLeafRows(getRows());
+    default List<R> getLeafRows() {
+        return TopsoilTableUtils.getLeafRows(getRows());
     }
 
     Uncertainty getUncertainty();
@@ -36,10 +37,10 @@ public interface DataTable extends JSONString {
         String title = getTitle();
         if (title != null) json.put("title", title);
 
-        List<? extends DataColumn<?>> columns = getColumns();
+        List<C> columns = getColumns();
         if (columns != null) json.put("columns", columns);
 
-        List<? extends DataRow> rows = getRows();
+        List<R> rows = getRows();
         if (rows != null) json.put("data", rows);
 
         return json.toString();

@@ -17,11 +17,7 @@ public class SimpleDataColumn<T> extends AbstractDataComponent<DataColumn<?>> im
     //**********************************************//
 
     public SimpleDataColumn(String title) {
-        this(title, true);
-    }
-
-    public SimpleDataColumn(String title, boolean selected, SimpleDataColumn... children) {
-        this(title, selected, null, null, children);
+        this(title, true, null, null);
     }
 
     public SimpleDataColumn(String title, boolean selected, T defaultValue, Class<T> valueType) {

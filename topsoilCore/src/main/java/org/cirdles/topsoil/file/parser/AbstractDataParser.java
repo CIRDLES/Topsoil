@@ -1,34 +1,53 @@
 package org.cirdles.topsoil.file.parser;
 
-import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
+import net.jodah.typetools.TypeResolver;
 import org.apache.commons.lang3.Validate;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataRow;
 import org.cirdles.topsoil.data.DataTable;
-import org.cirdles.topsoil.data.SimpleDataRow;
-import org.cirdles.topsoil.file.TopsoilFileUtils;
+import org.cirdles.topsoil.data.DataTemplate;
+import org.cirdles.topsoil.data.Uncertainty;
+import org.cirdles.topsoil.utils.TopsoilFileUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static org.cirdles.topsoil.utils.TopsoilClassUtils.instantiate;
 
 /**
  * Defines behavior for parsing value-separated data into a {@link DataTable}.
  *
  * @author marottajb
  */
-public abstract class AbstractDataParser<T extends DataTable, C extends DataColumn<?>, R extends DataRow> implements DataParser {
+public abstract class AbstractDataParser<T extends DataTable<C, R>, C extends DataColumn<?>, R extends DataRow> implements DataParser<T, C, R> {
 
-    protected Class<T> tableClass;
-    protected Class<C> columnClass;
-    protected Class<R> rowClass;
+    private static final Class[] TABLE_CONSTRUCTOR_ARG_TYPES = {
+            DataTemplate.class,
+            String.class,
+            Uncertainty.class,
+            List.class,
+            List.class
+    };
 
-    public AbstractDataParser(Class<T> tableClass, Class<C> columnClass, Class<R> rowClass) {
+    private static final Class[] ROW_CONSTRUCOR_ARG_TYPES = {
+            String.class
+    };
+
+    protected final DataTemplate template;
+    protected final Class<T> tableClass;
+    protected final Class<C> columnClass;
+    protected final Class<R> rowClass;
+
+    @SuppressWarnings("unchecked")  // this is okay because C and R are based off of the T class provided
+    public AbstractDataParser(DataTemplate template, Class<T> tableClass) {
+        this.template = template;
         this.tableClass = tableClass;
-        this.columnClass = columnClass;
-        this.rowClass = rowClass;
+
+        Class[] tableComponentTypes = TypeResolver.resolveRawArguments(DataTable.class, tableClass);
+        this.columnClass = (Class<C>) tableComponentTypes[0];
+        this.rowClass = (Class<R>) tableComponentTypes[1];
     }
 
     /**
@@ -64,7 +83,20 @@ public abstract class AbstractDataParser<T extends DataTable, C extends DataColu
         return parseDataTable(cells, label);
     }
 
-    protected abstract T parseDataTable(String[][] cells, String label);
+    protected abstract List<C> parseColumns(String[][] cells, Object... args);
+
+    protected abstract List<R> parseRows(String[][] cells, List<C> leafColumns, Object... args);
+
+    protected T parseDataTable(String[][] cells, String label) {
+        List<C> columns = parseColumns(cells);
+        List<R> rows = parseRows(cells, columns);
+
+        return instantiate(
+                tableClass,
+                TABLE_CONSTRUCTOR_ARG_TYPES,
+                new Object[]{template, label, null, columns, rows}
+        );
+    }
 
     /**
      * Identifies the data type of a column of values in the provided data. Currently, only {@code Number} and
@@ -75,7 +107,7 @@ public abstract class AbstractDataParser<T extends DataTable, C extends DataColu
      * @param numHeaderRows number of header rows in the data
      * @return Class of column type
      */
-    protected final Class getColumnDataType(String[][] rows, int colIndex, int numHeaderRows) {
+    protected Class getColumnDataType(String[][] rows, int colIndex, int numHeaderRows) {
         final int SAMPLE_SIZE = Math.min(5, rows.length - numHeaderRows);
         boolean isDouble = true;
         int i = numHeaderRows;
@@ -103,12 +135,7 @@ public abstract class AbstractDataParser<T extends DataTable, C extends DataColu
      * @return DataRow with assigned values
      */
     protected R getTableRow(String label, String[] row, List<C> columns) {
-        Constructor<R> constructor;
-        try {
-            constructor = rowClass.getConstructor(String.class);
-        } catch (Exception e) {
-        }
-        R newRow = constructor.newInstance(label);
+        R newRow = instantiate(rowClass, ROW_CONSTRUCOR_ARG_TYPES, new Object[]{label});
         C col;
         String str;
         for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
@@ -124,6 +151,17 @@ public abstract class AbstractDataParser<T extends DataTable, C extends DataColu
             }
         }
         return newRow;
+    }
+
+    protected int countHeaderRows(String[][] rows) {
+        int count = 0;
+        for (String[] row : rows) {
+            if (isDouble(row[0])) {
+                break;
+            }
+            count++;
+        }
+        return count;
     }
 
     /**

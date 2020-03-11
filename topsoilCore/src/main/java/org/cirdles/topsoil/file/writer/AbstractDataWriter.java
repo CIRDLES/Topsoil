@@ -3,7 +3,7 @@ package org.cirdles.topsoil.file.writer;
 import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.file.Delimiter;
 import org.cirdles.topsoil.file.TableFileExtension;
-import org.cirdles.topsoil.file.TopsoilFileUtils;
+import org.cirdles.topsoil.utils.TopsoilFileUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;

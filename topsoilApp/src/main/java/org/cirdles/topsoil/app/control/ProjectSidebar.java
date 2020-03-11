@@ -24,7 +24,7 @@ import org.cirdles.topsoil.app.control.dialog.PlotConfigDialog;
 import org.cirdles.topsoil.app.data.FXDataTable;
 import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.data.DataColumn;
-import org.cirdles.topsoil.data.TableUtils;
+import org.cirdles.topsoil.utils.TopsoilTableUtils;
 import org.cirdles.topsoil.javafx.PlotView;
 import org.cirdles.topsoil.javafx.SingleChildRegion;
 import org.cirdles.topsoil.plot.Plot;
@@ -136,14 +136,14 @@ public class ProjectSidebar extends SingleChildRegion<TreeView<String>> {
                 uncertaintyItem.setValue("Unct. Format: " +
                         ((table.getUncertainty() != null) ? table.getUncertainty().getName() : "[none]"))
             );
-            TreeItem<String> columnCountItem = new TreeItem<>("# Columns: " + TableUtils.countLeafColumns(table.getColumns()));
+            TreeItem<String> columnCountItem = new TreeItem<>("# Columns: " + TopsoilTableUtils.countLeafColumns(table.getColumns()));
             columnCountItem.valueProperty().bind(Bindings.createStringBinding(
-                    () -> "# Columns: " + TableUtils.countLeafColumns(table.getColumns()),
+                    () -> "# Columns: " + TopsoilTableUtils.countLeafColumns(table.getColumns()),
                     table.columnsProperty()
             ));
             TreeItem<String> rowCountItem = new TreeItem<>("# Rows: " + table.getLeafRows().size());
             rowCountItem.valueProperty().bind(Bindings.createStringBinding(
-                    () -> "# Rows: " + TableUtils.countLeafRows(table.getRows()),
+                    () -> "# Rows: " + TopsoilTableUtils.countLeafRows(table.getRows()),
                     table.rowsProperty()
             ));
             infoSectionItem.getChildren().addAll(Arrays.asList(uncertaintyItem, columnCountItem, rowCountItem));

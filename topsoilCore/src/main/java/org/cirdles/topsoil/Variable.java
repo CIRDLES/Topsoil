@@ -44,6 +44,10 @@ public class Variable<T> extends SimpleSymbolKey<T> {
     public static final List<Variable<?>> CLASSIC = Collections.unmodifiableList(asList(
             X, Y, RHO //SIGMA_X, SIGMA_Y,
     ));
+
+    public static final List<Variable<?>> UNCERTAINTY = Collections.unmodifiableList(asList(
+            SIGMA_X, SIGMA_Y
+    ));
     
     private String abbreviation;
 
@@ -92,4 +96,28 @@ public class Variable<T> extends SimpleSymbolKey<T> {
     }
 
 
+    /**
+     * A {@code Variable} for a {@code Double} data type, with some dependency on another {@code Variable}.
+     *
+     * @author marottajb
+     */
+    public static class DependentVariable extends Variable<Number> {
+
+        private Variable<Number> dependency;
+
+        DependentVariable(String name, String abbreviation, String key, Number defaultValue, Variable<Number> dependency) {
+            super(name, abbreviation, key, defaultValue, Number.class);
+            this.dependency = dependency;
+        }
+
+        /**
+         * Returns the {@code Variable} that this {@code DependentVariable} is dependent on.
+         *
+         * @return  Variable of type Number
+         */
+        public Variable<Number> getDependency() {
+            return dependency;
+        }
+
+    }
 }
