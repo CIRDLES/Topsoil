@@ -23,6 +23,10 @@ public class PlotStyleSerializationTest {
 
             ssm.put(ssk,objectString);
 
+            System.out.println("original: " + objectString);
+            System.out.println("get(): " + ssm.get(ssk));
+            assertEquals(objectString,ssm.get(ssk));
+
         } catch (Exception e) {
             fail();
         }
