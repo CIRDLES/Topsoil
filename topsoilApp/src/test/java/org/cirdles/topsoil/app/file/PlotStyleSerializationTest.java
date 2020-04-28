@@ -42,7 +42,6 @@ public class PlotStyleSerializationTest {
 
             String keyString = "key";
             SimpleSymbolKey<String> ssk = new SimpleSymbolKey<String>("title", "fieldName", keyString, (Class<String>) keyString.getClass());
-            String value = "value";
 
             String objectString = "object";
 
