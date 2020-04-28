@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.file;
 
+import org.cirdles.topsoil.app.file.serialization.PlotStyleSerializer;
+import org.cirdles.topsoil.javafx.PlotView;
 import org.cirdles.topsoil.symbols.SimpleSymbolKey;
 import org.cirdles.topsoil.symbols.SimpleSymbolMap;
 import org.cirdles.topsoil.symbols.SymbolKey;
@@ -28,6 +30,7 @@ public class PlotStyleSerializationTest {
             assertEquals(objectString,ssm.get(ssk));
 
         } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }
@@ -35,8 +38,22 @@ public class PlotStyleSerializationTest {
     @Test
     public void serialization_test() {
         try {
+            SimpleSymbolMap<SimpleSymbolKey<String>> ssm = new SimpleSymbolMap<>();
 
+            String keyString = "key";
+            SimpleSymbolKey<String> ssk = new SimpleSymbolKey<String>("title", "fieldName", keyString, (Class<String>) keyString.getClass());
+            String value = "value";
 
+            String objectString = "object";
+
+            ssm.put(ssk,objectString);
+
+            String fileName = "fileNameTest";
+            PlotStyleSerializer.serializeObjectToFile(ssm, fileName);
+
+            SimpleSymbolMap<SimpleSymbolKey<String>> ssmTwo = (SimpleSymbolMap<SimpleSymbolKey<String>>) PlotStyleSerializer.getSerializedObjectFromFile(fileName, true);
+
+            assertEquals(ssm.get(keyString), ssmTwo.get(keyString));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
