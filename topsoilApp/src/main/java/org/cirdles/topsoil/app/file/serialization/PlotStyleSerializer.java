@@ -11,6 +11,7 @@ import java.io.*;
  */
 public class PlotStyleSerializer {
 
+    private static final String FILE_EXTENSION = ".ser";
     // NOTE: This used to throw a SquidException and I have modified it to throw a regular Exception.
     // I do not know if this was the best option
     /**
@@ -25,6 +26,7 @@ public class PlotStyleSerializer {
         // Sept 2018 speedup per Rayner request
         ObjectOutputStream objectOutputStream = null;
         try {
+            fileName += FILE_EXTENSION;
             RandomAccessFile raf = new RandomAccessFile(fileName, "rw");
             FileOutputStream fos = new FileOutputStream(raf.getFD());
             objectOutputStream = new ObjectOutputStream(fos);
@@ -51,6 +53,7 @@ public class PlotStyleSerializer {
         //FileInputStream inputStream;
         ObjectInputStream deserializedInputStream;
         Object deserializedObject = null;
+        filename += FILE_EXTENSION;
 
         try (FileInputStream inputStream = new FileInputStream(filename)) {
             deserializedInputStream = new ObjectInputStream(inputStream);
@@ -64,11 +67,11 @@ public class PlotStyleSerializer {
             }
         } catch (IOException ex) {
             if (verbose) {
-                TopsoilNotification.error("Error", "The file you are attempting to open is not a valid '*.squid' file");
+                TopsoilNotification.error("Error", "The file you are attempting to open is not a valid '*.ser' file");
             }
         } catch (ClassNotFoundException | ClassCastException ex) {
             if (verbose) {
-                TopsoilNotification.error("Error", "The file you are attempting to open is not compatible with this version of Squid3");
+                TopsoilNotification.error("Error", "The file you are attempting to open is not a valid Plot Style file");
             }
         }
 
