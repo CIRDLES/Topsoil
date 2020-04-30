@@ -7,6 +7,7 @@
 <?import org.cirdles.topsoil.app.control.plot.panel.DataOptionsController?>
 <?import org.cirdles.topsoil.app.control.plot.panel.PlotFeaturesController?>
 <?import org.cirdles.topsoil.app.control.plot.panel.PhysicalConstantsController?>
+<?import org.cirdles.topsoil.app.control.plot.panel.ExportPreferencesController?>
 <fx:root type="Accordion" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
    <panes>
       <TitledPane text="Axis Styling">
@@ -27,6 +28,11 @@
       <TitledPane text="Physical Constants">
          <content>
             <PhysicalConstantsController fx:id="physicalConstants" />
+         </content>
+      </TitledPane>
+      <TitledPane text="Export Property Preferences">
+         <content>
+            <ExportPreferencesController fx:id="exportPreferences" />
          </content>
       </TitledPane>
    </panes>

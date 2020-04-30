@@ -6,6 +6,7 @@ import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.plot.feature.Concordia;
 import org.cirdles.topsoil.symbols.SimpleSymbolKey;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.function.Function;
  *
  * @param <T>   the type of the value that should be associated with this property
  */
-public final class PlotOption<T> extends SimpleSymbolKey<T> {
+public final class PlotOption<T> extends SimpleSymbolKey<T> implements Serializable {
 
     public static PlotOption<?> forKey(String key) {
         for (PlotOption<?> option : ALL) {

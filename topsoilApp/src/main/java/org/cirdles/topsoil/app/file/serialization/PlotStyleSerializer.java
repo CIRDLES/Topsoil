@@ -20,7 +20,7 @@ public class PlotStyleSerializer {
      * @param fileName
      * @throws Exception
      */
-    public static void serializeObjectToFile(Object serializableObject, String fileName) throws Exception {
+    public static void serializeObjectToFile(Serializable serializableObject, String fileName) throws Exception {
 
         // https://dzone.com/articles/fast-java-file-serialization
         // Sept 2018 speedup per Rayner request
@@ -31,10 +31,10 @@ public class PlotStyleSerializer {
             FileOutputStream fos = new FileOutputStream(raf.getFD());
             objectOutputStream = new ObjectOutputStream(fos);
             objectOutputStream.writeObject(serializableObject);
-        } catch (IOException ex) {
+        } /*catch (IOException ex) {
             throw new Exception("Cannot serialize object of " + serializableObject.getClass().getSimpleName() + " to: " + fileName);
 
-        } finally {
+        }*/ finally {
             if (objectOutputStream != null) {
                 try {
                     objectOutputStream.close();

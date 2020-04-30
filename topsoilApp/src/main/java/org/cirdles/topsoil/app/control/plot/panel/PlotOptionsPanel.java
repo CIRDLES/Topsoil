@@ -16,12 +16,15 @@ import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Lambda;
+import org.cirdles.topsoil.app.file.serialization.PlotStyleSerializer;
 import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.plot.PlotFunction;
 import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.javafx.PlotView;
+import org.cirdles.topsoil.plot.PlotOptions;
 import org.cirdles.topsoil.plot.feature.Concordia;
+import org.cirdles.topsoil.symbols.SimpleSymbolMap;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -48,6 +51,7 @@ public class PlotOptionsPanel extends Accordion {
     @FXML private DataOptionsController dataOptions;
     @FXML private PlotFeaturesController plotFeatures;
     @FXML private PhysicalConstantsController physicalConstants;
+	@FXML private ExportPreferencesController exportPreferences;
 
     private final StringProperty title = new SimpleStringProperty();
     public StringProperty titleProperty() {
@@ -115,6 +119,15 @@ public class PlotOptionsPanel extends Accordion {
 
 		// Snap to Corners button action
 		plotFeatures.snapToCornersButton.setOnAction(event -> plot.call(PlotFunction.Scatter.SNAP_TO_CORNERS));
+
+		exportPreferences.function = () -> {
+			SimpleSymbolMap<PlotOption<?>> ssm = new SimpleSymbolMap<>(plotOptions);
+			try {
+				PlotStyleSerializer.serializeObjectToFile(ssm, "testFile");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		};
     }
 
     //**********************************************//
