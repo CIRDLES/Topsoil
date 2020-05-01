@@ -27,11 +27,12 @@ import org.cirdles.topsoil.plot.feature.Concordia;
 import org.cirdles.topsoil.symbols.SimpleSymbolMap;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.cirdles.topsoil.app.control.plot.panel.OptionChangeEvent.OPTION_CHANGED;
+import static org.cirdles.topsoil.app.control.plot.panel.StyleImportEvent.STYLE_IMPORT;
 import static org.cirdles.topsoil.plot.PlotOption.*;
 
 public class PlotOptionsPanel extends Accordion {
@@ -42,6 +43,7 @@ public class PlotOptionsPanel extends Accordion {
 	private MapProperty<PlotOption<?>, Object> plotOptions;
 
 	private final Map<PlotOption<?>, Consumer<Object>> updateActions = new HashMap<>();
+	private static final List<PlotOption<?>> EXCLUDE_FROM_STYLE = Arrays.asList(TITLE, X_MIN, X_MAX, X_AXIS, Y_MIN, Y_MAX, Y_AXIS);
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -104,6 +106,19 @@ public class PlotOptionsPanel extends Accordion {
 		dataOptions.addEventFilter(OPTION_CHANGED, changeEventHandler);
 		plotFeatures.addEventFilter(OPTION_CHANGED, changeEventHandler);
 		physicalConstants.addEventFilter(OPTION_CHANGED, changeEventHandler);
+		// Listens for a filename selected from a style import
+		exportPreferences.addEventFilter(STYLE_IMPORT, event -> {
+			String fileName = event.getFileName();
+			HashMap<String, Object> somethin = (HashMap<String, Object>) PlotStyleSerializer.getSerializedObjectFromFile(fileName,true);
+			//HashMap<PlotOption<?>, Object> map = new HashMap<>();
+			for (Map.Entry<String, Object> entry : somethin.entrySet()) {
+				PlotOption<?> option = PlotOption.forKey(entry.getKey());
+				//TODO: Handle possilbe null pointer exception
+				plot.getOptions().put(option, option.getType().cast(entry.getValue()));
+			}
+
+			//plot.setOptions(map);
+		});
 
 		// Update axes when buttons pressed
 		axisStyling.setXExtentsButton.setOnAction(event -> {
@@ -121,9 +136,13 @@ public class PlotOptionsPanel extends Accordion {
 		plotFeatures.snapToCornersButton.setOnAction(event -> plot.call(PlotFunction.Scatter.SNAP_TO_CORNERS));
 
 		exportPreferences.function = () -> {
-			SimpleSymbolMap<PlotOption<?>> ssm = new SimpleSymbolMap<>(plotOptions);
+			HashMap<String, Serializable> map = new HashMap<>();
+			for (Map.Entry<PlotOption<?>, Object> entry : plotOptions.entrySet()) {
+				if (EXCLUDE_FROM_STYLE.contains(entry.getKey())) continue;
+				map.put(entry.getKey().getTitle(), (Serializable) entry.getValue());
+			}
 			try {
-				PlotStyleSerializer.serializeObjectToFile(ssm, "testFile");
+				PlotStyleSerializer.serializeObjectToFile(map, "testFile");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

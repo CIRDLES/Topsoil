@@ -3,6 +3,7 @@ package org.cirdles.topsoil.app.control.plot.panel;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -59,5 +60,11 @@ public class ExportPreferencesController extends AnchorPane {
         if (function != null) {
             function.run();
         }
+    }
+
+    @FXML
+    private void readPrefs(ActionEvent event) {
+        //create FileChooser
+        Event.fireEvent(event.getTarget(), new StyleImportEvent("testFile"));
     }
 }

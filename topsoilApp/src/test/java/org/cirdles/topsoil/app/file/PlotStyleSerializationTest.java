@@ -9,7 +9,10 @@ import org.cirdles.topsoil.symbols.SimpleSymbolMap;
 import org.cirdles.topsoil.symbols.SymbolKey;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -58,5 +61,16 @@ public class PlotStyleSerializationTest {
             e.printStackTrace();
             fail();
         }
+    }
+
+    @Test
+    public void deserialization_test() {
+        HashMap<String, Object> somethin = (HashMap<String, Object>) PlotStyleSerializer.getSerializedObjectFromFile("testFile",true);
+        HashMap<PlotOption<?>, Object> map = new HashMap<>();
+        for (Map.Entry<String, Object> entry : somethin.entrySet()) {
+            PlotOption<?> option = PlotOption.forKey(entry.getKey());
+            map.put(option, option.getType().cast(entry.getValue()));
+        }
+        System.out.println("\nMAP: " + map);
     }
 }

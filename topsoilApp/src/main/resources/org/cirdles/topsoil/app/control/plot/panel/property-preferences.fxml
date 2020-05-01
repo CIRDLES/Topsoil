@@ -12,6 +12,7 @@
          <VBox>
             <children>
                <Button mnemonicParsing="false" onAction="#exportPrefs" text="Export Preferences" />
+               <Button mnemonicParsing="false" onAction="#readPrefs" text="Import Preferences" />
             </children>
             <padding>
                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
