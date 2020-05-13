@@ -30,7 +30,7 @@
             <PhysicalConstantsController fx:id="physicalConstants" />
          </content>
       </TitledPane>
-      <TitledPane text="Export Property Preferences">
+      <TitledPane text="Manage Plot Preferences">
          <content>
             <ExportPreferencesController fx:id="exportPreferences" />
          </content>

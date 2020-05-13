@@ -64,7 +64,7 @@ public class ExportPreferencesController extends AnchorPane {
 
     @FXML
     private void readPrefs(ActionEvent event) {
-        //create FileChooser
+        //TODO create FileChooser
         Event.fireEvent(event.getTarget(), new StyleImportEvent("testFile"));
     }
 }

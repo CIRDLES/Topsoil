@@ -109,9 +109,9 @@ public class PlotOptionsPanel extends Accordion {
 		// Listens for a filename selected from a style import
 		exportPreferences.addEventFilter(STYLE_IMPORT, event -> {
 			String fileName = event.getFileName();
-			HashMap<String, Object> somethin = (HashMap<String, Object>) PlotStyleSerializer.getSerializedObjectFromFile(fileName,true);
+			HashMap<String, Object> something = (HashMap<String, Object>) PlotStyleSerializer.getSerializedObjectFromFile(fileName,true);
 			//HashMap<PlotOption<?>, Object> map = new HashMap<>();
-			for (Map.Entry<String, Object> entry : somethin.entrySet()) {
+			for (Map.Entry<String, Object> entry : something.entrySet()) {
 				PlotOption<?> option = PlotOption.forKey(entry.getKey());
 				//TODO: Handle possilbe null pointer exception
 				plot.getOptions().put(option, option.getType().cast(entry.getValue()));
