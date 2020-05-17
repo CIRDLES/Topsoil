@@ -94,4 +94,19 @@ public class FileChoosers {
         return fileChooser;
     }
 
+    /**
+     * Returns a {@code FileChooser} that chooses Topsoil plot preferences for opening.
+     *
+     * @return instance of FileChooser with a .tsprf extension filter
+     */
+    public static FileChooser topsoilPlotPreferenceFileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Topsoil Plot Preference File");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Topsoil Plot Preference (.tsprf)", "*.tsprf"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+        return fileChooser;
+    }
+
 }
