@@ -106,6 +106,23 @@ public class FileChoosers {
                 new FileChooser.ExtensionFilter("Topsoil Plot Preference (.tsprf)", "*.tsprf"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
+
+        return fileChooser;
+    }
+
+    /**
+     * Returns a {@code FileChooser} that chooses Topsoil plot preferences for exporting to.
+     *
+     * @return instance of FileChooser with a .tsprf extension filter
+     */
+    public static FileChooser saveTopsoilPlotPreferenceFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Topsoil Plot Preference File");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Topsoil Plot Preference (.tsprf)", "*.tsprf"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+
         return fileChooser;
     }
 

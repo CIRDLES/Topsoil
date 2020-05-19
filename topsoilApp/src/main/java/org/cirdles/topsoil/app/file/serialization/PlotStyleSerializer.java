@@ -11,7 +11,7 @@ import java.io.*;
  */
 public class PlotStyleSerializer {
 
-    private static final String FILE_EXTENSION = ".ser";
+    private static final String FILE_EXTENSION = ".tsprf";
     // NOTE: This used to throw a SquidException and I have modified it to throw a regular Exception.
     // I do not know if this was the best option
     /**
@@ -26,7 +26,7 @@ public class PlotStyleSerializer {
         // Sept 2018 speedup per Rayner request
         ObjectOutputStream objectOutputStream = null;
         try {
-            fileName += FILE_EXTENSION;
+            //fileName += FILE_EXTENSION;
             RandomAccessFile raf = new RandomAccessFile(fileName, "rw");
             FileOutputStream fos = new FileOutputStream(raf.getFD());
             objectOutputStream = new ObjectOutputStream(fos);
@@ -39,6 +39,7 @@ public class PlotStyleSerializer {
                 try {
                     objectOutputStream.close();
                 } catch (IOException iOException) {
+                    throw new Exception("Cannot serialize object of " + serializableObject.getClass().getSimpleName() + " to: " + fileName);
                 }
             }
         }
@@ -53,7 +54,7 @@ public class PlotStyleSerializer {
         //FileInputStream inputStream;
         ObjectInputStream deserializedInputStream;
         Object deserializedObject = null;
-        filename += FILE_EXTENSION;
+        //filename += FILE_EXTENSION;
 
         try (FileInputStream inputStream = new FileInputStream(filename)) {
             deserializedInputStream = new ObjectInputStream(inputStream);

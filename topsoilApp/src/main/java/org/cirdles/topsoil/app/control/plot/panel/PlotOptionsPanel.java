@@ -16,6 +16,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Lambda;
+import org.cirdles.topsoil.app.file.FileChoosers;
 import org.cirdles.topsoil.app.file.serialization.PlotStyleSerializer;
 import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.control.FXMLUtils;
@@ -28,6 +29,8 @@ import org.cirdles.topsoil.symbols.SimpleSymbolMap;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -142,7 +145,10 @@ public class PlotOptionsPanel extends Accordion {
 				map.put(entry.getKey().getTitle(), (Serializable) entry.getValue());
 			}
 			try {
-				PlotStyleSerializer.serializeObjectToFile(map, "testFile");
+				String fileName;
+				Path path = Paths.get(FileChoosers.saveTopsoilPlotPreferenceFile().showSaveDialog(null).toURI());
+				fileName = path.toString();
+				PlotStyleSerializer.serializeObjectToFile(map, fileName);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -7,10 +7,15 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.FXMLUtils;
+import org.cirdles.topsoil.app.control.plot.PlotStage;
+import org.cirdles.topsoil.app.file.FileChoosers;
 import org.cirdles.topsoil.plot.PlotOption;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Function;
 
 import static org.cirdles.topsoil.app.control.plot.panel.PlotOptionsPanel.fireEventOnChanged;
@@ -57,6 +62,7 @@ public class ExportPreferencesController extends AnchorPane {
 
     @FXML
     private void exportPrefs() {
+        // refer to PlotOptionsPanel.java
         if (function != null) {
             function.run();
         }
@@ -64,7 +70,9 @@ public class ExportPreferencesController extends AnchorPane {
 
     @FXML
     private void readPrefs(ActionEvent event) {
-        //TODO create FileChooser
-        Event.fireEvent(event.getTarget(), new StyleImportEvent("testFile"));
+        String fileName;
+        Path path = Paths.get(FileChoosers.topsoilPlotPreferenceFileChooser().showOpenDialog(null).toURI());
+        fileName = path.getFileName().toString();
+        Event.fireEvent(event.getTarget(), new StyleImportEvent(fileName));
     }
 }
