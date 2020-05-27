@@ -76,7 +76,7 @@ public class ExportPreferencesController extends AnchorPane {
         // PLEASE NOTE (Window) StageHelper.getStages().get(1) is not a rigorous solution and assumes that there is only one plot window open
         // TODO: make it so that the FileChooser specifically blocks the associated Plot window
         Path path = Paths.get(FileChoosers.topsoilPlotPreferenceFileChooser().showOpenDialog((Window) StageHelper.getStages().get(1)).toURI());
-        fileName = path.getFileName().toString();
+        fileName = path.toString();
         Event.fireEvent(event.getTarget(), new StyleImportEvent(fileName));
     }
 }

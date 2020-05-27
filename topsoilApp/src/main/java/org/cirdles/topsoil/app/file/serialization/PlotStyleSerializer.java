@@ -56,6 +56,7 @@ public class PlotStyleSerializer {
         Object deserializedObject = null;
         //filename += FILE_EXTENSION;
 
+        System.out.println(filename);
         try (FileInputStream inputStream = new FileInputStream(filename)) {
             deserializedInputStream = new ObjectInputStream(inputStream);
             deserializedObject = deserializedInputStream.readObject();
@@ -63,6 +64,7 @@ public class PlotStyleSerializer {
 
         } catch (FileNotFoundException ex) {
             if (verbose) {
+                System.out.println(ex.getMessage());
                 String errorString = "The file you are attempting to open does not exist:\n" + " " + filename;
                 TopsoilNotification.error("Error",errorString);
             }

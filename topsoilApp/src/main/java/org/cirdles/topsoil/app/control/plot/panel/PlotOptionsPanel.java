@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.control.plot.panel;
 
+import com.sun.javafx.stage.StageHelper;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
@@ -14,6 +15,7 @@ import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
+import javafx.stage.Window;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.app.file.FileChoosers;
@@ -146,7 +148,7 @@ public class PlotOptionsPanel extends Accordion {
 			}
 			try {
 				String fileName;
-				Path path = Paths.get(FileChoosers.saveTopsoilPlotPreferenceFile().showSaveDialog(null).toURI());
+				Path path = Paths.get(FileChoosers.saveTopsoilPlotPreferenceFile().showSaveDialog((Window) StageHelper.getStages().get(1)).toURI());
 				fileName = path.toString();
 				PlotStyleSerializer.serializeObjectToFile(map, fileName);
 			} catch (Exception e) {
