@@ -20,14 +20,13 @@ import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.app.file.FileChoosers;
 import org.cirdles.topsoil.app.file.serialization.PlotStyleSerializer;
+import org.cirdles.topsoil.app.file.serialization.TopsoilFileSerializer;
 import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.plot.PlotFunction;
 import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.javafx.PlotView;
-import org.cirdles.topsoil.plot.PlotOptions;
 import org.cirdles.topsoil.plot.feature.Concordia;
-import org.cirdles.topsoil.symbols.SimpleSymbolMap;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -114,7 +113,7 @@ public class PlotOptionsPanel extends Accordion {
 		// Listens for a filename selected from a style import
 		exportPreferences.addEventFilter(STYLE_IMPORT, event -> {
 			String fileName = event.getFileName();
-			HashMap<String, Object> something = (HashMap<String, Object>) PlotStyleSerializer.getSerializedObjectFromFile(fileName,true);
+			HashMap<String, Object> something = (HashMap<String, Object>) PlotStyleSerializer.importPlotStyle(fileName,true);
 			//HashMap<PlotOption<?>, Object> map = new HashMap<>();
 			for (Map.Entry<String, Object> entry : something.entrySet()) {
 				PlotOption<?> option = PlotOption.forKey(entry.getKey());
@@ -150,7 +149,7 @@ public class PlotOptionsPanel extends Accordion {
 				String fileName;
 				Path path = Paths.get(FileChoosers.saveTopsoilPlotPreferenceFile().showSaveDialog((Window) StageHelper.getStages().get(1)).toURI());
 				fileName = path.toString();
-				PlotStyleSerializer.serializeObjectToFile(map, fileName);
+				PlotStyleSerializer.exportPlotStyle(map, fileName);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

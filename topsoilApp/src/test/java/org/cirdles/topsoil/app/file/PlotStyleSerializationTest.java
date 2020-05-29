@@ -1,18 +1,13 @@
 package org.cirdles.topsoil.app.file;
 
 import org.cirdles.topsoil.Lambda;
-import org.cirdles.topsoil.app.file.serialization.PlotStyleSerializer;
-import org.cirdles.topsoil.javafx.PlotView;
+import org.cirdles.topsoil.app.file.serialization.TopsoilFileSerializer;
 import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.symbols.SimpleSymbolKey;
 import org.cirdles.topsoil.symbols.SimpleSymbolMap;
-import org.cirdles.topsoil.symbols.SymbolKey;
 import org.junit.Test;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -52,9 +47,9 @@ public class PlotStyleSerializationTest {
             ssm.put(ssk,objectString);
 
             String fileName = "fileNameTest";
-            PlotStyleSerializer.serializeObjectToFile(ssm, fileName);
+            TopsoilFileSerializer.serializeObjectToFile(ssm, fileName);
 
-            SimpleSymbolMap<SimpleSymbolKey<String>> ssmTwo = (SimpleSymbolMap<SimpleSymbolKey<String>>) PlotStyleSerializer.getSerializedObjectFromFile(fileName, true);
+            SimpleSymbolMap<SimpleSymbolKey<String>> ssmTwo = (SimpleSymbolMap<SimpleSymbolKey<String>>) TopsoilFileSerializer.getSerializedObjectFromFile(fileName, true);
 
             assertEquals(ssm.get(keyString), ssmTwo.get(keyString));
         } catch (Exception e) {
