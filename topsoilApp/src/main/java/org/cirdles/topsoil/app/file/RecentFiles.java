@@ -32,6 +32,7 @@ public final class RecentFiles {
     //                PUBLIC METHODS                //
     //**********************************************//
 
+    // PUBLIC PROJECT MRU METHODS
     /**
      * Returns an array containing the most recent project file paths.
      *
@@ -67,6 +68,24 @@ public final class RecentFiles {
     }
 
     /**
+     * Returns the path of the directory containing the most recently used project files.
+     * @return Path
+     */
+    public static Path findMRUProjectFolder() {
+        Path path;
+        Path[] recentlyUsed = getProjectPaths();
+        if (recentlyUsed.length == 0) {
+            path = Paths.get(System.getProperty("user.home"));
+        }
+        else {
+            path = Paths.get(recentlyUsed[0].toUri()).getParent();
+        }
+        return path;
+    }
+
+
+    // PUBLIC EXPORT MRU METHODS
+    /**
      * Returns an array containing the most recently exported table paths.
      *
      * @return Path[]
@@ -101,22 +120,6 @@ public final class RecentFiles {
     }
 
     /**
-     * Returns the path of the directory containing the most recently used project files.
-     * @return Path
-     */
-    public static Path findMRUProjectFolder() {
-        Path path;
-        Path[] recentlyUsed = getProjectPaths();
-        if (recentlyUsed.length == 0) {
-            path = Paths.get(System.getProperty("user.home"));
-        }
-        else {
-            path = Paths.get(recentlyUsed[0].toUri()).getParent();
-        }
-        return path;
-    }
-
-    /**
      * Returns the path of the directory containing the most recently exported table.
      * @return Path
       */
@@ -137,6 +140,7 @@ public final class RecentFiles {
     //                PRIVATE METHODS               //
     //**********************************************//
 
+    // PRIVATE PROJECT MRU METHODS
     /**
      * Reads a list of most recent Project paths from the {@code Preferences} node.
      *
@@ -176,6 +180,8 @@ public final class RecentFiles {
         }
     }
 
+
+    // PRIVATE EXPORT MRU METHODS
     /**
      * Reads a list of most recent Export paths from the {@code Preferences} node.
      *
