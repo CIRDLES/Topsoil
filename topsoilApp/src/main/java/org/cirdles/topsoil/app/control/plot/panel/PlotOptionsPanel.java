@@ -15,10 +15,12 @@ import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Lambda;
 import org.cirdles.topsoil.app.file.FileChoosers;
+import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.file.serialization.PlotStyleSerializer;
 import org.cirdles.topsoil.app.file.serialization.TopsoilFileSerializer;
 import org.cirdles.topsoil.data.Uncertainty;
@@ -139,6 +141,7 @@ public class PlotOptionsPanel extends Accordion {
 		// Snap to Corners button action
 		plotFeatures.snapToCornersButton.setOnAction(event -> plot.call(PlotFunction.Scatter.SNAP_TO_CORNERS));
 
+		// Export Prefs button
 		exportPreferences.function = () -> {
 			HashMap<String, Serializable> map = new HashMap<>();
 			for (Map.Entry<PlotOption<?>, Object> entry : plotOptions.entrySet()) {
@@ -147,7 +150,10 @@ public class PlotOptionsPanel extends Accordion {
 			}
 			try {
 				String fileName;
-				Path path = Paths.get(FileChoosers.saveTopsoilPlotPreferenceFile().showSaveDialog((Window) StageHelper.getStages().get(1)).toURI());
+				FileChooser chooser = FileChoosers.saveTopsoilPlotPreferenceFile();
+				chooser.setInitialDirectory(RecentFiles.findMRUPlotStyleFolder().toFile());
+				Path path = Paths.get(chooser.showSaveDialog((Window) StageHelper.getStages().get(1)).toURI());
+				RecentFiles.addPlotStylePath(path);
 				fileName = path.toString();
 				PlotStyleSerializer.exportPlotStyle(map, fileName);
 			} catch (Exception e) {

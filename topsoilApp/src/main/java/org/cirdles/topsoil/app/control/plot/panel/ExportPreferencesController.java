@@ -8,11 +8,13 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.cirdles.topsoil.app.Topsoil;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.app.control.plot.PlotStage;
 import org.cirdles.topsoil.app.file.FileChoosers;
+import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.plot.PlotOption;
 
 import java.io.IOException;
@@ -70,12 +72,16 @@ public class ExportPreferencesController extends AnchorPane {
         }
     }
 
+    // Import Prefs button
     @FXML
     private void readPrefs(ActionEvent event) {
         String fileName;
         // PLEASE NOTE (Window) StageHelper.getStages().get(1) is not a rigorous solution and assumes that there is only one plot window open
         // TODO: make it so that the FileChooser specifically blocks the associated Plot window
-        Path path = Paths.get(FileChoosers.topsoilPlotPreferenceFileChooser().showOpenDialog((Window) StageHelper.getStages().get(1)).toURI());
+        FileChooser chooser = FileChoosers.topsoilPlotPreferenceFileChooser();
+        chooser.setInitialDirectory(RecentFiles.findMRUPlotStyleFolder().toFile());
+        Path path = Paths.get(chooser.showOpenDialog((Window) StageHelper.getStages().get(1)).toURI());
+        RecentFiles.addPlotStylePath(path);
         fileName = path.toString();
         Event.fireEvent(event.getTarget(), new StyleImportEvent(fileName));
     }
