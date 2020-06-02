@@ -140,7 +140,7 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
      * @return  new TreeTableColumn
      */
     private TreeTableColumn<FXDataRow, Boolean> checkBoxColumn() {
-        MultilineHeaderTreeTableColumn<FXDataRow, Boolean> column = new MultilineHeaderTreeTableColumn<>("Selected");
+        MultilineHeaderTreeTableColumn<FXDataRow, Boolean> column = new MultilineHeaderTreeTableColumn<>("Included");
         column.setCellFactory(param -> {
             CheckBoxTreeTableCell<FXDataRow, Boolean> cell = new CheckBoxTreeTableCell<>();
             cell.setAlignment(Pos.CENTER);
