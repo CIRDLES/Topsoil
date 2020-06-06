@@ -23,6 +23,7 @@ import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.data.TableUtils;
 import org.cirdles.topsoil.javafx.SingleChildRegion;
+import org.cirdles.topsoil.utils.IntuitiveStringComparator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -130,6 +131,8 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
             FXDataRow row = param.getValue().getValue();
             return row.titleProperty();
         });
+        IntuitiveStringComparator<String> comparator = new IntuitiveStringComparator<>();
+        column.setComparator(comparator);
         column.setPrefWidth(LABEL_COL_WIDTH);
         return column;
     }
