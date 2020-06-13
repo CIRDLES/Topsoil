@@ -1,5 +1,7 @@
 package org.cirdles.topsoil.app.file;
 
+import org.cirdles.topsoil.utils.TopsoilPersistentState;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -185,7 +187,10 @@ public final class RecentFiles {
         Path path;
         Path recentlyUsed = getPlotStylePath();
         if (recentlyUsed == null) {
-            path = Paths.get(System.getProperty("user.home"));
+            path = TopsoilPersistentState.getTopsoilUserData();
+        }
+        else if (recentlyUsed.getFileName().equals(TopsoilPersistentState.getTopsoilUserData().getFileName())) {
+            path = Paths.get(recentlyUsed.toUri());
         }
         else {
             path = Paths.get(recentlyUsed.toUri()).getParent();
