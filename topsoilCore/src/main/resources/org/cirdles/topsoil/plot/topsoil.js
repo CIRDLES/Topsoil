@@ -14390,7 +14390,8 @@ class McLeanRegression {
             this.envelopeLowerBound = [];
             this.envelopeUpperBound = [];
             if (tIncrement > 0) {
-                for (let tStep = (0.9 * xMin); tStep <= (1.1 * xMax); tStep += tIncrement) {
+                // @bowring changed step math to handle tiny values 14 June 2020
+                for (let tStep = (xMin - tIncrement * 5); tStep <= (xMax + tIncrement * 5); tStep += tIncrement) {
                     const vperp = [[-vYVar, vXVar]], Jxyab = [[0, 0], [1, tStep]], dot1 = numeric_1.dot(vperp, Jxyab), dot2 = numeric_1.dot(dot1, subCov), dot3 = numeric_1.dot(dot2, numeric_1.transpose(Jxyab)), dot4 = numeric_1.dot(dot3, numeric_1.transpose(vperp)), thing5 = dot4[0][0], dot6 = numeric_1.dot(vperp, numeric_1.transpose(vperp)), s2perp = thing5 / dot6[0][0], xv = 2 * Math.cos(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), yv = 2 * Math.sin(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), xplus = xScale(aXVar + vXVar * tStep + xv), yplus = yScale(aYVar + vYVar * tStep + yv), xminus = xScale(aXVar + vXVar * tStep - xv), yminus = yScale(aYVar + vYVar * tStep - yv);
                     this.envelopeLowerBound.push([xminus, yminus]);
                     this.envelopeUpperBound.push([xplus, yplus]);
