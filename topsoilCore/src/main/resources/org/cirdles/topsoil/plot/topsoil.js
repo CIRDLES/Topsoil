@@ -14409,7 +14409,7 @@ class McLeanRegression {
                 .attr("y", -20)
                 .attr("fill", "black");
         }
-        info.text("Regression slope: " + this.slope);
+        info.text("Slope: " + this.slope);
         let infoWidth = info.node().getBBox().width;
         info
             .attr("x", (plot.canvasWidth - 30) - infoWidth);
