@@ -14477,8 +14477,14 @@ exports.Points = {
             .append("circle")
             .attr("class", POINT_CLASS)
             .attr("r", 2.5);
+        // @bowring modified to show hollow datapoint when not selected 15 june 2020
         points
-            .attr("fill", fill)
+            .style("fill", d => {
+            return d.selected ? fill : "none";
+        })
+            .style("stroke", d => {
+            return d.selected ? "none" : fill;
+        })
             .attr("opacity", opacity || 1)
             .attr("cx", d => plot.x.scale(d.x))
             .attr("cy", d => plot.y.scale(d.y));
