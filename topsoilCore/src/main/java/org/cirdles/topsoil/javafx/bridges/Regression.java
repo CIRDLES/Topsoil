@@ -4,6 +4,7 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.cirdles.mcLeanRegression.McLeanRegression;
 import org.cirdles.mcLeanRegression.McLeanRegressionInterface;
 import org.cirdles.mcLeanRegression.core.McLeanRegressionLineInterface;
+import org.cirdles.topsoil.utils.Rounding;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -46,15 +47,10 @@ public class Regression {
 
     public double getVectorX() { return mcLeanRegressionLine.getV()[0][0]; }
     public double getSlope() {
-        double unroundedSlope = mcLeanRegressionLine.getV()[1][0];
-        final int numSigFigs = 5;
-        BigDecimal valueBDtoSize = BigDecimal.ZERO;
-        if (Double.isFinite(unroundedSlope)) {
-            BigDecimal valueBD = new BigDecimal(unroundedSlope);
-            int newScale = numSigFigs - (valueBD.precision() - valueBD.scale());
-            valueBDtoSize = valueBD.setScale(newScale, RoundingMode.HALF_UP);
-        }
-        return valueBDtoSize.doubleValue();
+        return mcLeanRegressionLine.getV()[1][0];
+    }
+    public double getRoundedSlope() {
+        return Rounding.roundedToSize(getSlope(),5);
     }
 
     public String getV() {
