@@ -30,6 +30,7 @@ import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.javafx.PlotView;
 import org.cirdles.topsoil.plot.feature.Concordia;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -152,10 +153,13 @@ public class PlotOptionsPanel extends Accordion {
 				String fileName;
 				FileChooser chooser = FileChoosers.saveTopsoilPlotPreferenceFile();
 				chooser.setInitialDirectory(RecentFiles.findMRUPlotStyleFolder().toFile());
-				Path path = Paths.get(chooser.showSaveDialog((Window) StageHelper.getStages().get(1)).toURI());
-				RecentFiles.addPlotStylePath(path);
-				fileName = path.toString();
-				PlotStyleSerializer.exportPlotStyle(map, fileName);
+				File file = chooser.showSaveDialog((Window) StageHelper.getStages().get(1));
+				if (file != null) {
+					Path path = Paths.get(file.toURI());
+					RecentFiles.addPlotStylePath(path);
+					fileName = path.toString();
+					PlotStyleSerializer.exportPlotStyle(map, fileName);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

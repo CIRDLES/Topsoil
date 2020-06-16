@@ -17,6 +17,7 @@ import org.cirdles.topsoil.app.file.FileChoosers;
 import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.plot.PlotOption;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -80,9 +81,12 @@ public class ExportPreferencesController extends AnchorPane {
         // TODO: make it so that the FileChooser specifically blocks the associated Plot window
         FileChooser chooser = FileChoosers.topsoilPlotPreferenceFileChooser();
         chooser.setInitialDirectory(RecentFiles.findMRUPlotStyleFolder().toFile());
-        Path path = Paths.get(chooser.showOpenDialog((Window) StageHelper.getStages().get(1)).toURI());
-        RecentFiles.addPlotStylePath(path);
-        fileName = path.toString();
-        Event.fireEvent(event.getTarget(), new StyleImportEvent(fileName));
+        File file = chooser.showOpenDialog((Window) StageHelper.getStages().get(1));
+        if (file != null) {
+            Path path = Paths.get(file.toURI());
+            RecentFiles.addPlotStylePath(path);
+            fileName = path.toString();
+            Event.fireEvent(event.getTarget(), new StyleImportEvent(fileName));
+        }
     }
 }
