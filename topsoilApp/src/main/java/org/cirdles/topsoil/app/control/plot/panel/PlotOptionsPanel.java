@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.app.control.plot.panel;
 
+import com.sun.javafx.stage.StageHelper;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
@@ -14,8 +15,14 @@ import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import org.cirdles.topsoil.IsotopeSystem;
 import org.cirdles.topsoil.Lambda;
+import org.cirdles.topsoil.app.file.FileChoosers;
+import org.cirdles.topsoil.app.file.RecentFiles;
+import org.cirdles.topsoil.app.file.serialization.PlotStyleSerializer;
+import org.cirdles.topsoil.app.file.serialization.TopsoilFileSerializer;
 import org.cirdles.topsoil.data.Uncertainty;
 import org.cirdles.topsoil.app.control.FXMLUtils;
 import org.cirdles.topsoil.plot.PlotFunction;
@@ -23,12 +30,16 @@ import org.cirdles.topsoil.plot.PlotOption;
 import org.cirdles.topsoil.javafx.PlotView;
 import org.cirdles.topsoil.plot.feature.Concordia;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.cirdles.topsoil.app.control.plot.panel.OptionChangeEvent.OPTION_CHANGED;
+import static org.cirdles.topsoil.app.control.plot.panel.StyleImportEvent.STYLE_IMPORT;
 import static org.cirdles.topsoil.plot.PlotOption.*;
 
 public class PlotOptionsPanel extends Accordion {
@@ -39,6 +50,7 @@ public class PlotOptionsPanel extends Accordion {
 	private MapProperty<PlotOption<?>, Object> plotOptions;
 
 	private final Map<PlotOption<?>, Consumer<Object>> updateActions = new HashMap<>();
+	private static final List<PlotOption<?>> EXCLUDE_FROM_STYLE = Arrays.asList(TITLE, X_MIN, X_MAX, X_AXIS, Y_MIN, Y_MAX, Y_AXIS);
 
     //**********************************************//
     //                   CONTROLS                   //
@@ -48,6 +60,7 @@ public class PlotOptionsPanel extends Accordion {
     @FXML private DataOptionsController dataOptions;
     @FXML private PlotFeaturesController plotFeatures;
     @FXML private PhysicalConstantsController physicalConstants;
+	@FXML private ExportPreferencesController exportPreferences;
 
     private final StringProperty title = new SimpleStringProperty();
     public StringProperty titleProperty() {
@@ -100,6 +113,19 @@ public class PlotOptionsPanel extends Accordion {
 		dataOptions.addEventFilter(OPTION_CHANGED, changeEventHandler);
 		plotFeatures.addEventFilter(OPTION_CHANGED, changeEventHandler);
 		physicalConstants.addEventFilter(OPTION_CHANGED, changeEventHandler);
+		// Listens for a filename selected from a style import
+		exportPreferences.addEventFilter(STYLE_IMPORT, event -> {
+			String fileName = event.getFileName();
+			HashMap<String, Object> something = (HashMap<String, Object>) PlotStyleSerializer.importPlotStyle(fileName,true);
+			//HashMap<PlotOption<?>, Object> map = new HashMap<>();
+			for (Map.Entry<String, Object> entry : something.entrySet()) {
+				PlotOption<?> option = PlotOption.forKey(entry.getKey());
+				//TODO: Handle possilbe null pointer exception
+				plot.getOptions().put(option, option.getType().cast(entry.getValue()));
+			}
+
+			//plot.setOptions(map);
+		});
 
 		// Update axes when buttons pressed
 		axisStyling.setXExtentsButton.setOnAction(event -> {
@@ -115,6 +141,29 @@ public class PlotOptionsPanel extends Accordion {
 
 		// Snap to Corners button action
 		plotFeatures.snapToCornersButton.setOnAction(event -> plot.call(PlotFunction.Scatter.SNAP_TO_CORNERS));
+
+		// Export Prefs button
+		exportPreferences.function = () -> {
+			HashMap<String, Serializable> map = new HashMap<>();
+			for (Map.Entry<PlotOption<?>, Object> entry : plotOptions.entrySet()) {
+				if (EXCLUDE_FROM_STYLE.contains(entry.getKey())) continue;
+				map.put(entry.getKey().getTitle(), (Serializable) entry.getValue());
+			}
+			try {
+				String fileName;
+				FileChooser chooser = FileChoosers.saveTopsoilPlotPreferenceFile();
+				chooser.setInitialDirectory(RecentFiles.findMRUPlotStyleFolder().toFile());
+				File file = chooser.showSaveDialog((Window) StageHelper.getStages().get(1));
+				if (file != null) {
+					Path path = Paths.get(file.toURI());
+					RecentFiles.addPlotStylePath(path);
+					fileName = path.toString();
+					PlotStyleSerializer.exportPlotStyle(map, fileName);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		};
     }
 
     //**********************************************//

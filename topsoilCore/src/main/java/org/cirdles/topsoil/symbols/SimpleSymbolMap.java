@@ -1,5 +1,6 @@
 package org.cirdles.topsoil.symbols;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -8,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SimpleSymbolMap<K extends SymbolKey<?>> extends AbstractMap<K, Object> implements SymbolMap<K> {
+public class SimpleSymbolMap<K extends SymbolKey<?>> extends AbstractMap<K, Object>
+        implements SymbolMap<K>, Serializable {
 
     private List<Entry<K, Object>> entryList;
 

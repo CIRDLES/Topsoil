@@ -20,6 +20,7 @@ import org.cirdles.topsoil.app.data.TopsoilProject;
 import org.cirdles.topsoil.app.file.FileChoosers;
 import org.cirdles.topsoil.app.file.RecentFiles;
 import org.cirdles.topsoil.app.file.serialization.ProjectSerializer;
+import org.cirdles.topsoil.utils.TopsoilPersistentState;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +98,10 @@ public class Topsoil extends Application {
         } catch (MalformedURLException e) {
             throw new RuntimeException(ResourceBundles.MAIN.getString("stylesheetError") + " " + STYLESHEET, e);
         }
+
+        // Create or find user data folder and set it add it to the MRU for Plot Styles
+        Path topsoilUserDataFolderPath = TopsoilPersistentState.getTopsoilUserData();
+        RecentFiles.addPlotStylePath(topsoilUserDataFolderPath);
 
         // Exit platform on window close
         primaryStage.setOnCloseRequest(event -> {

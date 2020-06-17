@@ -1,8 +1,9 @@
 package org.cirdles.topsoil.symbols;
 
+import java.io.Serializable;
 import java.util.function.Function;
 
-public class SimpleSymbolKey<T> implements SymbolKey<T> {
+public class SimpleSymbolKey<T> implements SymbolKey<T>, Serializable {
 
     private String title;
     private String fieldName;
