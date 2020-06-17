@@ -42,7 +42,7 @@ public final class ProjectManager {
     }
     /**
      * Returns the {@code Path} associated with the most recently opened directory, if one exists
-     *
+     * @return directoryPath.get()
      */
     public static Path getDirectoryPath() {
         return directoryPath.get();
