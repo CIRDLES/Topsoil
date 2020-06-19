@@ -44,6 +44,9 @@ public class Regression {
 
     public double getAX() { return mcLeanRegressionLine.getA()[0][0]; }
     public double getIntercept() { return mcLeanRegressionLine.getA()[1][0]; }
+    public double getRoundedIntercept(int digits) {
+        return Rounding.roundedToSize(getIntercept(),digits);
+    }
 
     public double getVectorX() { return mcLeanRegressionLine.getV()[0][0]; }
     public double getSlope() {
