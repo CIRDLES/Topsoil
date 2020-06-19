@@ -14354,7 +14354,8 @@ class McLeanRegression {
                 .attr("stroke-width", 1);
         }
         // Update line
-        const x1 = 0, y1 = this.yIntercept, x2 = xScale.domain()[1], y2 = (this.slope * x2) + this.yIntercept;
+        // @bowring 12 JUNE 2020 : extended plotting to negative X
+        const x1 = xScale.domain()[0], y1 = (this.slope * x1) + this.yIntercept, x2 = xScale.domain()[1], y2 = (this.slope * x2) + this.yIntercept;
         line.attr("x1", xScale(x1))
             .attr("y1", yScale(y1))
             .attr("x2", xScale(x2))
@@ -14389,7 +14390,8 @@ class McLeanRegression {
             this.envelopeLowerBound = [];
             this.envelopeUpperBound = [];
             if (tIncrement > 0) {
-                for (let tStep = (0.9 * xMin); tStep <= (1.1 * xMax); tStep += tIncrement) {
+                // @bowring changed step math to handle tiny values 14 June 2020
+                for (let tStep = (xMin - tIncrement * 5); tStep <= (xMax + tIncrement * 5); tStep += tIncrement) {
                     const vperp = [[-vYVar, vXVar]], Jxyab = [[0, 0], [1, tStep]], dot1 = numeric_1.dot(vperp, Jxyab), dot2 = numeric_1.dot(dot1, subCov), dot3 = numeric_1.dot(dot2, numeric_1.transpose(Jxyab)), dot4 = numeric_1.dot(dot3, numeric_1.transpose(vperp)), thing5 = dot4[0][0], dot6 = numeric_1.dot(vperp, numeric_1.transpose(vperp)), s2perp = thing5 / dot6[0][0], xv = 2 * Math.cos(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), yv = 2 * Math.sin(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), xplus = xScale(aXVar + vXVar * tStep + xv), yplus = yScale(aYVar + vYVar * tStep + yv), xminus = xScale(aXVar + vXVar * tStep - xv), yminus = yScale(aYVar + vYVar * tStep - yv);
                     this.envelopeLowerBound.push([xminus, yminus]);
                     this.envelopeUpperBound.push([xplus, yplus]);
@@ -14409,7 +14411,7 @@ class McLeanRegression {
                 .attr("y", -20)
                 .attr("fill", "black");
         }
-        info.text("Slope: " + this.slope);
+        info.text("Slope: " + regression.getRoundedSlope(5));
         let infoWidth = info.node().getBBox().width;
         info
             .attr("x", (plot.canvasWidth - 30) - infoWidth);
@@ -14475,8 +14477,14 @@ exports.Points = {
             .append("circle")
             .attr("class", POINT_CLASS)
             .attr("r", 2.5);
+        // @bowring modified to show hollow datapoint when not selected 15 june 2020
         points
-            .attr("fill", fill)
+            .style("fill", d => {
+            return d.selected ? fill : "none";
+        })
+            .style("stroke", d => {
+            return d.selected ? "none" : fill;
+        })
             .attr("opacity", opacity || 1)
             .attr("cx", d => plot.x.scale(d.x))
             .attr("cy", d => plot.y.scale(d.y));

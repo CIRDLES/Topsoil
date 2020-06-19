@@ -49,8 +49,8 @@ public class Regression {
     public double getSlope() {
         return mcLeanRegressionLine.getV()[1][0];
     }
-    public double getRoundedSlope() {
-        return Rounding.roundedToSize(getSlope(),5);
+    public double getRoundedSlope(int digits) {
+        return Rounding.roundedToSize(getSlope(),digits);
     }
 
     public String getV() {
