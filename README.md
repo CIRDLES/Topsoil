@@ -1,5 +1,5 @@
 
-Topsoil is a desktop application and Java library that creates data
+*Topsoil* is a desktop application and Java library that creates data
 visualizations for geochronologists and other earth scientists. The project is
 led and maintained by [CIRDLES](http://cirdles.org), an undergraduate research
 lab at the College of Charleston in Charleston, South Carolina.
