@@ -4,6 +4,10 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.cirdles.mcLeanRegression.McLeanRegression;
 import org.cirdles.mcLeanRegression.McLeanRegressionInterface;
 import org.cirdles.mcLeanRegression.core.McLeanRegressionLineInterface;
+import org.cirdles.topsoil.utils.Rounding;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Regression {
 
@@ -40,10 +44,16 @@ public class Regression {
 
     public double getAX() { return mcLeanRegressionLine.getA()[0][0]; }
     public double getIntercept() { return mcLeanRegressionLine.getA()[1][0]; }
+    public double getRoundedIntercept(int digits) {
+        return Rounding.roundedToSize(getIntercept(),digits);
+    }
 
     public double getVectorX() { return mcLeanRegressionLine.getV()[0][0]; }
     public double getSlope() {
         return mcLeanRegressionLine.getV()[1][0];
+    }
+    public double getRoundedSlope(int digits) {
+        return Rounding.roundedToSize(getSlope(),digits);
     }
 
     public String getV() {
