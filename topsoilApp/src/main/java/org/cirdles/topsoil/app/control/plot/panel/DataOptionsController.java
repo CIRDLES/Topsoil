@@ -37,6 +37,8 @@ public class DataOptionsController extends AnchorPane {
     @FXML CheckBox pointsCheckBox;
     @FXML ColorPicker pointsFillColorPicker;
 
+    @FXML CheckBox uncertaintyCheckBox;
+
     @FXML RadioButton ellipsesRadioButton;
     @FXML ColorPicker ellipsesFillColorPicker;
 
@@ -89,6 +91,16 @@ public class DataOptionsController extends AnchorPane {
         unctBarsRadioButton.setToggleGroup(uncertaintyToggleGroup);
         unctBarsRadioButton.setOnMousePressed(unctBarsSelectionHandler.getOnMousePressed());
         unctBarsRadioButton.setOnMouseReleased(unctBarsSelectionHandler.getOnMouseReleased());
+
+        //	Configure disableProperty functionality
+		ellipsesRadioButton.disableProperty().bind(Bindings.or(uncertaintyCheckBox.disableProperty(),
+				Bindings.not(uncertaintyCheckBox.selectedProperty())));
+		ellipsesFillColorPicker.disableProperty().bind(Bindings.or(ellipsesRadioButton.disableProperty(),
+				Bindings.not(ellipsesRadioButton.selectedProperty())));
+		unctBarsRadioButton.disableProperty().bind(Bindings.or(uncertaintyCheckBox.disableProperty(),
+				Bindings.not(uncertaintyCheckBox.selectedProperty())));
+		unctBarsFillColorPicker.disableProperty().bind(Bindings.or(unctBarsRadioButton.disableProperty(),
+				Bindings.not(unctBarsRadioButton.selectedProperty())));
 
         // Configure properties that need to have values converted
 		pointsFillValue.bind(Bindings.createStringBinding(() -> PlotOptionsPanel.convertColor(pointsFillColorPicker.getValue()),
