@@ -121,6 +121,8 @@ public class DataOptionsController extends AnchorPane {
 		fireEventOnChanged(uncertaintyComboBox.valueProperty(), uncertaintyComboBox, PlotOption.UNCERTAINTY);
 
         fireEventOnChanged(pointsCheckBox.selectedProperty(), pointsCheckBox, PlotOption.POINTS);
+		fireEventOnChanged(uncertaintyCheckBox.selectedProperty(), uncertaintyCheckBox, PlotOption.UNCTBARS);
+        fireEventOnChanged(uncertaintyCheckBox.selectedProperty(), uncertaintyCheckBox, PlotOption.ELLIPSES);
         fireEventOnChanged(ellipsesRadioButton.selectedProperty(), ellipsesRadioButton, PlotOption.ELLIPSES);
         fireEventOnChanged(unctBarsRadioButton.selectedProperty(), unctBarsRadioButton, PlotOption.UNCTBARS);
 
@@ -130,6 +132,8 @@ public class DataOptionsController extends AnchorPane {
 		fireEventOnChanged(ellipsesOpacityValue, ellipsesFillColorPicker, PlotOption.ELLIPSES_OPACITY);
 		fireEventOnChanged(unctBarsFillValue, unctBarsFillColorPicker, PlotOption.UNCTBARS_FILL);
 		fireEventOnChanged(unctBarsOpacityValue, unctBarsFillColorPicker, PlotOption.UNCTBARS_OPACITY);
+
+		uncertaintyCheckBox.fire();
 
     }
 
