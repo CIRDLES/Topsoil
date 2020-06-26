@@ -91,6 +91,10 @@ public class DataOptionsController extends AnchorPane {
         unctBarsRadioButton.setToggleGroup(uncertaintyToggleGroup);
         unctBarsRadioButton.setOnMousePressed(unctBarsSelectionHandler.getOnMousePressed());
         unctBarsRadioButton.setOnMouseReleased(unctBarsSelectionHandler.getOnMouseReleased());
+        uncertaintyToggleGroup.selectedToggleProperty().addListener((obsVal, oldVal, newVal) -> {
+			if (newVal == null)
+				oldVal.setSelected(true);
+		});
 
         //	Configure disableProperty functionality
 		ellipsesRadioButton.disableProperty().bind(Bindings.or(uncertaintyCheckBox.disableProperty(),
