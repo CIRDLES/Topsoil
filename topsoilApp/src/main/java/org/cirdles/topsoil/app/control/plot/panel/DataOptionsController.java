@@ -37,6 +37,8 @@ public class DataOptionsController extends AnchorPane {
     @FXML CheckBox pointsCheckBox;
     @FXML ColorPicker pointsFillColorPicker;
 
+    @FXML CheckBox uncertaintyCheckBox;
+
     @FXML RadioButton ellipsesRadioButton;
     @FXML ColorPicker ellipsesFillColorPicker;
 
@@ -89,6 +91,20 @@ public class DataOptionsController extends AnchorPane {
         unctBarsRadioButton.setToggleGroup(uncertaintyToggleGroup);
         unctBarsRadioButton.setOnMousePressed(unctBarsSelectionHandler.getOnMousePressed());
         unctBarsRadioButton.setOnMouseReleased(unctBarsSelectionHandler.getOnMouseReleased());
+        uncertaintyToggleGroup.selectedToggleProperty().addListener((obsVal, oldVal, newVal) -> {
+			if (newVal == null)
+				oldVal.setSelected(true);
+		});
+
+        //	Configure disableProperty functionality
+		ellipsesRadioButton.disableProperty().bind(Bindings.or(uncertaintyCheckBox.disableProperty(),
+				Bindings.not(uncertaintyCheckBox.selectedProperty())));
+		ellipsesFillColorPicker.disableProperty().bind(Bindings.or(ellipsesRadioButton.disableProperty(),
+				Bindings.not(ellipsesRadioButton.selectedProperty())));
+		unctBarsRadioButton.disableProperty().bind(Bindings.or(uncertaintyCheckBox.disableProperty(),
+				Bindings.not(uncertaintyCheckBox.selectedProperty())));
+		unctBarsFillColorPicker.disableProperty().bind(Bindings.or(unctBarsRadioButton.disableProperty(),
+				Bindings.not(unctBarsRadioButton.selectedProperty())));
 
         // Configure properties that need to have values converted
 		pointsFillValue.bind(Bindings.createStringBinding(() -> PlotOptionsPanel.convertColor(pointsFillColorPicker.getValue()),
@@ -109,6 +125,8 @@ public class DataOptionsController extends AnchorPane {
 		fireEventOnChanged(uncertaintyComboBox.valueProperty(), uncertaintyComboBox, PlotOption.UNCERTAINTY);
 
         fireEventOnChanged(pointsCheckBox.selectedProperty(), pointsCheckBox, PlotOption.POINTS);
+		fireEventOnChanged(uncertaintyCheckBox.selectedProperty(), uncertaintyCheckBox, PlotOption.UNCTBARS);
+        fireEventOnChanged(uncertaintyCheckBox.selectedProperty(), uncertaintyCheckBox, PlotOption.ELLIPSES);
         fireEventOnChanged(ellipsesRadioButton.selectedProperty(), ellipsesRadioButton, PlotOption.ELLIPSES);
         fireEventOnChanged(unctBarsRadioButton.selectedProperty(), unctBarsRadioButton, PlotOption.UNCTBARS);
 
@@ -118,6 +136,8 @@ public class DataOptionsController extends AnchorPane {
 		fireEventOnChanged(ellipsesOpacityValue, ellipsesFillColorPicker, PlotOption.ELLIPSES_OPACITY);
 		fireEventOnChanged(unctBarsFillValue, unctBarsFillColorPicker, PlotOption.UNCTBARS_FILL);
 		fireEventOnChanged(unctBarsOpacityValue, unctBarsFillColorPicker, PlotOption.UNCTBARS_OPACITY);
+
+		uncertaintyCheckBox.fire();
 
     }
 

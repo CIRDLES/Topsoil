@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.221" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
@@ -85,9 +85,14 @@
                               <Insets left="25.0" />
                            </VBox.margin>
                         </GridPane>
-                        <RadioButton fx:id="ellipsesRadioButton" mnemonicParsing="false" text="Uncertainty Ellipses" underline="true">
+                        <CheckBox fx:id="uncertaintyCheckBox" mnemonicParsing="false" text="Uncertainty" underline="true">
                            <VBox.margin>
                               <Insets />
+                           </VBox.margin>
+                        </CheckBox>
+                        <RadioButton fx:id="ellipsesRadioButton" mnemonicParsing="false" text="Uncertainty Ellipses" underline="true">
+                           <VBox.margin>
+                              <Insets left="25.0" />
                            </VBox.margin>
                         </RadioButton>
                         <GridPane VBox.vgrow="NEVER">
@@ -99,7 +104,7 @@
                               <RowConstraints vgrow="NEVER" />
                            </rowConstraints>
                            <VBox.margin>
-                              <Insets left="25.0" />
+                              <Insets left="50.0" />
                            </VBox.margin>
                            <children>
                               <Label text="Fill:">
@@ -116,7 +121,7 @@
                         </GridPane>
                         <RadioButton fx:id="unctBarsRadioButton" mnemonicParsing="false" text="Uncertainty Bars" underline="true">
                            <VBox.margin>
-                              <Insets />
+                              <Insets left="25.0" />
                            </VBox.margin>
                         </RadioButton>
                         <GridPane>
@@ -140,7 +145,7 @@
                               </ColorPicker>
                            </children>
                            <VBox.margin>
-                              <Insets left="25.0" />
+                              <Insets left="50.0" />
                            </VBox.margin>
                         </GridPane>
                      </children>
