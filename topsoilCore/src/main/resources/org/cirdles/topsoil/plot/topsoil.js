@@ -14268,42 +14268,54 @@ exports.ErrorBars = {
             .attr("x2", d => xScale(d.x + (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + V_LINE_CLASS)
             .attr("x1", d => xScale(d.x))
             .attr("y1", d => yScale(d.y - (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x))
             .attr("y2", d => yScale(d.y + (uncertainty * d.sigma_y)))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + T_CAP_CLASS)
             .attr("x1", d => xScale(d.x - 0.2 * (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y + (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x + 0.2 * (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y + (uncertainty * d.sigma_y)))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + R_CAP_CLASS)
             .attr("x1", d => xScale(d.x + (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y - 0.2 * (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x + (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y + 0.2 * (uncertainty * d.sigma_y)))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + B_CAP_CLASS)
             .attr("x1", d => xScale(d.x - 0.2 * (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y - (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x + 0.2 * (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y - (uncertainty * d.sigma_y)))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + L_CAP_CLASS)
             .attr("x1", d => xScale(d.x - (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y - 0.2 * (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x - (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y + 0.2 * (uncertainty * d.sigma_y)))
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
     },
     undraw(plot) {
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.ERROR_BARS);
