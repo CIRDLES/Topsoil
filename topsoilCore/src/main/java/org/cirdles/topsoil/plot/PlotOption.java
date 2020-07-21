@@ -48,6 +48,8 @@ public final class PlotOption<T> extends SimpleSymbolKey<T> implements Serializa
     public static final PlotOption<Number> LAMBDA_TH230 = numberValue("lambda_230", Lambda.Th230.getDefaultValue());
     public static final PlotOption<Number> R238_235S = numberValue("R238_235S", 137.88);
 
+    public static final PlotOption<Boolean> SHOW_UNINCLUDED = booleanValue("show_unincluded", true);
+
     public static final PlotOption<Boolean> POINTS = booleanValue("points", true);
     public static final PlotOption<String> POINTS_FILL = stringValue("points_fill", "steelblue");
     public static final PlotOption<Number> POINTS_OPACITY = numberValue("points_opacity", 1.0);
@@ -87,6 +89,8 @@ public final class PlotOption<T> extends SimpleSymbolKey<T> implements Serializa
                 UNCERTAINTY,
                 LAMBDA_U234, LAMBDA_U235, LAMBDA_U238, LAMBDA_TH230,
                 R238_235S,
+
+                SHOW_UNINCLUDED,
 
                 POINTS, POINTS_FILL, POINTS_OPACITY,
 
