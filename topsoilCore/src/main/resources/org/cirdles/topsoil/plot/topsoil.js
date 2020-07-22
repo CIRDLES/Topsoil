@@ -14180,7 +14180,8 @@ exports.Ellipses = {
             return d.selected ? fill : "gray";
         })
             .attr("fill-opacity", opacity * 0.2)
-            .attr("stroke", "black");
+            .attr("stroke", "black")
+            .attr("opacity", d => d.selected || plot.options.show_unincluded ? 1 : 0);
     },
     undraw(plot) {
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.ELLIPSES);
@@ -14263,47 +14264,71 @@ exports.ErrorBars = {
         enterGroup.append("line").attr("class", L_CAP_CLASS);
         const strokeWidth = (opacity < 1) ? 2 : 1;
         unctBars.selectAll("." + H_LINE_CLASS)
+            .data((d) => [d])
             .attr("x1", d => xScale(d.x - (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y))
             .attr("x2", d => xScale(d.x + (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y))
+            .attr("opacity", d => d.selected || plot.options.show_unincluded ? opacity || 1 : 0)
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + V_LINE_CLASS)
+            .data((d) => [d])
             .attr("x1", d => xScale(d.x))
             .attr("y1", d => yScale(d.y - (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x))
             .attr("y2", d => yScale(d.y + (uncertainty * d.sigma_y)))
+            .attr("opacity", d => d.selected || plot.options.show_unincluded ? opacity || 1 : 0)
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + T_CAP_CLASS)
+            .data((d) => [d])
             .attr("x1", d => xScale(d.x - 0.2 * (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y + (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x + 0.2 * (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y + (uncertainty * d.sigma_y)))
+            .attr("opacity", d => d.selected || plot.options.show_unincluded ? opacity || 1 : 0)
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + R_CAP_CLASS)
+            .data((d) => [d])
             .attr("x1", d => xScale(d.x + (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y - 0.2 * (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x + (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y + 0.2 * (uncertainty * d.sigma_y)))
+            .attr("opacity", d => d.selected || plot.options.show_unincluded ? opacity || 1 : 0)
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + B_CAP_CLASS)
+            .data((d) => [d])
             .attr("x1", d => xScale(d.x - 0.2 * (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y - (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x + 0.2 * (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y - (uncertainty * d.sigma_y)))
+            .attr("opacity", d => d.selected || plot.options.show_unincluded ? opacity || 1 : 0)
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
         unctBars.selectAll("." + L_CAP_CLASS)
+            .data((d) => [d])
             .attr("x1", d => xScale(d.x - (uncertainty * d.sigma_x)))
             .attr("y1", d => yScale(d.y - 0.2 * (uncertainty * d.sigma_y)))
             .attr("x2", d => xScale(d.x - (uncertainty * d.sigma_x)))
             .attr("y2", d => yScale(d.y + 0.2 * (uncertainty * d.sigma_y)))
+            .attr("opacity", d => d.selected || plot.options.show_unincluded ? opacity || 1 : 0)
             .attr("stroke-width", strokeWidth)
-            .attr("stroke", fill);
+            .attr("stroke", d => {
+            return d.selected ? fill : "gray";
+        });
     },
     undraw(plot) {
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.ERROR_BARS);
@@ -14485,7 +14510,7 @@ exports.Points = {
             .style("stroke", d => {
             return d.selected ? "none" : fill;
         })
-            .attr("opacity", opacity || 1)
+            .attr("opacity", d => d.selected || plot.options.show_unincluded ? opacity || 1 : 0)
             .attr("cx", d => plot.x.scale(d.x))
             .attr("cy", d => plot.y.scale(d.y));
     },
@@ -15400,6 +15425,7 @@ var Option;
     Option["LAMBDA_235"] = "lambda_235";
     Option["LAMBDA_238"] = "lambda_238";
     Option["R238_235S"] = "R238_235S";
+    Option["SHOW_UNINCLUDED"] = "show_unincluded";
     Option["POINTS"] = "points";
     Option["POINTS_FILL"] = "points_fill";
     Option["POINTS_OPACITY"] = "points_opacity";
@@ -15781,7 +15807,7 @@ class ScatterPlot extends plot_abstract_1.default {
         const extents = [1000000, -1000000, 1000000, -1000000];
         let sigmaX, sigmaY;
         this.data.forEach(d => {
-            if (d.visible) {
+            if (d.visible && (d.selected || this.options.show_unincluded)) {
                 sigmaX = (d.sigma_x || 0) * (this.options["uncertainty" /* UNCERTAINTY */] || 1);
                 sigmaY = (d.sigma_y || 0) * (this.options["uncertainty" /* UNCERTAINTY */] || 1);
                 extents[0] = Math.min(extents[0], d.x - sigmaX);
