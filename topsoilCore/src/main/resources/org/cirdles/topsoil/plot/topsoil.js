@@ -14436,6 +14436,7 @@ class McLeanRegression {
                 .attr("y", -20)
                 .attr("fill", "black");
         }
+        //TODO: replace info with leftText()
         info.text("Slope: " + regression.getRoundedSlope(5) + ", y-intercept: " + regression.getRoundedIntercept(5));
         let infoWidth = info.node().getBBox().width;
         info
@@ -15519,6 +15520,16 @@ class AbstractPlot {
             .attr("class", "title-text")
             .attr("font-family", "sans-serif")
             .attr("font-size", "24px");
+        this.leftTextBox = this.svg
+            .append("text")
+            .attr("class", "left textbox")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "15px");
+        this.rightTextBox = this.svg
+            .append("text")
+            .attr("class", "right textbox")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "15px");
         this.canvas = this.displayContainer
             .append("g")
             .attr("clip-path", "url(#plotClipBox)");
@@ -15590,10 +15601,33 @@ class AbstractPlot {
         this.border
             .attr("width", this._canvasWidth)
             .attr("height", this._canvasHeight);
+        const titleDimensions = this.titleLabel.node().getBoundingClientRect();
         this.titleLabel
             .text(this._options.title)
-            .attr("x", (this._canvasWidth / 2) - (this.titleLabel.node().getBoundingClientRect().width / 2))
-            .attr("y", -(this._margin.top / 2) + (this.titleLabel.node().getBoundingClientRect().height / 3));
+            .attr("x", (this._canvasWidth / 2) - (titleDimensions.width / 2))
+            .attr("y", -(this._margin.top / 2) + (titleDimensions.height / 3));
+        const textBoxWidth = (width / 2) - (titleDimensions.width / 2) - 10;
+        //TODO: correct positioning
+        this.leftTextBox
+            .text(this.leftText())
+            .attr("x", ((width - this._canvasWidth) / 2))
+            .attr("y", ((height - this._canvasHeight) / 2))
+            .attr("fill", "red")
+            .attr("width", textBoxWidth);
+        //TODO: correct positioning
+        this.rightTextBox
+            .text(this.rightText())
+            .attr("text-anchor", "end")
+            .attr("x", this._canvasWidth + ((width - this._canvasWidth) / 2))
+            .attr("y", ((height - this._canvasHeight) / 2))
+            .attr("fill", "red")
+            .attr("width", textBoxWidth);
+    }
+    leftText() {
+        return "";
+    }
+    rightText() {
+        return "";
     }
 }
 exports.default = AbstractPlot;
@@ -15738,6 +15772,25 @@ class ScatterPlot extends plot_abstract_1.default {
             .attr("transform", "translate(0 " + this.canvasHeight + ")")
             .call(this.x.axis);
         this.yAxisG.call(this.y.axis);
+    }
+    leftText() {
+        let text = "";
+        // TODO: Get text for left textbox
+        return text;
+    }
+    rightText() {
+        let uncertainty = "" + this.options["uncertainty" /* UNCERTAINTY */];
+        let text = "Uncertainty:";
+        if (uncertainty == "1" || uncertainty == "2") {
+            text += " " + uncertainty + "σ";
+        }
+        else if (uncertainty == "2.4477") {
+            text += " " + "95% Confidence";
+        }
+        else {
+            text += " undefined";
+        }
+        return text;
     }
     update() {
         this.resize();
