@@ -14425,6 +14425,8 @@ class McLeanRegression {
             lowerEnvelope.attr("d", lineGenerator(this.envelopeLowerBound));
             upperEnvelope.attr("d", lineGenerator(this.envelopeUpperBound));
         }
+        let leftText = plot.leftTextSVGElement;
+        leftText.text("Slope: " + regression.getRoundedSlope(5) + ", y-intercept: " + regression.getRoundedIntercept(5));
     }
     undraw(plot) {
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.MCLEAN_REGRESSION);
@@ -14432,6 +14434,8 @@ class McLeanRegression {
         layerToDrawOn.selectAll("." + McLeanRegression.UPPER_ENVELOPE_CLASS).remove();
         layerToDrawOn.selectAll("." + McLeanRegression.LOWER_ENVELOPE_CLASS).remove();
         plot.displayContainer.selectAll("." + McLeanRegression.INFO_CLASS).remove();
+        let leftText = plot.leftTextSVGElement;
+        leftText.text("");
     }
     calcSav(savString) {
         let matrix = [];
@@ -15593,25 +15597,25 @@ class AbstractPlot {
         const textBoxWidth = (width / 2) - (titleDimensions.width / 2) - 10;
         //TODO: correct positioning
         this.leftTextBox
-            .text(this.leftText())
+            //.text(this.leftText())
             .attr("x", ((width - this._canvasWidth) / 2))
-            .attr("y", ((height - this._canvasHeight) / 2))
+            .attr("y", ((height - this._canvasHeight) / 2) + 10)
             .attr("fill", "red")
             .attr("width", textBoxWidth);
         //TODO: correct positioning
         this.rightTextBox
-            .text(this.rightText())
+            //.text(this.rightText())
             .attr("text-anchor", "end")
             .attr("x", this._canvasWidth + ((width - this._canvasWidth) / 2))
-            .attr("y", ((height - this._canvasHeight) / 2))
+            .attr("y", ((height - this._canvasHeight) / 2) + 10)
             .attr("fill", "red")
             .attr("width", textBoxWidth);
     }
-    leftText() {
-        return "";
+    get leftTextSVGElement() {
+        return this.leftTextBox;
     }
-    rightText() {
-        return "";
+    get rightTextSVGElement() {
+        return this.rightTextBox;
     }
 }
 exports.default = AbstractPlot;
@@ -15757,25 +15761,7 @@ class ScatterPlot extends plot_abstract_1.default {
             .call(this.x.axis);
         this.yAxisG.call(this.y.axis);
     }
-    leftText() {
-        const defaultText = "";
-        let text = "";
-        if (this.options.regression_mclean == true) {
-            text = "regression is on";
-            //text = "" + this.options.regression_mclean;
-            try {
-                text = "Slope: " + this.regressionBridge.getRoundedSlope(5) + ", y-intercept: " + this.regressionBridge.getRoundedIntercept(5);
-            }
-            catch (e) {
-                text = e;
-            }
-        }
-        else {
-            text = defaultText;
-        }
-        return text;
-    }
-    rightText() {
+    updateRightText(selector) {
         let uncertainty = "" + this.options["uncertainty" /* UNCERTAINTY */];
         let text = "Uncertainty:";
         if (uncertainty == "1" || uncertainty == "2") {
@@ -15787,10 +15773,12 @@ class ScatterPlot extends plot_abstract_1.default {
         else {
             text += " undefined";
         }
-        return text;
+        selector.text(text);
     }
     update() {
         this.resize();
+        let rightText = this.rightTextSVGElement;
+        this.updateRightText(rightText);
         this.displayContainer
             .selectAll(`.${AXIS_CLASS} text`)
             .attr("font-family", "sans-serif")
