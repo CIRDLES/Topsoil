@@ -41,7 +41,7 @@ public final class PlotOption<T> extends SimpleSymbolKey<T> implements Serializa
     public static final PlotOption<IsotopeSystem> ISOTOPE_SYSTEM =
             new PlotOption<>("isotope_system", IsotopeSystem.GENERIC, IsotopeSystem.class, IsotopeSystem::getName);
     public static final PlotOption<Uncertainty> UNCERTAINTY =
-            new PlotOption<>("uncertainty", Uncertainty.ONE_SIGMA_ABSOLUTE, Uncertainty.class, Uncertainty::getMultiplier);
+            new PlotOption<>("uncertainty", Uncertainty.TWO_SIGMA_ABSOLUTE, Uncertainty.class, Uncertainty::getMultiplier);
     public static final PlotOption<Number> LAMBDA_U234 = numberValue("lambda_234", Lambda.U234.getDefaultValue());
     public static final PlotOption<Number> LAMBDA_U235 = numberValue("lambda_235", Lambda.U235.getDefaultValue());
     public static final PlotOption<Number> LAMBDA_U238 = numberValue("lambda_238", Lambda.U238.getDefaultValue());
