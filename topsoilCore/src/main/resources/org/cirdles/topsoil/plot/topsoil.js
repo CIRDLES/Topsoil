@@ -14150,6 +14150,7 @@ const ELLIPSE_CLASS = "ellipse";
 exports.Ellipses = {
     draw(plot) {
         const { ellipses_fill: fill, ellipses_opacity: opacity, uncertainty } = plot.options;
+        console.log("uncertaintyE: " + uncertainty + " typeOf: " + typeof uncertainty);
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.ELLIPSES);
         const ellipses = layerToDrawOn.selectAll("." + ELLIPSE_CLASS).data(calcEllipses(plot.data, uncertainty));
         ellipses.exit().remove();
@@ -14246,6 +14247,7 @@ const G_CLASS = "error-bars-g", H_LINE_CLASS = "error-bars-h-line", V_LINE_CLASS
 exports.ErrorBars = {
     draw(plot) {
         const { x: { scale: xScale }, y: { scale: yScale }, data, options: { uncertainty, error_bars_fill: fill, error_bars_opacity: opacity } } = plot;
+        console.log("uncertainty: " + uncertainty + " typeOf: " + typeof uncertainty);
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.ERROR_BARS);
         const validEntries = data.filter(d => {
             return d.sigma_x && d.sigma_y;
@@ -14354,8 +14356,19 @@ const numeric_1 = __webpack_require__(/*! numeric */ "./node_modules/numeric/num
 const d3 = __webpack_require__(/*! d3 */ "./node_modules/d3/d3.js");
 class McLeanRegression {
     draw(plot) {
+        // Draw info box
+        let info = plot.displayContainer.select("." + McLeanRegression.INFO_CLASS);
+        if (info.empty()) {
+            info = plot.displayContainer.append("text")
+                .attr("class", McLeanRegression.INFO_CLASS)
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "12px")
+                .attr("x", 0)
+                .attr("y", -20)
+                .attr("fill", "black");
+        }
         // Calculate line
-        const { data, regressionBridge: regression, x: { scale: xScale }, y: { scale: yScale } } = plot;
+        const { data, regressionBridge: regression, x: { scale: xScale }, y: { scale: yScale }, options: { uncertainty } } = plot;
         const xList = [], yList = [], sigmaXList = [], sigmaYList = [], rhoList = [];
         data.forEach(d => {
             if (d["selected" /* SELECTED */]) {
@@ -14378,6 +14391,9 @@ class McLeanRegression {
                 .attr("stroke", "black")
                 .attr("stroke-width", 1);
         }
+        let infoWidth = info.node().getBBox().width;
+        info
+            .attr("x", 0);
         // Update line
         // @bowring 12 JUNE 2020 : extended plotting to negative X
         const x1 = xScale.domain()[0], y1 = (this.slope * x1) + this.yIntercept, x2 = xScale.domain()[1], y2 = (this.slope * x2) + this.yIntercept;
@@ -14417,7 +14433,7 @@ class McLeanRegression {
             if (tIncrement > 0) {
                 // @bowring changed step math to handle tiny values 14 June 2020
                 for (let tStep = (xMin - tIncrement * 5); tStep <= (xMax + tIncrement * 5); tStep += tIncrement) {
-                    const vperp = [[-vYVar, vXVar]], Jxyab = [[0, 0], [1, tStep]], dot1 = numeric_1.dot(vperp, Jxyab), dot2 = numeric_1.dot(dot1, subCov), dot3 = numeric_1.dot(dot2, numeric_1.transpose(Jxyab)), dot4 = numeric_1.dot(dot3, numeric_1.transpose(vperp)), thing5 = dot4[0][0], dot6 = numeric_1.dot(vperp, numeric_1.transpose(vperp)), s2perp = thing5 / dot6[0][0], xv = 2 * Math.cos(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), yv = 2 * Math.sin(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), xplus = xScale(aXVar + vXVar * tStep + xv), yplus = yScale(aYVar + vYVar * tStep + yv), xminus = xScale(aXVar + vXVar * tStep - xv), yminus = yScale(aYVar + vYVar * tStep - yv);
+                    const vperp = [[-vYVar, vXVar]], Jxyab = [[0, 0], [1, tStep]], dot1 = numeric_1.dot(vperp, Jxyab), dot2 = numeric_1.dot(dot1, subCov), dot3 = numeric_1.dot(dot2, numeric_1.transpose(Jxyab)), dot4 = numeric_1.dot(dot3, numeric_1.transpose(vperp)), thing5 = dot4[0][0], dot6 = numeric_1.dot(vperp, numeric_1.transpose(vperp)), s2perp = thing5 / dot6[0][0], xv = uncertainty * Math.cos(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), yv = uncertainty * Math.sin(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), xplus = xScale(aXVar + vXVar * tStep + xv), yplus = yScale(aYVar + vYVar * tStep + yv), xminus = xScale(aXVar + vXVar * tStep - xv), yminus = yScale(aYVar + vYVar * tStep - yv);
                     this.envelopeLowerBound.push([xminus, yminus]);
                     this.envelopeUpperBound.push([xplus, yplus]);
                 }
@@ -14425,21 +14441,7 @@ class McLeanRegression {
             lowerEnvelope.attr("d", lineGenerator(this.envelopeLowerBound));
             upperEnvelope.attr("d", lineGenerator(this.envelopeUpperBound));
         }
-        // Draw info box
-        let info = plot.displayContainer.select("." + McLeanRegression.INFO_CLASS);
-        if (info.empty()) {
-            info = plot.displayContainer.append("text")
-                .attr("class", McLeanRegression.INFO_CLASS)
-                .attr("font-family", "sans-serif")
-                .attr("font-size", "12px")
-                .attr("x", 0)
-                .attr("y", -20)
-                .attr("fill", "black");
-        }
         info.text("Slope: " + regression.getRoundedSlope(5) + ", y-intercept: " + regression.getRoundedIntercept(5));
-        let infoWidth = info.node().getBBox().width;
-        info
-            .attr("x", 0);
     }
     undraw(plot) {
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.MCLEAN_REGRESSION);
