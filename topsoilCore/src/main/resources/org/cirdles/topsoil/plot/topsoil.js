@@ -14150,7 +14150,10 @@ const ELLIPSE_CLASS = "ellipse";
 exports.Ellipses = {
     draw(plot) {
         const { ellipses_fill: fill, ellipses_opacity: opacity, uncertainty } = plot.options;
+<<<<<<< HEAD
         console.log("uncertaintyE: " + uncertainty + " typeOf: " + typeof uncertainty);
+=======
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.ELLIPSES);
         const ellipses = layerToDrawOn.selectAll("." + ELLIPSE_CLASS).data(calcEllipses(plot.data, uncertainty));
         ellipses.exit().remove();
@@ -14247,7 +14250,10 @@ const G_CLASS = "error-bars-g", H_LINE_CLASS = "error-bars-h-line", V_LINE_CLASS
 exports.ErrorBars = {
     draw(plot) {
         const { x: { scale: xScale }, y: { scale: yScale }, data, options: { uncertainty, error_bars_fill: fill, error_bars_opacity: opacity } } = plot;
+<<<<<<< HEAD
         console.log("uncertainty: " + uncertainty + " typeOf: " + typeof uncertainty);
+=======
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.ERROR_BARS);
         const validEntries = data.filter(d => {
             return d.sigma_x && d.sigma_y;
@@ -14356,6 +14362,7 @@ const numeric_1 = __webpack_require__(/*! numeric */ "./node_modules/numeric/num
 const d3 = __webpack_require__(/*! d3 */ "./node_modules/d3/d3.js");
 class McLeanRegression {
     draw(plot) {
+<<<<<<< HEAD
         // Draw info box
         let info = plot.displayContainer.select("." + McLeanRegression.INFO_CLASS);
         if (info.empty()) {
@@ -14369,6 +14376,10 @@ class McLeanRegression {
         }
         // Calculate line
         const { data, regressionBridge: regression, x: { scale: xScale }, y: { scale: yScale }, options: { uncertainty } } = plot;
+=======
+        // Calculate line
+        const { data, regressionBridge: regression, x: { scale: xScale }, y: { scale: yScale } } = plot;
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
         const xList = [], yList = [], sigmaXList = [], sigmaYList = [], rhoList = [];
         data.forEach(d => {
             if (d["selected" /* SELECTED */]) {
@@ -14391,9 +14402,12 @@ class McLeanRegression {
                 .attr("stroke", "black")
                 .attr("stroke-width", 1);
         }
+<<<<<<< HEAD
         let infoWidth = info.node().getBBox().width;
         info
             .attr("x", 0);
+=======
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
         // Update line
         // @bowring 12 JUNE 2020 : extended plotting to negative X
         const x1 = xScale.domain()[0], y1 = (this.slope * x1) + this.yIntercept, x2 = xScale.domain()[1], y2 = (this.slope * x2) + this.yIntercept;
@@ -14433,7 +14447,11 @@ class McLeanRegression {
             if (tIncrement > 0) {
                 // @bowring changed step math to handle tiny values 14 June 2020
                 for (let tStep = (xMin - tIncrement * 5); tStep <= (xMax + tIncrement * 5); tStep += tIncrement) {
+<<<<<<< HEAD
                     const vperp = [[-vYVar, vXVar]], Jxyab = [[0, 0], [1, tStep]], dot1 = numeric_1.dot(vperp, Jxyab), dot2 = numeric_1.dot(dot1, subCov), dot3 = numeric_1.dot(dot2, numeric_1.transpose(Jxyab)), dot4 = numeric_1.dot(dot3, numeric_1.transpose(vperp)), thing5 = dot4[0][0], dot6 = numeric_1.dot(vperp, numeric_1.transpose(vperp)), s2perp = thing5 / dot6[0][0], xv = uncertainty * Math.cos(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), yv = uncertainty * Math.sin(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), xplus = xScale(aXVar + vXVar * tStep + xv), yplus = yScale(aYVar + vYVar * tStep + yv), xminus = xScale(aXVar + vXVar * tStep - xv), yminus = yScale(aYVar + vYVar * tStep - yv);
+=======
+                    const vperp = [[-vYVar, vXVar]], Jxyab = [[0, 0], [1, tStep]], dot1 = numeric_1.dot(vperp, Jxyab), dot2 = numeric_1.dot(dot1, subCov), dot3 = numeric_1.dot(dot2, numeric_1.transpose(Jxyab)), dot4 = numeric_1.dot(dot3, numeric_1.transpose(vperp)), thing5 = dot4[0][0], dot6 = numeric_1.dot(vperp, numeric_1.transpose(vperp)), s2perp = thing5 / dot6[0][0], xv = 2 * Math.cos(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), yv = 2 * Math.sin(Math.atan(-vXVar / vYVar)) * Math.sqrt(s2perp), xplus = xScale(aXVar + vXVar * tStep + xv), yplus = yScale(aYVar + vYVar * tStep + yv), xminus = xScale(aXVar + vXVar * tStep - xv), yminus = yScale(aYVar + vYVar * tStep - yv);
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
                     this.envelopeLowerBound.push([xminus, yminus]);
                     this.envelopeUpperBound.push([xplus, yplus]);
                 }
@@ -14441,7 +14459,12 @@ class McLeanRegression {
             lowerEnvelope.attr("d", lineGenerator(this.envelopeLowerBound));
             upperEnvelope.attr("d", lineGenerator(this.envelopeUpperBound));
         }
+<<<<<<< HEAD
         info.text("Slope: " + regression.getRoundedSlope(5) + ", y-intercept: " + regression.getRoundedIntercept(5));
+=======
+        let leftText = plot.leftTextSVGElement;
+        leftText.text("Slope: " + regression.getRoundedSlope(5) + ", y-intercept: " + regression.getRoundedIntercept(5));
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
     }
     undraw(plot) {
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.MCLEAN_REGRESSION);
@@ -14449,6 +14472,11 @@ class McLeanRegression {
         layerToDrawOn.selectAll("." + McLeanRegression.UPPER_ENVELOPE_CLASS).remove();
         layerToDrawOn.selectAll("." + McLeanRegression.LOWER_ENVELOPE_CLASS).remove();
         plot.displayContainer.selectAll("." + McLeanRegression.INFO_CLASS).remove();
+<<<<<<< HEAD
+=======
+        let leftText = plot.leftTextSVGElement;
+        leftText.text("");
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
     }
     calcSav(savString) {
         let matrix = [];
@@ -15521,6 +15549,19 @@ class AbstractPlot {
             .attr("class", "title-text")
             .attr("font-family", "sans-serif")
             .attr("font-size", "24px");
+<<<<<<< HEAD
+=======
+        this.leftTextBox = this.svg
+            .append("text")
+            .attr("class", "left textbox")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "15px");
+        this.rightTextBox = this.svg
+            .append("text")
+            .attr("class", "right textbox")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "15px");
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
         this.canvas = this.displayContainer
             .append("g")
             .attr("clip-path", "url(#plotClipBox)");
@@ -15592,10 +15633,40 @@ class AbstractPlot {
         this.border
             .attr("width", this._canvasWidth)
             .attr("height", this._canvasHeight);
+<<<<<<< HEAD
         this.titleLabel
             .text(this._options.title)
             .attr("x", (this._canvasWidth / 2) - (this.titleLabel.node().getBoundingClientRect().width / 2))
             .attr("y", -(this._margin.top / 2) + (this.titleLabel.node().getBoundingClientRect().height / 3));
+=======
+        const titleDimensions = this.titleLabel.node().getBoundingClientRect();
+        this.titleLabel
+            .text(this._options.title)
+            .attr("x", (this._canvasWidth / 2) - (titleDimensions.width / 2))
+            .attr("y", -(this._margin.top / 2) + (titleDimensions.height / 3));
+        const textBoxWidth = (width / 2) - (titleDimensions.width / 2) - 10;
+        //TODO: correct positioning
+        this.leftTextBox
+            //.text(this.leftText())
+            .attr("x", ((width - this._canvasWidth) / 2))
+            .attr("y", ((height - this._canvasHeight) / 2) + 10)
+            .attr("fill", "red")
+            .attr("width", textBoxWidth);
+        //TODO: correct positioning
+        this.rightTextBox
+            //.text(this.rightText())
+            .attr("text-anchor", "end")
+            .attr("x", this._canvasWidth + ((width - this._canvasWidth) / 2))
+            .attr("y", ((height - this._canvasHeight) / 2) + 10)
+            .attr("fill", "red")
+            .attr("width", textBoxWidth);
+    }
+    get leftTextSVGElement() {
+        return this.leftTextBox;
+    }
+    get rightTextSVGElement() {
+        return this.rightTextBox;
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
     }
 }
 exports.default = AbstractPlot;
@@ -15741,8 +15812,29 @@ class ScatterPlot extends plot_abstract_1.default {
             .call(this.x.axis);
         this.yAxisG.call(this.y.axis);
     }
+<<<<<<< HEAD
     update() {
         this.resize();
+=======
+    updateRightText(selector) {
+        let uncertainty = "" + this.options["uncertainty" /* UNCERTAINTY */];
+        let text = "Uncertainty:";
+        if (uncertainty == "1" || uncertainty == "2") {
+            text += " " + uncertainty + "σ";
+        }
+        else if (uncertainty == "2.4477") {
+            text += " " + "95% Confidence";
+        }
+        else {
+            text += " undefined";
+        }
+        selector.text(text);
+    }
+    update() {
+        this.resize();
+        let rightText = this.rightTextSVGElement;
+        this.updateRightText(rightText);
+>>>>>>> 684b9462f2764ca3bd513900888eaea3666a01c3
         this.displayContainer
             .selectAll(`.${AXIS_CLASS} text`)
             .attr("font-family", "sans-serif")
