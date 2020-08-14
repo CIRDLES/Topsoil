@@ -46,6 +46,7 @@ public class DataOptionsController extends AnchorPane {
     @FXML ColorPicker unctBarsFillColorPicker;
 
     @FXML CheckBox showUnincludedCheckBox;
+    @FXML CheckBox resetViewOnChangeUnc;
 
 	private ToggleGroup uncertaintyToggleGroup = new ToggleGroup();
 
@@ -132,6 +133,7 @@ public class DataOptionsController extends AnchorPane {
         fireEventOnChanged(ellipsesRadioButton.selectedProperty(), ellipsesRadioButton, PlotOption.ELLIPSES);
         fireEventOnChanged(unctBarsRadioButton.selectedProperty(), unctBarsRadioButton, PlotOption.UNCTBARS);
         fireEventOnChanged(showUnincludedCheckBox.selectedProperty(), showUnincludedCheckBox, PlotOption.SHOW_UNINCLUDED);
+        fireEventOnChanged(resetViewOnChangeUnc.selectedProperty(), resetViewOnChangeUnc, PlotOption.RESET_VIEW_ON_CHANGE_UNC);
 
         fireEventOnChanged(pointsFillValue, pointsFillColorPicker, PlotOption.POINTS_FILL);
         fireEventOnChanged(pointsOpacityValue, pointsFillColorPicker, PlotOption.POINTS_OPACITY);
@@ -142,6 +144,7 @@ public class DataOptionsController extends AnchorPane {
 
 		uncertaintyCheckBox.fire();
 		showUnincludedCheckBox.fire();
+		resetViewOnChangeUnc.fire();
 
     }
 

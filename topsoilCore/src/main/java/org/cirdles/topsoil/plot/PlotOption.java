@@ -49,6 +49,7 @@ public final class PlotOption<T> extends SimpleSymbolKey<T> implements Serializa
     public static final PlotOption<Number> R238_235S = numberValue("R238_235S", 137.88);
 
     public static final PlotOption<Boolean> SHOW_UNINCLUDED = booleanValue("show_unincluded", true);
+    public static final PlotOption<Boolean> RESET_VIEW_ON_CHANGE_UNC = booleanValue("reset_view_on_change_unc", true);
 
     public static final PlotOption<Boolean> POINTS = booleanValue("points", true);
     public static final PlotOption<String> POINTS_FILL = stringValue("points_fill", "steelblue");
