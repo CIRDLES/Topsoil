@@ -91,7 +91,7 @@ public final class PlotOption<T> extends SimpleSymbolKey<T> implements Serializa
                 LAMBDA_U234, LAMBDA_U235, LAMBDA_U238, LAMBDA_TH230,
                 R238_235S,
 
-                SHOW_UNINCLUDED,
+                SHOW_UNINCLUDED, RESET_VIEW_ON_CHANGE_UNC,
 
                 POINTS, POINTS_FILL, POINTS_OPACITY,
 
