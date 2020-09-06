@@ -83,7 +83,7 @@ public class DataOptionsController extends AnchorPane {
     	// Populate Uncertainty ComboBox
 		uncertaintyComboBox.getItems().addAll(Uncertainty.ONE_SIGMA_ABSOLUTE, Uncertainty
 				.TWO_SIGMA_ABSOLUTE, Uncertainty.NINETY_FIVE_PERCENT_CONFIDENCE);
-    	uncertaintyComboBox.getSelectionModel().select(Uncertainty.ONE_SIGMA_ABSOLUTE);
+    	uncertaintyComboBox.getSelectionModel().select(Uncertainty.TWO_SIGMA_ABSOLUTE);
 
     	// Configure ellipses/unctbars RadioButtons
     	RadioButtonSelectionHandler ellipsesSelectionHandler = new RadioButtonSelectionHandler(ellipsesRadioButton);
