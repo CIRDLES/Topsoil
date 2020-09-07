@@ -15500,7 +15500,7 @@ class AbstractPlot {
     constructor(root, data, options, layers) {
         this.root = root;
         this._margin = {
-            top: 110,
+            top: 50,
             right: 75,
             bottom: 75,
             left: 75
@@ -15609,13 +15609,13 @@ class AbstractPlot {
         this.titleLabel
             .text(this._options.title)
             .attr("x", (this._canvasWidth / 2) - (titleDimensions.width / 2))
-            .attr("y", -(this._margin.top / 2) + (titleDimensions.height / 3));
+            .attr("y", -(this._margin.top / 2) + (titleDimensions.height / 3) - 10);
         const textBoxWidth = (width / 2) - (titleDimensions.width / 2) - 10;
         //TODO: correct positioning
         this.leftTextBox
             //.text(this.leftText())
             .attr("x", ((width - this._canvasWidth) / 2))
-            .attr("y", ((height - this._canvasHeight) / 2) + 10)
+            .attr("y", ((height - this._canvasHeight) / 2) - 15)
             .attr("fill", "red")
             .attr("width", textBoxWidth);
         //TODO: correct positioning
@@ -15623,7 +15623,7 @@ class AbstractPlot {
             //.text(this.rightText())
             .attr("text-anchor", "end")
             .attr("x", this._canvasWidth + ((width - this._canvasWidth) / 2))
-            .attr("y", ((height - this._canvasHeight) / 2) + 10)
+            .attr("y", ((height - this._canvasHeight) / 2) - 15)
             .attr("fill", "red")
             .attr("width", textBoxWidth);
     }
