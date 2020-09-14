@@ -14150,7 +14150,7 @@ const ELLIPSE_CLASS = "ellipse";
 exports.Ellipses = {
     draw(plot) {
         const { ellipses_fill: fill, ellipses_opacity: opacity, uncertainty } = plot.options;
-        console.log("uncertaintyE: " + uncertainty + " typeOf: " + typeof uncertainty);
+        console.log("options.reset_: " + plot.options.reset_view_on_change_unc);
         const layerToDrawOn = plots_1.findLayer(plot, plots_1.Feature.ELLIPSES);
         const ellipses = layerToDrawOn.selectAll("." + ELLIPSE_CLASS).data(calcEllipses(plot.data, uncertainty));
         ellipses.exit().remove();
@@ -14441,6 +14441,7 @@ class McLeanRegression {
             lowerEnvelope.attr("d", lineGenerator(this.envelopeLowerBound));
             upperEnvelope.attr("d", lineGenerator(this.envelopeUpperBound));
         }
+        info.text("this: " + plot.options.reset_view_on_change_unc);
         let leftText = plot.leftTextSVGElement;
         leftText.text("Slope: " + regression.getRoundedSlope(5) + ", y-intercept: " + regression.getRoundedIntercept(5));
     }
@@ -15431,6 +15432,7 @@ var Option;
     Option["LAMBDA_238"] = "lambda_238";
     Option["R238_235S"] = "R238_235S";
     Option["SHOW_UNINCLUDED"] = "show_unincluded";
+    Option["RESET_VIEW_ON_CHANGE_UNC"] = "reset_view_on_change_unc";
     Option["POINTS"] = "points";
     Option["POINTS_FILL"] = "points_fill";
     Option["POINTS_OPACITY"] = "points_opacity";
@@ -15856,6 +15858,18 @@ class ScatterPlot extends plot_abstract_1.default {
             const xDomain = this.x.scale.domain(), yDomain = this.y.scale.domain();
             this.javaBridge.syncAxes(xDomain[0], xDomain[1], yDomain[0], yDomain[1]);
         }
+    }
+    set options(options) {
+        super.options = options;
+        //this._options = options;
+        if (options.uncertainty != this._options.uncertainty
+            && options.reset_view_on_change_unc) {
+            this.resetView();
+        }
+        this.update();
+    }
+    get options() {
+        return super.options;
     }
     getDataExtents() {
         const extents = [1000000, -1000000, 1000000, -1000000];

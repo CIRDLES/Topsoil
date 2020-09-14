@@ -259,6 +259,7 @@ public class PlotOptionsPanel extends Accordion {
 		updateActions.put(ISOTOPE_SYSTEM, (value) -> dataOptions.isotopeSystemComboBox.getSelectionModel().select((IsotopeSystem) value));
 		updateActions.put(UNCERTAINTY, (value) -> dataOptions.uncertaintyComboBox.getSelectionModel().select((Uncertainty) value));
 
+		updateActions.put(RESET_VIEW_ON_CHANGE_UNC, (value) -> dataOptions.resetViewOnChangeUnc.setSelected((Boolean) value));
 		updateActions.put(SHOW_UNINCLUDED, (value) -> dataOptions.showUnincludedCheckBox.setSelected((Boolean) value));
 		updateActions.put(POINTS, (value) -> dataOptions.pointsCheckBox.setSelected((Boolean) value));
 		updateActions.put(POINTS_FILL, (value) -> dataOptions.pointsFillColorPicker.setValue(
