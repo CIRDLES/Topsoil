@@ -15523,7 +15523,8 @@ class AbstractPlot {
             .append("text")
             .attr("class", "title-text")
             .attr("font-family", "sans-serif")
-            .attr("font-size", "24px");
+            .attr("font-size", "24px")
+            .style("text-anchor", "middle");
         this.leftTextBox = this.svg
             .append("text")
             .attr("class", "left textbox")
@@ -15606,16 +15607,17 @@ class AbstractPlot {
             .attr("width", this._canvasWidth)
             .attr("height", this._canvasHeight);
         const titleDimensions = this.titleLabel.node().getBoundingClientRect();
+        console.log(this._margin.left + "," + this._margin.top);
         this.titleLabel
             .text(this._options.title)
-            .attr("x", (this._canvasWidth / 2) - (titleDimensions.width / 2))
-            .attr("y", -(this._margin.top / 2) + (titleDimensions.height / 3) - 10);
+            .attr("x", (this._canvasWidth / 2))
+            .attr("y", -(this._margin.top / 2));
         const textBoxWidth = (width / 2) - (titleDimensions.width / 2) - 10;
         //TODO: correct positioning
         this.leftTextBox
             //.text(this.leftText())
             .attr("x", ((width - this._canvasWidth) / 2))
-            .attr("y", ((height - this._canvasHeight) / 2) - 15)
+            .attr("y", ((height - this._canvasHeight) / 2) - 18)
             .attr("fill", "red")
             .attr("width", textBoxWidth);
         //TODO: correct positioning
@@ -15623,7 +15625,7 @@ class AbstractPlot {
             //.text(this.rightText())
             .attr("text-anchor", "end")
             .attr("x", this._canvasWidth + ((width - this._canvasWidth) / 2))
-            .attr("y", ((height - this._canvasHeight) / 2) - 15)
+            .attr("y", ((height - this._canvasHeight) / 2) - 18)
             .attr("fill", "red")
             .attr("width", textBoxWidth);
     }
