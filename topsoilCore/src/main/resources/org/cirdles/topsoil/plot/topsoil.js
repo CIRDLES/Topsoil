@@ -15523,7 +15523,7 @@ class AbstractPlot {
             .append("text")
             .attr("class", "title-text")
             .attr("font-family", "sans-serif")
-            .attr("font-size", "24px")
+            .attr("font-size", "20px")
             .style("text-anchor", "middle");
         this.leftTextBox = this.svg
             .append("text")
