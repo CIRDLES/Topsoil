@@ -51,6 +51,9 @@ import java.util.concurrent.CompletableFuture;
  * @author John Zeringue
  */
 public class PlotView extends SingleChildRegion<WebView> implements Plot {
+    // testingMode = FALSE means the webEngine will load the pre-written htmlString
+    // testingMode = TRUE means the webEngine will load http://localhost:3000
+    private static final boolean testingMode = true;
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(PlotView.class);
@@ -329,9 +332,12 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
         // to use testing environment.
         loadFuture = new CompletableFuture<>();
         // asynchronous
-        webEngine.loadContent(htmlString);
-        //webEngine.load(null);
-        //webEngine.load("http://localhost:3000");
+
+        if (this.testingMode) {
+            webEngine.load(null);
+            webEngine.load("http://localhost:3000");
+        } else {
+            webEngine.loadContent(htmlString); }
         return loadFuture;
     }
 
