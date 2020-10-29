@@ -11,6 +11,8 @@ import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.concurrent.Worker;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
@@ -49,6 +51,9 @@ import java.util.concurrent.CompletableFuture;
  * @author John Zeringue
  */
 public class PlotView extends SingleChildRegion<WebView> implements Plot {
+    // testingMode = FALSE means the webEngine will load the pre-written htmlString
+    // testingMode = TRUE means the webEngine will load http://localhost:3000
+    private static final boolean testingMode = true;
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(PlotView.class);
@@ -144,6 +149,19 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
         this.webEngine = webView.getEngine();
         webEngine.setJavaScriptEnabled(false);
         webEngine.setJavaScriptEnabled(true);
+
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem reloadMenuItem = new MenuItem("Reload Page");
+        reloadMenuItem.setOnAction((event) -> {
+            System.out.println("reloading!");
+        });
+
+        contextMenu.getItems().addAll(reloadMenuItem);
+        webView.setOnContextMenuRequested((event) -> {
+            contextMenu.show(webView, event.getScreenX(), event.getScreenY());
+        });
+
+
         // useful for debugging
         webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
         webEngine.getLoadWorker().stateProperty().addListener(
@@ -171,6 +189,7 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
                                 "[\"points\", [\"ellipses\", \"unctbars\"], [\"mclean_regression\", \"concordia\", \"evolution\"]]" +
                                 ")"
                         );
+                        //in js: plot.javaBridge = javaBridge
                         topsoil.setMember("javaBridge", javaBridge);
                         topsoil.setMember("regressionBridge", regressionBridge);
 
@@ -307,9 +326,18 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
      * @return CompletableFuture of Void
      */
     public CompletableFuture<Void> reloadEngine() {
+        // Uncomment webEngine.load(null);
+        //        webEngine.load("http://localhost:3000");
+        // and recomment webEngine.loadContent(htmlString);
+        // to use testing environment.
         loadFuture = new CompletableFuture<>();
         // asynchronous
-        webEngine.loadContent(htmlString);
+
+        if (this.testingMode) {
+            webEngine.load(null);
+            webEngine.load("http://localhost:3000");
+        } else {
+            webEngine.loadContent(htmlString); }
         return loadFuture;
     }
 
