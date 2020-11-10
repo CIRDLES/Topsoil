@@ -79,6 +79,7 @@ subprojects {
         compile 'com.github.cirdles:commons:0f628cc'
         
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+        compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
         compile 'org.apache.pdfbox:pdfbox:2.0.13'
 
         testCompile 'org.hamcrest:hamcrest-all:1.3'
