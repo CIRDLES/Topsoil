@@ -164,7 +164,7 @@ public class Squid3DataParser extends AbstractDataParser {
             idxs.add(5);
             for (int index = 6; index < cells.length; index++) {
                 current = cells[index][0];
-                if (! current.startsWith(last)) {
+                if (!current.toUpperCase().startsWith(last.toUpperCase())) {
                     idxs.add(index);
                     last = current;
                 }
