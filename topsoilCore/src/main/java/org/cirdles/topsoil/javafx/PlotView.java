@@ -53,7 +53,7 @@ import java.util.concurrent.CompletableFuture;
 public class PlotView extends SingleChildRegion<WebView> implements Plot {
     // testingMode = FALSE means the webEngine will load the pre-written htmlString
     // testingMode = TRUE means the webEngine will load http://localhost:3000
-    private static final boolean testingMode = true;
+    private static final boolean testingMode = false;
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(PlotView.class);
