@@ -1,17 +1,22 @@
 package org.cirdles.topsoil.app.control.data;
 
 import com.sun.javafx.scene.control.skin.TreeTableViewSkin;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.layout.Region;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import org.cirdles.topsoil.app.control.undo.UndoAction;
@@ -107,6 +112,33 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
         table.scientificNotationProperty().addListener(c -> {
             updateFractionDigitsForLeafColumns();
             refreshCells();
+        });
+
+        // MULTI-SELECT
+        treeTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        treeTableView.setRowFactory(new Callback<TreeTableView<FXDataRow>, TreeTableRow<FXDataRow>>() {
+            @Override
+            public TreeTableRow<FXDataRow> call(TreeTableView<FXDataRow> param) {
+                final TreeTableRow<FXDataRow> row = new TreeTableRow<>();
+                final ContextMenu rowMenu = new ContextMenu();
+                ContextMenu tableMenu = treeTableView.getContextMenu();
+
+                MenuItem editItem = new MenuItem("Group");
+                editItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        System.out.println("ActionEvent handled this group: " + treeTableView.getSelectionModel().getSelectedItems());
+                    }
+                });
+
+                rowMenu.getItems().addAll(editItem);
+                row.contextMenuProperty().bind(
+                        Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                                .then(rowMenu)
+                                .otherwise((ContextMenu) null));
+                return row;
+            }
         });
     }
 
