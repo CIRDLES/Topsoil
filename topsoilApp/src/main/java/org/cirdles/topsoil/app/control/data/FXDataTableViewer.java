@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -128,7 +129,22 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
                 editItem.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
+                        // todo: add popup for naming the group and specifying the plot color
+                        // todo: figure out why the children aren't being tabbed over
+                        // todo: fix bug where children of a subgroup disappear
                         System.out.println("ActionEvent handled this group: " + treeTableView.getSelectionModel().getSelectedItems());
+                        ObservableList<TreeItem<FXDataRow>> itemsForGrouping = treeTableView.getSelectionModel().getSelectedItems();
+                        TreeItem<FXDataRow> firstItem = itemsForGrouping.get(0);
+
+                        FXDataRow groupRow = new FXDataRow("group", true);
+                        TreeItem<FXDataRow> groupItem = new TreeItem<FXDataRow>(groupRow);
+                        groupItem.getChildren().addAll(itemsForGrouping);
+
+                        int indexOfFirstSelection = treeTableView.getSelectionModel().getSelectedIndices().get(0);
+                        treeTableView.getRoot().getChildren().add(indexOfFirstSelection, groupItem);
+
+                        treeTableView.getRoot().getChildren().removeAll(itemsForGrouping);
+                        treeTableView.getSelectionModel().clearSelection();
                     }
                 });
 
