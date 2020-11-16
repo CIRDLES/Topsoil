@@ -130,15 +130,20 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
                     @Override
                     public void handle(ActionEvent event) {
                         // todo: add popup for naming the group and specifying the plot color
-                        // todo: figure out why the children aren't being tabbed over
-                        // todo: fix bug where children of a subgroup disappear
+                        // todo: prevent nested grouping
                         System.out.println("ActionEvent handled this group: " + treeTableView.getSelectionModel().getSelectedItems());
                         ObservableList<TreeItem<FXDataRow>> itemsForGrouping = treeTableView.getSelectionModel().getSelectedItems();
                         TreeItem<FXDataRow> firstItem = itemsForGrouping.get(0);
 
                         FXDataRow groupRow = new FXDataRow("group", true);
                         TreeItem<FXDataRow> groupItem = new TreeItem<FXDataRow>(groupRow);
-                        groupItem.getChildren().addAll(itemsForGrouping);
+
+                        // Copies content into new TreeItem objects instead of using groupItem.getChildren().addAll(itemsForGrouping)
+                        // because the latter caused an issue with spacing
+                        for (TreeItem<FXDataRow> item : itemsForGrouping) {
+                            FXDataRow fxDataRowContent = item.getValue();
+                            groupItem.getChildren().add(new TreeItem<FXDataRow>(fxDataRowContent));
+                        }
 
                         int indexOfFirstSelection = treeTableView.getSelectionModel().getSelectedIndices().get(0);
                         treeTableView.getRoot().getChildren().add(indexOfFirstSelection, groupItem);
