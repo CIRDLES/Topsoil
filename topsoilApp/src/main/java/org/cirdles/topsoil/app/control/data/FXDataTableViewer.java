@@ -136,19 +136,29 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
                         TreeItem<FXDataRow> firstItem = itemsForGrouping.get(0);
 
                         FXDataRow groupRow = new FXDataRow("group", true);
+                        groupRow.setGroupProperty(true);
                         TreeItem<FXDataRow> groupItem = new TreeItem<FXDataRow>(groupRow);
 
                         // Copies content into new TreeItem objects instead of using groupItem.getChildren().addAll(itemsForGrouping)
                         // because the latter caused an issue with spacing
+                        boolean isGroupable = true;
                         for (TreeItem<FXDataRow> item : itemsForGrouping) {
                             FXDataRow fxDataRowContent = item.getValue();
-                            groupItem.getChildren().add(new TreeItem<FXDataRow>(fxDataRowContent));
+
+                            if (!fxDataRowContent.getGroupProperty()) {
+                                groupItem.getChildren().add(new TreeItem<FXDataRow>(fxDataRowContent));
+                            } else {
+                                isGroupable = false;
+                                break;
+                            }
                         }
 
-                        int indexOfFirstSelection = treeTableView.getSelectionModel().getSelectedIndices().get(0);
-                        treeTableView.getRoot().getChildren().add(indexOfFirstSelection, groupItem);
+                        if (isGroupable) {
+                            int indexOfFirstSelection = treeTableView.getSelectionModel().getSelectedIndices().get(0);
+                            treeTableView.getRoot().getChildren().add(indexOfFirstSelection, groupItem);
+                            treeTableView.getRoot().getChildren().removeAll(itemsForGrouping);
+                        }
 
-                        treeTableView.getRoot().getChildren().removeAll(itemsForGrouping);
                         treeTableView.getSelectionModel().clearSelection();
                     }
                 });
