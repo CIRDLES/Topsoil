@@ -56,22 +56,22 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
+//    task javadocJar(type: Jar, dependsOn: javadoc) {
+ //       classifier = 'javadoc'
+ //       from javadoc.destinationDir
+ //   }
 
     artifacts {
         archives sourcesJar
-        archives javadocJar
+//        archives javadocJar
     }
 
-    tasks.withType(FindBugs) {
-        reports {
-            html.enabled = true
-            xml.enabled = false
-        }
-    }
+//    tasks.withType(FindBugs) {
+ //       reports {
+ //           html.enabled = true
+//            xml.enabled = false
+//        }
+//    }
 
     dependencies {
         compile 'ch.qos.logback:logback-classic:1.1.3'
@@ -83,7 +83,7 @@ subprojects {
         compile 'org.apache.pdfbox:pdfbox:2.0.13'
 
         testCompile 'org.hamcrest:hamcrest-all:1.3'
-        testCompile 'com.google.code.findbugs:annotations:3.0.0'
+//        testCompile 'com.google.code.findbugs:annotations:3.0.0'
         testCompile 'com.google.jimfs:jimfs:1.0'
         testCompile 'junit:junit:4.12'
         testCompile 'org.assertj:assertj-core:3.3.0'
@@ -94,9 +94,9 @@ subprojects {
 jacocoTestReport {
     dependsOn test
 
-    sourceDirectories = files subprojects.sourceSets.main.allSource.srcDirs
-    classDirectories = files subprojects.sourceSets.main.output
-    executionData = files subprojects.jacocoTestReport.executionData
+//    sourceDirectories = files subprojects.sourceSets.main.allSource.srcDirs
+//    classDirectories = files subprojects.sourceSets.main.output
+//    executionData = files subprojects.jacocoTestReport.executionData
 
     reports {
         html.enabled true

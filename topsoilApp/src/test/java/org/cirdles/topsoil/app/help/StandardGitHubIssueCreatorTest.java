@@ -1,9 +1,7 @@
 package org.cirdles.topsoil.app.help;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+//import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.cirdles.topsoil.app.browse.WebBrowser;
-import org.cirdles.topsoil.app.help.IssueCreator;
-import org.cirdles.topsoil.app.help.StandardGitHubIssueCreator;
 import org.cirdles.topsoil.app.metadata.ApplicationMetadata;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,7 +23,7 @@ import java.util.Properties;
 public class StandardGitHubIssueCreatorTest {
 
     @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+ //   @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock

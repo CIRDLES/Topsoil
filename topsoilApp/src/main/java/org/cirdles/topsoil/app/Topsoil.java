@@ -12,7 +12,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.text.Font;
 import javafx.stage.*;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
