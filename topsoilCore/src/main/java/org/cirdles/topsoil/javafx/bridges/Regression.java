@@ -6,9 +6,6 @@ import org.cirdles.mcLeanRegression.McLeanRegressionInterface;
 import org.cirdles.mcLeanRegression.core.McLeanRegressionLineInterface;
 import org.cirdles.topsoil.utils.Rounding;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 public class Regression {
 
     private McLeanRegressionLineInterface mcLeanRegressionLine;
@@ -22,9 +19,9 @@ public class Regression {
         double[] y1SigmaAbsDouble = toDouble(y1SigmaAbs);
         double[] rhosDouble = toDouble(rhos);
 
-        double[][] xy = new double[x.length()][2];
+        double[][] xy = new double[xDouble.length][2];
 
-        for(int i = 0; i < xDouble.length; i++) {
+        for (int i = 0; i < xDouble.length; i++) {
             xy[i][0] = xDouble[i];
             xy[i][1] = yDouble[i];
         }
@@ -42,18 +39,28 @@ public class Regression {
         return mcLeanRegressionLine;
     }
 
-    public double getAX() { return mcLeanRegressionLine.getA()[0][0]; }
-    public double getIntercept() { return mcLeanRegressionLine.getA()[1][0]; }
-    public double getRoundedIntercept(int digits) {
-        return Rounding.roundedToSize(getIntercept(),digits);
+    public double getAX() {
+        return mcLeanRegressionLine.getA()[0][0];
     }
 
-    public double getVectorX() { return mcLeanRegressionLine.getV()[0][0]; }
+    public double getIntercept() {
+        return mcLeanRegressionLine.getA()[1][0];
+    }
+
+    public double getRoundedIntercept(int digits) {
+        return Rounding.roundedToSize(getIntercept(), digits);
+    }
+
+    public double getVectorX() {
+        return mcLeanRegressionLine.getV()[0][0];
+    }
+
     public double getSlope() {
         return mcLeanRegressionLine.getV()[1][0];
     }
+
     public double getRoundedSlope(int digits) {
-        return Rounding.roundedToSize(getSlope(),digits);
+        return Rounding.roundedToSize(getSlope(), digits);
     }
 
     public String getV() {
@@ -80,7 +87,7 @@ public class Regression {
 
         double[] doubleList = new double[stringList.length];
 
-        for(int i = 0; i < stringList.length; i++) {
+        for (int i = 0; i < stringList.length; i++) {
             doubleList[i] = Double.parseDouble(stringList[i]);
         }
 
@@ -130,4 +137,17 @@ public class Regression {
         }
     }
 
+    public static void main(String[] args) {
+        SimpleRegression regressionX = new SimpleRegression();
+
+        double[][] xy = new double[10][2];
+        for (int i = 0; i < 10; i++) {
+            xy[i][0] = i;
+            xy[i][1] = 10 - i;
+        }
+
+        regressionX.addData(xy);
+
+        System.out.println(regressionX.getSlope() + "      " + regressionX.getIntercept());
+    }
 }
