@@ -1,12 +1,14 @@
 
-plugins {
-    id "com.eriwen.gradle.js" version "2.14.1"
-}
+//plugins {
+//    id "com.eriwen.gradle.js" version "2.14.1"
+//}
 
 apply plugin: 'java-library'
 
 dependencies {
-    compile 'com.github.CIRDLES:McLeanRegression:-SNAPSHOT'
+    //compile 'com.github.CIRDLES:McLeanRegression:-SNAPSHOT'
+    implementation 'com.github.cirdles.McLeanRegression:api:a7aa3dab34'
+    implementation 'com.github.cirdles.McLeanRegression:core:a7aa3dab34'
     
     compile "org.apache.commons:commons-math3:3.6.1"
     compile group: 'org.apache.xmlgraphics', name: 'batik-all', version: '1.11', ext: 'jar'

@@ -3,7 +3,16 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.internal.storage.file.FileRepository
 
-def mainClass = 'org.cirdles.topsoil.app.Topsoil'
+
+apply plugin: "application"
+
+if (!hasProperty('mainClass')) {
+    ext.mainClass = 'org.cirdles.topsoil.app.Topsoil'
+}
+
+mainClassName = 'org.cirdles.topsoil.app.Topsoil'
+
+//def mainClass = 'org.cirdles.topsoil.app.Topsoil'
 
 def getVersionName = { ->
     def repo = new FileRepository("$rootDir/.git")
@@ -19,20 +28,22 @@ processResources {
     }
 }
 
-def configJavaExec = { JavaExec task ->
-    task.main = mainClass
-    task.classpath = sourceSets.main.runtimeClasspath
-    task.standardInput = System.in
-}
 
-task run(dependsOn: jar, type: JavaExec) {
-    configJavaExec(it)
-}
 
-task debug(dependsOn: jar, type: JavaExec) {
-    configJavaExec(it)
-    debug = true
-}
+//def configJavaExec = { JavaExec task ->
+//    task.main = mainClass
+//    task.classpath = sourceSets.main.runtimeClasspath
+//    task.standardInput = System.in
+//}
+
+//task run(dependsOn: jar, type: JavaExec) {
+//    configJavaExec(it)
+//}
+
+//task debug(dependsOn: jar, type: JavaExec) {
+//    configJavaExec(it)
+//    debug = true
+//}
 
 task jarWithDependencies(type: Jar) {
     manifest.attributes(
@@ -49,7 +60,7 @@ task jarWithDependencies(type: Jar) {
 dependencies {
     compile project(':topsoilCore')
 
-    compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
+ //   compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
     compile 'org.controlsfx:controlsfx:8.40.14'
     compile 'com.google.inject:guice:4.0'
 

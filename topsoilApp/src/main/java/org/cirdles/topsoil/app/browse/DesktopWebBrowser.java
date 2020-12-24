@@ -19,7 +19,6 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import org.cirdles.topsoil.app.control.dialog.TopsoilNotification;
 import org.slf4j.Logger;
@@ -45,7 +44,7 @@ public class DesktopWebBrowser implements WebBrowser {
     //**********************************************//
 
     @Inject
-    public DesktopWebBrowser(@Nullable Desktop desktop) {
+    public DesktopWebBrowser(Desktop desktop) {
         this.desktop = desktop;
     }
 
