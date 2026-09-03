@@ -80,13 +80,13 @@ public final class ProjectManager {
         ProjectManager.setProjectPath(null);
 
         // Close all stages except for the primary stage
-        Stage[] stages = StageHelper.getStages().toArray(new Stage[]{});
+      /*  Stage[] stages = StageHelper.getStages().toArray(new Stage[]{});
         for (Stage stage : stages) {
             if (stage != Topsoil.getPrimaryStage()) {
                 // Fires an event so attached event handlers will still run
                 stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
             }
-        }
+        }*/
     }
 
     private ProjectManager() {}

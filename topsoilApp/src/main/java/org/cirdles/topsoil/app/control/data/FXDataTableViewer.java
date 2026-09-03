@@ -1,6 +1,6 @@
 package org.cirdles.topsoil.app.control.data;
 
-import com.sun.javafx.scene.control.skin.TreeTableViewSkin;
+//import com.sun.javafx.scene.control.skin.TreeTableViewSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -61,7 +61,7 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
         treeTableView = getChild();
         treeTableView.setEditable(true);
         treeTableView.setShowRoot(false);
-        treeTableView.setSkin(new CustomTreeTableViewSkin(treeTableView));
+       // treeTableView.setSkin(new CustomTreeTableViewSkin(treeTableView));
 
         // Create root item
         CheckBoxTreeItem<FXDataRow> rootItem = new CheckBoxTreeItem<>();
@@ -237,10 +237,10 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
     }
 
     private void refreshCells() {
-        ((CustomTreeTableViewSkin) treeTableView.getSkin()).refreshCells();
+      //  ((CustomTreeTableViewSkin) treeTableView.getSkin()).refreshCells();
     }
 
-    private class CustomTreeTableViewSkin extends TreeTableViewSkin<FXDataRow> {
+/*    private class CustomTreeTableViewSkin extends TreeTableViewSkin<FXDataRow> {
 
         CustomTreeTableViewSkin(TreeTableView<FXDataRow> treeTableView) {
             super(treeTableView);
@@ -250,6 +250,6 @@ public class FXDataTableViewer extends SingleChildRegion<TreeTableView<FXDataRow
             super.flow.recreateCells();
         }
 
-    }
+    }*/
 
 }

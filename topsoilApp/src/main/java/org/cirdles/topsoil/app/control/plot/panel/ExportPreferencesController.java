@@ -81,12 +81,12 @@ public class ExportPreferencesController extends AnchorPane {
         // TODO: make it so that the FileChooser specifically blocks the associated Plot window
         FileChooser chooser = FileChoosers.topsoilPlotPreferenceFileChooser();
         chooser.setInitialDirectory(RecentFiles.findMRUPlotStyleFolder().toFile());
-        File file = chooser.showOpenDialog((Window) StageHelper.getStages().get(1));
+        /*File file = chooser.showOpenDialog((Window) StageHelper.getStages().get(1));
         if (file != null) {
             Path path = Paths.get(file.toURI());
             RecentFiles.addPlotStylePath(path);
             fileName = path.toString();
             Event.fireEvent(event.getTarget(), new StyleImportEvent(fileName));
-        }
+        }*/
     }
 }

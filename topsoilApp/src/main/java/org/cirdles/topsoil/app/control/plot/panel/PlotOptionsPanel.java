@@ -153,13 +153,13 @@ public class PlotOptionsPanel extends Accordion {
 				String fileName;
 				FileChooser chooser = FileChoosers.saveTopsoilPlotPreferenceFile();
 				chooser.setInitialDirectory(RecentFiles.findMRUPlotStyleFolder().toFile());
-				File file = chooser.showSaveDialog((Window) StageHelper.getStages().get(1));
+				/*File file = chooser.showSaveDialog((Window) StageHelper.getStages().get(1));
 				if (file != null) {
 					Path path = Paths.get(file.toURI());
 					RecentFiles.addPlotStylePath(path);
 					fileName = path.toString();
 					PlotStyleSerializer.exportPlotStyle(map, fileName);
-				}
+				}*/
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
