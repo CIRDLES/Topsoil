@@ -1,0 +1,3 @@
+# Configure the JDK version for your build
+jdk:
+  - openjdk17
