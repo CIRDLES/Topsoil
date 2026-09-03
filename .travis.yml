@@ -1,35 +1,6 @@
-language: java
+language: bash
 
-dist: trusty
+sudo: required
 
-sudo: false
-cache:
-  directories:
-  - "$HOME/.m2/repository"
-  - "$HOME/.gradle/caches/"
-
-jdk: oraclejdk8
-     
-before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-
-notifications:
-  webhooks:
-    urls: https://webhooks.gitter.im/e/7545741f25d3397d0a1e
-    on_success: change
-
-after_success: ./gradlew jacocoTestReport coveralls
-
-before_deploy: ./gradlew jarWithDependencies
-
-deploy:
-  provider: releases
-  api_key:
-    secure: emz/zr7vXQ21U0zE/RIa/hmIbbHsfw45ZD1L3Gv0qHvSgZCay4iPjm9bZkktUihhXLVneu/3OYktMuLKBwBU9N/jARvTL3514R8rUign1m1FqAhn1PsL9pRSnh9IeLMAw5zGptld0YERqCff6AC5PNwGIvRDJubReS5rE42BeII=
-  file_glob: true
-  file: app/build/libs/topsoil-v*.jar
-  skip_cleanup: true
-  on:
-    repo: CIRDLES/Topsoil
-    tags: true
+script: chmod u+x customBuildForJava17.sh
+script: bash customBuildForJava17.sh
