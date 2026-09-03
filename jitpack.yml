@@ -1,3 +1,6 @@
-# Configure the JDK version for your build
-jdk:
-  - openjdk17
+language: bash
+
+sudo: required
+
+script: chmod u+x customBuildForJava17.sh
+script: bash customBuildForJava17.sh
