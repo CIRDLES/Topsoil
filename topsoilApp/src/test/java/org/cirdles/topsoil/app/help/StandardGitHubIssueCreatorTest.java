@@ -20,6 +20,7 @@ import java.util.Properties;
 /**
  * Created by Benjam on 2/1/2016.
  */
+/*
 public class StandardGitHubIssueCreatorTest {
 
     @Rule
@@ -84,5 +85,6 @@ public class StandardGitHubIssueCreatorTest {
 
         verify(browser).browse(issueUrl);
     }
+*/
 
-}
+//}

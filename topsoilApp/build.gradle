@@ -23,6 +23,8 @@ def getVersionName = { ->
 
 processResources {
     from('src/main/resources') {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
         include '**/*.properties'
         filter(ReplaceTokens, tokens: [version: getVersionName()])
     }
@@ -58,15 +60,15 @@ task jarWithDependencies(type: Jar) {
 }
 
 dependencies {
-    compile project(':topsoilCore')
+    implementation project(':topsoilCore')
 
  //   compileOnly 'com.google.code.findbugs:jsr305:3.0.0'
-    compile 'org.controlsfx:controlsfx:8.40.14'
-    compile 'com.google.inject:guice:4.0'
+    implementation 'org.controlsfx:controlsfx:8.40.14'
+    implementation 'com.google.inject:guice:4.0'
 
-    compile 'org.springframework:spring-jdbc:4.2.0.RELEASE'
+    implementation 'org.springframework:spring-jdbc:4.2.0.RELEASE'
 
-    testCompile "org.testfx:testfx-core:4.0.15-alpha"
-    testCompile "org.testfx:openjfx-monocle:8u76-b04"
-    testCompile "org.testfx:testfx-junit:4.0.15-alpha"
+    testImplementation "org.testfx:testfx-core:4.0.15-alpha"
+    testImplementation "org.testfx:openjfx-monocle:8u76-b04"
+    testImplementation "org.testfx:testfx-junit:4.0.15-alpha"
 }

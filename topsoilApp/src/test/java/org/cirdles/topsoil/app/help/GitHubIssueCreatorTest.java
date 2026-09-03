@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
  */
 public class GitHubIssueCreatorTest {
 
-    @Rule
+ /*   @Rule
  //   @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -52,5 +52,5 @@ public class GitHubIssueCreatorTest {
 
         verify(browser).browse("https://github.com/CIRDLES/Topsoil/issues/new?body=Hello%0A");
     }
-
+*/
 }

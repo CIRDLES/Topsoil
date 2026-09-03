@@ -175,10 +175,10 @@ public class Topsoil extends Application {
      * Exits the application without saving.
      */
     private static void shutdown() {
-        List<Stage> stages = StageHelper.getStages();
+       /* List<Stage> stages = StageHelper.getStages();
         for (int index = stages.size() - 1; index > 0; index--) {
             stages.get(index).close();
-        }
+        }*/
         Platform.exit();
         System.exit(0);
     }
