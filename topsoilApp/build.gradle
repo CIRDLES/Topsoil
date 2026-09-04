@@ -47,6 +47,7 @@ processResources {
 //    debug = true
 //}
 
+/*
 task jarWithDependencies(type: Jar) {
     manifest.attributes(
             'Implementation-Title': 'Topsoil',
@@ -58,6 +59,7 @@ task jarWithDependencies(type: Jar) {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } } 
     with jar
 }
+*/
 
 dependencies {
     implementation project(':topsoilCore')
