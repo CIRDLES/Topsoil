@@ -1,3 +1,6 @@
-# Configure the JDK version for your build
 jdk:
   - openjdk17
+
+before_install:
+  - sdk install java 17.0.12.fx-librca
+  - sdk use java 17.0.12.fx-librca
