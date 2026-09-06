@@ -49,6 +49,10 @@ public class ProjectSerializer {
      */
     public static TopsoilProject deserialize(Path projectPath) throws IOException {
         try (InputStream in = Files.newInputStream(projectPath); ObjectInputStream ois = new ObjectInputStream(in)) {
+            // Restrict deserialization to only the classes that a .topsoil project file should
+            // contain, to protect against malicious object streams (CWE-502).
+            ois.setObjectInputFilter(ObjectInputFilter.Config.createFilter(
+                    "org.cirdles.topsoil.**;java.lang.*;java.util.*;!*"));
             return ((SerializableProject) ois.readObject()).reconstruct();
         } catch (InvalidClassException | ClassNotFoundException e) {
             throw new IOException(e);
