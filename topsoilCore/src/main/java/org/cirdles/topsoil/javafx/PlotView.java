@@ -5,11 +5,7 @@ import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
+import javafx.collections.*;
 import javafx.concurrent.Worker;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -21,15 +17,9 @@ import org.cirdles.topsoil.Variable;
 import org.cirdles.topsoil.data.DataColumn;
 import org.cirdles.topsoil.data.DataTable;
 import org.cirdles.topsoil.data.TableUtils;
-import org.cirdles.topsoil.javafx.bridges.Regression;
-import org.cirdles.topsoil.plot.DataEntry;
-import org.cirdles.topsoil.plot.HTMLTemplate;
-import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.PlotFunction;
-import org.cirdles.topsoil.plot.PlotOption;
-import org.cirdles.topsoil.plot.PlotOptions;
-import org.cirdles.topsoil.plot.PlotType;
 import org.cirdles.topsoil.javafx.bridges.PlotBridge;
+import org.cirdles.topsoil.javafx.bridges.Regression;
+import org.cirdles.topsoil.plot.*;
 import org.cirdles.topsoil.symbols.SymbolMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,16 +49,13 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
             = LoggerFactory.getLogger(PlotView.class);
 
     private static int jsFile = 1;
-
+    private final Map<String, Thread> updateThreads = new HashMap<>();
     private WebView webView;
     private WebEngine webEngine;
     private CompletableFuture<Void> loadFuture;
-
     private PlotType plotType;
     private String htmlString;
     private DataTable table;
-    private final Map<String, Thread> updateThreads = new HashMap<>();
-
     private JSObject topsoil;
     private PlotBridge javaBridge;
     private Regression regressionBridge;
@@ -78,52 +65,8 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
     //**********************************************//
 
     private ReadOnlyListWrapper<DataEntry> plotData = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
-    public final ReadOnlyListProperty<DataEntry> plotDataProperty() {
-        return plotData.getReadOnlyProperty();
-    }
-    @Override
-    public final ObservableList<DataEntry> getData() {
-        return plotData.get();
-    }
-
     private ReadOnlyMapWrapper<PlotOption<?>, Object> plotOptions = new ReadOnlyMapWrapper<>();
-    public final ReadOnlyMapProperty<PlotOption<?>, Object> plotOptionsProperty() {
-        return plotOptions;
-    }
-    @Override
-    public final ObservableMap<PlotOption<?>, Object> getOptions() {
-        return plotOptions.get();
-    }
-    @Override
-    public final void setOptions(Map<PlotOption<?>, Object> options) {
-        if (options instanceof PlotOptions) {
-            plotOptions.set(FXCollections.observableMap(options));
-        } else {
-            plotOptions.set(FXCollections.observableMap(new PlotOptions(options)));
-        }
-    }
-
     private ReadOnlyMapWrapper<Variable<?>, DataColumn<?>> variableMap = new ReadOnlyMapWrapper<>();
-    public final ReadOnlyMapProperty<Variable<?>, DataColumn<?>> variableMapProperty() {
-        return variableMap.getReadOnlyProperty();
-    }
-    @Override
-    public Map<Variable<?>, DataColumn<?>> getVariableMap() {
-        return variableMap.get();
-    }
-    @Override
-    public void setVariableMap(Map<Variable<?>, DataColumn<?>> variableMap) {
-        if (variableMap instanceof ObservableMap) {
-            this.variableMap.set((ObservableMap<Variable<?>, DataColumn<?>>) variableMap);
-        } else {
-            this.variableMap.set(FXCollections.observableMap(variableMap));
-        }
-        updateDataEntries();
-    }
-
-    //**********************************************//
-    //                 CONSTRUCTORS                 //
-    //**********************************************//
 
     public PlotView(PlotType type) {
         super(new WebView());
@@ -175,7 +118,7 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
                                 initXMax = (Number) plotOptions.get(PlotOption.X_MAX),
                                 initYMin = (Number) plotOptions.get(PlotOption.Y_MIN),
                                 initYMax = (Number) plotOptions.get(PlotOption.Y_MAX);
-                        boolean isCustomViewport = ! (
+                        boolean isCustomViewport = !(
                                 PlotOption.X_MIN.getDefaultValue().equals(initXMin) &&
                                         PlotOption.X_MAX.getDefaultValue().equals(initXMax) &&
                                         PlotOption.Y_MIN.getDefaultValue().equals(initYMin) &&
@@ -223,9 +166,68 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
         setData(table, variableMap);
     }
 
+    public final ReadOnlyListProperty<DataEntry> plotDataProperty() {
+        return plotData.getReadOnlyProperty();
+    }
+
+    @Override
+    public final ObservableList<DataEntry> getData() {
+        return plotData.get();
+    }
+
+    @Override
+    public void setData(List<DataEntry> data) {
+        if (data != null) {
+            plotData.setAll(data);
+            this.table = null;
+            variableMap.clear();
+        }
+    }
+
+    public final ReadOnlyMapProperty<PlotOption<?>, Object> plotOptionsProperty() {
+        return plotOptions;
+    }
+
+    //**********************************************//
+    //                 CONSTRUCTORS                 //
+    //**********************************************//
+
+    @Override
+    public final ObservableMap<PlotOption<?>, Object> getOptions() {
+        return plotOptions.get();
+    }
+
+    @Override
+    public final void setOptions(Map<PlotOption<?>, Object> options) {
+        if (options instanceof PlotOptions) {
+            plotOptions.set(FXCollections.observableMap(options));
+        } else {
+            plotOptions.set(FXCollections.observableMap(new PlotOptions(options)));
+        }
+    }
+
+    public final ReadOnlyMapProperty<Variable<?>, DataColumn<?>> variableMapProperty() {
+        return variableMap.getReadOnlyProperty();
+    }
+
+    @Override
+    public Map<Variable<?>, DataColumn<?>> getVariableMap() {
+        return variableMap.get();
+    }
+
     //**********************************************//
     //                PUBLIC METHODS                //
     //**********************************************//
+
+    @Override
+    public void setVariableMap(Map<Variable<?>, DataColumn<?>> variableMap) {
+        if (variableMap instanceof ObservableMap) {
+            this.variableMap.set((ObservableMap<Variable<?>, DataColumn<?>>) variableMap);
+        } else {
+            this.variableMap.set(FXCollections.observableMap(variableMap));
+        }
+        updateDataEntries();
+    }
 
     @Override
     public PlotType getPlotType() {
@@ -244,15 +246,6 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
         this.table = table;
         setVariableMap(variableMap);
-    }
-
-    @Override
-    public void setData(List<DataEntry> data) {
-        if (data != null) {
-            plotData.setAll(data);
-            this.table = null;
-            variableMap.clear();
-        }
     }
 
     @Override
@@ -275,7 +268,7 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
 
     @Override
     public Object call(PlotFunction function, Object... args) {
-        if (! plotType.equals(function.getPlotType())) {
+        if (!plotType.equals(function.getPlotType())) {
             throw new IllegalArgumentException("Function \"" + function.getName() +
                     "\" is not supported by plot type \"" + plotType.getName() + "\".");
         }
@@ -332,12 +325,14 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
         // to use testing environment.
         loadFuture = new CompletableFuture<>();
         // asynchronous
-
-        if (this.testingMode) {
-            webEngine.load(null);
-            webEngine.load("http://localhost:3000");
-        } else {
-            webEngine.loadContent(htmlString); }
+        Platform.runLater(() -> {
+            if (this.testingMode) {
+                webEngine.load(null);
+                webEngine.load("http://localhost:3000");
+            } else {
+                webEngine.loadContent(htmlString);
+            }
+        });
         return loadFuture;
     }
 
