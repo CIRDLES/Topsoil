@@ -109,45 +109,58 @@ public class PlotView extends SingleChildRegion<WebView> implements Plot {
         webEngine.setOnAlert(event -> LOGGER.info(event.getData()));
         webEngine.getLoadWorker().stateProperty().addListener(
                 (observable, oldValue, newValue) -> {
+                    if (newValue == Worker.State.SUCCEEDED) {
+                        // Get the JS global window instance
+                        JSObject window = (JSObject) webEngine.executeScript("window");
 
-                    if (webEngine.getDocument() != null &&
-                            webEngine.getDocument().getDoctype() != null &&
-                            newValue == Worker.State.SUCCEEDED) {
+                        // Create a bridge interface strictly for handling initialization safely
+                        window.setMember("plotLoader", new Object() {
+                            public void onReady() {
+                                // This block executes safely ONLY when Topsoil JS is fully compiled and ready
+                                Platform.runLater(() -> {
+                                    Number initXMin = (Number) plotOptions.get(PlotOption.X_MIN),
+                                            initXMax = (Number) plotOptions.get(PlotOption.X_MAX),
+                                            initYMin = (Number) plotOptions.get(PlotOption.Y_MIN),
+                                            initYMax = (Number) plotOptions.get(PlotOption.Y_MAX);
 
-                        Number initXMin = (Number) plotOptions.get(PlotOption.X_MIN),
-                                initXMax = (Number) plotOptions.get(PlotOption.X_MAX),
-                                initYMin = (Number) plotOptions.get(PlotOption.Y_MIN),
-                                initYMax = (Number) plotOptions.get(PlotOption.Y_MAX);
-                        boolean isCustomViewport = !(
-                                PlotOption.X_MIN.getDefaultValue().equals(initXMin) &&
-                                        PlotOption.X_MAX.getDefaultValue().equals(initXMax) &&
-                                        PlotOption.Y_MIN.getDefaultValue().equals(initYMin) &&
-                                        PlotOption.Y_MAX.getDefaultValue().equals(initYMax)
+                                    boolean isCustomViewport = !(
+                                            PlotOption.X_MIN.getDefaultValue().equals(initXMin) &&
+                                                    PlotOption.X_MAX.getDefaultValue().equals(initXMax) &&
+                                                    PlotOption.Y_MIN.getDefaultValue().equals(initYMin) &&
+                                                    PlotOption.Y_MAX.getDefaultValue().equals(initYMax)
+                                    );
+
+                                    // Instantiate the JavaScript ScatterPlot object safely
+                                    topsoil = (JSObject) webEngine.executeScript(
+                                            "new topsoil.ScatterPlot(" +
+                                                    "document.getElementById(\"root\")," +
+                                                    getJSONData() + "," +
+                                                    getJSONOptions() + "," +
+                                                    "[\"points\", [\"ellipses\", \"unctbars\"], [\"mclean_regression\", \"concordia\", \"evolution\"]]" +
+                                                    ")"
+                                    );
+
+                                    // Set the Java object members
+                                    topsoil.setMember("javaBridge", javaBridge);
+                                    topsoil.setMember("regressionBridge", regressionBridge);
+
+                                    if (isCustomViewport) {
+                                        call(PlotFunction.Scatter.SET_AXIS_EXTENTS, initXMin, initXMax, initYMin, initYMax, false);
+                                    }
+
+                                    loadFuture.complete(null);
+                                });
+                            }
+                        });
+
+                        // Trigger fallback check in case JS initialized faster than the window gateway layout
+                        webEngine.executeScript(
+                                "if (typeof topsoil !== 'undefined' && window.plotLoader) { window.plotLoader.onReady(); }"
                         );
-
-                        topsoil = (JSObject) webEngine.executeScript("new topsoil.ScatterPlot(" +
-                                "document.getElementById(\"root\")," +
-                                getJSONData() + "," +
-                                getJSONOptions() + "," +
-                                "[\"points\", [\"ellipses\", \"unctbars\"], [\"mclean_regression\", \"concordia\", \"evolution\"]]" +
-                                ")"
-                        );
-                        //in js: plot.javaBridge = javaBridge
-                        topsoil.setMember("javaBridge", javaBridge);
-                        topsoil.setMember("regressionBridge", regressionBridge);
-
-                        if (isCustomViewport) {
-                            call(PlotFunction.Scatter.SET_AXIS_EXTENTS,
-                                    initXMin,
-                                    initXMax,
-                                    initYMin,
-                                    initYMax,
-                                    false
-                            );
-                        }
-                        loadFuture.complete(null);
                     }
-                });
+                }
+        );
+
         reloadEngine();
     }
 
